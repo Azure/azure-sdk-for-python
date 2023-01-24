@@ -50,6 +50,7 @@ def upload_data_chunks(
         chunk_size=None,
         max_concurrency=None,
         stream=None,
+        checksum=None,
         progress_hook=None,
         **kwargs):
 
@@ -64,6 +65,7 @@ def upload_data_chunks(
         chunk_size=chunk_size,
         stream=stream,
         parallel=parallel,
+        checksum=checksum,
         progress_hook=progress_hook,
         **kwargs)
     if parallel:
@@ -296,20 +298,20 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
         # if reached the end without returning, then chunk_data is all 0's
         return not any(bytearray(chunk_data))
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
+    def _upload_chunk(self, chunk_info: "ChunkInfo"):
         # avoid uploading the empty pages
-        if not self._is_chunk_empty(chunk_data):
-            chunk_end = chunk_offset + len(chunk_data) - 1
-            content_range = "bytes={0}-{1}".format(chunk_offset, chunk_end)
-            computed_md5 = None
+        if not self._is_chunk_empty(chunk_info.data):
+            chunk_end = chunk_info.offset + chunk_info.length - 1
+            content_range = "bytes={0}-{1}".format(chunk_info.offset, chunk_end)
             self.response_headers = self.service.upload_pages(
-                body=chunk_data,
-                content_length=len(chunk_data),
-                transactional_content_md5=computed_md5,
+                body=chunk_info.data,
+                content_length=chunk_info.length,
                 range=content_range,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
+                transactional_content_md5=chunk_info.md5,
+                transactional_content_crc64=chunk_info.crc64,
                 **self.request_options
             )
 
@@ -326,11 +328,11 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
         super(AppendBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
+    def _upload_chunk(self, chunk_info: "ChunkInfo"):
         if self.current_length is None:
             self.response_headers = self.service.append_block(
-                body=chunk_data,
-                content_length=len(chunk_data),
+                body=chunk_info.data,
+                content_length=chunk_info.length,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,
@@ -339,10 +341,10 @@ class AppendBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-metho
             self.current_length = int(self.response_headers["blob_append_offset"])
         else:
             self.request_options['append_position_access_conditions'].append_position = \
-                self.current_length + chunk_offset
+                self.current_length + chunk_info.offset
             self.response_headers = self.service.append_block(
-                body=chunk_data,
-                content_length=len(chunk_data),
+                body=chunk_info.data,
+                content_length=chunk_info.length,
                 cls=return_response_headers,
                 data_stream_total=self.total_size,
                 upload_stream_current=self.progress_total,

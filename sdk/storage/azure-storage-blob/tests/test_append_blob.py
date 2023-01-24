@@ -1597,4 +1597,34 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         # Assert
         progress.assert_complete()
 
+    @BlobPreparer()
+    def test_upload_page_blob_checksum(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        self._setup(bsc)
+
+        blob_name = self.get_resource_name(TEST_BLOB_PREFIX)
+        data = b'123' * 1024
+
+        blob_client = BlobClient(
+            self.account_url(storage_account_name, 'blob'),
+            self.container_name, blob_name,
+            credential=storage_account_key,
+            max_single_put_size=1024, max_block_size=1024)
+
+        blob_client.upload_blob(
+            data,
+            blob_type=BlobType.AppendBlob,
+            overwrite=True,
+            validate_content=True,
+            checksum_algorithm='md5')
+        blob_client.upload_blob(
+            data,
+            blob_type=BlobType.AppendBlob,
+            overwrite=True,
+            validate_content=True,
+            checksum_algorithm='crc64')
+
 # ------------------------------------------------------------------------------
