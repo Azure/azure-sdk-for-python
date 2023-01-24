@@ -70,6 +70,7 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
 
     Naming it "_Coroutine" because if you don't await it makes the error message easier:
     >>> result = client.send_request(request)
+    >>> result.text()
     AttributeError: '_Coroutine' object has no attribute 'text'
 
     Indeed, the message for calling a coroutine without waiting would be:
