@@ -31,25 +31,25 @@ class CloudEvent(Generic[DataType]):  # pylint:disable=too-many-instance-attribu
     :param type: Required. Type of event related to the originating occurrence.
     :type type: str
     :keyword specversion: Optional. The version of the CloudEvent spec. Defaults to "1.0"
-    :type specversion: str
+    :paramtype specversion: str
     :keyword data: Optional. Event data specific to the event type.
-    :type data: object
+    :paramtype data: object
     :keyword time: Optional. The time (in UTC) the event was generated.
-    :type time: ~datetime.datetime
+    :paramtype time: ~datetime.datetime
     :keyword dataschema: Optional. Identifies the schema that data adheres to.
-    :type dataschema: str
+    :paramtype dataschema: str
     :keyword datacontenttype: Optional. Content type of data value.
-    :type datacontenttype: str
+    :paramtype datacontenttype: str
     :keyword subject: Optional. This describes the subject of the event in the context of the event producer
      (identified by source).
-    :type subject: str
+    :paramtype subject: str
     :keyword id: Optional. An identifier for the event. The combination of id and source must be
      unique for each distinct event. If not provided, a random UUID will be generated and used.
-    :type id: Optional[str]
+    :paramtype id: Optional[str]
     :keyword extensions: Optional. A CloudEvent MAY include any number of additional context attributes
      with distinct names represented as key - value pairs. Each extension must be alphanumeric, lower cased
      and must not exceed the length of 20 characters.
-    :type extensions: Optional[dict]
+    :paramtype extensions: Optional[dict]
     """
 
     source: str

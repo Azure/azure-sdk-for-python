@@ -103,7 +103,7 @@ class AzureSasCredential:
     def __init__(self, signature: str) -> None:
         if not isinstance(signature, str):
             raise TypeError("signature must be a string.")
-        self._signature: str = signature
+        self._signature = signature
 
     @property
     def signature(self) -> str:

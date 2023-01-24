@@ -195,7 +195,7 @@ def _serialize_request(http_request: "HTTPRequestType") -> bytes:
     :rtype: bytes
     """
     if isinstance(http_request.body, dict):
-        raise ValueError("Cannot serialize an HTTPRequest with dict body.")
+        raise TypeError("Cannot serialize an HTTPRequest with dict body.")
     serializer = _HTTPSerializer()
     serializer.request(
         method=http_request.method,
