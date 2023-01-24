@@ -11,7 +11,7 @@ from ._test_base import _TopicReceiveTest
 class ReceiveTopicMessageStreamTest(_TopicReceiveTest):
     def run_sync(self):
         count = 0
-        if self.args.peeklock:
+        if not self.args.peeklock:
             for msg in self.receiver:
                 if count >= self.args.num_messages:
                     break
@@ -25,7 +25,7 @@ class ReceiveTopicMessageStreamTest(_TopicReceiveTest):
 
     async def run_async(self):
         count = 0
-        if self.args.peeklock:
+        if not self.args.peeklock:
             async for msg in self.async_receiver:
                 if count >= self.args.num_messages:
                     break
