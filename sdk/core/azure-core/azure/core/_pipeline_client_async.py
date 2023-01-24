@@ -102,7 +102,7 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
                 print(result.text())
     ```
 
-    :param wrapped: Must be an async context manager that supports async "close()"
+    :param wrapped: Must be an awaitable the returns an async context manager that supports async "close()"
     """
 
     def __init__(self, wrapped: Awaitable[AsyncHTTPResponseType]) -> None:
