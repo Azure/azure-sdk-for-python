@@ -679,8 +679,6 @@ def Transport(host, transport_type, connect_timeout=None, ssl_opts=True, **kwarg
         transport = WebSocketTransport
     else:
         transport = SSLTransport
-    print('heeerrre')
-    print(transport)
     return transport(host, connect_timeout=connect_timeout, ssl_opts=ssl_opts, **kwargs)
 
 
