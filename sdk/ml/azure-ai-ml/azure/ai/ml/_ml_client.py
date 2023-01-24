@@ -73,6 +73,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    VirtualClusterOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -421,6 +422,8 @@ class MLClient(object):
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
+
+        self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
     @classmethod
     def from_config(
