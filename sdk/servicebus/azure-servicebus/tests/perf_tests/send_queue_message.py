@@ -14,10 +14,22 @@ class SendQueueMessageTest(_SendQueueTest):
         super().__init__(arguments)
         self.data = get_random_bytes(self.args.message_size)
 
-    def run_sync(self):
-        message = ServiceBusMessage(self.data)
-        self.sender.send_messages(message)
+    def run_batch_sync(self):
+        if self.args.batch_size > 1:
+            self.sender.send_messages(
+                [ServiceBusMessage(self.data) for _ in range(self.args.batch_size)]
+            )
+        else:
+            self.sender.send_messages(ServiceBusMessage(self.data))
+        
+        return self.args.batch_size
 
-    async def run_async(self):
-        message = ServiceBusMessage(self.data)
-        await self.async_sender.send_messages(message)
+    async def run_batch_async(self):
+        if self.args.batch_size > 1:
+            await self.sender.send_messages(
+                [ServiceBusMessage(self.data) for _ in range(self.args.batch_size)]
+            )
+        else:
+            await self.sender.send_messages(ServiceBusMessage(self.data))
+        
+        return self.args.batch_size

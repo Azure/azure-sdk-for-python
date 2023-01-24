@@ -15,30 +15,17 @@ class SendQueueMessageBatchTest(_SendQueueTest):
         super().__init__(arguments)
         self.data = get_random_bytes(self.args.message_size)
 
-    def run_sync(self):
+    def run_batch_sync(self):
         batch = self.sender.create_message_batch()
-        for i in range(self.args.batch_size):
-            try:
-                batch.add_message(ServiceBusMessage(self.data))
-            except ValueError:
-                # Batch full
-                self.sender.send_messages(batch)
-                batch = self.sender.create_message_batch()
-                batch.add_message(ServiceBusMessage(self.data))
-        if len(batch):
-            self.sender.send_messages(batch)
+        for _ in range(self.args.batch_size):
+                batch.add_message(ServiceBusMessage(self.data))    
+        self.sender.send_messages(batch)
         return self.args.batch_size
 
-    async def run_async(self):
+    async def run_batch_async(self):
         batch = await self.async_sender.create_message_batch()
-        for i in range(self.args.batch_size):
-            try:
-                batch.add_message(ServiceBusMessage(self.data))
-            except ValueError:
-                # Batch full
-                await self.async_sender.send_messages(batch)
-                batch = await self.async_sender.create_message_batch()
-                batch.add_message(ServiceBusMessage(self.data))
-        if len(batch):
-            await self.async_sender.send_messages(batch)
+        for _ in range(self.args.batch_size):
+            batch.add_message(ServiceBusMessage(self.data))
+            
+        await self.async_sender.send_messages(batch)
         return self.args.batch_size
