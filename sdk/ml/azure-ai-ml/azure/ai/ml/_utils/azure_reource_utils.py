@@ -11,7 +11,6 @@ from typing import List, Dict, Optional
 
 def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential, subscription_list: Optional[List[str]] = None):
     # If a subscription list is passed in, use it. Otherwise, get all subscriptions
-    
     subsList = []
     if subscription_list is not None:
         subsList = subscription_list
