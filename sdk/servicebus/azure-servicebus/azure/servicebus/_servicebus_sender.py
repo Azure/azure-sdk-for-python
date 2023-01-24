@@ -274,8 +274,8 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._close_handler()
             raise
 
-    def _send(self, message, timeout=None):
-        # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float]) -> None
+    def _send(self, message, timeout=None, last_exception=None):
+        # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float], Optional[Exception]) -> None
         self._open()
         try:
             # TODO This is not batch message sending?

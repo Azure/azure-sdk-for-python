@@ -207,7 +207,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             assert count == 10
 
-    # @pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="TODO: pyamqp transport and iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2648,17 +2648,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 self._open()
                 # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
                 if self.execution_times == 1:
-                    from uamqp.errors import LinkDetach
-                    from uamqp.constants import ErrorCodes
+                    from azure.servicebus._pyamqp.error import ErrorCondition, AMQPConnectionError
                     self.execution_times += 1
                     self.error_raised = True
-                    raise LinkDetach(ErrorCodes.LinkDetachForced)
+                    raise AMQPConnectionError(condition=ErrorCondition.LinkDetachForced)
                 else:
                     self.execution_times += 1
                 if not self._message_iter:
                     self._message_iter = self._handler.receive_messages_iter()
-                uamqp_message = next(self._message_iter)
-                message = self._build_message(uamqp_message)
+                pyamqp_message = next(self._message_iter)
+                message = self._build_message(pyamqp_message)
                 return message
             finally:
                 self._receive_context.clear()
