@@ -515,6 +515,9 @@ class ConsumerProducerMixin(_MIXIN_BASE):
                 raise
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = await self._handle_exception(exception)
+                # If optional dependency is not installed, do not retry.
+                if isinstance(exception.__cause__, ModuleNotFoundError):
+                    raise last_exception
                 await self._client._backoff_async(
                     retried_times=retried_times,
                     last_exception=last_exception,

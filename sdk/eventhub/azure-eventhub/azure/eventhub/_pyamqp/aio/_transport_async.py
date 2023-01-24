@@ -544,10 +544,10 @@ class WebSocketTransportAsync(
                     )
                 raise ConnectionError("Failed to establish websocket connection: " + str(exc))
             self.connected = True
-        except ImportError:
+        except ImportError as exc:
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
-            )
+            ) from exc
 
     async def _read(self, toread, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
