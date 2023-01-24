@@ -645,7 +645,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def set_contacts(self, contacts: Iterable[CertificateContact], **kwargs) -> List[CertificateContact]:
+    async def set_contacts(self, contacts: List[CertificateContact], **kwargs) -> List[CertificateContact]:
         """Sets the certificate contacts for the key vault. Requires certificates/managecontacts permission.
 
         :param contacts: The contact list for the vault certificates.
@@ -779,7 +779,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def merge_certificate(
-        self, certificate_name: str, x509_certificates: Iterable[bytes], **kwargs
+        self, certificate_name: str, x509_certificates: List[bytes], **kwargs
     ) -> KeyVaultCertificate:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 

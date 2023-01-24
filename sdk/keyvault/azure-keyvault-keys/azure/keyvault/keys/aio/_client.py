@@ -876,7 +876,7 @@ class KeyClient(AsyncKeyVaultClientBase):
 
         :keyword lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key. This will
             override the lifetime actions of the provided ``policy``.
-        :paramtype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
+        :paramtype lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
         :keyword str expires_in: The expiry time of the policy that will be applied on new key versions, defined as an
             ISO 8601 duration. For example: 90 days is "P90D", 3 months is "P3M", and 48 hours is "PT48H". See
             `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for more information on ISO 8601 durations.

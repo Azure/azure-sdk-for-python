@@ -302,7 +302,7 @@ class KeyRotationPolicy(object):
     :ivar id: The identifier of the key rotation policy.
     :vartype id: str or None
     :ivar lifetime_actions: Actions that will be performed by Key Vault over the lifetime of a key.
-    :vartype lifetime_actions: List[~azure.keyvault.keys.KeyRotationLifetimeAction]
+    :vartype lifetime_actions: list[~azure.keyvault.keys.KeyRotationLifetimeAction]
     :ivar expires_in: The expiry time of the policy that will be applied on new key versions, defined as an ISO 8601
         duration. For example, 90 days is "P90D".  See `Wikipedia <https://wikipedia.org/wiki/ISO_8601#Durations>`_ for
         more information on ISO 8601 durations.
