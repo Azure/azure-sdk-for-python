@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from io import IOBase
 import logging
 import sys
-from typing import Callable, List, Any, Awaitable, Optional, Union, IO
+from typing import Callable, cast, List, Any, Awaitable, Optional, Union, IO
 
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests, GZIP_MAGIC_NUMBER
@@ -25,7 +25,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsIngestionClientOperationsMixin(GeneratedOps):
-    async def upload(  # pylint: disable=arguments-renamed, arguments-differ
+    async def upload(  # type:ignore[override] # pylint: disable=arguments-renamed, arguments-differ
         self,
         rule_id: str,
         stream_name: str,
@@ -67,9 +67,15 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
             await super().upload(rule_id, stream=stream_name, body=logs, content_encoding=content_encoding, **kwargs)
             return
 
-        for gzip_data, log_chunk in _create_gzip_requests(logs):
+        for gzip_data, log_chunk in _create_gzip_requests(cast(List[JSON], logs)):
             try:
-                await super().upload(rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs)
+                await super().upload(
+                    rule_id,
+                    stream=stream_name,
+                    body=gzip_data,  # type: ignore
+                    content_encoding="gzip",
+                    **kwargs
+                )
             except Exception as err:  # pylint: disable=broad-except
                 if on_error:
                     await on_error(err, log_chunk)
