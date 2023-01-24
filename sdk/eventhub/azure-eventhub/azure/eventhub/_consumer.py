@@ -236,7 +236,7 @@ class EventHubConsumer(
                         self._offset = self._last_received_event.offset
                     last_exception = self._handle_exception(exception, is_consumer=True)
                     # If optional dependency is not installed, do not retry.
-                    if isinstance(exception.__cause__, ModuleNotFoundError):
+                    if isinstance(exception.__cause__, ImportError):
                         raise last_exception
                     retried_times += 1
                     if retried_times > max_retries:

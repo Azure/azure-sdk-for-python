@@ -586,7 +586,7 @@ class ConsumerProducerMixin(object):
             except Exception as exception:  # pylint:disable=broad-except
                 last_exception = self._handle_exception(exception)
                 # If optional dependency is not installed, do not retry.
-                if isinstance(exception.__cause__, ModuleNotFoundError):
+                if isinstance(exception.__cause__, ImportError):
                     raise last_exception
                 self._client._backoff(
                     retried_times=retried_times,

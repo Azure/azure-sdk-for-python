@@ -716,35 +716,35 @@ class WebSocketTransport(_AbstractTransport):
                 WebSocketTimeoutException,
                 WebSocketConnectionClosedException
             )
-            try:
-                self.ws = create_connection(
-                    url="wss://{}".format(self._custom_endpoint or self._host),
-                    subprotocols=[AMQP_WS_SUBPROTOCOL],
-                    timeout=self._connect_timeout,
-                    skip_utf8_validation=True,
-                    sslopt=self.sslopts,
-                    http_proxy_host=http_proxy_host,
-                    http_proxy_port=http_proxy_port,
-                    http_proxy_auth=http_proxy_auth,
-                )
-            except WebSocketAddressException as exc:
-                raise AuthenticationException(
-                    ErrorCondition.ClientError,
-                    description="Failed to authenticate the connection due to exception: " + str(exc),
-                    error=exc,
-                )
-            # TODO: resolve pylance error when type: ignore is removed below, issue #22051
-            except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:    # type: ignore
-                self.close()
-                raise ConnectionError("Websocket failed to establish connection: %r" % exc) from exc
-            except (OSError, IOError, SSLError) as e:
-                _LOGGER.info("Websocket connection failed: %r", e, extra=self.network_trace_params)
-                self.close()
-                raise
-        except ModuleNotFoundError as exc:
+        except ImportError as exc:
             raise ValueError(
                 "Please install websocket-client library to use websocket transport."
             ) from exc
+        try:
+            self.ws = create_connection(
+                url="wss://{}".format(self._custom_endpoint or self._host),
+                subprotocols=[AMQP_WS_SUBPROTOCOL],
+                timeout=self._connect_timeout,
+                skip_utf8_validation=True,
+                sslopt=self.sslopts,
+                http_proxy_host=http_proxy_host,
+                http_proxy_port=http_proxy_port,
+                http_proxy_auth=http_proxy_auth,
+            )
+        except WebSocketAddressException as exc:
+            raise AuthenticationException(
+                ErrorCondition.ClientError,
+                description="Failed to authenticate the connection due to exception: " + str(exc),
+                error=exc,
+            )
+        # TODO: resolve pylance error when type: ignore is removed below, issue #22051
+        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:    # type: ignore
+            self.close()
+            raise ConnectionError("Websocket failed to establish connection: %r" % exc) from exc
+        except (OSError, IOError, SSLError) as e:
+            _LOGGER.info("Websocket connection failed: %r", e, extra=self.network_trace_params)
+            self.close()
+            raise
 
     def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""

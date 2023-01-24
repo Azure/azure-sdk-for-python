@@ -196,7 +196,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         consumer._offset = consumer._last_received_event.offset
                     last_exception = await consumer._handle_exception(exception)
                     # If optional dependency is not installed, do not retry.
-                    if isinstance(exception.__cause__, ModuleNotFoundError):
+                    if isinstance(exception.__cause__, ImportError):
                         raise last_exception
                     retried_times += 1
                     if retried_times > max_retries:
