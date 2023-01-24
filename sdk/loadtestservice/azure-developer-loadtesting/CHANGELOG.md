@@ -1,5 +1,17 @@
 # Release History
 
+## 1.0.0 (2023-01-23)
+
+### Breaking Changes
+- removed `azure.developer.loadtesting.LoadTestingClient.administration.upload_test_file` as it moved all functionality to `azure.developer.loadtesting.LoadTestingClient.administration.begin_upload_test_file`
+- removed `azure.developer.loadtesting.aio.LoadTestingClient.administration.upload_test_file` as it moved all functionality to `azure.developer.loadtesting.aio.LoadTestingClient.administration.begin_upload_test_file`
+- removed `azure.developer.loadtesting.LoadTestingClient.test_run.create_or_update_test_run` as it moved all functionality to `azure.developer.loadtesting.LoadTestingClient.test_run.begin_test_run`
+- removed `azure.developer.loadtesting.aio.LoadTestingClient.test_run.create_or_update_test_run` as it moved all functionality to `azure.developer.loadtesting.aio.LoadTestingClient.test_run.begin_test_run`
+
+### Other Changes
+- bumped version to stable `1.0.0`
+- updated README.md
+
 ## 1.0.0b3 (2023-01-01)
 
 ### Features Added 
