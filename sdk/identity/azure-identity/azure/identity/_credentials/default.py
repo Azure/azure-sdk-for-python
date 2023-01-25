@@ -121,6 +121,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
             credentials.append(ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs))
+        if not exclude_azd_cli_credential:
+            credentials.append(AzureDeveloperCliCredential())
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
@@ -130,8 +132,6 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 credentials.append(shared_cache)
             except Exception as ex:  # pylint:disable=broad-except
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
-        if not exclude_azd_cli_credential:
-            credentials.append(AzureDeveloperCliCredential())
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
         if not exclude_cli_credential:
