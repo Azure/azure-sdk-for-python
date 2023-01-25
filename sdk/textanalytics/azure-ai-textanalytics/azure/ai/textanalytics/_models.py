@@ -1247,7 +1247,7 @@ class DocumentError(DictMixin):
     def __getattr__(self, attr: str) -> Any:
         result_set = set()
         result_set.update(
-            RecognizeEntitiesResult().keys()
+            RecognizeEntitiesResult().keys()  # type: ignore[operator]
             + RecognizePiiEntitiesResult().keys()
             + DetectLanguageResult().keys()
             + RecognizeLinkedEntitiesResult().keys()
@@ -1307,11 +1307,18 @@ class DetectLanguageInput(LanguageInput):
         specified by ISO 3166-1 alpha-2. Defaults to "US". Pass
         in the string "none" to not use a country_hint."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.id = kwargs.get("id", None)
-        self.text = kwargs.get("text", None)
-        self.country_hint = kwargs.get("country_hint", None)
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        text: str,
+        country_hint: Optional[str] = None,
+        **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
+        super().__init__(id=id, text=text, country_hint=country_hint)
+        self.id = id
+        self.text = text
+        self.country_hint = country_hint
 
     def __repr__(self) -> str:
         return f"DetectLanguageInput(id={self.id}, text={self.text}, country_hint={self.country_hint})"[:1024]
@@ -1449,11 +1456,18 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
      of a language. For example, use "en" for English; "es" for Spanish etc.
      If not set, uses "en" for English as default."""
 
-    def __init__(self, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
-        self.id = kwargs.get("id", None)
-        self.text = kwargs.get("text", None)
-        self.language = kwargs.get("language", None)
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        text: str,
+        language: Optional[str] = None,
+        **kwargs: Any  # pylint: disable=unused-argument
+    ) -> None:
+        super().__init__(id=id, text=text, language=language)
+        self.id = id
+        self.text = text
+        self.language = language
 
     def __repr__(self) -> str:
         return f"TextDocumentInput(id={self.id}, text={self.text}, language={self.language})"[:1024]

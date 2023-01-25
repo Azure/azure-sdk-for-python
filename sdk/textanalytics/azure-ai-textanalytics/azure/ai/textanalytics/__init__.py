@@ -68,7 +68,6 @@ from ._models import (
 )
 from ._generated.models import (
     HealthcareDocumentType,
-    BaseResolution,
     ResolutionKind,
     AgeResolution,
     AreaResolution,
@@ -162,7 +161,6 @@ __all__ = [
     "ExtractSummaryResult",
     "SummarySentence",
     "HealthcareDocumentType",
-    "BaseResolution",
     "ResolutionKind",
     "AgeResolution",
     "AreaResolution",
