@@ -32,7 +32,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         stream_name: str,
         logs: Union[List[JSON], IO],
         *,
-        on_error: Optional[Callable[[Exception, List[JSON]], Awaitable[None]]] = None,
+        on_error: Optional[Callable[[UploadLogsError], Awaitable[None]]] = None,
         **kwargs: Any
     ) -> None:
         """Ingestion API used to directly ingest data using Data Collection Rules.
