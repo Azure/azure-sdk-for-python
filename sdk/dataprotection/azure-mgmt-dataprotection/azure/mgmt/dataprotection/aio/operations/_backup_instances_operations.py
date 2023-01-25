@@ -82,7 +82,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncIterable["_models.BackupInstanceResource"]:
         """Gets a backup instances belonging to a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -97,7 +97,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BackupInstanceResourceList] = kwargs.pop("cls", None)
@@ -176,7 +176,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> _models.BackupInstanceResource:
         """Gets a backup instance with name in a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -199,7 +199,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BackupInstanceResource] = kwargs.pop("cls", None)
@@ -257,7 +257,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -333,7 +333,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BackupInstanceResource]:
         """Create or update a backup instance in a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -373,7 +373,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BackupInstanceResource]:
         """Create or update a backup instance in a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -411,7 +411,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.BackupInstanceResource]:
         """Create or update a backup instance in a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -440,7 +440,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -502,7 +502,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -551,7 +551,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """Delete a backup instance in a backup vault.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -573,7 +573,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -635,7 +635,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -709,7 +709,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Trigger adhoc backup.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -749,7 +749,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Trigger adhoc backup.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -787,7 +787,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Trigger adhoc backup.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -816,7 +816,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -882,7 +882,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -954,7 +954,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validate whether adhoc backup will be successful or not.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -991,7 +991,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validate whether adhoc backup will be successful or not.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -1026,7 +1026,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validate whether adhoc backup will be successful or not.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -1053,7 +1053,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1106,12 +1106,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> Optional[_models.BackupInstanceResource]:
         """Get result of backup instance creation operation.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param operation_id: Required.
         :type operation_id: str
@@ -1131,7 +1131,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[Optional[_models.BackupInstanceResource]] = kwargs.pop("cls", None)
@@ -1192,7 +1192,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1260,12 +1260,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """rehydrate recovery point for restore for a BackupInstance.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRehydrationRequest
@@ -1298,12 +1298,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """rehydrate recovery point for restore for a BackupInstance.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
         :type parameters: IO
@@ -1334,12 +1334,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """rehydrate recovery point for restore for a BackupInstance.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Is either a model type or a IO type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRehydrationRequest or IO
@@ -1361,7 +1361,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1426,7 +1426,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1500,7 +1500,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Triggers restore for a BackupInstance.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -1540,7 +1540,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Triggers restore for a BackupInstance.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -1578,7 +1578,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Triggers restore for a BackupInstance.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -1607,7 +1607,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1669,7 +1669,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1718,12 +1718,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """This operation will resume backups for backup instance.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1740,7 +1740,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1797,7 +1797,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1846,12 +1846,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """This operation will resume protection for a stopped backup instance.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1868,7 +1868,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1925,7 +1925,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1974,12 +1974,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[None]:
         """This operation will stop protection of a backup instance and data will be held forever.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1996,7 +1996,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -2053,7 +2053,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -2103,12 +2103,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         """This operation will stop backup for a backup instance and retains the backup data as per the
         policy (except latest Recovery point, which will be retained forever).
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -2125,7 +2125,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -2187,7 +2187,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2256,12 +2256,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         """Sync backup instance again in case of failure
         This action will retry last failed operation and will bring backup instance to valid state.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.SyncBackupInstanceRequest
@@ -2295,12 +2295,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         """Sync backup instance again in case of failure
         This action will retry last failed operation and will bring backup instance to valid state.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
         :type parameters: IO
@@ -2332,12 +2332,12 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         """Sync backup instance again in case of failure
         This action will retry last failed operation and will bring backup instance to valid state.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
         :type vault_name: str
-        :param backup_instance_name: Required.
+        :param backup_instance_name: The name of the backup instance. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Is either a model type or a IO type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.SyncBackupInstanceRequest or IO
@@ -2359,7 +2359,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2424,7 +2424,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2498,7 +2498,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validates if Restore can be triggered for a DataSource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -2538,7 +2538,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validates if Restore can be triggered for a DataSource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -2576,7 +2576,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncLROPoller[_models.OperationJobExtendedInfo]:
         """Validates if Restore can be triggered for a DataSource.
 
-        :param resource_group_name: The name of the resource group where the backup vault is present.
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -2605,7 +2605,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        api_version: Literal["2023-01-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))

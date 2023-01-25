@@ -36,6 +36,14 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     KEY = "Key"
 
 
+class CrossSubscriptionRestoreState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CrossSubscriptionRestore state."""
+
+    DISABLED = "Disabled"
+    PERMANENTLY_DISABLED = "PermanentlyDisabled"
+    ENABLED = "Enabled"
+
+
 class CurrentProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the current protection state of the resource."""
 
@@ -126,8 +134,8 @@ class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class PersistentVolumeRestoreMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the PV Restore Mode property. This property sets whether volumes needs to be
-    restored.
+    """Gets or sets the PV (Persistent Volume) Restore Mode property. This property sets whether
+    volumes needs to be restored.
     """
 
     RESTORE_WITH_VOLUME_DATA = "RestoreWithVolumeData"
@@ -166,16 +174,6 @@ class RehydrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DELETE_IN_PROGRESS = "DELETE_IN_PROGRESS"
     DELETED = "DELETED"
     FAILED = "FAILED"
-
-
-class ResourceGuardProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the BackupVault resource."""
-
-    FAILED = "Failed"
-    PROVISIONING = "Provisioning"
-    SUCCEEDED = "Succeeded"
-    UNKNOWN = "Unknown"
-    UPDATING = "Updating"
 
 
 class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -222,12 +220,12 @@ class SecretStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SoftDeleteState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of soft delete."""
 
-    #: Soft Delete is turned off for the BackupVault
     OFF = "Off"
-    #: Soft Delete is enabled for the BackupVault but can be turned off
+    """Soft Delete is turned off for the BackupVault"""
     ON = "On"
-    #: Soft Delete is permanently enabled for the BackupVault and the setting cannot be changed
+    """Soft Delete is enabled for the BackupVault but can be turned off"""
     ALWAYS_ON = "AlwaysOn"
+    """Soft Delete is permanently enabled for the BackupVault and the setting cannot be changed"""
 
 
 class SourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -235,6 +233,7 @@ class SourceDataStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ARCHIVE_STORE = "ArchiveStore"
     SNAPSHOT_STORE = "SnapshotStore"
+    OPERATIONAL_STORE = "OperationalStore"
     VAULT_STORE = "VaultStore"
 
 
@@ -253,7 +252,7 @@ class StorageSettingStoreTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the type of the datastore."""
 
     ARCHIVE_STORE = "ArchiveStore"
-    SNAPSHOT_STORE = "SnapshotStore"
+    OPERATIONAL_STORE = "OperationalStore"
     VAULT_STORE = "VaultStore"
 
 
