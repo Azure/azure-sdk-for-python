@@ -14,7 +14,7 @@ import os
 import logging
 import sys
 
-from ci_tools.environment_exclusions import PYLINT_OPT_OUT
+from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
     top_level_module = pkg_details.namespace.split('.')[0]
 
-    if pkg_details.name not in PYLINT_OPT_OUT:
+    if is_check_enabled(args.target_package, "pylint"):
         try:
             check_call(
                 [
