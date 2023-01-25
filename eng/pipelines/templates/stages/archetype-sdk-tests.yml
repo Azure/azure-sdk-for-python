@@ -161,8 +161,10 @@ stages:
             - pwsh: |
                 python -m pip install -r eng/ci_tools.txt 
               displayName: 'Install Necessary Dependencies'
-            parameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+            - template: /eng/pipelines/templates/steps/use-python-version.yml
+                parameters:
+                  ServiceDirectory: ${{ parameters.ServiceDirectory }}
+                  $(PythonVersion)
             - task: PythonScript@0
               displayName: 'Run Pylint Next'
               continueOnError: true
