@@ -415,14 +415,17 @@ def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(N
     for dirpath, _, filenames in os.walk(root, followlinks=True):
         for name in filenames:
             full_path = os.path.join(dirpath, name)
+            # Don't count files that are excluded by an ignore file
             if ignore_file.is_file_excluded(full_path):
                 continue
             if not os.path.islink(full_path):
                 path_size = os.path.getsize(full_path)
             else:
-                path_size = os.path.getsize(
-                    os.readlink(convert_windows_path_to_unix(full_path))
-                )  # ensure we're counting the size of the linked file
+                # ensure we're counting the size of the linked file
+                # os.readlink returns a file path relative to dirpath, and must be
+                # re-joined to get a workable result
+                path_size = os.path.getsize(os.path.join(dirpath,
+                    os.readlink(convert_windows_path_to_unix(full_path)))) 
             size_list[full_path] = path_size
             total_size += path_size
     return total_size, size_list

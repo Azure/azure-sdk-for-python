@@ -13,6 +13,7 @@ from azure.ai.ml._utils._asset_utils import (
     get_ignore_file,
     get_object_hash,
     traverse_directory,
+    get_directory_size,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 
@@ -168,3 +169,34 @@ class TestAssetUtils:
         assert Path(target_file_path).resolve().as_posix() in local_paths
         # remote file names are relative to root and include the prefix
         assert prefix + Path(link_file_path).relative_to(storage_test_directory).as_posix() in remote_paths
+
+    def test_directory_size_with_ignore_file(self, storage_test_directory: str, amlignore_file: AmlIgnoreFile) -> None:
+        initial_size = get_directory_size(storage_test_directory)
+
+        with_ignore_size = get_directory_size(storage_test_directory, ignore_file=amlignore_file)
+        assert initial_size[0] == 53
+        assert len(initial_size[1]) == 7
+
+        # Directory size calculated with ignore file should be smaller, and include less files
+        assert with_ignore_size[0] == 36
+        assert len(with_ignore_size[1]) == 4
+
+        # Directory size calculated after symlink creation should correctly include linked file size, 
+        # and count symlink file itself towards file count.
+        target_file_name, symlink_file_name = generate_link_file(storage_test_directory)
+        with_symlink_size = get_directory_size(storage_test_directory)
+        assert with_symlink_size[0] == 71
+        assert len(with_symlink_size[1]) == 9
+
+        # If the symlink target is ignored, the overall file size should not decrease, since the 
+        # symlink should still count the real file size.
+        # Incidentally, this shouldn't decrease the overall directory size, since, the linked file shouldn't
+        # be double twice.
+        
+        with open(amlignore_file.path, 'w') as f:
+            f.write(target_file_name.split('/')[-1])
+        amlignore_file._path_spec = None # Reset path spec generated from file contents.
+        with_symlink_and_ignore_size = get_directory_size(storage_test_directory, amlignore_file)
+        assert with_symlink_and_ignore_size[0] == 71
+        assert len(with_symlink_and_ignore_size[1]) == 8
+        amlignore_file._get_ignore_list
