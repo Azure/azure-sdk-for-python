@@ -117,12 +117,12 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         credentials = []  # type: List[TokenCredential]
-        if not exclude_azd_cli_credential:
-            credentials.append(AzureDeveloperCliCredential())
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
             credentials.append(ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs))
+        if not exclude_azd_cli_credential:
+            credentials.append(AzureDeveloperCliCredential())
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities
