@@ -13,6 +13,7 @@ from typing import Callable, cast, List, Any, Awaitable, Optional, Union, IO
 
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests, GZIP_MAGIC_NUMBER
+from ..._models import UploadLogsError
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -45,11 +46,10 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         :type stream: str
         :param logs: An array of objects matching the schema defined by the provided stream.
         :type logs: list[JSON] or IO
-        :keyword on_error: The asynchronous callback function that is called when a chunk of logs fails to upload.
-            This function should expect two arguments that correspond to the error encountered and
-            the list of logs that failed to upload. If no function is provided, then the first exception
-            encountered will be raised.
-        :paramtype on_error: Optional[Callable[[Exception, List[JSON]], None]]
+        :keyword on_error: The callback function that is called when a chunk of logs fails to upload.
+            This function should expect one argument that corresponds to an "UploadLogsError" object.
+            If no function is provided, then the first exception encountered will be raised.
+        :paramtype on_error: Optional[Callable[[~azure.monitor.ingestion.UploadLogsError], None]]
         :return: None
         :rtype: None
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -78,7 +78,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
                 )
             except Exception as err:  # pylint: disable=broad-except
                 if on_error:
-                    await on_error(err, log_chunk)
+                    await on_error(UploadLogsError(error=err, failed_logs=log_chunk))
                 else:
                     _LOGGER.error("Failed to upload chunk containing %d log entries", len(log_chunk))
                     raise err
