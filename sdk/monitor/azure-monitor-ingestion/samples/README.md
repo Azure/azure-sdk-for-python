@@ -88,5 +88,5 @@ To learn more about Azure Monitor, see the [Azure Monitor service documentation]
 [azure_monitor_docs]: https://docs.microsoft.com/azure/azure-monitor/
 [azure_monitor_logs_ingestion_overview]: https://learn.microsoft.com/azure/azure-monitor/logs/logs-ingestion-api-overview
 [azure_subscription]: https://azure.microsoft.com/free/
-[data_collection_endpoint]: https://learn.microsoft.com//azure/azure-monitor/essentials/data-collection-endpoint-overview
+[data_collection_endpoint]: https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-endpoint-overview
 [data_collection_rule]: https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview

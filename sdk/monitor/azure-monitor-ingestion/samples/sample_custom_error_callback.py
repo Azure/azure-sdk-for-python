@@ -34,7 +34,7 @@ def on_error(error: UploadLogsError) -> None:
     failed_logs.extend(error.failed_logs)
 
 # Sample callback that just ignores the error.
-def on_error_pass(*_) -> None:
+def on_error_pass(_) -> None:
     pass
 
 client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error)

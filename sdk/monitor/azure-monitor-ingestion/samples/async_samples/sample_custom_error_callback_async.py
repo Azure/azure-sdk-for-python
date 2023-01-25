@@ -34,7 +34,7 @@ async def send_logs():
         failed_logs.extend(error.failed_logs)
 
     # Sample callback that just ignores the error.
-    async def on_error_pass(*_) -> None:
+    async def on_error_pass(_) -> None:
         pass
 
     client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
