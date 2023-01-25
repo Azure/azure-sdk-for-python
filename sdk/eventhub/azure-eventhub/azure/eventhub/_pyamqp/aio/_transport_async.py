@@ -501,10 +501,10 @@ class WebSocketTransportAsync(
         try:
             from aiohttp import ClientSession, ClientConnectorError
             from urllib.parse import urlsplit
-        except ImportError as exc:
+        except ImportError:
             raise ImportError(
                 "Please install aiohttp library to use async websocket transport."
-            ) from exc
+            )
 
         if username or password:
             from aiohttp import BasicAuth
