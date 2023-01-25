@@ -9,7 +9,7 @@
 ### Bugs Fixed
 
 - Update success criteria for requests
-    ([#28379](https://github.com/Azure/azure-sdk-for-python/pull/28379))
+    ([#28486](https://github.com/Azure/azure-sdk-for-python/pull/28486))
 
 ### Other Changes
 
