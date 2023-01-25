@@ -11,8 +11,6 @@ from azure.servicebus import ServiceBusClient, ServiceBusReceiveMode, ServiceBus
 from azure.servicebus.aio import ServiceBusClient as AsyncServiceBusClient
 from azure.servicebus.aio.management import ServiceBusAdministrationClient
 
-MAX_QUEUE_SIZE=4096
-
 class _ReceiveTest(PerfStressTest):
     def __init__(self, arguments) -> None:
         super().__init__(arguments)
@@ -73,7 +71,7 @@ class _QueueReceiveTest(_ReceiveTest):
         print(f"The current queue {self.queue_name} has {current_queue_message_count} already")
 
         async with self.async_servicebus_client.get_queue_sender(self.queue_name) as sender:
-            batch=await sender.create_message_batch()
+            batch = await sender.create_message_batch()
 
             for i in range(current_queue_message_count, self.args.preload):
                 try:
@@ -81,7 +79,7 @@ class _QueueReceiveTest(_ReceiveTest):
                 except ValueError:
                     await sender.send_messages(batch)
                     print(f"Loaded {i} messages")
-                    batch=await sender.create_message_batch()
+                    batch = await sender.create_message_batch()
                     batch.add_message(ServiceBusMessage(data))
 
             if len(batch):
@@ -120,7 +118,7 @@ class _TopicReceiveTest(_ReceiveTest):
         print(f"The current queue {self.topic_name} has {current_topic_message_count} already")
 
         async with self.async_servicebus_client.get_topic_sender(self.topic_name) as sender:
-            batch=await sender.create_message_batch()
+            batch = await sender.create_message_batch()
 
             for i in range(current_topic_message_count, self.args.preload):
                 try:
@@ -128,7 +126,7 @@ class _TopicReceiveTest(_ReceiveTest):
                 except ValueError:
                     await sender.send_messages(batch)
                     print(f"Loaded {i} messages")
-                    batch=await sender.create_message_batch()
+                    batch = await sender.create_message_batch()
                     batch.add_message(ServiceBusMessage(data))
 
             if len(batch):
