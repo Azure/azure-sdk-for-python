@@ -1,14 +1,10 @@
 # Release History
 
-## 5.11.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 5.11.1 (2023-01-25)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a bug where, when `websocket-client` was not installed, the error was not caught/raised properly (issue #28453).
 
 ## 5.11.0 (2023-01-19)
 
