@@ -3042,6 +3042,42 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_rename_file_file_permission_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.generate_oauth_token()
+
+        self._setup(storage_account_name, storage_account_key)
+        url = self.account_url(storage_account_name, "file")
+        blob_url = self.account_url(storage_account_name, "blob")
+
+        self.fsc = ShareServiceClient(url,
+                                      credential=token_credential,
+                                      file_request_intent=TEST_INTENT,
+                                      max_range_size=4 * 1024)
+        self.share_name = self.get_resource_name('utshare')
+        self.source_container_name = self.get_resource_name('sourceshare')
+        if self.is_live:
+            try:
+                self.fsc.create_share(self.share_name)
+            except:
+                pass
+        share_client = self.fsc.get_share_client(self.share_name)
+        file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
+
+        source_file = share_client.get_file_client('file1')
+        source_file.create_file(1024)
+
+        # Act
+        new_file = source_file.rename_file('file2', file_permission=TEST_FILE_PERMISSIONS)
+
+        # Assert
+        props = new_file.get_file_properties()
+        assert props is not None
+        assert file_permission_key == props.permission_key
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_rename_file_preserve_permission(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

@@ -3152,6 +3152,38 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_rename_file_file_permission_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.generate_oauth_token()
+
+        self._setup(storage_account_name, storage_account_key)
+        async with ShareServiceClient(self.account_url(storage_account_name, "file"),
+                                      credential=token_credential,
+                                      file_request_intent=TEST_INTENT,
+                                      max_range_size=4 * 1024) as fsc:
+            self.share_name = self.get_resource_name('utshare')
+            if not self.is_playback():
+                try:
+                    await fsc.create_share(self.share_name)
+                except:
+                    pass
+        share_client = fsc.get_share_client(self.share_name)
+        file_permission_key = await share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
+
+        source_file = share_client.get_file_client('file1')
+        await source_file.create_file(1024)
+
+        # Act
+        new_file = await source_file.rename_file('file2', file_permission=TEST_FILE_PERMISSIONS)
+
+        # Assert
+        props = await new_file.get_file_properties()
+        assert props is not None
+        assert file_permission_key == props.permission_key
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_preserve_permission(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
