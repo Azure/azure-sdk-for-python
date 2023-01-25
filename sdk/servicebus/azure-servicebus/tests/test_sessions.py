@@ -47,7 +47,7 @@ _logger = get_logger(logging.DEBUG)
 
 
 class ServiceBusSessionTests(AzureMgmtTestCase):
-    # @pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="pyamqp transport -- message serialization error System.Byte[]")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()

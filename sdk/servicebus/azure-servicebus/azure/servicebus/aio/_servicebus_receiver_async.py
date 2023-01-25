@@ -214,38 +214,33 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         self._receive_context = asyncio.Event()
         self._handler: ReceiveClientAsync
 
-    # Python 3.5 does not allow for yielding from a coroutine, so instead of the try-finally functional wrapper
-    # trick to restore the timeout, let's use a wrapper class to maintain the override that may be specified.
-    class _IterContextualWrapper(collections.abc.AsyncIterator):
-        def __init__(self, receiver, max_wait_time=None):
-            self.receiver = receiver
-            self.max_wait_time = max_wait_time
-
-        async def __anext__(self):
-            # pylint: disable=protected-access
-            original_timeout = None
+    async def _iter_contextual_wrapper(self, max_wait_time=None):
+        # pylint: disable=protected-access
+        original_timeout = None
+        while True:
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
-            if self.max_wait_time and self.receiver and self.receiver._handler:
-                # TODO: What did the previous _handler.timeout represent here?
-                original_timeout = self.receiver._handler._timeout
-                self.receiver._handler._timeout = self.max_wait_time * 1
+            if max_wait_time:
+                original_timeout = self._handler._timeout
+                self._handler._timeout = max_wait_time * 1
             try:
-                self.receiver._receive_context.set()
-                message = await self.receiver._inner_anext()
+                # self.receiver._receive_context.set()
+                message = await self._inner_anext()
                 links = get_receive_links(message)
-                with receive_trace_context_manager(self.receiver, links=links):
-                    return message
+                with receive_trace_context_manager(self, links=links):
+                    yield message
+            except StopAsyncIteration:
+                break
             finally:
-                self.receiver._receive_context.clear()
+                # self.receiver._receive_context.clear()
                 if original_timeout:
                     try:
-                        self.receiver._handler._timeout = original_timeout
+                        self._handler._timeout = original_timeout
                     except AttributeError:  # Handler may be disposed already.
                         pass
 
     def __aiter__(self):
-        return self._IterContextualWrapper(self)
+        return self._iter_contextual_wrapper()
 
     async def _inner_anext(self):
         # We do this weird wrapping such that an imperitive next() call, and a generator-based iter both trace sanely.
@@ -268,19 +263,23 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             self._receive_context.clear()
 
     async def _iter_next(self):
-        await self._open()
-        # TODO: Add in Recieve Message Iterator
-        if not self._message_iter:
-            self._message_iter = self._handler.receive_messages_iter_async()
-        uamqp_message = await self._message_iter.__anext__()
-        message = self._build_message(uamqp_message)
-        if (
-            self._auto_lock_renewer
-            and not self._session
-            and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
-        ):
-            self._auto_lock_renewer.register(self, message)
-        return message
+        try:
+            self._receive_context.set()
+            await self._open()
+            # TODO: Add in Recieve Message Iterator
+            if not self._message_iter:
+                self._message_iter = await self._handler.receive_messages_iter_async()
+            pyamqp_message = await anext(self._message_iter)
+            message = self._build_message(pyamqp_message)
+            if (
+                self._auto_lock_renewer
+                and not self._session
+                and self._receive_mode != ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            ):
+                self._auto_lock_renewer.register(self, message)
+            return message
+        finally:
+            self._receive_context.clear()
 
     @classmethod
     def _from_connection_string(

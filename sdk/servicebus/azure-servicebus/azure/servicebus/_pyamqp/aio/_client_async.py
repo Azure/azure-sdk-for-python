@@ -840,7 +840,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         :type on_message_received: callable[~uamqp.message.Message]
         """
         self._message_received_callback = on_message_received
-        return await self._message_generator_async()
+        return self._message_generator_async()
 
     async def _message_generator_async(self):
         """Iterate over processed messages in the receive queue.

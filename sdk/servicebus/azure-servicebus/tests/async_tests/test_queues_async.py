@@ -49,8 +49,8 @@ from azure.servicebus.exceptions import (
     OperationTimeoutError
 )
 from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer, AzureTestCase
-from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
-from utilities import get_logger, print_message, sleep_until_expired
+from tests.servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
+from tests.utilities import get_logger, print_message, sleep_until_expired
 from mocks_async import MockReceivedMessage, MockReceiver
 
 _logger = get_logger(logging.DEBUG)
@@ -124,7 +124,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 await receiver.peek_messages()
 
-    # @pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="pyamqp transport -- lock on message expires")
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -1783,7 +1783,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert len(messages) == 0  # make sure messages are removed from the queue
                 assert receiver_handler == receiver._handler  # make sure no reconnection happened
 
-    # @pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="pyamqp transport --- no _counter in pyamqp")
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only

@@ -279,8 +279,8 @@ class ServiceBusReceiver(
             # TODO: Add in Recieve Message Iterator
             if not self._message_iter:
                 self._message_iter = self._handler.receive_messages_iter()
-            uamqp_message = next(self._message_iter)
-            message = self._build_message(uamqp_message)
+            pyamqp_message = next(self._message_iter)
+            message = self._build_message(pyamqp_message)
             if (
                 self._auto_lock_renewer
                 and not self._session
