@@ -159,7 +159,7 @@ stages:
 
           steps:
             - pwsh: |
-                pip -m pip install -r eng/ci_tools.txt 
+                python -m pip install -r eng/ci_tools.txt 
               displayName: 'Install Necessary Dependencies'
             - task: PythonScript@0
               displayName: 'Run Pylint Next'
