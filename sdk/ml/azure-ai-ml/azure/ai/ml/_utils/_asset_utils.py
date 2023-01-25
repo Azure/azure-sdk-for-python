@@ -403,14 +403,20 @@ def generate_asset_id(asset_hash: str, include_directory=True) -> str:
     return asset_id
 
 
-def get_directory_size(root: os.PathLike) -> Tuple[int, Dict[str, int]]:
+def get_directory_size(root: os.PathLike, ignore_file: IgnoreFile = IgnoreFile(None)) -> Tuple[int, Dict[str, int]]:
     """Returns total size of a directory and a dictionary itemizing each sub-
-    path and its size."""
+    path and its size.
+    
+    If an optional ignore_file argument is provided, then files specified in the ignore file are not 
+    included in the directory size calculation.
+    """
     total_size = 0
     size_list = {}
     for dirpath, _, filenames in os.walk(root, followlinks=True):
         for name in filenames:
             full_path = os.path.join(dirpath, name)
+            if ignore_file.is_file_excluded(full_path):
+                continue
             if not os.path.islink(full_path):
                 path_size = os.path.getsize(full_path)
             else:
