@@ -146,12 +146,11 @@ stages:
     - stage: Analysis
       dependsOn: []
       jobs:
+      - template: /eng/pipelines/templates/steps/use-python-version.yml  
+        parameters: 
+            $(PythonVersion)
         - job: 'Analyze'
           timeoutInMinutes: 90
-
-          template: /eng/pipelines/templates/steps/use-python-version.yml  
-          parameters: 
-            $(PythonVersion)
 
           variables:
             - template: /eng/pipelines/templates/variables/globals.yml
