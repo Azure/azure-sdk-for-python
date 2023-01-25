@@ -3,8 +3,13 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
+from typing import List, Dict
+
 
 from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
+from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
+from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml.entities._assets._artifacts.model import Model
 
 # This should be the implementation of what's used in the spec here: https://github.com/Azure/azureml_run_specification/blob/aims/flspec/specs/federated-learning/examples/sdk/1_preprocessing.py#L189
 # General idea, this node will be used to warp code snippets into in a scatter gather loop
@@ -40,16 +45,25 @@ from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
 # 
 def fl_scatter_gather(
     *, 
-    model,
-    silo_configs,
-    learning_func,
-    aggregation_func,
-    max_iterations,
+    initial_model: Model,
+    silo_configs: List[FederatedLearningSilo],
+    aggregation_config: Dict,
+    silo_component: PipelineComponent,
+    aggregation_component: PipelineComponent,
+    silo_to_aggregation_argument_map: Dict,
+    max_iterations: int,
+    shared_silo_kwargs: Dict = None,
+    aggregation_kwargs: Dict = None,
     **kwargs,
 ):
-    return FLScatterGather(model=model, # TODO determine typehint of this
-        silo_configs=silo_configs, # TODO determine (and probably create) typehint of this
-        learning_func=learning_func, # TODO determine typehint of this
-        aggregation_func=aggregation_func, # TODO determine typehint of this
-        max_iterations=max_iterations: int,
-        )
+    return FLScatterGather(
+        initial_model=initial_model,
+        silo_configs=silo_configs,
+        aggregation_config=aggregation_config,
+        silo_component=silo_component,
+        aggregation_component=aggregation_component,
+        silo_to_aggregation_argument_map=silo_to_aggregation_argument_map
+        max_iterations=max_iterations,
+        shared_silo_kwargs=shared_silo_kwargs,
+        aggregation_kwargs=aggregation_kwargs,
+    )

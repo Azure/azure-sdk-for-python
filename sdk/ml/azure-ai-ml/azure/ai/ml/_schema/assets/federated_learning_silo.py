@@ -10,7 +10,7 @@ from azure.ai.ml._utils._experimental import experimental
 # it is merely used to simplify the loading and validation of silos which are used
 # to create FL pipeline nodes.s
 @experimental
-class federated_learning_silo(ResourceSchema):
+class FederatedLearningSilo(ResourceSchema):
     
     # TODO determine remaining inputs
     location = fields.Str(required=True)

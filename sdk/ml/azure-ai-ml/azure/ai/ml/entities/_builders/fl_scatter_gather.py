@@ -14,6 +14,11 @@ from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, validate_attribute_type
 
+from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
+from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
+from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
+from azure.ai.ml.entities._assets._artifacts.model import Model
+
 # TODO: Determine if this should inherit ControlFlowNode, LoopNode, or neither.
 class FLScatterGather(ControlFlowNode, NodeIOMixin): 
     """A node which creates a federated learning scatter-gather loop as a pipeline subgraph.
@@ -27,12 +32,15 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
     def __init__(
         self,
         *,
-        model, # TODO determine typehint of this
-        silo_configs, # TODO determine (and probably create) typehint of this
-        learning_func, # TODO determine typehint of this
-        aggregation_func, # TODO determine typehint of this
+        initial_model: Model,
+        silo_configs: List[FederatedLearningSilo],
+        silo_component: PipelineComponent,
+        shared_silo_kwargs: Dict,
+        aggregation_config: Dict,
+        aggregation_component: PipelineComponent,
+        aggregation_kwargs: Dict,
+        silo_to_aggregation_argument_map: Dict,
         max_iterations: int,
-        #max_concurrency=None # TODO should this still be a value?
         **kwargs,
     ):
         # validate init params are valid type
@@ -45,19 +53,22 @@ class FLScatterGather(ControlFlowNode, NodeIOMixin):
             **kwargs,
         )
         # Todo, possibly catch errors thrown by this
-        self.validate_inputs(model, silo_configs, learning_func, aggregation_func, max_iterations)
+        self.validate_inputs(initial_model, silo_configs, silo_component, aggregation_component, max_iterations)
         # Pseudo code of the hardest part of this POC, the actual scatter-gather subgraph creation.
         # The below is a high-level idea of the behavior that we want to have run in Azure when 
         # this node is submitted. How that's actually achieved is still something I don't understand,
         # since I've yet to find the code that seems to correlate nodes to server-side orchestration.
         '''
+        input_model = initial_Model
         for i in range(0, max_iterations):
             silo_comps = []
             for silo_config in silo_configs:
-                silo_comps.add(create_silo_component(silo_config, learning_func))
-            agg_comp = create_aggregate_component([silo.output for silo in silo_comps], aggregate_func)
+                silo_comps.add(create_silo_component(silo_config, silo_component, shared_silo_kwargs))
+            agg_comp = create_aggregate_component([silo.output for silo in silo_comps], aggregation_component, aggregation_kwargs, silo_to_aggregation_argument_map)
             if learning_thresholds_reached(agg_comp.output, input_model):
-                break
+                return agg_comp.output
+            else:
+                input_model = agg_comp.output
         
         '''
 

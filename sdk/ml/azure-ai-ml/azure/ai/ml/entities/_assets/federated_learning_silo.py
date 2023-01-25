@@ -8,7 +8,7 @@ from azure.ai.ml.entities._resource import Resource
 # FL subgraphs in pipelines.
 # The functionality of this entity is limited, and it exists mostly
 # To simplify the process of loading and validating these objects from YAML.
-class Federated_Learning_Silo(Resource):
+class FederatedLearningSilo(Resource):
 
     def __init__(
         self,
