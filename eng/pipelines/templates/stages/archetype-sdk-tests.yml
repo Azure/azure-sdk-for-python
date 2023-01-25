@@ -160,10 +160,17 @@ stages:
             name: azsdk-pool-mms-ubuntu-2004-general
             vmImage: MMSUbuntu20.04
 
-          - template: ../steps/analyze.yml
-            parameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              TestMarkArgument: ${{ parameters.TestMarkArgument }}
-              TestPipeline: false
-              VerifyAutorest: false
-              ValidateFormatting: false
+          steps:
+              - task: PythonScript@0
+                displayName: 'Run Pylint Next'
+                continueOnError: true
+                inputs:
+                  scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
+                  arguments: >-
+                    "$(TargetingString)" 
+                    --mark_arg="${{ parameters.TestMarkArgument }}" 
+                    --service="${{ parameters.ServiceDirectory }}" 
+                    --toxenv="next-pylint"
+                    --disablecov
+                    --filter-type="Omit_management"
+                env: ${{ parameters.EnvVars }}
