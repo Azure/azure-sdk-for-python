@@ -143,6 +143,10 @@ stages:
 #               Cloud: ${{ cloud.key }}
 
   - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
+    - pwsh: |
+        pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+      displayName: 'Install Necessary Dependencies'
+      condition: succeededOrFailed()
     - stage: Analysis
       dependsOn: []
       jobs:
