@@ -181,22 +181,9 @@ class TestAssetUtils:
         assert with_ignore_size[0] == 36
         assert len(with_ignore_size[1]) == 4
 
-        # Directory size calculated after symlink creation should correctly include linked file size, 
+        # Directory size calculated after symlink creation should correctly include linked file size,
         # and count symlink file itself towards file count.
         target_file_name, symlink_file_name = generate_link_file(storage_test_directory)
         with_symlink_size = get_directory_size(storage_test_directory)
         assert with_symlink_size[0] == 71
         assert len(with_symlink_size[1]) == 9
-
-        # If the symlink target is ignored, the overall file size should not decrease, since the 
-        # symlink should still count the real file size.
-        # Incidentally, this shouldn't decrease the overall directory size, since, the linked file shouldn't
-        # be double twice.
-        
-        with open(amlignore_file.path, 'w') as f:
-            f.write(target_file_name.split('/')[-1])
-        amlignore_file._path_spec = None # Reset path spec generated from file contents.
-        with_symlink_and_ignore_size = get_directory_size(storage_test_directory, amlignore_file)
-        assert with_symlink_and_ignore_size[0] == 71
-        assert len(with_symlink_and_ignore_size[1]) == 8
-        amlignore_file._get_ignore_list

@@ -7,6 +7,8 @@
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected
+- Fixed an issue where ignore files weren't considered during upload directory size calculations
+- Fixed an issue where symlinks crashed upload directory size calculations.
 
 ### Other Changes
 - Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights.
