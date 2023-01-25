@@ -16,11 +16,11 @@ MAX_QUEUE_SIZE=4096
 class _ReceiveTest(PerfStressTest):
     def __init__(self, arguments) -> None:
         super().__init__(arguments)
-        connection_string=self.get_from_env("AZURE_SERVICEBUS_CONNECTION_STRING")
+        self.connection_string=self.get_from_env("AZURE_SERVICEBUS_CONNECTION_STRING")
         transport_type=TransportType.AmqpOverWebsocket if arguments.transport_type == 1 else TransportType.Amqp
         mode=ServiceBusReceiveMode.PEEK_LOCK if arguments.peeklock else ServiceBusReceiveMode.RECEIVE_AND_DELETE
         self.servicebus_client=ServiceBusClient.from_connection_string(
-            connection_string,
+            self.connection_string,
             receive_mode=mode,
             prefetch_count=self.args.num_messages,
             max_wait_time=self.args.max_wait_time or None, 
@@ -28,7 +28,7 @@ class _ReceiveTest(PerfStressTest):
             uamqqp_transport=arguments.transport_type,
         )
         self.async_servicebus_client=AsyncServiceBusClient.from_connection_string(
-            connection_string,
+            self.connection_string,
             receive_mode=mode,
             prefetch_count=self.args.num_messages,
             max_wait_time=self.args.max_wait_time or None,
@@ -63,10 +63,19 @@ class _QueueReceiveTest(_ReceiveTest):
     async def _preload_queue(self) -> None:
         data=get_random_bytes(self.args.message_size)
 
+        current_queue_message_count = 0
+
+        async with ServiceBusAdministrationClient.from_connection_string(self.connection_string) as admin_client:
+            queue_properties = await admin_client.get_queue_runtime_properties(self.queue_name)
+            current_queue_message_count = queue_properties.active_message_count
+    
+
+        print(f"The current queue {self.queue_name} has {current_queue_message_count} already")
+
         async with self.async_servicebus_client.get_queue_sender(self.queue_name) as sender:
             batch=await sender.create_message_batch()
 
-            for i in range(self.args.preload):
+            for i in range(current_queue_message_count, self.args.preload):
                 try:
                     batch.add_message(ServiceBusMessage(data))
                 except ValueError:
@@ -101,10 +110,19 @@ class _TopicReceiveTest(_ReceiveTest):
     async def _preload_topic(self) -> None:
         data=get_random_bytes(self.args.message_size)
 
+        current_topic_message_count = 0
+
+        async with ServiceBusAdministrationClient.from_connection_string(self.connection_string) as admin_client:
+            topic_properties = await admin_client.get_topic_runtime_properties(self.topic_name)
+            current_topic_message_count = topic_properties.scheduled_message_count
+    
+
+        print(f"The current queue {self.topic_name} has {current_topic_message_count} already")
+
         async with self.async_servicebus_client.get_topic_sender(self.topic_name) as sender:
             batch=await sender.create_message_batch()
 
-            for i in range(self.args.preload):
+            for i in range(current_topic_message_count, self.args.preload):
                 try:
                     batch.add_message(ServiceBusMessage(data))
                 except ValueError:
