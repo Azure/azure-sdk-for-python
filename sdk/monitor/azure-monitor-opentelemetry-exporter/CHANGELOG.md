@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 
+- Update success criteria for requests
+    ([#28379](https://github.com/Azure/azure-sdk-for-python/pull/28379))
+
 ### Other Changes
 
 - Loosen instrumentation key validation strictness
