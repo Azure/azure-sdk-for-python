@@ -23,7 +23,7 @@ class _ReceiveTest(PerfStressTest):
             prefetch_count=self.args.num_messages,
             max_wait_time=self.args.max_wait_time or None, 
             transport_type=transport_type,
-            uamqqp_transport=arguments.transport_type,
+            uamqp_transport=arguments.transport_type,
         )
         self.async_servicebus_client=AsyncServiceBusClient.from_connection_string(
             self.connection_string,
@@ -96,7 +96,7 @@ class _QueueReceiveTest(_ReceiveTest):
     
    
 
-class _TopicReceiveTest(_ReceiveTest):
+class _SubscriptionReceiveTest(_ReceiveTest):
     def __init__(self, arguments) -> None:
         super().__init__(arguments)
         self.topic_name=self.get_from_env('AZURE_SERVICEBUS_TOPIC_NAME')
