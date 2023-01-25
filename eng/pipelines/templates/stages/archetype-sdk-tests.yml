@@ -149,12 +149,12 @@ stages:
         - job: 'Analyze'
           timeoutInMinutes: 90
 
+          template: /eng/pipelines/templates/steps/use-python-version.yml  
+          parameters: 
+            $(PythonVersion)
+
           variables:
-            Skip.BreakingChanges: false
-            Skip.VerifySdist: true
-            Skip.VerifyWhl: true
-            Skip.AnalyzeDependencies: true
-            PythonVersion: '3.9'
+            - template: /eng/pipelines/templates/variables/globals.yml
 
           pool:
             name: azsdk-pool-mms-ubuntu-2004-general
@@ -162,9 +162,8 @@ stages:
 
           steps:
             - pwsh: |
-                pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+                pip -m pip install -r eng/ci_tools.txt 
               displayName: 'Install Necessary Dependencies'
-              condition: succeededOrFailed()
             - task: PythonScript@0
               displayName: 'Run Pylint Next'
               continueOnError: true
