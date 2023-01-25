@@ -6,7 +6,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Literal, Optional
+from typing import List, Optional
+from typing_extensions import Literal
 from ._models_py3 import (
     AgeResolution as GeneratedAgeResolution,
     AreaResolution as GeneratedAreaResolution,
