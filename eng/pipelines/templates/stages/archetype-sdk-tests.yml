@@ -143,10 +143,6 @@ stages:
 #               Cloud: ${{ cloud.key }}
 
   - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
-    - pwsh: |
-        pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
-      displayName: 'Install Necessary Dependencies'
-      condition: succeededOrFailed()
     - stage: Analysis
       dependsOn: []
       jobs:
@@ -165,6 +161,10 @@ stages:
             vmImage: MMSUbuntu20.04
 
           steps:
+            - pwsh: |
+                pip install -r eng/ci_tools.txt $(if($IsWindows) {"--user" })
+              displayName: 'Install Necessary Dependencies'
+              condition: succeededOrFailed()
             - task: PythonScript@0
               displayName: 'Run Pylint Next'
               continueOnError: true
