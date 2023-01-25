@@ -141,3 +141,29 @@ stages:
               SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
               Cloud: ${{ cloud.key }}
+
+  - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
+    - stage: Analysis
+      dependsOn: []
+      jobs:
+        - job: 'Analyze'
+          timeoutInMinutes: 90
+          
+          variables:
+            Skip.BreakingChanges: false
+            Skip.VerifySdist: true
+            Skip.VerifyWhl: true
+            Skip.AnalyzeDependencies: true
+            PythonVersion: '3.9'
+
+          pool:
+            name: azsdk-pool-mms-ubuntu-2004-general
+            vmImage: MMSUbuntu20.04
+
+          - template: ../steps/analyze.yml
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
+              TestMarkArgument: ${{ parameters.TestMarkArgument }}
+              TestPipeline: false
+              VerifyAutorest: false
+              ValidateFormatting: false
