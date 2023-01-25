@@ -46,7 +46,7 @@ if __name__ == "__main__":
         "-m",
         "mypy",
         "--python-version",
-        "3.10",
+        "3.11",
         "--show-error-codes",
         "--ignore-missing-imports",
     ]
