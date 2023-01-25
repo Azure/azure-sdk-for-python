@@ -153,7 +153,7 @@ stages:
           timeoutInMinutes: 90
 
           variables:
-            - template: /eng/pipelines/templates/variables/globals.yml
+            PythonVersion: /eng/pipelines/templates/variables/globals.yml
 
           pool:
             name: azsdk-pool-mms-ubuntu-2004-general
