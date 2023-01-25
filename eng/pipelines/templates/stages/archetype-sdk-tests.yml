@@ -146,14 +146,12 @@ stages:
     - stage: Analysis
       dependsOn: []
       jobs:
-      - template: /eng/pipelines/templates/steps/use-python-version.yml  
-        parameters: 
-            $(PythonVersion)
         - job: 'Analyze'
           timeoutInMinutes: 90
 
+
           variables:
-            PythonVersion: /eng/pipelines/templates/variables/globals.yml
+            PythonVersion: '3.9'
 
           pool:
             name: azsdk-pool-mms-ubuntu-2004-general
