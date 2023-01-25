@@ -832,6 +832,7 @@ def pytest_configure(config):
         ("data_experiences_test", "marks tests as data experience tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
         ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
+        ("vc_test", "marks tests as virtual cluster tests"),
     ]:
         config.addinivalue_line("markers", f"{marker}: {description}")
 
