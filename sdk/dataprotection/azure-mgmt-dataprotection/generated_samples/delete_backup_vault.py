@@ -29,13 +29,13 @@ def main():
         subscription_id="0b352192-dcac-4cc7-992e-a96190ccc68c",
     )
 
-    response = client.backup_vaults.delete(
+    response = client.backup_vaults.begin_delete(
         resource_group_name="SampleResourceGroup",
         vault_name="swaggerExample",
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/preview/2022-11-01-preview/examples/VaultCRUD/DeleteBackupVault.json
+# x-ms-original-file: specification/dataprotection/resource-manager/Microsoft.DataProtection/stable/2023-01-01/examples/VaultCRUD/DeleteBackupVault.json
 if __name__ == "__main__":
     main()
