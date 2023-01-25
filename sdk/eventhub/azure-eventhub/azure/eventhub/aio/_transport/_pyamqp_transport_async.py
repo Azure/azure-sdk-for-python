@@ -185,6 +185,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
+                    # If optional dependency is not installed, do not retry.
+                    if isinstance(exception, ImportError):
+                        raise exception
                     if (
                         isinstance(exception, errors.AMQPLinkError)
                         and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
@@ -195,9 +198,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                     if consumer._last_received_event:
                         consumer._offset = consumer._last_received_event.offset
                     last_exception = await consumer._handle_exception(exception)
-                    # If optional dependency is not installed, do not retry.
-                    if isinstance(exception.__cause__, ImportError):
-                        raise last_exception
                     retried_times += 1
                     if retried_times > max_retries:
                         _LOGGER.info(

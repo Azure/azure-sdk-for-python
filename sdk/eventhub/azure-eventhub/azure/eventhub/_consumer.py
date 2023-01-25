@@ -227,6 +227,9 @@ class EventHubConsumer(
                         self._handler.do_work(batch=self._prefetch)  # type: ignore
                     break
                 except Exception as exception:  # pylint: disable=broad-except
+                    # If optional dependency is not installed, do not retry.
+                    if isinstance(exception, ImportError):
+                        raise exception
                     self._amqp_transport.check_link_stolen(self, exception)
                     # TODO: below block hangs when retry_total > 0
                     # need to remove/refactor, issue #27137
@@ -235,9 +238,6 @@ class EventHubConsumer(
                     if self._last_received_event:
                         self._offset = self._last_received_event.offset
                     last_exception = self._handle_exception(exception, is_consumer=True)
-                    # If optional dependency is not installed, do not retry.
-                    if isinstance(exception.__cause__, ImportError):
-                        raise last_exception
                     retried_times += 1
                     if retried_times > max_retries:
                         _LOGGER.info(

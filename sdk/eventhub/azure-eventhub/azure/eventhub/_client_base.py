@@ -431,6 +431,9 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     return response
                 raise self._amqp_transport.get_error(status_code, description)
             except Exception as exception:  # pylint: disable=broad-except
+                # If optional dependency is not installed, do not retry.
+                if isinstance(exception, ImportError):
+                    raise exception
                 # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
                 # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
                 # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
@@ -584,10 +587,10 @@ class ConsumerProducerMixin(object):
                     )
                 return operation()
             except Exception as exception:  # pylint:disable=broad-except
-                last_exception = self._handle_exception(exception)
                 # If optional dependency is not installed, do not retry.
-                if isinstance(exception.__cause__, ImportError):
-                    raise last_exception
+                if isinstance(exception, ImportError):
+                    raise exception
+                last_exception = self._handle_exception(exception)
                 self._client._backoff(
                     retried_times=retried_times,
                     last_exception=last_exception,

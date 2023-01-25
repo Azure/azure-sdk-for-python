@@ -716,10 +716,10 @@ class WebSocketTransport(_AbstractTransport):
                 WebSocketTimeoutException,
                 WebSocketConnectionClosedException
             )
-        except ImportError as exc:
-            raise ValueError(
-                "Please install websocket-client library to use websocket transport."
-            ) from exc
+        except ImportError:
+            raise ImportError(
+                "Please install websocket-client library to use sync websocket transport."
+            )
         try:
             self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
