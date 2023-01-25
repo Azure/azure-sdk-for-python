@@ -97,7 +97,6 @@ MYPY_OPT_OUT = [
     "azure-mixedreality-authentication",
     "azure-ai-ml",
     "azure-iot-modelsrepository",
-    "azure-monitor-ingestion",
     "azure-monitor-opentelemetry-exporter",
     "azure-purview-administration",
     "azure-purview-catalog",
@@ -160,7 +159,6 @@ PYRIGHT_OPT_OUT = [
     "azure-mixedreality-authentication",
     "azure-ai-ml",
     "azure-iot-modelsrepository",
-    "azure-monitor-ingestion",
     "azure-monitor-opentelemetry-exporter",
     "azure-ai-personalizer",
     "azure-purview-administration",
@@ -235,7 +233,6 @@ VERIFYTYPES_OPT_OUT = [
     "azure-mixedreality-authentication",
     "azure-ai-ml",
     "azure-iot-modelsrepository",
-    "azure-monitor-ingestion",
     "azure-monitor-opentelemetry-exporter",
     "azure-ai-personalizer",
     "azure-purview-administration",
@@ -301,7 +298,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-mixedreality-authentication",
     "azure-ai-ml",
     "azure-iot-modelsrepository",
-    "azure-monitor-ingestion",
     "azure-monitor-opentelemetry-exporter",
     "azure-monitor-query",
     "azure-purview-administration",
@@ -368,9 +364,9 @@ def is_check_enabled(package_path: str, check: str, default: bool = True) -> boo
     if package_name in exclusions_for_env:
         enabled = False
 
-    # now pull the new pyproject.toml configuration    
+    # now pull the new pyproject.toml configuration
     config = get_config_setting(package_path, check.strip().lower(), True)
-    
+
     return (config and enabled)
 
 

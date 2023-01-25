@@ -185,6 +185,9 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
+                    # If optional dependency is not installed, do not retry.
+                    if isinstance(exception, ImportError):
+                        raise exception
                     if (
                         isinstance(exception, errors.AMQPLinkError)
                         and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member

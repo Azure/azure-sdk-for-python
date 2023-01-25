@@ -133,14 +133,14 @@ except HttpResponseError as e:
 
 ### Upload with custom error handling
 
-To upload logs with custom error handling, you can pass a callback function to the `on_error` parameter of the `upload` method. The callback function will be called for each error that occurs during the upload and should expect two arguments which correspond to the error encountered and the list of logs that failed to upload.
+To upload logs with custom error handling, you can pass a callback function to the `on_error` parameter of the `upload` method. The callback function will be called for each error that occurs during the upload and should expect one argument that corresponds to an `UploadLogsError` object. This object contains the error encountered and the list of logs that failed to upload.
 
 ```python
 failed_logs = []
-def on_error(error, logs):
-    print("Log chunk failed to upload with error: ", error)
+def on_error(error):
+    print("Log chunk failed to upload with error: ", error.error)
     # Collect all logs that failed to upload.
-    failed_logs.extend(logs)
+    failed_logs.extend(error.failed_logs)
 
 client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error)
 ```
