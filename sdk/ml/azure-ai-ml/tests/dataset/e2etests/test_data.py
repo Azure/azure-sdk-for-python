@@ -186,6 +186,11 @@ sepal_length,sepal_width,petal_length,petal_width,species
         assert all(data.name == data_with_2_versions for data in data_list)
         # use a set since ordering of elements returned from list isn't guaranteed
         assert {"1", "2"} == {data.version for data in data_list}
+    
+    def test_list_data_in_registry(self, registry_client: MLClient) -> None:
+        data_iterator = registry_client.data.list()
+        assert data_iterator
+        assert isinstance(data_iterator, ItemPaged)
 
     def test_data_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")
