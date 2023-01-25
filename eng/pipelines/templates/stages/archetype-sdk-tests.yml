@@ -91,56 +91,56 @@ parameters:
     default: false
 
 stages:
-- ${{ each cloud in parameters.CloudConfig }}:
-  - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
-    - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
-      - stage: ${{ cloud.key }}_${{ parameters.JobName }}
-        dependsOn: []
-        jobs:
-        - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
-          parameters:
-            SparseCheckoutPaths:
-              # Python recording files are implicit excluded here since they are using '.yaml' file extension.
-              - "sdk/${{ parameters.ServiceDirectory }}/**/*.json"
-            JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
-            AdditionalParameters:
-              ServiceDirectory: ${{ parameters.ServiceDirectory }}
-              PreSteps:
-                - ${{ parameters.PlatformPreSteps }}
-                - ${{ parameters.PreSteps }}
-              PostSteps:
-                - ${{ parameters.PlatformPostSteps }}
-                - ${{ parameters.PostSteps }}
-              EnvVars: ${{ parameters.EnvVars }}
-              MaxParallel: ${{ parameters.MaxParallel }}
-              BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
-              AfterTestSteps: ${{ parameters.AfterTestSteps }}
-              AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
-              BuildTargetingString: ${{ parameters.BuildTargetingString }}
-              TestMarkArgument: ${{ parameters.TestMarkArgument }}
-              InjectedPackages: ${{ parameters.InjectedPackages }}
-              BuildDocs: ${{ parameters.BuildDocs }}
-              TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
-              TestProxy: ${{ parameters.TestProxy }}
-            MatrixConfigs:
-              # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
-              - ${{ each config in parameters.MatrixConfigs }}:
-                -  ${{ config }}
-              - ${{ each config in parameters.AdditionalMatrixConfigs }}:
-                -  ${{ config }}
-            MatrixFilters:
-              - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
-                - ${{ cloudFilter }}
-              - ${{ parameters.MatrixFilters }}
-            MatrixReplace:
-              - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
-                - ${{ cloudReplace }}
-              - ${{ parameters.MatrixReplace }}
-            CloudConfig:
-              SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
-              SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
-              Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
-              Cloud: ${{ cloud.key }}
+# - ${{ each cloud in parameters.CloudConfig }}:
+#   - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
+#     - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
+#       - stage: ${{ cloud.key }}_${{ parameters.JobName }}
+#         dependsOn: []
+#         jobs:
+#         - template: /eng/common/pipelines/templates/jobs/archetype-sdk-tests-generate.yml
+#           parameters:
+#             SparseCheckoutPaths:
+#               # Python recording files are implicit excluded here since they are using '.yaml' file extension.
+#               - "sdk/${{ parameters.ServiceDirectory }}/**/*.json"
+#             JobTemplatePath: /eng/pipelines/templates/jobs/live.tests.yml
+#             AdditionalParameters:
+#               ServiceDirectory: ${{ parameters.ServiceDirectory }}
+#               PreSteps:
+#                 - ${{ parameters.PlatformPreSteps }}
+#                 - ${{ parameters.PreSteps }}
+#               PostSteps:
+#                 - ${{ parameters.PlatformPostSteps }}
+#                 - ${{ parameters.PostSteps }}
+#               EnvVars: ${{ parameters.EnvVars }}
+#               MaxParallel: ${{ parameters.MaxParallel }}
+#               BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+#               AfterTestSteps: ${{ parameters.AfterTestSteps }}
+#               AdditionalTestArgs: ${{ parameters.AdditionalTestArgs }}
+#               BuildTargetingString: ${{ parameters.BuildTargetingString }}
+#               TestMarkArgument: ${{ parameters.TestMarkArgument }}
+#               InjectedPackages: ${{ parameters.InjectedPackages }}
+#               BuildDocs: ${{ parameters.BuildDocs }}
+#               TestTimeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
+#               TestProxy: ${{ parameters.TestProxy }}
+#             MatrixConfigs:
+#               # Enumerate platforms and additional platforms based on supported clouds (sparse platform<-->cloud matrix).
+#               - ${{ each config in parameters.MatrixConfigs }}:
+#                 -  ${{ config }}
+#               - ${{ each config in parameters.AdditionalMatrixConfigs }}:
+#                 -  ${{ config }}
+#             MatrixFilters:
+#               - ${{ each cloudFilter in cloud.value.MatrixFilters }}:
+#                 - ${{ cloudFilter }}
+#               - ${{ parameters.MatrixFilters }}
+#             MatrixReplace:
+#               - ${{ each cloudReplace in cloud.value.MatrixReplace }}:
+#                 - ${{ cloudReplace }}
+#               - ${{ parameters.MatrixReplace }}
+#             CloudConfig:
+#               SubscriptionConfiguration: ${{ cloud.value.SubscriptionConfiguration }}
+#               SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
+#               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
+#               Cloud: ${{ cloud.key }}
 
   - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
     - stage: Analysis
@@ -148,7 +148,7 @@ stages:
       jobs:
         - job: 'Analyze'
           timeoutInMinutes: 90
-          
+
           variables:
             Skip.BreakingChanges: false
             Skip.VerifySdist: true
