@@ -161,6 +161,8 @@ stages:
             - pwsh: |
                 python -m pip install -r eng/ci_tools.txt 
               displayName: 'Install Necessary Dependencies'
+            parameters:
+              ServiceDirectory: ${{ parameters.ServiceDirectory }}
             - task: PythonScript@0
               displayName: 'Run Pylint Next'
               continueOnError: true
