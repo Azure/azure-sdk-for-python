@@ -9,7 +9,7 @@ from ._test_base import _TopicReceiveTest
 
 
 class ReceiveTopicMessageStreamTest(_TopicReceiveTest):
-    def run_sync(self):
+    def run_sync(self) -> None:
         count = 0
         if not self.args.peeklock:
             for msg in self.receiver:
@@ -23,7 +23,7 @@ class ReceiveTopicMessageStreamTest(_TopicReceiveTest):
                     break
                 count += 1
 
-    async def run_async(self):
+    async def run_async(self) -> None:
         count = 0
         if not self.args.peeklock:
             async for msg in self.async_receiver:

@@ -11,18 +11,18 @@ from azure.servicebus import ServiceBusMessage
 
 
 class SendQueueMessageBatchTest(_SendQueueTest):
-    def __init__(self, arguments):
+    def __init__(self, arguments) -> None:
         super().__init__(arguments)
         self.data = get_random_bytes(self.args.message_size)
 
-    def run_batch_sync(self):
+    def run_batch_sync(self) -> int:
         batch = self.sender.create_message_batch()
         for _ in range(self.args.batch_size):
                 batch.add_message(ServiceBusMessage(self.data))    
         self.sender.send_messages(batch)
         return self.args.batch_size
 
-    async def run_batch_async(self):
+    async def run_batch_async(self) -> int:
         batch = await self.async_sender.create_message_batch()
         for _ in range(self.args.batch_size):
             batch.add_message(ServiceBusMessage(self.data))

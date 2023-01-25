@@ -9,7 +9,7 @@ from ._test_base import _TopicReceiveTest
 
 
 class ReceiveTopicMessageBatchTest(_TopicReceiveTest):
-    def run_sync(self):
+    def run_sync(self) -> None:
         count = 0
         while count < self.args.num_messages:
             batch = self.receiver.receive_messages(
@@ -20,7 +20,7 @@ class ReceiveTopicMessageBatchTest(_TopicReceiveTest):
                     self.receiver.complete_message(msg)
             count += len(batch)
 
-    async def run_async(self):
+    async def run_async(self) -> None:
         count = 0
         while count < self.args.num_messages:
             batch = await self.async_receiver.receive_messages(
