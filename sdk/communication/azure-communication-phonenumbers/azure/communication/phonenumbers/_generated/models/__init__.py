@@ -6,40 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._models_py3 import CommunicationError
-from ._models_py3 import CommunicationErrorResponse
-from ._models_py3 import PhoneNumberCapabilities
-from ._models_py3 import PhoneNumberCapabilitiesRequest
-from ._models_py3 import PhoneNumberCost
-from ._models_py3 import PhoneNumberOperation
-from ._models_py3 import PhoneNumberPurchaseRequest
-from ._models_py3 import PhoneNumberSearchRequest
-from ._models_py3 import PhoneNumberSearchResult
-from ._models_py3 import PurchasedPhoneNumber
-from ._models_py3 import PurchasedPhoneNumbers
+from ._models import CommunicationError
+from ._models import CommunicationErrorResponse
+from ._models import PhoneNumberAdministrativeDivision
+from ._models import PhoneNumberAreaCode
+from ._models import PhoneNumberCapabilities
+from ._models import PhoneNumberCapabilitiesRequest
+from ._models import PhoneNumberCost
+from ._models import PhoneNumberCountry
+from ._models import PhoneNumberLocality
+from ._models import PhoneNumberOffering
+from ._models import PhoneNumberOperation
+from ._models import PhoneNumberPurchaseRequest
+from ._models import PhoneNumberSearchRequest
+from ._models import PhoneNumberSearchResult
+from ._models import PurchasedPhoneNumber
 
-from ._phone_numbers_client_enums import BillingFrequency
-from ._phone_numbers_client_enums import PhoneNumberAssignmentType
-from ._phone_numbers_client_enums import PhoneNumberCapabilityType
-from ._phone_numbers_client_enums import PhoneNumberOperationStatus
-from ._phone_numbers_client_enums import PhoneNumberOperationType
-from ._phone_numbers_client_enums import PhoneNumberType
+from ._enums import BillingFrequency
+from ._enums import PhoneNumberAssignmentType
+from ._enums import PhoneNumberCapabilityType
+from ._enums import PhoneNumberOperationStatus
+from ._enums import PhoneNumberOperationType
+from ._enums import PhoneNumberType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "CommunicationError",
     "CommunicationErrorResponse",
+    "PhoneNumberAdministrativeDivision",
+    "PhoneNumberAreaCode",
     "PhoneNumberCapabilities",
     "PhoneNumberCapabilitiesRequest",
     "PhoneNumberCost",
+    "PhoneNumberCountry",
+    "PhoneNumberLocality",
+    "PhoneNumberOffering",
     "PhoneNumberOperation",
     "PhoneNumberPurchaseRequest",
     "PhoneNumberSearchRequest",
     "PhoneNumberSearchResult",
     "PurchasedPhoneNumber",
-    "PurchasedPhoneNumbers",
     "BillingFrequency",
     "PhoneNumberAssignmentType",
     "PhoneNumberCapabilityType",

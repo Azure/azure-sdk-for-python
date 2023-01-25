@@ -3,8 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Type
-import platform
 import pytest
 from unittest import TestCase
 try:
@@ -15,7 +13,6 @@ import azure.communication.identity._shared.user_credential as user_credential
 from azure.communication.identity._shared.user_credential import CommunicationTokenCredential
 from azure.communication.identity._shared.utils import create_access_token
 from azure.communication.identity._shared.utils import get_current_utc_as_int
-from datetime import timedelta
 from _shared.helper import generate_token_with_custom_expiry_epoch, generate_token_with_custom_expiry
 
 
@@ -59,6 +56,14 @@ class TestCommunicationTokenCredential(TestCase):
         refresher = MagicMock(
             return_value=create_access_token(self.sample_token))
         with CommunicationTokenCredential(self.expired_token, token_refresher=refresher) as credential:
+            access_token = credential.get_token()
+        refresher.assert_called_once()
+        self.assertEqual(access_token.token, self.sample_token)
+
+    def test_communicationtokencredential_token_expired_refresh_called_with_proactive_refresh(self):
+        refresher = MagicMock(
+            return_value=create_access_token(self.sample_token))
+        with CommunicationTokenCredential(self.expired_token, token_refresher=refresher, proactive_refresh=True) as credential:
             access_token = credential.get_token()
         refresher.assert_called_once()
         self.assertEqual(access_token.token, self.sample_token)

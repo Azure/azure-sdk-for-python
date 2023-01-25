@@ -33,7 +33,7 @@ from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import ValidationException, UnexpectedKeywordError
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -2289,6 +2289,57 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert actual_job["inputs"] == expected_job_inputs
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
 
+    def test_registered_pipeline_with_group(self, client: MLClient):
+
+        hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
+        hello_world_component_func = load_component(hello_world_component_yaml)
+        from azure.ai.ml.dsl._group_decorator import group
+
+        @group
+        class SubParamClass:
+            int_param: Input(min=1.0, max=5.0, type="integer")
+
+        @group
+        class ParamClass:
+            sub: SubParamClass
+            str_param: str = "test"
+            bool_param: bool = True
+            number_param = 4.0
+
+        @dsl.pipeline()
+        def pipeline_with_group(group: ParamClass):
+            hello_world_component_func(
+                component_in_string=group.str_param,
+                component_in_ranged_number=group.number_param,
+                component_in_boolean=group.bool_param,
+                component_in_ranged_integer=group.sub.int_param,
+            )
+        component = client.components.create_or_update(pipeline_with_group)
+        # Assert key not exists
+        match = "(.*)unexpected keyword argument 'group.not_exist'(.*)valid keywords: " \
+                "'group', 'group.sub.int_param', 'group.str_param', 'group.bool_param', 'group.number_param'"
+        with pytest.raises(UnexpectedKeywordError, match=match):
+            component(**{
+                "group.number_param": 4.0, "group.str_param": "testing",
+                "group.sub.int_param": 4, "group.not_exist": 4,
+            })
+        # Assert conflict assignment
+        with pytest.raises(ValidationException, match="Conflict parameter key 'group' and 'group.number_param'"):
+            pipeline = component(**{
+                "group.number_param": 4.0, "group.str_param": "testing",
+                "group.sub.int_param": 4, "group": ParamClass(sub=SubParamClass(int_param=1))
+            })
+            pipeline.settings.default_compute = "cpu-cluster"
+            client.jobs.create_or_update(pipeline)
+        # Assert happy path
+        inputs = {
+            "group.number_param": 4.0, "group.str_param": "testing", "group.sub.int_param": 4
+        }
+        pipeline = component(**inputs)
+        pipeline.settings.default_compute = "cpu-cluster"
+        rest_pipeline_job = client.jobs.create_or_update(pipeline)
+        assert rest_pipeline_job._to_dict()["inputs"] == {key: str(val) for key, val in inputs.items()}
+
     def test_dsl_pipeline_with_default_component(
         self,
         client: MLClient,
@@ -2458,3 +2509,16 @@ class TestDSLPipeline(AzureRecordedTestCase):
         component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
         # pipeline component output mode is undefined behavior so we skip assert it
         # assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
+
+    def test_local_data_as_node_input(self, client: MLClient):
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+        local_data_input = Input(type="uri_folder", path="./tests/test_configs/data")
+
+        @dsl.pipeline
+        def my_pipeline():
+            hello_world_component_func(component_in_number=1, component_in_path=local_data_input)
+
+        pipeline_job: PipelineJob = my_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        assert_job_cancel(pipeline_job, client)

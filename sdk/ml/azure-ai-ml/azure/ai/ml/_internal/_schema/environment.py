@@ -12,7 +12,8 @@ class InternalEnvironmentSchema(PathAwareSchema):
     docker = fields.Dict()
     conda = fields.Dict()
     os = DumpableEnumField(
-        allowed_values=["Linux", "Windows"],
+        # add enum instead of use string transformer here to avoid changing the value
+        allowed_values=["Linux", "Windows", "linux", "windows"],
         required=False,
     )
     name = fields.Str()

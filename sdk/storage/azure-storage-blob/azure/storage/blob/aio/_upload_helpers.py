@@ -9,7 +9,6 @@ import asyncio
 from io import SEEK_SET, UnsupportedOperation
 from typing import TypeVar, TYPE_CHECKING
 
-import six
 from azure.core.exceptions import ResourceModifiedError, HttpResponseError
 
 from .._shared.response_handlers import process_storage_error, return_response_headers
@@ -78,7 +77,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                     data = await data.read(length)
                 else:
                     data = data.read(length)
-                if not isinstance(data, six.binary_type):
+                if not isinstance(data, bytes):
                     raise TypeError('Blob data should be of type bytes.')
             except AttributeError:
                 pass

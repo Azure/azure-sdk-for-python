@@ -95,7 +95,7 @@ class IgnoreFile(object):
 
     def _create_pathspec(self) -> List[GitWildMatchPattern]:
         """Creates path specification based on ignore list."""
-        return [GitWildMatchPattern(ignore) for ignore in set(self._get_ignore_list())]
+        return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Checks if given file_path is excluded.
@@ -109,17 +109,20 @@ class IgnoreFile(object):
         file_path = Path(file_path)
         if file_path.is_absolute():
             ignore_dirname = self._path.parent
-            if len(os.path.commonprefix([file_path, ignore_dirname])) != len(str(ignore_dirname)):
+            try:
+                file_path = os.path.relpath(file_path, ignore_dirname)
+            except ValueError:
+                # 2 paths are on different drives
                 return True
-            file_path = os.path.relpath(file_path, ignore_dirname)
 
-        file_path = str(file_path)
         norm_file = normalize_file(file_path)
+        matched = False
         for pattern in self._path_spec:
             if pattern.include is not None:
-                if norm_file in pattern.match((norm_file,)):
-                    return bool(pattern.include)
-        return False
+                if pattern.match_file(norm_file) is not None:
+                    matched = pattern.include
+
+        return matched
 
     @property
     def path(self) -> Union[Path, str]:
@@ -682,6 +685,51 @@ def _get_next_version_from_container(
         version = "1"
     return version
 
+def _get_latest_version_from_container(
+    asset_name: str,
+    container_operation: Any,
+    resource_group_name: str,
+    workspace_name: Optional[str] = None,
+    registry_name: Optional[str] = None,
+    **kwargs,
+) -> str:
+    try:
+        container = (
+            container_operation.get(
+                name=asset_name,
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                **kwargs,
+            )
+            if registry_name
+            else container_operation.get(
+                name=asset_name,
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                **kwargs,
+            )
+        )
+        version = container.properties.latest_version
+
+    except ResourceNotFoundError:
+        message = (
+            f"Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else f"Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
+        no_personal_data_message = (
+            "Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else "Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
+        raise ValidationException(
+            message=message,
+            no_personal_data_message=no_personal_data_message,
+            target=ErrorTarget.ASSET,
+            error_category=ErrorCategory.USER_ERROR,
+            error_type=ValidationErrorType.RESOURCE_NOT_FOUND
+        )
+    return version
 
 def _get_latest(
     asset_name: str,
@@ -725,8 +773,16 @@ def _get_latest(
         # Data list return object doesn't require this since its elements are already DatasetVersionResources
         latest = cast(ModelVersionData, latest)
     if not latest:
-        message = f"Asset {asset_name} does not exist in workspace {workspace_name}."
-        no_personal_data_message = "Asset {asset_name} does not exist in workspace {workspace_name}."
+        message = (
+            f"Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else f"Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
+        no_personal_data_message = (
+            "Asset {asset_name} does not exist in registry {registry_name}."
+            if registry_name
+            else "Asset {asset_name} does not exist in workspace {workspace_name}."
+            )
         raise ValidationException(
             message=message,
             no_personal_data_message=no_personal_data_message,

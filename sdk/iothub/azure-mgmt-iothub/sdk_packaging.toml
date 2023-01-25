@@ -4,5 +4,5 @@ package_pprint_name = "IoT Hub Management"
 package_doc_id = "iot"
 is_stable = false
 is_arm = true
-sample_link = "iothub"
+sample_link = ""
 title = "IotHubClient"

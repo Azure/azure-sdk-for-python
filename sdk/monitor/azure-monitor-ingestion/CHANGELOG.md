@@ -3,6 +3,8 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
+  - Added new `on_error` parameter to the `upload` method to allow users to handle errors in their own way.
+  - Added IO support for upload. Now IO streams can be passed in using the `logs` parameter. ([#28373](https://github.com/Azure/azure-sdk-for-python/pull/28373))
 
 ### Breaking Changes
   - Removed support for max_concurrency
@@ -11,7 +13,8 @@
 
 ### Other Changes
   - Removed `msrest` dependency.
-  - Added requirement for `isodate>=0.6.0` (`isodate` was required by `msrest`)
+  - Added requirement for `isodate>=0.6.0` (`isodate` was required by `msrest`).
+  - Added requirement for `typing-extensions>=4.0.1`.
 
 ## 1.0.0b1 (2022-07-15)
 

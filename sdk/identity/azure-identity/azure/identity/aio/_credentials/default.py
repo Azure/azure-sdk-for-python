@@ -4,12 +4,13 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Any
 
 from azure.core.credentials import AccessToken
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority
 from .azure_cli import AzureCliCredential
+from .azd_cli import AzureDeveloperCliCredential
 from .azure_powershell import AzurePowerShellCredential
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
@@ -43,6 +44,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
+    :keyword bool exclude_azd_cli_credential: Whether to exclude the Azure Developer CLI
+        from the credential. Defaults to **False**.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
@@ -65,7 +68,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -96,6 +99,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         )
 
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
+        exclude_azd_cli_credential = kwargs.pop("exclude_azd_cli_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
@@ -118,6 +122,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
                 _LOGGER.info("Shared token cache is unavailable: '%s'", ex)
         if not exclude_visual_studio_code_credential:
             credentials.append(VisualStudioCodeCredential(**vscode_args))
+        if not exclude_azd_cli_credential:
+            credentials.append(AzureDeveloperCliCredential())
         if not exclude_cli_credential:
             credentials.append(AzureCliCredential())
         if not exclude_powershell_credential:
@@ -125,7 +131,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super().__init__(*credentials)
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
