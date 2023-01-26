@@ -99,3 +99,12 @@ def gzip_content_encoding():
     r.headers["Content-Type"] = "text/plain"
     r.headers['Content-Encoding'] = "gzip"
     return r
+
+@encoding_api.route('/deflate', methods=['GET'])
+def deflate_content_encoding():
+    r = Response(
+        b'\xcb\xc8T(\xc9H-J\x05\x00', status=200
+    )
+    r.headers["Content-Type"] = "text/plain"
+    r.headers['Content-Encoding'] = "deflate"
+    return r
