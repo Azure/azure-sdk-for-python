@@ -3,6 +3,7 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
+* Added Async Support
 * Added missing methods for Mapping API
 * Made load method properties unordered.
 

@@ -77,9 +77,9 @@ def load_provider(**kwargs):
 
     provider._trim_prefixes = sorted(kwargs.pop("trimmed_key_prefixes", []), key=len, reverse=True)
 
-    if key_vault_options != None and len(key_vault_options.secret_clients) > 0:
-      for secret_client in key_vault_options.secret_clients:
-        provider._secret_clients[secret_client.vault_url] = secret_client
+    if key_vault_options is not None and len(key_vault_options.secret_clients) > 0:
+        for secret_client in key_vault_options.secret_clients:
+            provider._secret_clients[secret_client.vault_url] = secret_client
 
     for select in selects:
         configurations = provider._client.list_configuration_settings(
@@ -144,6 +144,7 @@ def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfiguration
 
     key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
+    #pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(key_vault_identifier.vault_url, None)
 
     if referenced_client is None and key_vault_options.credential is not None:
@@ -194,6 +195,7 @@ class AzureAppConfigurationProvider:
         self._dict = {}
         self._trim_prefixes = []
         self._client = None
+        self._secret_clients = {}
 
     def __getitem__(self, key:str) -> str:
         """

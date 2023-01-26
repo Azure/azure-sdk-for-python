@@ -78,7 +78,7 @@ async def load_provider(**kwargs):
 
     provider._trim_prefixes = sorted(kwargs.pop("trimmed_key_prefixes", []), key=len, reverse=True)
 
-    if key_vault_options != None and len(key_vault_options.secret_clients) > 0:
+    if key_vault_options is not None and len(key_vault_options.secret_clients) > 0:
         for secret_client in key_vault_options.secret_clients:
             provider._secret_clients[secret_client.vault_url] = secret_client
 
@@ -145,6 +145,7 @@ async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigu
 
     key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
+    #pylint:disable=protected-access
     referenced_client = provider._secret_clients.get(key_vault_identifier.vault_url, None)
 
     if referenced_client is None and key_vault_options.credential is not None:
@@ -154,7 +155,9 @@ async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigu
         provider._secret_clients[key_vault_identifier.vault_url] = referenced_client
 
     if referenced_client:
-        return (await referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version)).value
+        return (
+            await referenced_client.get_secret(key_vault_identifier.name, version=key_vault_identifier.version)
+        ).value
 
     if key_vault_options.secret_resolver is not None:
         return key_vault_options.secret_resolver(config.secret_id)
@@ -264,12 +267,12 @@ class AzureAppConfigurationProvider:
         await self._client.close()
 
     async def __aenter__(self):
-        await self.client.__aenter__()
+        await self._client.__aenter__()
         for client in self._secret_clients.values():
             await client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
-        await self.client.__aexit__(*args)
+        await self._client.__aexit__(*args)
         for client in self._secret_clients.values():
             await client.__aexit__()
