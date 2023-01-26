@@ -1,0 +1,6 @@
+{
+    "main": "dist/src/index.js",
+    "dependencies": {
+        "@azure-tools/cadl-python": "0.4.20"
+    }
+}
