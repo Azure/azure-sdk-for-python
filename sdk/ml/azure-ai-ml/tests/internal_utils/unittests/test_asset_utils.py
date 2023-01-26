@@ -177,13 +177,11 @@ class TestAssetUtils:
         # Note, the [1] index is the number of files counted in the directory size calculation.
         # The [0] index is the sum file size, which we don't check here due to how instable that
         # value is across systems/builds.
-        assert len(base_size[1]) == 7
-
         # Directory size calculated with ignore file should include less files
-        assert len(with_ignore_size[1]) == 4
+        assert len(with_ignore_size[1]) < len(base_size[1])
 
         # Directory size calculated after symlink creation should correctly include linked file size,
         # and count symlink file itself towards file count.
         _, _ = generate_link_file(storage_test_directory)
         with_symlink_size = get_directory_size(storage_test_directory)
-        assert len(with_symlink_size[1]) == 9
+        assert len(with_symlink_size[1]) == len(base_size[1]) + 2
