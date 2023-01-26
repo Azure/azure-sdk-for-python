@@ -269,7 +269,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             # TODO: Add in Recieve Message Iterator
             if not self._message_iter:
                 self._message_iter = await self._handler.receive_messages_iter_async()
-            pyamqp_message = await anext(self._message_iter)
+            pyamqp_message = await self._message_iter.__anext__()
             message = self._build_message(pyamqp_message)
             if (
                 self._auto_lock_renewer
