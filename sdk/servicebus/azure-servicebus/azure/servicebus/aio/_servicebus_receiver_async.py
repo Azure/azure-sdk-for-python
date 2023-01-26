@@ -673,7 +673,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         """
         if max_wait_time is not None and max_wait_time <= 0:
             raise ValueError("The max_wait_time must be greater than 0.")
-        return self._IterContextualWrapper(self, max_wait_time)
+        return self._iter_contextual_wrapper(max_wait_time)
 
     async def receive_messages(
         self,
