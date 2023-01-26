@@ -88,5 +88,3 @@ class BatchEndpointInvoke:
     DEFAULT = "default"
     MIN = "min"
     MAX = "max"
-
-SmallSKUs = ["standard_ds1_v2", "standard_ds2_v2"]
