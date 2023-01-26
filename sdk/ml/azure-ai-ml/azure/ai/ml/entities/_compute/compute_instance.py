@@ -140,7 +140,7 @@ class ComputeInstance(Compute):
         inactivity in minutes. Minimum is 15 min, maximum is 3 days.
     :type idle_time_before_shutdown_minutes: Optional[int], optional
     :param custom_applications: Describes available applications and their endpoints on this ComputeInstance.
-    :type custom_applications: Optional[CustomApplications], optional
+    :type custom_applications: Optional[List[CustomApplications]], optional
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
         True - Indicates that the compute nodes will have public IPs provisioned.
         False - Indicates that the compute nodes will have a private endpoint and no public IPs.
@@ -164,7 +164,7 @@ class ComputeInstance(Compute):
         identity: Optional[IdentityConfiguration] = None,
         idle_time_before_shutdown: Optional[str] = None,
         idle_time_before_shutdown_minutes: Optional[int] = None,
-        custom_applications: Optional[CustomApplications] = None,
+        custom_applications: Optional[List[CustomApplications]] = None,
         setup_scripts: Optional[SetupScripts] = None,
         enable_node_public_ip: bool = True,
         **kwargs,
@@ -290,11 +290,10 @@ class ComputeInstance(Compute):
         compute_instance_prop.schedules = (
             self.schedules._to_rest_object() if self.schedules else None
         )
-        compute_instance_prop.custom_services = (
-            self.custom_applications._to_rest_object()
-            if self.custom_applications
-            else None
-        )
+        if self.custom_applications:
+            compute_instance_prop.custom_services = []
+            for app in self.custom_applications:
+                compute_instance_prop.custom_services.append(app._to_rest_object())
         compute_instance_prop.setup_scripts = (
             self.setup_scripts._to_rest_object() if self.setup_scripts else None
         )
@@ -390,6 +389,11 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown_minutes = (
                 int(idle_time_match[1]) if idle_time_match else None
             )
+        custom_applications = None
+        if prop.properties and prop.properties.custom_services:
+            custom_applications = []
+            for app in prop.properties.custom_services:
+                custom_applications.append(CustomApplications._from_rest_object(app))
 
         response = ComputeInstance(
             name=rest_obj.name,
@@ -430,11 +434,7 @@ class ComputeInstance(Compute):
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity)
             if rest_obj.identity
             else None,
-            custom_applications=CustomApplications._from_rest_object(
-                prop.properties.custom_services
-            )
-            if prop.properties and prop.properties.custom_services
-            else None,
+            custom_applications=custom_applications,
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,
