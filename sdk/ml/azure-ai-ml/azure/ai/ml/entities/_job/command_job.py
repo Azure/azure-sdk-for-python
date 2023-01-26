@@ -146,8 +146,6 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             # This is the format of the October Api response. We need to match it exactly
             resources.properties[LOCAL_COMPUTE_PROPERTY] = {LOCAL_COMPUTE_PROPERTY: True}
 
-        print(f"############# ----------------- ######## Command_Job.py-> JobServiceBase.self.services {self.services} ")
-        print(f"############# ----------------- ######## Command_Job.py-> JobServiceBase._to_rest_job_services(self.services) {JobServiceBase._to_rest_job_services(self.services)} ")
         properties = RestCommandJob(
             display_name=self.display_name,
             description=self.description,

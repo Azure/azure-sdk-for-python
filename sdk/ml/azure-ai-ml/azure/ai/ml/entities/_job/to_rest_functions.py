@@ -46,7 +46,6 @@ def _(job: Job) -> JobBaseData:
 
 @to_rest_job_object.register(Command)
 def _(command: Command) -> JobBaseData:
-    print(f"############# ----------------- ######## to_rest_job_object:command {command} ")
     rest_job = command._to_job()._to_rest_object()
     generate_defaults(command, rest_job)
     return rest_job

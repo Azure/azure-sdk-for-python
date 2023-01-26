@@ -512,8 +512,6 @@ class JobOperations(_ScopeDependentOperations):
                 isinstance(rest_job_resource.properties.identity, UserIdentity)
             ):
                 self._set_headers_with_user_aml_token(kwargs)
-            print(f"############# ----------------- ######## rest_job_resource {rest_job_resource} ")
-            print(f"############# ----------------- ######## rest_job_resource.properties {rest_job_resource.properties} ")
             result = self._operation_2022_10_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
@@ -521,7 +519,6 @@ class JobOperations(_ScopeDependentOperations):
                 body=rest_job_resource,
                 **kwargs,
             )
-            print(f"############# ----------------- ######## result {result} ")
             if is_local_run(result):
                 ws_base_url = self._all_operations.all_operations[
                     AzureMLResourceType.WORKSPACE
@@ -557,8 +554,6 @@ class JobOperations(_ScopeDependentOperations):
                 )
             return self._resolve_azureml_id(Job._from_rest_object(result))
         except Exception as ex:  # pylint: disable=broad-except
-            print(f"############# ----------------- ######## isinstance(ex, (ValidationException, SchemaValidationError)) {isinstance(ex, (ValidationException, SchemaValidationError))} ")
-            print(f"############# ----------------- ######## ex {ex} ")
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:

@@ -215,7 +215,6 @@ def command(
             is_deterministic=is_deterministic,
             **kwargs,
         )
-    print(f"############# ----------------- ######## command_func.py() services {services} ")
     command_obj = Command(
         component=component,
         name=name,

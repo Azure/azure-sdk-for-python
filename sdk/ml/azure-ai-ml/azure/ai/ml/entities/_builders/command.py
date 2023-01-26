@@ -162,7 +162,6 @@ class Command(BaseNode):
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
         # resolve normal dict to dict[str, JobService]
-        print(f"############# ----------------- ######## command.py() services {services} ")
         services = _resolve_job_services(services)
         kwargs.pop("type", None)
         self._parameters = kwargs.pop("parameters", {})
@@ -680,7 +679,6 @@ def _resolve_job_services(services: dict) -> Dict[str, Union[JobService, Jupyter
 
     result = {}
     for name, service in services.items():
-        print(f"############# ----------------- ######## name {name} -> service {service} ")
         if isinstance(service, dict):
             # TODO: Remove JobServiceSchema ?
             service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})

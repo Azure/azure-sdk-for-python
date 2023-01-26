@@ -151,7 +151,6 @@ class JobService(JobServiceBase):
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        #print(f"############# ----------------- ######## _to_rest_object JobService ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -178,7 +177,6 @@ class SshJobService(JobServiceBase):
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        print(f"############# ----------------- ######## SshJobService properties {properties} ")
         super().__init__(
             endpoint=endpoint,
             job_service_type=job_service_type,
@@ -191,7 +189,6 @@ class SshJobService(JobServiceBase):
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "SshJobService":
-        print(f"############# ----------------- ######## _from_rest_object SshJobService self.job_service_type {obj.job_service_type} ")
         return cls(
             endpoint=obj.endpoint,
             job_service_type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
@@ -208,7 +205,6 @@ class SshJobService(JobServiceBase):
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        print(f"############# ----------------- ######## _to_rest_object SshJobService self.job_service_type {self.job_service_type} ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -236,7 +232,6 @@ class TensorBoardJobService(JobServiceBase):
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        #print(f"############# ----------------- ######## TensorBoardJobService properties {properties} ")
         super().__init__(
             endpoint=endpoint,
             job_service_type=job_service_type,
@@ -263,7 +258,6 @@ class TensorBoardJobService(JobServiceBase):
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        #print(f"############# ----------------- ######## _to_rest_object TensorBoardJobService self.properties {self.properties} ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -290,7 +284,6 @@ class JupyterLabJobService(JobServiceBase):
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        #print(f"############# ----------------- ######## JupyterLabJobService properties {properties} ")
         super().__init__(
             endpoint=endpoint,
             job_service_type=job_service_type,
@@ -316,7 +309,6 @@ class JupyterLabJobService(JobServiceBase):
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        #print(f"############# ----------------- ######## _to_rest_object JupyterLabJobService self.properties {self.properties} ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -344,7 +336,6 @@ class VsCodeJobService(JobServiceBase):
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        #print(f"############# ----------------- ######## VsCodeJobService properties {properties} ")
         super().__init__(
             endpoint=endpoint,
             job_service_type=job_service_type,
