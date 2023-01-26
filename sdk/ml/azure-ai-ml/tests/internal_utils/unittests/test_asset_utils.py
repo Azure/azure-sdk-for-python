@@ -174,16 +174,18 @@ class TestAssetUtils:
         initial_size = get_directory_size(storage_test_directory)
 
         with_ignore_size = get_directory_size(storage_test_directory, ignore_file=amlignore_file)
-        assert initial_size[0] == 53
+
         assert len(initial_size[1]) == 7
 
         # Directory size calculated with ignore file should be smaller, and include less files
-        assert with_ignore_size[0] == 36
+        # Sizes can vary my machine/OS, so tests against actual sizes shold be relative t
+        # ensure test stability.
+        assert with_ignore_size[0] < initial_size[0]
         assert len(with_ignore_size[1]) == 4
 
         # Directory size calculated after symlink creation should correctly include linked file size,
         # and count symlink file itself towards file count.
         target_file_name, symlink_file_name = generate_link_file(storage_test_directory)
         with_symlink_size = get_directory_size(storage_test_directory)
-        assert with_symlink_size[0] == 71
+        assert with_symlink_size[0] > initial_size[0]
         assert len(with_symlink_size[1]) == 9
