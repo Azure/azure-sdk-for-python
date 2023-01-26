@@ -52,9 +52,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential, endpoint),
+            authentication_policy=auth_policy or get_authentication_policy(credential, endpoint),
             endpoint=self._endpoint.rstrip('/') + "/v1",
             **kwargs
         )

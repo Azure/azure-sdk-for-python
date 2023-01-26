@@ -219,7 +219,7 @@ class InternalComponent(Component):
         :type ignore_file: InternalComponentIgnoreFile
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
-        curr_root = create_merkletree(code_path, lambda x: ignore_file.is_file_excluded(code_path))
+        curr_root = create_merkletree(code_path, ignore_file.is_file_excluded)
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id
 

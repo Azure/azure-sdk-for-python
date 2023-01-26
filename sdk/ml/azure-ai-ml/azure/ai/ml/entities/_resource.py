@@ -76,7 +76,7 @@ class Resource(abc.ABC):
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
         self.__source_path: Optional[str] = kwargs.pop("source_path", None)
-        self._base_path = kwargs.pop("base_path", os.getcwd())
+        self._base_path = kwargs.pop("base_path", None) or os.getcwd()  # base path should never be None
         self._creation_context = kwargs.pop("creation_context", None)
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)

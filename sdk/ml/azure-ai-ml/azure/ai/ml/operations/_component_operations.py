@@ -29,6 +29,7 @@ from azure.ai.ml._scope_dependent_operations import (
 # )
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
+    _create_or_update_autoincrement,
     _get_latest,
     _get_next_version_from_container,
     _resolve_label_to_asset,
@@ -212,6 +213,11 @@ class ComponentOperations(_ScopeDependentOperations):
             )
         )
         component = Component._from_rest_object(result)
+        self._resolve_dependencies_for_pipeline_component_jobs(
+            component,
+            resolver=self._orchestrators.resolve_azureml_id,
+            resolve_inputs=False,
+        )
         return component
 
     @experimental
@@ -290,7 +296,11 @@ class ComponentOperations(_ScopeDependentOperations):
             component = _refine_component(component)
         if version is not None:
             component.version = version
-        if not component.version and component._auto_increment_version:
+        # In non-registry scenario, if component does not have version, no need to get next version here.
+        # As Component property version has setter that updates `_auto_increment_version` in-place, then
+        # a component will get a version after its creation, and it will always use this version in its
+        # future creation operations, which breaks version auto increment mechanism.
+        if self._registry_name and not component.version and component._auto_increment_version:
             component.version = _get_next_version_from_container(
                 name=component.name,
                 container_operation=self._container_operation,
@@ -335,14 +345,27 @@ class ComponentOperations(_ScopeDependentOperations):
                 polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
 
             else:
-                result = self._version_operation.create_or_update(
-                    name=name,
-                    version=version,
-                    resource_group_name=self._resource_group_name,
-                    workspace_name=self._workspace_name,
-                    body=rest_component_resource,
-                    **self._init_args,
-                )
+                # _auto_increment_version can be True for non-registry component creation operation;
+                # and anonymous component should use hash as version
+                if not component._is_anonymous and component._auto_increment_version:
+                    result = _create_or_update_autoincrement(
+                        name=name,
+                        body=rest_component_resource,
+                        version_operation=self._version_operation,
+                        container_operation=self._container_operation,
+                        resource_group_name=self._operation_scope.resource_group_name,
+                        workspace_name=self._workspace_name,
+                        **self._init_args,
+                    )
+                else:
+                    result = self._version_operation.create_or_update(
+                        name=name,
+                        version=version,
+                        resource_group_name=self._resource_group_name,
+                        workspace_name=self._workspace_name,
+                        body=rest_component_resource,
+                        **self._init_args,
+                    )
         except Exception as e:
             raise e
 
@@ -696,7 +719,8 @@ class ComponentOperations(_ScopeDependentOperations):
         layers = self._divide_nodes_to_resolve_into_layers(
             component,
             extra_operations=[
-                self._set_default_display_name_for_anonymous_component_in_node,
+                # no need to do this as we now keep the original component name for anonymous components
+                # self._set_default_display_name_for_anonymous_component_in_node,
                 partial(self._try_resolve_node_level_task_for_parallel_node, resolver=resolver),
                 partial(self._try_resolve_environment_for_component, resolver=resolver),
                 partial(self._try_resolve_compute_for_node, resolver=resolver),
