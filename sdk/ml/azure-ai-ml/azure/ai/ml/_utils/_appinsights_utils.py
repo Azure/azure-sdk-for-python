@@ -49,9 +49,8 @@ def clean_up_rg_deployments_on_subscription(
         try:
             print(f"Deleting past Resource Group Deployment with name: {name}")
             client.deployments.begin_delete_at_subscription_scope(deployment_name=name)
-        except Exception:
+        except Exception: # pylint: disable=broad-except
             print(f"Failed to delete past Resource Group Deployment with name: {name}")
-            pass
 
 
 def default_log_analytics_workspace_exists(credentials: TokenCredential, subscription_id: str, location: str) -> bool:
