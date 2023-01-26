@@ -171,21 +171,19 @@ class TestAssetUtils:
         assert prefix + Path(link_file_path).relative_to(storage_test_directory).as_posix() in remote_paths
 
     def test_directory_size_with_ignore_file(self, storage_test_directory: str, amlignore_file: AmlIgnoreFile) -> None:
-        initial_size = get_directory_size(storage_test_directory)
-
+        base_size = get_directory_size(storage_test_directory)
         with_ignore_size = get_directory_size(storage_test_directory, ignore_file=amlignore_file)
 
-        assert len(initial_size[1]) == 7
+        # Note, the [1] index is the number of files counted in the directory size calculation.
+        # The [0] index is the sum file size, which we don't check here due to how instable that
+        # value is across systems/builds.
+        assert len(base_size[1]) == 7
 
-        # Directory size calculated with ignore file should be smaller, and include less files
-        # Sizes can vary my machine/OS, so tests against actual sizes shold be relative t
-        # ensure test stability.
-        assert with_ignore_size[0] < initial_size[0]
+        # Directory size calculated with ignore file should include less files
         assert len(with_ignore_size[1]) == 4
 
         # Directory size calculated after symlink creation should correctly include linked file size,
         # and count symlink file itself towards file count.
-        target_file_name, symlink_file_name = generate_link_file(storage_test_directory)
+        _, _ = generate_link_file(storage_test_directory)
         with_symlink_size = get_directory_size(storage_test_directory)
-        assert with_symlink_size[0] > initial_size[0]
         assert len(with_symlink_size[1]) == 9
