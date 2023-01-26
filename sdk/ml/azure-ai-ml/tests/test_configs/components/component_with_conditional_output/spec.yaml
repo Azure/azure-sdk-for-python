@@ -3,11 +3,6 @@ version: '1'
 display_name: basic_component
 description: module run logic goes here
 type: command
-inputs:
-  str_param:
-    type: string
-  int_param:
-    type: integer
 outputs:
   output1:
     type: boolean
@@ -20,8 +15,7 @@ outputs:
   output:
     type: boolean
     is_control: true
-command: mldesigner execute --source entry.py --name basic_component --inputs
-  str_param=${{inputs.str_param}} int_param=${{inputs.int_param}} --outputs
+command: mldesigner execute --source entry.py --name basic_component --outputs
   output1=${{outputs.output1}} output2=${{outputs.output2}} output3=${{outputs.output3}}
   output=${{outputs.output}}
 environment:

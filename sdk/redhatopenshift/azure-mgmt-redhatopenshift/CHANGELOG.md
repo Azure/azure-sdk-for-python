@@ -1,5 +1,17 @@
 # Release History
 
+## 1.2.0 (2023-01-17)
+
+### Features Added
+
+  - Added operation group MachinePoolsOperations
+  - Added operation group OpenShiftVersionsOperations
+  - Added operation group SecretsOperations
+  - Added operation group SyncIdentityProvidersOperations
+  - Added operation group SyncSetsOperations
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
 ## 1.1.0 (2022-05-10)
 
 **Features**

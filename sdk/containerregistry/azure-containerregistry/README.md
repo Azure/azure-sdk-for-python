@@ -128,7 +128,7 @@ with ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="https
         for manifest in client.list_manifest_properties(repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING):
             manifest_count += 1
             if manifest_count > 3:
-                print("Deleting {}:{}".format(repository, manifest.digest))
+                print(f"Deleting {repository}:{manifest.digest}")
                 client.delete_manifest(repository, manifest.digest)
 ```
 

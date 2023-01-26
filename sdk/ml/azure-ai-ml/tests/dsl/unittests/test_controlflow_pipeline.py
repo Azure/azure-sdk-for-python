@@ -3,15 +3,15 @@ import pytest
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._parallel_for import parallel_for
-from azure.ai.ml.entities import Command
-from azure.ai.ml.exceptions import UserErrorException, ValidationException
+from azure.ai.ml.exceptions import ValidationException
 
-from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
+from .._util import _DSL_TIMEOUT_SECOND
 
 
 @pytest.mark.usefixtures(
     "enable_pipeline_private_preview_features",
-    "enable_private_preview_schema_features"
+    "enable_private_preview_schema_features",
+    "enable_private_preview_pipeline_node_types"
 )
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
@@ -95,7 +95,6 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ),
             (
                     # invalid JSON string items
-
                     '[{"component_in_number": 1}, {}]',
                     "Items should have same keys with body inputs"
             )
@@ -115,8 +114,10 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             )
 
         with pytest.raises(ValidationException) as e:
-            invalid_pipeline()
+            pipeline_job = invalid_pipeline()
+            pipeline_job._validate(raise_error=True)
         assert error_message in str(e.value)
+
     @pytest.mark.parametrize(
         "items",
         (
@@ -259,6 +260,10 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ({"type": "uri_file"}, {'job_output_type': 'mltable'}, {'type': 'mltable'}, True),
             ({"type": "uri_folder"}, {'job_output_type': 'mltable'}, {'type': 'mltable'}, True),
             ({"type": "mltable"}, {'job_output_type': 'mltable'}, {'type': 'mltable'}, True),
+            ({"type": "mlflow_model"}, {'job_output_type': 'mltable'}, {'type': 'mltable'}, True),
+            ({"type": "triton_model"}, {'job_output_type': 'mltable'}, {'type': 'mltable'}, True),
+            ({"type": "custom_model"}, {'job_output_type': 'mltable'}, {'type': 'mltable'}, True),
+            ({"type": "path"}, {'job_output_type': 'mltable'}, {'type': 'mltable'}, True),
             ({"type": "number"}, {}, {'type': 'string'}, False),
             ({"type": "string", "is_control": True}, {}, {'type': 'string', "is_control": True}, False),
             ({"type": "boolean", "is_control": True}, {}, {'type': 'string', "is_control": True}, False),
@@ -298,30 +303,3 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         pipeline_component = my_job.component
         rest_component = pipeline_component._to_rest_object().as_dict()
         assert rest_component["properties"]["component_spec"]["outputs"] == {'output': component_out_dict}
-
-    @pytest.mark.parametrize(
-        "out_type", ["mlflow_model", "triton_model", "custom_model"]
-    )
-    def test_parallel_for_output_unsupported_case(self, out_type):
-        basic_component = load_component(
-            source="./tests/test_configs/components/helloworld_component.yml",
-            params_override=[
-                {"outputs.component_out_path": {"type": out_type}}
-            ]
-        )
-
-        @pipeline
-        def my_pipeline():
-            body = basic_component(component_in_path=Input(path="test_path1"))
-
-            parallel_for(
-                body=body,
-                items={
-                    "iter1": {"component_in_number": 1},
-                    "iter2": {"component_in_number": 2}
-                }
-            )
-
-        with pytest.raises(UserErrorException) as e:
-            my_pipeline()
-        assert f"Referencing output with type {out_type} is not supported" in str(e.value)
