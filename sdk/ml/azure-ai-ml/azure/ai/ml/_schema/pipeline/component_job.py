@@ -156,11 +156,11 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         keys=fields.Str(),
         values=UnionField(
             [
-                NestedField(JobServiceSchema),
                 NestedField(SshJobServiceSchema),
                 NestedField(JupyterLabJobServiceSchema),
                 NestedField(TensorBoardJobServiceSchema),
                 NestedField(VsCodeJobServiceSchema),
+                NestedField(JobServiceSchema),
             ]
         ),
     )

@@ -82,20 +82,15 @@ class JobServiceBase(RestTranslatableMixin):
             )
 
     @classmethod
-    def _to_rest_job_services(cls, services: Dict[str, Union["JobService", "SshJobService"]]) -> Dict[str, RestJobService]:
-        print(f"############# ----------------- ######## _to_rest_job_services->services {services} ")
+    def _to_rest_job_services(cls, services: Dict[str, Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"]]) -> Dict[str, RestJobService]:
         if services is None:
             # TODO: return {} ?
             return None
 
-        for name, service in services.items():
-            print(f"############# ----------------- ######## isinstance(service, JobService)  {isinstance(service, JobService)} ")
-            print(f"############# ----------------- ######## isinstance(service, SshJobService) {isinstance(service, SshJobService)} ")
-        # pylint: disable=protected-access
         return {name: service._to_rest_object() for name, service in services.items()}
 
     @classmethod
-    def _from_rest_job_services(cls, services: Dict[str, RestJobService]) -> Dict[str, Union["JobService", "SshJobService"]]:
+    def _from_rest_job_services(cls, services: Dict[str, RestJobService]) -> Dict[str, Union["JobService", "JupyterLabJobService", "SshJobService", "TensorBoardJobService", "VsCodeJobService"]]:
         # """Resolve Dict[str, RestJobService] to Dict[str, JobService]"""
         if services is None:
             # TODO: return {} ?
@@ -103,8 +98,14 @@ class JobServiceBase(RestTranslatableMixin):
 
         result = {}
         for name, service in services.items():
+            if service.job_service_type == JobServiceTypeNames.RestNames.JUPYTER_LAB:
+                result[name] = JupyterLabJobService._from_rest_object(service)
             if service.job_service_type == JobServiceTypeNames.RestNames.SSH:
                 result[name] = SshJobService._from_rest_object(service)
+            if service.job_service_type == JobServiceTypeNames.RestNames.TENSOR_BOARD:
+                result[name] = TensorBoardJobService._from_rest_object(service)
+            if service.job_service_type == JobServiceTypeNames.RestNames.VS_CODE:
+                result[name] = VsCodeJobService._from_rest_object(service)
             else:
                 result[name] = JobService._from_rest_object(service)
         return result
@@ -142,8 +143,6 @@ class JobService(JobServiceBase):
             job_service_type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
             if obj.job_service_type
             else None,
-            # obj.job_service_type,
-            # nodes="all" if isinstance(obj.nodes, AllNodes) else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
@@ -152,7 +151,7 @@ class JobService(JobServiceBase):
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        print(f"############# ----------------- ######## _to_rest_object JobService ")
+        #print(f"############# ----------------- ######## _to_rest_object JobService ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -171,19 +170,14 @@ class SshJobService(JobServiceBase):
         self,   
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]] = None,
+        job_service_type: Optional[Literal["ssh"]] = "ssh",
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
-        log_dir: Optional[str] = None,
+        ssh_public_keys: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        if log_dir and not properties:
-            properties = {"logDir": log_dir}
-
-        if log_dir and properties:
-            properties.update({"logDir": log_dir})
         print(f"############# ----------------- ######## SshJobService properties {properties} ")
         super().__init__(
             endpoint=endpoint,
@@ -191,12 +185,13 @@ class SshJobService(JobServiceBase):
             nodes=nodes,
             status=status,
             port=port,
-            properties=properties,
+            properties=append_or_update_properties(properties, "sshPublicKeys", ssh_public_keys),
             **kwargs,
         )
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "SshJobService":
+        print(f"############# ----------------- ######## _from_rest_object SshJobService self.job_service_type {obj.job_service_type} ")
         return cls(
             endpoint=obj.endpoint,
             job_service_type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
@@ -207,12 +202,13 @@ class SshJobService(JobServiceBase):
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
+            ssh_public_keys=get_property(obj.properties, "sshPublicKeys"),
             properties=obj.properties,
         )
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        print(f"############# ----------------- ######## _to_rest_object SshJobService self.properties {self.properties} ")
+        print(f"############# ----------------- ######## _to_rest_object SshJobService self.job_service_type {self.job_service_type} ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -232,7 +228,7 @@ class TensorBoardJobService(JobServiceBase):
         self,   
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]] = None,
+        job_service_type: Optional[Literal["tensor_board"]] = "tensor_board",
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -240,19 +236,14 @@ class TensorBoardJobService(JobServiceBase):
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        if log_dir and not properties:
-            properties = {"logDir": log_dir}
-
-        if log_dir and properties:
-            properties.update({"logDir": log_dir})
-        print(f"############# ----------------- ######## TensorBoardJobService properties {properties} ")
+        #print(f"############# ----------------- ######## TensorBoardJobService properties {properties} ")
         super().__init__(
             endpoint=endpoint,
             job_service_type=job_service_type,
             nodes=nodes,
             status=status,
             port=port,
-            properties=properties,
+            properties=append_or_update_properties(properties, "logDir", log_dir),
             **kwargs,
         )
 
@@ -263,18 +254,16 @@ class TensorBoardJobService(JobServiceBase):
             job_service_type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
             if obj.job_service_type
             else None,
-            # obj.job_service_type,
-            # nodes="all" if isinstance(obj.nodes, AllNodes) else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
-            log_dir= obj.properties.get("logDir", None) if obj.properties else None,
+            log_dir=get_property(obj.properties, "logDir"),
             properties=obj.properties,
         )
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        print(f"############# ----------------- ######## _to_rest_object TensorBoardJobService self.properties {self.properties} ")
+        #print(f"############# ----------------- ######## _to_rest_object TensorBoardJobService self.properties {self.properties} ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -294,20 +283,14 @@ class JupyterLabJobService(JobServiceBase):
         self,   
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]] = None,
+        job_service_type: Optional[Literal["jupyter_lab"]] = "jupyter_lab",
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
-        ssh_public_keys: Optional[str] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        if ssh_public_keys and not properties:
-            properties = {"sshPublicKeys": ssh_public_keys}
-
-        if ssh_public_keys and properties:
-            properties.update({"sshPublicKeys": ssh_public_keys})
-        print(f"############# ----------------- ######## JupyterLabJobService properties {properties} ")
+        #print(f"############# ----------------- ######## JupyterLabJobService properties {properties} ")
         super().__init__(
             endpoint=endpoint,
             job_service_type=job_service_type,
@@ -325,18 +308,15 @@ class JupyterLabJobService(JobServiceBase):
             job_service_type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
             if obj.job_service_type
             else None,
-            # obj.job_service_type,
-            # nodes="all" if isinstance(obj.nodes, AllNodes) else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
-            ssh_public_keys= obj.properties.get("sshPublicKeys", None) if obj.properties else None,
             properties=obj.properties,
         )
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        print(f"############# ----------------- ######## _to_rest_object JupyterLabJobService self.properties {self.properties} ")
+        #print(f"############# ----------------- ######## _to_rest_object JupyterLabJobService self.properties {self.properties} ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -357,14 +337,14 @@ class VsCodeJobService(JobServiceBase):
         self,   
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]] = None,
+        job_service_type: Optional[Literal["vs_code"]] = "vs_code",
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
         properties: Optional[Dict[str, str]] = None,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
-        print(f"############# ----------------- ######## VsCodeJobService properties {properties} ")
+        #print(f"############# ----------------- ######## VsCodeJobService properties {properties} ")
         super().__init__(
             endpoint=endpoint,
             job_service_type=job_service_type,
@@ -382,8 +362,6 @@ class VsCodeJobService(JobServiceBase):
             job_service_type=JobServiceTypeNames.REST_TO_ENTITY.get(obj.job_service_type, None)
             if obj.job_service_type
             else None,
-            # obj.job_service_type,
-            # nodes="all" if isinstance(obj.nodes, AllNodes) else None,
             nodes="all" if obj.nodes else None,
             status=obj.status,
             port=obj.port,
@@ -392,7 +370,6 @@ class VsCodeJobService(JobServiceBase):
 
     # TODO: Map properties
     def _to_rest_object(self) -> RestJobService:
-        print(f"############# ----------------- ######## _to_rest_object VsCodeJobService self.properties {self.properties} ")
         return RestJobService(
             endpoint=self.endpoint,
             job_service_type=JobServiceTypeNames.ENTITY_TO_REST.get(self.job_service_type, None)
@@ -403,3 +380,19 @@ class VsCodeJobService(JobServiceBase):
             port=self.port,
             properties=self.properties,
         )
+
+
+def append_or_update_properties(properties: Dict[str, str], key: str, value: str) -> Dict[str, str]:
+    # TODO: Should we support add when value is NONE
+    if value and not properties:
+        properties = {key: value}
+
+    # TODO: Should we support update when value is NONE
+    if value and properties:
+        properties.update({key: value})
+
+    return properties
+
+
+def get_property(properties: Dict[str, str], key: str) -> str:
+    return properties.get(key, None) if properties else None

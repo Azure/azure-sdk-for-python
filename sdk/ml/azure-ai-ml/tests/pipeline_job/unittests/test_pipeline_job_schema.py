@@ -33,7 +33,7 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     validate_pipeline_input_key_contains_allowed_characters,
 )
 from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_dist_dict_to_str_dict
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
 
@@ -1655,13 +1655,15 @@ class TestPipelineJobSchema:
         assert job.component._job_sources == {"REMOTE.REGISTRY": 1}
         assert job.component._source == "YAML.JOB"
 
-    def test_command_job_node_services_in_pipeline(self):
-        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services.yml"
+    def test_command_job_node_services_in_pipeline_with_properties(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_with_properties.yml"
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
 
-        for name, service in node_services.items():
-            assert isinstance(service, JobService)
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
 
         job_rest_obj = job._to_rest_object()
         rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
@@ -1669,6 +1671,7 @@ class TestPipelineJobSchema:
         assert rest_services == {
             "my_ssh": {
                 "job_service_type": "SSH",
+                "properties": {"sshPublicKeys": "xyz123"},
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
@@ -1677,6 +1680,39 @@ class TestPipelineJobSchema:
             "my_jupyterlab": {
                 "job_service_type": "JupyterLab",
             },
+            "my_vscode": {
+                "job_service_type": "VSCode",
+            },
+        }
+
+    def test_command_job_node_services_in_pipeline(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services.yml"
+        job: PipelineJob = load_job(source=test_path)
+        node_services = job.jobs["hello_world_component_inline"].services
+
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
+
+        job_rest_obj = job._to_rest_object()
+        rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
+        # rest object of node in pipeline should be pure dict
+        assert rest_services == {
+            "my_ssh": {
+                "job_service_type": "SSH",
+                "properties": {"sshPublicKeys": "xyz123"},
+            },
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {"logDir": "~/tblog"},
+            },
+            "my_jupyterlab": {
+                "job_service_type": "JupyterLab",
+            },
+            "my_vscode": {
+                "job_service_type": "VSCode",
+            },
         }
 
     def test_command_job_node_services_in_pipeline_with_no_component(self):
@@ -1684,8 +1720,10 @@ class TestPipelineJobSchema:
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
 
-        for name, service in node_services.items():
-            assert isinstance(service, JobService)
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
 
         job_rest_obj = job._to_rest_object()
 
@@ -1700,6 +1738,38 @@ class TestPipelineJobSchema:
             },
             "my_jupyterlab": {
                 "job_service_type": "JupyterLab",
+            },
+            "my_vscode": {
+                "job_service_type": "VSCode",
+            },
+        }
+
+    def test_command_job_node_services_subtypes_in_pipeline_with_no_component(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_inline_job.yml"
+        job: PipelineJob = load_job(source=test_path)
+        node_services = job.jobs["hello_world_component_inline"].services
+
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
+
+        job_rest_obj = job._to_rest_object()
+
+        # rest object of node in pipeline should be pure dict
+        assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
+            "my_ssh": {
+                "job_service_type": "SSH",
+            },
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {"logDir": "~/tblog"},
+            },
+            "my_jupyterlab": {
+                "job_service_type": "JupyterLab",
+            },
+            "my_vscode": {
+                "job_service_type": "VSCode",
             },
         }
 

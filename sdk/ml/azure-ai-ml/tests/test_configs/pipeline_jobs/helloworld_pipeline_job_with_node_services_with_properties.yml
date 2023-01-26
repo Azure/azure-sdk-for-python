@@ -1,7 +1,7 @@
 type: pipeline
 
-name: simplePipelineJobWithNoComps
-description: The hello world pipeline job with no component
+name: simplePipelineJobWithInlineComps
+description: The hello world pipeline job with inline components
 tags:
   tag: tagvalue
   owner: sdkteam
@@ -10,11 +10,18 @@ compute: azureml:cpu-cluster
 
 jobs:
   hello_world_component_inline:
-    command: echo Hello World & sleep 1h
-    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+    type: command
+    compute: azureml:cpu-cluster
+    component:
+      command: >-
+        echo Hello World & sleep 1h
+      environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
+      code: "./"
     services:
       "my_ssh":
         job_service_type: "ssh"
+        properties:
+          sshPublicKeys: "xyz123"
       "my_tensorboard":
         job_service_type: "tensor_board"
         properties:
@@ -23,3 +30,4 @@ jobs:
         job_service_type: "jupyter_lab"
       "my_vscode":
         job_service_type: "vs_code"
+
