@@ -18,9 +18,14 @@ class Destination:
     """
 
     # pylint: disable=unused-argument,no-self-use
-    def __init__(self, path: Optional[str] = None, event_hub: Optional[EventHub] = None, **kwargs):
+    def __init__(
+        self, path: Optional[str] = None, 
+        event_hub: Optional[EventHub] = None, 
+        client_id: Optional[str] = None,
+        **kwargs):
         self.path = path
         self.event_hub = event_hub
+        self.client_id = client_id
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

@@ -572,8 +572,6 @@ class ModelType:
 
 
 class RollingRate:
-    YEAR = "year"
-    MONTH = "month"
     DAY = "day"
     HOUR = "hour"
     MINUTE = "minute"
@@ -588,3 +586,7 @@ class IdentityType:
     AML_TOKEN = "aml_token"
     USER_IDENTITY = "user_identity"
     MANAGED_IDENTITY = "managed_identity"
+
+class Boolean:
+    TRUE = "true"
+    FALSE = "false"

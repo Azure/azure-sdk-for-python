@@ -17,6 +17,7 @@ module_logger = logging.getLogger(__name__)
 class DestinationSchema(metaclass=PatchedSchemaMeta):
     path = fields.Str()
     event_hub = NestedField(EventHubSchema)
+    client_id = fields.Str()
 
     # pylint: disable=unused-argument,no-self-use
     @validates("path")
