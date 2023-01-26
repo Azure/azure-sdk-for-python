@@ -1,14 +1,8 @@
 # Release History
 
-## 1.26.3 (Unreleased)
+## 1.26.3 (2023-02-02)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Fixed deflate decompression for aiohttp   #28483
 
 ## 1.26.2 (2023-01-05)
 
