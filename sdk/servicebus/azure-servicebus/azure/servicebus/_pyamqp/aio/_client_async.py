@@ -729,7 +729,6 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)
             self._shutdown = True
-            self._timeout_reached = True
             return False
         return True
 
@@ -853,15 +852,17 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         receiving = True
         message = None
         try:
+            # I think if it is just this one loop then when we close the connection we still might have items in queue
             while receiving:
                 receiving = await self.do_work_async()
-                message = self._received_messages.get(timeout=self._timeout)
-                if not self._received_messages.empty():
-                    self._received_messages.task_done()
+                # while not self._received_messages.empty():
+                message = self._received_messages.get(block=True, timeout=self._timeout)
+                self._received_messages.task_done()
                 yield message
                 await self._complete_message_async(message, auto_complete)
         except:
-
+            #Check what self._received_messages is 
+            # what happens to queue when Empty exception thrown, do we need to reset it?
             if self._shutdown:
                 self.close()
 

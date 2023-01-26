@@ -928,8 +928,8 @@ class ReceiveClient(AMQPClient):
             while receiving:
 
                 receiving = self.do_work()
-
-                message = self._received_messages.get(timeout=self._timeout)
+                # while not self._received_messages.empty():
+                message = self._received_messages.get(block=True, timeout=self._timeout)
                 if not self._received_messages.empty():
                     self._received_messages.task_done()
                 yield message
