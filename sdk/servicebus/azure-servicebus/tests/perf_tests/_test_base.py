@@ -23,7 +23,7 @@ class _ReceiveTest(PerfStressTest):
             prefetch_count=self.args.num_messages,
             max_wait_time=self.args.max_wait_time or None, 
             transport_type=transport_type,
-            uamqp_transport=arguments.transport_type,
+            uamqp_transport=arguments.uamqp_transport,
         )
         self.async_servicebus_client=AsyncServiceBusClient.from_connection_string(
             self.connection_string,
@@ -31,7 +31,7 @@ class _ReceiveTest(PerfStressTest):
             prefetch_count=self.args.num_messages,
             max_wait_time=self.args.max_wait_time or None,
             transport_type=transport_type,
-            uamqp_transport=arguments.transport_type,
+            uamqp_transport=arguments.uamqp_transport,
         )
     async def close(self) -> None:
         self.servicebus_client.close
@@ -151,12 +151,12 @@ class _SendTest(BatchPerfTest):
         self.service_client=ServiceBusClient.from_connection_string(
             self.connection_string,
             transport_type=transport_type,
-            uamqp_transport=arguments.transport_type,
+            uamqp_transport=arguments.uamqp_transport,
         )
         self.async_service_client=AsyncServiceBusClient.from_connection_string(
             self.connection_string,
             transport_type=transport_type,
-            uamqp_transport=arguments.transport_type,
+            uamqp_transport=arguments.uamqp_transport,
         )
     async def close(self) -> None:
         self.service_client.close()
@@ -170,7 +170,6 @@ class _SendTest(BatchPerfTest):
         parser.add_argument('--batch-size', nargs='?', type=int, help='The number of messages that should be included in each batch. Defaults to 100', default=100)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)
-        parser.add_argument('--no-client-share', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
 
 
 
