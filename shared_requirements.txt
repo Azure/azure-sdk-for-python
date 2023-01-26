@@ -323,9 +323,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-monitor-opentelemetry-exporter fixedint==0.1.6
 #override azure-monitor-opentelemetry-exporter msrest>=0.6.10
 #override azure-mgmt-healthbot azure-mgmt-core>=1.3.2,<2.0.0
-#override azure-monitor-opentelemetry-exporter opentelemetry-api<2.0.0,>=1.15.0
+#override azure-monitor-opentelemetry-exporter opentelemetry-api==1.15.0
 #override azure-mgmt-cosmosdb typing-extensions>=4.3.0; python_version<'3.8.0'
-#override azure-monitor-opentelemetry-exporter opentelemetry-sdk<2.0.0,>=1.15.0
+#override azure-monitor-opentelemetry-exporter opentelemetry-sdk==1.15.0
 #override azure-mgmt-support msrest>=0.7.1
 #override azure-core-tracing-opentelemetry opentelemetry-api<2.0.0,>=1.0.0
 #override azure-mgmt-appcontainers typing-extensions>=4.3.0; python_version<'3.8.0'
