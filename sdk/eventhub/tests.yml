@@ -19,3 +19,10 @@ stages:
         AZURE_CLIENT_SECRET: $(python-eh-livetest-event-hub-aad-secret)
         AZURE_SUBSCRIPTION_ID: $(python-eh-livetest-event-hub-subscription-id)
         AZURE_COSMOS_CONN_STR: $(python-eventhub-livetest-cosmos-conn-str)
+      Clouds: 'Public,Canary'
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        Canary:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          Location: 'eastus2euap'
