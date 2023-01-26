@@ -212,7 +212,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             None if self._session_id is None else ServiceBusSession(cast(str, self._session_id), self)
         )
         self._receive_context = asyncio.Event()
-        self._handler: ReceiveClientAsync
 
     async def _iter_contextual_wrapper(self, max_wait_time=None):
         # pylint: disable=protected-access

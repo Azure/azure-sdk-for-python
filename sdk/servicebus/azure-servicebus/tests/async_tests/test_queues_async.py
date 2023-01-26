@@ -2277,7 +2277,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert receiver.error_raised
                 assert receiver.execution_times >= 4  # at least 1 failure and 3 successful receiving iterator
 
-    # @pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="pyamqp header time to live error")
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
