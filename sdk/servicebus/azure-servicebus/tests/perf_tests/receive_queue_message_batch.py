@@ -16,7 +16,7 @@ class ReceiveQueueMessageBatchTest(_QueueReceiveTest):
                 max_message_count=self.args.num_messages - count,
                 max_wait_time=self.args.max_wait_time or None
             )
-            if not self.args.peeklock:
+            if self.args.peeklock:
                 for msg in batch:
                     self.receiver.complete_message(msg)
             count += len(batch)
@@ -28,6 +28,6 @@ class ReceiveQueueMessageBatchTest(_QueueReceiveTest):
                 max_message_count=self.args.num_messages - count,
                 max_wait_time=self.args.max_wait_time or None
             )
-            if not self.args.peeklock:
+            if self.args.peeklock:
                 await asyncio.gather(*[self.async_receiver.complete_message(m) for m in batch])
             count += len(batch)
