@@ -12,16 +12,25 @@ from ._models_py3 import AnalyzeResult
 from ._models_py3 import AnalyzeResultOperation
 from ._models_py3 import AuthorizeCopyRequest
 from ._models_py3 import AzureBlobContentSource
+from ._models_py3 import AzureBlobFileListSource
 from ._models_py3 import BoundingRegion
+from ._models_py3 import BuildDocumentClassifierRequest
 from ._models_py3 import BuildDocumentModelRequest
+from ._models_py3 import ClassifierDocumentTypeDetails
+from ._models_py3 import ClassifyDocumentRequest
 from ._models_py3 import ComponentDocumentModelDetails
 from ._models_py3 import ComposeDocumentModelRequest
 from ._models_py3 import CopyAuthorization
 from ._models_py3 import CurrencyValue
 from ._models_py3 import CustomDocumentModelsDetails
 from ._models_py3 import Document
+from ._models_py3 import DocumentAnnotation
+from ._models_py3 import DocumentBarcode
+from ._models_py3 import DocumentClassifierBuildOperationDetails
+from ._models_py3 import DocumentClassifierDetails
 from ._models_py3 import DocumentField
 from ._models_py3 import DocumentFieldSchema
+from ._models_py3 import DocumentFormula
 from ._models_py3 import DocumentKeyValueElement
 from ._models_py3 import DocumentKeyValuePair
 from ._models_py3 import DocumentLanguage
@@ -42,6 +51,7 @@ from ._models_py3 import DocumentTypeDetails
 from ._models_py3 import DocumentWord
 from ._models_py3 import Error
 from ._models_py3 import ErrorResponse
+from ._models_py3 import GetDocumentClassifiersResponse
 from ._models_py3 import GetDocumentModelsResponse
 from ._models_py3 import GetOperationsResponse
 from ._models_py3 import InnerError
@@ -54,10 +64,18 @@ from ._form_recognizer_client_enums import (
     AnalyzeResultOperationStatus,
     ApiVersion,
     ContentType,
+    ContentType1,
+    DocumentAnalysisFeature,
+    DocumentAnnotationKind,
+    DocumentBarcodeKind,
     DocumentBuildMode,
     DocumentFieldType,
+    DocumentFormulaKind,
     DocumentSignatureType,
     DocumentTableCellKind,
+    FontFamily,
+    FontStyle,
+    FontWeight,
     LengthUnit,
     OperationKind,
     OperationStatus,
@@ -75,16 +93,25 @@ __all__ = [
     'AnalyzeResultOperation',
     'AuthorizeCopyRequest',
     'AzureBlobContentSource',
+    'AzureBlobFileListSource',
     'BoundingRegion',
+    'BuildDocumentClassifierRequest',
     'BuildDocumentModelRequest',
+    'ClassifierDocumentTypeDetails',
+    'ClassifyDocumentRequest',
     'ComponentDocumentModelDetails',
     'ComposeDocumentModelRequest',
     'CopyAuthorization',
     'CurrencyValue',
     'CustomDocumentModelsDetails',
     'Document',
+    'DocumentAnnotation',
+    'DocumentBarcode',
+    'DocumentClassifierBuildOperationDetails',
+    'DocumentClassifierDetails',
     'DocumentField',
     'DocumentFieldSchema',
+    'DocumentFormula',
     'DocumentKeyValueElement',
     'DocumentKeyValuePair',
     'DocumentLanguage',
@@ -105,6 +132,7 @@ __all__ = [
     'DocumentWord',
     'Error',
     'ErrorResponse',
+    'GetDocumentClassifiersResponse',
     'GetDocumentModelsResponse',
     'GetOperationsResponse',
     'InnerError',
@@ -114,10 +142,18 @@ __all__ = [
     'AnalyzeResultOperationStatus',
     'ApiVersion',
     'ContentType',
+    'ContentType1',
+    'DocumentAnalysisFeature',
+    'DocumentAnnotationKind',
+    'DocumentBarcodeKind',
     'DocumentBuildMode',
     'DocumentFieldType',
+    'DocumentFormulaKind',
     'DocumentSignatureType',
     'DocumentTableCellKind',
+    'FontFamily',
+    'FontStyle',
+    'FontWeight',
     'LengthUnit',
     'OperationKind',
     'OperationStatus',

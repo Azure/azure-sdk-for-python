@@ -59,18 +59,24 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'authorize_copy_document_model': '2022-08-31',
-            'begin_analyze_document': '2022-08-31',
-            'begin_build_document_model': '2022-08-31',
-            'begin_compose_document_model': '2022-08-31',
-            'begin_copy_document_model_to': '2022-08-31',
-            'delete_document_model': '2022-08-31',
-            'get_analyze_document_result': '2022-08-31',
-            'get_document_model': '2022-08-31',
-            'get_document_models': '2022-08-31',
-            'get_operation': '2022-08-31',
-            'get_operations': '2022-08-31',
-            'get_resource_details': '2022-08-31',
+            'authorize_copy_document_model': '2022-10-31-preview',
+            'begin_analyze_document': '2022-10-31-preview',
+            'begin_build_document_classifier': '2022-10-31-preview',
+            'begin_build_document_model': '2022-10-31-preview',
+            'begin_classify_document': '2022-10-31-preview',
+            'begin_compose_document_model': '2022-10-31-preview',
+            'begin_copy_document_model_to': '2022-10-31-preview',
+            'delete_document_classifier': '2022-10-31-preview',
+            'delete_document_model': '2022-10-31-preview',
+            'get_analyze_document_result': '2022-10-31-preview',
+            'get_classify_document_result': '2022-10-31-preview',
+            'get_document_classifier': '2022-10-31-preview',
+            'get_document_classifiers': '2022-10-31-preview',
+            'get_document_model': '2022-10-31-preview',
+            'get_document_models': '2022-10-31-preview',
+            'get_operation': '2022-10-31-preview',
+            'get_operations': '2022-10-31-preview',
+            'get_resource_details': '2022-10-31-preview',
             'train_custom_model_async': '2.0',
         }},
         _PROFILE_TAG + " latest"
@@ -84,7 +90,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if api_version == '2022-08-31':
+        if api_version == '2022-08-31' or api_version == '2022-10-31-preview':
             base_url = '{endpoint}/formrecognizer'
         elif api_version == '2.0':
             base_url = '{endpoint}/formrecognizer/v2.0'
@@ -108,11 +114,15 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         """Module depends on the API version:
 
            * 2022-08-31: :mod:`v2022_08_31.models<azure.ai.formrecognizer.v2022_08_31.models>`
+           * 2022-10-31-preview: :mod:`v2023_02_28.models<azure.ai.formrecognizer.v2023_02_28.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
            * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
         """
         if api_version == '2022-08-31':
             from ..v2022_08_31 import models
+            return models
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28 import models
             return models
         elif api_version == '2.0':
             from ..v2_0 import models

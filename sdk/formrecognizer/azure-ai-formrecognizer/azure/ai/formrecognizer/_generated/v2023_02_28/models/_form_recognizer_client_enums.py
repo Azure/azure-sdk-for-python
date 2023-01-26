@@ -24,8 +24,36 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     TWO_THOUSAND_TWENTY_TWO08_31 = "2022-08-31"
+    TWO_THOUSAND_TWENTY_TWO10_31_PREVIEW = "2022-10-31-preview"
 
 class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Content type for upload
+    """
+
+    #: Content Type 'application/octet-stream'.
+    APPLICATION_OCTET_STREAM = "application/octet-stream"
+    #: Content Type 'application/pdf'.
+    APPLICATION_PDF = "application/pdf"
+    #: Content Type 'application/vnd.openxmlformats-officedocument.presentationml.presentation'.
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_PRESENTATIONML_PRESENTATION = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+    #: Content Type 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'.
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_SPREADSHEETML_SHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    #: Content Type 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'.
+    APPLICATION_VND_OPENXMLFORMATS_OFFICEDOCUMENT_WORDPROCESSINGML_DOCUMENT = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    #: Content Type 'image/bmp'.
+    IMAGE_BMP = "image/bmp"
+    #: Content Type 'image/heif'.
+    IMAGE_HEIF = "image/heif"
+    #: Content Type 'image/jpeg'.
+    IMAGE_JPEG = "image/jpeg"
+    #: Content Type 'image/png'.
+    IMAGE_PNG = "image/png"
+    #: Content Type 'image/tiff'.
+    IMAGE_TIFF = "image/tiff"
+    #: Content Type 'text/html'.
+    TEXT_HTML = "text/html"
+
+class ContentType1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload
     """
 
@@ -45,6 +73,41 @@ class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IMAGE_TIFF = "image/tiff"
     #: Content Type 'application/json'.
     APPLICATION_JSON = "application/json"
+
+class DocumentAnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+
+    HIGH_RESOLUTION = "highResolution"
+    FORMULA = "formula"
+    FONT = "font"
+
+class DocumentAnnotationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Annotation kind.
+    """
+
+    CHECK = "check"
+    CROSS = "cross"
+
+class DocumentBarcodeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Barcode kind.
+    """
+
+    QR_CODE = "QRCode"
+    PDF417 = "PDF417"
+    UPCA = "UPCA"
+    UPCE = "UPCE"
+    CODE39 = "Code39"
+    CODE128 = "Code128"
+    EAN8 = "EAN8"
+    EAN13 = "EAN13"
+    DATA_BAR = "DataBar"
+    CODE93 = "Code93"
+    CODABAR = "Codabar"
+    DATA_BAR_EXPANDED = "DataBarExpanded"
+    ITF = "ITF"
+    MICRO_QR_CODE = "MicroQRCode"
+    AZTEC = "Aztec"
+    DATA_MATRIX = "DataMatrix"
+    MAXI_CODE = "MaxiCode"
 
 class DocumentBuildMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom document model build mode.
@@ -71,6 +134,13 @@ class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CURRENCY = "currency"
     ADDRESS = "address"
 
+class DocumentFormulaKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Formula kind.
+    """
+
+    INLINE = "inline"
+    DISPLAY = "display"
+
 class DocumentSignatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Presence of signature.
     """
@@ -88,6 +158,30 @@ class DocumentTableCellKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STUB_HEAD = "stubHead"
     DESCRIPTION = "description"
 
+class FontFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Generic font family category.
+    """
+
+    SERIF = "serif"
+    SANS_SERIF = "sansSerif"
+    CURSIVE = "cursive"
+    FANTASY = "fantasy"
+    MONOSPACE = "monospace"
+
+class FontStyle(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Font style.
+    """
+
+    NORMAL = "normal"
+    ITALIC = "italic"
+
+class FontWeight(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Font weight.
+    """
+
+    NORMAL = "normal"
+    BOLD = "bold"
+
 class LengthUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The unit used by the width, height, and polygon properties. For images, the unit is "pixel".
     For PDF, the unit is "inch".
@@ -103,6 +197,7 @@ class OperationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DOCUMENT_MODEL_BUILD = "documentModelBuild"
     DOCUMENT_MODEL_COMPOSE = "documentModelCompose"
     DOCUMENT_MODEL_COPY_TO = "documentModelCopyTo"
+    DOCUMENT_CLASSIFIER_BUILD = "documentClassifierBuild"
 
 class OperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Operation status.
@@ -124,6 +219,7 @@ class ParagraphRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TITLE = "title"
     SECTION_HEADING = "sectionHeading"
     FOOTNOTE = "footnote"
+    FORMULA_BLOCK = "formulaBlock"
 
 class SelectionMarkState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """State of the selection mark.

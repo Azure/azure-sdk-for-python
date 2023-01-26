@@ -41,6 +41,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('authorize_copy_document_model')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'authorize_copy_document_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -156,6 +158,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_analyze_document')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_document'".format(api_version))
         mixin_instance = OperationClass()
@@ -490,6 +494,42 @@ class FormRecognizerClientOperationsMixin(object):
         elif api_version == '2.1':
             return await mixin_instance.begin_analyze_with_custom_model(model_id, include_text_details, pages, file_stream, content_type=content_type, **kwargs)
 
+    async def begin_build_document_classifier(  # pylint: disable=inconsistent-return-statements
+        self,
+        build_request: _models.BuildDocumentClassifierRequest,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Build document classifier.
+
+        Builds a custom document classifier.
+
+        :param build_request: Building request parameters.
+        :type build_request: ~azure.ai.formrecognizer.v2023_02_28.models.BuildDocumentClassifierRequest
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('begin_build_document_classifier')
+        if api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'begin_build_document_classifier'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.begin_build_document_classifier(build_request, **kwargs)
+
     async def begin_build_document_model(  # pylint: disable=inconsistent-return-statements
         self,
         build_request: _models.BuildDocumentModelRequest,
@@ -517,6 +557,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_build_document_model')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_build_document_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -526,6 +568,56 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.begin_build_document_model(build_request, **kwargs)
+
+    async def begin_classify_document(  # pylint: disable=inconsistent-return-statements
+        self,
+        classifier_id: str,
+        string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
+        classify_request: Optional[Union[IO, _models.ClassifyDocumentRequest]] = None,
+        *,
+        content_type: Optional[Union[str, "_models.ContentType1"]] = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Classify document.
+
+        Classifies document with document classifier.
+
+        :param classifier_id: Unique document classifier name.
+        :type classifier_id: str
+        :param string_index_type: Method used to compute string offset and length. Default value is
+         None.
+        :type string_index_type: str or ~azure.ai.formrecognizer.v2023_02_28.models.StringIndexType
+        :param classify_request: Classify request parameters. Default value is None.
+        :type classify_request: IO or
+         ~azure.ai.formrecognizer.v2023_02_28.models.ClassifyDocumentRequest
+        :keyword content_type: Media type of the body sent to the API. Known values are:
+         "application/octet-stream", "application/pdf", "image/bmp", "image/heif", "image/jpeg",
+         "image/png", "image/tiff", and "application/json". Default value is "application/json".
+        :paramtype content_type: str or ~azure.ai.formrecognizer.v2023_02_28.models.ContentType1
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
+         for this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('begin_classify_document')
+        if api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'begin_classify_document'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.begin_classify_document(classifier_id, string_index_type, classify_request, content_type=content_type, **kwargs)
 
     async def begin_compose_custom_models_async(  # pylint: disable=inconsistent-return-statements
         self,
@@ -592,6 +684,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_compose_document_model')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_compose_document_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -674,6 +768,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('begin_copy_document_model_to')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_copy_document_model_to'".format(api_version))
         mixin_instance = OperationClass()
@@ -760,6 +856,35 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.delete_custom_model(model_id, **kwargs)
 
+    async def delete_document_classifier(  # pylint: disable=inconsistent-return-statements
+        self,
+        classifier_id: str,
+        **kwargs: Any
+    ) -> None:
+        """Delete document classifier.
+
+        Deletes document classifier.
+
+        :param classifier_id: Unique document classifier name.
+        :type classifier_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: None, or the result of cls(response)
+        :rtype: None
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('delete_document_classifier')
+        if api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'delete_document_classifier'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.delete_document_classifier(classifier_id, **kwargs)
+
     async def delete_document_model(  # pylint: disable=inconsistent-return-statements
         self,
         model_id: str,
@@ -779,6 +904,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('delete_document_model')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_document_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -868,6 +995,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_analyze_document_result')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_document_result'".format(api_version))
         mixin_instance = OperationClass()
@@ -1032,6 +1161,38 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.get_analyze_receipt_result(result_id, **kwargs)
 
+    async def get_classify_document_result(
+        self,
+        classifier_id: str,
+        result_id: str,
+        **kwargs: Any
+    ) -> _models.AnalyzeResultOperation:
+        """Get document classifier result.
+
+        Gets the result of document classifier.
+
+        :param classifier_id: Unique document classifier name.
+        :type classifier_id: str
+        :param result_id: Analyze operation result ID.
+        :type result_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: AnalyzeResultOperation, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2023_02_28.models.AnalyzeResultOperation
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_classify_document_result')
+        if api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_classify_document_result'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.get_classify_document_result(classifier_id, result_id, **kwargs)
+
     async def get_custom_model(
         self,
         model_id: str,
@@ -1132,6 +1293,63 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return await mixin_instance.get_custom_models(**kwargs)
 
+    async def get_document_classifier(
+        self,
+        classifier_id: str,
+        **kwargs: Any
+    ) -> _models.DocumentClassifierDetails:
+        """Get document classifier.
+
+        Gets detailed document classifier information.
+
+        :param classifier_id: Unique document classifier name.
+        :type classifier_id: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: DocumentClassifierDetails, or the result of cls(response)
+        :rtype: ~azure.ai.formrecognizer.v2023_02_28.models.DocumentClassifierDetails
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_document_classifier')
+        if api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_document_classifier'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return await mixin_instance.get_document_classifier(classifier_id, **kwargs)
+
+    def get_document_classifiers(
+        self,
+        **kwargs: Any
+    ) -> AsyncIterable[_models.GetDocumentClassifiersResponse]:
+        """List document classifiers.
+
+        List all document classifiers.
+
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: An iterator like instance of either GetDocumentClassifiersResponse or the result of
+         cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2023_02_28.models.GetDocumentClassifiersResponse]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = self._get_api_version('get_document_classifiers')
+        if api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_document_classifiers'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_document_classifiers(**kwargs)
+
     async def get_document_model(
         self,
         model_id: str,
@@ -1151,6 +1369,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_document_model')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_document_model'".format(api_version))
         mixin_instance = OperationClass()
@@ -1179,6 +1399,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_document_models')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_document_models'".format(api_version))
         mixin_instance = OperationClass()
@@ -1208,6 +1430,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_operation')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_operation'".format(api_version))
         mixin_instance = OperationClass()
@@ -1236,6 +1460,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_operations')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_operations'".format(api_version))
         mixin_instance = OperationClass()
@@ -1262,6 +1488,8 @@ class FormRecognizerClientOperationsMixin(object):
         api_version = self._get_api_version('get_resource_details')
         if api_version == '2022-08-31':
             from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
+        elif api_version == '2022-10-31-preview':
+            from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_resource_details'".format(api_version))
         mixin_instance = OperationClass()

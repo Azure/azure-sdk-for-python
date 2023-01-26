@@ -28,8 +28,8 @@ class FormRecognizerClientConfiguration(Configuration):  # pylint: disable=too-m
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for
      example: https://westus2.api.cognitive.microsoft.com).
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-08-31". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-10-31-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -40,7 +40,7 @@ class FormRecognizerClientConfiguration(Configuration):  # pylint: disable=too-m
         **kwargs: Any
     ) -> None:
         super(FormRecognizerClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-08-31")  # type: str
+        api_version = kwargs.pop('api_version', "2022-10-31-preview")  # type: str
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
