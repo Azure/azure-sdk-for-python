@@ -10,7 +10,7 @@ import re
 import shutil
 import subprocess
 import sys
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 import six
 
 from azure.core.credentials import AccessToken
@@ -37,12 +37,20 @@ class AzureDeveloperCliCredential:
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+    :keyword int process_timeout: Seconds to wait for the Azure Developer CLI process to respond. Defaults to 10.
     """
 
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: Optional[List[str]] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        process_timeout: int = 10
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
+        self._process_timeout = process_timeout
 
     def __enter__(self) -> "AzureDeveloperCliCredential":
         return self
@@ -83,7 +91,7 @@ class AzureDeveloperCliCredential:
         )
         if tenant:
             command += " --tenant-id " + tenant
-        output = _run_command(command)
+        output = _run_command(command, self._process_timeout)
 
         token = parse_token(output)
         if not token:
@@ -130,7 +138,7 @@ def sanitize_output(output):
     return re.sub(r"\"token\": \"(.*?)(\"|$)", "****", output)
 
 
-def _run_command(command):
+def _run_command(command: str, timeout: int) -> str:
     # Ensure executable exists in PATH first. This avoids a subprocess call that would fail anyway.
     if shutil.which(EXECUTABLE_NAME) is None:
         raise CredentialUnavailableError(message=CLI_NOT_FOUND)
@@ -142,12 +150,12 @@ def _run_command(command):
     try:
         working_directory = get_safe_working_dir()
 
-        kwargs = {
+        kwargs: Dict[str, Any] = {
             "stderr": subprocess.PIPE,
             "cwd": working_directory,
             "universal_newlines": True,
             "env": dict(os.environ, NO_COLOR="true"),
-            "timeout": 10,
+            "timeout": timeout,
         }
 
         return subprocess.check_output(args, **kwargs)

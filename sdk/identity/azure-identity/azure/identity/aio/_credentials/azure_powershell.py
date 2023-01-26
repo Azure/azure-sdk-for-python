@@ -29,12 +29,20 @@ class AzurePowerShellCredential(AsyncContextManager):
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
+    :keyword int process_timeout: Seconds to wait for the Azure PowerShell process to respond. Defaults to 10.
     """
 
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: Optional[List[str]] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: Optional[List[str]] = None,
+        process_timeout: int = 10
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
+        self._process_timeout = process_timeout
 
     @log_get_token_async
     async def get_token(
@@ -65,7 +73,7 @@ class AzurePowerShellCredential(AsyncContextManager):
             **kwargs
         )
         command_line = get_command_line(scopes, tenant_id)
-        output = await run_command_line(command_line)
+        output = await run_command_line(command_line, self._process_timeout)
         token = parse_token(output)
         return token
 
@@ -73,7 +81,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def run_command_line(command_line: List[str]) -> str:
+async def run_command_line(command_line: List[str], timeout: int) -> str:
     try:
         proc = await start_process(command_line)
         stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
@@ -81,7 +89,7 @@ async def run_command_line(command_line: List[str]) -> str:
             # pwsh.exe isn't on the path; try powershell.exe
             command_line[-1] = command_line[-1].replace("pwsh", "powershell", 1)
             proc = await start_process(command_line)
-            stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)
+            stdout, stderr = await asyncio.wait_for(proc.communicate(), timeout)
 
     except OSError as ex:
         # failed to execute "cmd" or "/bin/sh"; Azure PowerShell may or may not be installed
