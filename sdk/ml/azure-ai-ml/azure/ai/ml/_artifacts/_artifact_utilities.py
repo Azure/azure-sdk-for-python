@@ -588,7 +588,6 @@ def _upload_snapshot_to_datastore(
     asset_name: str = None,
     asset_version: str = None,
     asset_hash: str = None,
-    asset_type: str = "codes",
     ignore_file: IgnoreFile = IgnoreFile(),
     sas_uri: str = None,  # contains registry sas url
 ) -> ArtifactStorageInfo:
