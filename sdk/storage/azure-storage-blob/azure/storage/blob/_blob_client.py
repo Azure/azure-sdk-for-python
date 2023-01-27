@@ -1217,10 +1217,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         Returns True if a blob exists with the defined parameters, and returns
         False otherwise.
 
-        :kwarg str version_id:
+        :keyword str version_id:
             The version id parameter is an opaque DateTime
             value that, when present, specifies the version of the blob to check if it exists.
-        :kwarg int timeout:
+        :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts

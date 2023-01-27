@@ -1034,8 +1034,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
-            multiple calls to the Azure service and the timeout will apply to
-            each call individually.
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
             A page blob tier value to set the blob to. The tier correlates to the size of the
             blob and number of allowed IOPS. This is only applicable to page blobs on
