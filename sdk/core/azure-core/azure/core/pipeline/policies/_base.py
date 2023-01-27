@@ -61,11 +61,11 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
     :type next: ~azure.core.pipeline.policies.HTTPPolicy or ~azure.core.pipeline.transport.HttpTransport
     """
 
-    def __init__(self):
-        self.next: Union[
-            "HTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]",
-            "HttpTransport[HTTPRequestTypeVar, HTTPResponseTypeVar]",
-        ] = None
+    next: Union[
+        "HTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]",
+        "HttpTransport[HTTPRequestTypeVar, HTTPResponseTypeVar]",
+    ]
+    """Pointer to the next policy or a transport. Will be set at pipeline creation."""
 
     @abc.abstractmethod
     def send(

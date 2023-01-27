@@ -48,16 +48,11 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, AsyncHTTPResponseType
     :type next: ~azure.core.pipeline.policies.AsyncHTTPPolicy or ~azure.core.pipeline.transport.AsyncHttpTransport
     """
 
-    def __init__(self) -> None:
-        # next will be set once in the pipeline
-
-        self.next = cast(
-            Union[
-                AsyncHTTPPolicy[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar],
-                "AsyncHttpTransport[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]",
-            ],
-            None,
-        )
+    next: Union[
+        "AsyncHTTPPolicy"[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar],
+        "AsyncHttpTransport[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]",
+    ]
+    """Pointer to the next policy or a transport. Will be set at pipeline creation."""
 
     @abc.abstractmethod
     async def send(self, request: PipelineRequest[HTTPRequestTypeVar]):
