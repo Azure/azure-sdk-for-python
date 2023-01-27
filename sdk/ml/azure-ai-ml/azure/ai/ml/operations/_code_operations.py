@@ -9,7 +9,7 @@ from typing import Dict, Union
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._artifacts._artifact_utilities import (
-    _check_and_upload_path,
+    _check_and_upload_snapshot,
     _get_existing_snapshot_by_hash,
     _get_snapshot_path_info,
 )
