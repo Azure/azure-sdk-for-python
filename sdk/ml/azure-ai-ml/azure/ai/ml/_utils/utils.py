@@ -955,3 +955,8 @@ def open_file_with_int_mode(file: Union[str, PathLike], mode: str = 'r', int_mod
             yield f
     finally:
         os.umask(origin_mask)
+
+
+def replace_between(s: str, start: str, end: str, replace: str) -> str:
+    """Replace string between two substrings."""
+    return start + replace + s[s.find(end) - 1 + len(end) :]

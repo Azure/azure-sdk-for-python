@@ -8,7 +8,11 @@ from typing import Dict, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_path,
+    _get_existing_snapshot_by_hash,
+    _get_snapshot_path_info,
+)
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -85,6 +89,11 @@ class CodeOperations(_ScopeDependentOperations):
             name = code.name
             version = code.version
             sas_uri = None
+            path, ignore_file, asset_hash = _get_snapshot_path_info(code)
+            workspace_info = self._datastore_operation._service_client.workspaces.get(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name
+            )
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -95,8 +104,23 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
-            code, _ = _check_and_upload_path(
-                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+            else:
+                existing_asset = _get_existing_snapshot_by_hash(
+                    self._datastore_operation,
+                    asset_hash,
+                    workspace_info,
+                    requests_pipeline=self._requests_pipeline
+                )
+                if existing_asset:
+                    return self.get(name=existing_asset.get("name"), version=existing_asset.get("version"))
+
+            code = _check_and_upload_snapshot(
+                artifact=code, path=path,
+                ignore_file=ignore_file,
+                asset_operations=self,
+                sas_uri=sas_uri,
+                workspace=workspace_info,
+                requests_pipeline=self._requests_pipeline,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,
