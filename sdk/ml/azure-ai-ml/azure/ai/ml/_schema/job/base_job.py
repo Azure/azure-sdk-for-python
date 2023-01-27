@@ -25,7 +25,7 @@ class BaseJobSchema(ResourceSchema):
         NestedField(VsCodeJobServiceSchema),
         NestedField(JupyterLabJobServiceSchema),
         NestedField(JobServiceSchema),
-        ]))
+        ], is_strict=True))
     name = fields.Str()
     id = ArmStr(azureml_type=AzureMLResourceType.JOB, dump_only=True, required=False)
     display_name = fields.Str(required=False)
