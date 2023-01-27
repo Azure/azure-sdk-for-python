@@ -591,3 +591,6 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
 }
 
 function Get-python-EmitterName() {  return "@azure-tools/cadl-python"}
+function Get-python-EmitterAdditionalOptions([string]$projectDirectory) {
+    return "@azure-tools/cadl-python.emitter-output-dir=$projectDirectory"
+}
