@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-# pylint: disable=protected-access
+# pylint: disable=protected-access,redefined-builtin
 
 from typing import Dict, List, Optional
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
@@ -54,25 +54,16 @@ class EndpointsSettings:
 
     def _validate_endpoint_settings(self):
         invalid_value_error_message = "Value of {} property should be between {} and {}"
-        ports = [self.target, self.published]
-        port_names = [
-            CustomApplicationDefaults.TARGET_PORT,
-            CustomApplicationDefaults.PUBLISHED_PORT,
-        ]
-        min_values = [
-            CustomApplicationDefaults.TARGET_PORT_MIN_VALUE,
-            CustomApplicationDefaults.PUBLISHED_PORT_MIN_VALUE,
-        ]
-        max_values = [
-            CustomApplicationDefaults.TARGET_PORT_MAX_VALUE,
-            CustomApplicationDefaults.PUBLISHED_PORT_MAX_VALUE,
-        ]
+        ports = {
+            CustomApplicationDefaults.TARGET_PORT: self.target,
+            CustomApplicationDefaults.PUBLISHED_PORT: self.published,
+        }
+        min_value = CustomApplicationDefaults.PORT_MIN_VALUE
+        max_value = CustomApplicationDefaults.PORT_MAX_VALUE
 
-        for i, port in enumerate(ports):
-            msg = invalid_value_error_message.format(
-                port_names[i], min_values[i], max_values[i]
-            )
-            if port < min_values[i] or port > max_values[i]:
+        for port_name, port in ports.items():
+            msg = invalid_value_error_message.format(port_name, min_value, max_value)
+            if port < min_value or port > max_value:
                 raise ValidationException(
                     message=msg,
                     target=ErrorTarget.COMPUTE,
@@ -126,6 +117,8 @@ class CustomApplications:
     :type name: str
     :param image: Describes the Image Specifications.
     :type image: ImageSettings
+    :param type: Type of the Custom Application.
+    :type type: Optional[str]
     :param endpoints: Configuring the endpoints for the container.
     :type endpoints: List[EndpointsSettings]
     :param environment_variables: Environment Variables for the container.
@@ -139,15 +132,19 @@ class CustomApplications:
         *,
         name: str,
         image: ImageSettings,
+        type: str = CustomApplicationDefaults.DOCKER,
         endpoints: List[EndpointsSettings],
         environment_variables: Optional[Dict] = None,
         bind_mounts: Optional[List[VolumeSettings]] = None,
+        **kwargs
     ):
         self.name = name
+        self.type = type
         self.image = image
         self.endpoints = endpoints
         self.environment_variables = environment_variables
         self.bind_mounts = bind_mounts
+        self.additional_properties = kwargs
 
     def _to_rest_object(self):
         endpoints = []
@@ -169,7 +166,12 @@ class CustomApplications:
             endpoints=endpoints,
             environment_variables=environment_variables,
             volumes=volumes,
-            docker=Docker(privileged=True),
+            docker=(
+                Docker(privileged=True)
+                if self.type == CustomApplicationDefaults.DOCKER
+                else None
+            ),
+            additional_properties=self.additional_properties,
         )
 
     @classmethod
@@ -195,7 +197,9 @@ class CustomApplications:
             endpoints=endpoints,
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
+            additional_properties=obj.additional_properties,
         )
+
 
 def validate_custom_applications(custom_apps: List[CustomApplications]):
     unique_error = "Value of {} is should be unique accross all custom applications"
@@ -209,7 +213,9 @@ def validate_custom_applications(custom_apps: List[CustomApplications]):
             error_category=ErrorCategory.USER_ERROR,
         )
 
-    published_ports = [endpoint.published for app in custom_apps for endpoint in app.endpoints]
+    published_ports = [
+        endpoint.published for app in custom_apps for endpoint in app.endpoints
+    ]
 
     if len(set(published_ports)) != len(published_ports):
         raise ValidationException(

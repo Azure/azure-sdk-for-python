@@ -4,6 +4,7 @@ size: STANDARD_DS3_V2
 
 custom_applications:
     - name: rstudio-workbench
+      type: docker
       image:
         reference: ghcr.io/azure/rstudio-workbench:latest
       endpoints:

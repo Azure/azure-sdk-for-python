@@ -7,6 +7,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource, ImageMetadata
+from azure.ai.ml.constants._compute import CustomApplicationDefaults
 from azure.ai.ml.entities import (
     AmlCompute,
     Compute,
@@ -365,6 +366,7 @@ class TestComputeEntity:
 
         custom_app = compute_instance.custom_applications[0]
         assert custom_app.name == "rstudio-workbench"
+        assert custom_app.type == CustomApplicationDefaults.DOCKER
         assert custom_app.image is not None
         assert custom_app.image.reference == "ghcr.io/azure/rstudio-workbench:latest"
         assert custom_app.endpoints is not None

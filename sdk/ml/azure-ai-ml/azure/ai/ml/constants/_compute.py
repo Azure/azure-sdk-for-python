@@ -35,7 +35,6 @@ class ComputeDefaults:
 class CustomApplicationDefaults:
     TARGET_PORT = "target_port"
     PUBLISHED_PORT = "published_port"
-    TARGET_PORT_MIN_VALUE = 1
-    TARGET_PORT_MAX_VALUE = 65535
-    PUBLISHED_PORT_MIN_VALUE = 1025
-    PUBLISHED_PORT_MAX_VALUE = 65535
+    PORT_MIN_VALUE = 1025
+    PORT_MAX_VALUE = 65535
+    DOCKER = "docker"
