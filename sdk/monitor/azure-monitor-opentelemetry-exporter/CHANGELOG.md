@@ -8,7 +8,17 @@
 
 ### Bugs Fixed
 
+- Update success criteria for requests
+    ([#28486](https://github.com/Azure/azure-sdk-for-python/pull/28486))
+
 ### Other Changes
+
+- Loosen instrumentation key validation strictness
+    ([#28316](https://github.com/Azure/azure-sdk-for-python/pull/28316))
+- Disable storage for statsbeat if storage is disabled for exporter
+    ([#28322](https://github.com/Azure/azure-sdk-for-python/pull/28322))
+- Add UK to eu statsbeats
+    ([#28379](https://github.com/Azure/azure-sdk-for-python/pull/28379))
 
 ## 1.0.0b11 (2022-12-15)
 

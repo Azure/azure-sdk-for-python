@@ -29,7 +29,7 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.sim.begin_bulk_delete(
+    response = client.sims.begin_bulk_delete(
         resource_group_name="testResourceGroupName",
         sim_group_name="testSimGroup",
         parameters={"sims": ["testSim", "testSim2"]},

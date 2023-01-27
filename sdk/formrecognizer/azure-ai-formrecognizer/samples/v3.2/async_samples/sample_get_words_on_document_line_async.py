@@ -71,23 +71,24 @@ async def get_words_on_document_line_async():
             )
         )
 
-        for line_idx, line in enumerate(page.lines):
-            words = line.get_words()
-            print(
-                "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
-                    line_idx,
-                    len(words),
-                    line.content,
-                    format_polygon(line.polygon),
-                )
-            )
-
-            for word in words:
+        if page.lines is not None:
+            for line_idx, line in enumerate(page.lines):
+                words = line.get_words()
                 print(
-                    "......Word '{}' has a confidence of {}".format(
-                        word.content, word.confidence
+                    "...Line # {} has word count {} and text '{}' within bounding polygon '{}'".format(
+                        line_idx,
+                        len(words),
+                        line.content,
+                        format_polygon(line.polygon),
                     )
                 )
+
+                for word in words:
+                    print(
+                        "......Word '{}' has a confidence of {}".format(
+                            word.content, word.confidence
+                        )
+                    )
 
     print("----------------------------------------")
 

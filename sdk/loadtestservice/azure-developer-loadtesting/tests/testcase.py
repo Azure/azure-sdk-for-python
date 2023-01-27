@@ -28,5 +28,6 @@ LoadtestingPowerShellPreparer = functools.partial(
     loadtesting_file_id="000",
     loadtesting_test_run_id="000",
     loadtesting_app_component="000",
-    loadtesting_subscription_id="000"
+    loadtesting_subscription_id="000",
+    loadtesting_resource_id="000",
 )
