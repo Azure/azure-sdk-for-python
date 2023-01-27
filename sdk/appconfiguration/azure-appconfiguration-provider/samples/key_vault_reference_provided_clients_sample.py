@@ -10,7 +10,6 @@ from azure.appconfiguration.provider import (
     SettingSelector
 )
 from azure.keyvault.secrets import SecretClient
-from azure.identity import DefaultAzureCredential
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 
