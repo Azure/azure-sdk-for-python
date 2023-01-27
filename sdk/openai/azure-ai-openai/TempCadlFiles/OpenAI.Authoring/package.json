@@ -1,0 +1,17 @@
+{
+  "name": "@cadl-api-spec/azure-openai-api-version-2022-06-01-preview",
+  "author": "Microsoft Corporation",
+  "description": "// FIXME: (miissing-service-description) Add service description",
+  "license": "MIT",
+  "dependencies": {
+    "@cadl-lang/compiler": "^0.38.0",
+    "@cadl-lang/rest": "^0.38.0",
+    "@cadl-lang/versioning": "^0.38.0",
+    "@cadl-lang/prettier-plugin-cadl": "^0.38",
+    "@azure-tools/cadl-azure-core": "^0.24.0",
+    "@azure-tools/cadl-autorest": "^0.24.0",
+    "@azure-tools/cadl-apiview": "~0.3.1",
+    "prettier": "^2.8.0"
+  },
+  "private": true
+}

@@ -590,4 +590,4 @@ function Validate-Python-DocMsPackages ($PackageInfo, $PackageInfos, $PackageSou
   }
 }
 
-function Get-Python-EmitterName() {  return "@azure-tools/cadl-python"}
+function Get-python-EmitterName() {  return "@azure-tools/cadl-python"}

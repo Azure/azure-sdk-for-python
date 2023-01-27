@@ -1,0 +1,41 @@
+import "@cadl-lang/rest";
+import "@cadl-lang/versioning";
+import "./common.cadl";
+import "./deployment.cadl";
+import "./file.cadl";
+import "./finetune.cadl";
+import "./model.routes.cadl";
+
+using Cadl.Rest;
+using Cadl.Http;
+using Cadl.Versioning;
+
+@useAuth(
+  ApiKeyAuth<ApiKeyLocation.header, "api-key"> |
+    OAuth2Auth<[{
+      type: OAuth2FlowType.implicit,
+      authorizationUrl: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+      scopes: ["https://cognitiveservices.azure.com/.default"]
+    }]>)
+@service({title: "Azure OpenAI API"})
+@versioned(Azure.OpenAI.Versions)
+@versionedDependency(
+  [[Azure.OpenAI.Versions.v2022_06_01_preview, Azure.Core.Versions.v1_0_Preview_1]]
+)
+@server(
+  "{endpoint}/openai",
+  "API for managing and utilizing Azure Open AI endpoints",
+  {
+    @doc("""
+Supported Cognitive Services endpoints (protocol and hostname, for example:
+https://westus.api.cognitive.microsoft.com).
+""")
+    endpoint: string,
+  }
+)
+@doc("API for managing and utilizing Azure Open AI endpoints")
+namespace Azure.OpenAI;
+
+enum Versions {
+  v2022_06_01_preview: "2022-06-01-preview",
+}

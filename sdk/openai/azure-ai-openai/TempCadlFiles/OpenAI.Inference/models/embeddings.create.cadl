@@ -1,0 +1,43 @@
+import "@cadl-lang/rest";
+
+using Cadl.Rest;
+using Cadl.Http;
+
+namespace Azure.OpenAI.Embeddings;
+
+model EmbeddingsOptions {
+    @doc("The ID of the end-user, for use in tracking and rate-limiting.")
+    user?: string;
+
+    @doc("input type of embedding search to use")
+    input_type?: string;
+
+    @doc("ID of the model to use")
+    "model"?: string;
+
+    @doc("""
+    Input text to get embeddings for, encoded as a string.
+    To get embeddings for multiple inputs in a single request, pass an array of strings.
+    Each input must not exceed 2048 tokens in length.
+
+    Unless you are embedding code, we suggest replacing newlines (\\n) in your input with a single space,
+    as we have observed inferior results when newlines are present.
+    """)
+    input: string | string[];
+};
+
+model Embeddings {
+    object: "list",
+    data: EmbeddingItem[],
+}
+
+model Usage {
+    prompt_tokens: int32,
+    total_tokens: int32
+}
+
+model EmbeddingItem {
+    object: "embedding",
+    embedding: float32[];
+    index: int32;
+}
