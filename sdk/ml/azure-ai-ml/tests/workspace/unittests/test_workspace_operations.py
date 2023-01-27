@@ -217,8 +217,12 @@ class TestWorkspaceOperation:
             "azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value="random_name"
         )
         mocker.patch(
-            "azure.ai.ml.operations._workspace_operations.get_default_log_analytics_arm_id",
-            return_value=("random_id", True),
+            "azure.ai.ml.operations._workspace_operations.default_resource_group_for_app_insights_exists",
+            return_value=True,
+        )
+        mocker.patch(
+            "azure.ai.ml.operations._workspace_operations.default_log_analytics_workspace_exists",
+            return_value=True,
         )
         mock_workspace_operation._populate_arm_paramaters(workspace=Workspace(name="name"))
 
