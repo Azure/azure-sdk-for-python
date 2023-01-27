@@ -287,7 +287,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -333,7 +333,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             matches the active lease ID of the source container.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -388,7 +388,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -454,7 +454,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -504,7 +504,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             container's lease is active and matches this ID.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -542,7 +542,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         Returns True if a container exists and returns False otherwise.
 
         :kwarg int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -593,7 +593,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             An ETag value, or the wildcard character (*). Used to check if the resource has changed,
             and act according to the condition specified by the `match_condition` parameter.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -672,7 +672,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             container's lease is active and matches this ID.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -739,7 +739,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -799,7 +799,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
         :type include: list[str] or str
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -844,7 +844,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             Filters the results to return only blobs whose names
             begin with the specified prefix.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -898,7 +898,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -940,7 +940,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         :keyword int results_per_page:
             The max result per page when paginating.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -1028,7 +1028,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -1159,7 +1159,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -1274,7 +1274,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], None]
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -1489,7 +1489,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -1661,7 +1661,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
@@ -1714,7 +1714,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob

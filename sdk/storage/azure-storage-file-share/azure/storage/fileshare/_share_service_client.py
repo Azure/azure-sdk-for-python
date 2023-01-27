@@ -156,7 +156,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         Azure Storage Analytics.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -211,7 +211,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             Sets protocol settings
         :type protocol: ~azure.storage.fileshare.ShareProtocolSettings
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -262,7 +262,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
             Specifies that deleted shares be returned in the response.
             This is only for share soft delete enabled account.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -316,7 +316,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :keyword int quota:
             Quota in bytes.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -357,7 +357,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :param bool delete_snapshots:
             Indicates if snapshots are to be deleted.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -395,7 +395,7 @@ class ShareServiceClient(StorageAccountHostsMixin):
         :param str deleted_share_version:
             Specifies the version of the deleted share to restore.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share

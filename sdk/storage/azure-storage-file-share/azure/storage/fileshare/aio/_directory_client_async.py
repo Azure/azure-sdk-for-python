@@ -187,7 +187,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the directory as metadata.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -239,7 +239,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         later deleted during garbage collection.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -273,7 +273,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :param str new_name:
             The new directory name.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -385,7 +385,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             This keyword argument was introduced in API version '2020-10-02'.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -422,7 +422,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -449,7 +449,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         Returns True if a directory exists and returns False otherwise.
 
         :kwarg int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -475,7 +475,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             A specific handle to close.
         :type handle: str or ~azure.storage.fileshare.Handle
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -517,7 +517,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -565,7 +565,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         list of files.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -596,7 +596,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -657,7 +657,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
         :paramtype file_change_time: str or ~datetime.datetime
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -696,7 +696,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the subdirectory as metadata.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -730,7 +730,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :param str directory_name:
             The name of the subdirectory.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -786,7 +786,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             so far, and total is the size of the blob or None if the size is unknown.
         :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -824,7 +824,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :param str file_name:
             The name of the file to delete.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share

@@ -196,7 +196,7 @@ class DataLakeFileClient(PathClient):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
@@ -241,7 +241,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
@@ -290,7 +290,7 @@ class DataLakeFileClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file was created with a customer-provided key.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
@@ -322,7 +322,7 @@ class DataLakeFileClient(PathClient):
             When expiry_options is RelativeTo*, expires_on should be an int in milliseconds.
             If the type of expires_on is datetime, it should be in UTC time.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
@@ -446,7 +446,7 @@ class DataLakeFileClient(PathClient):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
@@ -726,7 +726,7 @@ class DataLakeFileClient(PathClient):
         :keyword int max_concurrency:
             The number of parallel connections with which to download.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
@@ -753,7 +753,7 @@ class DataLakeFileClient(PathClient):
         Returns True if a file exists and returns False otherwise.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
@@ -814,7 +814,7 @@ class DataLakeFileClient(PathClient):
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
@@ -910,7 +910,7 @@ class DataLakeFileClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file was created with a Customer-Provided Key.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake

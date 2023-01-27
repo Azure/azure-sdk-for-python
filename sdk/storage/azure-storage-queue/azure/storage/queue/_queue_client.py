@@ -215,7 +215,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             metadata. Note that metadata names preserve the case with which they
             were created, but are case-insensitive when set or read.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -261,7 +261,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         an :class:`HttpResponseError` will be thrown.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -330,7 +330,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             queue as metadata.
         :type metadata: dict(str, str)
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -364,7 +364,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         queue that may be used with Shared Access Signatures.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -408,7 +408,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             will clear the access policies set on the service.
         :type signed_identifiers: dict(str, ~azure.storage.queue.AccessPolicy)
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -479,7 +479,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             seconds. The time-to-live may be any positive number or -1 for infinity. If this
             parameter is omitted, the default time-to-live is 7 days.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -561,7 +561,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -639,7 +639,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             set to a value later than the expiry time. visibility_timeout
             should be set to a value smaller than the time-to-live value.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -722,7 +722,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             message can be updated until it has been deleted or has expired.
             The message object or message id identifying the message to update.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -827,7 +827,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             messages to peek from the queue, up to a maximum of 32. By default,
             a single message is peeked from the queue with this operation.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -873,7 +873,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         """Deletes all messages from the specified queue.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
@@ -920,7 +920,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             A valid pop receipt value returned from an earlier call
             to the :func:`~receive_messages` or :func:`~update_message`.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue

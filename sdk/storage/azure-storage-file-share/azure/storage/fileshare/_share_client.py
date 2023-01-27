@@ -293,7 +293,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             returns 400 (Invalid request) if the proposed lease ID is not
             in the correct format.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -334,7 +334,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -404,7 +404,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the share as metadata.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -453,7 +453,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             This keyword argument was introduced in API version '2020-08-04'.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -491,7 +491,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         list of files or directories.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -539,7 +539,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Specifies the maximum size of the share, in gigabytes.
             Must be greater than 0, and less than or equal to 5TB.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -591,7 +591,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Specifies the maximum size of the share, in gigabytes.
             Must be greater than 0, and less than or equal to 5TB.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -647,7 +647,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Name-value pairs associated with the share as metadata.
         :type metadata: dict(str, str)
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -692,7 +692,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         indicate whether files in a share may be accessed publicly.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -735,7 +735,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             will clear the access policies set on the service.
         :type signed_identifiers: dict(str, :class:`~azure.storage.fileshare.AccessPolicy`)
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -782,7 +782,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         or recently re-sized files.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -841,7 +841,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             This keyword argument was introduced in API version '2020-10-02'.
 
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -888,7 +888,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :param str file_permission:
             File permission, a Portable SDDL
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -916,7 +916,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :param str permission_key:
             Key of the file permission to retrieve
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -946,7 +946,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
@@ -968,7 +968,7 @@ class ShareClient(StorageAccountHostsMixin): # pylint: disable=too-many-public-m
         :param str directory_name:
             The name of the directory.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share

@@ -293,7 +293,7 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
         :keyword int timeout:
-            Sets the server-side timeout for the operation in seconds. For more details see 
+            Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
