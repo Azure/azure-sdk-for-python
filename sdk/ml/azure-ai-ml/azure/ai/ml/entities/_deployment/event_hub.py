@@ -16,8 +16,6 @@ class EventHub:
     :type namespace: str
     :param oversize_data_config: Oversized payload body configurations.
     :type oversize_data_config: OversizeDataConfig
-    :param client_id: Client id of System/User Assigned Identity.
-    :type client_id: str
 
     """
 
@@ -26,12 +24,10 @@ class EventHub:
         self,
         namespace: Optional[str] = None,
         oversize_data_config: Optional[OversizeDataConfig] = None,
-        client_id: Optional[str] = None,
         **kwargs
     ):
         self.namespace = (namespace,)
         self.oversize_data_config = oversize_data_config
-        self.client_id = client_id
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

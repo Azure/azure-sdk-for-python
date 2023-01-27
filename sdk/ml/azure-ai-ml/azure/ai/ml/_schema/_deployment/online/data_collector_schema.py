@@ -12,8 +12,8 @@ from marshmallow import fields, post_load, validates, ValidationError
 from azure.ai.ml._schema import NestedField, PatchedSchemaMeta, StringTransformedEnum
 from azure.ai.ml._schema._deployment.online.destination_schema import DestinationSchema
 from azure.ai.ml._schema._deployment.online.request_logging_schema import RequestLoggingSchema
-from azure.ai.ml._schema._deployment.online.request_schema import RequestSchema
-from azure.ai.ml._schema._deployment.online.response_schema import ResponseSchema
+from azure.ai.ml._schema._deployment.online.payload_request_schema import PayloadRequestSchema
+from azure.ai.ml._schema._deployment.online.payload_response_schema import PayloadResponseSchema
 
 from azure.ai.ml.constants._common import RollingRate
 
@@ -21,11 +21,11 @@ module_logger = logging.getLogger(__name__)
 
 
 class DataCollectorSchema(metaclass=PatchedSchemaMeta):
-    request = NestedField(RequestSchema)
-    response = NestedField(ResponseSchema)
+    request = NestedField(PayloadRequestSchema)
+    response = NestedField(PayloadResponseSchema)
     rolling_rate = StringTransformedEnum(
         required=False,
-        allowed_values=[RollingRate.HOUR, RollingRate.DAY, RollingRate.MINUTE],
+        allowed_values=[ RollingRate.MINUTE, RollingRate.DAY, RollingRate.HOUR],
     )
     destination = NestedField(DestinationSchema)
     sampling_rate = fields.Float()
@@ -34,7 +34,7 @@ class DataCollectorSchema(metaclass=PatchedSchemaMeta):
     # pylint: disable=unused-argument,no-self-use
     @validates("sampling_rate")
     def validate_sampling_rate(self, value, **kwargs):
-        if value >= 1.0 or value <= 0.0:
+        if value > 1.0 or value < 0.0:
             raise ValidationError("Random Sample Percentage must be an number between 0.0-1.0")
 
     @post_load

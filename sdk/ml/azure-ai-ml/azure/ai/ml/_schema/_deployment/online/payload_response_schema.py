@@ -13,7 +13,7 @@ from azure.ai.ml.constants._common import Boolean
 module_logger = logging.getLogger(__name__)
 
 
-class RequestSchema(metaclass=PatchedSchemaMeta):
+class PayloadResponseSchema(metaclass=PatchedSchemaMeta):
     enabled = StringTransformedEnum(
         required= True,
         allowed_values=[Boolean.TRUE, Boolean.FALSE]
@@ -22,6 +22,6 @@ class RequestSchema(metaclass=PatchedSchemaMeta):
     # pylint: disable=unused-argument,no-self-use
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
-        from azure.ai.ml.entities._deployment.request import Request
+        from azure.ai.ml.entities._deployment.payload_response import PayloadResponse
 
-        return Request(**data)
+        return PayloadResponse(**data)

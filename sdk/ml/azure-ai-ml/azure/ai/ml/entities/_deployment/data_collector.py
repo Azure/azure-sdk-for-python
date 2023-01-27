@@ -8,8 +8,8 @@ from azure.ai.ml._schema._deployment.online.data_collector_schema import DataCol
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.destination import Destination
 from azure.ai.ml.entities._deployment.request_logging import RequestLogging
-from azure.ai.ml.entities._deployment.request import Request
-from azure.ai.ml.entities._deployment.response import Response
+from azure.ai.ml.entities._deployment.payload_request import PayloadRequest
+from azure.ai.ml.entities._deployment.payload_response import PayloadResponse
 
 
 class DataCollector:
@@ -18,7 +18,7 @@ class DataCollector:
     :param request: Will request logging be accepted.
     :type request: Request
     :param response: Will response logging be accepted.
-    :type response: Resonse
+    :type response: Response
     :param rolling_rate: The rolling rate of mdc files, possible values: ["year", "month", "day", "hour", "minute"].
     :type rolling_rate: str
     :param destination: Must be blob store.
@@ -31,8 +31,8 @@ class DataCollector:
 
     def __init__(
         self,
-        request: Optional[Request] = None,
-        response: Optional[Response] = None,
+        request: Optional[PayloadRequest] = None,
+        response: Optional[PayloadResponse] = None,
         rolling_rate: Optional[str] = None,
         destination: Optional[Destination] = None,
         sampling_rate: Optional[float] = None,

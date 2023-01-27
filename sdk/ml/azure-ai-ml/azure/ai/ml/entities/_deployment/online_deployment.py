@@ -316,15 +316,15 @@ class OnlineDeployment(Deployment):
             self.instance_type = other.instance_type or self.instance_type
 
     def _filter_datastore_to_rest_object(self):
-        # temporarily storing the data collector in the properties since it is no part of the contract
+        # temporarily storing the data collector in the properties since it is not part of the contract
         # will be removed once the contract is fixed to reflect data collector attribute
         if is_private_preview_enabled() and self.data_collector:
             non_flat_data = {}
             non_flat_data["data_collector"] = self.data_collector._to_dict()
             flat_data = flatten(non_flat_data, ".")
-            flat_data_keys = flat_data.keys()
-            for k in flat_data_keys:
-                self.tags[k] = flat_data[k]
+            for k, v in flat_data.items():
+                self.tags[k] = v
+
     @classmethod
     def _filter_datastore_from_rest_object(cls, entity: "OnlineDeployment", deployment: RestOnlineDeploymentDetails) -> "OnlineDeployment":
         # Data collector is private preview. If Private Preview environment variable is not enable

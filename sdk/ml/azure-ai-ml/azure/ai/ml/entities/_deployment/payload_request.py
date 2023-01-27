@@ -4,11 +4,11 @@
 
 from typing import Dict
 
-from azure.ai.ml._schema._deployment.online.request_schema import RequestSchema
+from azure.ai.ml._schema._deployment.online.payload_request_schema import PayloadRequestSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
-class Request:
+class PayloadRequest:
     """Request deployment entity
 
     :param enabled: Is request logging enabled.
@@ -22,4 +22,4 @@ class Request:
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return RequestSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return PayloadRequestSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

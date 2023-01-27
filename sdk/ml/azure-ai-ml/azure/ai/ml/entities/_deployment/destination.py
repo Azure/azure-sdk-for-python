@@ -14,6 +14,8 @@ class Destination:
 
     :param path: Blob path for Model Data Collector file.
     :type path: str
+    :param event_hub: Azure event hub location where payload logging will be stored.
+    :type event_hub: EventHub
 
     """
 
@@ -21,11 +23,9 @@ class Destination:
     def __init__(
         self, path: Optional[str] = None, 
         event_hub: Optional[EventHub] = None, 
-        client_id: Optional[str] = None,
         **kwargs):
         self.path = path
         self.event_hub = event_hub
-        self.client_id = client_id
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
