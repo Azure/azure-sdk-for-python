@@ -126,6 +126,8 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
                 if "WWW-Authenticate" in response.http_response.headers:
                     request_authorized = self.on_challenge(request, response)
                     if request_authorized:
+                        # if we receive a challenge response, clear the 'insecure_domain_change' tag
+                        request.context.options.pop('insecure_domain_change', False)
                         try:
                             response = self.next.send(request)
                             self.on_response(request, response)
