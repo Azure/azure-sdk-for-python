@@ -2,7 +2,7 @@ from typing import Any, Iterator, Optional, Tuple, Union, Mapping
 from uuid import UUID
 from json import JSONEncoder
 from datetime import datetime
-from enum import Enum
+from math import isnan
 
 from ._serialize import EdmType
 from ._common_conversion import _encode_base64, _to_utc_datetime
@@ -37,6 +37,12 @@ class TableEntityEncoder:
             return None, value  # TODO: Test what happens if the supplied value exceeds int32.
         if isinstance(value, float):
             # The default JSONEncoder will automatically convert to 'NaN', 'Infinity' and '-Infinity'.
+            if isnan(value):
+                return EdmType.DOUBLE, "NaN"
+            if value == float("inf"):
+                return EdmType.DOUBLE, "Infinity"
+            if value == float("-inf"):
+                return EdmType.DOUBLE, "-Infinity"
             return EdmType.DOUBLE, value
         if isinstance(value, UUID):
             return EdmType.GUID, str(value)
@@ -69,6 +75,9 @@ class TableEntityEncoder:
         """
         encoded = {}
         for key, value in entity.items():  # TODO: Confirm what to do with None values (before and after encoding).
+            # To make sure key in string type
+            if not isinstance(key, str):
+                key = str(key)
             if "PartitionKey" in key or "RowKey" in key:
                 if key == "PartitionKey" or key == "RowKey":
                     encoded[key] = self.prepare_key(value)

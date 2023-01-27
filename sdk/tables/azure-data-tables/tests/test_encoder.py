@@ -12,6 +12,7 @@ import enum
 from urllib.parse import quote
 from datetime import datetime, timezone
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.transport import HttpTransport
 from azure.data.tables import TableClient, TableEntityEncoder, EdmType, EntityProperty, UpdateMode
 from azure.data.tables._base_client import _DEV_CONN_STRING
@@ -23,7 +24,7 @@ from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 from preparers import tables_decorator
 
 
-class MyKeysEncoder(TableEntityEncoder):
+class MyEncoder(TableEntityEncoder):
     def prepare_key(self, key):
         """Custom key preparer to support key in type UUID, int, float or bool."""
         if isinstance(key, uuid.UUID) or isinstance(key, int) or isinstance(key, float) or isinstance(key, bool):
@@ -32,7 +33,14 @@ class MyKeysEncoder(TableEntityEncoder):
             key = str(_to_utc_datetime(key))
         elif isinstance(key, bytes):
             key = str(_encode_base64(key))
+        elif isinstance(key, enum.Enum): # Support enum in key's value
+            key = key.value
         return super().prepare_key(key)
+
+    def encode_property(self, name, value):
+        if isinstance(value, enum.Enum): # Support enum in normal property's value
+            value = value.value
+        return super().encode_property(name, value)
 
 
 class EnumBasicOptions(enum.Enum):
@@ -138,7 +146,7 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "RowKey": "1234"
         }
         
-        encoder = MyKeysEncoder()
+        encoder = MyEncoder()
         encoded_entity1 = encoder.encode_entity(entity1)
         assert json.dumps(encoded_entity1, sort_keys=True) == json.dumps(expected_entity1, sort_keys=True)
         encoded_entity2 = encoder.encode_entity(entity2)
@@ -159,25 +167,25 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             entity1 = client.get_entity(entity1["PartitionKey"], entity1["RowKey"])
             client.delete_entity(entity1["PartitionKey"], entity1["RowKey"])
 
-            client.create_entity(entity2, encoder=MyKeysEncoder())
-            entity2 = client.get_entity(entity2["PartitionKey"], entity2["RowKey"], encoder=MyKeysEncoder())
-            client.delete_entity(entity2, encoder=MyKeysEncoder())
+            client.create_entity(entity2, encoder=MyEncoder())
+            entity2 = client.get_entity(entity2["PartitionKey"], entity2["RowKey"], encoder=MyEncoder())
+            client.delete_entity(entity2, encoder=MyEncoder())
 
-            client.create_entity(entity3, encoder=MyKeysEncoder())
-            entity3 = client.get_entity(entity3["PartitionKey"], entity3["RowKey"], encoder=MyKeysEncoder())
-            client.delete_entity(entity3, encoder=MyKeysEncoder())
+            client.create_entity(entity3, encoder=MyEncoder())
+            entity3 = client.get_entity(entity3["PartitionKey"], entity3["RowKey"], encoder=MyEncoder())
+            client.delete_entity(entity3, encoder=MyEncoder())
 
-            client.create_entity(entity4, encoder=MyKeysEncoder())
-            entity4 = client.get_entity(entity4["PartitionKey"], entity4["RowKey"], encoder=MyKeysEncoder())
-            client.delete_entity(entity4, encoder=MyKeysEncoder())
+            client.create_entity(entity4, encoder=MyEncoder())
+            entity4 = client.get_entity(entity4["PartitionKey"], entity4["RowKey"], encoder=MyEncoder())
+            client.delete_entity(entity4, encoder=MyEncoder())
 
-            client.create_entity(entity5, encoder=MyKeysEncoder())
-            entity5 = client.get_entity(entity5["PartitionKey"], entity5["RowKey"], encoder=MyKeysEncoder())
-            client.delete_entity(entity5, encoder=MyKeysEncoder())
+            client.create_entity(entity5, encoder=MyEncoder())
+            entity5 = client.get_entity(entity5["PartitionKey"], entity5["RowKey"], encoder=MyEncoder())
+            client.delete_entity(entity5, encoder=MyEncoder())
 
-            client.create_entity(entity6, encoder=MyKeysEncoder())
-            entity6 = client.get_entity(entity6["PartitionKey"], entity6["RowKey"], encoder=MyKeysEncoder())
-            client.delete_entity(entity6, encoder=MyKeysEncoder())
+            client.create_entity(entity6, encoder=MyEncoder())
+            entity6 = client.get_entity(entity6["PartitionKey"], entity6["RowKey"], encoder=MyEncoder())
+            client.delete_entity(entity6, encoder=MyEncoder())
 
             client.delete_table()
 
@@ -213,7 +221,7 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             "Data7": 3.14,
             "Data7@odata.type": "Edm.Double"
         }
-        encoder = MyKeysEncoder()
+        encoder = MyEncoder()
         entity = encoder.encode_entity(entity)
         assert json.dumps(entity, sort_keys=True) == json.dumps(expected_entity, sort_keys=True)
 
@@ -354,177 +362,158 @@ class TestTableEncoderTests(AzureRecordedTestCase, TableTestCase):
             client.delete_entity(entity)
             client.delete_table()
 
-
-class TestTableEncoderUnitTests(TableTestCase):
-    def test_encoder_create_entity_atypical_values(self):
-        client = TableClient.from_connection_string(
-            _DEV_CONN_STRING,
-            table_name="foo",
-            transport=EncoderVerificationTransport())
-
+    @tables_decorator
+    @recorded_by_proxy
+    def test_encoder_create_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
+        table_name = self.get_resource_name("uttable")
+        url = self.account_url(tables_storage_account_name, "table")
         # Non-UTF8 characters in both keys and properties
-        test_entity = {
-            "PartitionKey": "PK",
+        entity1 = {
+            "PartitionKey": "PK1",
             "RowKey": "你好",
             "Data":  "你好"
         }
-        expected_entity = {
-            "PartitionKey": "PK",
-            "PartitionKey@odata.type": "Edm.String",
-            "RowKey": "你好",
-            "RowKey@odata.type": "Edm.String",
-            "Data": "你好",
-            "Data@odata.type": "Edm.String"
-        }
-        verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"}
-            )
-
         # Invalid int32 and int64 values
+        # TODO: test large int32 in storage and cosmos
         # TODO: This will likely change if we move to post-request validation.
-        test_entity = {
-            "PartitionKey": "PK",
+        entity2 = {
+            "PartitionKey": "PK2",
             "RowKey": "RK",
-            "Data":  2 ** 65
+            "Data":  2 ** 65 # 2 ** 70 also works
         }
-        with pytest.raises(TypeError):
-            client.create_entity(test_entity)
-        test_entity = {
-            "PartitionKey": "PK",
+        max_int64 = 9223372036854775807
+        entity3 = {
+            "PartitionKey": "PK3",
             "RowKey": "RK",
-            "Data":  (2 ** 70, "Edm.Int64")
+            "Data": (max_int64, "Edm.Int64")
         }
-        with pytest.raises(TypeError):
-            client.create_entity(test_entity)
-
+        expected_entity3 = {
+            "PartitionKey": "PK3",
+            "RowKey": "RK",
+            "Data": str(max_int64),
+            "Data@odata.type": "Edm.Int64"
+        }
+        # Test data out of int64 range
+        entity4 = {
+            "PartitionKey": "PK4",
+            "RowKey": "RK",
+            "Data": (max_int64 + 1, "Edm.Int64") # Bad request, InvalidInput
+        }
         # Infinite float values
-        test_entity = {
-            "PartitionKey": "PK",
+        # TODO: update encoder to convert float value to string
+        entity5 = {
+            "PartitionKey": "PK5",
             "RowKey": "RK",
-            "Data1":  float('nan'),
-            "Data2": float('inf'),
-            "Data3": float('-inf'),
+            "Data1":  float('nan'), # Bad request, InvalidInput
+            "Data2": float('inf'), # Bad request, InvalidInput
+            "Data3": float('-inf'), # Bad request, InvalidInput
         }
-        expected_entity = {
-            "PartitionKey": "PK",
-            "PartitionKey@odata.type": "Edm.String",
+        expected_entity5 = {
+            "PartitionKey": "PK5",
             "RowKey": "RK",
-            "RowKey@odata.type": "Edm.String",
-            "Data1": "NaN",
+            "Data1":  "NaN",
             "Data1@odata.type": "Edm.Double",
             "Data2": "Infinity",
             "Data2@odata.type": "Edm.Double",
             "Data3": "-Infinity",
             "Data3@odata.type": "Edm.Double",
         }
-        verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"}
-            )
-
         # Non-string keys
-        # TODO: This seems broken? Not sure what the live service will do with a non-string key.
-        test_entity = {
-            "PartitionKey": "PK",
+        entity6 = {
+            "PartitionKey": "PK6",
             "RowKey": "RK",
             123:  456
         }
-        expected_entity = {
-            "PartitionKey": "PK",
-            "PartitionKey@odata.type": "Edm.String",
+        # TODO: test update the entity with property name "123" in cosmos
+        # Will get HttpResponseError with code PropertyNameInvalid
+        expected_entity6 = {
+            "PartitionKey": "PK6",
             "RowKey": "RK",
-            "RowKey@odata.type": "Edm.String",
-            123:  456
+            "123":  456  # key values should always be string?
         }
-        verification = json.dumps(expected_entity)
-        # TODO: The code introduced to serialize to support odata types raises a TypeError here. Need to investigate the best approach.
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"}
-            )
-
         # Test enums
-        test_entity = {
-            "PartitionKey": "PK",
+        # TBD: support it in default encoder?
+        entity7 = {
+            "PartitionKey": "PK7",
             "RowKey": EnumBasicOptions.ONE,
             "Data": EnumBasicOptions.TWO
         }
-        # TODO: This looks like it was always broken
-        expected_entity = {
-            "PartitionKey": "PK",
-            "PartitionKey@odata.type": "Edm.String",
-            "RowKey": "EnumBasicOptions.ONE",
-            "RowKey@odata.type": "Edm.String",
-            "Data": "EnumBasicOptions.TWO",
-            "Data@odata.type": "Edm.String",
+        # Support the enum by adding conversions in a customized encoder
+        expected_entity7 = {
+            "PartitionKey": "PK7",
+            "RowKey": "One",
+            "Data": "Two",
         }
-        verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"}
-            )
-        test_entity = {
-            "PartitionKey": "PK",
+        entity8 = {
+            "PartitionKey": "PK8",
             "RowKey": EnumIntOptions.ONE,
             "Data": EnumIntOptions.TWO
         }
-        # TODO: This is a bit weird
-        expected_entity = {
-            "PartitionKey": "PK",
-            "PartitionKey@odata.type": "Edm.String",
+        # Key's value always be string type
+        # For enum value in normal properties: EnumIntOptions -> int, EnumBasicOptions/EnumStrOptions -> string
+        expected_entity8 = {
+            "PartitionKey": "PK8",
             "RowKey": "1",
-            "RowKey@odata.type": "Edm.String",
-            "Data": "2",
-            "Data@odata.type": "Edm.String",
+            "Data": 2,
         }
-        verification = json.dumps(expected_entity)
-        # TODO: This changes between Python 3.10 and 3.11
-        # with pytest.raises(VerificationSuccessful):
-        #     client.create_entity(
-        #         test_entity,
-        #         verify_payload=verification,
-        #         verify_url="/foo",
-        #         verify_headers={"Content-Type":"application/json;odata=nometadata"}
-        #     )
-
-        test_entity = {
-            "PartitionKey": "PK",
+        entity9 = {
+            "PartitionKey": "PK9",
             "RowKey": EnumStrOptions.ONE,
             "Data": EnumStrOptions.TWO
         }
-        # TODO: This looks like it was always broken
-        expected_entity = {
-            "PartitionKey": "PK",
-            "PartitionKey@odata.type": "Edm.String",
-            "RowKey": "EnumStrOptions.ONE",
-            "RowKey@odata.type": "Edm.String",
-            "Data": "EnumStrOptions.TWO",
-            "Data@odata.type": "Edm.String",
+        expected_entity9 = {
+            "PartitionKey": "PK9",
+            "RowKey": "One",
+            "Data": "Two",
         }
-        verification = json.dumps(expected_entity)
-        with pytest.raises(VerificationSuccessful):
-            client.create_entity(
-                test_entity,
-                verify_payload=verification,
-                verify_url="/foo",
-                verify_headers={"Content-Type":"application/json;odata=nometadata"}
-            )
+        encoder = TableEntityEncoder()
+        encoded_entity = encoder.encode_entity(entity1)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(entity1, sort_keys=True)
+        encoded_entity = encoder.encode_entity(entity2)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(entity2, sort_keys=True)
+        encoded_entity = encoder.encode_entity(entity3)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity3, sort_keys=True)
+        encoded_entity = encoder.encode_entity(entity5)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity5, sort_keys=True)
+        encoded_entity = MyEncoder().encode_entity(entity6)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity6, sort_keys=True)
+        encoded_entity = MyEncoder().encode_entity(entity7)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity7, sort_keys=True)
+        encoded_entity = MyEncoder().encode_entity(entity8)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity8, sort_keys=True)
+        encoded_entity = MyEncoder().encode_entity(entity9)
+        assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity9, sort_keys=True)
 
+        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+            client.create_table()
+            client.create_entity(entity1) # no edm type in get and list results
+            client.delete_entity(entity1)
+            client.create_entity(entity2)
+            client.delete_entity(entity2)
+            client.create_entity(entity3)
+            client.delete_entity(entity3)
+            with pytest.raises(HttpResponseError) as exc:
+                client.create_entity(entity4)
+            assert ("Operation returned an invalid status 'Bad Request'") in str(exc.value)
+            client.create_entity(entity5)
+            client.delete_entity(entity5)
+            with pytest.raises(HttpResponseError) as exc:
+                client.create_entity(entity6)
+            assert ("Operation returned an invalid status 'Bad Request'") in str(exc.value)
+            with pytest.raises(HttpResponseError) as exc:
+                client.create_entity(entity6, encoder=MyEncoder())
+            assert ("Operation returned an invalid status 'Bad Request'") in str(exc.value)
+            client.create_entity(entity7, encoder=MyEncoder())
+            client.delete_entity(entity7, encoder=MyEncoder())
+            client.create_entity(entity8, encoder=MyEncoder())
+            client.delete_entity(entity8, encoder=MyEncoder())
+            client.create_entity(entity9, encoder=MyEncoder())
+            client.delete_entity(entity9, encoder=MyEncoder())
+            client.delete_table()
+                
+
+
+class TestTableEncoderUnitTests(TableTestCase):
     def test_encoder_upsert_entity_basic(self):
         # Test basic string, int32 and bool data
         client = TableClient.from_connection_string(
