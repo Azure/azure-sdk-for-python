@@ -1657,7 +1657,6 @@ class TestPipelineJobSchema:
 
     def test_command_job_node_services_in_pipeline_with_properties(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_with_properties.yml"
-        # test_path = "D:/T/Git/azure-sdk-for-python/sdk/ml/azure-ai-ml/tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_with_properties.yml"
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
 
@@ -1688,7 +1687,6 @@ class TestPipelineJobSchema:
 
     def test_command_job_node_services_in_pipeline(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services.yml"
-        # test_path = "D:/T/Git/azure-sdk-for-python/sdk/ml/azure-ai-ml/tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services.yml"
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
 
@@ -1722,7 +1720,6 @@ class TestPipelineJobSchema:
 
     def test_command_job_node_services_in_pipeline_with_no_component(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_inline_job.yml"
-        # test_path = "D:/T/Git/azure-sdk-for-python/sdk/ml/azure-ai-ml/tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_inline_job.yml"
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
 
@@ -1753,7 +1750,6 @@ class TestPipelineJobSchema:
 
     def test_command_job_node_services_in_pipeline_with_no_component_with_properties(self):
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_inline_job_with_properties.yml"
-        # test_path = "D:/T/Git/azure-sdk-for-python/sdk/ml/azure-ai-ml/tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_node_services_inline_job_with_properties.yml"
         job: PipelineJob = load_job(source=test_path)
         node_services = job.jobs["hello_world_component_inline"].services
 
