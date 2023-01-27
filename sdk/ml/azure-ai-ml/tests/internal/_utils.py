@@ -223,7 +223,7 @@ ANONYMOUS_COMPONENT_TEST_PARAMS = [
     ),
     (
         "additional-includes/component_spec.yaml",
-        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
+        "1928c330-6272-fc7d-818c-f411a3e6eb09"
     ),
     # TODO(2076035): skip tests related to zip additional includes for now
     # (
