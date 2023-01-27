@@ -43,7 +43,7 @@ class CustomApplicationsSchema(metaclass=PatchedSchemaMeta):
     image = NestedField(ImageSettingsSchema)
     endpoints = NestedField(EndpointSettingsSchema)
     environment_variables = fields.Dict()
-    bind_mounts = NestedField(VolumeSettingsSchema)
+    bind_mounts = fields.List(NestedField(VolumeSettingsSchema))
 
     @post_load
     def make(self, data, **kwargs):

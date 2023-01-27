@@ -351,7 +351,7 @@ class TestComputeEntity:
             compute_resource = compute._to_rest_object()
             assert compute_resource.properties.properties.enable_node_public_ip == False
             compute_from_rest = Compute._from_rest_object(compute_resource)
-            assert compute.enable_node_public_ip == False
+            assert compute_from_rest.enable_node_public_ip == False
 
         validate_no_public_ip(compute=compute_instance)
         validate_no_public_ip(compute=aml_compute)

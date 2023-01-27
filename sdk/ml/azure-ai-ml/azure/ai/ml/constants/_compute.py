@@ -31,3 +31,11 @@ class ComputeDefaults:
     MAX_NODES = 4
     IDLE_TIME = 1800
     PRIORITY = "Dedicated"
+
+class CustomApplicationDefaults:
+    TARGET_PORT = "target_port"
+    PUBLISHED_PORT = "published_port"
+    TARGET_PORT_MIN_VALUE = 1
+    TARGET_PORT_MAX_VALUE = 65535
+    PUBLISHED_PORT_MIN_VALUE = 1025
+    PUBLISHED_PORT_MAX_VALUE = 65535

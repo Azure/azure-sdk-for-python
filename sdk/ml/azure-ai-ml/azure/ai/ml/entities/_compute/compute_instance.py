@@ -34,7 +34,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
-from ._custom_applications import CustomApplications
+from ._custom_applications import CustomApplications, validate_custom_applications
 
 module_logger = logging.getLogger(__name__)
 
@@ -291,6 +291,7 @@ class ComputeInstance(Compute):
             self.schedules._to_rest_object() if self.schedules else None
         )
         if self.custom_applications:
+            validate_custom_applications(self.custom_applications)
             compute_instance_prop.custom_services = []
             for app in self.custom_applications:
                 compute_instance_prop.custom_services.append(app._to_rest_object())
