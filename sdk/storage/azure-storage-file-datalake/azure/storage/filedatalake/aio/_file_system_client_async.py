@@ -164,7 +164,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.filedatalake.aio.DataLakeLeaseClient
@@ -211,7 +211,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
@@ -241,7 +241,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
@@ -264,7 +264,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
@@ -309,7 +309,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: None
 
@@ -338,7 +338,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: Properties for the specified file system within a file system object.
         :rtype: ~azure.storage.filedatalake.FileSystemProperties
@@ -395,7 +395,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: file system-updated property dict (Etag and last modified).
 
@@ -447,7 +447,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: filesystem-updated property dict (Etag and last modified).
         :rtype: dict[str, str or ~datetime.datetime]
@@ -469,7 +469,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
@@ -510,7 +510,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of PathProperties.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.filedatalake.PathProperties]
@@ -608,7 +608,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: DataLakeDirectoryClient
 
@@ -661,7 +661,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: DataLakeDirectoryClient
 
@@ -759,7 +759,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: DataLakeFileClient
 
@@ -812,7 +812,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: DataLakeFileClient
 
@@ -846,7 +846,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.file.datalake.aio.DataLakeDirectoryClient
                 or azure.storage.file.datalake.aio.DataLakeFileClient
@@ -969,7 +969,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, FileSystemClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of DeletedPathProperties.
         :rtype:

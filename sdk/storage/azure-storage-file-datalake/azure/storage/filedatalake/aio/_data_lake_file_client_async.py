@@ -155,7 +155,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: response dict (Etag and last modified).
 
@@ -179,7 +179,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
@@ -215,7 +215,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: None
 
@@ -264,7 +264,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: FileProperties
 
@@ -295,7 +295,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
@@ -372,7 +372,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
         :keyword int chunk_size:
@@ -587,7 +587,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
             the timeout will apply to each call individually.
         :returns: A streaming object (StorageStreamDownloader)
@@ -661,7 +661,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: the renamed file client
         :rtype: DataLakeFileClient

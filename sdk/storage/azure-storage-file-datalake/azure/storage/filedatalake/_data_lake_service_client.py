@@ -173,7 +173,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: The user delegation key.
         :rtype: ~azure.storage.filedatalake.UserDelegationKey
@@ -214,7 +214,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :keyword bool include_deleted:
             Specifies that deleted file systems to be returned in the response. This is for file system restore enabled
@@ -272,7 +272,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
 
@@ -307,7 +307,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
@@ -333,7 +333,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
@@ -381,7 +381,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: None
 
@@ -570,7 +570,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
@@ -588,7 +588,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :returns: An object containing datalake service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.

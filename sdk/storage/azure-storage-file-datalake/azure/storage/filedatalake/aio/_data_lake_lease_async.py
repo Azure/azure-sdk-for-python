@@ -102,7 +102,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
@@ -140,7 +140,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: None
         """
@@ -176,7 +176,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: None
         """
@@ -211,7 +211,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: None
         """
@@ -255,7 +255,7 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
             Sets the server-side timeout for the operation in seconds. For more details see 
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
             This value is not tracked or validated on the client. To configure client-side network timesouts
-            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
