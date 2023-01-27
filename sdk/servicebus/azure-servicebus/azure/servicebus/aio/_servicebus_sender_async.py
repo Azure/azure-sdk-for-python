@@ -29,7 +29,7 @@ from .._common.constants import (
 )
 from .._common import mgmt_handlers
 from .._common.utils import (
-    transform_messages_if_needed,
+    transform_outbound_messages,
     send_trace_context_manager,
     trace_message,
 )
@@ -267,7 +267,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        obj_messages = transform_messages_if_needed(messages, ServiceBusMessage)
+        obj_messages = transform_outbound_messages(messages, ServiceBusMessage)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
         with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
@@ -384,7 +384,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             if isinstance(message, ServiceBusMessageBatch):
                 obj_message = message  # type: MessageObjTypes
             else:
-                obj_message = transform_messages_if_needed(  # type: ignore
+                obj_message = transform_outbound_messages(  # type: ignore
                     message, ServiceBusMessage
                 )
                 try:

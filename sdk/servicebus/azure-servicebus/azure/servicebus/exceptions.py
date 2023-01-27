@@ -33,6 +33,27 @@ from ._common.constants import (
     ERROR_CODE_PRECONDITION_FAILED,
 )
 
+class _ServiceBusErrorPolicy(RetryPolicy):
+
+    no_retry = RetryPolicy.no_retry + cast(List[ErrorCondition], [
+                ERROR_CODE_SESSION_LOCK_LOST,
+                ERROR_CODE_MESSAGE_LOCK_LOST,
+                ERROR_CODE_OUT_OF_RANGE,
+                ERROR_CODE_ARGUMENT_ERROR,
+                ERROR_CODE_PRECONDITION_FAILED,
+            ])
+
+    def __init__(self, is_session=False, **kwargs):
+        self._is_session = is_session
+        custom_condition_backoff = {
+            b"com.microsoft:server-busy": 4,
+            b"com.microsoft:timeout": 2,
+            b"com.microsoft:container-close": 4
+        }
+        super(_ServiceBusErrorPolicy, self).__init__(
+            custom_condition_backoff=custom_condition_backoff,
+            **kwargs
+        )
 
 def _handle_amqp_exception_with_condition(
     logger, condition, description, exception=None, status_code=None
@@ -116,34 +137,6 @@ def _create_servicebus_exception(logger, exception):
         )
 
     return exception
-
-
-class _ServiceBusErrorPolicy(RetryPolicy):
-
-    no_retry = RetryPolicy.no_retry + cast(List[ErrorCondition], [
-                ERROR_CODE_SESSION_LOCK_LOST,
-                ERROR_CODE_MESSAGE_LOCK_LOST,
-                ERROR_CODE_OUT_OF_RANGE,
-                ERROR_CODE_ARGUMENT_ERROR,
-                ERROR_CODE_PRECONDITION_FAILED,
-            ])
-
-    def __init__(self, is_session=False, **kwargs):
-        self._is_session = is_session
-        custom_condition_backoff = {
-            b"com.microsoft:server-busy": 4,
-            b"com.microsoft:timeout": 2,
-            b"com.microsoft:container-close": 4
-        }
-        super(_ServiceBusErrorPolicy, self).__init__(
-            custom_condition_backoff=custom_condition_backoff,
-            **kwargs
-        )
-
-    def is_retryable(self, error):
-        if self._is_session:
-            return False
-        return super().is_retryable(error)
 
 
 class ServiceBusError(AzureError):

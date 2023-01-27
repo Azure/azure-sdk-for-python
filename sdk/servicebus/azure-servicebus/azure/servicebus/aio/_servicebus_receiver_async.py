@@ -273,7 +273,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         # if not self._message_iter:
         #     self._message_iter = self._handler.receive_messages_iter_async()
         uamqp_message = await self._message_iter.__anext__()
-        message = self._build_message(uamqp_message)
+        message = self._build_received_message(uamqp_message)
         if (
             self._auto_lock_renewer
             and not self._session
@@ -436,7 +436,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 batch.append(received_messages_queue.get())
                 received_messages_queue.task_done()
             if len(batch) >= max_message_count:
-                return [self._build_message(message) for message in batch]
+                return [self._build_received_message(message) for message in batch]
 
             # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
             if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
@@ -466,7 +466,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 ):
                     batch.append(received_messages_queue.get())
                     received_messages_queue.task_done()
-            return [self._build_message(message) for message in batch]
+            return [self._build_received_message(message) for message in batch]
         finally:
             self._receive_context.clear()
 

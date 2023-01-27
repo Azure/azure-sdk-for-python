@@ -43,19 +43,25 @@ from ._common.constants import (
 )
 
 if TYPE_CHECKING:
+    try:
+        from uamqp import AMQPClient as uamqp_AMQPClientSync
+    except ImportError:
+        pass
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def _parse_conn_str(conn_str, check_case=False):
-    # type: (str, Optional[bool]) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]
+def _parse_conn_str(
+    conn_str: str,
+    check_case: Optional[bool] = False
+) -> Tuple[str, Optional[str], Optional[str], str, Optional[str], Optional[int]]:
     endpoint = None
     shared_access_key_name = None
     shared_access_key = None
-    entity_path = None  # type: Optional[str]
-    shared_access_signature = None  # type: Optional[str]
-    shared_access_signature_expiry = None  # type: Optional[int]
+    entity_path: Optional[str]= None
+    shared_access_signature: Optional[str] = None
+    shared_access_signature_expiry: Optional[int] = None
 
     # split connection string into properties
     conn_properties = [s.split("=", 1) for s in conn_str.strip().rstrip(";").split(";")]
@@ -134,8 +140,9 @@ def _parse_conn_str(conn_str, check_case=False):
     )
 
 
-def _generate_sas_token(uri, policy, key, expiry=None):
-    # type: (str, str, str, Optional[timedelta]) -> AccessToken
+def _generate_sas_token(
+    uri: str, policy: str, key: str, expiry: Optional[timedelta] = None
+) -> AccessToken:
     """Create a shared access signiture token as a string literal.
     :returns: SAS token as string literal.
     :rtype: str
@@ -144,7 +151,7 @@ def _generate_sas_token(uri, policy, key, expiry=None):
         expiry = timedelta(hours=1)  # Default to 1 hour.
 
     abs_expiry = int(time.time()) + expiry.seconds
-    token = generate_sas_token(uri, policy, key, abs_expiry).encode("UTF-8")
+    token = generate_sas_token(uri, policy, key, abs_expiry)
     return AccessToken(token=token, expires_on=abs_expiry)
 
 def _get_backoff_time(retry_mode, backoff_factor, backoff_max, retried_times):
@@ -160,8 +167,7 @@ class ServiceBusSASTokenCredential(object):
     :param int expiry: The epoch timestamp
     """
 
-    def __init__(self, token, expiry):
-        # type: (str, int) -> None
+    def __init__(self, token: str, expiry: int) -> None:
         """
         :param str token: The shared access token string
         :param float expiry: The epoch timestamp
@@ -170,8 +176,7 @@ class ServiceBusSASTokenCredential(object):
         self.expiry = expiry
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
         """
@@ -185,14 +190,12 @@ class ServiceBusSharedKeyCredential(object):
     :param str key: The shared access key.
     """
 
-    def __init__(self, policy, key):
-        # type: (str, str) -> None
+    def __init__(self, policy: str, key: str) -> None:
         self.policy = policy
         self.key = key
         self.token_type = TOKEN_TYPE_SASTOKEN
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         return _generate_sas_token(scopes[0], self.policy, self.key)
@@ -204,13 +207,11 @@ class ServiceBusAzureNamedKeyTokenCredential(object):
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
+    def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         if not scopes:
             raise ValueError("No token scope provided.")
         name, key = self._credential.named_key
@@ -223,13 +224,11 @@ class ServiceBusAzureSasTokenCredential(object):
     :param azure_sas_credential: The credential to be used for authentication.
     :type azure_sas_credential: ~azure.core.credentials.AzureSasCredential
     """
-    def __init__(self, azure_sas_credential):
-        # type: (AzureSasCredential) -> None
+    def __init__(self, azure_sas_credential: AzureSasCredential) -> None:
         self._credential = azure_sas_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (str, Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """
         This method is automatically called when token is about to expire.
         """
@@ -238,8 +237,15 @@ class ServiceBusAzureSasTokenCredential(object):
 
 
 class BaseHandler:  # pylint:disable=too-many-instance-attributes
-    def __init__(self, fully_qualified_namespace, entity_name, credential, **kwargs):
-        # type: (str, str, Union[TokenCredential, AzureSasCredential, AzureNamedKeyCredential], Any) -> None
+    def __init__(
+        self,
+        fully_qualified_namespace: str,
+        entity_name: str,
+        credential: Union["TokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        **kwargs: Any
+    ) -> None:
+        self._amqp_transport = kwargs.pop("amqp_transport")
+
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
@@ -258,16 +264,24 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
-        self._config = Configuration(**kwargs)
+        self._config = Configuration(
+            hostname=self.fully_qualified_namespace,
+            amqp_transport=self._amqp_transport,
+            **kwargs
+        )
         self._running = False
-        self._handler = cast(AMQPClientSync, None)  # type: AMQPClientSync
+        self._handler: Union["uamqp_AMQPClientSync", "AMQPClientSync"] = None   # type: ignore
         self._auth_uri = None
-        self._properties = create_properties(self._config.user_agent)
+        self._properties = create_properties(
+            self._config.user_agent,
+            amqp_transport=self._amqp_transport,
+        )
         self._shutdown = threading.Event()
 
     @classmethod
-    def _convert_connection_string_to_kwargs(cls, conn_str, **kwargs):
-        # type: (str, Any) -> Dict[str, Any]
+    def _convert_connection_string_to_kwargs(
+        cls, conn_str: str, **kwargs: Any
+    ) -> Dict[str, Any]:
         host, policy, key, entity_in_conn_str, token, token_expiry = _parse_conn_str(
             conn_str
         )
@@ -324,16 +338,16 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
-    def _handle_exception(self, exception):
-        # type: (BaseException) -> ServiceBusError
+    def _handle_exception(self, exception: BaseException) -> ServiceBusError:
         # pylint: disable=protected-access, line-too-long
-        error = _create_servicebus_exception(_LOGGER, exception)
+        error = self._amqp_transport._create_servicebus_exception(_LOGGER, exception)
 
         try:
-            # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
-            # the receiver should no longer be used and should create a new session receiver
-            # instance to receive from session. There are pitfalls WRT both next session IDs,
-            # and the diversity of session failure modes, that motivates us to disallow this.
+            # If SessionLockLostError or ServiceBusConnectionError happen when a
+            # session receiver is running, the receiver should no longer be used and
+            # should create a new session receiver instance to receive from session.
+            # There are pitfalls WRT both next session IDs, and the diversity of session
+            # failure modes, that motivates us to disallow this.
             if self._session and self._running and isinstance(error, (SessionLockLostError, ServiceBusConnectionError)):  # type: ignore
                 self._session._lock_lost = True  # type: ignore
                 self._close_handler()
@@ -374,8 +388,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             pass
 
-    def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        # type: (Callable, Optional[float], Any) -> Any
+    def _do_retryable_operation(
+        self,
+        operation: Callable,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> Any:
         # pylint: disable=protected-access
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
@@ -415,9 +433,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 )
 
     def _backoff(
-        self, retried_times, last_exception, abs_timeout_time=None, entity_name=None
-    ):
-        # type: (int, Exception, Optional[float], str) -> None
+        self,
+        retried_times: int,
+        last_exception: Exception,
+        abs_timeout_time: Optional[float] = None,
+        entity_name: str = None
+    ) -> None:
         entity_name = entity_name or self._container_id
         backoff = _get_backoff_time(
                     self._config.retry_mode,

@@ -78,7 +78,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
                 "as they have been deleted, providing an AutoLockRenewer in this mode is invalid."
             )
 
-    def _build_message(self, received, message_type=ServiceBusReceivedMessage):
+    def _build_received_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(
             message=received[1], receive_mode=self._receive_mode, receiver=self, frame=received[0]
         )

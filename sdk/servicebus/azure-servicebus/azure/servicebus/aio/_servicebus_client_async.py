@@ -127,18 +127,15 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
 
-        self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
-        self._connection_verify = kwargs.get("connection_verify")
-
     async def __aenter__(self):
         if self._connection_sharing:
-            await self._create_uamqp_connection()
+            await self._create_connection()
         return self
 
     async def __aexit__(self, *args):
         await self.close()
 
-    async def _create_uamqp_connection(self):
+    async def _create_connection(self):
         auth = await create_authentication(self)
         self._connection = self._connection = Connection(
             endpoint=self.fully_qualified_namespace,
