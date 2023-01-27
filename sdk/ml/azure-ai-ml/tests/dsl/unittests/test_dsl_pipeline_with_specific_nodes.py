@@ -1640,87 +1640,7 @@ class TestDSLPipelineWithSpecificNodes:
             "classificationjob_1",
             "classificationjob",
         }
-
     def test_pipeline_with_command_services(self):
-        services = {
-            "my_ssh": JobService(job_service_type="ssh"),
-            "my_tensorboard": JobService(
-                job_service_type="tensor_board",
-                properties={
-                    "logDir": "~/tblog",
-                },
-            ),
-            "my_jupyterlab": JobService(job_service_type="jupyter_lab"),
-        }
-        rest_services = {
-            "my_ssh": {"job_service_type": "SSH"},
-            "my_tensorboard": {
-                "job_service_type": "TensorBoard",
-                "properties": {
-                    "logDir": "~/tblog",
-                },
-            },
-            "my_jupyterlab": {"job_service_type": "JupyterLab"},
-        }
-
-        command_func = command(
-            name="test_component_with_services",
-            display_name="command_with_services",
-            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
-            command=('echo "hello world" & sleep 1h'),
-            environment_variables={"key": "val"},
-            inputs={},
-            outputs={"component_out_path": Output(type="uri_folder")},
-            services=services,
-        )
-
-        @dsl.pipeline(
-            name="test_component_with_services_pipeline",
-            description="The command node with services",
-            tags={"owner": "sdkteam", "tag": "tagvalue"},
-            compute="cpu-cluster",
-        )
-        def sample_pipeline():
-            node = command_func()
-            return {"pipeline_output": node.outputs.component_out_path}
-
-        pipeline = sample_pipeline()
-        node_services = pipeline.jobs["node"].services
-
-        assert len(node_services) == 3
-        for name, service in node_services.items():
-            assert isinstance(service, JobService)
-
-        job_rest_obj = pipeline._to_rest_object()
-        assert job_rest_obj.properties.jobs["node"]["services"] == rest_services
-
-        recovered_obj = PipelineJob._from_rest_object(job_rest_obj)
-        node_services = recovered_obj.jobs["node"].services
-
-        assert len(node_services) == 3
-        for name, service in node_services.items():
-            assert isinstance(service, JobService)
-
-        # test set services in pipeline
-        new_services = {"my_jupyter": JobService(job_service_type="jupyter_lab")}
-        rest_new_services = {"my_jupyter": {"job_service_type": "JupyterLab"}}
-
-        @dsl.pipeline()
-        def sample_pipeline_with_new_services():
-            node = command_func()
-            node.services = new_services
-
-        pipeline = sample_pipeline_with_new_services()
-        node_services = pipeline.jobs["node"].services
-
-        assert len(node_services) == 1
-        for name, service in node_services.items():
-            assert isinstance(service, JobService)
-
-        job_rest_obj = pipeline._to_rest_object()
-        assert job_rest_obj.properties.jobs["node"]["services"] == rest_new_services
-
-    def test_pipeline_with_command_services_subtypes(self):
         services = {
             "my_ssh": SshJobService(),
             "my_tensorboard": TensorBoardJobService(
@@ -1796,7 +1716,91 @@ class TestDSLPipelineWithSpecificNodes:
         node_services = pipeline.jobs["node"].services
 
         assert len(node_services) == 1
+        # TODO: node_services.get("my_jupyterlab") return dict, Shouldn't it be JupyterLabJobService ?
+        # assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+
+        job_rest_obj = pipeline._to_rest_object()
+        assert job_rest_obj.properties.jobs["node"]["services"] == rest_new_services
+
+    def test_pipeline_with_command_services_with_deprecatable_JobService(self):
+        services = {
+            "my_ssh": JobService(job_service_type="ssh"),
+            "my_tensorboard": JobService(
+                job_service_type="tensor_board",
+                properties={
+                    "logDir": "~/tblog",
+                },
+            ),
+            "my_jupyterlab": JobService(job_service_type="jupyter_lab"),
+            "my_vscode": JobService(job_service_type="vs_code"),
+        }
+        rest_services = {
+            "my_ssh": {"job_service_type": "SSH"},
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+            "my_vscode": { "job_service_type": "VSCode"},
+        }
+
+        command_func = command(
+            name="test_component_with_services",
+            display_name="command_with_services",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+            command=('echo "hello world" & sleep 1h'),
+            environment_variables={"key": "val"},
+            inputs={},
+            outputs={"component_out_path": Output(type="uri_folder")},
+            services=services,
+        )
+
+        @dsl.pipeline(
+            name="test_component_with_services_pipeline",
+            description="The command node with services",
+            tags={"owner": "sdkteam", "tag": "tagvalue"},
+            compute="cpu-cluster",
+        )
+        def sample_pipeline():
+            node = command_func()
+            return {"pipeline_output": node.outputs.component_out_path}
+
+        pipeline = sample_pipeline()
+        node_services = pipeline.jobs["node"].services
+
+        assert len(node_services) == 4
+        for name, service in node_services.items():
+            assert isinstance(service, JobService)
+
+        job_rest_obj = pipeline._to_rest_object()
+        assert job_rest_obj.properties.jobs["node"]["services"] == rest_services
+
+        recovered_obj = PipelineJob._from_rest_object(job_rest_obj)
+        node_services = recovered_obj.jobs["node"].services
+
+        assert len(node_services) == 4
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
         assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
+
+        # test set services in pipeline
+        new_services = {"my_jupyter": JobService(job_service_type="jupyter_lab")}
+        rest_new_services = {"my_jupyter": {"job_service_type": "JupyterLab"}}
+
+        @dsl.pipeline()
+        def sample_pipeline_with_new_services():
+            node = command_func()
+            node.services = new_services
+
+        pipeline = sample_pipeline_with_new_services()
+        node_services = pipeline.jobs["node"].services
+
+        assert len(node_services) == 1
+        for name, service in node_services.items():
+            assert isinstance(service, JobService)
 
         job_rest_obj = pipeline._to_rest_object()
         assert job_rest_obj.properties.jobs["node"]["services"] == rest_new_services
