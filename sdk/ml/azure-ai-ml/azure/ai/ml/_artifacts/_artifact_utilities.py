@@ -601,7 +601,6 @@ def _upload_snapshot_to_datastore(
         sas_uri, blob_uri = _get_snapshot_temporary_data_reference(
             requests_pipeline=requests_pipeline,
             asset_name=asset_name,
-            asset_type=asset_type,
             asset_version=asset_version,
             request_headers=request_headers,
             workspace=workspace,
