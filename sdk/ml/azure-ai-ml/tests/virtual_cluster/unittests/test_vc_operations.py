@@ -1,12 +1,9 @@
 from unittest.mock import Mock, patch
 
 import pytest
-import mock
 
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.operations import VirtualClusterOperations
-
 
 
 @pytest.fixture
