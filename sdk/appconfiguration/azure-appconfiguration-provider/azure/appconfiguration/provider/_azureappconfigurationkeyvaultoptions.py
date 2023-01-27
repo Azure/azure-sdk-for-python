@@ -51,3 +51,5 @@ class AzureAppConfigurationKeyVaultOptions:
         self.credential = kwargs.get("credential", None)
         self.secret_clients = kwargs.get("secret_clients", {})
         self.secret_resolver = kwargs.get("secret_resolver", None)
+        if self.credential is not None and self.secret_resolver is not None:
+            raise ValueError("credential and secret_resolver can't both be configured.")
