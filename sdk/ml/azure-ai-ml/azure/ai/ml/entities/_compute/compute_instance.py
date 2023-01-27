@@ -166,7 +166,6 @@ class ComputeInstance(Compute):
         idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
         enable_node_public_ip: bool = True,
-        custom_applications: Optional[List[CustomApplications]] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -174,6 +173,7 @@ class ComputeInstance(Compute):
         self._last_operation = kwargs.pop("last_operation", None)
         self._os_image_metadata = kwargs.pop("os_image_metadata", None)
         self._services = kwargs.pop("services", None)
+        self.custom_applications = kwargs.pop("custom_applications", None)
         super().__init__(
             name=name,
             location=kwargs.pop("location", None),
@@ -192,7 +192,6 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
         self.enable_node_public_ip = enable_node_public_ip
-        self.custom_applications = custom_applications
         self.subnet = None
 
     @property
