@@ -442,7 +442,7 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
             os_image_metadata=os_image_metadata,
             enable_node_public_ip=prop.properties.enable_node_public_ip
-            if (prop.properties and prop.properties.enable_node_public_ip)
+            if (prop.properties and prop.properties.enable_node_public_ip is not None)
             else True,
             custom_applications=custom_applications,
         )
