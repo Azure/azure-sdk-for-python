@@ -6,13 +6,20 @@ import logging
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml.entities._job.job_service import JobService, SshJobService, JupyterLabJobService, VsCodeJobService, TensorBoardJobService
+from azure.ai.ml.entities._job.job_service import (
+    JobService,
+    SshJobService,
+    JupyterLabJobService,
+    VsCodeJobService,
+    TensorBoardJobService,
+)
 from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField
 
 from ..core.schema import PathAwareSchema
 
 module_logger = logging.getLogger(__name__)
+
 
 class JobServiceBaseSchema(PathAwareSchema):
     port = fields.Int()
@@ -38,6 +45,7 @@ class JobServiceSchema(JobServiceBaseSchema):
     def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
         return JobService(**data)
 
+
 class TensorBoardJobServiceSchema(JobServiceBaseSchema):
     job_service_type = UnionField(
         [
@@ -52,6 +60,7 @@ class TensorBoardJobServiceSchema(JobServiceBaseSchema):
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
         return TensorBoardJobService(**data)
+
 
 class SshJobServiceSchema(JobServiceBaseSchema):
     job_service_type = UnionField(
@@ -68,6 +77,7 @@ class SshJobServiceSchema(JobServiceBaseSchema):
     @post_load
     def make(self, data, **kwargs):  # pylint: disable=unused-argument,no-self-use
         return SshJobService(**data)
+
 
 class VsCodeJobServiceSchema(JobServiceBaseSchema):
     job_service_type = UnionField(

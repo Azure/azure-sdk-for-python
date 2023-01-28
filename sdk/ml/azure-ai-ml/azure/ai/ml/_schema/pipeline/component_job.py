@@ -39,7 +39,13 @@ from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnio
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
 from ..job.job_limits import CommandJobLimitsSchema
 from ..job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
-from ..job.services import JobServiceSchema, SshJobServiceSchema, JupyterLabJobServiceSchema, VsCodeJobServiceSchema, TensorBoardJobServiceSchema
+from ..job.services import (
+    JobServiceSchema,
+    SshJobServiceSchema,
+    JupyterLabJobServiceSchema,
+    VsCodeJobServiceSchema,
+    TensorBoardJobServiceSchema,
+)
 
 module_logger = logging.getLogger(__name__)
 

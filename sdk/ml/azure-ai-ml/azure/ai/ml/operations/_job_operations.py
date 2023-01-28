@@ -512,6 +512,7 @@ class JobOperations(_ScopeDependentOperations):
                 isinstance(rest_job_resource.properties.identity, UserIdentity)
             ):
                 self._set_headers_with_user_aml_token(kwargs)
+
             result = self._operation_2022_10_preview.create_or_update(
                 id=rest_job_resource.name,  # type: ignore
                 resource_group_name=self._operation_scope.resource_group_name,
@@ -519,6 +520,7 @@ class JobOperations(_ScopeDependentOperations):
                 body=rest_job_resource,
                 **kwargs,
             )
+
             if is_local_run(result):
                 ws_base_url = self._all_operations.all_operations[
                     AzureMLResourceType.WORKSPACE

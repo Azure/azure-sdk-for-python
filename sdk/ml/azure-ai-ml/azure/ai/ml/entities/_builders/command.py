@@ -43,7 +43,14 @@ from azure.ai.ml.entities._job.distribution import (
 )
 from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
-from azure.ai.ml.entities._job.job_service import JobServiceBase, JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService
+from azure.ai.ml.entities._job.job_service import (
+    JobServiceBase,
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.search_space import (
@@ -154,8 +161,9 @@ class Command(BaseNode):
         environment: Optional[Union[Environment, str]] = None,
         environment_variables: Optional[Dict] = None,
         resources: Optional[JobResourceConfiguration] = None,
-        # services: Optional[Dict[str, JobService]] = None,
-        services: Optional[Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]] = None,
+        services: Optional[
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        ] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -663,7 +671,9 @@ class Command(BaseNode):
         )
 
 
-def _resolve_job_services(services: dict) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
+def _resolve_job_services(
+    services: dict,
+) -> Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]:
     """Resolve normal dict to dict[str, JobService]"""
     if services is None:
         return None
@@ -682,7 +692,9 @@ def _resolve_job_services(services: dict) -> Dict[str, Union[JobService, Jupyter
         if isinstance(service, dict):
             # TODO: Remove JobServiceSchema ?
             service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
-        elif not isinstance(service, (JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService)):
+        elif not isinstance(
+            service, (JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService)
+        ):
             msg = f"Service value for key {name!r} must be a dict or JobService object, got {type(service)} instead."
             raise ValidationException(
                 message=msg,
