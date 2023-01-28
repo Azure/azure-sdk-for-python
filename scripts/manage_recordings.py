@@ -40,7 +40,6 @@ import subprocess
 #
 #   * push: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
 #   * restore: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
-#   * reset: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 #
 # For more information about how recording asset synchronization, please refer to
 # https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md.
@@ -118,7 +117,7 @@ if not (GIT_TOKEN and GIT_OWNER and GIT_EMAIL):
 
 # Prepare command arguments
 parser = argparse.ArgumentParser(description="Script for managing recording assets with Docker.")
-parser.add_argument("verb", help='The action verb for managing recordings: "restore", "push", or "reset".')
+parser.add_argument("verb", help='The action verb for managing recordings: "push" or "restore".')
 parser.add_argument(
     "path",
     default="assets.json",
