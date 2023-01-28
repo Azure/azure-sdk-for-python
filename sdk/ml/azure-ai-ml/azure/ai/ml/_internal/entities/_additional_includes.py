@@ -11,7 +11,7 @@ from typing import Optional, Union
 
 import yaml
 
-from azure.ai.ml._utils._asset_utils import IgnoreFile, get_local_paths
+from azure.ai.ml._utils._asset_utils import IgnoreFile, get_local_paths, get_ignore_file
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
@@ -192,7 +192,11 @@ class _AdditionalIncludes:
                 self._resolve_folder_to_compress(additional_include, Path(tmp_folder_path))
             else:
                 dst_path = (tmp_folder_path / src_path.name).resolve()
-                self._copy(src_path, dst_path, ignore_file=IgnoreFile() if self._is_artifact_includes else None)
+                self._copy(
+                    src_path,
+                    dst_path,
+                    ignore_file=IgnoreFile() if self._is_artifact_includes else get_ignore_file(src_path)
+                )
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return
 

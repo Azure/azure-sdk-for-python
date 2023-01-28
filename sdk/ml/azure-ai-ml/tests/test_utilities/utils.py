@@ -4,12 +4,14 @@
 
 import copy
 import os
+import shutil
 import signal
 import tempfile
 import time
+from contextlib import contextmanager
 from io import StringIO
 from pathlib import Path
-from typing import Callable, Dict
+from typing import Callable, Dict, List, Optional, Union
 from zipfile import ZipFile
 
 import pydash
@@ -343,3 +345,33 @@ def parse_local_path(origin_path, base_path=None):
     else:
         base_path = Path(base_path)
     return (base_path / origin_path).resolve().absolute().as_posix()
+
+
+@contextmanager
+def build_temp_folder(
+        *,
+        source_base_dir: Union[str, os.PathLike],
+        relative_dirs_to_copy: List[str] = None,
+        relative_files_to_copy: List[str] = None,
+        extra_files_to_create: Dict[str, Optional[str]] = None,
+) -> str:
+    source_base_dir = Path(source_base_dir)
+    with tempfile.TemporaryDirectory() as temp_dir:
+        if relative_dirs_to_copy:
+            for dir_name in relative_dirs_to_copy:
+                shutil.copytree(source_base_dir / dir_name, Path(temp_dir) / dir_name)
+        if relative_files_to_copy:
+            for file_name in relative_files_to_copy:
+                shutil.copy(source_base_dir / file_name, Path(temp_dir) / file_name)
+        if extra_files_to_create:
+            for file_name, content in extra_files_to_create.items():
+                target_file = Path(temp_dir) / file_name
+                target_file.parent.mkdir(parents=True, exist_ok=True)
+                if content is None:
+                    target_file.touch()
+                    continue
+                with open(target_file, "w") as f:
+                    if content:
+                        f.write(content)
+
+        yield temp_dir
