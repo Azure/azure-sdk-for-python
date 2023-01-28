@@ -4,7 +4,7 @@ from tempfile import TemporaryDirectory
 from typing import Callable
 
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 from test_utilities.utils import sleep_if_live, wait_until_done
 
 from azure.ai.ml import MLClient, load_job
@@ -28,6 +28,7 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 class TestSweepJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_sweep_job_submit(self, randstr: Callable[[], str], client: MLClient) -> None:
+        set_bodiless_matcher()
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
 
         job_name = randstr("job_name")
@@ -47,6 +48,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_sweep_job_submit_with_inputs(self, randstr: Callable[[str], str], client: MLClient) -> None:
+        set_bodiless_matcher()
         # TODO: need to create a workspace under a e2e-testing-only subscription and reousrce group
 
         job_name = randstr("job_name")
@@ -70,6 +72,8 @@ class TestSweepJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_sweep_job_submit_minimal(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure the Minimal required properties does not fail on submisison"""
+        set_bodiless_matcher()
+
         job_name = randstr("job_name")
 
         params_override = [{"name": job_name}]
@@ -87,6 +91,8 @@ class TestSweepJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     def test_sweep_job_await_completion(self, randstr: Callable[[str], str], client: MLClient) -> None:
         """Ensure sweep job runs to completion"""
+        set_bodiless_matcher()
+
         job_name = randstr("job_name")
 
         params_override = [{"name": job_name}]
@@ -105,6 +111,8 @@ class TestSweepJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     @pytest.mark.skip(reason="flaky test")
     def test_sweep_job_download(self, randstr: Callable[[str], str], client: MLClient) -> None:
+        set_bodiless_matcher()
+
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/sweep_job/sweep_job_minimal_outputs.yaml",
@@ -131,6 +139,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_sweep_job_builder(self, randstr: Callable[[str], str], client: MLClient) -> None:
+        set_bodiless_matcher()
 
         inputs = {
             "uri": Input(
