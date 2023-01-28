@@ -148,27 +148,6 @@ class JobServiceBase(RestTranslatableMixin):
 
 @experimental
 class JobService(JobServiceBase):
-    def __init__(
-        self,
-        *,
-        endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["jupyter_lab", "ssh", "tensor_board", "vs_code"]] = None,
-        nodes: Optional[Literal["all"]] = None,
-        status: Optional[str] = None,
-        port: Optional[int] = None,
-        properties: Optional[Dict[str, str]] = None,
-        **kwargs,  # pylint: disable=unused-argument
-    ) -> None:
-        super().__init__(
-            endpoint=endpoint,
-            job_service_type=job_service_type,
-            nodes=nodes,
-            status=status,
-            port=port,
-            properties=properties,
-            **kwargs,
-        )
-
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JobService":
         return cls._from_rest_job_service_object(obj)

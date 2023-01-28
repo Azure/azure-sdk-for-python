@@ -128,7 +128,8 @@ class Command(BaseNode):
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
     :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
         Please see https://aka.ms/azuremlexperimental for more information.
-    :type services: Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    :type services:
+        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
     """
