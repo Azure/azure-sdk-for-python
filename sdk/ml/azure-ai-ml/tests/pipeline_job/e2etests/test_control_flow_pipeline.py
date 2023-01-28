@@ -32,6 +32,8 @@ omit_fields = [
     "enable_private_preview_pipeline_node_types",
     "mock_asset_name",
     "mock_component_hash",
+    "bodiless_matching",
+    "mock_snapshot_hash"
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

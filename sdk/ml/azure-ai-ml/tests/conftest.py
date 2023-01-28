@@ -79,8 +79,12 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
+    add_body_key_sanitizer(json_path="$.blobReferenceForConsumption.credential.sasUri", value="fake_sas_uri")
+    add_general_regex_sanitizer(value="fake_tenant_id", regex=os.environ.get('ML_TENANT_ID'))
     add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
+    add_general_regex_sanitizer(value="", regex=f"\\u0026sktid={os.environ.get('ML_TENANT_ID')}")
+    add_general_string_sanitizer(value="", target=f"&sktid={os.environ.get('ML_TENANT_ID')}")
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1"
     )
@@ -486,6 +490,21 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
             "azure.ai.ml._artifacts._artifact_utilities.get_object_hash",
             return_value="00000000000000000000000000000000",
         )
+
+
+@pytest.fixture
+def mock_snapshot_hash(mocker: MockFixture) -> None:
+    fake_uuid = "000000000000000000000"
+
+    def generate_uuid(*args, **kwargs):
+        real_uuid = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        return real_uuid
+
+    if is_live():
+        mocker.patch("azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id", side_effect=generate_uuid)
+    else:
+        mocker.patch("azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id", return_value=fake_uuid)
 
 
 @pytest.fixture
