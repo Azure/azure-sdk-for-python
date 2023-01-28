@@ -5,6 +5,7 @@
 from pathlib import Path
 from typing import List, Optional, Union
 
+from ..._utils._asset_utils import IgnoreFile
 from ...entities._assets import Code
 from ...entities._component.code import ComponentIgnoreFile
 
@@ -14,10 +15,27 @@ class InternalComponentIgnoreFile(ComponentIgnoreFile):
 
     def __init__(self, directory_path: Union[str, Path]):
         super(InternalComponentIgnoreFile, self).__init__(directory_path=directory_path)
+        self._other_ignores = []
 
     def _get_ignore_list(self) -> List[str]:
         """Override to add custom ignores for internal component."""
         return super(InternalComponentIgnoreFile, self)._get_ignore_list() + self._INTERNAL_COMPONENT_CODE_IGNORES
+
+    def merge(self, other: IgnoreFile):
+        """Merge other ignore file with this one and create a new IgnoreFile for it.
+        """
+        ignore_file = InternalComponentIgnoreFile(self._base_path)
+        ignore_file._other_ignores.append(other)  # pylint: disable=protected-access
+        return ignore_file
+
+    def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
+        """Override to check if file is excluded in other ignore files."""
+        if super(InternalComponentIgnoreFile, self).is_file_excluded(file_path):
+            return True
+        for other in self._other_ignores:
+            if other.is_file_excluded(file_path):
+                return True
+        return False
 
 
 class InternalCode(Code):

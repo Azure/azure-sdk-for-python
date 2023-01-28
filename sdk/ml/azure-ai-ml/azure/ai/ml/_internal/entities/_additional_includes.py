@@ -84,8 +84,10 @@ class _AdditionalIncludes:
     def code(self) -> Path:
         return self._tmp_code_path if self._tmp_code_path else self._code_path
 
-    def _copy(self, src: Path, dst: Path, ignore_file=None) -> None:
+    def _copy(self, src: Path, dst: Path, with_ignore: bool = True) -> None:
         if src.is_file():
+            if not dst.parent.is_dir():
+                dst.parent.mkdir(parents=True)
             _general_copy(src, dst)
         else:
             # use os.walk to replace shutil.copytree, which may raise
@@ -93,15 +95,12 @@ class _AdditionalIncludes:
             # is merging ignore will be also applied during this process
             local_paths, _ = get_local_paths(
                 source_path=str(src),
-                ignore_file=(ignore_file or self._ignore_file)
+                ignore_file=self._ignore_file.merge(get_ignore_file(src)) if with_ignore else IgnoreFile(),
             )
-            for path in local_paths:
-                dst_root = Path(dst) / Path(path).relative_to(src)
-                dst_root_mkdir_flag = dst_root.is_dir()
-                # if there is nothing to copy under current dst_root, no need to create this folder
-                if dst_root_mkdir_flag is False:
-                    dst_root.mkdir(parents=True)
-                _general_copy(path, dst_root / Path(path).name)
+            for src_path in local_paths:
+                src_path = Path(src_path)
+                dst_path = Path(dst) / src_path.relative_to(src)
+                self._copy(src_path, dst_path, with_ignore=with_ignore)
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -195,7 +194,7 @@ class _AdditionalIncludes:
                 self._copy(
                     src_path,
                     dst_path,
-                    ignore_file=IgnoreFile() if self._is_artifact_includes else get_ignore_file(src_path)
+                    with_ignore=not self._is_artifact_includes
                 )
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return

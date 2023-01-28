@@ -358,11 +358,11 @@ class TestComponent:
         with component._resolve_local_code() as code:
             code_path = code.path
             assert code_path.is_dir()
-            assert (code_path / "LICENSE").exists()
-            assert (code_path / "library.zip").exists()
+            assert (code_path / "LICENSE").is_file()
+            assert (code_path / "library.zip").is_file()
             assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
-            assert (code_path / "library1" / "hello.py").exists()
-            assert (code_path / "library1" / "world.py").exists()
+            assert (code_path / "library1" / "hello.py").is_file()
+            assert (code_path / "library1" / "world.py").is_file()
 
         assert not code_path.is_dir()
 
@@ -407,8 +407,8 @@ class TestComponent:
             component: InternalComponent = load_component(source=yaml_path)
 
             # resolve and check snapshot directory
-            assert (Path(test_configs_dir) / "component_with_additional_includes" / "code_only").exists()
-            assert (Path(test_configs_dir) / "additional_includes" / "library1" / "hello.py").exists()
+            assert (Path(test_configs_dir) / "component_with_additional_includes" / "code_only").is_dir()
+            assert (Path(test_configs_dir) / "additional_includes" / "library1" / "hello.py").is_file()
             with component._resolve_local_code() as code:
                 code_path = code.path
                 assert not (code_path / "code_only").exists()
@@ -423,12 +423,12 @@ class TestComponent:
         with component._resolve_local_code() as code:
             code_path = code.path
             # first folder
-            assert (code_path / "library1" / "__init__.py").exists()
-            assert (code_path / "library1" / "hello.py").exists()
+            assert (code_path / "library1" / "__init__.py").is_file()
+            assert (code_path / "library1" / "hello.py").is_file()
             # second folder content
             assert (code_path / "library1" / "utils").is_dir()
-            assert (code_path / "library1" / "utils" / "__init__.py").exists()
-            assert (code_path / "library1" / "utils" / "salute.py").exists()
+            assert (code_path / "library1" / "utils" / "__init__.py").is_file()
+            assert (code_path / "library1" / "utils" / "salute.py").is_file()
 
     @pytest.mark.parametrize(
         "yaml_path,has_additional_includes",
@@ -459,8 +459,8 @@ class TestComponent:
                     "helloworld_invalid_additional_includes_zip_file_not_found.yml",
                     "no_code_and_additional_includes",
                 ]:
-                    assert (code_path / path).exists()
-                assert (code_path / "LICENSE").exists()
+                    assert (code_path / path).is_file() if ".yml" in path else (code_path / path).is_dir()
+                assert (code_path / "LICENSE").is_file()
             else:
                 # additional includes not specified, code should be specified path (default yaml folder)
                 yaml_dict = load_yaml(yaml_path)
