@@ -355,6 +355,21 @@ def build_temp_folder(
         relative_files_to_copy: List[str] = None,
         extra_files_to_create: Dict[str, Optional[str]] = None,
 ) -> str:
+    """Build a temporary folder with files and subfolders copied from source_base_dir.
+
+    :param source_base_dir: The base directory to copy files from.
+    :type source_base_dir: Union[str, os.PathLike]
+    :param relative_dirs_to_copy: The relative paths of subfolders to copy from source_base_dir.
+    :type relative_dirs_to_copy: List[str]
+    :param relative_files_to_copy: The relative paths of files to copy from source_base_dir.
+    :type relative_files_to_copy: List[str]
+    :param extra_files_to_create: The relative paths of files to create in the temporary folder.
+    The value of each key-value pair is the content of the file.
+    If the value is None, the file will be empty.
+    :type extra_files_to_create: Dict[str, Optional[str]]
+    :return: The path of the temporary folder.
+    :rtype: str
+    """
     source_base_dir = Path(source_base_dir)
     with tempfile.TemporaryDirectory() as temp_dir:
         if relative_dirs_to_copy:
