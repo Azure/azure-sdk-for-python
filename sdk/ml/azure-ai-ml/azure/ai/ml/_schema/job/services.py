@@ -30,14 +30,16 @@ class JobServiceBaseSchema(PathAwareSchema):
     properties = fields.Dict()
 
 
-# TODO: Can JobServiceSchema removed?
 class JobServiceSchema(JobServiceBaseSchema):
     job_service_type = UnionField(
         [
             StringTransformedEnum(
                 allowed_values=JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC,
                 pass_original=True,
-            )
+            ),
+            # This is to support internal types like Custom, Tracking, Studio.
+            # These are set by the service and not by the user.
+            fields.Str(),
         ]
     )
 

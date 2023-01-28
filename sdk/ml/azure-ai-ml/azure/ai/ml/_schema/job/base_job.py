@@ -32,6 +32,8 @@ class BaseJobSchema(ResourceSchema):
                 NestedField(TensorBoardJobServiceSchema),
                 NestedField(VsCodeJobServiceSchema),
                 NestedField(JupyterLabJobServiceSchema),
+                # JobServiceSchema should be the last in the list.
+                # To support types not set by users like Custom, Tracking, Studio.
                 NestedField(JobServiceSchema),
             ],
             is_strict=True,

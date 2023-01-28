@@ -166,6 +166,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
                 NestedField(JupyterLabJobServiceSchema),
                 NestedField(TensorBoardJobServiceSchema),
                 NestedField(VsCodeJobServiceSchema),
+                # JobServiceSchema should be the last in the list.
+                # To support types not set by users like Custom, Tracking, Studio.
                 NestedField(JobServiceSchema),
             ]
         ),
