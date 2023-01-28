@@ -47,6 +47,15 @@
                 "tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py"
             ],
             "_justification": "File contains private key used by test code."
+        },
+        {
+            "file":[
+                "sdk/core/azure-servicemanagement-legacy/tests/test_legacy_mgmt_servicebus.test_list_namespaces.yml",
+                "sdk/core/azure-servicemanagement-legacy/tests/test_legacy_mgmt_servicebus.test_delete_namespace.yaml",
+                "sdk/core/azure-servicemanagement-legacy/tests/recordings/test_legacy_mgmt_storage.test_get_storage_account_keys.yaml",
+                "sdk/core/azure-servicemanagement-legacy/tests/recordings/test_legacy_mgmt_storage.test_regenerate_storage_account_keys.yaml"
+            ],
+            "_justification": "Management recording containing long expired secrets. Secrets originate from ~7 years ago and do not merit the effort to re-record on a defunct package."
         }
     ]
 }

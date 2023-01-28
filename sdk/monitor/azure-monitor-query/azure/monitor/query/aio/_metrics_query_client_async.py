@@ -35,10 +35,11 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorMetricsClient(
             credential=credential,
             endpoint=self._endpoint,
-            authentication_policy=get_metrics_authentication_policy(credential, audience),
+            authentication_policy=auth_policy or get_metrics_authentication_policy(credential, audience),
             **kwargs
         )
         self._metrics_op = self._client.metrics
@@ -95,6 +96,8 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         timespan = construct_iso8601(kwargs.pop("timespan", None))
+        # Metric names with commas need to be encoded.
+        metric_names = [x.replace(",", "%2") for x in metric_names]
         kwargs.setdefault("metricnames", ",".join(metric_names))
         kwargs.setdefault("timespan", timespan)
         kwargs.setdefault("top", kwargs.pop("max_results", None))

@@ -6,69 +6,15 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
+from typing import TYPE_CHECKING, List
 
-from azure.core import PipelineClient
-
-from ._client import LoadTestingClient as LoadTestingClientGenerated
-from ._configuration import LoadTestingClientConfiguration
-from ._serialization import Deserializer, Serializer
-from .operations import AppComponentOperations, ServerMetricsOperations, TestOperations, TestRunOperations
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    pass
 
 
-class LoadTestingAdministration(AppComponentOperations, ServerMetricsOperations, TestOperations):
-    """
-    class to hold LoadTestingAdministration
-    """
-
-    def __init__(self, client, config, serialize, deserialize):
-        self._client = client
-        self._config = config
-
-        self._serialize = serialize
-        self._deserialize = deserialize
-        self._serialize.client_side_validation = False
-
-        AppComponentOperations.__init__(self, self._client, self._config, self._serialize, self._deserialize)
-        ServerMetricsOperations.__init__(self, self._client, self._config, self._serialize, self._deserialize)
-        TestOperations.__init__(self, self._client, self._config, self._serialize, self._deserialize)
-
-
-class LoadTestingClient(LoadTestingClientGenerated):  # pylint: disable=client-accepts-api-version-keyword
-    """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
-
-    :ivar app_component: AppComponentOperations operations
-    :vartype app_component: azure.developer.loadtesting.operations.AppComponentOperations
-    :ivar server_metrics: ServerMetricsOperations operations
-    :vartype server_metrics: azure.developer.loadtesting.operations.ServerMetricsOperations
-    :ivar test: TestOperations operations
-    :vartype test: azure.developer.loadtesting.operations.TestOperations
-    :ivar test_run: TestRunOperations operations
-    :vartype test_run: azure.developer.loadtesting.operations.TestRunOperations
-    :param endpoint: URL to perform data plane API operations on the resource. Required.
-    :type endpoint: str
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-06-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
-    :paramtype api_version: str
-    """
-
-    def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
-        self._config = LoadTestingClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
-        self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
-
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
-        self._serialize.client_side_validation = False
-
-        self.load_test_runs = TestRunOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.load_test_administration = LoadTestingAdministration(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-
-
-__all__: List[str] = ["LoadTestingClient"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = []  # Add all objects you want publicly available to users at this
+# package level
 
 
 def patch_sdk():

@@ -11,7 +11,7 @@ from typing import Optional, Union
 
 import yaml
 
-from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory
+from azure.ai.ml._utils._asset_utils import IgnoreFile, get_local_paths
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
@@ -88,29 +88,27 @@ class _AdditionalIncludes:
         if src.is_file():
             _general_copy(src, dst)
         else:
-            # use os.walk to replace shutil.copytree, which may raise FileExistsError
-            # for same folder, the expected behavior is merging
-            # ignore will be also applied during this process
-            for root, _, files in os.walk(src):
-                dst_root = Path(dst) / Path(root).relative_to(src)
+            # use os.walk to replace shutil.copytree, which may raise
+            # FileExistsError for same folder, the expected behavior
+            # is merging ignore will be also applied during this process
+            local_paths, _ = get_local_paths(
+                source_path=str(src),
+                ignore_file=(ignore_file or self._ignore_file)
+            )
+            for path in local_paths:
+                dst_root = Path(dst) / Path(path).relative_to(src)
                 dst_root_mkdir_flag = dst_root.is_dir()
-                for path, _ in traverse_directory(
-                    root, files, str(src), "", ignore_file=ignore_file or self._ignore_file
-                ):
-                    # if there is nothing to copy under current dst_root, no need to create this folder
-                    if dst_root_mkdir_flag is False:
-                        dst_root.mkdir(parents=True)
-                        dst_root_mkdir_flag = True
-                    _general_copy(path, dst_root / Path(path).name)
+                # if there is nothing to copy under current dst_root, no need to create this folder
+                if dst_root_mkdir_flag is False:
+                    dst_root.mkdir(parents=True)
+                _general_copy(path, dst_root / Path(path).name)
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
         """Check if the additional include needs to compress corresponding folder as a zip.
-
         For example, given additional include /mnt/c/hello.zip
           1) if a file named /mnt/c/hello.zip already exists, return False (simply copy)
           2) if a folder named /mnt/c/hello exists, return True (compress as a zip and copy)
-
         :param path: Given path in additional include.
         :type path: Path
         :return: If the path need to be compressed as a zip file.
@@ -167,7 +165,6 @@ class _AdditionalIncludes:
 
     def resolve(self) -> None:
         """Resolve code and potential additional includes.
-
         If no additional includes is specified, just return and use
         original real code path; otherwise, create a tmp folder and copy
         all files under real code path and additional includes to it.
@@ -206,9 +203,9 @@ class _AdditionalIncludes:
         zip_file = dst_path / zip_additional_include.name
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
-            for root, _, files in os.walk(folder_to_zip, followlinks=True):
-                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=self._ignore_file):
-                    zf.write(path, os.path.relpath(path, folder_to_zip.parent))
+            local_paths, _ = get_local_paths(source_path=str(folder_to_zip), ignore_file=self._ignore_file)
+            for path in local_paths:
+                zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def cleanup(self) -> None:
         """Clean up potential tmp folder generated during resolve as it can be
@@ -233,7 +230,6 @@ class _AdditionalIncludes:
     def _load_yaml_format_additional_includes(self):
         """
         Load the additional includes by yaml format.
-
         Addition includes is a list of include files, such as local paths and Azure Devops Artifacts.
         Yaml format of additional_includes likes below:
             additional_includes:
@@ -247,7 +243,6 @@ class _AdditionalIncludes:
                scope: scope_type
         If will get the artifacts package from devops to the local, and merge them with the local path into
         additional include list. If there are files conflict in the artifacts, user error will be raised.
-
         :return additional_includes: Path list of additional_includes
         :rtype additional_includes: List[str]
         """

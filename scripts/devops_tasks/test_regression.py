@@ -23,8 +23,7 @@ from common_tasks import (
     find_whl,
     find_tools_packages,
     get_installed_packages,
-    extend_dev_requirements,
-    str_to_bool,
+    extend_dev_requirements
 )
 
 from git_helper import (
@@ -34,7 +33,7 @@ from git_helper import (
     clone_repo,
 )
 
-from ci_tools.functions import discover_targeted_packages
+from ci_tools.functions import discover_targeted_packages, str_to_bool
 from ci_tools.parsing import ParsedSetup
 
 AZURE_GLOB_STRING = "azure*"
