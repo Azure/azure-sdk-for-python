@@ -70,9 +70,9 @@ class Output(_InputOutputBase):
 
     def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs):
         super(Output, self).__init__(type=type)
-        # As an annotation, it is not allowed to initialize the previous_name.
-        # The previous_name will be updated by the annotated variable previous_name.
-        self.previous_name = None
+        # As an annotation, it is not allowed to initialize the arg_name.
+        # The arg_name will be updated by the annotated variable arg_name.
+        self.arg_name = None
         self.name = kwargs.pop('name', None)
         self.version = kwargs.pop('version', None)
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
@@ -90,10 +90,10 @@ class Output(_InputOutputBase):
 
     def _to_dict(self, remove_name=True):
         """Convert the Output object to a dict."""
-        keys = ["previous_name", "name", "version", "path", "type", "mode",
+        keys = ["arg_name", "name", "version", "path", "type", "mode",
                 "description", "is_control", "early_available"]
         if remove_name:
-            keys.remove("previous_name")
+            keys.remove("arg_name")
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 

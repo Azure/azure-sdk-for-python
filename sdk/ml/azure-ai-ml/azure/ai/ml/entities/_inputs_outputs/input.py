@@ -216,7 +216,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         super(Input, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
-        self.previous_name = None
+        self.arg_name = None
         self.description = description
 
         if path is not None and not isinstance(path, str):
@@ -272,9 +272,9 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     def _to_dict(self, remove_name=True):
         """Convert the Input object to a dict."""
-        keys = ["previous_name", "path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
+        keys = ["arg_name", "path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
         if remove_name:
-            keys.remove("previous_name")
+            keys.remove("arg_name")
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
@@ -316,11 +316,11 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         return val
 
     def _update_name(self, name):
-        self.previous_name = name
+        self.arg_name = name
 
     def _update_default(self, default_value):
         """Update provided default values."""
-        name = "" if not self.previous_name else f"{self.previous_name!r} "
+        name = "" if not self.arg_name else f"{self.arg_name!r} "
         msg_prefix = f"Default value of Input {name}"
 
         if not self._is_primitive_type and default_value is not None:
