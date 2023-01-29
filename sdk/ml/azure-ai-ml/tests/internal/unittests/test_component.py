@@ -366,7 +366,7 @@ class TestComponent:
 
         assert not code_path.is_dir()
 
-    def test_additional_includes_pycache_ignore(self) -> None:
+    def test_additional_includes_default_ignore(self) -> None:
         with build_temp_folder(
             source_base_dir="./tests/test_configs/internal/",
             relative_dirs_to_copy=[
@@ -374,6 +374,7 @@ class TestComponent:
                 "additional_includes"
             ],
             extra_files_to_create={
+                "component_with_additional_includes/x.additional_includes": None,
                 "component_with_additional_includes/__pycache__/a.pyc": None,
                 "additional_includes/__pycache__/a.pyc": None,
                 "additional_includes/library1/x.additional_includes": None,
@@ -387,8 +388,10 @@ class TestComponent:
             with component._resolve_local_code() as code:
                 code_path = code.path
                 assert not (code_path / "__pycache__").exists()
-                assert not (code_path / "library1" / "x.additional_includes").exists()
                 assert not (code_path / "library1" / "__pycache__").exists()
+                assert not (code_path / "helloworld_additional_includes.additional_includes").exists()
+                assert (code_path / "library1" / "x.additional_includes").is_file()
+                assert (code_path / "x.additional_includes").is_file()
 
     def test_additional_includes_file_ignore(self) -> None:
         with build_temp_folder(
@@ -398,7 +401,8 @@ class TestComponent:
                 "additional_includes"
             ],
             extra_files_to_create={
-                "component_with_additional_includes/.amlignore": "code_only",
+                "component_with_additional_includes/test_code/hello.py": None,
+                "component_with_additional_includes/.amlignore": "code_only\nlibrary1/world.py",
                 "additional_includes/library1/.amlignore": "hello.py",
             }
         ) as test_configs_dir:
@@ -413,6 +417,8 @@ class TestComponent:
                 code_path = code.path
                 assert not (code_path / "code_only").exists()
                 assert not (code_path / "library1" / "hello.py").exists()
+                assert not (code_path / "library1" / "world.py").exists()
+                assert (code_path / "test_code" / "hello.py").is_file()
 
     def test_additional_includes_merge_folder(self) -> None:
         yaml_path = (
