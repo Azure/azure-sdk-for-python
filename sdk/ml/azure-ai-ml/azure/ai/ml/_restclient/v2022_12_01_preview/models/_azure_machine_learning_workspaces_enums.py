@@ -264,19 +264,6 @@ class ComputePowerAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     START = "Start"
     STOP = "Stop"
 
-class ComputeProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provision state of the cluster. Valid values are Unknown, Updating, Provisioning,
-    Succeeded, and Failed.
-    """
-
-    UNKNOWN = "Unknown"
-    UPDATING = "Updating"
-    CREATING = "Creating"
-    DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-
 class ComputeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of compute
     """
@@ -303,6 +290,19 @@ class ConnectionAuthType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SAS = "SAS"
     SERVICE_PRINCIPAL = "ServicePrincipal"
     ACCESS_KEY = "AccessKey"
+
+class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """Category of the connection
+    """
+
+    PYTHON_FEED = "PythonFeed"
+    CONTAINER_REGISTRY = "ContainerRegistry"
+    GIT = "Git"
+    FEATURE_STORE = "FeatureStore"
+    S3 = "S3"
+    SNOWFLAKE = "Snowflake"
+    AZURE_SQL_DB = "AzureSqlDb"
+    AZURE_SYNAPSE_ANALYTICS = "AzureSynapseAnalytics"
 
 class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of container to retrieve logs from.
@@ -993,6 +993,20 @@ class Protocol(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UDP = "udp"
     HTTP = "http"
 
+class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+    """The current deployment state of workspace resource. The provisioningState is to indicate states
+    for resource provisioning.
+    """
+
+    UNKNOWN = "Unknown"
+    UPDATING = "Updating"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    SOFT_DELETED = "SoftDeleted"
+
 class ProvisioningStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The current deployment state of schedule.
     """
@@ -1515,17 +1529,3 @@ class WeekDay(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
     #: Sunday weekday.
     SUNDAY = "Sunday"
-
-class WorkspaceProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current deployment state of workspace resource. The provisioningState is to indicate states
-    for resource provisioning.
-    """
-
-    UNKNOWN = "Unknown"
-    UPDATING = "Updating"
-    CREATING = "Creating"
-    DELETING = "Deleting"
-    SUCCEEDED = "Succeeded"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-    SOFT_DELETED = "SoftDeleted"

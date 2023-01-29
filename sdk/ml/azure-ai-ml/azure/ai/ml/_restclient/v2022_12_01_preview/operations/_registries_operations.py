@@ -181,7 +181,7 @@ def build_get_request(
     )
 
 
-def build_update_request(
+def build_update_request_initial(
     subscription_id,  # type: str
     resource_group_name,  # type: str
     registry_name,  # type: str
@@ -629,8 +629,7 @@ class RegistriesOperations(object):
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
 
-    @distributed_trace
-    def update(
+    def _update_initial(
         self,
         resource_group_name,  # type: str
         registry_name,  # type: str
@@ -638,21 +637,6 @@ class RegistriesOperations(object):
         **kwargs  # type: Any
     ):
         # type: (...) -> "_models.Registry"
-        """Update tags.
-
-        Update tags.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-        :type resource_group_name: str
-        :param registry_name: Name of registry. This is case-insensitive.
-        :type registry_name: str
-        :param body: Details required to create the registry.
-        :type body: ~azure.mgmt.machinelearningservices.models.PartialRegistryPartialTrackedResource
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Registry, or the result of cls(response)
-        :rtype: ~azure.mgmt.machinelearningservices.models.Registry
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -664,14 +648,14 @@ class RegistriesOperations(object):
 
         _json = self._serialize.body(body, 'PartialRegistryPartialTrackedResource')
 
-        request = build_update_request(
+        request = build_update_request_initial(
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self.update.metadata['url'],
+            template_url=self._update_initial.metadata['url'],
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
@@ -685,8 +669,7 @@ class RegistriesOperations(object):
 
         if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 200:
@@ -703,8 +686,82 @@ class RegistriesOperations(object):
 
         return deserialized
 
-    update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
+    _update_initial.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
+
+    @distributed_trace
+    def begin_update(
+        self,
+        resource_group_name,  # type: str
+        registry_name,  # type: str
+        body,  # type: "_models.PartialRegistryPartialTrackedResource"
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> LROPoller["_models.Registry"]
+        """Update tags.
+
+        Update tags.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :type resource_group_name: str
+        :param registry_name: Name of registry. This is case-insensitive.
+        :type registry_name: str
+        :param body: Details required to create the registry.
+        :type body: ~azure.mgmt.machinelearningservices.models.PartialRegistryPartialTrackedResource
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either Registry or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.Registry]
+        :raises: ~azure.core.exceptions.HttpResponseError
+        """
+        api_version = kwargs.pop('api_version', "2022-12-01-preview")  # type: str
+        content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
+        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
+        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
+        lro_delay = kwargs.pop(
+            'polling_interval',
+            self._config.polling_interval
+        )
+        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                registry_name=registry_name,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x,y,z: x,
+                **kwargs
+            )
+        kwargs.pop('error_map', None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = self._deserialize('Registry', pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, {})
+            return deserialized
+
+
+        if polling is True: polling_method = ARMPolling(lro_delay, lro_options={'final-state-via': 'location'}, **kwargs)
+        elif polling is False: polling_method = NoPolling()
+        else: polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}"}  # type: ignore
 
     def _create_or_update_initial(
         self,
@@ -713,8 +770,8 @@ class RegistriesOperations(object):
         body,  # type: "_models.Registry"
         **kwargs  # type: Any
     ):
-        # type: (...) -> "_models.Registry"
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.Registry"]
+        # type: (...) -> Optional["_models.Registry"]
+        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.Registry"]]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
         }
@@ -748,13 +805,11 @@ class RegistriesOperations(object):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
+        deserialized = None
         if response.status_code == 200:
             deserialized = self._deserialize('Registry', pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('Registry', pipeline_response)
-
-        if response.status_code == 202:
             deserialized = self._deserialize('Registry', pipeline_response)
 
         if cls:

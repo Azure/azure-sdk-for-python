@@ -34,11 +34,14 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-TEST_ID = "my-new-sdk-test-id"
-FILE_ID = "my-file-id"
+TEST_ID = "my-sdk-test-id"
+FILE_NAME = "my-file-id.jmx"
 
 # uploading .jmx file to a test
-result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, open("sample.jmx", "rb"))
+resultPoller = client.administration.begin_upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"), poll_for_validation_status=True)
+fileUploadResponse = resultPoller.get_initial_response()
+print(fileUploadResponse)
 
-print(result)
-print(result["validationStatus"])
+# getting result of LRO poller with timeout of 600 secs
+validationResponse = resultPoller.result(600)
+print(validationResponse)
