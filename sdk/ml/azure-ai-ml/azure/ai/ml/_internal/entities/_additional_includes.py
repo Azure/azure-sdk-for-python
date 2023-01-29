@@ -91,14 +91,17 @@ class _AdditionalIncludes:
             # use os.walk to replace shutil.copytree, which may raise
             # FileExistsError for same folder, the expected behavior
             # is merging ignore will be also applied during this process
+            # TODO: inner ignore file is not supported with current implementation
+            # TODO: empty folder will be ignored with current implementation
             local_paths, _ = get_local_paths(
                 source_path=str(src),
                 ignore_file=ignore_file or IgnoreFile(),
             )
+            # local_paths contains and only contains all file paths, so no need to apply ignore-file
             for src_path in local_paths:
                 src_path = Path(src_path)
                 dst_path = Path(dst) / src_path.relative_to(src)
-                _AdditionalIncludes._copy(src_path, dst_path, ignore_file=ignore_file)
+                _AdditionalIncludes._copy(src_path, dst_path)
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -186,6 +189,8 @@ class _AdditionalIncludes:
             src_path = Path(additional_include)
             if not src_path.is_absolute():
                 src_path = (base_path / additional_include).resolve()
+            dst_path = (tmp_folder_path / src_path.name).resolve()
+
             if self._is_folder_to_compress(src_path):
                 self._resolve_folder_to_compress(
                     additional_include,
@@ -193,10 +198,12 @@ class _AdditionalIncludes:
                     # TODO: seems it won't work as current ignore file implementation is based on absolute path
                     ignore_file=ignore_file,
                 )
-            else:
-                dst_path = (tmp_folder_path / src_path.name).resolve()
+            elif src_path.is_dir():
                 # support ignore file in additional includes
                 self._copy(src_path, dst_path, ignore_file=get_ignore_file(src_path))
+            else:
+                # do not apply ignore file for files
+                self._copy(src_path, dst_path)
 
         # Remove ignored files copied from additional includes
         rebased_ignore_file = InternalComponentIgnoreFile(
