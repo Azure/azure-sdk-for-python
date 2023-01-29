@@ -9,13 +9,13 @@ import re
 import warnings
 from typing import Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import AssignedUser
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_12_01_preview.models import ComputeInstanceProperties
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeInstanceSshSettings as CiSShSettings,
 )
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,
