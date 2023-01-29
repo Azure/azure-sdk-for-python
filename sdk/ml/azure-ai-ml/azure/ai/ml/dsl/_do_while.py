@@ -38,8 +38,8 @@ def do_while(body, condition, mapping, *, max_iteration_count=None):
 
     :param body: Pipeline job for the do-while loop body.
     :type body: Pipeline
-    :param condition: Name of boolean output of body as do-while loop condition.
-    :type condition: Output
+    :param condition: Either name of boolean output of body or simply True as do-while loop condition.
+    :type condition: Union[Output, bool]
     :param mapping: Output-Input mapping for reach round of the do-while loop.
                     Key is the last round output of the body. Value is the input port for current body.
     :type mapping: Dict[Union[str, Output], Union[str, Input, List]]

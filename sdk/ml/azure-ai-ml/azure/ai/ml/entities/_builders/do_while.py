@@ -129,16 +129,23 @@ class DoWhile(LoopNode):
             ]
             mapping[output_name] = [get_port_obj(body, item, validate_port=validate_port) for item in input_names]
 
-        # Convert condition to output object
-        condition_name = cls._get_data_binding_expression_value(
-            loaded_data.pop("condition"), regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
-        )
-
         limits = loaded_data.pop("limits", None)
+
+        condition_in_loaded_data = loaded_data.pop("condition")
+        if isinstance(condition_in_loaded_data, bool):
+            # condition is True, no need to extra process
+            condition_value = condition_in_loaded_data
+        else:
+            # Convert condition to output object
+            condition_name = cls._get_data_binding_expression_value(
+                condition_in_loaded_data, regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
+            )
+            condition_value = get_port_obj(body, condition_name, is_input=False, validate_port=validate_port)
+
         do_while_instance = DoWhile(
             body=body,
             mapping=mapping,
-            condition=get_port_obj(body, condition_name, is_input=False, validate_port=validate_port),
+            condition=condition_value,
             **loaded_data,
         )
         do_while_instance.set_limits(**limits)
@@ -155,6 +162,15 @@ class DoWhile(LoopNode):
 
         obj = BaseNode._from_rest_object_to_init_params(obj)
         return cls._create_instance_from_schema_dict(pipeline_jobs, obj, validate_port=False)
+
+    def _to_rest_object(self, **kwargs) -> dict:
+        condition = self.condition
+        if isinstance(condition, bool):
+            self._condition = None
+        rest_obj = super(DoWhile, self)._to_rest_object(**kwargs)
+        if isinstance(condition, bool):
+            self._condition = condition
+        return rest_obj
 
     def set_limits(
         self,
@@ -211,6 +227,9 @@ class DoWhile(LoopNode):
         validation_result = self._create_empty_validation_result()
         if self.condition is None:
             validation_result.append_error(yaml_path="condition", message="The condition cannot be empty.")
+        elif isinstance(self.condition, bool):
+            # condition=True, directly pass
+            pass
         else:
             # Check condition exists in dowhile body.
             validation_result.merge_with(

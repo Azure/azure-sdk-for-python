@@ -42,6 +42,8 @@ class DoWhileSchema(BaseLoopSchema):
         [
             DataBindingStr(),
             fields.Str(),
+            # Bool should be kept after Str, otherwise value in REST object will become True
+            fields.Bool(),
         ]
     )
     mapping = fields.Dict(
