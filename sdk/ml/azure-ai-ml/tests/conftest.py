@@ -79,12 +79,11 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
-    add_body_key_sanitizer(json_path="$.blobReferenceForConsumption.credential.sasUri", value="fake_sas_uri")
-    add_general_regex_sanitizer(value="fake_tenant_id", regex=os.environ.get('ML_TENANT_ID'))
-    add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
-    add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
-    add_general_regex_sanitizer(value="", regex=f"\\u0026sktid={os.environ.get('ML_TENANT_ID')}")
-    add_general_string_sanitizer(value="", target=f"&sktid={os.environ.get('ML_TENANT_ID')}")
+    add_body_key_sanitizer(json_path="$.properties.sdkTelemetryAppInsightsKey", value="0000000-0000-0000-0000-000000000000")
+    add_body_key_sanitizer(json_path="$.properties.workspaceId", value="0000000-0000-0000-0000-000000000000")
+    add_body_key_sanitizer(json_path="$.properties.notebookInfo.resourceId", value="0000000-0000-0000-0000-000000000000")
+    add_body_key_sanitizer(json_path="$.identity.principalId", value="0000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(value="0000000-0000-0000-0000-000000000000", regex=os.environ.get('ML_TENANT_ID'))
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1"
     )
@@ -100,7 +99,12 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
-
+    # masks signature in SAS uri 
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='sig=([^/\\s"]{48})',
+        group_for_replace="1",
+    )
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")

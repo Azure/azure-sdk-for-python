@@ -23,6 +23,8 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
     "mock_code_hash",
     "mock_asset_name",
     "enable_environment_id_arm_expansion",
+    "mock_snapshot_hash",
+    "bodiless_matching",
 )
 @pytest.mark.training_experiences_test
 class TestSweepJob(AzureRecordedTestCase):
