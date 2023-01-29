@@ -56,7 +56,7 @@ class DoWhileSchema(BaseLoopSchema):
         ),
         required=True,
     )
-    limits = NestedField(DoWhileLimitsSchema)
+    limits = NestedField(DoWhileLimitsSchema, required=True)
 
     @pre_dump
     def resolve_inputs_outputs(self, data, **kwargs):  # pylint: disable=no-self-use

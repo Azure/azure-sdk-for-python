@@ -4,7 +4,7 @@
 from azure.ai.ml.entities._builders.do_while import DoWhile
 
 
-def do_while(body, condition, mapping, *, max_iteration_count=None):
+def do_while(body, condition, mapping, max_iteration_count: int):
     """Build a do_while node by specifying the loop body, output-input mapping and termination condition.
 
     .. remarks::
@@ -52,6 +52,5 @@ def do_while(body, condition, mapping, *, max_iteration_count=None):
         mapping=mapping,
         _from_component_func=True,
     )
-    if max_iteration_count is not None:
-        do_while_node.set_limits(max_iteration_count=max_iteration_count)
+    do_while_node.set_limits(max_iteration_count=max_iteration_count)
     return do_while_node
