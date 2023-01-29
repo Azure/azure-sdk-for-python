@@ -120,6 +120,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
         assert '"path": "jobs.conditionnode.true_block",' in str(e.value)
         assert "'true_block' of dsl.condition has invalid binding expression:" in str(e.value)
 
+
 class TestDoWhile(TestConditionalNodeInPipeline):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
