@@ -67,7 +67,7 @@ class DoWhileSchema(BaseLoopSchema):
         result._mapping = mapping
 
         try:
-            result._condition = result._condition._name
+            result._condition = result._condition._port_name
         except AttributeError:
             result._condition = result._condition
 
