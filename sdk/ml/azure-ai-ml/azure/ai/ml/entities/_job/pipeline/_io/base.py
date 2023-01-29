@@ -216,7 +216,7 @@ class NodeInput(InputOutputBase):
 
     def __init__(
         self,
-        name: str,
+        port_name: str,
         meta: Input,
         *,
         data: Optional[Union[int, bool, float, str, Output, "PipelineInput", Input]] = None,
@@ -245,7 +245,7 @@ class NodeInput(InputOutputBase):
         """
         # TODO: validate data matches type in meta
         # TODO: validate supported data
-        self._name = name
+        self._port_name = port_name
         self._owner = owner
         super().__init__(meta=meta, data=data, **kwargs)
 
@@ -320,15 +320,15 @@ class NodeInput(InputOutputBase):
         msg = "Input binding {} can only come from a pipeline, currently got {}"
         # call type(self._owner) to avoid circular import
         raise ValidationException(
-            message=msg.format(self._name, type(self._owner)),
+            message=msg.format(self._port_name, type(self._owner)),
             target=ErrorTarget.PIPELINE,
-            no_personal_data_message=msg.format("[name]", "[owner]"),
+            no_personal_data_message=msg.format("[port_name]", "[owner]"),
             error_category=ErrorCategory.USER_ERROR,
         )
 
     def _copy(self, owner):
         return NodeInput(
-            name=self._name,
+            port_name=self._port_name,
             data=self._data,
             owner=owner,
             meta=self._meta,
@@ -336,7 +336,7 @@ class NodeInput(InputOutputBase):
 
     def _deepcopy(self):
         return NodeInput(
-            name=self._name,
+            port_name=self._port_name,
             data=copy.copy(self._data),
             owner=self._owner,
             meta=self._meta,
@@ -515,7 +515,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         :param group_names: The input parameter's group names.
         :type group_names: List[str]
         """
-        super(PipelineInput, self).__init__(name=name, meta=meta, **kwargs)
+        super(PipelineInput, self).__init__(port_name=name, meta=meta, **kwargs)
         self._group_names = group_names if group_names else []
 
     def result(self):
@@ -562,7 +562,7 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         return data
 
     def _data_binding(self):
-        full_name = "%s.%s" % (".".join(self._group_names), self._name) if self._group_names else self._name
+        full_name = "%s.%s" % (".".join(self._group_names), self._port_name) if self._group_names else self._port_name
         return f"${{{{parent.inputs.{full_name}}}}}"
 
     def _to_input(self) -> Input:

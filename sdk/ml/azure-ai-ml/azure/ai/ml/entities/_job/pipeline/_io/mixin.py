@@ -27,7 +27,7 @@ class NodeIOMixin:
     dynamically."""
 
     def _build_input(self, name, meta: Input, data) -> NodeInput:
-        return NodeInput(name=name, meta=meta, data=data, owner=self)
+        return NodeInput(port_name=name, meta=meta, data=data, owner=self)
 
     def _build_output(self, name, meta: Output, data) -> NodeOutput:
         # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
