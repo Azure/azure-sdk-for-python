@@ -6,7 +6,7 @@
 
 import logging
 
-from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump
+from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump, validates
 
 from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema
 from azure.ai.ml._schema.component import (
@@ -14,10 +14,16 @@ from azure.ai.ml._schema.component import (
     AnonymousImportComponentSchema,
     AnonymousParallelComponentSchema,
     AnonymousSparkComponentSchema,
+    AnonymousDataTransferCopyComponentSchema,
+    AnonymousDataTransferImportComponentSchema,
+    AnonymousDataTransferExportComponentSchema,
     ComponentFileRefField,
     ImportComponentFileRefField,
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
+    DataTransferCopyComponentFileRefField,
+    DataTransferImportComponentFileRefField,
+    DataTransferExportComponentFileRefField
 )
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -347,48 +353,58 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
         return _resolve_inputs_outputs(job)
 
 
-# class DataTransferSchema(BaseNodeSchema):
-#     # pylint: disable=unused-argument
-#     component = TypeSensitiveUnionField(
-#         {
-#             NodeType.DATATRANSFER: [
-#                 # inline component or component file reference starting with FILE prefix
-#                 NestedField(AnonymousDataTransferComponentSchema, unknown=INCLUDE),
-#                 # component file reference
-#                 DataTransferComponentFileRefField(),
-#             ],
-#         },
-#         plain_union_fields=[
-#             # for registry type assets
-#             RegistryStr(),
-#             # existing component
-#             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
-#         ],
-#         required=True,
-#     )
-#     type = StringTransformedEnum(allowed_values=[NodeType.DATATRANSFER])
-#     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA, DataTransferTaskType.IMPORT_DATA,
-#                                                  DataTransferTaskType.EXPORT_DATA], required=True)
-#     compute = ComputeField()
-#     source = NestedField(SourceSchema)
-#     sink = NestedField(SinkSchema)
-#
-#     @post_load
-#     def make(self, data, **kwargs) -> "DataTransfer":
-#         from azure.ai.ml.entities._builders import parse_inputs_outputs
-#         from azure.ai.ml.entities._builders.data_transfer_func import data_transfer
-#
-#         # parse inputs/outputs
-#         data = parse_inputs_outputs(data)
-#         try:
-#             data_transfer_node = data_transfer(**data)
-#         except ValidationException as e:
-#             # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
-#             # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
-#             raise ValidationError(e.message)
-#         return data_transfer_node
-#
-#     @pre_dump
-#     def resolve_inputs_outputs(self, job, **kwargs):
-#         return _resolve_inputs_outputs(job)
+class DataTransferSchema(BaseNodeSchema):
+    # pylint: disable=unused-argument
+    component = TypeSensitiveUnionField(
+        {
+            NodeType.DATATRANSFER: [
+                # inline component or component file reference starting with FILE prefix
+                NestedField(AnonymousDataTransferCopyComponentSchema, unknown=INCLUDE),
+                NestedField(AnonymousDataTransferImportComponentSchema, unknown=INCLUDE),
+                NestedField(AnonymousDataTransferExportComponentSchema, unknown=INCLUDE),
+                # component file reference
+                DataTransferCopyComponentFileRefField(),
+                DataTransferImportComponentFileRefField(),
+                DataTransferExportComponentFileRefField(),
+            ],
+        },
+        plain_union_fields=[
+            # for registry type assets
+            RegistryStr(),
+            # existing component
+            ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
+        ],
+        required=True,
+    )
+    task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA, DataTransferTaskType.IMPORT_DATA,
+                                                 DataTransferTaskType.EXPORT_DATA])
+    type = StringTransformedEnum(allowed_values=[NodeType.DATATRANSFER])
+    compute = ComputeField()
+    source = NestedField(SourceSchema)
+    sink = NestedField(SinkSchema)
+
+    @post_load
+    def make(self, data, **kwargs) -> "DataTransfer":
+        from azure.ai.ml.entities._builders import parse_inputs_outputs
+        from azure.ai.ml.entities._builders.data_transfer_func import copy_data, import_data, export_data
+
+        # parse inputs/outputs
+        data = parse_inputs_outputs(data)
+        try:
+            task = data.get("task", None)
+            if task == DataTransferTaskType.COPY_DATA:
+                data_transfer_node = copy_data(**data)
+            elif task == DataTransferTaskType.IMPORT_DATA:
+                data_transfer_node = import_data(**data)
+            else:
+                data_transfer_node = export_data(**data)
+        except ValidationException as e:
+            # It may raise ValidationError during initialization, data_transfer._validate_io e.g. raise ValidationError
+            # instead in marshmallow function, so it won't break SchemaValidatable._schema_validate
+            raise ValidationError(e.message)
+        return data_transfer_node
+
+    @pre_dump
+    def resolve_inputs_outputs(self, job, **kwargs):
+        return _resolve_inputs_outputs(job)
 

@@ -97,7 +97,7 @@ class Source(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-inst
     def __init__(
         self,
         *,
-        type: str,
+        type: str = None,
         path: Optional[str] = None,
         query: Optional[str] = None,
         stored_procedure: Optional[str] = None,

@@ -185,7 +185,6 @@ class SourceSchema(metaclass=PatchedSchemaMeta):
             ExternalDataType.FILE_SYSTEM,
             ExternalDataType.DATABASE
         ],
-        required=True
     )
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
     query = fields.Str(
@@ -195,7 +194,14 @@ class SourceSchema(metaclass=PatchedSchemaMeta):
     )
     stored_procedure = fields.Str()
     stored_procedure_params = fields.List(NestedField(StoredProcedureParamsSchema))
-    connection = ArmVersionedStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION, required=True)
+
+    connection = UnionField(
+        [
+            NestedField(InputLiteralValueSchema),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION)
+        ],
+        is_strict=True,
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -203,13 +209,14 @@ class SourceSchema(metaclass=PatchedSchemaMeta):
 
         return Source(**data)
 
-    @pre_dump
-    def check_dict(self, data, **kwargs):
-        from azure.ai.ml.entities._inputs_outputs import Source
-
-        if isinstance(data, Source):
-            return data
-        raise ValidationError("InputSchema needs type Source to dump")
+    # Todo: need add check when node level source is ready
+    # @pre_dump
+    # def check_dict(self, data, **kwargs):
+    #     from azure.ai.ml.entities._inputs_outputs import Source
+    #
+    #     if isinstance(data, Source):
+    #         return data
+    #     raise ValidationError("InputSchema needs type Source to dump")
 
 
 class SinkSchema(PathAwareSchema):
@@ -218,11 +225,16 @@ class SinkSchema(PathAwareSchema):
             ExternalDataType.FILE_SYSTEM,
             ExternalDataType.DATABASE
         ],
-        required=True
     )
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
     table_name = fields.Str()
-    connection = ArmVersionedStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION, required=True)
+    connection = UnionField(
+        [
+            NestedField(InputLiteralValueSchema),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION)
+        ],
+        is_strict=True,
+    )
 
     @post_load
     def make(self, data, **kwargs):
@@ -230,11 +242,12 @@ class SinkSchema(PathAwareSchema):
 
         return Sink(**data)
 
-    @pre_dump
-    def check_dict(self, data, **kwargs):
-        from azure.ai.ml.entities._inputs_outputs import Sink
-
-        if isinstance(data, Sink):
-            return data
-        # Assists with union schema
-        raise ValidationError("OutputSchema needs type Sink to dump")
+    # Todo: need add check when node level sink is ready
+    # @pre_dump
+    # def check_dict(self, data, **kwargs):
+    #     from azure.ai.ml.entities._inputs_outputs import Sink
+    #
+    #     if isinstance(data, Sink):
+    #         return data
+    #     # Assists with union schema
+    #     raise ValidationError("OutputSchema needs type Sink to dump")

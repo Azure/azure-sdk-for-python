@@ -51,7 +51,7 @@ class Sink(DictMixin, RestTranslatableMixin):
     :type connection: str
         """
 
-    def __init__(self, *, type, path=None, table_name=None, connection=None, **kwargs):
+    def __init__(self, *, type=None, path=None, table_name=None, connection=None, **kwargs):
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
         self.name = None

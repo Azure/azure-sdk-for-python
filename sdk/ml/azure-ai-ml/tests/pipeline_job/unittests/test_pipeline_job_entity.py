@@ -16,7 +16,7 @@ from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities._builders import Spark
+from azure.ai.ml.entities._builders import Spark, DataTransfer
 from azure.ai.ml.entities._job.automl.image import (
     ImageClassificationJob,
     ImageClassificationMultilabelJob,
@@ -801,6 +801,78 @@ class TestPipelineJobEntity:
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
             'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
+        }
+        assert actual_dict == expected_dict
+
+    def test_data_transfer_copy_node_in_pipeline(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files.yaml"
+
+        job = load_job(test_path)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, DataTransfer)
+
+        result = job._validate()
+        assert result.passed is True
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        rest_job_dict = job._to_rest_object().as_dict()
+        omit_fields = ["properties"]  # "name", "display_name", "experiment_name", "properties"
+        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["merge_files"], omit_fields)
+
+        expected_dict = {
+            "_source": "YAML.COMPONENT",
+            "componentId": "",
+            "computeId": "",
+            'inputs': {'folder1': {'job_input_type': 'literal',
+                                   'value': '${{parent.inputs.cosmos_folder}}'},
+                       'folder2': {'job_input_type': 'literal',
+                                   'value': '${{parent.inputs.cosmos_folder_dup}}'}},
+            'name': 'merge_files',
+            'outputs': {'output_folder': {'type': 'literal',
+                                          'value': '${{parent.outputs.merged_blob}}'}},
+            'type': 'data_transfer'
+        }
+        assert actual_dict == expected_dict
+
+    def test_inline_data_transfer_copy_node_in_pipeline(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
+
+        job = load_job(test_path)
+        assert isinstance(job, PipelineJob)
+        node = next(iter(job.jobs.values()))
+        assert isinstance(node, DataTransfer)
+
+        result = job._validate()
+        assert result.passed is True
+
+        mocker.patch(
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
+        )
+        mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
+        mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
+
+        rest_job_dict = job._to_rest_object().as_dict()
+        omit_fields = ["properties"]  # "name", "display_name", "experiment_name", "properties"
+        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["merge_files_job"], omit_fields)
+
+        expected_dict = {
+            "_source": "YAML.JOB",
+            "componentId": "",
+            "computeId": "",
+            'inputs': {'folder1': {'job_input_type': 'literal',
+                                   'value': '${{parent.inputs.cosmos_folder}}'},
+                       'folder2': {'job_input_type': 'literal',
+                                   'value': '${{parent.inputs.cosmos_folder_dup}}'}},
+            'name': 'merge_files_job',
+            'outputs': {'output_folder': {'type': 'literal',
+                                          'value': '${{parent.outputs.merged_blob}}'}},
+            'type': 'data_transfer'
         }
         assert actual_dict == expected_dict
 

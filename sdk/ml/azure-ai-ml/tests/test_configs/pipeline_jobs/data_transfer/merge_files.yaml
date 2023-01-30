@@ -1,0 +1,31 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'pipeline with data transfer components'
+settings:
+  default_compute: azureml:adf_compute
+inputs:
+  cosmos_folder:
+    type: uri_folder
+    path: azureml://datastores/my_cosmos/paths/source_cosmos
+  cosmos_folder_dup:
+    type: uri_folder
+    path: azureml://datastores/my_cosmos/paths/source_cosmos
+
+outputs:
+  merged_blob:
+    type: uri_folder
+    path: azureml://datastores/my_blob/paths/merged_blob
+
+jobs:
+    merge_files:
+      type: data_transfer
+      task: copy_data
+      component: ../../components/data_transfer/merge_files.yaml
+      inputs:
+        folder1: ${{parent.inputs.cosmos_folder}}
+        folder2: ${{parent.inputs.cosmos_folder_dup}}
+      outputs:
+        output_folder: ${{parent.outputs.merged_blob}}
+      # use default compute
+
