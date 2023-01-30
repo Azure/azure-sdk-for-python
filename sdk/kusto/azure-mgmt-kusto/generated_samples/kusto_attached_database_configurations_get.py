@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2022-11-11/examples/KustoAttachedDatabaseConfigurationsGet.json
+# x-ms-original-file: specification/azure-kusto/resource-manager/Microsoft.Kusto/stable/2022-12-29/examples/KustoAttachedDatabaseConfigurationsGet.json
 if __name__ == "__main__":
     main()
