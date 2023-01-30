@@ -14,6 +14,13 @@
 # /scripts/
 # /tools/
 
+###########
+# Eng Sys
+###########
+/eng/                                                                @scbedd @weshaggard @benbp
+/**/tests.yml                                                        @scbedd @benbp
+/**/ci.yml                                                           @scbedd @benbp
+
 ################
 # Automation
 ################
@@ -913,14 +920,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 
 # Management Plane
 /**/*mgmt*/                                                          @Wzb123456789 @msyyc
-
-
-###########
-# Eng Sys
-###########
-/eng/                                                                @scbedd @weshaggard @benbp
-/**/tests.yml                                                        @scbedd @benbp
-/**/ci.yml                                                           @scbedd @benbp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
