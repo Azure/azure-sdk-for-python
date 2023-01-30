@@ -691,7 +691,6 @@ def _resolve_job_services(
     result = {}
     for name, service in services.items():
         if isinstance(service, dict):
-            # TODO: Remove JobServiceSchema ?
             service = load_from_dict(JobServiceSchema, service, context={BASE_PATH_CONTEXT_KEY: "."})
         elif not isinstance(
             service, (JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService)

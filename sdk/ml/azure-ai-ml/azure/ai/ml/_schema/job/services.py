@@ -31,14 +31,16 @@ class JobServiceBaseSchema(PathAwareSchema):
 
 
 class JobServiceSchema(JobServiceBaseSchema):
+    """This is to support tansformation of job services passed as dict type and
+    internal job services like Custom, Tracking, Studio set by the system.
+    """
+
     job_service_type = UnionField(
         [
             StringTransformedEnum(
                 allowed_values=JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC,
                 pass_original=True,
             ),
-            # This is to support internal types like Custom, Tracking, Studio.
-            # These are set by the service and not by the user.
             fields.Str(),
         ]
     )

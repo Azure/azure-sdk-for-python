@@ -291,11 +291,9 @@ class VsCodeJobService(JobServiceBase):
 
 
 def append_or_update_properties(properties: Dict[str, str], key: str, value: str) -> Dict[str, str]:
-    # TODO: Should we support add when value is NONE?
     if value and not properties:
         properties = {key: value}
 
-    # TODO: Should we support update when value is NONE?
     if value and properties:
         properties.update({key: value})
     return properties
