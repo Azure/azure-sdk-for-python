@@ -49,7 +49,7 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, AsyncHTTPResponseType
     """
 
     next: Union[
-        "AsyncHTTPPolicy"[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar],
+        "AsyncHTTPPolicy[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]",
         "AsyncHttpTransport[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]",
     ]
     """Pointer to the next policy or a transport. Will be set at pipeline creation."""
