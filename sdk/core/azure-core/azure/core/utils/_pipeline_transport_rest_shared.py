@@ -357,7 +357,7 @@ def _aiohttp_body_helper(
     if enc in ("gzip", "deflate"):
         import zlib
 
-        zlib_mode = 16 + zlib.MAX_WBITS if enc == "gzip" else zlib.MAX_WBITS
+        zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
         decompressor = zlib.decompressobj(wbits=zlib_mode)
         response._content = decompressor.decompress(response._content)
         response._decompressed_content = True
