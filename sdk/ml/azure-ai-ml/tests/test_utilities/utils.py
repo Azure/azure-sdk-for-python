@@ -7,6 +7,7 @@ import os
 import signal
 import tempfile
 import time
+from contextlib import contextmanager
 from io import StringIO
 from pathlib import Path
 from typing import Callable, Dict
@@ -343,3 +344,24 @@ def parse_local_path(origin_path, base_path=None):
     else:
         base_path = Path(base_path)
     return (base_path / origin_path).resolve().absolute().as_posix()
+
+
+@contextmanager
+def reload_schema_for_nodes_in_pipeline_job(*, revert_after_yield: bool = True):
+    """Reload schema for nodes in pipeline job. This is needed when we want to test private preview features or
+    unregister internal components.
+
+    This method should be called after environment variable is set, so we make it a method instead of a fixture.
+    """
+    # Update the node types in pipeline jobs to include the private preview node types
+    from azure.ai.ml._schema.pipeline import pipeline_job
+
+    declared_fields = pipeline_job.PipelineJobSchema._declared_fields  # pylint: disable=protected-access, no-member
+    original_jobs = declared_fields["jobs"]
+    declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        if revert_after_yield:
+            declared_fields["jobs"] = original_jobs

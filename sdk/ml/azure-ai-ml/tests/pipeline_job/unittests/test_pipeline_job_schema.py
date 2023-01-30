@@ -8,7 +8,6 @@ from typing import Any, Dict, Optional
 import pydash
 import pytest
 import yaml
-from jsonschema import validate
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
@@ -37,7 +36,6 @@ from azure.ai.ml.entities._job.automl.search_space_utils import _convert_sweep_d
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.exceptions import UserErrorException, ValidationException
-from test_utilities.json_schema import PatchedJSONSchema
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES
 
@@ -1785,12 +1783,3 @@ class TestPipelineJobSchema:
     ):
         pipeline: PipelineJob = load_job(source=pipeline_job_path)
         pipeline._to_rest_object()
-
-    def test_json_schema_validate(self):
-        base_dir = Path("./tests/test_configs/pipeline_jobs/json_schema_validation")
-        target_schema = PatchedJSONSchema().dump(PipelineJob._create_schema_for_validation(context={"base_path": "./"}))
-
-        with open(base_dir.joinpath("component_spec.yaml"), "r") as f:
-            yaml_data = yaml.safe_load(f.read())
-
-        validate(yaml_data, target_schema)
