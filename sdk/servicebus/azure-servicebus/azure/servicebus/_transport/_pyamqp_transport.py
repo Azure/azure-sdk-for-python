@@ -27,7 +27,11 @@ from .._common.constants import (
 #    PROP_PARTITION_KEY,
 #    CUSTOM_CONDITION_BACKOFF,
     PYAMQP_LIBRARY,
+    MAX_ABSOLUTE_EXPIRY_TIME,
+    MAX_DURATION_VALUE,
     MAX_MESSAGE_LENGTH_BYTES,
+    _X_OPT_ENQUEUED_TIME,
+    _X_OPT_LOCKED_UNTIL,
     ERROR_CODE_SESSION_LOCK_LOST,
     ERROR_CODE_MESSAGE_LOCK_LOST,
     ERROR_CODE_MESSAGE_NOT_FOUND,
@@ -86,6 +90,11 @@ class _ServiceBusErrorPolicy(AMQPErrors.RetryPolicy):
         if self._is_session:
             return False
         return super().is_retryable(error)
+
+_LONG_ANNOTATIONS = (
+    _X_OPT_ENQUEUED_TIME,
+    _X_OPT_LOCKED_UNTIL
+)
 
 _ERROR_CODE_TO_ERROR_MAPPING = {
     AMQPErrors.ErrorCondition.LinkMessageSizeExceeded: MessageSizeExceededError,
@@ -159,21 +168,40 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: pyamqp.Message
         """
         message_header = None
+        ttl_set = False
         header_vals = annotated_message.header.values() if annotated_message.header else None
         # If header and non-None header values, create outgoing header.
         if annotated_message.header and header_vals.count(None) != len(header_vals):
             message_header = Header(
-                delivery_count=annotated_message.header.delivery_count,
+                delivery_count=annotated_message.header.delivery_count if annotated_message.header.delivery_count is not None else 0,
                 ttl=annotated_message.header.time_to_live,
                 first_acquirer=annotated_message.header.first_acquirer,
                 durable=annotated_message.header.durable,
                 priority=annotated_message.header.priority,
             )
+            if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
+                ttl_set = True
+                creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * 1000)
+                absolute_expiry_time_from_ttl = int(min(
+                    MAX_ABSOLUTE_EXPIRY_TIME,
+                    creation_time_from_ttl + annotated_message.header.time_to_live
+                ))
 
         message_properties = None
         properties_vals = annotated_message.properties.values() if annotated_message.properties else None
         # If properties and non-None properties values, create outgoing properties.
         if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
+            creation_time = None
+            absolute_expiry_time = None
+            if ttl_set:
+                creation_time = creation_time_from_ttl
+                absolute_expiry_time = absolute_expiry_time_from_ttl
+            else:
+                if annotated_message.properties.creation_time:
+                    creation_time = int(annotated_message.properties.creation_time)
+                if annotated_message.properties.absolute_expiry_time:
+                    absolute_expiry_time = int(annotated_message.properties.absolute_expiry_time)
+
             message_properties = Properties(
                 message_id=annotated_message.properties.message_id,
                 user_id=annotated_message.properties.user_id,
@@ -195,7 +223,17 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 group_sequence=annotated_message.properties.group_sequence,
                 reply_to_group_id=annotated_message.properties.reply_to_group_id,
             )
-
+        elif ttl_set:
+            message_properties = Properties(
+                creation_time=creation_time_from_ttl if ttl_set else None,
+                absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
+            )
+        if annotated_message.annotations:
+            # TODO: Investigate how we originally encoded annotations.
+            annotations = dict(annotated_message.annotations)
+            for key in _LONG_ANNOTATIONS:
+                if key in annotated_message.annotations:
+                    annotations[key] = amqp_long_value(annotated_message.annotations[key])
         message_dict = {
             "header": message_header,
             "properties": message_properties,

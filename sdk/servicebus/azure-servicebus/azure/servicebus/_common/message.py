@@ -133,11 +133,10 @@ class ServiceBusMessage(
         self._uamqp_message: Optional[Union[LegacyMessage, "Message"]] = None
         self._message: Union["Message", "pyamqp_Message"] = None # type: ignore
 
-        if "raw_amqp_message" in kwargs:
-            # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
-            self._raw_amqp_message = kwargs["raw_amqp_message"]
-        elif "message" in kwargs:
+        # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
+        if "message" in kwargs:
             self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"])
+            self._message = kwargs["message"]
         else:
             self._build_annotated_message(body)
             self.application_properties = application_properties

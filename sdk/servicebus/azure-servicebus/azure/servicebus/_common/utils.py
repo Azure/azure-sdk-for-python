@@ -214,26 +214,24 @@ def _convert_to_single_service_bus_message(
     message_type: Type["ServiceBusMessage"],
     to_outgoing_amqp_message: Callable
 ) -> "ServiceBusMessage":
-    # pylint: disable=protected-access
     try:
         # ServiceBusMessage/ServiceBusReceivedMessage
         message = cast("ServiceBusMessage", message)
+        # pylint: disable=protected-access
         message._message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message
     except AttributeError:
-        # AmqpAnnotatedMessage
-        # pylint: disable=protected-access
-        try:
-            message = cast(AmqpAnnotatedMessage, message)
-            amqp_message = to_outgoing_amqp_message(message)
-            return message_type._from_message(
-                message=amqp_message, raw_amqp_message=message
-            )
-        except AttributeError:
-            # Mapping representing
-            pass
-
+        # AmqpAnnotatedMessage or Mapping representation
+        pass
     try:
+        message = cast(AmqpAnnotatedMessage, message)
+        amqp_message = to_outgoing_amqp_message(message)
+        return message_type(body=None, message=amqp_message, raw_amqp_message=message)
+    except AttributeError:
+        # Mapping representing
+        pass
+    try:
+        # pylint: disable=protected-access
         message = message_type(**cast(Mapping[str, Any], message))
         message._message = to_outgoing_amqp_message(message.raw_amqp_message)
         return message

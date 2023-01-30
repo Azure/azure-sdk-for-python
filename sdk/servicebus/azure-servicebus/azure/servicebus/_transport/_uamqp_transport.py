@@ -200,20 +200,39 @@ if uamqp_installed:
             :rtype: uamqp.Message
             """
             message_header = None
+            ttl_set = False
             header_vals = annotated_message.header.values() if annotated_message.header else None
             # If header and non-None header values, create outgoing header.
             if annotated_message.header and header_vals.count(None) != len(header_vals):
                 message_header = MessageHeader()
-                message_header.delivery_count = annotated_message.header.delivery_count
+                message_header.delivery_count = annotated_message.header.delivery_count if annotated_message.header.delivery_count is not None else 0
                 message_header.time_to_live = annotated_message.header.time_to_live
                 message_header.first_acquirer = annotated_message.header.first_acquirer
                 message_header.durable = annotated_message.header.durable
                 message_header.priority = annotated_message.header.priority
+                if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
+                    ttl_set = True
+                    creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * UamqpTransport.TIMEOUT_FACTOR)
+                    absolute_expiry_time_from_ttl = int(min(
+                        MAX_ABSOLUTE_EXPIRY_TIME,
+                        creation_time_from_ttl + annotated_message.header.time_to_live
+                    ))
 
             message_properties = None
             properties_vals = annotated_message.properties.values() if annotated_message.properties else None
             # If properties and non-None properties values, create outgoing properties.
             if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
+                creation_time = None
+                absolute_expiry_time = None
+                if ttl_set:
+                    creation_time = creation_time_from_ttl
+                    absolute_expiry_time = absolute_expiry_time_from_ttl
+                else:
+                    if annotated_message.properties.creation_time:
+                        creation_time = int(annotated_message.properties.creation_time)
+                    if annotated_message.properties.absolute_expiry_time:
+                        absolute_expiry_time = int(annotated_message.properties.absolute_expiry_time)
+
                 message_properties = MessageProperties(
                     message_id=annotated_message.properties.message_id,
                     user_id=annotated_message.properties.user_id,
@@ -231,6 +250,11 @@ if uamqp_installed:
                     group_sequence=annotated_message.properties.group_sequence,
                     reply_to_group_id=annotated_message.properties.reply_to_group_id,
                     encoding=annotated_message._encoding    # pylint: disable=protected-access
+                )
+            elif ttl_set:
+                message_properties = Properties(
+                    creation_time=creation_time_from_ttl if ttl_set else None,
+                    absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
                 )
 
             # pylint: disable=protected-access
