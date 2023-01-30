@@ -5,6 +5,7 @@ import copy
 import json
 
 from marshmallow import INCLUDE, fields, pre_dump
+from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._schema.core.fields import DataBindingStr, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
@@ -35,6 +36,23 @@ class BaseLoopSchema(ControlFlowSchema):
         return result
 
 
+class PositiveOnlyBoolean(fields.Boolean):
+
+    error_message = "Negative value is not allowed."
+
+    def _serialize(self, value, attr, obj, **kwargs):
+        data = super(PositiveOnlyBoolean, self)._serialize(value, attr, obj, **kwargs)
+        if data is False:
+            raise ValidationError(self.error_message)
+        return data
+
+    def _deserialize(self, value, attr, data, **kwargs):
+        obj = super(PositiveOnlyBoolean, self)._deserialize(value, attr, data, **kwargs)
+        if obj is False:
+            raise ValidationError(self.error_message)
+        return obj
+
+
 class DoWhileSchema(BaseLoopSchema):
     # pylint: disable=unused-argument
     type = StringTransformedEnum(allowed_values=[ControlFlowType.DO_WHILE])
@@ -42,8 +60,8 @@ class DoWhileSchema(BaseLoopSchema):
         [
             DataBindingStr(),
             fields.Str(),
-            # Bool should be kept after Str, otherwise value in REST object will become True
-            fields.Bool(),
+            # Bool schema should be kept after Str, otherwise value in REST object will become True
+            PositiveOnlyBoolean(),
         ]
     )
     mapping = fields.Dict(

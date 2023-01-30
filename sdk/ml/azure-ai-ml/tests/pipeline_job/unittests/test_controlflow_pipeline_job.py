@@ -2,6 +2,7 @@ import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml import load_job
+from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.exceptions import ValidationException
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
@@ -32,6 +33,10 @@ class TestDoWhilePipelineJobUT(TestControlFlowPipelineJobUT):
         yaml_path = "./tests/test_configs/pipeline_jobs/control_flow/do_while/invalid_pipeline.yml"
         expected_validation_result = [
             (
+                "Negative value is not allowed.",
+                "jobs.invalid_condition.condition",
+            ),
+            (
                 "Missing data for required field.",
                 "jobs.empty_mapping.mapping",
             ),
@@ -58,13 +63,16 @@ class TestDoWhilePipelineJobUT(TestControlFlowPipelineJobUT):
             assert location in error_message
 
         # ValidationException - error during validate pipeline job
-        yaml_path = "./tests/test_configs/pipeline_jobs/control_flow/do_while/invalid_pipeline_while_false.yml"
-        job = load_job(yaml_path)
+        # load valid pipeline job, override condition value in memory to make it invalid
+        yaml_path = "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml"
+        job: PipelineJob = load_job(yaml_path)
+        # replace condition value to test pipeline job validation on while False
+        job.jobs["do_while_true_job_with_pipeline_job"]._condition = False
         with pytest.raises(ValidationException) as e:
             job._validate(raise_error=True)
         error_message = str(e.value)
         assert "The condition cannot be False." in error_message
-        assert "jobs.invalid_condition.condition" in error_message
+        assert "jobs.do_while_true_job_with_pipeline_job.condition" in error_message
 
 
 class TestParallelForPipelineJobUT(TestControlFlowPipelineJobUT):
