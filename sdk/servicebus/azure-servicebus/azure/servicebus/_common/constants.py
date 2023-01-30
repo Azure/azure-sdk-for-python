@@ -23,6 +23,9 @@ ASSOCIATEDLINKPROPERTYNAME = b"associated-link-name"
 SESSION_FILTER = VENDOR + b":session-filter"
 SESSION_LOCKED_UNTIL = VENDOR + b":locked-until-utc"
 
+DEFAULT_AMQPS_PORT = 5671
+DEFAULT_AMQP_WSS_PORT = 443
+
 # Error codes
 ERROR_CODE_SESSION_LOCK_LOST = VENDOR + b":session-lock-lost"
 ERROR_CODE_MESSAGE_LOCK_LOST = VENDOR + b":message-lock-lost"
