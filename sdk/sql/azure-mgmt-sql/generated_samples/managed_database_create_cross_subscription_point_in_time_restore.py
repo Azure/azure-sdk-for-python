@@ -14,7 +14,7 @@ from azure.mgmt.sql import SqlManagementClient
     pip install azure-identity
     pip install azure-mgmt-sql
 # USAGE
-    python managed_database_update_min.py
+    python managed_database_create_cross_subscription_point_in_time_restore.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,15 +29,23 @@ def main():
         subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.managed_databases.begin_update(
+    response = client.managed_databases.begin_create_or_update(
         resource_group_name="Default-SQL-SouthEastAsia",
         managed_instance_name="managedInstance",
-        database_name="testdb",
-        parameters={"tags": {"tagKey1": "TagValue1"}},
+        database_name="managedDatabase",
+        parameters={
+            "location": "southeastasia",
+            "properties": {
+                "createMode": "PointInTimeRestore",
+                "crossSubscriptionSourceDatabaseId": "/subscriptions/11111111-2222-3333-4444-555555555555/resourceGroups/Default-SQL-SouthEastAsia/providers/Microsoft.Sql/managedInstances/testsvr2/databases/testdb",
+                "crossSubscriptionTargetManagedInstanceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/Default-SQL-SouthEastAsia/providers/Microsoft.Sql/managedInstances/testsvr",
+                "restorePointInTime": "2017-07-14T05:35:31.503Z",
+            },
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-05-01-preview/examples/ManagedDatabaseUpdateMin.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2022-05-01-preview/examples/ManagedDatabaseCreateCrossSubscriptionPointInTimeRestore.json
 if __name__ == "__main__":
     main()
