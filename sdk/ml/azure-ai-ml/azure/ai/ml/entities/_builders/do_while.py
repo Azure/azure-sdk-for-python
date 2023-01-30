@@ -228,8 +228,8 @@ class DoWhile(LoopNode):
         if self.condition is None:
             validation_result.append_error(yaml_path="condition", message="The condition cannot be empty.")
         elif isinstance(self.condition, bool):
-            # condition=True, directly pass
-            pass
+            if self.condition is False:
+                validation_result.append_error(yaml_path="condition", message="The condition cannot be False.")
         else:
             # Check condition exists in dowhile body.
             validation_result.merge_with(
