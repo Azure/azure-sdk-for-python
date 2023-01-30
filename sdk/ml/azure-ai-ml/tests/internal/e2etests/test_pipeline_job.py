@@ -65,6 +65,8 @@ def create_internal_sample_dependent_datasets(client: MLClient):
     "enable_pipeline_private_preview_features",
     "create_internal_sample_dependent_datasets",
     "enable_internal_components",
+    "mock_snapshot_hash",
+    "bodiless_matching",
 )
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
