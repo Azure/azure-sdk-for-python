@@ -101,7 +101,7 @@ def from_blob_properties(blob_properties, **additional_args):
 
     # Parse additional Datalake-only properties
     file_props.encryption_context = additional_args.pop('encryption_context', None)
-    
+
     return file_props
 
 
