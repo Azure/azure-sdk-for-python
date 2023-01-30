@@ -16,7 +16,7 @@
     ([#28322](https://github.com/Azure/azure-sdk-for-python/pull/28322))
 - Add UK to eu statsbeats
     ([#28379](https://github.com/Azure/azure-sdk-for-python/pull/28379))
-- Update to OTel 1.15
+- Update to opentelemetry api/sdk v1.15
     ([#28499](https://github.com/Azure/azure-sdk-for-python/pull/28499))
 
 ## 1.0.0b11 (2022-12-15)
