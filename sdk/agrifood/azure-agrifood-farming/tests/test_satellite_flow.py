@@ -25,7 +25,7 @@ class TestFarmBeatsSatelliteJob(FarmBeatsTestCase):
         common_id_prefix = "satellite-flow-"
         farmer_id = common_id_prefix + "test-farmer"
         boundary_id = common_id_prefix + "test-boundary"
-        job_id = common_id_prefix + "job-967"
+        job_id = common_id_prefix + "job-736"
 
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())

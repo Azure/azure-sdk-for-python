@@ -89,3 +89,5 @@ class TestFarmHeirarchyAsync(FarmBeatsAsyncTestCase):
         # Assert object doesn't exist anymore
         with pytest.raises(ResourceNotFoundError):
             await client.farmers.get(farmer_id=farmer_id)
+        
+        await self.close_client()

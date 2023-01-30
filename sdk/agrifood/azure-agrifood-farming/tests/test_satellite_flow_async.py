@@ -22,7 +22,7 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         common_id_prefix = "satellite-flow-"
         farmer_id = common_id_prefix + "test-farmer"
         boundary_id = common_id_prefix + "test-boundary"
-        job_id = common_id_prefix + "job-358"
+        job_id = common_id_prefix + "job-4868"
 
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())
@@ -109,3 +109,5 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         file_iter = await client.scenes.download(file_path=file_path)
         file = list([byte async for byte in file_iter])
         assert file.__sizeof__() == 72
+
+        await self.close_client()

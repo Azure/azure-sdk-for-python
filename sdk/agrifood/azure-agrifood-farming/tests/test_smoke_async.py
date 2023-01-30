@@ -116,3 +116,5 @@ class TestFarmBeatsSmokeAsync(FarmBeatsAsyncTestCase):
         )
         await client.boundaries.delete(farmer_id=farmer_id, boundary_id=boundary_id)
         await client.farmers.delete(farmer_id=farmer_id)
+
+        await self.close_client()

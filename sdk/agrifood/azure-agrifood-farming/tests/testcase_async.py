@@ -1,4 +1,3 @@
-
 # coding: utf-8
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,12 +13,17 @@ from azure.agrifood.farming.aio import FarmBeatsClient
 
 class FarmBeatsAsyncTestCase(AzureRecordedTestCase):
     def create_client(self, agrifood_endpoint) -> FarmBeatsClient:
-        credential = self.get_credential(FarmBeatsClient, is_async= True)
-        return self.create_client_from_credential(
+        self.credential = self.get_credential(FarmBeatsClient, is_async= True)
+        self.client = self.create_client_from_credential(
             FarmBeatsClient,
             endpoint=agrifood_endpoint,
-            credential=credential,
+            credential=self.credential,
         )
+        return self.client
+    
+    async def close_client(self):
+        await self.credential.close()
+        await self.client.close()
     
     @staticmethod
     def await_prepared_test(test_fn):
@@ -30,7 +34,8 @@ class FarmBeatsAsyncTestCase(AzureRecordedTestCase):
         @functools.wraps(test_fn)
         def run(test_class_instance, *args, **kwargs):
             trim_kwargs_from_test_function(test_fn, kwargs)
-            loop = asyncio.get_event_loop()
-            return loop.run_until_complete(test_fn(test_class_instance, **kwargs))
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            asyncio.run(test_fn(test_class_instance, **kwargs))
 
         return run
