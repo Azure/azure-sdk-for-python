@@ -51,13 +51,9 @@ class JobServiceSchema(JobServiceBaseSchema):
 
 
 class TensorBoardJobServiceSchema(JobServiceBaseSchema):
-    job_service_type = UnionField(
-        [
-            StringTransformedEnum(
-                allowed_values="tensor_board",
-                pass_original=True,
-            )
-        ]
+    job_service_type = StringTransformedEnum(
+        allowed_values=JobServiceTypeNames.EntityNames.TENSOR_BOARD,
+        pass_original=True,
     )
     log_dir = fields.Str()
 
@@ -67,14 +63,9 @@ class TensorBoardJobServiceSchema(JobServiceBaseSchema):
 
 
 class SshJobServiceSchema(JobServiceBaseSchema):
-    job_service_type = UnionField(
-        [
-            StringTransformedEnum(
-                # allowed_values=JobServiceTypeNames.NAMES_ALLOWED_FOR_PUBLIC,
-                allowed_values="ssh",
-                pass_original=True,
-            )
-        ]
+    job_service_type = StringTransformedEnum(
+        allowed_values=JobServiceTypeNames.EntityNames.SSH,
+        pass_original=True,
     )
     ssh_public_keys = fields.Str()
 
@@ -84,13 +75,9 @@ class SshJobServiceSchema(JobServiceBaseSchema):
 
 
 class VsCodeJobServiceSchema(JobServiceBaseSchema):
-    job_service_type = UnionField(
-        [
-            StringTransformedEnum(
-                allowed_values="vs_code",
-                pass_original=True,
-            )
-        ]
+    job_service_type = StringTransformedEnum(
+        allowed_values=JobServiceTypeNames.EntityNames.VS_CODE,
+        pass_original=True,
     )
 
     @post_load
@@ -99,13 +86,9 @@ class VsCodeJobServiceSchema(JobServiceBaseSchema):
 
 
 class JupyterLabJobServiceSchema(JobServiceBaseSchema):
-    job_service_type = UnionField(
-        [
-            StringTransformedEnum(
-                allowed_values="jupyter_lab",
-                pass_original=True,
-            )
-        ]
+    job_service_type = StringTransformedEnum(
+        allowed_values=JobServiceTypeNames.EntityNames.JUPYTER_LAB,
+        pass_original=True,
     )
 
     @post_load
