@@ -164,6 +164,9 @@ class DoWhile(LoopNode):
         return cls._create_instance_from_schema_dict(pipeline_jobs, obj, validate_port=False)
 
     def _to_rest_object(self, **kwargs) -> dict:
+        # Feature 2154655: support while True in do-while
+        # if directly pass True to server, they cannot identify it is literal True or output port name;
+        # so use None condition to express while True and here we replace during convert to REST object.
         condition = self.condition
         if isinstance(condition, bool):
             self._condition = None
