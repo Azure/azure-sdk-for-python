@@ -13,7 +13,6 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
-from uamqp.errors import VendorLinkDetach
 from azure.servicebus import (
     ServiceBusMessage,
     ServiceBusReceivedMessage,

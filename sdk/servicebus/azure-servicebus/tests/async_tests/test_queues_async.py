@@ -1019,6 +1019,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             messages.append(message)
                             await receiver.complete_message(message)
+                            time.sleep(2)
             await renewer.close()
             assert len(messages) == 11
 
@@ -1046,8 +1047,10 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                                                     receive_mode=ServiceBusReceiveMode.PEEK_LOCK,
                                                     prefetch_count=10,
                                                     auto_lock_renewer=renewer) as receiver:
+   
                 async for message in receiver:
                     if not messages:
+                        _logger.debug("One message")
                         messages.append(message)
                         assert not message._lock_expired
                         print("Registered lock renew thread", message.locked_until_utc, utc_now())
@@ -1074,6 +1077,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                             print("Remaining messages", message.locked_until_utc, utc_now())
                             messages.append(message)
                             await receiver.complete_message(message)
+                            time.sleep(2)
             await renewer.close()
             assert len(messages) == 11
 
@@ -2246,15 +2250,14 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             await self._open()
             # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
             if self.execution_times == 1:
-                from uamqp.errors import LinkDetach
-                from uamqp.constants import ErrorCodes
+                from azure.servicebus._pyamqp.error import ErrorCondition, AMQPConnectionError
                 self.execution_times += 1
                 self.error_raised = True
-                raise LinkDetach(ErrorCodes.LinkDetachForced)
+                raise AMQPConnectionError(condition=ErrorCondition.LinkDetachForced)
             else:
                 self.execution_times += 1
             if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter_async()
+                self._message_iter = await self._handler.receive_messages_iter_async()
             uamqp_message = await self._message_iter.__anext__()
             message = self._build_message(uamqp_message)
             return message

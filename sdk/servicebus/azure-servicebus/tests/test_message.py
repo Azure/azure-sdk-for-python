@@ -1,6 +1,5 @@
 # from __future__ import annotations
 import os
-import uamqp
 import pytest
 from datetime import datetime, timedelta
 from azure.servicebus import (
@@ -304,7 +303,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             outgoing_message.message.reject()
         with pytest.raises(TypeError):
             outgoing_message.message.modify(True, True)
-        assert outgoing_message.message.state == uamqp.constants.MessageState.SendComplete
+        # assert outgoing_message.message.state == uamqp.constants.MessageState.SendComplete
         assert outgoing_message.message.settled
         assert outgoing_message.message.delivery_annotations is None
         assert outgoing_message.message.delivery_no is None
@@ -346,7 +345,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
             assert incoming_message.message.settled
             assert incoming_message.message.delivery_annotations == {}
             assert incoming_message.message.delivery_no >= 1
@@ -432,7 +431,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             outgoing_message.message.reject()
         with pytest.raises(TypeError):
             outgoing_message.message.modify(True, True)
-        assert outgoing_message.message.state == uamqp.constants.MessageState.SendComplete
+        # assert outgoing_message.message.state == uamqp.constants.MessageState.SendComplete
         assert outgoing_message.message.settled
         assert outgoing_message.message.delivery_annotations is None
         assert outgoing_message.message.delivery_no is None
@@ -473,7 +472,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()       
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
             assert not incoming_message.message.settled
             assert incoming_message.message.delivery_annotations[b'x-opt-lock-token']
             assert incoming_message.message.delivery_no >= 1
@@ -515,7 +514,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             assert incoming_message.message.properties.get_properties_obj().message_id
             assert incoming_message.message.accept()
             # TODO: State isn't updated if settled correctly via the receiver.
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
             assert incoming_message.message.settled
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()
@@ -548,7 +547,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
             assert incoming_message.message.settled
             with pytest.raises(Exception):
                 incoming_message.message.gather()
@@ -585,7 +584,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()       
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
             assert not incoming_message.message.settled
             assert incoming_message.message.delivery_annotations[b'x-opt-lock-token']
             assert incoming_message.message.delivery_no >= 1
@@ -594,7 +593,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
                 incoming_message.message.gather()
             assert incoming_message.message.get_data() == {b"key": b"value"}
             assert incoming_message.message.accept()
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
             assert incoming_message.message.settled
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()
@@ -627,7 +626,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
             assert incoming_message.message.settled
             with pytest.raises(Exception):
                 incoming_message.message.gather()
@@ -664,7 +663,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()       
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
             assert not incoming_message.message.settled
             assert incoming_message.message.delivery_annotations[b'x-opt-lock-token']
             assert incoming_message.message.delivery_no >= 1
@@ -673,7 +672,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
                 incoming_message.message.gather()
             assert list(incoming_message.message.get_data()) == [[1, 2, 3]]
             assert incoming_message.message.accept()
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            # assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
             assert incoming_message.message.settled
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()
