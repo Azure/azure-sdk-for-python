@@ -8,6 +8,7 @@
 
 
 import sys
+import logging
 from typing import Any, Mapping, overload, Union, Optional, TypeVar, Tuple
 import json
 import math
@@ -27,6 +28,8 @@ if sys.version_info >= (3, 8):
 else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class JoinGroupMessage:
@@ -226,7 +229,9 @@ class OnConnectedArgs(_model_base.Model):
 
 
 class ConnectedMessage:
-    def __init__(self, connection_id: str, user_id: str, reconnection_token: Optional[str] = None) -> None:
+    def __init__(
+        self, connection_id: str, user_id: Optional[str] = None, reconnection_token: Optional[str] = None
+    ) -> None:
         self.kind: Literal["connected"] = "connected"
         self.connection_id = connection_id
         self.user_id = user_id
@@ -234,7 +239,7 @@ class ConnectedMessage:
 
 
 class DisconnectedMessage:
-    def __init__(self, message: str) -> None:
+    def __init__(self, message: Optional[str] = None) -> None:
         self.kind: Literal["disconnected"] = "disconnected"
         self.message = message
 
@@ -245,7 +250,7 @@ class GroupDataMessage:
         data_type: WebPubSubDataType,
         data: Any,
         group: str,
-        from_user_id: str,
+        from_user_id: Optional[str] = None,
         sequence_id: Optional[int] = None,
     ) -> None:
         self.kind: Literal["groupData"] = "groupData"
@@ -281,7 +286,7 @@ class SendToGroupMessage:
         self.ack_id = ack_id
 
 
-class OnRestoreGroupFailedArgs:
+class OnRejoinGroupFailedArgs:
     def __init__(self, group: str, error: Exception) -> None:
         self.group = group
         self.error = error
@@ -338,7 +343,7 @@ class WebPubSubClientProtocol:
     @staticmethod
     def parse_messages(
         raw_message: str,
-    ) -> Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage]:
+    ) -> Union[ConnectedMessage, DisconnectedMessage, GroupDataMessage, ServerDataMessage, AckMessage, None]:
         if raw_message is None:
             raise Exception("No input")
         if not isinstance(raw_message, str):
@@ -349,12 +354,13 @@ class WebPubSubClientProtocol:
             if message["event"] == "connected":
                 return ConnectedMessage(
                     connection_id=message["connectionId"],
-                    user_id=message["userId"],
+                    user_id=message.get("userId"),
                     reconnection_token=message.get("reconnectionToken"),
                 )
             if message["event"] == "disconnected":
-                return DisconnectedMessage(message=message["message"])
-            raise Exception(f"wrong message event type: {message['event']}")
+                return DisconnectedMessage(message=message.get("message"))
+            _LOGGER.error("wrong message event type: %s", message["event"])
+            return None
         if message["type"] == "message":
             if message["from"] == "group":
                 data = parse_payload(message["data"], message["dataType"])
@@ -362,7 +368,7 @@ class WebPubSubClientProtocol:
                     data_type=message["dataType"],
                     data=data,
                     group=message["group"],
-                    from_user_id=message["fromUserId"],
+                    from_user_id=message.get("fromUserId"),
                     sequence_id=message.get("sequenceId"),
                 )
             if message["from"] == "server":
@@ -370,14 +376,16 @@ class WebPubSubClientProtocol:
                 return ServerDataMessage(
                     data=data, data_type=message["dataType"], sequence_id=message.get("sequenceId")
                 )
-            raise Exception(f"wrong message from: {message['from']}")
+            _LOGGER.error("wrong message from type: %s", message["from"])
+            return None
         if message["type"] == "ack":
             return AckMessage(
                 ack_id=message["ackId"],
                 success=message["success"],
                 error=message.get("error"),
             )
-        raise Exception(f"wrong message type: {message['type']}")
+        _LOGGER.error("wrong message type: %s", message["type"])
+        return None
 
     @staticmethod
     def write_message(message: WebPubSubMessage) -> str:
@@ -441,12 +449,12 @@ class WebPubSubClientOptions:
         self,
         protocol: Optional[WebPubSubClientProtocol] = None,
         auto_reconnect: Optional[bool] = None,
-        auto_restore_groups: Optional[bool] = None,
+        auto_rejoin_groups: Optional[bool] = None,
         message_retry_options: Optional[WebPubSubRetryOptions] = None,
     ) -> None:
         self.protocol = protocol
         self.auto_reconnect = auto_reconnect
-        self.auto_restore_groups = auto_restore_groups
+        self.auto_rejoin_groups = auto_rejoin_groups
         self.message_retry_options = message_retry_options
 
 

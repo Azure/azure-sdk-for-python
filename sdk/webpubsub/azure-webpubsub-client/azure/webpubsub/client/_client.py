@@ -37,7 +37,7 @@ from ._models import (
     ConnectedMessage,
     SequenceAckMessage,
     CloseEvent,
-    OnRestoreGroupFailedArgs,
+    OnRejoinGroupFailedArgs,
     DisconnectedMessage,
     GroupDataMessage,
     ServerDataMessage,
@@ -445,7 +445,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                             except Exception as e:  # pylint: disable=broad-except
                                 self._call_back(
                                     CallBackType.REJOIN_GROUP_FAILED,
-                                    OnRestoreGroupFailedArgs(group=group_name, error=e),
+                                    OnRejoinGroupFailedArgs(group=group_name, error=e),
                                 )
 
                     self._call_back(
@@ -616,8 +616,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
     def _build_default_options(self):
         if self._options.auto_reconnect is None:
             self._options.auto_reconnect = True
-        if self._options.auto_restore_groups is None:
-            self._options.auto_restore_groups = True
+        if self._options.auto_rejoin_groups is None:
+            self._options.auto_rejoin_groups = True
         if self._options.protocol is None:
             self._options.protocol = WebPubSubJsonReliableProtocol()
 
