@@ -219,11 +219,13 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
 ANONYMOUS_COMPONENT_TEST_PARAMS = [
     (
         "simple-command/powershell_copy.yaml",
+        # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
         "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
     ),
     (
         "additional-includes/component_spec.yaml",
-        "1928c330-6272-fc7d-818c-f411a3e6eb09"
+        # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
+        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
     ),
     # TODO(2076035): skip tests related to zip additional includes for now
     # (
