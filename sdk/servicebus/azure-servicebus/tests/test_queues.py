@@ -1195,7 +1195,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 received_msgs = receiver.receive_messages(max_message_count=10, max_wait_time=5)
                 for msg in received_msgs:
                     renewer.register(receiver, msg, max_lock_renewal_duration=30)
-                time.sleep(10)
+                # time.sleep(10)
+                # what is the reason for this time.sleep()? this causes the client to shutdown
 
                 for msg in received_msgs:
                     receiver.complete_message(msg)
