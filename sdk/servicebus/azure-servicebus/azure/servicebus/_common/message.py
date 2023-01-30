@@ -245,6 +245,7 @@ class ServiceBusMessage(
     #    encode_payload(output, self.raw_amqp_message._to_outgoing_amqp_message())  # pylint: disable=protected-access
     #    return output
 
+    # TODO: test these
     @property
     def message(self) -> Union["Message", LegacyMessage]:
         """DEPRECATED: Get the underlying uamqp.BatchMessage or LegacyBatchMessage.

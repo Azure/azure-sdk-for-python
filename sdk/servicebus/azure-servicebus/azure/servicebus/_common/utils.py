@@ -236,7 +236,6 @@ def _convert_to_single_service_bus_message(
     try:
         message = message_type(**cast(Mapping[str, Any], message))
         message._message = to_outgoing_amqp_message(message.raw_amqp_message)
-        print(message._message)
         return message
     except TypeError:
         raise TypeError(

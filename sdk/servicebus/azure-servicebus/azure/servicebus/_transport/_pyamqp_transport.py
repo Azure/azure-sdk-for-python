@@ -149,6 +149,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         message = cast(List, [None] * 9)
         message[5] = data
         return message
+        #return BatchMessage(data=data)
 
     @staticmethod
     def to_outgoing_amqp_message(annotated_message):
@@ -230,6 +231,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param List message: Message to get encoded size of.
         :rtype: int
         """
+        #return utils.get_message_encoded_size(message)
         return utils.get_message_encoded_size(BatchMessage(*message))
 
     @staticmethod
@@ -348,7 +350,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         sender._open()
         try:
-            sender._handler.send_message(message._message, timeout=timeout) # pylint:disable=protected-access
+            #sender._handler.send_message(message._message, timeout=timeout) # pylint:disable=protected-access
+            if isinstance(message._message, list):    # BatchMessage
+                sender._handler.send_message(BatchMessage(*message._message), timeout=timeout) # pylint:disable=protected-access
+            else:   # Message
+                sender._handler.send_message(message._message, timeout=timeout) # pylint:disable=protected-access
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except AMQPErrors.MessageException as e:

@@ -555,10 +555,9 @@ if uamqp_installed:
             then pass 300 to refresh_window.
             """
             update_token = kwargs.pop("update_token")
-            refresh_window = 300
-            if update_token:
-                refresh_window = 0
+            refresh_window = 0 if update_token else 300
 
+            print(auth_uri)
             token_auth = authentication.JWTTokenAuth(
                 auth_uri,
                 auth_uri,
