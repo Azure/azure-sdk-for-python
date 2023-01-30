@@ -13,7 +13,7 @@ import pydash
 import pytest
 import yaml
 from pytest_mock import MockFixture
-from test_utilities.utils import parse_local_path
+from test_utilities.utils import parse_local_path, build_temp_folder
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
@@ -81,6 +81,7 @@ class TestComponent:
             "tags": {"category": "Component Tutorial", "contact": "amldesigner@microsoft.com"},
             "type": "CommandComponent",
             "$schema": "https://componentsdk.azureedge.net/jsonschema/CommandComponent.json",
+            "_source": "CLASS",
             "version": "0.0.1",
             "display_name": "0.0.1",
             "is_deterministic": True,
@@ -139,6 +140,7 @@ class TestComponent:
             "tags": {"org": "bing", "project": "relevance"},
             "type": "ScopeComponent",
             "$schema": "https://componentsdk.azureedge.net/jsonschema/CommandComponent.json",
+            "_source": "CLASS",
             "version": "85b54741.0bf9.4734.a5bb.0e469c7bf792",
             "display_name": "Convert Text to StructureStream",
             "is_deterministic": True,
@@ -218,8 +220,11 @@ class TestComponent:
             expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
 
         assert entity._to_dict() == expected_dict
+
+        expected_rest_object = copy.deepcopy(expected_dict)
+        expected_rest_object["_source"] = "YAML.COMPONENT"
         rest_obj = entity._to_rest_object()
-        assert rest_obj.properties.component_spec == expected_dict
+        assert rest_obj.properties.component_spec == expected_rest_object
 
         # inherit input type map from Component._from_rest_object
         for input_port in expected_dict.get("inputs", {}).values():
@@ -358,41 +363,67 @@ class TestComponent:
         with component._resolve_local_code() as code:
             code_path = code.path
             assert code_path.is_dir()
-            assert (code_path / "LICENSE").exists()
-            assert (code_path / "library.zip").exists()
+            assert (code_path / "LICENSE").is_file()
+            assert (code_path / "library.zip").is_file()
             assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
-            assert (code_path / "library1" / "hello.py").exists()
-            assert (code_path / "library1" / "world.py").exists()
+            assert (code_path / "library1" / "hello.py").is_file()
+            assert (code_path / "library1" / "world.py").is_file()
 
         assert not code_path.is_dir()
 
-    def test_additional_includes_ignore(self) -> None:
-        origin_test_configs_dir = Path("./tests/test_configs/internal/")
-        with tempfile.TemporaryDirectory() as test_configs_dir:
-            for dir_name in ["component_with_additional_includes", "additional_includes"]:
-                shutil.copytree(origin_test_configs_dir / dir_name, Path(test_configs_dir) / dir_name)
-
+    def test_additional_includes_default_ignore(self) -> None:
+        with build_temp_folder(
+            source_base_dir="./tests/test_configs/internal/",
+            relative_dirs_to_copy=[
+                "component_with_additional_includes",
+                "additional_includes"
+            ],
+            extra_files_to_create={
+                "component_with_additional_includes/x.additional_includes": None,
+                "component_with_additional_includes/__pycache__/a.pyc": None,
+                "additional_includes/__pycache__/a.pyc": None,
+                "additional_includes/library1/x.additional_includes": None,
+            }
+        ) as test_configs_dir:
             yaml_path = Path(test_configs_dir) / "component_with_additional_includes" / "helloworld_additional_includes.yml"
-            additional_includes_dir = Path(test_configs_dir) / "additional_includes"
 
             component: InternalComponent = load_component(source=yaml_path)
-            # create some files/folders expected to ignore
-            code_pycache = yaml_path.parent / "__pycache__"
-            additional_includes_ignore = additional_includes_dir / "library1" / "x.additional_includes"
-            additional_includes_pycache = additional_includes_dir / "library1" / "__pycache__"
-            code_pycache.mkdir()
 
-            (code_pycache / "a.pyc").touch()
-            additional_includes_ignore.touch()
-
-            additional_includes_pycache.mkdir()
-            (additional_includes_pycache / "a.pyc").touch()
             # resolve and check snapshot directory
             with component._resolve_local_code() as code:
                 code_path = code.path
                 assert not (code_path / "__pycache__").exists()
-                assert not (code_path / "library1" / "x.additional_includes").exists()
                 assert not (code_path / "library1" / "__pycache__").exists()
+                assert not (code_path / "helloworld_additional_includes.additional_includes").exists()
+                assert (code_path / "library1" / "x.additional_includes").is_file()
+                assert (code_path / "x.additional_includes").is_file()
+
+    def test_additional_includes_file_ignore(self) -> None:
+        with build_temp_folder(
+            source_base_dir="./tests/test_configs/internal/",
+            relative_dirs_to_copy=[
+                "component_with_additional_includes",
+                "additional_includes"
+            ],
+            extra_files_to_create={
+                "component_with_additional_includes/test_code/hello.py": None,
+                "component_with_additional_includes/.amlignore": "code_only\nlibrary1/world.py",
+                "additional_includes/library1/.amlignore": "hello.py",
+            }
+        ) as test_configs_dir:
+            yaml_path = Path(test_configs_dir) / "component_with_additional_includes" / "helloworld_additional_includes.yml"
+
+            component: InternalComponent = load_component(source=yaml_path)
+
+            # resolve and check snapshot directory
+            assert (Path(test_configs_dir) / "component_with_additional_includes" / "code_only").is_dir()
+            assert (Path(test_configs_dir) / "additional_includes" / "library1" / "hello.py").is_file()
+            with component._resolve_local_code() as code:
+                code_path = code.path
+                assert not (code_path / "code_only").exists()
+                assert not (code_path / "library1" / "hello.py").exists()
+                assert not (code_path / "library1" / "world.py").exists()
+                assert (code_path / "test_code" / "hello.py").is_file()
 
     def test_additional_includes_merge_folder(self) -> None:
         yaml_path = (
@@ -403,12 +434,12 @@ class TestComponent:
         with component._resolve_local_code() as code:
             code_path = code.path
             # first folder
-            assert (code_path / "library1" / "__init__.py").exists()
-            assert (code_path / "library1" / "hello.py").exists()
+            assert (code_path / "library1" / "__init__.py").is_file()
+            assert (code_path / "library1" / "hello.py").is_file()
             # second folder content
             assert (code_path / "library1" / "utils").is_dir()
-            assert (code_path / "library1" / "utils" / "__init__.py").exists()
-            assert (code_path / "library1" / "utils" / "salute.py").exists()
+            assert (code_path / "library1" / "utils" / "__init__.py").is_file()
+            assert (code_path / "library1" / "utils" / "salute.py").is_file()
 
     @pytest.mark.parametrize(
         "yaml_path,has_additional_includes",
@@ -439,8 +470,8 @@ class TestComponent:
                     "helloworld_invalid_additional_includes_zip_file_not_found.yml",
                     "no_code_and_additional_includes",
                 ]:
-                    assert (code_path / path).exists()
-                assert (code_path / "LICENSE").exists()
+                    assert (code_path / path).is_file() if ".yml" in path else (code_path / path).is_dir()
+                assert (code_path / "LICENSE").is_file()
             else:
                 # additional includes not specified, code should be specified path (default yaml folder)
                 yaml_dict = load_yaml(yaml_path)
