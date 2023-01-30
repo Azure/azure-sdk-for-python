@@ -25,7 +25,7 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import TYPE_CHECKING, Generic, TypeVar, Union, cast
+from typing import TYPE_CHECKING, Generic, TypeVar, Union
 
 from .. import PipelineRequest
 
