@@ -1,3 +1,5 @@
+import os
+import tempfile
 from collections import OrderedDict
 
 import pytest
@@ -8,6 +10,7 @@ from azure.ai.ml._utils.utils import (
     get_all_data_binding_expressions,
     is_data_binding_expression,
     map_single_brackets_and_warn,
+    write_with_int_mode,
 )
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -72,3 +75,19 @@ class TestUtils:
         ordered_dict2["c"] = 4
         target_list = [ordered_dict1, ordered_dict2]
         assert convert_ordered_dict_to_dict(target_list) == [{"a": 1, "b": 2}, {"d": 3, "c": 4}]
+
+    def test_open_with_int_mode(self):
+        def get_int_mode(file_path: str) -> str:
+            int_mode = os.stat(file_path).st_mode & 0o777
+            return oct(int_mode)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            target_file_path = temp_dir + "/test.txt"
+            write_with_int_mode(target_file_path, "test1", int_mode=0o600)
+            if os.name == "nt":
+                # Windows does not support the mode argument for os.open and will always create file with 0o666
+                assert get_int_mode(target_file_path) == "0o666"
+            else:
+                assert get_int_mode(target_file_path) == "0o600"
+            write_with_int_mode(target_file_path, "test2", int_mode=0o666)
+            assert get_int_mode(target_file_path) == "0o666"
+

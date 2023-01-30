@@ -934,24 +934,24 @@ def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resour
         )
 
 
-@contextmanager
-def open_file_with_int_mode(file: Union[str, PathLike], mode: str = 'r', int_mode: int = 0o666, **kwargs) -> IO:
+def write_with_int_mode(file: Union[str, PathLike], content: str, *, int_mode: int = 0o666, encoding="utf-8"):
     """Open file with specific mode and return the file object.
 
     :param file: Path to the file.
-    :param mode: Mode to open the file.
+    :param content: Content to write to the file.
     :param int_mode: Mode for opener in integer. Default value is 0o666, which means
     w+r for owner, group and others.
-    :param int_mode: Mode for the opener.
-    :return: The file object.
+    :param encoding: Encoding for the file. Default value is utf-8.
     """
     origin_mask = os.umask(0)
     try:
-        def opener(path, flags):
-            # w+r for owner, group and others
-            return os.open(path, flags, int_mode)
-
-        with open(file=file, mode=mode, **kwargs, opener=opener) as f:
-            yield f
+        fd = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, int_mode)
+        os.write(fd, content.encode(encoding=encoding))
+        os.close(fd)
+        if os.stat(file).st_mode & 0o777 != int_mode:
+            try:
+                os.chmod(file, int_mode)
+            except PermissionError:
+                pass
     finally:
         os.umask(origin_mask)
