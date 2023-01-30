@@ -397,7 +397,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             return new_url
         return None
 
-    def is_connected(self) -> bool:
+    def _is_connected(self) -> bool:
         """check whether the client is still coneected to server after start"""
         return bool(
             self._state == WebPubSubClientState.CONNECTED
@@ -547,7 +547,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._thread.start()
         with self._cv:
             self._cv.wait(timeout=self._start_timeout)
-        if not self.is_connected():
+        if not self._is_connected():
             raise Exception("Fail to start client")
 
         # set thread to check sequence id if needed
@@ -556,7 +556,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         ):
 
             def sequence_id_ack_periodically():
-                while self.is_connected():
+                while self._is_connected():
                     try:
                         is_updated, seq_id = self._sequence_id.try_get_sequence_id()
                         if is_updated:

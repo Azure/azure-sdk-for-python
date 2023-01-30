@@ -412,6 +412,10 @@ class WebPubSubClientProtocol:
             data = SequenceAckData(sequence_id=message.sequence_id)
         else:
             raise Exception(f"Unsupported type: {message.kind}")
+        
+        for k in list(data.keys()):
+            if data[k] is None:
+                data.pop(k) 
 
         return json.dumps(data, cls=AzureJSONEncoder)
 
