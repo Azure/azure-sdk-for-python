@@ -81,6 +81,7 @@ class TestComponent:
             "tags": {"category": "Component Tutorial", "contact": "amldesigner@microsoft.com"},
             "type": "CommandComponent",
             "$schema": "https://componentsdk.azureedge.net/jsonschema/CommandComponent.json",
+            "_source": "CLASS",
             "version": "0.0.1",
             "display_name": "0.0.1",
             "is_deterministic": True,
@@ -139,6 +140,7 @@ class TestComponent:
             "tags": {"org": "bing", "project": "relevance"},
             "type": "ScopeComponent",
             "$schema": "https://componentsdk.azureedge.net/jsonschema/CommandComponent.json",
+            "_source": "CLASS",
             "version": "85b54741.0bf9.4734.a5bb.0e469c7bf792",
             "display_name": "Convert Text to StructureStream",
             "is_deterministic": True,
@@ -218,8 +220,11 @@ class TestComponent:
             expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
 
         assert entity._to_dict() == expected_dict
+
+        expected_rest_object = copy.deepcopy(expected_dict)
+        expected_rest_object["_source"] = "YAML.COMPONENT"
         rest_obj = entity._to_rest_object()
-        assert rest_obj.properties.component_spec == expected_dict
+        assert rest_obj.properties.component_spec == expected_rest_object
 
         # inherit input type map from Component._from_rest_object
         for input_port in expected_dict.get("inputs", {}).values():
