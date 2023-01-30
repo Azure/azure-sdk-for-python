@@ -268,38 +268,6 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Connection": "keep-alive",
-        "Content-Length": "223",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 19:06:05 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-dc-na4b3zkj5hmeo.eastus.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b161f301-955f-47cf-8df8-bf6e29de907c?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-dc-na4b3zkj5hmeo.eastus.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b161f301-955f-47cf-8df8-bf6e29de907c",
-        "Retry-After": "30",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "x-ms-correlation-request-id": "393a4ebf-099a-4ada-90f6-8012142c4ebd",
-        "X-Rate-Limit-Limit": "1m",
-        "X-Rate-Limit-Remaining": "299",
-        "X-Rate-Limit-Reset": "2023-01-30T19:07:05.7000352Z"
-      },
-      "ResponseBody": {
-        "id": "/projects/sdk-default-project/operationStatuses/b161f301-955f-47cf-8df8-bf6e29de907c",
-        "name": "b161f301-955f-47cf-8df8-bf6e29de907c",
-        "status": "Running",
-        "startTime": "2023-01-30T19:05:05.0308053\u002B00:00"
-      }
-    },
-    {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-dc-na4b3zkj5hmeo.eastus.devcenter.azure.com/projects/sdk-default-project/operationstatuses/b161f301-955f-47cf-8df8-bf6e29de907c",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 30 Jan 2023 19:06:36 GMT",
@@ -411,38 +379,6 @@
         "id": "/projects/sdk-default-project/operationStatuses/639043f9-dea3-4fa9-bb5d-5ab3dc1c8ac0",
         "name": "639043f9-dea3-4fa9-bb5d-5ab3dc1c8ac0",
         "status": "NotStarted",
-        "startTime": "2023-01-30T19:06:36.4551255\u002B00:00"
-      }
-    },
-    {
-      "RequestUri": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-dc-na4b3zkj5hmeo.eastus.devcenter.azure.com/projects/sdk-default-project/operationstatuses/639043f9-dea3-4fa9-bb5d-5ab3dc1c8ac0",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-developer-devcenter/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Connection": "keep-alive",
-        "Content-Length": "223",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 19:07:06 GMT",
-        "Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-dc-na4b3zkj5hmeo.eastus.devcenter.azure.com/projects/sdk-default-project/operationstatuses/639043f9-dea3-4fa9-bb5d-5ab3dc1c8ac0?monitor=true",
-        "Operation-Location": "https://8ab2df1c-ed88-4946-a8a9-e1bbb3e4d1fd-sdk-dc-na4b3zkj5hmeo.eastus.devcenter.azure.com/projects/sdk-default-project/operationstatuses/639043f9-dea3-4fa9-bb5d-5ab3dc1c8ac0",
-        "Retry-After": "30",
-        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "x-ms-correlation-request-id": "db427fe7-aeab-4f47-9055-0c44abaa3b33",
-        "X-Rate-Limit-Limit": "1m",
-        "X-Rate-Limit-Remaining": "298",
-        "X-Rate-Limit-Reset": "2023-01-30T19:07:36.1498596Z"
-      },
-      "ResponseBody": {
-        "id": "/projects/sdk-default-project/operationStatuses/639043f9-dea3-4fa9-bb5d-5ab3dc1c8ac0",
-        "name": "639043f9-dea3-4fa9-bb5d-5ab3dc1c8ac0",
-        "status": "Running",
         "startTime": "2023-01-30T19:06:36.4551255\u002B00:00"
       }
     },
