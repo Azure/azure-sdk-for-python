@@ -31,6 +31,8 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
         self._instance_discovery = instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
+        if self._regional_authority.lower() in ["tryautodetect", "true"]:
+            self._regional_authority = msal.ConfidentialClientApplication.ATTEMPT_REGION_DISCOVERY
         self._tenant_id = tenant_id or "organizations"
         validate_tenant_id(self._tenant_id)
         self._client = MsalClient(**kwargs)

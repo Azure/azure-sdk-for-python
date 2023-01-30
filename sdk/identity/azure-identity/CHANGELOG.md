@@ -1,10 +1,11 @@
 # Release History
 
-## 1.13.0b2 (Unreleased)
+## 1.13.0b2 (2023-02-07)
 
 ### Features Added
 
 - Added `AzureDeveloperCredential` for Azure Developer CLI. ([#27916](https://github.com/Azure/azure-sdk-for-python/pull/27916))
+- Added support to use "TryAutoDetect" to enable auto detect.    ([#526](https://github.com/AzureAD/microsoft-authentication-library-for-python/issues/526))
 
 ### Breaking Changes
 
