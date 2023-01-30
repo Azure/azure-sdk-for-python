@@ -4,21 +4,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-import random
-from azure.agrifood.farming.models import Farmer, SatelliteDataIngestionJob, SatelliteData
-from azure.core.exceptions import ResourceNotFoundError
-from testcase_async import TestFarmBeats
+from testcase_async import FarmBeatsAsyncTestCase
 from testcase import FarmBeatsPowerShellPreparer
-from random import randint
 from isodate.tzinfo import Utc
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils.aio import recorded_by_proxy_async
 from urllib.parse import urlparse, parse_qs
 
 
-class TestFarmBeatsSatelliteJob(TestFarmBeats):
+class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
 
     @FarmBeatsPowerShellPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_satellite_flow(self, **kwargs):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
 
@@ -26,7 +22,7 @@ class TestFarmBeatsSatelliteJob(TestFarmBeats):
         common_id_prefix = "satellite-flow-"
         farmer_id = common_id_prefix + "test-farmer"
         boundary_id = common_id_prefix + "test-boundary"
-        job_id = common_id_prefix + "job" + str(random.randint(0, 100000))
+        job_id = common_id_prefix + "job-358"
 
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())
@@ -68,7 +64,7 @@ class TestFarmBeatsSatelliteJob(TestFarmBeats):
         )
 
         # Create satellite job
-        satellite_job_poller = client.scenes.begin_create_satellite_data_ingestion_job(
+        satellite_job_poller = await client.scenes.begin_create_satellite_data_ingestion_job(
             job_id=job_id,
             job={
                 "boundaryId": boundary_id,
@@ -103,7 +99,7 @@ class TestFarmBeatsSatelliteJob(TestFarmBeats):
             end_date_time=end_date_time,
         )
 
-        scenes_list = list(scenes)
+        scenes_list = [scene async for scene in scenes]
 
         # Assert scenes got created
         assert len(scenes_list) == 12
@@ -111,5 +107,5 @@ class TestFarmBeatsSatelliteJob(TestFarmBeats):
         # Download scene file
         file_path = parse_qs(urlparse(scenes_list[0]["imageFiles"][0]["fileLink"]).query)['filePath'][0]
         file_iter = await client.scenes.download(file_path=file_path)
-        file = list(file_iter)
-        assert file.__sizeof__() == 104
+        file = list([byte async for byte in file_iter])
+        assert file.__sizeof__() == 72

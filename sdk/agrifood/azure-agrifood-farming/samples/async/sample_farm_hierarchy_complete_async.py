@@ -30,7 +30,7 @@ from azure.agrifood.farming.models import Farmer, Farm, Field, Boundary, Crop, C
 import os
 import asyncio
 from dotenv import load_dotenv
-
+import random
 
 
 async def sample_farm_hierarchy_complete_async():
@@ -44,7 +44,7 @@ async def sample_farm_hierarchy_complete_async():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer3"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     farmer_name = "contoso-farmer-name"
     farmer_description = "contoso-farmer-description"
     farm_id = "contoso-farm"
@@ -294,5 +294,6 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(
-        sample_farm_hierarchy_complete_async())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    asyncio.run(sample_farm_hierarchy_complete_async())

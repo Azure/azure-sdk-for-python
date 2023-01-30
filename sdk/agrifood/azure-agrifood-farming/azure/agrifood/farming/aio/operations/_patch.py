@@ -144,19 +144,9 @@ class AttachmentsOperations(AttachmentsOperationsGenerated):
         # Construct parameters
         _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-        _multipart_data = MultipartEncoder(
-            fields={
-                # a file upload field
-                "file": (os.path.basename(file.name), file),
-                # plain text fields
-                **attachment,
-            }
-        )
-
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", _multipart_data.content_type, "str")
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-        request = HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, data=_multipart_data)
+        request = HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, files={'file': file, **attachment})
 
         request.url = self._client.format_url(request.url)  # type: ignore
 
@@ -292,19 +282,9 @@ class InsightAttachmentsOperations(InsightAttachmentsOperationsGenerated):
         # Construct parameters
         _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-        _multipart_data = MultipartEncoder(
-            fields={
-                # a file upload field
-                "file": (os.path.basename(file.name), file, "application/octet-stream"),
-                # plain text fields
-                **insight_attachment,
-            }
-        )
-
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", _multipart_data.content_type, "str")
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-        request = HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, data=_multipart_data)
+        request = HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, files={'file': file, **insight_attachment})
 
         request.url = self._client.format_url(request.url)  # type: ignore
 

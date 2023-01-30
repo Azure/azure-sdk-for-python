@@ -26,6 +26,7 @@ from azure.agrifood.farming.models import Farmer
 import os
 import asyncio
 from dotenv import load_dotenv
+import random
 
 
 async def sample_hello_world_async():
@@ -39,7 +40,7 @@ async def sample_hello_world_async():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     farmer_name = "Contoso"
     farmer_description = "Contoso is hard working."
 
@@ -74,4 +75,6 @@ if __name__ == "__main__":
 
     load_dotenv()
     
-    asyncio.get_event_loop().run_until_complete(sample_hello_world_async())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    asyncio.run(sample_hello_world_async())

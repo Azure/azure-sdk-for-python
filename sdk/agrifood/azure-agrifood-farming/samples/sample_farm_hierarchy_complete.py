@@ -28,6 +28,7 @@ from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
 import os
 from dotenv import load_dotenv
+import random
 
 
 def sample_farm_hierarchy_complete():
@@ -41,7 +42,7 @@ def sample_farm_hierarchy_complete():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     farmer_name = "contoso-farmer-name"
     farmer_description = "contoso-farmer-description"
     farm_id = "contoso-farm"

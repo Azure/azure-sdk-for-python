@@ -32,6 +32,7 @@ from pathlib import Path
 import os
 from isodate import UTC
 from dotenv import load_dotenv
+import random
 
 # Helper to retrive local file path from FarmBeats data store path.
 def parse_file_path_from_file_link(file_link):
@@ -40,18 +41,18 @@ def parse_file_path_from_file_link(file_link):
 # Helper to download a given scene file path and store it to
 # the specified out path.
 async def download_image(client, file_link, root_dir):
-        file_path = parse_file_path_from_file_link(file_link)
-        out_path = Path(os.path.join(root_dir, file_path))
-        out_path.parent.mkdir(parents=True, exist_ok=True)
+    file_path = parse_file_path_from_file_link(file_link)
+    out_path = Path(os.path.join(root_dir, file_path))
+    out_path.parent.mkdir(parents=True, exist_ok=True)
 
-        print(
-            f"Async downloading image to {out_path.resolve()}... ", end="", flush=True)
-        with open(out_path, 'wb') as tif_file:
-            file_stream = await client.scenes.download(file_path=file_path)
-            async for bits in file_stream:
-                tif_file.write(bits)
-        print("Done")
-        return str(out_path.resolve())
+    print(
+        f"Async downloading image to {out_path.resolve()}... ", end="", flush=True)
+    with open(out_path, 'wb') as tif_file:
+        file_stream = await client.scenes.download(file_path=file_path)
+        async for bits in file_stream:
+            tif_file.write(bits)
+    print("Done")
+    return str(out_path.resolve())
         
 async def sample_satellite_download_async():
     farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
@@ -63,7 +64,7 @@ async def sample_satellite_download_async():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     boundary_id = "contoso-boundary"
     job_id_prefix = "contoso-job"
     start_date_time = datetime(2020, 1, 1, tzinfo=UTC)
@@ -172,4 +173,6 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(sample_satellite_download_async())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    asyncio.run(sample_satellite_download_async())

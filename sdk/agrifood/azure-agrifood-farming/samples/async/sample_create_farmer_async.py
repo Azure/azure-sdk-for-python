@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 import asyncio
+import random
 
 
 async def create_farmer():
@@ -15,7 +16,7 @@ async def create_farmer():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
 
     # Create or update a farmer within FarmBeats.
     farmer = await client.farmers.create_or_update(
@@ -28,8 +29,12 @@ async def create_farmer():
     )
     print(farmer)
 
-if __name__ == "__main__":
+    await client.close()
+    await credential.close()
 
+if __name__ == "__main__":
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(create_farmer())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    asyncio.run(create_farmer())

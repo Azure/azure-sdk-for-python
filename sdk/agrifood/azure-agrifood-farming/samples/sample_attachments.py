@@ -27,6 +27,7 @@ from azure.agrifood.farming import FarmBeatsClient
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import random
 
 
 def sample_attachments():
@@ -39,7 +40,7 @@ def sample_attachments():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer2"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     farm_id = "contoso-farm"
     attachment_on_farmer_id = "contoso-farmer-attachment-1"
     attachment_on_farm_id = "contoso-farm-attachment-1"
@@ -117,6 +118,25 @@ def sample_attachments():
         
     # Create attachment with farm
     try:
+        # Open file with buffering set to 0, to get a IO object.
+        file_to_attach_on_farm = open(
+            attachment_on_farm_file_path,
+            "rb")
+
+        attachment = {
+            "resourceId": farm_id,
+            "resourceType": "Farm",
+            "name": "aasdf"
+        }
+
+        client.attachments.create_or_update(
+            farmer_id=farmer_id,
+            attachment_id=attachment_on_farm_id,
+            attachment=attachment,
+            file=file_to_attach_on_farm)
+
+        print("Done!")
+        
         print(f"Checking if attachment with id {attachment_on_farm_id} already exists " + 
             f"on farm with id {farm_id}...", end=" ", flush=True)
         client.attachments.get(
@@ -137,7 +157,7 @@ def sample_attachments():
         attachment = {
             "resourceId": farm_id,
             "resourceType": "Farm",
-            "name": "a"
+            "name": "aasdf"
         }
 
         client.attachments.create_or_update(
@@ -147,10 +167,6 @@ def sample_attachments():
             file=file_to_attach_on_farm)
 
         print("Done!")
-    
-    print("Proceeding to download all attachments on the farmer. " +
-        "Press enter to continue...")
-    input()
 
 
     print("Getting a list of all attachments " +
@@ -159,10 +175,6 @@ def sample_attachments():
         farmer_id=farmer_id,
     )
     print("Done!")
-
-    print("Downloading attachments one at a time. Please refer to the" +
-        "async sample to learn more about concurrent downloads."
-    )
 
     for attachment in farmer_attachments:
 

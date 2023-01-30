@@ -24,6 +24,7 @@ from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
 import os
 from dotenv import load_dotenv
+import random
 
 
 def sample_hello_world():
@@ -37,7 +38,7 @@ def sample_hello_world():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     farmer_name = "Contoso"
     farmer_description = "Contoso is hard working."
 

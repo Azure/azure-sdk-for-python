@@ -12,9 +12,9 @@ from devtools_testutils import AzureRecordedTestCase
 from azure_devtools.scenario_tests.utilities import trim_kwargs_from_test_function
 from azure.agrifood.farming.aio import FarmBeatsClient
 
-class TestFarmBeats(AzureRecordedTestCase):
+class FarmBeatsAsyncTestCase(AzureRecordedTestCase):
     def create_client(self, agrifood_endpoint) -> FarmBeatsClient:
-        credential = self.get_credential(FarmBeatsClient)
+        credential = self.get_credential(FarmBeatsClient, is_async= True)
         return self.create_client_from_credential(
             FarmBeatsClient,
             endpoint=agrifood_endpoint,

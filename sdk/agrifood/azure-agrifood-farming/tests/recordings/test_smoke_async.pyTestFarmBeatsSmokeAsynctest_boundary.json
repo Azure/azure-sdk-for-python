@@ -1,0 +1,318 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "182",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": "client_id=39d176c5-91b6-454b-854d-55813c17d92d\u0026client_secret=KCf8Q~J3H5tYIwsneXeV_aMSAwR5QTDM.1SsNcee\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Ffarmbeats.azure.net%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 30 Jan 2023 02:26:37 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=AlOnNCLN2oNJmgLb4WhLJ08U3PbiAQAAAN0hadsOAAAA; expires=Wed, 01-Mar-2023 02:26:38 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14601.8 - SEASLR1 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-07-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "167",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "name": "Test Farmer",
+        "description": "Farmer created during testing.",
+        "status": "Sample Status",
+        "properties": {
+          "foo": "bar",
+          "numeric one": 1,
+          "1": "numeric key"
+        }
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "412",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 30 Jan 2023 02:26:38 GMT",
+        "ETag": "00000505-0000-0600-0000-63d72ade0000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/farmers/smoke-test-farmer",
+        "mise-correlation-id": "b05cd025-aac6-466d-9d46-56267d2a713c",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-throttle-information": "1000"
+      },
+      "ResponseBody": {
+        "id": "smoke-test-farmer",
+        "eTag": "00000505-0000-0600-0000-63d72ade0000",
+        "status": "Sample Status",
+        "createdDateTime": "2023-01-30T02:26:38Z",
+        "modifiedDateTime": "2023-01-30T02:26:38Z",
+        "name": "Test Farmer",
+        "description": "Farmer created during testing.",
+        "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "properties": {
+          "foo": "bar",
+          "numeric one": 1,
+          "1": "numeric key"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer/boundaries/smoke-test-boundary?api-version=2021-07-31-preview",
+      "RequestMethod": "PATCH",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "408",
+        "Content-Type": "application/merge-patch\u002Bjson",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": {
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70448589324951,
+                20.542411534243367
+              ],
+              [
+                73.70877742767334,
+                20.541688176010233
+              ],
+              [
+                73.71023654937744,
+                20.545083911372505
+              ],
+              [
+                73.70663166046143,
+                20.546992723579137
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ]
+            ]
+          ]
+        },
+        "status": "\u003Cstring\u003E",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E"
+      },
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Length": "710",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 30 Jan 2023 02:26:39 GMT",
+        "ETag": "00000605-0000-0600-0000-63d72adf0000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/farmers/smoke-test-farmer/boundaries/smoke-test-boundary",
+        "mise-correlation-id": "ccb50cc1-5681-4a88-b9bc-7a93e727fcf7",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-throttle-information": "1000"
+      },
+      "ResponseBody": {
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70448589324951,
+                20.542411534243367
+              ],
+              [
+                73.70877742767334,
+                20.541688176010233
+              ],
+              [
+                73.71023654937744,
+                20.545083911372505
+              ],
+              [
+                73.70663166046143,
+                20.546992723579137
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ]
+            ]
+          ]
+        },
+        "farmerId": "smoke-test-farmer",
+        "isPrimary": false,
+        "acreage": 60.405,
+        "id": "smoke-test-boundary",
+        "eTag": "00000605-0000-0600-0000-63d72adf0000",
+        "status": "\u003Cstring\u003E",
+        "createdDateTime": "2023-01-30T02:26:39Z",
+        "modifiedDateTime": "2023-01-30T02:26:39Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E",
+        "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd"
+      }
+    },
+    {
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer/boundaries/smoke-test-boundary?api-version=2021-07-31-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 30 Jan 2023 02:26:39 GMT",
+        "mise-correlation-id": "257c448d-96ae-4dbc-bcb0-c9a56217277a",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": {
+        "geometry": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ],
+              [
+                73.70448589324951,
+                20.542411534243367
+              ],
+              [
+                73.70877742767334,
+                20.541688176010233
+              ],
+              [
+                73.71023654937744,
+                20.545083911372505
+              ],
+              [
+                73.70663166046143,
+                20.546992723579137
+              ],
+              [
+                73.70457172393799,
+                20.545385304358106
+              ]
+            ]
+          ]
+        },
+        "farmerId": "smoke-test-farmer",
+        "isPrimary": false,
+        "acreage": 60.405,
+        "id": "smoke-test-boundary",
+        "eTag": "00000605-0000-0600-0000-63d72adf0000",
+        "status": "\u003Cstring\u003E",
+        "createdDateTime": "2023-01-30T02:26:39Z",
+        "modifiedDateTime": "2023-01-30T02:26:39Z",
+        "name": "\u003Cstring\u003E",
+        "description": "\u003Cstring\u003E",
+        "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
+        "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd"
+      }
+    },
+    {
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer/boundaries/smoke-test-boundary?api-version=2021-07-31-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
+        "Connection": "keep-alive",
+        "Date": "Mon, 30 Jan 2023 02:26:40 GMT",
+        "mise-correlation-id": "897ebd5c-4d9d-4281-b0c9-575049594394",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/smoke-test-farmer?api-version=2021-07-31-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-07-31-preview",
+        "Connection": "keep-alive",
+        "Date": "Mon, 30 Jan 2023 02:26:41 GMT",
+        "mise-correlation-id": "77b30a5d-9d2d-461d-bdb9-5ff6dbd62b76",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "x-ms-throttle-information": "100"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

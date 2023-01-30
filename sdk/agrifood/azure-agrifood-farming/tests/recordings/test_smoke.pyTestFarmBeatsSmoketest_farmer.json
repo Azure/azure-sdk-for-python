@@ -17,15 +17,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Nov 2022 05:09:33 GMT",
+        "Date": "Mon, 30 Jan 2023 02:30:12 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjwM_oq1qopNnTzeTQPj6ZQU3PbiAgAAAGTy89oOAAAA; expires=Fri, 02-Dec-2022 05:09:34 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=Ag1rfGxdxtdGjCXavQ9J3dw; expires=Wed, 01-Mar-2023 02:30:12 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=PAQABAAEAAAD--DLA3VO7QrddgJg7WevraCmRr5tnRtKwXAg_y5cRZsRv9miZJvK8oKnofZUmbrZKlOjP1NbFmBpDDFmQ_b1Gg4BuADTYXMrW0BCWIPzs2sVnD9ZE0ndpoRswshc2r1OPLfAe1vkVS8YQiTkxPi4URaG-mMHYGRZwFtJvTOz_MKv4BT366UzRp7eg-8tiWMEgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14059.10 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14601.8 - SEASLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +105,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AjwM_oq1qopNnTzeTQPj6ZQU3PbiAgAAAGTy89oOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Ag1rfGxdxtdGjCXavQ9J3dw; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -113,17 +115,16 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-vuVyPJhu6-eUk_0OvbtvNQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Nov 2022 05:09:33 GMT",
+        "Date": "Mon, 30 Jan 2023 02:30:12 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjwM_oq1qopNnTzeTQPj6ZQU3PbiAgAAAGTy89oOAAAA; expires=Fri, 02-Dec-2022 05:09:34 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ag1rfGxdxtdGjCXavQ9J3dw; expires=Wed, 01-Mar-2023 02:30:13 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14059.10 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14601.8 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -179,11 +180,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
-        "client-request-id": "debdc13f-7258-4623-b481-128b3aed1f84",
+        "client-request-id": "42d04063-2abe-4027-83ec-5b6e42227ba8",
         "Connection": "keep-alive",
         "Content-Length": "291",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AjwM_oq1qopNnTzeTQPj6ZQU3PbiAgAAAGTy89oOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Ag1rfGxdxtdGjCXavQ9J3dw; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.7 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -193,25 +194,26 @@
         "x-client-ver": "1.18.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=39d176c5-91b6-454b-854d-55813c17d92d\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=TOo8Q~_bZFdCLspdxJLrh-zRCCpYrf56-2D4FbJ5\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Ffarmbeats.azure.net%2F.default",
+      "RequestBody": "client_id=39d176c5-91b6-454b-854d-55813c17d92d\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=KCf8Q~J3H5tYIwsneXeV_aMSAwR5QTDM.1SsNcee\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Ffarmbeats.azure.net%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "debdc13f-7258-4623-b481-128b3aed1f84",
+        "client-request-id": "42d04063-2abe-4027-83ec-5b6e42227ba8",
         "Content-Length": "111",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-Qea3MMfdqRFQY4JfVlEpsQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Nov 2022 05:09:34 GMT",
+        "Date": "Mon, 30 Jan 2023 02:30:13 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AjwM_oq1qopNnTzeTQPj6ZQU3PbiAwAAAGTy89oOAAAA; expires=Fri, 02-Dec-2022 05:09:34 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ag1rfGxdxtdGjCXavQ9J3dwU3PbiAQAAALQiadsOAAAA; expires=Wed, 01-Mar-2023 02:30:14 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14059.10 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14601.8 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -243,25 +245,25 @@
           "1": "numeric key"
         }
       },
-      "StatusCode": 200,
+      "StatusCode": 201,
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-31-preview",
         "Connection": "keep-alive",
-        "Content-Encoding": "gzip",
+        "Content-Length": "412",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 02 Nov 2022 05:09:35 GMT",
-        "mise-correlation-id": "efdf91c1-4a61-494b-a5a0-a0844cba0d9a",
+        "Date": "Mon, 30 Jan 2023 02:30:15 GMT",
+        "ETag": "00000a05-0000-0600-0000-63d72bb70000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/farmers/smoke-test-farmer",
+        "mise-correlation-id": "63f81988-a222-415b-a949-46f5e465d776",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "Transfer-Encoding": "chunked",
-        "Vary": "Accept-Encoding",
-        "x-ms-throttle-information": "50"
+        "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
         "id": "smoke-test-farmer",
-        "eTag": "260049e9-0000-0600-0000-6361fb8f0000",
+        "eTag": "00000a05-0000-0600-0000-63d72bb70000",
         "status": "Sample Status",
-        "createdDateTime": "2022-11-02T05:05:57Z",
-        "modifiedDateTime": "2022-11-02T05:09:35Z",
+        "createdDateTime": "2023-01-30T02:30:15Z",
+        "modifiedDateTime": "2023-01-30T02:30:15Z",
         "name": "Test Farmer",
         "description": "Farmer created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -288,10 +290,10 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-31-preview",
         "Connection": "keep-alive",
-        "Date": "Wed, 02 Nov 2022 05:09:35 GMT",
-        "mise-correlation-id": "48856a58-8361-4dda-bd2b-6b0caff9f982",
+        "Date": "Mon, 30 Jan 2023 02:30:15 GMT",
+        "mise-correlation-id": "0316ce09-f556-473d-9a0b-7e13ba887d7d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
-        "x-ms-throttle-information": "10"
+        "x-ms-throttle-information": "100"
       },
       "ResponseBody": null
     }

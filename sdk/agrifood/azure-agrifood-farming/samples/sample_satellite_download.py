@@ -30,6 +30,7 @@ from pathlib import Path
 import os
 from isodate import UTC
 from dotenv import load_dotenv
+import random
 
 
 # Helper to retrive local file path from FarmBeats data store path.
@@ -64,7 +65,7 @@ def sample_satellite_download():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     boundary_id = "contoso-boundary"
     job_id_prefix = "contoso-job"
     start_date_time = datetime(2020, 1, 1, tzinfo=UTC)

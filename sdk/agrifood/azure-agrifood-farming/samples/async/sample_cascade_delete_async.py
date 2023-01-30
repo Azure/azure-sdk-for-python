@@ -47,7 +47,7 @@ async def sample_cascade_delete_async():
     farmers = client.farmers.list(
         min_last_modified_date_time=datetime.now(tz=UTC) - timedelta(days=7)
     )
-    farmer_ids = [farmer.id async for farmer in farmers]
+    farmer_ids = [farmer['id'] async for farmer in farmers]
     print("Done")
 
     # Ask for the id of the farmer which is to be deleted.
@@ -78,4 +78,6 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(sample_cascade_delete_async())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    asyncio.run(sample_cascade_delete_async())

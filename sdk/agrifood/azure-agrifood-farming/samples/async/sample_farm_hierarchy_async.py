@@ -28,6 +28,7 @@ from azure.agrifood.farming.models import Farmer, Farm, Field, Boundary, MultiPo
 import os
 import asyncio
 from dotenv import load_dotenv
+import random
 
 
 async def sample_farm_hierarchy_async():
@@ -41,7 +42,7 @@ async def sample_farm_hierarchy_async():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     farmer_name = "contoso-farmer-name"
     farmer_description = "contoso-farmer-description"
     farm_id = "contoso-farm"
@@ -53,8 +54,9 @@ async def sample_farm_hierarchy_async():
     boundary_id = "contoso-boundary"
     boundary_name = "contoso-boundary-name"
     boundary_description = "contoso-boundary-description"
-    multi_polygon = MultiPolygon(
-        coordinates=[
+    multi_polygon = {
+        "type": "MultiPolygon",
+        "coordinates": [
             [
                 [
                     [-94.05807495, 44.75916947],
@@ -89,24 +91,25 @@ async def sample_farm_hierarchy_async():
                 ]
             ]
         ]
-    )
+    }
 
     # Step 1: Create a farmer.
     print(
         f"Creating or updating farmer with Id {farmer_id}...", end=" ", flush=True)
     farmer = await client.farmers.create_or_update(
         farmer_id=farmer_id,
-        farmer=Farmer(
-            name=farmer_name,
-            description=farmer_description
-        )
+        farmer={
+            "name": farmer_name,
+            "status": "created from SDK",
+            "description": farmer_description
+        }
     )
     print("Done")
 
     print("Details of farmer:")
-    print("\tID:", farmer.id)
-    print("\tName:", farmer.name)
-    print("\tDescription:", farmer.description)
+    print("\tID:", farmer["id"])
+    print("\tName:", farmer["name"])
+    print("\tDescription:", farmer["description"])
 
     # Step 2: Create a farm.
     print(
@@ -114,18 +117,18 @@ async def sample_farm_hierarchy_async():
     farm = await client.farms.create_or_update(
         farmer_id=farmer_id,
         farm_id= farm_id,
-        farm=Farm(
-            name=farm_name,
-            description=farm_description
-        )
+        farm={
+            "name": farm_name,
+            "description": farm_description
+        }
     )
     print("Done")
-
+    print(farm)
     print("Details of farm:")
-    print("\tID:", farm.id)
-    print("\tName:", farm.name)
-    print("\tFarmer Name:", farm.farmer_id)
-    print("\tDescription:", farm.description)
+    print("\tID:", farm["id"])
+    print("\tName:", farm["name"])
+    print("\tFarmer Name:", farm["farmerId"])
+    print("\tDescription:", farm["description"])
 
     # Step 3: Create a field.
     print(
@@ -133,21 +136,21 @@ async def sample_farm_hierarchy_async():
     field = await client.fields.create_or_update(
         farmer_id=farmer_id,
         field_id= field_id,
-        field=Field(
-            name=field_name,
-            farm_id=farm_id,
-            description=field_description
-        )
+        field={
+            "farmId": farm_id,
+            "name": field_name,
+            "description": field_description
+        }
     )
     print("Done")
 
     print("Details of field:")
-    print("\tID:", field.id)
-    print("\tName:", field.name)
-    print("\tFarmer Name:", field.farmer_id)
-    print("\tFarm Name:", field.farm_id)
-    print("\tName:", field.name)
-    print("\tDescription:", field.description)
+    print("\tID:", field["id"])
+    print("\tName:", field["name"])
+    print("\tFarmer Name:", field["farmerId"])
+    print("\tFarm Name:", field["farmId"])
+    print("\tName:", field["name"])
+    print("\tDescription:", field["description"])
 
     # Step 4: Create a boundary.
     try:
@@ -164,18 +167,18 @@ async def sample_farm_hierarchy_async():
         boundary = await client.boundaries.create_or_update(
             farmer_id=farmer_id,
             boundary_id=boundary_id,
-            boundary=Boundary(
-                name=boundary_name,
-                geometry=multi_polygon,
-                description=boundary_description
-            )
+            boundary={
+                "name": boundary_name,
+                "geometry": multi_polygon,
+                "description": boundary_description
+            }
         )
         print("Done")
 
     print("Details of boundary:")
-    print("\tID:", boundary.id)
-    print("\tName:", boundary.name)
-    print("\tDescription:", boundary.description)
+    print("\tID:", boundary["id"])
+    print("\tName:", boundary["name"])
+    print("\tDescription:", boundary["description"])
 
     await client.close()
     await credential.close()
@@ -185,4 +188,6 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(sample_farm_hierarchy_async())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    asyncio.run(sample_farm_hierarchy_async())

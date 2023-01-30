@@ -9,17 +9,17 @@ from datetime import datetime
 from dateutil.parser import parse
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import recorded_by_proxy
-from testcase import FarmBeatsPowerShellPreparer, TestFarmBeats
+from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTestCase
 
 
-class TestFarmHeirarchy(TestFarmBeats):    
+class TestFarmHeirarchy(FarmBeatsTestCase):    
     @FarmBeatsPowerShellPreparer()
     @recorded_by_proxy
     def test_farmer_operations(self, **kwargs):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         
         # Setup data
-        farmer_id = "test-farmer-farmer-ops"
+        farmer_id = "test-farmer"
         farmer_request = {
             "name": "Test Farmer",
             "description": "Farmer created during testing.",

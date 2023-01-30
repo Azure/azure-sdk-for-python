@@ -8,14 +8,15 @@ import os
 from datetime import datetime
 from dateutil.parser import parse
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from testcase_async import TestFarmBeats
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.aio import recorded_by_proxy_async
+from testcase_async import FarmBeatsAsyncTestCase
 from testcase import FarmBeatsPowerShellPreparer
 
 
-class TestFarmHeirarchyAsync(TestFarmBeats):    
+class TestFarmHeirarchyAsync(FarmBeatsAsyncTestCase):    
     @FarmBeatsPowerShellPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_farmer_operations(self, **kwargs):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         
@@ -33,7 +34,7 @@ class TestFarmHeirarchyAsync(TestFarmBeats):
         }
 
         # Setup client
-        client = self.create_async_client(agrifood_endpoint=agrifood_endpoint)
+        client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create
         farmer_response = await client.farmers.create_or_update(

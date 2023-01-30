@@ -11,7 +11,7 @@ from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, record
 from azure.agrifood.farming import FarmBeatsClient
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
-class TestFarmBeats(AzureRecordedTestCase):
+class FarmBeatsTestCase(AzureRecordedTestCase):
 
     def create_client(self, agrifood_endpoint):
         credential = self.get_credential(FarmBeatsClient)

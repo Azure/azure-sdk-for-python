@@ -1,6 +1,8 @@
-from azure.identity.aio import DefaultAzureCredential
+import os
+from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
 from dotenv import load_dotenv
+import random
 
 
 def create_farmer():
@@ -12,7 +14,7 @@ def create_farmer():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
 
     # Create or update a farmer within FarmBeats.
     farmer = client.farmers.create_or_update(

@@ -7,15 +7,15 @@ from datetime import datetime
 from dateutil.parser import parse
 from azure.core.exceptions import HttpResponseError
 from azure.agrifood.farming.models import Farmer, SatelliteDataIngestionJob, SatelliteData
-from testcase_async import TestFarmBeats
+from testcase_async import FarmBeatsAsyncTestCase
 from testcase import FarmBeatsPowerShellPreparer
 from isodate.tzinfo import Utc
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils.aio import recorded_by_proxy_async
 
 
-class TestFarmBeatsSmokeAsync(TestFarmBeats):
+class TestFarmBeatsSmokeAsync(FarmBeatsAsyncTestCase):
     @FarmBeatsPowerShellPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_farmer(self, **kwargs):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
@@ -61,7 +61,7 @@ class TestFarmBeatsSmokeAsync(TestFarmBeats):
 
 
     @FarmBeatsPowerShellPreparer()
-    @recorded_by_proxy
+    @recorded_by_proxy_async
     async def test_boundary(self, **kwargs):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)

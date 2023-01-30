@@ -1,227 +1,39 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
-      "RequestMethod": "GET",
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "182",
+        "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
-      "RequestBody": null,
+      "RequestBody": "client_id=39d176c5-91b6-454b-854d-55813c17d92d\u0026client_secret=KCf8Q~J3H5tYIwsneXeV_aMSAwR5QTDM.1SsNcee\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Ffarmbeats.azure.net%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "max-age=86400, private",
-        "Content-Length": "1753",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-S-v0Yb4_fD9tMUkGFtEjTA\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "92",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:22:36 GMT",
+        "Date": "Mon, 30 Jan 2023 02:24:30 GMT",
+        "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=Asjlwfvu7wtGiiv_1CCwMtc; expires=Wed, 01-Mar-2023 02:22:37 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=PAQABAAEAAAD--DLA3VO7QrddgJg7WevrRdK8JUNo8Tk1C08j8encnoE-DIGJWN7O2l79k1OuP2iAzpKLHrk-GLVYL2vT3MwYtJcRDbu8p1_eNseqcwswWZfQshuiFE50UHfVBgrl29FyvJmOYV62Zhv3-N1Q2r1BtkMf5UgqnsROnqqYjXu3dDiNw_3ccwdmnxoW2dfTNVIgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Ak4uzo2gnL9Gi1qne81B5KMU3PbiAQAAAF4hadsOAAAA; expires=Wed, 01-Mar-2023 02:24:31 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14601.8 - KRSLR1 ProdSlices",
-        "X-XSS-Protection": "0"
-      },
-      "ResponseBody": {
-        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
-        "token_endpoint_auth_methods_supported": [
-          "client_secret_post",
-          "private_key_jwt",
-          "client_secret_basic"
-        ],
-        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
-        "response_modes_supported": [
-          "query",
-          "fragment",
-          "form_post"
-        ],
-        "subject_types_supported": [
-          "pairwise"
-        ],
-        "id_token_signing_alg_values_supported": [
-          "RS256"
-        ],
-        "response_types_supported": [
-          "code",
-          "id_token",
-          "code id_token",
-          "id_token token"
-        ],
-        "scopes_supported": [
-          "openid",
-          "profile",
-          "email",
-          "offline_access"
-        ],
-        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
-        "request_uri_parameter_supported": false,
-        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
-        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
-        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
-        "http_logout_supported": true,
-        "frontchannel_logout_supported": true,
-        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
-        "claims_supported": [
-          "sub",
-          "iss",
-          "cloud_instance_name",
-          "cloud_instance_host_name",
-          "cloud_graph_host_name",
-          "msgraph_host",
-          "aud",
-          "exp",
-          "iat",
-          "auth_time",
-          "acr",
-          "nonce",
-          "preferred_username",
-          "name",
-          "tid",
-          "ver",
-          "at_hash",
-          "c_hash",
-          "email"
-        ],
-        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
-        "tenant_region_scope": "WW",
-        "cloud_instance_name": "microsoftonline.com",
-        "cloud_graph_host_name": "graph.windows.net",
-        "msgraph_host": "graph.microsoft.com",
-        "rbac_url": "https://pas.windows.net"
-      }
-    },
-    {
-      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
-        "Cookie": "fpc=Asjlwfvu7wtGiiv_1CCwMtc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "max-age=86400, private",
-        "Content-Length": "945",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:22:36 GMT",
-        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Set-Cookie": [
-          "fpc=Asjlwfvu7wtGiiv_1CCwMtc; expires=Wed, 01-Mar-2023 02:22:37 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
-        ],
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14601.8 - SEASLR2 ProdSlices",
-        "X-XSS-Protection": "0"
-      },
-      "ResponseBody": {
-        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
-        "api-version": "1.1",
-        "metadata": [
-          {
-            "preferred_network": "login.microsoftonline.com",
-            "preferred_cache": "login.windows.net",
-            "aliases": [
-              "login.microsoftonline.com",
-              "login.windows.net",
-              "login.microsoft.com",
-              "sts.windows.net"
-            ]
-          },
-          {
-            "preferred_network": "login.partner.microsoftonline.cn",
-            "preferred_cache": "login.partner.microsoftonline.cn",
-            "aliases": [
-              "login.partner.microsoftonline.cn",
-              "login.chinacloudapi.cn"
-            ]
-          },
-          {
-            "preferred_network": "login.microsoftonline.de",
-            "preferred_cache": "login.microsoftonline.de",
-            "aliases": [
-              "login.microsoftonline.de"
-            ]
-          },
-          {
-            "preferred_network": "login.microsoftonline.us",
-            "preferred_cache": "login.microsoftonline.us",
-            "aliases": [
-              "login.microsoftonline.us",
-              "login.usgovcloudapi.net"
-            ]
-          },
-          {
-            "preferred_network": "login-us.microsoftonline.com",
-            "preferred_cache": "login-us.microsoftonline.com",
-            "aliases": [
-              "login-us.microsoftonline.com"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
-        "client-request-id": "a2c7a16e-e49d-44e5-8d93-39a35dd8f9ae",
-        "Connection": "keep-alive",
-        "Content-Length": "291",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=Asjlwfvu7wtGiiv_1CCwMtc; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.7 (Windows-10-10.0.22000-SP0)",
-        "x-client-cpu": "x64",
-        "x-client-current-telemetry": "4|730,0|",
-        "x-client-last-telemetry": "4|0|||",
-        "x-client-os": "win32",
-        "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.18.0",
-        "x-ms-lib-capability": "retry-after, h429"
-      },
-      "RequestBody": "client_id=39d176c5-91b6-454b-854d-55813c17d92d\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=KCf8Q~J3H5tYIwsneXeV_aMSAwR5QTDM.1SsNcee\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Ffarmbeats.azure.net%2F.default",
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-store, no-cache",
-        "client-request-id": "a2c7a16e-e49d-44e5-8d93-39a35dd8f9ae",
-        "Content-Length": "111",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-xvLj_vNqeFf78e1hQLrJ8w\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:22:37 GMT",
-        "Expires": "-1",
-        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Pragma": "no-cache",
-        "Set-Cookie": [
-          "fpc=Asjlwfvu7wtGiiv_1CCwMtcU3PbiAQAAAO0gadsOAAAA; expires=Wed, 01-Mar-2023 02:22:37 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
-        ],
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14601.8 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14601.8 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_type": "Bearer",
         "expires_in": 86399,
         "ext_expires_in": 86399,
-        "refresh_in": 43199,
         "access_token": "Sanitized"
       }
     },
@@ -230,8 +42,7 @@
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
         "Content-Length": "2",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
@@ -243,8 +54,8 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:22:38 GMT",
-        "mise-correlation-id": "ac0a1d3d-6bae-447b-bb55-282a9095e8c3",
+        "Date": "Mon, 30 Jan 2023 02:24:32 GMT",
+        "mise-correlation-id": "9d89f7ff-a93e-4c69-95ac-26e65fc81aee",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -252,9 +63,9 @@
       },
       "ResponseBody": {
         "id": "satellite-flow-test-farmer",
-        "eTag": "01002dcb-0000-0600-0000-63d729ee0000",
+        "eTag": "010031cb-0000-0600-0000-63d72a600000",
         "createdDateTime": "2022-11-01T17:34:24Z",
-        "modifiedDateTime": "2023-01-30T02:22:38Z",
+        "modifiedDateTime": "2023-01-30T02:24:32Z",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd"
       }
@@ -264,8 +75,7 @@
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
         "Content-Length": "408",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
@@ -316,8 +126,8 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:22:39 GMT",
-        "mise-correlation-id": "363183a5-b6b7-4c8c-9275-b0b313ac7d35",
+        "Date": "Mon, 30 Jan 2023 02:24:33 GMT",
+        "mise-correlation-id": "4449e218-6133-4bd5-b369-5b5c7a2b6332",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -363,10 +173,10 @@
         "isPrimary": false,
         "acreage": 60.405,
         "id": "satellite-flow-test-boundary",
-        "eTag": "01002ccb-0000-0600-0000-63d729c80000",
+        "eTag": "010030cb-0000-0600-0000-63d72a1c0000",
         "status": "\u003Cstring\u003E",
         "createdDateTime": "2022-11-01T17:34:25Z",
-        "modifiedDateTime": "2023-01-30T02:22:39Z",
+        "modifiedDateTime": "2023-01-30T02:24:33Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -374,12 +184,11 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-967?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-358?api-version=2021-07-31-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
         "Content-Length": "352",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
@@ -411,10 +220,10 @@
         "Connection": "keep-alive",
         "Content-Length": "610",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:22:39 GMT",
-        "Location": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-967?api-version=2021-07-31-preview",
-        "mise-correlation-id": "bb2cfbc4-67c3-4826-b9a9-a3fb5ba0ff01",
-        "operation-location": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-967?api-version=2021-07-31-preview",
+        "Date": "Mon, 30 Jan 2023 02:24:33 GMT",
+        "Location": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-358?api-version=2021-07-31-preview",
+        "mise-correlation-id": "8765061f-51ab-4a0a-9484-feb64903afd7",
+        "operation-location": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-358?api-version=2021-07-31-preview",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-throttle-information": "1284"
       },
@@ -436,21 +245,20 @@
             10.0
           ]
         },
-        "id": "satellite-flow-job-967",
+        "id": "satellite-flow-job-358",
         "status": "Waiting",
-        "message": "Created job \u0027satellite-flow-job-967\u0027 to fetch satellite data for boundary \u0027satellite-flow-test-boundary\u0027 from startDate \u002701/01/2020\u0027 to endDate \u002701/31/2020\u0027 (both inclusive).",
-        "createdDateTime": "2023-01-30T02:22:39Z",
+        "message": "Created job \u0027satellite-flow-job-358\u0027 to fetch satellite data for boundary \u0027satellite-flow-test-boundary\u0027 from startDate \u002701/01/2020\u0027 to endDate \u002701/31/2020\u0027 (both inclusive).",
+        "createdDateTime": "2023-01-30T02:24:33Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E"
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-967?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-358?api-version=2021-07-31-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -460,8 +268,8 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:23:09 GMT",
-        "mise-correlation-id": "2066863c-590e-48e2-b6d8-5cef8cbb9e53",
+        "Date": "Mon, 30 Jan 2023 02:25:04 GMT",
+        "mise-correlation-id": "f8c051be-b701-43cb-9135-0bd8fe006bce",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -485,25 +293,24 @@
             10.0
           ]
         },
-        "id": "satellite-flow-job-967",
+        "id": "satellite-flow-job-358",
         "status": "Succeeded",
-        "durationInSeconds": 5.84762,
+        "durationInSeconds": 10.0113209,
         "message": "Satellite data is available for 12 days from provider in the requested date range. Successfully fetched data for 12 days.",
-        "createdDateTime": "2023-01-30T02:22:39Z",
-        "lastActionDateTime": "2023-01-30T02:22:45Z",
-        "startTime": "2023-01-30T02:22:39Z",
-        "endTime": "2023-01-30T02:22:45Z",
+        "createdDateTime": "2023-01-30T02:24:33Z",
+        "lastActionDateTime": "2023-01-30T02:24:43Z",
+        "startTime": "2023-01-30T02:24:33Z",
+        "endTime": "2023-01-30T02:24:43Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E"
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-967?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-job-358?api-version=2021-07-31-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -513,8 +320,8 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:23:10 GMT",
-        "mise-correlation-id": "8fbc5bb2-2e3a-49d9-8338-d97c79ca0e47",
+        "Date": "Mon, 30 Jan 2023 02:25:05 GMT",
+        "mise-correlation-id": "b04899ba-3221-4927-a219-d38578840b8b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -538,25 +345,24 @@
             10.0
           ]
         },
-        "id": "satellite-flow-job-967",
+        "id": "satellite-flow-job-358",
         "status": "Succeeded",
-        "durationInSeconds": 5.84762,
+        "durationInSeconds": 10.0113209,
         "message": "Satellite data is available for 12 days from provider in the requested date range. Successfully fetched data for 12 days.",
-        "createdDateTime": "2023-01-30T02:22:39Z",
-        "lastActionDateTime": "2023-01-30T02:22:45Z",
-        "startTime": "2023-01-30T02:22:39Z",
-        "endTime": "2023-01-30T02:22:45Z",
+        "createdDateTime": "2023-01-30T02:24:33Z",
+        "lastActionDateTime": "2023-01-30T02:24:43Z",
+        "startTime": "2023-01-30T02:24:33Z",
+        "endTime": "2023-01-30T02:24:43Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E"
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft\u0026farmerId=satellite-flow-test-farmer\u0026boundaryId=satellite-flow-test-boundary\u0026source=Sentinel_2_L2A\u0026startDateTime=2020-01-01T00%3A00%3A00.000Z\u0026endDateTime=2020-01-31T00%3A00%3A00.000Z\u0026maxCloudCoveragePercentage=100.0\u0026maxDarkPixelCoveragePercentage=100.0\u0026api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft\u0026farmerId=satellite-flow-test-farmer\u0026boundaryId=satellite-flow-test-boundary\u0026source=Sentinel_2_L2A\u0026startDateTime=2020-01-01T00:00:00.000Z\u0026endDateTime=2020-01-31T00:00:00.000Z\u0026maxCloudCoveragePercentage=100.0\u0026maxDarkPixelCoveragePercentage=100.0\u0026api-version=2021-07-31-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -566,8 +372,8 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 02:23:10 GMT",
-        "mise-correlation-id": "fd096323-92e6-4f87-b182-41aecc3cfb73",
+        "Date": "Mon, 30 Jan 2023 02:25:05 GMT",
+        "mise-correlation-id": "7cfbdb17-bd43-4fc7-bc5b-fd3380a0697f",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -819,12 +625,11 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?filePath=Microsoft%2FSentinel_2_L2A%2Fsatellite-flow-test-farmer%2Fsatellite-flow-test-boundary%2F2020-01-30%2F00-00-00%2Fndvi_10.tif\u0026api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?filePath=Microsoft/Sentinel_2_L2A/satellite-flow-test-farmer/satellite-flow-test-boundary/2020-01-30/00-00-00/ndvi_10.tif\u0026api-version=2021-07-31-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json, application/octet-stream",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Connection": "keep-alive",
+        "Accept-Encoding": "gzip, deflate",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -834,8 +639,8 @@
         "Connection": "keep-alive",
         "Content-Disposition": "attachment; filename=\u0022ndvi_10.tif\u0022",
         "Content-Type": "application/octet-stream",
-        "Date": "Mon, 30 Jan 2023 02:23:10 GMT",
-        "mise-correlation-id": "24781984-d264-400e-8e3f-09d42ce5ad3a",
+        "Date": "Mon, 30 Jan 2023 02:25:06 GMT",
+        "mise-correlation-id": "2a33e4f9-2c73-422d-9ce6-474f2e8caf47",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "x-ms-throttle-information": "100"

@@ -29,6 +29,7 @@ from pathlib import Path
 import asyncio
 import os
 from dotenv import load_dotenv
+import random
 
 
 async def sample_attachments_async():
@@ -41,7 +42,7 @@ async def sample_attachments_async():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer5"
+    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
     farm_id = "contoso-farm"
     attachment_on_farmer_id = "contoso-farmer-attachment-1"
     attachment_on_farm_id = "contoso-farm-attachment-1"
@@ -145,11 +146,6 @@ async def sample_attachments_async():
             file=file_to_attach_on_farm)
 
         print("Done!")
-    
-    print("Proceeding to download all attachments on the farmer. " +
-        "Press enter to continue...")
-    input()
-
 
     print("Getting a list of all attachments " +
         f"on the farmer with id {farmer_id}...", end=" ", flush=True)
@@ -158,15 +154,10 @@ async def sample_attachments_async():
     )
     print("Done!")
 
-    print("Downloading attachments one at a time. Please refer to the" +
-        "async sample to learn more about concurrent downloads."
-    )
-
-    for attachment in farmer_attachments:
-
-        downloaded_attachment = client.attachments.download(
+    async for attachment in farmer_attachments:
+        downloaded_attachment = await client.attachments.download(
             farmer_id=farmer_id,
-            attachment_id=attachment_on_farmer_id
+            attachment_id=attachment['id']
         )
         out_path = Path(
             "./data/attachments/" +
@@ -174,7 +165,7 @@ async def sample_attachments_async():
             f"/{attachment['id']}/{attachment['originalFileName']}"
         )
 
-        # Make sure the dirs to the output path exists
+        # Make sure the directory exists to the output path exists
         Path(out_path).parent.mkdir(parents=True, exist_ok=True)
 
         print(f"Saving attachment id {attachment['id']} to {out_path.resolve()}")
@@ -182,7 +173,7 @@ async def sample_attachments_async():
                 out_path,
                 'wb'
                 ) as out_file:
-            for bits in downloaded_attachment:
+            async for bits in downloaded_attachment:
                 out_file.write(bits)
 
     print("Done!")
@@ -195,4 +186,6 @@ if __name__ == "__main__":
 
     load_dotenv()
 
-    asyncio.get_event_loop().run_until_complete(sample_attachments_async())
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    asyncio.run(sample_attachments_async())

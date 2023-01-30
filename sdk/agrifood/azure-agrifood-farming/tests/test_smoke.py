@@ -5,12 +5,12 @@
 # ------------------------------------
 from datetime import datetime
 from dateutil.parser import parse
-from testcase import FarmBeatsPowerShellPreparer, TestFarmBeats
+from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTestCase
 from isodate.tzinfo import Utc
 from devtools_testutils import recorded_by_proxy
 
 
-class TestFarmBeatsSmoke(TestFarmBeats):
+class TestFarmBeatsSmoke(FarmBeatsTestCase):
 
     @FarmBeatsPowerShellPreparer()
     @recorded_by_proxy
@@ -59,6 +59,7 @@ class TestFarmBeatsSmoke(TestFarmBeats):
 
 
     @FarmBeatsPowerShellPreparer()
+    @recorded_by_proxy
     def test_boundary(self, **kwargs):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
