@@ -154,6 +154,8 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: response dict (Etag and last modified).
+        :keyword encryption_context:
+            Specifies the encryption context to set on the file.
 
         .. admonition:: Example:
 

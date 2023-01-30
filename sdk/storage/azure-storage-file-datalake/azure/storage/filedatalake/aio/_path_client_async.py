@@ -180,6 +180,8 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A dictionary of response headers.
+        :keyword encryption_context:
+            Specifies the encryption context to set on the file.
         :rtype: Dict[str, Union[str, datetime]]
         """
         lease_id = kwargs.get('lease_id', None)

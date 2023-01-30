@@ -197,6 +197,8 @@ class DataLakeFileClient(PathClient):
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
+        :keyword encryption_context:
+            Specifies the encryption context to set on the file.
         :return: response dict (Etag and last modified).
 
         .. admonition:: Example:

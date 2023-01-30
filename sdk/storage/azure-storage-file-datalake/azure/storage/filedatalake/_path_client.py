@@ -176,6 +176,7 @@ class PathClient(StorageAccountHostsMixin):
             'modified_access_conditions': mod_conditions,
             'cpk_info': cpk_info,
             'timeout': kwargs.pop('timeout', None),
+            'encryption_context': kwargs.pop('encryption_context', None),
             'cls': return_response_headers}
         options.update(kwargs)
         return options
@@ -263,6 +264,8 @@ class PathClient(StorageAccountHostsMixin):
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :return: A dictionary of response headers.
+        :keyword encryption_context:
+            Specifies the encryption context to set on the file.
         :rtype: Dict[str, Union[str, datetime]]
         """
         lease_id = kwargs.get('lease_id', None)
