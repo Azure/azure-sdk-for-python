@@ -12,12 +12,11 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 - Text Analytics for Health
 - Custom Named Entity Recognition
 - Custom Text Classification
+- Extractive Text Summarization
+- Abstractive Text Summarization
+- Dynamic Classification
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][language_product_documentation] | [Samples][ta_samples]
-
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
 
 ## Getting started
 
@@ -31,30 +30,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 The Language service supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Language service access only, create a Language service resource.
-
-You can create the resource using
-
-**Option 1:** [Azure Portal][azure_portal_create_ta_resource]
-
-**Option 2:** [Azure CLI][azure_cli_create_ta_resource].
-Below is an example of how you can create a Language service resource using the CLI:
-
-```bash
-# Create a new resource group to hold the Language service resource -
-# if using an existing resource group, skip this step
-az group create --name my-resource-group --location westus2
-```
-
-```bash
-# Create text analytics
-az cognitiveservices account create \
-    --name text-analytics-resource \
-    --resource-group my-resource-group \
-    --kind TextAnalytics \
-    --sku F0 \
-    --location westus2 \
-    --yes
-```
+You can create the resource using the [Azure Portal][azure_portal_create_ta_resource] or [Azure CLI][azure_cli] following the steps in [this document][azure_cli_create_ta_resource].
 
 Interaction with the service using the client library begins with a [client](#textanalyticsclient "TextAnalyticsClient").
 To create a client object, you will need the Cognitive Services or Language service `endpoint` to
@@ -76,17 +52,18 @@ For example, `https://<region>.api.cognitive.microsoft.com/`.
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics
+pip install azure-ai-textanalytics --pre
 ```
 
-> Note that `5.2.X` targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
-In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-05-01`.
+> Note that `5.2.X` and newer targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-10-01-preview`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
-| 5.2.0 - Latest stable release | 3.0, 3.1, 2022-05-01 (default) |
+| 5.3.0b1 - Latest beta release | 3.0, 3.1, 2022-05-01, 2022-10-01-preview (default) |
+| 5.2.X - Latest stable release | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0  | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |
 
@@ -254,6 +231,9 @@ The following section provides several code snippets covering some of the most c
 - [Custom Entity Recognition][recognize_custom_entities_sample]
 - [Custom Single Label Classification][single_label_classify_sample]
 - [Custom Multi Label Classification][multi_label_classify_sample]
+- [Extractive Summarization][extract_summary_sample]
+- [Abstractive Summarization][abstract_summary_sample]
+- [Dynamic Classification][dynamic_classification_sample]
 
 ### Analyze sentiment
 
@@ -530,10 +510,12 @@ Note: Healthcare Entities Analysis is only available with API version v3.1 and n
 - Linked Entity Recognition
 - Key Phrase Extraction
 - Sentiment Analysis
-- Custom Entity Recognition
-- Custom Single Label Classification
-- Custom Multi Label Classification
-- Healthcare Entities Analysis
+- Custom Entity Recognition (API version 2022-05-01 and newer)
+- Custom Single Label Classification (API version 2022-05-01 and newer)
+- Custom Multi Label Classification (API version 2022-05-01 and newer)
+- Healthcare Entities Analysis (API version 2022-05-01 and newer)
+- Extractive Summarization (API version 2022-10-01-preview and newer)
+- Abstractive Summarization (API version 2022-10-01-preview and newer)
 
 ```python
 from azure.core.credentials import AzureKeyCredential
@@ -664,6 +646,9 @@ Common scenarios
 - Custom Entity Recognition: [sample_recognize_custom_entities.py][recognize_custom_entities_sample] ([async_version][recognize_custom_entities_sample_async])
 - Custom Single Label Classification: [sample_single_label_classify.py][single_label_classify_sample] ([async_version][single_label_classify_sample_async])
 - Custom Multi Label Classification: [sample_multi_label_classify.py][multi_label_classify_sample] ([async_version][multi_label_classify_sample_async])
+- Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
+- Abstractive text summarization: [sample_abstract_summary.py][abstract_summary_sample] ([async version][abstract_summary_sample_async])
+- Dynamic Classification: [sample_dynamic_classification.py][dynamic_classification_sample] ([async_version][dynamic_classification_sample_async])
 
 Advanced scenarios
 
@@ -692,7 +677,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ta_or_cs_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
 [azure_portal_create_ta_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
-[azure_cli_create_ta_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
+[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli_create_ta_resource]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
@@ -732,7 +718,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [key_phrase_extraction]: https://docs.microsoft.com/azure/cognitive-services/language-service/key-phrase-extraction/overview
 [linked_entities_categories]: https://aka.ms/taner
 [linked_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/language-service/entity-linking/overview
-[pii_entity_categories]: https://aka.ms/tanerpii
+[pii_entity_categories]: https://aka.ms/azsdk/language/pii
 [named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/language-service/named-entity-recognition/overview
 [named_entity_categories]: https://aka.ms/taner
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
@@ -766,6 +752,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [multi_label_classify_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_multi_label_classify.py
 [multi_label_classify_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_multi_label_classify_async.py
 [healthcare_action_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
+[extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
+[extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
+[abstract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_abstract_summary.py
+[abstract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_abstract_summary_async.py
+[dynamic_classification_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamic_classification.py
+[dynamic_classification_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamic_classification_async.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

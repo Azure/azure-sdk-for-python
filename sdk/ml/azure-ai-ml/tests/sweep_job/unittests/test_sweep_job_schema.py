@@ -5,16 +5,22 @@ from typing import Any
 import pytest
 import yaml
 
-from azure.ai.ml import AmlToken, ManagedIdentity, UserIdentity, load_job
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken as RestAmlToken
-from azure.ai.ml._restclient.v2022_06_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity as RestManagedIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml import load_job
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken as RestAmlToken
+from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode, JobInputType, JobOutputType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedIdentity as RestManagedIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._schema import SweepJobSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
-from azure.ai.ml.entities import CommandJob, Job
+from azure.ai.ml.entities import (
+    AmlTokenConfiguration,
+    CommandJob,
+    Job,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+)
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
@@ -35,6 +41,7 @@ from azure.ai.ml.sweep import (
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestSweepJobSchema:
     @pytest.mark.parametrize(
         "search_space, expected",
@@ -341,9 +348,9 @@ class TestSweepJobSchema:
     @pytest.mark.parametrize(
         ("identity", "rest_identity"),
         [
-            (AmlToken(), RestAmlToken()),
-            (UserIdentity(), RestUserIdentity()),
-            (ManagedIdentity(), RestManagedIdentity()),
+            (AmlTokenConfiguration(), RestAmlToken()),
+            (UserIdentityConfiguration(), RestUserIdentity()),
+            (ManagedIdentityConfiguration(), RestManagedIdentity()),
         ],
     )
     def test_identity_to_rest(self, identity, rest_identity):

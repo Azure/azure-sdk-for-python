@@ -6,12 +6,13 @@
 # pylint: disable=no-self-use
 
 import asyncio
+import inspect
 import threading
 from asyncio import Lock
+from io import UnsupportedOperation
 from itertools import islice
 from math import ceil
-
-import six
+from typing import AsyncGenerator, Union
 
 from . import encode_base64, url_quote
 from .request_handlers import get_length
@@ -186,11 +187,10 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             while True:
                 if self.total_size:
                     read_size = min(self.chunk_size - len(data), self.total_size - (index + len(data)))
-                if asyncio.iscoroutinefunction(self.stream.read):
-                    temp = await self.stream.read(read_size)
-                else:
-                    temp = self.stream.read(read_size)
-                if not isinstance(temp, six.binary_type):
+                temp = self.stream.read(read_size)
+                if inspect.isawaitable(temp):
+                    temp = await temp
+                if not isinstance(temp, bytes):
                     raise TypeError('Blob data should be of type bytes.')
                 data += temp or b""
 
@@ -281,7 +281,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_chunk(self, chunk_offset, chunk_data):
         # TODO: This is incorrect, but works with recording.
-        index = '{0:032d}'.format(chunk_offset)
+        index = f'{chunk_offset:032d}'
         block_id = encode_base64(url_quote(encode_base64(index)))
         await self.service.stage_block(
             block_id,
@@ -294,7 +294,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = 'BlockId{}'.format("%05d" % (index/self.chunk_size))
+            block_id = f'BlockId{"%05d" % (index/self.chunk_size)}'
             await self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -321,7 +321,7 @@ class PageBlobChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
         # avoid uploading the empty pages
         if not self._is_chunk_empty(chunk_data):
             chunk_end = chunk_offset + len(chunk_data) - 1
-            content_range = 'bytes={0}-{1}'.format(chunk_offset, chunk_end)
+            content_range = f'bytes={chunk_offset}-{chunk_end}'
             computed_md5 = None
             self.response_headers = await self.service.upload_pages(
                 body=chunk_data,
@@ -415,9 +415,47 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
             upload_stream_current=self.progress_total,
             **self.request_options
         )
-        range_id = 'bytes={0}-{1}'.format(chunk_offset, chunk_end)
+        range_id = f'bytes={chunk_offset}-{chunk_end}'
         return range_id, response
 
     # TODO: Implement this method.
     async def _upload_substream_block(self, index, block_stream):
         pass
+
+
+class AsyncIterStreamer():
+    """
+    File-like streaming object for AsyncGenerators.
+    """
+    def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
+        self.iterator = generator.__aiter__()
+        self.leftover = b""
+        self.encoding = encoding
+
+    def seekable(self):
+        return False
+
+    def tell(self, *args, **kwargs):
+        raise UnsupportedOperation("Data generator does not support tell.")
+
+    def seek(self, *args, **kwargs):
+        raise UnsupportedOperation("Data generator is not seekable.")
+
+    async def read(self, size: int) -> bytes:
+        data = self.leftover
+        count = len(self.leftover)
+        try:
+            while count < size:
+                chunk = await self.iterator.__anext__()
+                if isinstance(chunk, str):
+                    chunk = chunk.encode(self.encoding)
+                data += chunk
+                count += len(chunk)
+        # This means count < size and what's leftover will be returned in this call.
+        except StopAsyncIteration:
+            self.leftover = b""
+
+        if count >= size:
+            self.leftover = data[size:]
+
+        return data[:size]

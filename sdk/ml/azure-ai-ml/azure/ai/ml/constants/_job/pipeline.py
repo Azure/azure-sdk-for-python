@@ -15,3 +15,7 @@ class PipelineConstants:
     REUSED_FLAG_FIELD = "azureml.isreused"
     REUSED_FLAG_TRUE = "true"
     REUSED_JOB_ID = "azureml.reusedrunid"
+
+
+class ValidationErrorCode:
+    PARAMETER_TYPE_UNKNOWN = "ParameterTypeUnknown"

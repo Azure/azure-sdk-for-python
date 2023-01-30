@@ -26,7 +26,7 @@ jobs:
         echo Hello World &
         echo ${{inputs.component_in_number}}
       environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
-      code: "./"
+      code: "../python"
       inputs:
         component_in_number:
           description: Am integer
@@ -46,7 +46,7 @@ jobs:
         echo Hello World &
         echo ${{inputs.component_in_number}}
       environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1
-      code: "./"
+      code: "../python"
       inputs:
         component_in_number:
           description: Am integer

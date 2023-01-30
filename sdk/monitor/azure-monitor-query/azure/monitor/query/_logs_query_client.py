@@ -4,15 +4,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List, cast, Tuple
+from typing import Any, Union, Sequence, Dict, List, cast, Tuple
 from datetime import timedelta, datetime
+
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from ._generated._monitor_query_client import MonitorQueryClient
-
-from ._generated.models import BatchRequest, QueryBody as LogsQueryBody
+from ._generated._client import MonitorQueryClient
 from ._helpers import (
     get_authentication_policy,
     construct_iso8601,
@@ -22,9 +21,6 @@ from ._helpers import (
 )
 from ._models import LogsBatchQuery, LogsQueryResult, LogsQueryPartialResult
 from ._exceptions import LogsQueryError
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 
 class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -51,16 +47,16 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential, **kwargs):
-        # type: (TokenCredential, Any) -> None
+    def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
         endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io")
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential, endpoint),
-            base_url=self._endpoint.rstrip('/') + "/v1",
+            authentication_policy=auth_policy or get_authentication_policy(credential, endpoint),
+            endpoint=self._endpoint.rstrip('/') + "/v1",
             **kwargs
         )
         self._query_op = self._client.query
@@ -112,19 +108,21 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        timespan = construct_iso8601(timespan)
+        timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
-        workspaces = kwargs.pop("additional_workspaces", None)
+        additional_workspaces = kwargs.pop("additional_workspaces", None)
 
         prefer = process_prefer(
             server_timeout, include_statistics, include_visualization
         )
 
-        body = LogsQueryBody(
-            query=query, timespan=timespan, workspaces=workspaces, **kwargs
-        )
+        body = {
+            "query": query,
+            "timespan": timespan_iso,
+            "workspaces": additional_workspaces
+        }
 
         try:
             generated_response = (
@@ -134,8 +132,9 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
-        response = None
-        if not generated_response.error:
+
+        response: Union[LogsQueryResult, LogsQueryPartialResult]
+        if not generated_response.get("error"):
             response = LogsQueryResult._from_generated( # pylint: disable=protected-access
                 generated_response
             )
@@ -143,15 +142,14 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
-        return cast(Union[LogsQueryResult, LogsQueryPartialResult], response)
+        return response
 
     @distributed_trace
     def query_batch(
         self,
-        queries,  # type: Union[Sequence[Dict], Sequence[LogsBatchQuery]]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]
+        queries: Union[Sequence[Dict], Sequence[LogsBatchQuery]],
+        **kwargs: Any
+    ) -> List[Union[LogsQueryResult, LogsQueryPartialResult, LogsQueryError]]:
         """Execute a list of Kusto queries. Each request can be either a LogsBatchQuery
         object or an equivalent serialized model.
 
@@ -183,13 +181,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         queries = [
             cast(LogsBatchQuery, q)._to_generated() for q in queries # pylint: disable=protected-access
         ]
-        try:
-            request_order = [req.id for req in queries]
-        except AttributeError:
-            request_order = [req["id"] for req in queries]
-        batch = BatchRequest(requests=queries)
+        request_order = [req["id"] for req in queries]
+        batch = {"requests": queries}
         generated = self._query_op.batch(batch, **kwargs)
-        mapping = {item.id: item for item in generated.responses} # type: ignore
+        mapping = {item["id"]: item for item in generated["responses"]}
         return order_results(
             request_order,
             mapping,
@@ -199,16 +194,13 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             raise_with=LogsQueryError,
         )
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the :class:`~azure.monitor.query.LogsQueryClient` session."""
         return self._client.close()
 
-    def __enter__(self):
-        # type: () -> LogsQueryClient
+    def __enter__(self) -> "LogsQueryClient":
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

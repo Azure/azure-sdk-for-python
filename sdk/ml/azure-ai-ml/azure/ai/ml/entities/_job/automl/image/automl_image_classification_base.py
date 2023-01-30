@@ -4,20 +4,18 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
-    ImageModelSettingsClassification,
-    LearningRateScheduler,
-    StochasticOptimizer,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import LearningRateScheduler, StochasticOptimizer
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.image.automl_image import AutoMLImage
 from azure.ai.ml.entities._job.automl.image.image_classification_search_space import ImageClassificationSearchSpace
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
+from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsClassification
 from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
+from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.utils import cast_to_specific_search_space
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class AutoMLImageClassificationBase(AutoMLImage):
@@ -25,10 +23,10 @@ class AutoMLImageClassificationBase(AutoMLImage):
         self,
         *,
         task_type: str,
-        limits: ImageLimitSettings = None,
-        sweep: ImageSweepSettings = None,
-        training_parameters: ImageModelSettingsClassification = None,
-        search_space: List[ImageClassificationSearchSpace] = None,
+        limits: Optional[ImageLimitSettings] = None,
+        sweep: Optional[ImageSweepSettings] = None,
+        training_parameters: Optional[ImageModelSettingsClassification] = None,
+        search_space: Optional[List[ImageClassificationSearchSpace]] = None,
         **kwargs,
     ) -> None:
         super().__init__(task_type=task_type, limits=limits, sweep=sweep, **kwargs)
@@ -67,7 +65,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
         return self._search_space
 
     @search_space.setter
-    def search_space(self, value: Union[List[Dict], List[ImageClassificationSearchSpace]]) -> None:
+    def search_space(self, value: Union[List[Dict], List[SearchSpace]]) -> None:
         if not isinstance(value, list):
             msg = "Expected a list for search space."
             raise ValidationException(
@@ -78,12 +76,12 @@ class AutoMLImageClassificationBase(AutoMLImage):
             )
 
         all_dict_type = all(isinstance(item, dict) for item in value)
-        all_search_space_type = all(isinstance(item, ImageClassificationSearchSpace) for item in value)
+        all_search_space_type = all(isinstance(item, SearchSpace) for item in value)
 
-        if all_search_space_type:
-            self._search_space = value
-        elif all_dict_type:
-            self._search_space = [ImageClassificationSearchSpace(**item) for item in value]
+        if all_search_space_type or all_dict_type:
+            self._search_space = [
+                cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type) for item in value
+            ]
         else:
             msg = "Expected all items in the list to be either dictionaries or ImageClassificationSearchSpace objects."
             raise ValidationException(
@@ -97,42 +95,40 @@ class AutoMLImageClassificationBase(AutoMLImage):
     def set_training_parameters(
         self,
         *,
-        advanced_settings: str = None,
-        ams_gradient: bool = None,
-        augmentations: str = None,
-        beta1: float = None,
-        beta2: float = None,
-        checkpoint_frequency: int = None,
-        checkpoint_run_id: str = None,
-        checkpoint_model: Input = None,
-        distributed: bool = None,
-        early_stopping: bool = None,
-        early_stopping_delay: int = None,
-        early_stopping_patience: int = None,
-        enable_onnx_normalization: bool = None,
-        evaluation_frequency: int = None,
-        gradient_accumulation_step: int = None,
-        layers_to_freeze: int = None,
-        learning_rate: float = None,
-        learning_rate_scheduler: Union[str, LearningRateScheduler] = None,
-        model_name: str = None,
-        momentum: float = None,
-        nesterov: bool = None,
-        number_of_epochs: int = None,
-        number_of_workers: int = None,
-        optimizer: Union[str, StochasticOptimizer] = None,
-        random_seed: int = None,
-        step_lr_gamma: float = None,
-        step_lr_step_size: int = None,
-        training_batch_size: int = None,
-        validation_batch_size: int = None,
-        warmup_cosine_lr_cycles: float = None,
-        warmup_cosine_lr_warmup_epochs: int = None,
-        weight_decay: float = None,
-        training_crop_size: int = None,
-        validation_crop_size: int = None,
-        validation_resize_size: int = None,
-        weighted_loss: int = None,
+        advanced_settings: Optional[str] = None,
+        ams_gradient: Optional[bool] = None,
+        beta1: Optional[float] = None,
+        beta2: Optional[float] = None,
+        checkpoint_frequency: Optional[int] = None,
+        checkpoint_run_id: Optional[str] = None,
+        distributed: Optional[bool] = None,
+        early_stopping: Optional[bool] = None,
+        early_stopping_delay: Optional[int] = None,
+        early_stopping_patience: Optional[int] = None,
+        enable_onnx_normalization: Optional[bool] = None,
+        evaluation_frequency: Optional[int] = None,
+        gradient_accumulation_step: Optional[int] = None,
+        layers_to_freeze: Optional[int] = None,
+        learning_rate: Optional[float] = None,
+        learning_rate_scheduler: Optional[Union[str, LearningRateScheduler]] = None,
+        model_name: Optional[str] = None,
+        momentum: Optional[float] = None,
+        nesterov: Optional[bool] = None,
+        number_of_epochs: Optional[int] = None,
+        number_of_workers: Optional[int] = None,
+        optimizer: Optional[Union[str, StochasticOptimizer]] = None,
+        random_seed: Optional[int] = None,
+        step_lr_gamma: Optional[float] = None,
+        step_lr_step_size: Optional[int] = None,
+        training_batch_size: Optional[int] = None,
+        validation_batch_size: Optional[int] = None,
+        warmup_cosine_lr_cycles: Optional[float] = None,
+        warmup_cosine_lr_warmup_epochs: Optional[int] = None,
+        weight_decay: Optional[float] = None,
+        training_crop_size: Optional[int] = None,
+        validation_crop_size: Optional[int] = None,
+        validation_resize_size: Optional[int] = None,
+        weighted_loss: Optional[int] = None,
     ) -> None:
         """Setting Image training parameters for AutoML Image Classification and
         Image Classification Multilabel tasks.
@@ -141,8 +137,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
         :type advanced_settings: str
         :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
         :type ams_gradient: bool
-        :param augmentations: Settings for using Augmentations.
-        :type augmentations: str
         :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
          range [0, 1].
         :type beta1: float
@@ -155,8 +149,6 @@ class AutoMLImageClassificationBase(AutoMLImage):
         :param checkpoint_run_id: The id of a previous run that has a pretrained checkpoint for
          incremental training.
         :type checkpoint_run_id: str
-        :param checkpoint_model: The pretrained checkpoint model for incremental training.
-        :type checkpoint_model: Input
         :param distributed: Whether to use distributed training.
         :type distributed: bool
         :param early_stopping: Enable early stopping logic during training.
@@ -250,16 +242,10 @@ class AutoMLImageClassificationBase(AutoMLImage):
         self._training_parameters.ams_gradient = (
             ams_gradient if ams_gradient is not None else self._training_parameters.ams_gradient
         )
-        self._training_parameters.augmentations = (
-            augmentations if augmentations is not None else self._training_parameters.augmentations
-        )
         self._training_parameters.beta1 = beta1 if beta1 is not None else self._training_parameters.beta1
         self._training_parameters.beta2 = beta2 if beta2 is not None else self._training_parameters.beta2
         self._training_parameters.checkpoint_frequency = (
             checkpoint_frequency if checkpoint_frequency is not None else self._training_parameters.checkpoint_frequency
-        )
-        self._training_parameters.checkpoint_model = (
-            checkpoint_model if checkpoint_model is not None else self._training_parameters.checkpoint_model
         )
         self._training_parameters.checkpoint_run_id = (
             checkpoint_run_id if checkpoint_run_id is not None else self._training_parameters.checkpoint_run_id
@@ -367,7 +353,7 @@ class AutoMLImageClassificationBase(AutoMLImage):
 
     def extend_search_space(
         self,
-        value: Union[ImageClassificationSearchSpace, List[ImageClassificationSearchSpace]],
+        value: Union[SearchSpace, List[SearchSpace]],
     ) -> None:
         """Add Search space for AutoML Image Classification and Image
         Classification Multilabel tasks.
@@ -379,9 +365,13 @@ class AutoMLImageClassificationBase(AutoMLImage):
         self._search_space = self._search_space or []
 
         if isinstance(value, list):
-            self._search_space.extend(value)
+            self._search_space.extend(
+                [cast_to_specific_search_space(item, ImageClassificationSearchSpace, self.task_type) for item in value]
+            )
         else:
-            self._search_space.append(value)
+            self._search_space.append(
+                cast_to_specific_search_space(value, ImageClassificationSearchSpace, self.task_type)
+            )
 
     @classmethod
     def _get_search_space_from_str(cls, search_space_str: str):

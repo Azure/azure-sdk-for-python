@@ -8,9 +8,14 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar
 
-from msrest import Serializer
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -20,45 +25,38 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from .. import models as _models
+from ..._serialization import Serializer
 from .._vendor import _convert_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_list_request(
-    *,
-    filter: Optional[str] = None,
-    select: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
+
+def build_list_request(*, filter: Optional[str] = None, select: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-04-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/providers/Microsoft.Insights/eventtypes/management/values")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     if filter is not None:
-        _params['$filter'] = _SERIALIZER.query("filter", filter, 'str')
+        _params["$filter"] = _SERIALIZER.query("filter", filter, "str")
     if select is not None:
-        _params['$select'] = _SERIALIZER.query("select", select, 'str')
+        _params["$select"] = _SERIALIZER.query("select", select, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class TenantActivityLogsOperations:
     """
@@ -79,14 +77,10 @@ class TenantActivityLogsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list(
-        self,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        **kwargs: Any
-    ) -> Iterable[_models.EventDataCollection]:
+        self, filter: Optional[str] = None, select: Optional[str] = None, **kwargs: Any
+    ) -> Iterable["_models.EventData"]:
         """Gets the Activity Logs for the Tenant.:code:`<br>`Everything that is applicable to the API to
         get the Activity Logs for the subscription is applicable to this API (the parameters, $filter,
         etc.).:code:`<br>`One thing to point out here is that this API does *not* retrieve the logs at
@@ -118,33 +112,33 @@ class TenantActivityLogsOperations:
          *resourceId*\ , *status*\ , *submissionTimestamp*\ , *subStatus*\ , *subscriptionId*. Default
          value is None.
         :type select: str
-        :keyword api_version: Api Version. Default value is "2015-04-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either EventDataCollection or the result of cls(response)
-        :rtype:
-         ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2015_04_01.models.EventDataCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either EventData or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~$(python-base-namespace).v2015_04_01.models.EventData]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-04-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EventDataCollection]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EventDataCollection]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
-                    api_version=api_version,
                     filter=filter,
                     select=select,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -152,15 +146,7 @@ class TenantActivityLogsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    api_version=api_version,
-                    filter=filter,
-                    select=select,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -176,10 +162,8 @@ class TenantActivityLogsOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -190,8 +174,6 @@ class TenantActivityLogsOperations:
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/providers/Microsoft.Insights/eventtypes/management/values"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.Insights/eventtypes/management/values"}  # type: ignore

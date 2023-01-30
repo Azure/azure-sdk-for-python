@@ -12,7 +12,9 @@ from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 class NlpLimitsSchema(metaclass=PatchedSchemaMeta):
     max_concurrent_trials = fields.Int()
     max_trials = fields.Int()
+    max_nodes = fields.Int()
     timeout_minutes = fields.Int()  # type duration
+    trial_timeout_minutes = fields.Int()  # type duration
 
     @post_load
     def make(self, data, **kwargs) -> "NlpLimitSettings":

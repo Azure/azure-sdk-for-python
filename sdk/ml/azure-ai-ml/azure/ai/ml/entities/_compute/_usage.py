@@ -3,11 +3,10 @@
 # ---------------------------------------------------------
 
 from os import PathLike
-from typing import IO, AnyStr, Dict, Union
+from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import Usage as RestUsage
-from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageName as RestUsageName
-from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageUnit
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Usage as RestUsage
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 from azure.ai.ml._schema.compute.usage import UsageSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -15,7 +14,7 @@ from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class UsageName:
-    def __init__(self, *, value: str = None, localized_value: str = None):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None):
         """The Usage Names.
 
         :param value: The name of the resource.
@@ -32,13 +31,13 @@ class Usage(RestTranslatableMixin):
 
     def __init__(
         self,
-        id: str = None,  # pylint: disable=redefined-builtin
-        aml_workspace_location: str = None,
-        type: str = None,  # pylint: disable=redefined-builtin
-        unit: Union[str, UsageUnit] = None,  # enum
-        current_value: int = None,
-        limit: int = None,
-        name: RestUsageName = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        aml_workspace_location: Optional[str] = None,
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        unit: Optional[Union[str, UsageUnit]] = None,  # enum
+        current_value: Optional[int] = None,
+        limit: Optional[int] = None,
+        name: Optional[UsageName] = None,
     ):
         """Describes AML Resource Usage.
 
@@ -49,13 +48,13 @@ class Usage(RestTranslatableMixin):
         :param type: Specifies the resource type.
         :type type: str
         :param unit: An enum describing the unit of usage measurement. Possible values include: "Count".
-        :type unit: str or ~azure.mgmt.machinelearningservices.models.UsageUnit
+        :type unit: str or ~azure.ai.ml.entities.UsageUnit
         :param current_value: The current usage of the resource.
         :type current_value: int
         :param limit: The maximum permitted usage of the resource.
         :type limit: int
         :param name: The name of the type of usage.
-        :type name: ~azure.mgmt.machinelearningservices.models.UsageName
+        :type name: ~azure.ai.ml.entities.UsageName
         """
         self.id = id
         self.aml_workspace_location = aml_workspace_location
@@ -71,9 +70,7 @@ class Usage(RestTranslatableMixin):
         result.__dict__.update(obj.as_dict())
         return result
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the resource usage content into a file in yaml format.
 
         :param dest: The destination to receive this resource usage's content.
@@ -83,25 +80,20 @@ class Usage(RestTranslatableMixin):
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         return UsageSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def load(
+    def _load(
         cls,
         path: Union[PathLike, str],
-        params_override: list = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Usage":
 

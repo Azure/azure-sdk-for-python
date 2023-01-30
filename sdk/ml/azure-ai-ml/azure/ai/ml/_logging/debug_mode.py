@@ -10,7 +10,7 @@ import sys
 import time
 import traceback
 from collections import namedtuple
-from typing import List
+from typing import List, Optional
 
 import six.moves.http_client as httpclient
 
@@ -46,6 +46,7 @@ def connection_info(gc_objects: list) -> List[ConnectionInfo]:
     return [ConnectionInfo(host=c.host, port=c.port, hasSocket=(c.sock is not None)) for c in connections]
 
 
+# pylint: disable=client-incorrect-naming-convention
 class diagnostic_log(object):
     """Directs debug logs to a specified file.
 
@@ -60,7 +61,9 @@ class diagnostic_log(object):
     :type context_type: str
     """
 
-    def __init__(self, log_path: str = None, namespaces: list = None, context_name: str = None):
+    def __init__(
+        self, log_path: Optional[str] = None, namespaces: Optional[list] = None, context_name: Optional[str] = None
+    ):
         self._namespaces = INTERESTING_NAMESPACES if namespaces is None else namespaces
         self._filename = LOG_FILE if log_path is None else log_path
         self._filename = os.path.abspath(self._filename)
@@ -124,7 +127,7 @@ class diagnostic_log(object):
     def __enter__(self) -> None:
         self.start_capture()
 
-    def __exit__(self) -> None:
+    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
         self.stop_capture()
 
 
@@ -132,7 +135,7 @@ _debugging_enabled = False
 
 
 def debug_sdk() -> None:
-    global _debugging_enabled
+    global _debugging_enabled  # pylint: disable=global-statement
     if _debugging_enabled:
         module_logger.warning("Debug logs are already enabled at %s", LOG_FILE)
         return

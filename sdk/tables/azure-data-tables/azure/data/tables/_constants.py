@@ -9,8 +9,8 @@ from ._generated._version import VERSION
 DEFAULT_X_MS_VERSION = "2018-03-28"
 X_MS_VERSION = VERSION
 
-# Live ServiceClient URLs
-SERVICE_HOST_BASE = "core.windows.net"
+DEFAULT_STORAGE_ENDPOINT_SUFFIX = "core.windows.net"
+DEFAULT_COSMOS_ENDPOINT_SUFFIX = "cosmos.azure.com"
 
 STORAGE_OAUTH_SCOPE = "https://storage.azure.com/.default"
 

@@ -12,6 +12,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from ..core.fields import ExperimentalField, NestedField, StringTransformedEnum
 from .compute import ComputeSchema, IdentitySchema, NetworkSettingsSchema
 from .schedule import ComputeSchedulesSchema
+from .setup_scripts import SetupScriptsSchema
 
 
 class ComputeInstanceSshSettingsSchema(PathAwareSchema):
@@ -37,8 +38,22 @@ class CreateOnBehalfOfSchema(PathAwareSchema):
         return AssignedUserConfiguration(**data)
 
 
+class OsImageMetadataSchema(PathAwareSchema):
+    is_latest_os_image_version = fields.Bool(dump_only=True)
+    current_image_version = fields.Str(dump_only=True)
+    latest_image_version = fields.Str(dump_only=True)
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import OsImageMetadata
+
+        return OsImageMetadata(**data)
+
+
 class ComputeInstanceSchema(ComputeSchema):
-    type = StringTransformedEnum(allowed_values=[ComputeType.COMPUTEINSTANCE], required=True)
+    type = StringTransformedEnum(
+        allowed_values=[ComputeType.COMPUTEINSTANCE], required=True
+    )
     size = fields.Str()
     network_settings = NestedField(NetworkSettingsSchema)
     create_on_behalf_of = NestedField(CreateOnBehalfOfSchema)
@@ -46,6 +61,19 @@ class ComputeInstanceSchema(ComputeSchema):
     ssh_public_access_enabled = fields.Bool(dump_default=None)
     state = fields.Str(dump_only=True)
     last_operation = fields.Dict(keys=fields.Str(), values=fields.Str(), dump_only=True)
-    services = fields.List(fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True)
-    schedules = ExperimentalField(NestedField(ComputeSchedulesSchema))
-    identity = NestedField(IdentitySchema)
+    services = fields.List(
+        fields.Dict(keys=fields.Str(), values=fields.Str()), dump_only=True
+    )
+    schedules = NestedField(ComputeSchedulesSchema)
+    identity = ExperimentalField(NestedField(IdentitySchema))
+    idle_time_before_shutdown = ExperimentalField(fields.Str())
+    idle_time_before_shutdown_minutes = ExperimentalField(fields.Int())
+    setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
+    os_image_metadata = ExperimentalField(
+        NestedField(OsImageMetadataSchema, dump_only=True)
+    )
+    enable_node_public_ip = fields.Bool(
+        metadata={
+            "description": "Enable or disable node public IP address provisioning."
+        }
+    )

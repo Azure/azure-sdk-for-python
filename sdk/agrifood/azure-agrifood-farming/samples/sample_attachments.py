@@ -5,7 +5,7 @@
 FILE: sample_attachments.py
 
 DESCRIPTION:
-    This sample demonstrates FarmBeats' capabaility of storing arbitrary files 
+    This sample demonstrates FarmBeats' capability of storing arbitrary files 
     in context to the various farm hierarchy objects. 
     We first attach some files onto a farmer and a farm, and then download all 
     existing attachments for the farmer onto a local directory.

@@ -5,3 +5,4 @@ package_pprint_name = "DNS Private Zones"
 package_doc_id = ""
 is_stable = false
 is_arm = true
+title = "PrivateDnsManagementClient"

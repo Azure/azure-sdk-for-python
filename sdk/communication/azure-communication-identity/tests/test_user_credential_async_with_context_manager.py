@@ -73,6 +73,21 @@ class TestCommunicationTokenCredential(TestCase):
         assert refreshed_token == access_token.token
 
     @pytest.mark.asyncio
+    async def test_refresher_should_be_called_immediately_with_expired_token_and_proactive_refresh(self):
+        refreshed_token = generate_token_with_custom_expiry(10 * 60)
+        refresher = MagicMock(
+            return_value=self.get_completed_future(create_access_token(refreshed_token)))
+        expired_token = generate_token_with_custom_expiry(-(5 * 60))
+
+        credential = CommunicationTokenCredential(
+            expired_token, token_refresher=refresher, proactive_refresh=True)
+        async with credential:
+            access_token = await credential.get_token()
+
+        refresher.assert_called_once()
+        assert refreshed_token == access_token.token
+
+    @pytest.mark.asyncio
     async def test_refresher_should_not_be_called_before_expiring_time(self):
         initial_token = generate_token_with_custom_expiry(15 * 60)
         refreshed_token = generate_token_with_custom_expiry(10 * 60)

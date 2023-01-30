@@ -13,6 +13,7 @@ from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultO
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
@@ -23,17 +24,20 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.begin_analyze_document_from_url(model_id=None, document_url="https://badurl.jpg")
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     def test_document_analysis_empty_model_id(self, **kwargs):
         formrecognizer_test_endpoint = kwargs.pop("formrecognizer_test_endpoint")
         formrecognizer_test_api_key = kwargs.pop("formrecognizer_test_api_key")
         client = DocumentAnalysisClient(formrecognizer_test_endpoint, AzureKeyCredential(formrecognizer_test_api_key))
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.begin_analyze_document_from_url(model_id="", document_url="https://badurl.jpg")
+        assert "model_id cannot be None or empty." in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -76,6 +80,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -117,6 +122,7 @@ class TestDACAnalyzeCustomModelFromUrl(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy

@@ -14,6 +14,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -22,8 +23,8 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_upload_request
-from .._vendor import MixinABC
+from ..._operations._operations import build_logs_ingestion_upload_request
+from .._vendor import LogsIngestionClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -31,12 +32,10 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[
-    Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]
-]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class MonitorIngestionClientOperationsMixin(MixinABC):
+class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
     @overload
     async def upload(  # pylint: disable=inconsistent-return-statements
         self,
@@ -150,19 +149,15 @@ class MonitorIngestionClientOperationsMixin(MixinABC):
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
             409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: str
-        content_type = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", None)
-        )  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -172,35 +167,31 @@ class MonitorIngestionClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_upload_request(
+        request = build_logs_ingestion_upload_request(
             rule_id=rule_id,
             stream=stream,
-            api_version=api_version,
             content_encoding=content_encoding,
             x_ms_client_request_id=x_ms_client_request_id,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            "endpoint": self._serialize.url(
-                "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
-            map_error(
-                status_code=response.status_code, response=response, error_map=error_map
-            )
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
         if cls:

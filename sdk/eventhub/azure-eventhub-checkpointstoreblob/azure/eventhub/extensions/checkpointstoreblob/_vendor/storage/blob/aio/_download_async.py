@@ -164,7 +164,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         The properties of the blob being downloaded. If only a range of the data is being
         downloaded, this will be reflected in the properties.
     :ivar int size:
-        The size of the total data in the stream. This will be the byte range if speficied,
+        The size of the total data in the stream. This will be the byte range if specified,
         otherwise the total size of the blob.
     """
 
@@ -316,7 +316,7 @@ class StorageStreamDownloader(object):  # pylint: disable=too-many-instance-attr
         # If the file is small, the download is complete at this point.
         # If file size is large, download the rest of the file in chunks.
         if response.properties.size != self.size:
-            # Lock on the etag. This can be overriden by the user by specifying '*'
+            # Lock on the etag. This can be overridden by the user by specifying '*'
             if self._request_options.get('modified_access_conditions'):
                 if not self._request_options['modified_access_conditions'].if_match:
                     self._request_options['modified_access_conditions'].if_match = response.properties.etag

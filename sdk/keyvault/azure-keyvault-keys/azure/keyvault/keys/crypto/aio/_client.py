@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, cast
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from .. import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from .. import DecryptResult, EncryptionAlgorithm, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
 from .._client import _validate_arguments
 from .._key_validity import raise_if_time_invalid
 from .._providers import get_local_cryptography_provider, NoLocalCryptography
@@ -19,9 +19,9 @@ from ..._shared import AsyncKeyVaultClientBase, parse_key_vault_id
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from datetime import datetime
-    from typing import Any, Optional, Union
+    from typing import Any, Dict, Optional, Union
     from azure.core.credentials_async import AsyncTokenCredential
-    from .. import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from .. import KeyWrapAlgorithm, SignatureAlgorithm
     from ..._shared import KeyVaultResourceId
 
 _LOGGER = logging.getLogger(__name__)
@@ -34,15 +34,18 @@ class CryptographyClient(AsyncKeyVaultClientBase):
     that material from Key Vault. When the required key material is unavailable, cryptographic operations are performed
     by the Key Vault service.
 
-    :param key:
-        Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
+    :param key: Either a :class:`~azure.keyvault.keys.KeyVaultKey` instance as returned by
         :func:`~azure.keyvault.keys.aio.KeyClient.get_key`, or a string.
         If a string, the value must be the identifier of an Azure Key Vault key. Including a version is recommended.
     :type key: str or :class:`~azure.keyvault.keys.KeyVaultKey`
     :param credential: An object which can provide an access token for the vault, such as a credential from
         :mod:`azure.identity.aio`
-    :keyword api_version: version of the Key Vault API to use. Defaults to the most recent.
+    :type credential: :class:`~azure.core.credentials_async.AsyncTokenCredential`
+
+    :keyword api_version: Version of the service API to use. Defaults to the most recent.
     :paramtype api_version: ~azure.keyvault.keys.ApiVersion
+    :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
+        Vault or Managed HSM domain. Defaults to True.
 
     .. literalinclude:: ../tests/test_examples_crypto_async.py
         :start-after: [START create_client]
@@ -52,7 +55,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :dedent: 8
     """
 
-    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
+    # pylint:disable=protected-access
+
+    def __init__(self, key: "Union[KeyVaultKey, str]", credential: "AsyncTokenCredential", **kwargs) -> None:
         self._jwk = kwargs.pop("_jwk", False)
         self._not_before = None  # type: Optional[datetime]
         self._expires_on = None  # type: Optional[datetime]
@@ -61,7 +66,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         if isinstance(key, KeyVaultKey):
             self._key = key.key  # type: Union[JsonWebKey, KeyVaultKey, str, None]
             self._key_id = parse_key_vault_id(key.id)
-            if key.properties._attributes:  # pylint:disable=protected-access
+            if key.properties._attributes:
                 self._not_before = key.properties.not_before
                 self._expires_on = key.properties.expires_on
         elif isinstance(key, str):
@@ -111,11 +116,12 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return self._vault_url
 
     @classmethod
-    def from_jwk(cls, jwk: "Union[JsonWebKey, dict]") -> "CryptographyClient":
+    def from_jwk(cls, jwk: "Union[JsonWebKey, Dict[str, Any]]") -> "CryptographyClient":
         """Creates a client that can only perform cryptographic operations locally.
 
         :param jwk: the key's cryptographic material, as a JsonWebKey or dictionary.
-        :type jwk: JsonWebKey or dict
+        :type jwk: JsonWebKey or Dict[str, Any]
+
         :rtype: CryptographyClient
         """
         if not isinstance(jwk, JsonWebKey):
@@ -123,8 +129,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return cls(jwk, object(), _jwk=True)  # type: ignore
 
     @distributed_trace_async
-    async def _initialize(self, **kwargs):
-        # type: (**Any) -> None
+    async def _initialize(self, **kwargs) -> None:
         if self._initialized:
             return
 
@@ -137,7 +142,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     self._key_id.version if self._key_id else None,
                     **kwargs
                 )
-                key = KeyVaultKey._from_key_bundle(key_bundle)  # pylint:disable=protected-access
+                key = KeyVaultKey._from_key_bundle(key_bundle)
                 self._key = key.key
                 self._key_id = parse_key_vault_id(key.id)  # update the key ID in case we didn't have the version before
             except HttpResponseError as ex:
@@ -154,7 +159,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
             self._initialized = self._keys_get_forbidden
 
     @distributed_trace_async
-    async def encrypt(self, algorithm: "EncryptionAlgorithm", plaintext: bytes, **kwargs: "Any") -> EncryptResult:
+    async def encrypt(self, algorithm: EncryptionAlgorithm, plaintext: bytes, **kwargs) -> EncryptResult:
         """Encrypt bytes using the client's key.
 
         Requires the keys/encrypt permission. This method encrypts only a single block of data, whose size depends on
@@ -163,13 +168,16 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param algorithm: Encryption algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.EncryptionAlgorithm`
         :param bytes plaintext: Bytes to encrypt
+
         :keyword bytes iv: Initialization vector. Required for only AES-CBC(PAD) encryption. If you pass your own IV,
             make sure you use a cryptographically random, non-repeating IV. If omitted, an attempt will be made to
             generate an IV via `os.urandom <https://docs.python.org/library/os.html#os.urandom>`_ for local
             cryptography; for remote cryptography, Key Vault will generate an IV.
         :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM encryption.
+
         :rtype: :class:`~azure.keyvault.keys.crypto.EncryptResult`
+
         :raises ValueError: if parameters that are incompatible with the specified algorithm are provided, or if
             generating an IV fails on the current platform.
 
@@ -195,7 +203,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "encrypt" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.encrypt}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = await self._client.encrypt(
@@ -224,7 +232,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         )
 
     @distributed_trace_async
-    async def decrypt(self, algorithm: "EncryptionAlgorithm", ciphertext: bytes, **kwargs: "Any") -> DecryptResult:
+    async def decrypt(self, algorithm: EncryptionAlgorithm, ciphertext: bytes, **kwargs) -> DecryptResult:
         """Decrypt a single block of encrypted data using the client's key.
 
         Requires the keys/decrypt permission. This method decrypts only a single block of data, whose size depends on
@@ -235,12 +243,15 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param bytes ciphertext: Encrypted bytes to decrypt. Microsoft recommends you not use CBC without first ensuring
             the integrity of the ciphertext using, for example, an HMAC. See
             https://docs.microsoft.com/dotnet/standard/security/vulnerabilities-cbc-mode for more information.
+
         :keyword bytes iv: The initialization vector used during encryption. Required for AES decryption.
         :keyword bytes authentication_tag: The authentication tag generated during encryption. Required for only AES-GCM
             decryption.
         :keyword bytes additional_authenticated_data: Optional data that is authenticated but not encrypted. For use
             with AES-GCM decryption.
+
         :rtype: :class:`~azure.keyvault.keys.crypto.DecryptResult`
+
         :raises ValueError: If parameters that are incompatible with the specified algorithm are provided.
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
@@ -265,7 +276,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "decrypt" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.decrypt}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = await self._client.decrypt(
@@ -281,7 +292,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return DecryptResult(key_id=self.key_id, algorithm=algorithm, plaintext=operation_result.result)
 
     @distributed_trace_async
-    async def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs: "Any") -> WrapResult:
+    async def wrap_key(self, algorithm: "KeyWrapAlgorithm", key: bytes, **kwargs) -> WrapResult:
         """Wrap a key with the client's key.
 
         Requires the keys/wrapKey permission.
@@ -289,6 +300,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
         :param bytes key: key to wrap
+
         :rtype: :class:`~azure.keyvault.keys.crypto.WrapResult`
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
@@ -309,7 +321,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "wrapKey" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.wrap_key}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = await self._client.wrap_key(
@@ -323,7 +335,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return WrapResult(key_id=self.key_id, algorithm=algorithm, encrypted_key=operation_result.result)
 
     @distributed_trace_async
-    async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs: "Any") -> UnwrapResult:
+    async def unwrap_key(self, algorithm: "KeyWrapAlgorithm", encrypted_key: bytes, **kwargs) -> UnwrapResult:
         """Unwrap a key previously wrapped with the client's key.
 
         Requires the keys/unwrapKey permission.
@@ -331,6 +343,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param algorithm: wrapping algorithm to use
         :type algorithm: :class:`~azure.keyvault.keys.crypto.KeyWrapAlgorithm`
         :param bytes encrypted_key: the wrapped key
+
         :rtype: :class:`~azure.keyvault.keys.crypto.UnwrapResult`
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
@@ -350,7 +363,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "unwrapKey" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.unwrap_key}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = await self._client.unwrap_key(
@@ -364,7 +377,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         return UnwrapResult(key_id=self.key_id, algorithm=algorithm, key=operation_result.result)
 
     @distributed_trace_async
-    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs: "Any") -> SignResult:
+    async def sign(self, algorithm: "SignatureAlgorithm", digest: bytes, **kwargs) -> SignResult:
         """Create a signature from a digest using the client's key.
 
         Requires the keys/sign permission.
@@ -372,6 +385,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param algorithm: signing algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
         :param bytes digest: hashed bytes to sign
+
         :rtype: :class:`~azure.keyvault.keys.crypto.SignResult`
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
@@ -392,7 +406,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "sign" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.sign}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = await self._client.sign(
@@ -407,7 +421,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
 
     @distributed_trace_async
     async def verify(
-        self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs: "Any"
+        self, algorithm: "SignatureAlgorithm", digest: bytes, signature: bytes, **kwargs
     ) -> VerifyResult:
         """Verify a signature using the client's key.
 
@@ -416,8 +430,9 @@ class CryptographyClient(AsyncKeyVaultClientBase):
         :param algorithm: verification algorithm
         :type algorithm: :class:`~azure.keyvault.keys.crypto.SignatureAlgorithm`
         :param bytes digest: Pre-hashed digest corresponding to **signature**. The hash algorithm used must be
-          compatible with **algorithm**.
+            compatible with ``algorithm``.
         :param bytes signature: signature to verify
+
         :rtype: :class:`~azure.keyvault.keys.crypto.VerifyResult`
 
         .. literalinclude:: ../tests/test_examples_crypto_async.py
@@ -437,7 +452,7 @@ class CryptographyClient(AsyncKeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "verify" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.verify}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = await self._client.verify(

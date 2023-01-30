@@ -48,6 +48,8 @@ class JobComputePropertyFields(object):
     # Legacy name
     AISUPERCOMPUTER = "AISuperComputer"
     SINGULARITY = "Singularity"
+    ITP = "itp"
+    TARGET_SELECTOR = "target_selector"
 
 
 class SparkConfKey:
@@ -70,3 +72,37 @@ class RestSparkConfKey:
     DYNAMIC_ALLOCATION_MIN_EXECUTORS = "spark.dynamicAllocation.minExecutors"
     DYNAMIC_ALLOCATION_MAX_EXECUTORS = "spark.dynamicAllocation.maxExecutors"
     DYNAMIC_ALLOCATION_ENABLED = "spark.dynamicAllocation.enabled"
+
+
+class JobServiceTypeNames:
+    class EntityNames:
+        CUSTOM = "custom"
+        TRACKING = "Tracking"
+        STUDIO = "Studio"
+        JUPYTER_LAB = "jupyter_lab"
+        SSH = "ssh"
+        TENSOR_BOARD = "tensor_board"
+        VS_CODE = "vs_code"
+
+    class RestNames:
+        CUSTOM = "Custom"
+        TRACKING = "Tracking"
+        STUDIO = "Studio"
+        JUPYTER_LAB = "JupyterLab"
+        SSH = "SSH"
+        TENSOR_BOARD = "TensorBoard"
+        VS_CODE = "VSCode"
+
+    ENTITY_TO_REST = {
+        EntityNames.CUSTOM: RestNames.CUSTOM,
+        EntityNames.TRACKING: RestNames.TRACKING,
+        EntityNames.STUDIO: RestNames.STUDIO,
+        EntityNames.JUPYTER_LAB: RestNames.JUPYTER_LAB,
+        EntityNames.SSH: RestNames.SSH,
+        EntityNames.TENSOR_BOARD: RestNames.TENSOR_BOARD,
+        EntityNames.VS_CODE: RestNames.VS_CODE,
+    }
+
+    REST_TO_ENTITY = {v: k for k, v in ENTITY_TO_REST.items()}
+
+    NAMES_ALLOWED_FOR_PUBLIC = [EntityNames.JUPYTER_LAB, EntityNames.SSH, EntityNames.TENSOR_BOARD, EntityNames.VS_CODE]

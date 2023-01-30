@@ -10,15 +10,20 @@ from typing import Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, JobBase, ManagedIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import SparkJob as RestSparkJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
-from azure.ai.ml._schema.job.parameterized_spark import SparkConfSchema
+from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP, SparkConfSchema
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._job.job import SparkConfKey
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+    _BaseJobIdentityConfiguration,
+)
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
@@ -26,7 +31,6 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_dataset_literal_inputs,
     validate_inputs_for_args,
 )
-from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
 from azure.ai.ml.entities._util import load_from_dict
 
@@ -67,7 +71,10 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :param archives: List of archives to be extracted into the working directory of each executor.
     :type archives: Optional[typing.List[str]]
     :param identity: Identity that spark job will use while running on compute.
-    :type identity: Union[azure.ai.ml.ManagedIdentity, azure.ai.ml.AmlToken, azure.ai.ml.UserIdentity]
+    :type identity: Union[
+        azure.ai.ml.ManagedIdentityConfiguration,
+        azure.ai.ml.AmlTokenConfiguration,
+        azure.ai.ml.UserIdentityConfiguration]
     :param driver_cores: Number of cores to use for the driver process, only in cluster mode.
     :type driver_cores: int
     :param driver_memory: Amount of memory to use for the driver process.
@@ -99,7 +106,11 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     :param compute: The compute resource the job runs on.
     :type compute: str
     :param identity: Identity that spark job will use while running on compute.
-    :type identity: Union[Dict, ManagedIdentity, AmlToken, UserIdentity]
+    :type identity: Union[
+        Dict,
+        ManagedIdentityConfiguration,
+        AmlTokenConfiguration,
+        UserIdentityConfiguration]
     :param resources: Compute Resource configuration for the job.
     :type resources: Union[Dict, SparkResourceConfiguration]
     """
@@ -107,18 +118,20 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     def __init__(
         self,
         *,
-        driver_cores: int = None,
-        driver_memory: str = None,
-        executor_cores: int = None,
-        executor_memory: str = None,
-        executor_instances: int = None,
-        dynamic_allocation_enabled: bool = None,
-        dynamic_allocation_min_executors: int = None,
-        dynamic_allocation_max_executors: int = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
+        driver_cores: Optional[int] = None,
+        driver_memory: Optional[str] = None,
+        executor_cores: Optional[int] = None,
+        executor_memory: Optional[str] = None,
+        executor_instances: Optional[int] = None,
+        dynamic_allocation_enabled: Optional[bool] = None,
+        dynamic_allocation_min_executors: Optional[int] = None,
+        dynamic_allocation_max_executors: Optional[int] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
         compute: Optional[str] = None,
-        identity: Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Optional[
+            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        ] = None,
         resources: Union[Dict, SparkResourceConfiguration, None] = None,
         **kwargs,
     ):
@@ -153,11 +166,16 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[ManagedIdentity, AmlToken, UserIdentity]]:
+    ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
         return self._identity
 
     @identity.setter
-    def identity(self, value: Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity, None]):
+    def identity(
+        self,
+        value: Union[
+            Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration, None
+        ],
+    ):
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
@@ -173,10 +191,19 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         # pylint: disable=no-member
         return SparkJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
+    def filter_conf_fields(self):
+        if self.conf is None:
+            return {}
+        data_conf = {}
+        for conf_key, conf_val in self.conf.items():
+            if not conf_key in CONF_KEY_MAP:
+                data_conf[conf_key] = conf_val
+        return data_conf
+
     def _to_rest_object(self) -> JobBase:
         self._validate()
         conf = {
-            **(self.conf or {}),
+            **(self.filter_conf_fields()),
             "spark.driver.cores": self.driver_cores,
             "spark.driver.memory": self.driver_memory,
             "spark.executor.cores": self.executor_cores,
@@ -200,7 +227,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             jars=self.jars,
             files=self.files,
             archives=self.archives,
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
             conf=conf,
             environment_id=self.environment,
             inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
@@ -243,7 +270,9 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             code=rest_spark_job.code_id,
             compute=rest_spark_job.compute_id,
             environment=rest_spark_job.environment_id,
-            identity=Identity._from_rest_object(rest_spark_job.identity) if rest_spark_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_spark_job.identity)
+            if rest_spark_job.identity
+            else None,
             args=rest_spark_job.args,
             conf=rest_spark_conf,
             driver_cores=rest_spark_conf.get(
@@ -262,7 +291,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         )
         return spark_job
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a spark job to component.
 
         :param context: Context of spark job YAML file.
@@ -301,7 +330,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             args=self.args,
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a spark job to a pipeline node.
 
         :param context: Context of spark job YAML file.
@@ -333,6 +362,7 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
             outputs=self.outputs,
             compute=self.compute,
             resources=self.resources,
+            properties=self.properties,
         )
 
     def _validate(self) -> None:

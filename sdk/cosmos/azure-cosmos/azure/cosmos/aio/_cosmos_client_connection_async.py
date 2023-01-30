@@ -40,7 +40,6 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     DistributedTracingPolicy,
-    HttpLoggingPolicy,
     ProxyPolicy)
 
 from .. import _base as base
@@ -59,6 +58,7 @@ from .. import _session
 from .. import _utils
 from ..partition_key import _Undefined, _Empty
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
+from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
 
 ClassType = TypeVar("ClassType")
 # pylint: disable=protected-access
@@ -195,7 +195,7 @@ class CosmosClientConnection(object):  # pylint: disable=too-many-public-methods
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
+            CosmosHttpLoggingPolicy(**kwargs),
             ]
 
         transport = kwargs.pop("transport", None)

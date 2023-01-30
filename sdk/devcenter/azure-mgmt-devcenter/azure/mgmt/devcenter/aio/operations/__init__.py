@@ -14,11 +14,13 @@ from ._images_operations import ImagesOperations
 from ._image_versions_operations import ImageVersionsOperations
 from ._catalogs_operations import CatalogsOperations
 from ._environment_types_operations import EnvironmentTypesOperations
+from ._project_allowed_environment_types_operations import ProjectAllowedEnvironmentTypesOperations
 from ._project_environment_types_operations import ProjectEnvironmentTypesOperations
 from ._dev_box_definitions_operations import DevBoxDefinitionsOperations
 from ._operations import Operations
 from ._operation_statuses_operations import OperationStatusesOperations
 from ._usages_operations import UsagesOperations
+from ._check_name_availability_operations import CheckNameAvailabilityOperations
 from ._skus_operations import SkusOperations
 from ._pools_operations import PoolsOperations
 from ._schedules_operations import SchedulesOperations
@@ -37,11 +39,13 @@ __all__ = [
     "ImageVersionsOperations",
     "CatalogsOperations",
     "EnvironmentTypesOperations",
+    "ProjectAllowedEnvironmentTypesOperations",
     "ProjectEnvironmentTypesOperations",
     "DevBoxDefinitionsOperations",
     "Operations",
     "OperationStatusesOperations",
     "UsagesOperations",
+    "CheckNameAvailabilityOperations",
     "SkusOperations",
     "PoolsOperations",
     "SchedulesOperations",

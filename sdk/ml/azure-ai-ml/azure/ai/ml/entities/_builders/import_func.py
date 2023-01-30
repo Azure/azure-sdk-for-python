@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._component.import_component import ImportComponent
@@ -17,13 +17,13 @@ from .import_node import Import
 
 def import_job(
     *,
-    name: str = None,
-    description: str = None,
-    tags: Dict = None,
-    display_name: str = None,
-    experiment_name: str = None,
-    source: ImportSource = None,
-    output: Output = None,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    source: Optional[ImportSource] = None,
+    output: Optional[Output] = None,
     is_deterministic: bool = True,
     **kwargs,
 ) -> Import:

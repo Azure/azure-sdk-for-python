@@ -4,14 +4,14 @@
 
 from base64 import b64encode
 
-from azure.ai.ml._restclient.v2022_02_01_preview import models as model_preview
+from azure.ai.ml._restclient.v2022_10_01_preview import models as model_preview
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 
-from .credentials import DatastoreCredentials
 
-
+# TODO: Move classes in this file to azure.ai.ml.entities._credentials
 @experimental
-class BaseKerberosCredentials(DatastoreCredentials):
+class BaseKerberosCredentials(NoneCredentialConfiguration):
     def __init__(self, kerberos_realm: str, kerberos_kdc_address: str, kerberos_principal: str):
         super().__init__()
         self.kerberos_realm = kerberos_realm

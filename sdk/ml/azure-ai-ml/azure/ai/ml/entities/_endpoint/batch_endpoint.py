@@ -5,7 +5,7 @@
 import logging
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
@@ -41,23 +41,23 @@ class BatchEndpoint(Endpoint):
     :type default_deployment_name: str, optional
     :param scoring_uri: URI to use to perform a prediction, readonly.
     :type scoring_uri: str, optional
-    :param swagger_uri: URI to check the swagger definition of the endpoint.
-    :type swagger_uri: str, optional
+    :param openapi_uri: URI to check the open API definition of the endpoint.
+    :type openapi_uri: str, optional
     """
 
     def __init__(
         self,
         *,
-        name: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        name: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         auth_mode: str = AAD_TOKEN_YAML,
-        description: str = None,
-        location: str = None,
-        defaults: Dict[str, str] = None,
-        default_deployment_name: str = None,
-        scoring_uri: str = None,
-        swagger_uri: str = None,
+        description: Optional[str] = None,
+        location: Optional[str] = None,
+        defaults: Optional[Dict[str, str]] = None,
+        default_deployment_name: Optional[str] = None,
+        scoring_uri: Optional[str] = None,
+        openapi_uri: Optional[str] = None,
         **kwargs,
     ) -> None:
         super(BatchEndpoint, self).__init__(
@@ -68,7 +68,7 @@ class BatchEndpoint(Endpoint):
             description=description,
             location=location,
             scoring_uri=scoring_uri,
-            swagger_uri=swagger_uri,
+            openapi_uri=openapi_uri,
             **kwargs,
         )
 
@@ -101,14 +101,12 @@ class BatchEndpoint(Endpoint):
             defaults=endpoint.properties.defaults,
             provisioning_state=endpoint.properties.provisioning_state,
             scoring_uri=endpoint.properties.scoring_uri,
-            swagger_uri=endpoint.properties.swagger_uri,
+            openapi_uri=endpoint.properties.swagger_uri,
         )
 
     def dump(
         self,
-        *args,  # pylint: disable=unused-argument
-        dest: Union[str, PathLike, IO[AnyStr]] = None,  # pylint: disable=unused-argument
-        path: Union[str, PathLike] = None,  # pylint: disable=unused-argument
+        dest: Optional[Union[str, PathLike, IO[AnyStr]]] = None,  # pylint: disable=unused-argument
         **kwargs,  # pylint: disable=unused-argument
     ) -> Dict[str, Any]:
         context = {BASE_PATH_CONTEXT_KEY: Path(".").parent}
@@ -117,9 +115,9 @@ class BatchEndpoint(Endpoint):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "BatchEndpoint":
         data = data or {}

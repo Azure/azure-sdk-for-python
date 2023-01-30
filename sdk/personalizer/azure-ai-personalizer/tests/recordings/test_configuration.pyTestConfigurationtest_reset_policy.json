@@ -1,0 +1,36 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/configurations/policy?api-version=2022-09-01-preview",
+      "RequestMethod": "DELETE",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "34280ba9-a59c-44eb-9295-38debce57487",
+        "Cache-Control": "no-store, must-revalidate, no-cache",
+        "Content-Length": "138",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Thu, 03 Nov 2022 15:50:45 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "timing-allow-origin": "*",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "146",
+        "x-ms-region": "East US 2 EUAP"
+      },
+      "ResponseBody": {
+        "name": "dccb7cec1bc54695b64a0ea223b02533",
+        "arguments": "--cb_explore_adf --epsilon 0.2 --power_t 0 -l 0.001 --cb_type mtr -q ::"
+      }
+    }
+  ],
+  "Variables": {}
+}

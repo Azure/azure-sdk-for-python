@@ -4,13 +4,11 @@
 
 # pylint: disable=R0902,too-many-locals
 
-from typing import Union
+from typing import Optional, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageModelDistributionSettingsClassification
-from azure.ai.ml.entities._job.automl.image.image_search_space_utils import (
-    _convert_from_rest_object,
-    _convert_to_rest_object,
-)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageModelDistributionSettingsClassification
+from azure.ai.ml.entities._job.automl.search_space import SearchSpace
+from azure.ai.ml.entities._job.automl.search_space_utils import _convert_from_rest_object, _convert_to_rest_object
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -21,8 +19,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
 
     :param ams_gradient: Enable AMSGrad when optimizer is 'adam' or 'adamw'.
     :type ams_gradient: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
-    :param augmentations: Settings for using Augmentations.
-    :type augmentations: str or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
     :param beta1: Value of 'beta1' when optimizer is 'adam' or 'adamw'. Must be a float in the
         range [0, 1].
     :type beta1: float or ~azure.ai.ml.entities._job.sweep.search_space.SweepDistribution
@@ -117,41 +113,39 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        ams_gradient: Union[bool, SweepDistribution] = None,
-        augmentations: Union[str, SweepDistribution] = None,
-        beta1: Union[float, SweepDistribution] = None,
-        beta2: Union[float, SweepDistribution] = None,
-        distributed: Union[bool, SweepDistribution] = None,
-        early_stopping: Union[bool, SweepDistribution] = None,
-        early_stopping_delay: Union[int, SweepDistribution] = None,
-        early_stopping_patience: Union[int, SweepDistribution] = None,
-        enable_onnx_normalization: Union[bool, SweepDistribution] = None,
-        evaluation_frequency: Union[int, SweepDistribution] = None,
-        gradient_accumulation_step: Union[int, SweepDistribution] = None,
-        layers_to_freeze: Union[int, SweepDistribution] = None,
-        learning_rate: Union[float, SweepDistribution] = None,
-        learning_rate_scheduler: Union[str, SweepDistribution] = None,
-        model_name: Union[str, SweepDistribution] = None,
-        momentum: Union[float, SweepDistribution] = None,
-        nesterov: Union[bool, SweepDistribution] = None,
-        number_of_epochs: Union[int, SweepDistribution] = None,
-        number_of_workers: Union[int, SweepDistribution] = None,
-        optimizer: Union[str, SweepDistribution] = None,
-        random_seed: Union[int, SweepDistribution] = None,
-        step_lr_gamma: Union[float, SweepDistribution] = None,
-        step_lr_step_size: Union[int, SweepDistribution] = None,
-        training_batch_size: Union[int, SweepDistribution] = None,
-        validation_batch_size: Union[int, SweepDistribution] = None,
-        warmup_cosine_lr_cycles: Union[float, SweepDistribution] = None,
-        warmup_cosine_lr_warmup_epochs: Union[int, SweepDistribution] = None,
-        weight_decay: Union[float, SweepDistribution] = None,
-        training_crop_size: Union[int, SweepDistribution] = None,
-        validation_crop_size: Union[int, SweepDistribution] = None,
-        validation_resize_size: Union[int, SweepDistribution] = None,
-        weighted_loss: Union[int, SweepDistribution] = None,
+        ams_gradient: Optional[Union[bool, SweepDistribution]] = None,
+        beta1: Optional[Union[float, SweepDistribution]] = None,
+        beta2: Optional[Union[float, SweepDistribution]] = None,
+        distributed: Optional[Union[bool, SweepDistribution]] = None,
+        early_stopping: Optional[Union[bool, SweepDistribution]] = None,
+        early_stopping_delay: Optional[Union[int, SweepDistribution]] = None,
+        early_stopping_patience: Optional[Union[int, SweepDistribution]] = None,
+        enable_onnx_normalization: Optional[Union[bool, SweepDistribution]] = None,
+        evaluation_frequency: Optional[Union[int, SweepDistribution]] = None,
+        gradient_accumulation_step: Optional[Union[int, SweepDistribution]] = None,
+        layers_to_freeze: Optional[Union[int, SweepDistribution]] = None,
+        learning_rate: Optional[Union[float, SweepDistribution]] = None,
+        learning_rate_scheduler: Optional[Union[str, SweepDistribution]] = None,
+        model_name: Optional[Union[str, SweepDistribution]] = None,
+        momentum: Optional[Union[float, SweepDistribution]] = None,
+        nesterov: Optional[Union[bool, SweepDistribution]] = None,
+        number_of_epochs: Optional[Union[int, SweepDistribution]] = None,
+        number_of_workers: Optional[Union[int, SweepDistribution]] = None,
+        optimizer: Optional[Union[str, SweepDistribution]] = None,
+        random_seed: Optional[Union[int, SweepDistribution]] = None,
+        step_lr_gamma: Optional[Union[float, SweepDistribution]] = None,
+        step_lr_step_size: Optional[Union[int, SweepDistribution]] = None,
+        training_batch_size: Optional[Union[int, SweepDistribution]] = None,
+        validation_batch_size: Optional[Union[int, SweepDistribution]] = None,
+        warmup_cosine_lr_cycles: Optional[Union[float, SweepDistribution]] = None,
+        warmup_cosine_lr_warmup_epochs: Optional[Union[int, SweepDistribution]] = None,
+        weight_decay: Optional[Union[float, SweepDistribution]] = None,
+        training_crop_size: Optional[Union[int, SweepDistribution]] = None,
+        validation_crop_size: Optional[Union[int, SweepDistribution]] = None,
+        validation_resize_size: Optional[Union[int, SweepDistribution]] = None,
+        weighted_loss: Optional[Union[int, SweepDistribution]] = None,
     ) -> None:
         self.ams_gradient = ams_gradient
-        self.augmentations = augmentations
         self.beta1 = beta1
         self.beta2 = beta2
         self.distributed = distributed
@@ -186,7 +180,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     def _to_rest_object(self) -> ImageModelDistributionSettingsClassification:
         return ImageModelDistributionSettingsClassification(
             ams_gradient=_convert_to_rest_object(self.ams_gradient) if self.ams_gradient is not None else None,
-            augmentations=_convert_to_rest_object(self.augmentations) if self.augmentations is not None else None,
             beta1=_convert_to_rest_object(self.beta1) if self.beta1 is not None else None,
             beta2=_convert_to_rest_object(self.beta2) if self.beta2 is not None else None,
             distributed=_convert_to_rest_object(self.distributed) if self.distributed is not None else None,
@@ -271,7 +264,6 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
     def _from_rest_object(cls, obj: ImageModelDistributionSettingsClassification) -> "ImageClassificationSearchSpace":
         return cls(
             ams_gradient=_convert_from_rest_object(obj.ams_gradient) if obj.ams_gradient is not None else None,
-            augmentations=_convert_from_rest_object(obj.augmentations) if obj.augmentations is not None else None,
             beta1=_convert_from_rest_object(obj.beta1) if obj.beta1 is not None else None,
             beta2=_convert_from_rest_object(obj.beta2) if obj.beta2 is not None else None,
             distributed=_convert_from_rest_object(obj.distributed) if obj.distributed is not None else None,
@@ -352,13 +344,54 @@ class ImageClassificationSearchSpace(RestTranslatableMixin):
             weighted_loss=_convert_from_rest_object(obj.weighted_loss) if obj.weighted_loss is not None else None,
         )
 
+    @classmethod
+    def _from_search_space_object(cls, obj: SearchSpace) -> "ImageClassificationSearchSpace":
+        return cls(
+            ams_gradient=obj.ams_gradient if hasattr(obj, "ams_gradient") else None,
+            beta1=obj.beta1 if hasattr(obj, "beta1") else None,
+            beta2=obj.beta2 if hasattr(obj, "beta2") else None,
+            distributed=obj.distributed if hasattr(obj, "distributed") else None,
+            early_stopping=obj.early_stopping if hasattr(obj, "early_stopping") else None,
+            early_stopping_delay=obj.early_stopping_delay if hasattr(obj, "early_stopping_delay") else None,
+            early_stopping_patience=obj.early_stopping_patience if hasattr(obj, "early_stopping_patience") else None,
+            enable_onnx_normalization=obj.enable_onnx_normalization
+            if hasattr(obj, "enable_onnx_normalization")
+            else None,
+            evaluation_frequency=obj.evaluation_frequency if hasattr(obj, "evaluation_frequency") else None,
+            gradient_accumulation_step=obj.gradient_accumulation_step
+            if hasattr(obj, "gradient_accumulation_step")
+            else None,
+            layers_to_freeze=obj.layers_to_freeze if hasattr(obj, "layers_to_freeze") else None,
+            learning_rate=obj.learning_rate if hasattr(obj, "learning_rate") else None,
+            learning_rate_scheduler=obj.learning_rate_scheduler if hasattr(obj, "learning_rate_scheduler") else None,
+            model_name=obj.model_name if hasattr(obj, "model_name") else None,
+            momentum=obj.momentum if hasattr(obj, "momentum") else None,
+            nesterov=obj.nesterov if hasattr(obj, "nesterov") else None,
+            number_of_epochs=obj.number_of_epochs if hasattr(obj, "number_of_epochs") else None,
+            number_of_workers=obj.number_of_workers if hasattr(obj, "number_of_workers") else None,
+            optimizer=obj.optimizer if hasattr(obj, "optimizer") else None,
+            random_seed=obj.random_seed if hasattr(obj, "random_seed") else None,
+            step_lr_gamma=obj.step_lr_gamma if hasattr(obj, "step_lr_gamma") else None,
+            step_lr_step_size=obj.step_lr_step_size if hasattr(obj, "step_lr_step_size") else None,
+            training_batch_size=obj.training_batch_size if hasattr(obj, "training_batch_size") else None,
+            validation_batch_size=obj.validation_batch_size if hasattr(obj, "validation_batch_size") else None,
+            warmup_cosine_lr_cycles=obj.warmup_cosine_lr_cycles if hasattr(obj, "warmup_cosine_lr_cycles") else None,
+            warmup_cosine_lr_warmup_epochs=obj.warmup_cosine_lr_warmup_epochs
+            if hasattr(obj, "warmup_cosine_lr_warmup_epochs")
+            else None,
+            weight_decay=obj.weight_decay if hasattr(obj, "weight_decay") else None,
+            training_crop_size=obj.training_crop_size if hasattr(obj, "training_crop_size") else None,
+            validation_crop_size=obj.validation_crop_size if hasattr(obj, "validation_crop_size") else None,
+            validation_resize_size=obj.validation_resize_size if hasattr(obj, "validation_resize_size") else None,
+            weighted_loss=obj.weighted_loss if hasattr(obj, "weighted_loss") else None,
+        )
+
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ImageClassificationSearchSpace):
             return NotImplemented
 
         return (
             self.ams_gradient == other.ams_gradient
-            and self.augmentations == other.augmentations
             and self.beta1 == other.beta1
             and self.beta2 == other.beta2
             and self.distributed == other.distributed

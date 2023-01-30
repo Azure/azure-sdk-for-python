@@ -3,12 +3,12 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 import azure.ai.ml._schema._datastore as DatastoreSchemaDir
 from azure.ai.ml import load_datastore
-from azure.ai.ml._restclient.v2022_02_01_preview import models as models_preview
-from azure.ai.ml._restclient.v2022_05_01.models import AzureBlobDatastore as RestAzureBlobDatastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
-from azure.ai.ml._restclient.v2022_05_01.models import AzureFileDatastore as RestAzureFileDatastore
-from azure.ai.ml._restclient.v2022_05_01.models import NoneDatastoreCredentials, ServicePrincipalDatastoreCredentials
+from azure.ai.ml._restclient.v2022_10_01_preview import models as models_preview
+from azure.ai.ml._restclient.v2022_10_01.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen1Datastore as RestAzureDataLakeGen1Datastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import NoneDatastoreCredentials, ServicePrincipalDatastoreCredentials
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import DATASTORE_SCHEMA_TYPES
 from azure.ai.ml.entities import (
@@ -18,13 +18,13 @@ from azure.ai.ml.entities import (
     AzureFileDatastore,
     Datastore,
 )
+from azure.ai.ml.entities._credentials import (
+    AccountKeyConfiguration,
+    NoneCredentialConfiguration,
+    ServicePrincipalConfiguration,
+)
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
 from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosKeytabCredentials, KerberosPasswordCredentials
-from azure.ai.ml.entities._datastore.credentials import (
-    AccountKeyCredentials,
-    NoneCredentials,
-    ServicePrincipalCredentials,
-)
 
 kerberos_pw_yml = "hdfs_kerberos_pw.yml"
 kerberos_keytab_yml = "hdfs_kerberos_keytab.yml"
@@ -39,6 +39,7 @@ def b64read(p):
 
 @pytest.mark.unittest
 @pytest.mark.skip(reason="Disable until preview release")
+@pytest.mark.data_experiences_test
 class TestHdfsDatastore:
     @pytest.mark.parametrize(
         "path, cred_type, is_key_tab",
@@ -132,7 +133,7 @@ class TestDatastore:
         internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureFileDatastore)
         assert cfg["account_name"] == internal_ds.account_name
-        assert isinstance(internal_ds.credentials, AccountKeyCredentials)
+        assert isinstance(internal_ds.credentials, AccountKeyConfiguration)
         assert cfg["credentials"]["account_key"] == internal_ds.credentials.account_key
         assert cfg["file_share_name"] == internal_ds.file_share_name
         # test REST translation
@@ -155,7 +156,7 @@ class TestDatastore:
         internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureBlobDatastore)
         assert cfg["account_name"] == internal_ds.account_name
-        assert isinstance(internal_ds.credentials, AccountKeyCredentials)
+        assert isinstance(internal_ds.credentials, AccountKeyConfiguration)
         assert cfg["credentials"]["account_key"] == internal_ds.credentials.account_key
         assert cfg["container_name"] == internal_ds.container_name
         # test REST translation
@@ -178,7 +179,7 @@ class TestDatastore:
         internal_ds = load_datastore(test_path)
         assert isinstance(internal_ds, AzureBlobDatastore)
         assert cfg["account_name"] == internal_ds.account_name
-        assert isinstance(internal_ds.credentials, NoneCredentials)
+        assert isinstance(internal_ds.credentials, NoneCredentialConfiguration)
         assert cfg["container_name"] == internal_ds.container_name
         # test REST translation
         datastore_resource = internal_ds._to_rest_object()
@@ -191,7 +192,7 @@ class TestDatastore:
         assert isinstance(ds_properties.credentials, NoneDatastoreCredentials)
         # test the REST to internal translation
         internal_ds_from_rest = Datastore._from_rest_object(datastore_resource)
-        assert isinstance(internal_ds_from_rest.credentials, NoneCredentials)
+        assert isinstance(internal_ds_from_rest.credentials, NoneCredentialConfiguration)
         assert internal_ds_from_rest.credentials == internal_ds.credentials
         assert internal_ds_from_rest == internal_ds
 
@@ -203,7 +204,7 @@ class TestDatastore:
         assert cfg["store_name"] == internal_ds.store_name
         cfg_credential = cfg["credentials"]
         internal_credential = internal_ds.credentials
-        assert isinstance(internal_credential, ServicePrincipalCredentials)
+        assert isinstance(internal_credential, ServicePrincipalConfiguration)
         assert cfg_credential["tenant_id"] == internal_credential.tenant_id
         assert cfg_credential["client_id"] == internal_credential.client_id
         assert cfg_credential["client_secret"] == internal_credential.client_secret
@@ -227,7 +228,7 @@ class TestDatastore:
         assert cfg["account_name"] == internal_ds.account_name
         cfg_credential = cfg["credentials"]
         internal_credential = internal_ds.credentials
-        assert isinstance(internal_credential, ServicePrincipalCredentials)
+        assert isinstance(internal_credential, ServicePrincipalConfiguration)
         assert cfg_credential["tenant_id"] == internal_credential.tenant_id
         assert cfg_credential["client_id"] == internal_credential.client_id
         assert cfg_credential["client_secret"] == internal_credential.client_secret
@@ -248,7 +249,7 @@ class TestDatastore:
     def assert_rest_internal_service_principal_equal(
         self,
         rest_service_principal: ServicePrincipalDatastoreCredentials,
-        internal_credential: ServicePrincipalCredentials,
+        internal_credential: ServicePrincipalConfiguration,
     ) -> None:
         assert rest_service_principal
         assert rest_service_principal.tenant_id

@@ -22,7 +22,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def search_point_of_interest_category():
-    # [START search_point_of_interest_category]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -32,7 +31,6 @@ def search_point_of_interest_category():
 
     print("Get Search POI Category:")
     print(result)
-    # [END search_point_of_interest_category]
 
 if __name__ == '__main__':
     search_point_of_interest_category()

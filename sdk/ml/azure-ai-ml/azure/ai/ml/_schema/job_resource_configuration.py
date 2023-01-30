@@ -4,15 +4,18 @@
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-
 from .resource_configuration import ResourceConfigurationSchema
 
 
 class JobResourceConfigurationSchema(ResourceConfigurationSchema):
     shm_size = fields.Str(
         metadata={
-            "description": "The size of the docker container's shared memory block. This should be in the format of `<number><unit>` where number as to be greater than 0 and the unit can be one of `b` (bytes), `k` (kilobytes), `m` (megabytes), or `g` (gigabytes)."
+            "description": (
+                "The size of the docker container's shared memory block. "
+                "This should be in the format of `<number><unit>` where number as "
+                "to be greater than 0 and the unit can be one of "
+                "`b` (bytes), `k` (kilobytes), `m` (megabytes), or `g` (gigabytes)."
+            )
         }
     )
     docker_args = fields.Str(metadata={"description": "arguments to pass to the Docker run command."})

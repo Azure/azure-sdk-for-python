@@ -4,11 +4,10 @@
 # pylint: disable=protected-access
 
 import logging
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.import_job import ImportJobSchema
@@ -20,6 +19,7 @@ from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._inputs_outputs import Output
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, from_rest_inputs_to_dataset_literal
 from azure.ai.ml.entities._job.import_job import ImportJob, ImportSource
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 from ..._schema import PathAwareSchema
 from .._util import convert_ordered_dict_to_dict, load_from_dict, validate_attribute_type
@@ -31,6 +31,9 @@ module_logger = logging.getLogger(__name__)
 class Import(BaseNode):
     """Base class for import node, used for import component version
     consumption.
+
+    You should not instantiate this class directly. Instead, you should
+    create from a builder function.
 
     :param component: Id or instance of the import component/job to be run for the step
     :type component: ImportComponent
@@ -53,8 +56,8 @@ class Import(BaseNode):
         self,
         *,
         component: Union[str, ImportComponent],
-        inputs: Dict[str, str] = None,
-        outputs: Dict[str, Output] = None,
+        inputs: Optional[Dict[str, str]] = None,
+        outputs: Optional[Dict[str, Output]] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -132,16 +135,6 @@ class Import(BaseNode):
         return import_job
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Import":
-        obj = BaseNode._rest_object_to_init_params(obj)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        return Import(**obj)
-
-    @classmethod
     def _load_from_rest_job(cls, obj: JobBaseData) -> "Import":
         from .import_func import import_job
 
@@ -196,7 +189,7 @@ class Import(BaseNode):
         msg = "Import can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
             target=ErrorTarget.COMMAND_JOB,
             error_type=ValidationErrorType.INVALID_VALUE,
         )

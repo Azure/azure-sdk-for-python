@@ -6,15 +6,15 @@ import pytest
 import yaml
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
-from test_utilities.utils import verify_entity_load_and_dump
+from test_utilities.utils import omit_with_wildcard, verify_entity_load_and_dump
 
-from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._ml_exceptions import ValidationException
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase as RestJob
+from azure.ai.ml import MLClient, dsl, load_component, load_job
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
 from azure.ai.ml.automl import classification
 from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import Spark
 from azure.ai.ml.entities._job.automl.image import (
@@ -25,7 +25,9 @@ from azure.ai.ml.entities._job.automl.image import (
 )
 from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
+from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
@@ -40,6 +42,7 @@ def load_pipeline_entity_from_rest_json(job_dict) -> PipelineJob:
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_PIPELINE_JOB_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJobEntity:
     def test_automl_node_in_pipeline_regression(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.yml"
@@ -89,7 +92,7 @@ class TestPipelineJobEntity:
         # same regression node won't load as AutoMLRegressionSchema since there's data binding
         with pytest.raises(ValidationError) as e:
             AutoMLRegressionSchema(context={"base_path": "./"}).load(expected_dict)
-        assert "Value ${{parent.inputs.primary_metric}} passed is not in set" in str(e.value)
+        assert "Value '${{parent.inputs.primary_metric}}' passed is not in set" in str(e.value)
 
     def test_automl_node_in_pipeline_classification(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_classification.yml"
@@ -159,16 +162,16 @@ class TestPipelineJobEntity:
         "rest_job_file, node_name",
         [
             (
-                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.json",
-                "hello_automl_regression",
+                    "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_regression.json",
+                    "hello_automl_regression",
             ),
             (
-                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/rest_pipeline_with_automl_output_binding.json",
-                "classification_node",
+                    "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/rest_pipeline_with_automl_output_binding.json",
+                    "classification_node",
             ),
             (
-                "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/rest_pipeline_with_automl_output.json",
-                "hello_automl_regression",
+                    "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/rest_pipeline_with_automl_output.json",
+                    "hello_automl_regression",
             ),
         ],
     )
@@ -192,6 +195,71 @@ class TestPipelineJobEntity:
             job_dict = yaml.safe_load(f)
         pipeline = load_pipeline_entity_from_rest_json(job_dict)
         assert pipeline.jobs == {}
+
+    def test_command_job_with_invalid_mode_type_in_pipeline_deserialize(self):
+        # this json file is to test whether the client can handle the dirty data of node type/mode of the originally
+        # submitted job due to API switching
+        rest_job_file = "./tests/test_configs/pipeline_jobs/invalid/with_invalid_job_input_type_mode.json"
+        with open(rest_job_file, "r") as f:
+            job_dict = yaml.safe_load(f)
+        rest_obj = RestJob.from_dict(json.loads(json.dumps(job_dict)))
+        pipeline = PipelineJob._from_rest_object(rest_obj)
+        pipeline_dict = pipeline._to_dict()
+        assert pydash.omit(pipeline_dict["jobs"], *["properties", "hello_python_world_job.properties"]) == {
+            "hello_python_world_job": {
+                "inputs": {
+                    "sample_input_data": {
+                        'mode': "ro_mount",
+                        "type": "uri_folder",
+                        'path': "azureml://datastores/workspaceblobstore/paths/LocalUpload/22fd2a62-9759-4843-ab92-5bd79c35f6f0/data/",
+                    },
+                    "sample_input_string": {
+                        "mode": "ro_mount",
+                        "path": "${{parent.inputs.pipeline_sample_input_string}}",
+                    },
+                },
+                "outputs": {"sample_output_data": "${{parent.outputs.pipeline_sample_output_data}}"},
+                'component': "azureml:/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/components/azureml_anonymous/versions/9904ff48-9cb2-4733-ad1c-eb1eb9940a19",
+                "type": "command",
+                "compute": "azureml:cpu-cluster",
+            }
+        }
+        assert pipeline_dict["inputs"] == {"pipeline_sample_input_string": "Hello_Pipeline_World"}
+        assert pipeline_dict["outputs"] == {"pipeline_sample_output_data": {"mode": "upload", "type": "uri_folder"}}
+
+        pipeline_rest_dict = pipeline._to_rest_object().as_dict()
+        pipeline_rest_dict["properties"]["inputs"] == {
+            "pipeline_sample_input_string": {"job_input_type": "literal", "value": "Hello_Pipeline_World"}
+        }
+        pipeline_rest_dict["properties"]["outputs"] == {
+            "pipeline_sample_output_data": {"mode": "Upload", "job_output_type": "uri_folder"}
+        }
+        pipeline_rest_dict["properties"]["jobs"] == {
+            "hello_python_world_job": {
+                "name": "hello_python_world_job",
+                "type": "command",
+                "computeId": "cpu-cluster",
+                "inputs": {
+                    "sample_input_string": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.pipeline_sample_input_string}}",
+                        "mode": "ReadOnlyMount",
+                    },
+                    "sample_input_data": {
+                        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/553d1a28-7933-4017-8321-96c2a9f1fc44/data/",
+                        "job_input_type": "uri_folder",
+                    },
+                },
+                "outputs": {
+                    "sample_output_data": {
+                        "value": "${{parent.outputs.pipeline_sample_output_data}}",
+                        "type": "literal",
+                    }
+                },
+                "_source": "REMOTE.WORKSPACE.COMPONENT",
+                "componentId": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master/components/azureml_anonymous/versions/6ffc3ff9-8801-4cc4-9285-9f8052b946fe",
+            }
+        }
 
     def test_automl_node_in_pipeline_with_binding(self):
         # classification node
@@ -257,23 +325,17 @@ class TestPipelineJobEntity:
             "_source": "YAML.JOB",
             "componentId": "xxx",
             "computeId": "xxx",
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "mltable_output": {
                     "job_input_type": "literal",
                     "value": "${{parent.jobs.regression_node.outputs.best_model}}",
                 }
             },
-            "limits": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
 
     def test_automl_node_in_pipeline_text_classification(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification.yml"
         job = load_job(source=test_path)
@@ -292,7 +354,7 @@ class TestPipelineJobEntity:
 
         assert actual_dict == {
             "featurization": {"dataset_language": "eng"},
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -305,7 +367,7 @@ class TestPipelineJobEntity:
         }
 
     def test_automl_node_in_pipeline_text_classification_multilabel(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_text_classification_multilabel.yml"
@@ -327,7 +389,7 @@ class TestPipelineJobEntity:
         )
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -356,7 +418,7 @@ class TestPipelineJobEntity:
         actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["automl_text_ner"], omit_fields)
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "timeout_minutes": 60, "max_nodes": 1},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -369,11 +431,11 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_multiclass_classification(
-        self,
-        mock_machinelearning_client: MLClient,
-        mocker: MockFixture,
-        run_type: str,
-        tmp_path: Path,
+            self,
+            mock_machinelearning_client: MLClient,
+            mocker: MockFixture,
+            run_type: str,
+            tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multiclass_classification.yml"
 
@@ -403,7 +465,7 @@ class TestPipelineJobEntity:
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -415,7 +477,6 @@ class TestPipelineJobEntity:
             "validation_data": "${{parent.inputs.image_multiclass_classification_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -447,11 +508,11 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_multilabel_classification(
-        self,
-        mock_machinelearning_client: MLClient,
-        mocker: MockFixture,
-        run_type: str,
-        tmp_path: Path,
+            self,
+            mock_machinelearning_client: MLClient,
+            mocker: MockFixture,
+            run_type: str,
+            tmp_path: Path,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_multilabel_classification.yml"
 
@@ -481,7 +542,7 @@ class TestPipelineJobEntity:
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "iou",
@@ -493,7 +554,6 @@ class TestPipelineJobEntity:
             "validation_data": "${{parent.inputs.image_multilabel_classification_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -525,7 +585,7 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_object_detection(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type: str, tmp_path: Path
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture, run_type: str, tmp_path: Path
     ):
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_object_detection.yml"
 
@@ -555,7 +615,7 @@ class TestPipelineJobEntity:
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -567,7 +627,6 @@ class TestPipelineJobEntity:
             "validation_data": "${{parent.inputs.image_object_detection_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -600,11 +659,11 @@ class TestPipelineJobEntity:
 
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
     def test_automl_node_in_pipeline_image_instance_segmentation(
-        self,
-        mock_machinelearning_client: MLClient,
-        mocker: MockFixture,
-        run_type: str,
-        tmp_path: Path,
+            self,
+            mock_machinelearning_client: MLClient,
+            mocker: MockFixture,
+            run_type: str,
+            tmp_path: Path,
     ):
         test_path = (
             "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_image_instance_segmentation.yml"
@@ -636,7 +695,7 @@ class TestPipelineJobEntity:
         )
 
         expected_dict = {
-            "limits": {"timeout_minutes": 60},
+            "limits": {"timeout_minutes": 60, "max_concurrent_trials": 4, "max_trials": 20},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "mean_average_precision",
@@ -648,7 +707,6 @@ class TestPipelineJobEntity:
             "validation_data": "${{parent.inputs.image_instance_segmentation_validate_data}}",
             "sweep": {
                 "sampling_algorithm": "random",
-                "limits": {"max_concurrent_trials": 4, "max_trials": 20},
                 "early_termination": {
                     "evaluation_interval": 10,
                     "delay_evaluation": 0,
@@ -682,41 +740,26 @@ class TestPipelineJobEntity:
     def test_spark_node_in_pipeline(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml"
 
-        job = load_job(path=test_path)
+        job = load_job(test_path)
         assert isinstance(job, PipelineJob)
         node = next(iter(job.jobs.values()))
         assert isinstance(node, Spark)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
         )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
 
         rest_job_dict = job._to_rest_object().as_dict()
-        omit_fields = []  # "name", "display_name", "experiment_name", "properties"
-        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["spark_job"], omit_fields)
+        omit_fields = ["properties"]  # "name", "display_name", "experiment_name", "properties"
+        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["add_greeting_column"], omit_fields)
 
         expected_dict = {
-            "type": "spark",
-            "resources": None,
-            "entry": {"file": "entry.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-            "py_files": ["utils.zip"],
-            "jars": ["scalaproj.jar"],
-            "files": ["my_files.txt"],
-            "archives": None,
-            "identity": None,
-            "args": "--file_input1 ${{inputs.file_input1}} --file_input2 ${{inputs.file_input2}} --output ${{outputs.output}}",
-            "name": "spark_job",
-            "display_name": None,
-            "tags": {},
-            "computeId": "xxx",
-            "inputs": {
-                "file_input1": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
-                "file_input2": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
-            },
-            "outputs": {"output": {"value": "${{parent.outputs.output}}", "type": "literal"}},
-            "_source": "YAML.JOB",
+            "_source": "YAML.COMPONENT",
+            "args": "--file_input ${{inputs.file_input}}",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -724,52 +767,210 @@ class TestPipelineJobEntity:
                 "spark.executor.instances": 1,
                 "spark.executor.memory": "1g",
             },
-            "componentId": "xxx",
+            "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+            "files": ["my_files.txt"],
+            "identity": {"identity_type": "Managed"},
+            "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+            "name": "add_greeting_column",
+            "py_files": ["utils.zip"],
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
+            "type": "spark",
         }
         assert actual_dict == expected_dict
 
+        actual_dict = pydash.omit(rest_job_dict["properties"]["jobs"]["count_by_row"], omit_fields)
+
+        expected_dict = {
+            "_source": "YAML.COMPONENT",
+            "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
+            "componentId": "",
+            "computeId": "",
+            "conf": {
+                "spark.driver.cores": 2,
+                "spark.driver.memory": "1g",
+                "spark.executor.cores": 1,
+                "spark.executor.instances": 1,
+                "spark.executor.memory": "1g",
+            },
+            "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+            "files": ["my_files.txt"],
+            "identity": {"identity_type": "Managed"},
+            "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+            "jars": ["scalaproj.jar"],
+            "name": "count_by_row",
+            "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
+            "type": "spark",
+        }
+        assert actual_dict == expected_dict
+
+    def test_default_user_identity_if_empty_identity_input(self):
+        test_path = "./tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml"
+        job = load_job(test_path)
+        omit_fields = [
+            "jobs.sample_word.componentId",
+            "jobs.count_word.componentId",
+            "jobs.sample_word.properties",
+            "jobs.count_word.properties",
+        ]
+        actual_job = pydash.omit(job._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            "description": "submit a shakespear sample and word spark job in pipeline",
+            "inputs": {
+                "input1": {"job_input_type": "uri_file", "mode": "Direct", "uri": "./dataset/shakespeare.txt"},
+                "sample_rate": {"job_input_type": "literal", "value": "0.01"},
+            },
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "jobs": {
+                "count_word": {
+                    "_source": "YAML.JOB",
+                    "args": "--input1 ${{inputs.input1}}",
+                    "conf": {
+                        "spark.driver.cores": 1,
+                        "spark.driver.memory": "2g",
+                        "spark.executor.cores": 2,
+                        "spark.executor.instances": 4,
+                        "spark.executor.memory": "2g",
+                    },
+                    "entry": {"file": "wordcount.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "identity": {"identity_type": "UserIdentity"},
+                    "inputs": {
+                        "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
+                    },
+                    "name": "count_word",
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
+                    "type": "spark",
+                },
+                "sample_word": {
+                    "_source": "YAML.JOB",
+                    "args": "--input1 ${{inputs.input1}} --output2 "
+                            "${{outputs.output1}} --my_sample_rate "
+                            "${{inputs.sample_rate}}",
+                    "conf": {
+                        "spark.driver.cores": 1,
+                        "spark.driver.memory": "2g",
+                        "spark.dynamicAllocation.enabled": True,
+                        "spark.dynamicAllocation.maxExecutors": 4,
+                        "spark.dynamicAllocation.minExecutors": 1,
+                        "spark.executor.cores": 2,
+                        "spark.executor.instances": 1,
+                        "spark.executor.memory": "2g",
+                    },
+                    "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "identity": {"identity_type": "UserIdentity"},
+                    "inputs": {
+                        "input1": {"job_input_type": "literal", "value": "${{parent.inputs.input1}}"},
+                        "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
+                    },
+                    "name": "sample_word",
+                    "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
+                    "type": "spark",
+                },
+            },
+            "outputs": {"output1": {"job_output_type": "uri_file", "mode": "Direct"}},
+            "properties": {},
+            "settings": {"_source": "YAML.JOB"},
+            "tags": {},
+        }
+
     def test_spark_node_in_pipeline_with_dynamic_allocation_disabled(
-        self,
+            self,
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_dynamic_allocation_disabled.yml"
-        job = load_job(path=test_path)
+        job = load_job(test_path)
         with pytest.raises(ValidationException) as ve:
             job._to_rest_object().as_dict()
             assert ve.message == "Should not specify min or max executors when dynamic allocation is disabled."
 
+    def test_spark_node_in_pipeline_with_invalid_code(
+            self,
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_code.yml"
+        job = load_job(test_path)
+        result = job._validate()
+        assert 'jobs.hello_world.component.entry' in result.error_messages
+
+    def test_spark_node_in_pipeline_with_git_code(
+            self,
+    ):
+        test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_git_code.yml"
+        job = load_job(test_path)
+        job._validate()
+
     def test_infer_pipeline_output_type_as_node_type(
-        self,
+            self,
     ) -> None:
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
         )
         assert (
-            pipeline_job.jobs["hello_world_inline_parallel_tabular_job_1"].outputs["job_output_file"].type
-            == AssetTypes.URI_FILE
+                pipeline_job.jobs["hello_world_inline_parallel_tabular_job_1"].outputs["job_output_file"].type
+                == AssetTypes.URI_FILE
         )
 
     @pytest.mark.parametrize(
-        "pipeline_job_path, expected_type",
+        "pipeline_job_path, expected_type, expected_components",
         [
             (
-                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input.yml",
-                "uri_folder",
+                    "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input.yml",
+                    "uri_folder",
+                    {
+                        "score_job": {
+                            "_source": "YAML.JOB",
+                            "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
+                            "is_deterministic": True,
+                            "outputs": {"score_output": {"type": "uri_folder"}},
+                            "type": "command",
+                            "version": "1",
+                        },
+                    },
             ),
             (
-                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input2.yml",
-                "mltable",
+                    "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_literal_output_binding_to_inline_job_input2.yml",
+                    "mltable",
+                    {
+                        "score_job": {
+                            "_source": "YAML.JOB",
+                            "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "inputs": {"model_input": {"type": "mltable"}, "test_data": {"type": "uri_folder"}},
+                            "is_deterministic": True,
+                            "outputs": {"score_output": {"type": "uri_folder"}},
+                            "type": "command",
+                            "version": "1",
+                        },
+                    },
             ),
             (
-                "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_output_binding_to_inline_job_input.yml",
-                "uri_folder",
+                    "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_registered_component_output_binding_to_inline_job_input.yml",
+                    "uri_folder",
+                    {
+                        "score_job": {
+                            "_source": "YAML.JOB",
+                            "command": 'echo "hello" && echo "world" && echo "train" > world.txt',
+                            "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
+                            "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
+                            "is_deterministic": True,
+                            "outputs": {"score_output": {"type": "uri_folder"}},
+                            "type": "command",
+                            "version": "1",
+                        },
+                    },
             ),
         ],
     )
     def test_pipeline_job_with_inline_command_job_input_binding_to_registered_component_job_output(
-        self,
-        client: MLClient,
-        pipeline_job_path: str,
-        expected_type,
+            self,
+            client: MLClient,
+            pipeline_job_path: str,
+            expected_type,
+            expected_components,
     ) -> None:
         pipeline_job = load_job(
             source=pipeline_job_path,
@@ -778,6 +979,16 @@ class TestPipelineJobEntity:
         assert actual_type == expected_type
         actual_type = pipeline_job.jobs["score_job"].component.inputs["model_input"].type
         assert actual_type == expected_type
+
+        # check component of pipeline job is expected
+        for name, expected_dict in expected_components.items():
+            actual_dict = pipeline_job.jobs[name].component._to_rest_object().as_dict()
+            omit_fields = [
+                "name",
+            ]
+
+            actual_dict = pydash.omit(actual_dict["properties"]["component_spec"], omit_fields)
+            assert actual_dict == expected_dict
 
     def test_pipeline_without_setting_binding_node(self, mock_machinelearning_client: MLClient, mocker: MockFixture):
         test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_without_setting_binding_node.yml"
@@ -807,13 +1018,7 @@ class TestPipelineJobEntity:
                 "train_job": {
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
@@ -832,11 +1037,11 @@ class TestPipelineJobEntity:
                 }
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
-            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+            "settings": {"_source": "YAML.JOB"},
         }
 
     def test_pipeline_with_only_setting_pipeline_level(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_only_setting_pipeline_level.yml"
         job = load_job(source=test_path)
@@ -865,13 +1070,7 @@ class TestPipelineJobEntity:
                 "train_job": {
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
@@ -891,8 +1090,6 @@ class TestPipelineJobEntity:
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "Upload"}},
             "settings": {
-                "default_compute": "xxx",
-                "default_datastore": "xxx",
                 "_source": "YAML.JOB",
             },
         }
@@ -909,8 +1106,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -928,13 +1124,7 @@ class TestPipelineJobEntity:
                 "train_job": {
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {
@@ -964,11 +1154,11 @@ class TestPipelineJobEntity:
                 }
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
-            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+            "settings": {"_source": "YAML.JOB"},
         }
 
     def test_pipeline_with_setting_binding_node_and_pipeline_level(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_setting_binding_node_and_pipeline_level.yml"
         job = load_job(source=test_path)
@@ -981,8 +1171,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -997,13 +1186,7 @@ class TestPipelineJobEntity:
                 "train_job": {
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {
@@ -1033,11 +1216,11 @@ class TestPipelineJobEntity:
                 }
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
-            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+            "settings": {"_source": "YAML.JOB"},
         }
 
     def test_pipeline_with_inline_job_setting_binding_node_and_pipeline_level(
-        self, mock_machinelearning_client: MLClient, mocker: MockFixture
+            self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ):
         test_path = "./tests/test_configs/dsl_pipeline/pipeline_with_set_binding_output_input/pipeline_with_inline_job_setting_binding_node_and_pipeline_level.yml"
         job = load_job(source=test_path)
@@ -1050,8 +1233,7 @@ class TestPipelineJobEntity:
 
         actual_dict = job._to_rest_object().as_dict()["properties"]
 
-        assert actual_dict == {
-            "properties": {},
+        assert pydash.omit(actual_dict, *["properties", "jobs.train_job.properties"]) == {
             "tags": {},
             "is_archived": False,
             "compute_id": "xxx",
@@ -1066,13 +1248,7 @@ class TestPipelineJobEntity:
                 "train_job": {
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {
@@ -1102,12 +1278,12 @@ class TestPipelineJobEntity:
                 }
             },
             "outputs": {"trained_model": {"job_output_type": "uri_folder", "mode": "ReadWriteMount"}},
-            "settings": {"default_compute": "xxx", "default_datastore": "xxx", "_source": "YAML.JOB"},
+            "settings": {"_source": "YAML.JOB"},
         }
 
     def test_pipeline_job_with_parameter_group(self):
         test_path = "./tests/test_configs/pipeline_jobs/pipeline_job_with_parameter_group.yml"
-        job: PipelineJob = load_job(path=test_path)
+        job: PipelineJob = load_job(test_path)
         assert isinstance(job.inputs.group, _GroupAttrDict)
         job.inputs.group.int_param = 5
         job.inputs.group.sub_group.str_param = "str"
@@ -1151,10 +1327,165 @@ class TestPipelineJobEntity:
             },
         }
 
-    def test_pipeline_with_init_finalize(self) -> None:
-        pipeline_job = load_job(path="./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
-        assert pipeline_job.settings.on_init == "a"
-        assert pipeline_job.settings.on_finalize == "c"
-        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
-        assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
-        assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"
+    def test_non_string_pipeline_node_input(self):
+        test_path = "./tests/test_configs/pipeline_jobs/rest_non_string_input_pipeline.json"
+        with open(test_path, "r") as f:
+            job_dict = yaml.safe_load(f)
+        pipeline = load_pipeline_entity_from_rest_json(job_dict)
+        pipeline_dict = pipeline._to_dict()
+        node_input_dict = pipeline_dict["jobs"]["error_analysis_job"]["inputs"]
+        # Assert integer value became str
+        assert node_input_dict == {
+            "max_depth": "3",
+            "min_child_samples": "20",
+            "num_leaves": "31",
+            "rai_insights_dashboard": {"path": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}"},
+        }
+        rest_pipeline_dict = pipeline._to_rest_object().as_dict()
+        rest_node_dict = pydash.omit_by(rest_pipeline_dict["properties"]["jobs"]["error_analysis_job"], lambda x: not x)
+        # Assert integer value became str
+        assert rest_node_dict == {
+            "_source": "REMOTE.REGISTRY",
+            "componentId": "azureml://registries/rai-test/components/microsoft_azureml_rai_tabular_erroranalysis/versions/dev.0.0.1.1662509117.preview",
+            "inputs": {
+                "max_depth": {"job_input_type": "literal", "value": "3"},
+                "min_child_samples": {"job_input_type": "literal", "value": "20"},
+                "num_leaves": {"job_input_type": "literal", "value": "31"},
+                "rai_insights_dashboard": {
+                    "job_input_type": "literal",
+                    "value": "${{parent.jobs.create_rai_job.outputs.rai_insights_dashboard}}",
+                },
+            },
+            "type": "command",
+        }
+
+    def test_job_properties(self):
+        pipeline_job: PipelineJob = load_job(
+            source="./tests/test_configs/pipeline_jobs/pipeline_job_with_properties.yml"
+        )
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
+        for name, node_dict in pipeline_dict["jobs"].items():
+            rest_node_dict = rest_pipeline_dict["jobs"][name]
+            assert len(node_dict["properties"]) == 1
+            assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
+            assert node_dict["properties"] == rest_node_dict["properties"]
+
+    def test_comment_in_pipeline(self) -> None:
+        pipeline_job = load_job(source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_comment.yml")
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"
+        assert rest_pipeline_dict["jobs"]["hello_world_component"]["comment"] == "arbitrary string"
+
+    def test_pipeline_node_default_output(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
+        pipeline: PipelineJob = load_job(source=test_path)
+
+        # pipeline level output
+        pipeline_output = pipeline.outputs["job_out_path_2"]
+        assert pipeline_output.mode == "upload"
+
+        # other node level output tests can be found in
+        # dsl/unittests/test_component_func.py::TestComponentFunc::test_component_outputs
+        # data-binding-expression
+        with pytest.raises(ValidationException, match="<class '.*'> does not support setting path."):
+            pipeline.jobs["merge_component_outputs"].outputs["component_out_path_1"].path = "xxx"
+
+    def test_pipeline_node_with_identity(self):
+        test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_identity.yml"
+        pipeline_job: PipelineJob = load_job(source=test_path)
+
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
+        assert actual_dict["jobs"] == {
+            'hello_world_component': {
+                'computeId': 'cpu-cluster',
+                'identity': {'type': 'user_identity'},
+                'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                   'value': '${{parent.inputs.job_in_number}}'},
+                           'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.inputs.job_in_path}}'}},
+                'name': 'hello_world_component',
+                'type': 'command'},
+            'hello_world_component_2': {
+                'computeId': 'cpu-cluster',
+                'identity': {'type': 'aml_token'},
+                'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                   'value': '${{parent.inputs.job_in_other_number}}'},
+                           'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.inputs.job_in_path}}'}},
+                'name': 'hello_world_component_2',
+                'type': 'command'},
+            'hello_world_component_3': {
+                'computeId': 'cpu-cluster',
+                'identity': {'type': 'user_identity'},
+                'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                   'value': '${{parent.inputs.job_in_other_number}}'},
+                           'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.inputs.job_in_path}}'}},
+                'name': 'hello_world_component_3',
+                'type': 'command'}
+        }
+
+    def test_pipeline_parameter_with_empty_value(self, client: MLClient) -> None:
+        input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
+
+        @group
+        class InputGroup:
+            group_empty_str: str = ""
+            group_none_str: str = None
+
+        # Construct pipeline
+        @dsl.pipeline(
+            default_compute="cpu-cluster",
+            description="This is the basic pipeline with empty_value",
+        )
+        def empty_value_pipeline(integer: int, boolean: bool, number: float,
+                                 str_param: str, empty_str: str, input_group: InputGroup):
+            input_types_func(component_in_string=str_param,
+                             component_in_ranged_integer=integer,
+                             component_in_boolean=boolean,
+                             component_in_ranged_number=number)
+            input_types_func(component_in_string=empty_str)
+            input_types_func(component_in_string=input_group.group_empty_str)
+            input_types_func(component_in_string=input_group.group_none_str)
+
+        pipeline = empty_value_pipeline(integer=0, boolean=False, number=0,
+                                        str_param="str_param", empty_str="", input_group=InputGroup())
+        rest_obj = pipeline._to_rest_object()
+        # Currently MFE not support pass empty str or None as pipeline input.
+        assert len(rest_obj.properties.inputs) == 4
+        assert "integer" in rest_obj.properties.inputs
+        assert "boolean" in rest_obj.properties.inputs
+        assert "number" in rest_obj.properties.inputs
+        assert "str_param" in rest_obj.properties.inputs
+
+    def test_pipeline_input_as_runsettings_value(self, client: MLClient) -> None:
+        input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
+
+        @dsl.pipeline(
+            default_compute="cpu-cluster",
+            description="Set pipeline input to runsettings",
+        )
+        def empty_value_pipeline(integer: int, boolean: bool, number: float,
+                                 str_param: str, shm_size: str):
+            component = input_types_func(component_in_string=str_param,
+                                         component_in_ranged_integer=integer,
+                                         component_in_boolean=boolean,
+                                         component_in_ranged_number=number)
+            component.resources = JobResourceConfiguration(
+                instance_count=integer,
+                shm_size=shm_size,
+            )
+
+        pipeline = empty_value_pipeline(integer=0, boolean=False, number=0,
+                                        str_param="str_param", shm_size="20g")
+        rest_obj = pipeline._to_rest_object()
+        expect_resource = {'instance_count': '${{parent.inputs.integer}}', 'shm_size': '${{parent.inputs.shm_size}}'}
+        assert rest_obj.properties.jobs["component"]["resources"] == expect_resource

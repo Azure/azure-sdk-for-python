@@ -17,6 +17,12 @@ class RestTranslatableMixin:
 
 
 class DictMixin(object):
+    def __contains__(self, item):
+        return self.__dict__.__contains__(item)
+
+    def __iter__(self):
+        return self.__dict__.__iter__()
+
     def __setitem__(self, key, item):
         # type: (Any, Any) -> None
         self.__dict__[key] = item
@@ -81,7 +87,7 @@ class DictMixin(object):
 
 
 class TelemetryMixin:
-    def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument
+    def _get_telemetry_values(self, *args, **kwargs):  # pylint: disable=unused-argument, no-self-use
         """Return the telemetry values of object."""
         return {}
 

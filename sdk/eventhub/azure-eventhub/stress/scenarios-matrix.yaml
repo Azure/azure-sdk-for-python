@@ -1,0 +1,28 @@
+matrix:
+  image:
+    - Dockerfile38
+  scenarios:
+    event-async:
+      testTarget: event-async
+    event-sync:
+      testTarget: event-sync
+    batch-async:
+      testTarget: batch-async
+    batch-sync:
+      testTarget: batch-sync
+    bplistsync:
+      testTarget:  bplistsync
+    bpasync:
+      testTarget:   bpasync
+    bplistasync:
+      testTarget: bplistasync
+    bpsync:
+      testTarget:  bpsync
+    syncwebsockets:
+      testTarget:  syncwebsockets
+    asyncwebsockets:
+      testTarget: asyncwebsockets
+    sync-batch-web:
+      testTarget: sync-batch-web
+    async-batch-web:
+      testTarget: async-batch-web

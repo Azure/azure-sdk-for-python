@@ -7,7 +7,7 @@ import logging
 import time
 from typing import TYPE_CHECKING
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 from ..._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 

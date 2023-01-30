@@ -21,7 +21,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def get_geometries():
-    # [START get_geometries]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -30,7 +29,6 @@ def get_geometries():
     result = maps_search_client.get_geometries(geometry_ids=["8bceafe8-3d98-4445-b29b-fd81d3e9adf5"])
 
     print(result[0].geometry_data)
-    # [END get_geometries]
 
 if __name__ == '__main__':
     get_geometries()

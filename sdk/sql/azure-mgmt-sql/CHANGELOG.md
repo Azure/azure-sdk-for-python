@@ -1,5 +1,83 @@
 # Release History
 
+## 4.0.0b7 (2023-01-29)
+
+### Features Added
+
+  - Model InstanceFailoverGroup has a new parameter secondary_type
+  - Model ManagedDatabase has a new parameter cross_subscription_restorable_dropped_database_id
+  - Model ManagedDatabase has a new parameter cross_subscription_source_database_id
+  - Model ManagedDatabase has a new parameter cross_subscription_target_managed_instance_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_restorable_dropped_database_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_source_database_id
+  - Model ManagedDatabaseUpdate has a new parameter cross_subscription_target_managed_instance_id
+
+## 4.0.0b6 (2022-12-30)
+
+### Features Added
+
+  - Model Database has a new parameter preferred_enclave_type
+  - Model DatabaseUpdate has a new parameter preferred_enclave_type
+
+## 4.0.0b5 (2022-11-10)
+
+### Features Added
+
+  - Model ServerDevOpsAuditingSettings has a new parameter is_managed_identity_in_use
+
+## 4.0.0b4 (2022-09-29)
+
+### Features Added
+
+  - Added operation ManagedDatabasesOperations.begin_cancel_move
+  - Added operation ManagedDatabasesOperations.begin_complete_move
+  - Added operation ManagedDatabasesOperations.begin_start_move
+  - Added operation group DatabaseSqlVulnerabilityAssessmentBaselinesOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentExecuteScanOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentRuleBaselinesOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentScanResultOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentScansOperations
+  - Added operation group DatabaseSqlVulnerabilityAssessmentsSettingsOperations
+  - Added operation group ManagedDatabaseAdvancedThreatProtectionSettingsOperations
+  - Added operation group ManagedDatabaseMoveOperationsOperations
+  - Added operation group ManagedInstanceAdvancedThreatProtectionSettingsOperations
+  - Added operation group ManagedInstanceDtcsOperations
+  - Added operation group SqlVulnerabilityAssessmentBaselineOperations
+  - Added operation group SqlVulnerabilityAssessmentBaselinesOperations
+  - Added operation group SqlVulnerabilityAssessmentExecuteScanOperations
+  - Added operation group SqlVulnerabilityAssessmentRuleBaselineOperations
+  - Added operation group SqlVulnerabilityAssessmentRuleBaselinesOperations
+  - Added operation group SqlVulnerabilityAssessmentScanResultOperations
+  - Added operation group SqlVulnerabilityAssessmentScansOperations
+  - Added operation group SqlVulnerabilityAssessmentsOperations
+  - Added operation group SqlVulnerabilityAssessmentsSettingsOperations
+  - Added operation group SynapseLinkWorkspacesOperations
+  - Model ManagedDatabase has a new parameter storage_container_identity
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_backup_type
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_restore_plan_size_mb
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter current_restored_size_mb
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter diff_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter full_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter log_backup_sets
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_queued
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_restored
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_restoring
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_skipped
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter number_of_files_unrestorable
+  - Model ManagedDatabaseRestoreDetailsResult has a new parameter type_properties_type
+  - Model ManagedDatabaseUpdate has a new parameter storage_container_identity
+  - Model VirtualCluster has a new parameter version
+  - Model VirtualClusterUpdate has a new parameter version
+
+### Breaking Changes
+
+  - Model VirtualCluster no longer has parameter family
+  - Model VirtualCluster no longer has parameter maintenance_configuration_id
+  - Model VirtualClusterUpdate no longer has parameter family
+  - Model VirtualClusterUpdate no longer has parameter maintenance_configuration_id
+  - Renamed operation ReplicationLinksOperations.delete to ReplicationLinksOperations.begin_delete
+  - Renamed operation VirtualClustersOperations.update_dns_servers to VirtualClustersOperations.begin_update_dns_servers
+
 ## 4.0.0b3 (2022-07-06)
 
 **Features**

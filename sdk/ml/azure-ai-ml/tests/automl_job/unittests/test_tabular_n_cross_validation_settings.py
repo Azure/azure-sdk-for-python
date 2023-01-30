@@ -2,7 +2,7 @@ from typing import Union
 
 import pytest
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoNCrossValidations, CustomNCrossValidations, JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoNCrossValidations, CustomNCrossValidations, JobBase
 from azure.ai.ml.automl import classification, forecasting, regression
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
@@ -12,6 +12,7 @@ from azure.ai.ml.entities._job.automl.tabular.forecasting_job import Forecasting
 from azure.ai.ml.entities._job.automl.tabular.regression_job import RegressionJob
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestNCrossValidationSettings:
     JOBS = [classification, regression, forecasting]

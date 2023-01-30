@@ -3,15 +3,17 @@
 # ---------------------------------------------------------
 
 import logging
+from typing import Optional
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2021_10_01.models import CodeConfiguration as RestCodeConfiguration
+from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._assets import Code
+from azure.ai.ml.entities._mixins import DictMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-class CodeConfiguration:
+class CodeConfiguration(DictMixin):
     """CodeConfiguration.
 
     :param code: Code entity, defaults to None
@@ -22,8 +24,8 @@ class CodeConfiguration:
 
     def __init__(
         self,
-        code: str = None,
-        scoring_script: str = None,
+        code: Optional[str] = None,
+        scoring_script: Optional[str] = None,
     ):
         self.code = code
         self._scoring_script = scoring_script
@@ -43,6 +45,7 @@ class CodeConfiguration:
                 target=ErrorTarget.CODE,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
 
     @staticmethod

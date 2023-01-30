@@ -37,6 +37,7 @@ cloud_custom_string = json.dumps(cloud_custom_dict)
 cloud_custom_bytes = cloud_custom_string.encode("utf-8")
 
 # storage eg event
+# spell-checker:ignore swpill eventgridegsub egtopicsamplesub
 eg_storage_dict = {
     "id":"bbab6625-dc56-4b22-abeb-afcc72e5290c",
     "subject":"/blobServices/default/containers/oc2d2817345i200097container/blobs/oc2d2817345i20002296blob",

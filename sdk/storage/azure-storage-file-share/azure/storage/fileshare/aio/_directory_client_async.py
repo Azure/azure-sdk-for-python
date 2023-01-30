@@ -8,8 +8,10 @@ import functools
 import sys
 import time
 import warnings
-from typing import ( # pylint: disable=unused-import
-    Optional, Union, Any, Dict, TYPE_CHECKING
+from datetime import datetime
+from typing import (
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
+    TYPE_CHECKING
 )
 
 from azure.core.async_paging import AsyncItemPaged
@@ -19,7 +21,6 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from .._parser import _get_file_permission, _datetime_to_str
 from .._shared.parser import _str
-
 from .._generated.aio import AzureFileStorage
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -32,9 +33,8 @@ from ._file_client_async import ShareFileClient
 from ._models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from .._models import ShareProperties, DirectoryProperties, ContentSettings, NTFSAttributes
-    from .._generated.models import HandleItem
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from .._models import DirectoryProperties, Handle, NTFSAttributes
 
 
 class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBase):
@@ -74,15 +74,14 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         The hostname of the secondary endpoint.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
     """
-    def __init__( # type: ignore
-            self, account_url,  # type: str
-            share_name, # type: str
-            directory_path, # type: str
-            snapshot=None,  # type: Optional[Union[str, Dict[str, Any]]]
-            credential=None, # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs # type: Optional[Any]
-        ):
-        # type: (...) -> None
+    def __init__(
+            self, account_url: str,
+            share_name: str,
+            directory_path: str,
+            snapshot: Optional[Union[str, Dict[str, Any]]] = None,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         if loop and sys.version_info >= (3, 8):
@@ -188,7 +187,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the directory as metadata.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
 
@@ -236,7 +239,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         later deleted during garbage collection.
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :rtype: None
 
         .. admonition:: Example:
@@ -266,7 +273,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :param str new_name:
             The new directory name.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :keyword bool overwrite:
             A boolean value for if the destination file already exists, whether this request will
             overwrite the file or not. If true, the rename will succeed and will overwrite the
@@ -374,7 +385,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             This keyword argument was introduced in API version '2020-10-02'.
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: An auto-paging iterable of dict-like DirectoryProperties and FileProperties
         :rtype: ~azure.core.async_paging.AsyncItemPaged[DirectoryProperties and FileProperties]
 
@@ -407,9 +422,13 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.HandleItem]
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
+        :returns: An auto-paging iterable of Handle
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.Handle]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -430,7 +449,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         Returns True if a directory exists and returns False otherwise.
 
         :kwarg int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: True if the directory exists, False otherwise.
         :rtype: bool
         """
@@ -445,14 +468,18 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
     @distributed_trace_async
     async def close_handle(self, handle, **kwargs):
-        # type: (Union[str, HandleItem], Any) -> Dict[str, int]
+        # type: (Union[str, Handle], Any) -> Dict[str, int]
         """Close an open file handle.
 
         :param handle:
             A specific handle to close.
         :type handle: str or ~azure.storage.fileshare.Handle
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: The number of handles closed (this may be 0 if the specified handle was not found)
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
@@ -490,7 +517,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             Boolean that specifies if operation should apply to the directory specified by the client,
             its files, its subdirectories and their files. Default value is False.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: The number of handles closed (this may be 0 if the specified handle was not found)
             and the number of handles failed to close in a dict.
         :rtype: dict[str, int]
@@ -534,7 +565,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         list of files.
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: DirectoryProperties
         :rtype: ~azure.storage.fileshare.DirectoryProperties
         """
@@ -561,7 +596,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             Name-value pairs associated with the directory as metadata.
         :type metadata: dict(str, str)
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: Directory-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -618,7 +657,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
         :paramtype file_change_time: str or ~datetime.datetime
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
@@ -653,7 +696,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :keyword dict(str,str) metadata:
             Name-value pairs associated with the subdirectory as metadata.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :returns: ShareDirectoryClient
         :rtype: ~azure.storage.fileshare.aio.ShareDirectoryClient
 
@@ -683,7 +730,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :param str directory_name:
             The name of the subdirectory.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :rtype: None
 
         .. admonition:: Example:
@@ -701,18 +752,17 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
 
     @distributed_trace_async
     async def upload_file(
-            self, file_name,  # type: str
-            data, # type: Any
-            length=None, # type: Optional[int]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> ShareFileClient
+            self, file_name: str,
+            data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
+            **kwargs
+        ) -> ShareFileClient:
         """Creates a new file in the directory and returns a ShareFileClient
         to interact with the file.
 
         :param str file_name:
             The name of the file.
-        :param Any data:
+        :param data:
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
@@ -736,7 +786,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             so far, and total is the size of the blob or None if the size is unknown.
         :paramtype progress_hook: Callable[[int, Optional[int]], Awaitable[None]]
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :keyword str encoding:
             Defaults to UTF-8.
         :returns: ShareFileClient
@@ -756,7 +810,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             data,
             length=length,
             **kwargs)
-        return file_client # type: ignore
+        return file_client
 
     @distributed_trace_async
     async def delete_file(
@@ -770,7 +824,11 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         :param str file_name:
             The name of the file to delete.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-share
+            #other-client--per-operation-configuration>`_.
         :rtype: None
 
         .. admonition:: Example:

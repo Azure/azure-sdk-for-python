@@ -1,5 +1,30 @@
 # Release History
 
+## 7.2.0b1 (2022-12-29)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
+# 7.1.0 (2022-10-18)
+
+### Features Added
+
+  - Added operation ClustersOperations.list_zones
+  - Added operation WorkloadNetworksOperations.get
+  - Added operation WorkloadNetworksOperations.list
+  - Model EncryptionKeyVaultProperties has a new parameter auto_detected_key_version
+  - Model PlacementPolicyUpdate has a new parameter affinity_strength
+  - Model PlacementPolicyUpdate has a new parameter azure_hybrid_benefit_type
+  - Model PrivateCloud has a new parameter nsx_public_ip_quota_raised
+  - Model PrivateCloudProperties has a new parameter nsx_public_ip_quota_raised
+  - Model ScriptPackage has a new parameter company
+  - Model ScriptPackage has a new parameter uri
+  - Model VmHostPlacementPolicyProperties has a new parameter affinity_strength
+  - Model VmHostPlacementPolicyProperties has a new parameter azure_hybrid_benefit_type
+  - Operation LocationsOperations.check_trial_availability has a new parameter sku
+
 ## 7.0.0 (2021-11-11)
 
 **Features**

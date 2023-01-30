@@ -4,31 +4,25 @@
 
 # pylint: disable=protected-access,no-member
 
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models import Forecasting as RestForecasting
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
-    ForecastingPrimaryMetrics,
-    JobBase,
-    StackEnsembleSettings,
-    TaskType,
-)
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Forecasting as RestForecasting
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ForecastingPrimaryMetrics, JobBase, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
-from azure.ai.ml.constants import AutoMLConstants
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._job.automl import AutoMLConstants
+from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
 from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.tabular.automl_tabular import AutoMLTabular
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import TabularFeaturizationSettings
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import ForecastingTrainingSettings
-from azure.ai.ml.entities._job.identity import Identity
 from azure.ai.ml.entities._util import load_from_dict
 
 
-@experimental
 class ForecastingJob(AutoMLTabular):
     """Configuration for AutoML Forecasting Task."""
 
@@ -37,10 +31,19 @@ class ForecastingJob(AutoMLTabular):
     def __init__(
         self,
         *,
-        primary_metric: str = None,
-        forecasting_settings: ForecastingSettings = None,
+        primary_metric: Optional[str] = None,
+        forecasting_settings: Optional[ForecastingSettings] = None,
         **kwargs,
     ) -> None:
+        """Initialize a new AutoML Forecasting task.
+
+        :param primary_metric: The primary metric to use for optimization
+        :type primary_metric: str, optional
+        :param forecasting_settings: The settings for the forecasting task
+        :type forecasting_settings: ForecastingSettings, optional
+        :param kwargs: Job-specific arguments
+        :type kwargs: dict
+        """
         # Extract any task specific settings
         featurization = kwargs.pop("featurization", None)
         limits = kwargs.pop("limits", None)
@@ -83,19 +86,19 @@ class ForecastingJob(AutoMLTabular):
     def set_forecast_settings(
         self,
         *,
-        time_column_name: str = None,
-        forecast_horizon: Union[str, int] = None,
-        time_series_id_column_names: Union[str, List[str]] = None,
-        target_lags: Union[str, int, List[int]] = None,
-        feature_lags: str = None,
-        target_rolling_window_size: Union[str, int] = None,
-        country_or_region_for_holidays: str = None,
-        use_stl: str = None,
-        seasonality: Union[str, int] = None,
-        short_series_handling_config: str = None,
-        frequency: str = None,
-        target_aggregate_function: str = None,
-        cv_step_size: int = None,
+        time_column_name: Optional[str] = None,
+        forecast_horizon: Optional[Union[str, int]] = None,
+        time_series_id_column_names: Optional[Union[str, List[str]]] = None,
+        target_lags: Optional[Union[str, int, List[int]]] = None,
+        feature_lags: Optional[str] = None,
+        target_rolling_window_size: Optional[Union[str, int]] = None,
+        country_or_region_for_holidays: Optional[str] = None,
+        use_stl: Optional[str] = None,
+        seasonality: Optional[Union[str, int]] = None,
+        short_series_handling_config: Optional[str] = None,
+        frequency: Optional[str] = None,
+        target_aggregate_function: Optional[str] = None,
+        cv_step_size: Optional[int] = None,
     ) -> None:
         """Manage parameters used by forecasting tasks.
 
@@ -339,15 +342,15 @@ class ForecastingJob(AutoMLTabular):
     def set_training(
         self,
         *,
-        enable_onnx_compatible_models: bool = None,
-        enable_dnn_training: bool = None,
-        enable_model_explainability: bool = None,
-        enable_stack_ensemble: bool = None,
-        enable_vote_ensemble: bool = None,
-        stack_ensemble_settings: StackEnsembleSettings = None,
-        ensemble_model_download_timeout: int = None,
-        allowed_training_algorithms: List[str] = None,
-        blocked_training_algorithms: List[str] = None,
+        enable_onnx_compatible_models: Optional[bool] = None,
+        enable_dnn_training: Optional[bool] = None,
+        enable_model_explainability: Optional[bool] = None,
+        enable_stack_ensemble: Optional[bool] = None,
+        enable_vote_ensemble: Optional[bool] = None,
+        stack_ensemble_settings: Optional[StackEnsembleSettings] = None,
+        ensemble_model_download_timeout: Optional[int] = None,
+        allowed_training_algorithms: Optional[List[str]] = None,
+        blocked_training_algorithms: Optional[List[str]] = None,
     ) -> None:
         super().set_training(
             enable_onnx_compatible_models=enable_onnx_compatible_models,
@@ -400,7 +403,7 @@ class ForecastingJob(AutoMLTabular):
             outputs=to_rest_data_outputs(self.outputs),
             resources=self.resources,
             task_details=forecasting_task,
-            identity=self.identity._to_rest_object() if self.identity else None,
+            identity=self.identity._to_job_rest_object() if self.identity else None,
         )
 
         result = JobBase(properties=properties)
@@ -408,25 +411,27 @@ class ForecastingJob(AutoMLTabular):
         return result
 
     @classmethod
-    def _from_rest_object(cls, job_rest_object: JobBase) -> "ForecastingJob":
-        properties: RestAutoMLJob = job_rest_object.properties
+    def _from_rest_object(cls, obj: JobBase) -> "ForecastingJob":
+        properties: RestAutoMLJob = obj.properties
         task_details: RestForecasting = properties.task_details
 
         job_args_dict = {
-            "id": job_rest_object.id,
-            "name": job_rest_object.name,
+            "id": obj.id,
+            "name": obj.name,
             "description": properties.description,
             "tags": properties.tags,
             "properties": properties.properties,
             "experiment_name": properties.experiment_name,
             "services": properties.services,
             "status": properties.status,
-            "creation_context": job_rest_object.system_data,
+            "creation_context": obj.system_data,
             "display_name": properties.display_name,
             "compute": properties.compute_id,
             "outputs": from_rest_data_outputs(properties.outputs),
             "resources": properties.resources,
-            "identity": Identity._from_rest_object(properties.identity) if properties.identity else None,
+            "identity": _BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
         }
 
         forecasting_job = cls(
@@ -467,13 +472,12 @@ class ForecastingJob(AutoMLTabular):
         data: Dict,
         context: Dict,
         additional_message: str,
-        inside_pipeline=False,
         **kwargs,
     ) -> "ForecastingJob":
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 
-        if inside_pipeline:
+        if kwargs.pop("inside_pipeline", False):
             loaded_data = load_from_dict(AutoMLForecastingNodeSchema, data, context, additional_message, **kwargs)
         else:
             loaded_data = load_from_dict(AutoMLForecastingSchema, data, context, additional_message, **kwargs)
@@ -498,7 +502,7 @@ class ForecastingJob(AutoMLTabular):
         job.set_data(**data_settings)
         return job
 
-    def _to_dict(self, inside_pipeline=False) -> Dict:
+    def _to_dict(self, inside_pipeline=False) -> Dict:  # pylint: disable=arguments-differ
         from azure.ai.ml._schema.automl.table_vertical.forecasting import AutoMLForecastingSchema
         from azure.ai.ml._schema.pipeline.automl_node import AutoMLForecastingNodeSchema
 

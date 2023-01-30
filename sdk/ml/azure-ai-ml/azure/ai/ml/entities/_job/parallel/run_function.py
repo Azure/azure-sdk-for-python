@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 
 
-from typing import Union
+from typing import Optional, Union
 
 from azure.ai.ml.constants import ParallelTaskType
-from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.entities._assets.environment import Environment
 
 from .parallel_task import ParallelTask
 
@@ -41,18 +41,18 @@ class RunFunction(ParallelTask):
         if it is not set, 'summary_only' would invoked,  which means user script is expected to store the output itself.
     :type append_row_to: str
     :param environment: Environment that training job will run in.
-    :type environment: Union["Environment", str]
+    :type environment: Union[Environment, str]
     """
 
     def __init__(
         self,
         *,
-        code: str = None,
-        entry_script: str = None,
-        program_arguments: str = None,
-        model: str = None,
-        append_row_to: str = None,
-        environment: Union["Environment", str] = None,
+        code: Optional[str] = None,
+        entry_script: Optional[str] = None,
+        program_arguments: Optional[str] = None,
+        model: Optional[str] = None,
+        append_row_to: Optional[str] = None,
+        environment: Optional[Union[Environment, str]] = None,
         **kwargs,
     ):
         super().__init__(

@@ -8,17 +8,15 @@ from typing import Dict, List, Optional, Union
 from marshmallow import Schema
 
 from azure.ai.ml._schema.component.spark_component import SparkComponentSchema
-from azure.ai.ml.constants._common import COMPONENT_TYPE, SPARK_ENVIRONMENT_WARNING_MESSAGE
+from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._job.job import RestSparkConfKey
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.entities._job.parameterized_spark import ParameterizedSpark
-from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
 
 from ..._schema import PathAwareSchema
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
-from .._validation import ValidationResult
 from .component import Component
 
 
@@ -76,19 +74,19 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
         jars: Optional[List[str]] = None,
         files: Optional[List[str]] = None,
         archives: Optional[List[str]] = None,
-        driver_cores: int = None,
-        driver_memory: str = None,
-        executor_cores: int = None,
-        executor_memory: str = None,
-        executor_instances: int = None,
-        dynamic_allocation_enabled: bool = None,
-        dynamic_allocation_min_executors: int = None,
-        dynamic_allocation_max_executors: int = None,
+        driver_cores: Optional[int] = None,
+        driver_memory: Optional[str] = None,
+        executor_cores: Optional[int] = None,
+        executor_memory: Optional[str] = None,
+        executor_instances: Optional[int] = None,
+        dynamic_allocation_enabled: Optional[bool] = None,
+        dynamic_allocation_min_executors: Optional[int] = None,
+        dynamic_allocation_max_executors: Optional[int] = None,
         conf: Optional[Dict[str, str]] = None,
-        environment: Union[str, Environment] = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        args: str = None,
+        environment: Optional[Union[str, Environment]] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        args: Optional[str] = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -138,20 +136,10 @@ class SparkComponent(Component, ParameterizedSpark, SparkJobEntryMixin):  # pyli
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return SparkComponentSchema(context=context)
 
-    def _customized_validate(self) -> ValidationResult:
-        result = super()._customized_validate()
-        if isinstance(self._environment, Environment) and self._environment.image is not None:
-            result.append_warning(
-                yaml_path="environment.image",
-                message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
-            )
-        return result
-
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
             "environment": (str, Environment),
-            "resources": (dict, SparkResourceConfiguration),
             "code": (str, os.PathLike),
         }
 

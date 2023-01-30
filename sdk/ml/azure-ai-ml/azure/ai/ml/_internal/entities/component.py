@@ -4,31 +4,32 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
+from os import PathLike
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
+from uuid import UUID
 
-from marshmallow import INCLUDE, Schema
+from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails, SystemData
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Component
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ... import Input, Output
-from .._schema.component import InternalBaseComponentSchema
-from ._additional_includes import _AdditionalIncludes
+from ..._utils._arm_id_utils import parse_name_label
+from ..._utils._asset_utils import IgnoreFile
+from ...entities._assets import Code
+from ...entities._job.distribution import DistributionConfiguration
+from .._schema.component import InternalComponentSchema
+from ._additional_includes import _AdditionalIncludes, ADDITIONAL_INCLUDES_SUFFIX
+from ._input_outputs import InternalInput, InternalOutput
+from ._merkle_tree import create_merkletree
+from .code import InternalCode, InternalComponentIgnoreFile
+from .environment import InternalEnvironment
 from .node import InternalBaseNode
-
-YAML_CODE_FIELD_NAME = "code"
-YAML_ENVIRONMENT_CONDA_FIELD_NAME = "conda"
-YAML_CONDA_DEPENDENCIES_FIELD_NAME = "conda_dependencies"
-YAML_CONDA_DEPENDENCIES_FILE = "conda_dependencies_file"
-YAML_PIP_REQUIREMENTS_FILE = "pip_requirements_file"
-DEFAULT_PYTHON_VERSION = "3.8.5"
 
 
 class InternalComponent(Component):
@@ -63,40 +64,41 @@ class InternalComponent(Component):
     :param _schema: Schema of the component.
     :type _schema: str
     :param creation_context: Creation metadata of the component.
-    :type creation_context: SystemData
+    :type creation_context: ~azure.ai.ml.entities.SystemData
     """
 
     def __init__(
         self,
         *,
-        _schema: str = None,
-        name: str = None,
-        version: str = None,
-        display_name: str = None,
-        type: str = None,
-        description: str = None,
-        tags: Dict = None,
-        is_deterministic: bool = None,
-        successful_return_code: str = None,
-        inputs: Dict = None,
-        outputs: Dict = None,
-        code: str = None,
-        environment: Dict = None,
-        environment_variables: Dict = None,
-        command: str = None,
-        id: str = None,
-        properties: Dict = None,
-        yaml_str: str = None,
-        creation_context: SystemData = None,
-        scope: Dict = None,
-        hemera: Dict = None,
-        hdinsight: Dict = None,
-        parallel: Dict = None,
-        starlite: Dict = None,
-        ae365exepool: Dict = None,
-        launcher: Dict = None,
+        _schema: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        display_name: Optional[str] = None,
+        type: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        is_deterministic: Optional[bool] = None,
+        successful_return_code: Optional[str] = None,
+        inputs: Optional[Dict] = None,
+        outputs: Optional[Dict] = None,
+        code: Optional[str] = None,
+        environment: Optional[Dict] = None,
+        environment_variables: Optional[Dict] = None,
+        command: Optional[str] = None,
+        id: Optional[str] = None,
+        properties: Optional[Dict] = None,
+        yaml_str: Optional[str] = None,
+        creation_context: Optional[SystemData] = None,
+        scope: Optional[Dict] = None,
+        hemera: Optional[Dict] = None,
+        hdinsight: Optional[Dict] = None,
+        parallel: Optional[Dict] = None,
+        starlite: Optional[Dict] = None,
+        ae365exepool: Optional[Dict] = None,
+        launcher: Optional[Dict] = None,
         **kwargs,
     ):
+        type, self._type_label = parse_name_label(type)
         super().__init__(
             name=name,
             version=version,
@@ -120,9 +122,11 @@ class InternalComponent(Component):
 
         self.successful_return_code = successful_return_code
         self.code = code
-        self.environment = environment
+        self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
-        # TODO: remove this to keep it a general component class
+        self.__additional_includes = None
+        self.__ignore_file = None
+        # TODO: remove these to keep it a general component class
         self.command = command
         self.scope = scope
         self.hemera = hemera
@@ -131,31 +135,16 @@ class InternalComponent(Component):
         self.starlite = starlite
         self.ae365exepool = ae365exepool
         self.launcher = launcher
-        self.__additional_includes = None
 
-        # add some internal specific attributes to inputs/outputs after super().__init__()
-        self._build_internal_inputs_outputs(inputs, outputs)
-
-    def _build_internal_inputs_outputs(
-        self,
-        inputs_dict: Union[Dict, Input, Output],
-        outputs_dict: Union[Dict, Input, Output],
-    ):
-        for io_name, io_object in self.inputs.items():
-            original = inputs_dict[io_name]
-            # force append attribute for internal inputs
-            if isinstance(original, dict):
-                for attr_name in ["is_resource", "default", "optional"]:
-                    if attr_name in original:
-                        io_object.__setattr__(attr_name, original[attr_name])
-
-        for io_name, io_object in self.outputs.items():
-            original = outputs_dict[io_name]
-            # force append attribute for internal inputs
-            if isinstance(original, dict):
-                for attr_name in ["datastore_mode"]:
-                    if attr_name in original:
-                        io_object.__setattr__(attr_name, original[attr_name])
+    @classmethod
+    def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
+        component_io = {}
+        for name, port in io_dict.items():
+            if is_input:
+                component_io[name] = InternalInput._from_base(port)
+            else:
+                component_io[name] = InternalOutput._from_base(port)
+        return component_io
 
     @property
     def _additional_includes(self):
@@ -170,28 +159,37 @@ class InternalComponent(Component):
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
-        return InternalBaseComponentSchema(context=context)
+        return InternalComponentSchema(context=context)
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_environment())
-        if self._additional_includes is not None:
-            validation_result.merge_with(self._additional_includes.validate())
+        # if the code is not local path, no need for additional includes
+        code = Path(self.code) if self.code is not None else Path(self._source_path).parent
+        if code.exists() and self._additional_includes.with_includes:
+            validation_result.merge_with(self._additional_includes._validate())
+            # resolving additional includes & update self._base_path can be dangerous,
+            # so we just skip path validation if additional_includes is used
+            # note that there will still be runtime error in submission or execution
+            skip_path_validation = True
+        else:
+            skip_path_validation = False
+        if isinstance(self.environment, InternalEnvironment):
+            validation_result.merge_with(
+                self.environment._validate(self._base_path, skip_path_validation=skip_path_validation),
+                field_name="environment",
+            )
         return validation_result
 
     @classmethod
-    def _load_from_rest(cls, obj: ComponentVersionData) -> "InternalComponent":
-        # pylint: disable=no-member
-        loaded_data = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
-            obj.properties.component_spec, unknown=INCLUDE
-        )
-        return InternalComponent(
-            _source=ComponentSource.REMOTE_WORKSPACE_COMPONENT,
-            **loaded_data,
-        )
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        # put it here as distribution is shared by some components, e.g. command
+        distribution = obj.properties.component_spec.pop("distribution", None)
+        init_kwargs = super()._from_rest_object_to_init_params(obj)
+        if distribution:
+            init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
+        return init_kwargs
 
     def _to_rest_object(self) -> ComponentVersionData:
-        self._resolve_local_environment()
         component = convert_ordered_dict_to_dict(self._to_dict())
 
         properties = ComponentVersionDetails(
@@ -205,95 +203,96 @@ class InternalComponent(Component):
         result.name = self.name
         return result
 
+    @classmethod
+    def _get_snapshot_id(
+        cls,
+        code_path: Union[str, PathLike],
+        ignore_file: IgnoreFile,
+    ) -> str:
+        """Get the snapshot id of a component with specific working directory in ml-components.
+        Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
+
+        :param code_path: The path of the working directory.
+        :type code_path: str
+        :param ignore_file: The ignore file of the snapshot.
+        :type ignore_file: IgnoreFile
+        :return: The snapshot id of a component in ml-components with code_path as its working directory.
+        """
+        curr_root = create_merkletree(code_path, ignore_file.is_file_excluded)
+        snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
+        return snapshot_id
+
     @contextmanager
-    def _resolve_local_code(self):
-        # if `self._source_path` is None, component is not loaded from local yaml and
-        # no need to resolve
-        if self._source_path is None:
-            yield self.code
-        else:
-            self._additional_includes.resolve()
-            # use absolute path in case temp folder & work dir are in different drive
-            yield self._additional_includes.code.absolute()
-            self._additional_includes.cleanup()
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+        If there is no local code to upload, yield None.
+        Otherwise, yield a Code object pointing to the code.
+        """
+        # an internal component always has a default local code of its base path
+        # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
+        if self.code is not None:
+            with super()._resolve_local_code() as code:
+                if not isinstance(code, Code) or code._is_remote:
+                    yield code
+                    return
+
+        # This is forbidden by schema CodeFields for now so won't happen.
+        if isinstance(self.code, Code):
+            yield code
+            return
+
+        def get_additional_include_file_name():
+            if self._source_path is not None:
+                return Path(self._source_path).with_suffix(ADDITIONAL_INCLUDES_SUFFIX).name
+            return None
+
+        def get_ignore_file() -> InternalComponentIgnoreFile:
+            if self.code is None and self._source_path is None:
+                # no code and no yaml, ignore file is not needed; return ignore file on cwd to avoid error
+                return InternalComponentIgnoreFile(
+                    self.base_path,
+                    additional_include_file_name=get_additional_include_file_name(),
+                )
+
+            return InternalComponentIgnoreFile(
+                self.code if self.code is not None else Path(self._source_path).parent,
+                additional_include_file_name=get_additional_include_file_name(),
+            )
+        ignore_file = get_ignore_file()
+
+        self._additional_includes.resolve(ignore_file=ignore_file)
+
+        # file dependency in code will be read during internal environment resolution
+        # for example, docker file of the environment may be in additional includes
+        # and it will be read then insert to the environment object during resolution
+        # so we need to resolve environment based on the temporary code path
+        if isinstance(self.environment, InternalEnvironment):
+            self.environment.resolve(self._additional_includes.code)
+        # use absolute path in case temp folder & work dir are in different drive
+        tmp_code_dir = self._additional_includes.code.absolute()
+        rebased_ignore_file = InternalComponentIgnoreFile(
+            tmp_code_dir,
+            additional_include_file_name=get_additional_include_file_name(),
+        )
+        # Use the snapshot id in ml-components as code name to enable anonymous
+        # component reuse from ml-component runs.
+        # calculate snapshot id here instead of inside InternalCode to ensure that
+        # snapshot id is calculated based on the resolved code path
+        yield InternalCode(
+            name=self._get_snapshot_id(
+                # use absolute path in case temp folder & work dir are in different drive
+                self._additional_includes.code.absolute(),
+                # this ignore-file should be rebased to the resolved code path
+                rebased_ignore_file,
+            ),
+            version="1",
+            base_path=self._base_path,
+            path=tmp_code_dir,
+            is_anonymous=True,
+            ignore_file=rebased_ignore_file,
+        )
+
+        self._additional_includes.cleanup()
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)
-
-    def _schema_validate(self) -> ValidationResult:
-        """Validate the resource with the schema.
-
-        return type: ValidationResult
-        """
-        result = super(InternalComponent, self)._schema_validate()
-        # skip unknown field warnings for internal components
-        # TODO: move this logic into base class
-        result._warnings = list(filter(lambda x: x.message != "Unknown field.", result._warnings))
-        return result
-
-    def _validate_environment(self) -> ValidationResult:
-        validation_result = self._create_empty_validation_result()
-        if not isinstance(self.environment, dict) or not self.environment.get(YAML_ENVIRONMENT_CONDA_FIELD_NAME):
-            return validation_result
-        environment_conda_dict = self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME]
-        # only one of "conda_dependencies", "conda_dependencies_file" and "pip_requirements_file" should exist
-        dependencies_field_names = {
-            YAML_CONDA_DEPENDENCIES_FIELD_NAME,
-            YAML_CONDA_DEPENDENCIES_FILE,
-            YAML_PIP_REQUIREMENTS_FILE,
-        }
-        if len(set(environment_conda_dict.keys()) & dependencies_field_names) > 1:
-            validation_result.append_warning(
-                yaml_path="environment.conda",
-                message="Duplicated declaration of dependencies, will honor in the order "
-                "conda_dependencies, conda_dependencies_file, pip_requirements_file.",
-            )
-        # if dependencies file is specified, check its existence
-        if environment_conda_dict.get(YAML_CONDA_DEPENDENCIES_FILE):
-            conda_dependencies_file = environment_conda_dict[YAML_CONDA_DEPENDENCIES_FILE]
-            if not (Path(self._source_path).parent / conda_dependencies_file).is_file():
-                validation_result.append_error(
-                    yaml_path=f"environment.conda.{YAML_CONDA_DEPENDENCIES_FILE}",
-                    message=f"Conda dependencies file not exists: {conda_dependencies_file}",
-                )
-        if environment_conda_dict.get(YAML_PIP_REQUIREMENTS_FILE):
-            pip_requirements_file = environment_conda_dict[YAML_PIP_REQUIREMENTS_FILE]
-            if not (Path(self._source_path).parent / pip_requirements_file).is_file():
-                validation_result.append_error(
-                    yaml_path=f"environment.conda.{YAML_PIP_REQUIREMENTS_FILE}",
-                    message=f"Conda dependencies file not exists: {pip_requirements_file}",
-                )
-        return validation_result
-
-    def _resolve_local_environment(self) -> None:
-        """Resolve environment dependencies when refer to local file."""
-        if not self.environment or not self.environment.get(YAML_ENVIRONMENT_CONDA_FIELD_NAME, {}):
-            return
-        environment_conda_dict = self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME]
-        if environment_conda_dict.get(YAML_CONDA_DEPENDENCIES_FILE):
-            conda_dependencies_file = environment_conda_dict[YAML_CONDA_DEPENDENCIES_FILE]
-            conda_dependencies_file_path = Path(self._source_path).parent / conda_dependencies_file
-            conda_dependencies_dict = load_yaml(conda_dependencies_file_path)
-            self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME].pop(YAML_CONDA_DEPENDENCIES_FILE)
-            self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME] = {
-                YAML_CONDA_DEPENDENCIES_FIELD_NAME: conda_dependencies_dict
-            }
-            return
-        if environment_conda_dict.get(YAML_PIP_REQUIREMENTS_FILE):
-            pip_requirements_file = environment_conda_dict[YAML_PIP_REQUIREMENTS_FILE]
-            pip_requirements_file_path = Path(self._source_path).parent / pip_requirements_file
-            self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME].pop(YAML_PIP_REQUIREMENTS_FILE)
-            with open(pip_requirements_file_path, "r") as fin:
-                pip_requirements = fin.read().splitlines()
-                self.environment[YAML_ENVIRONMENT_CONDA_FIELD_NAME] = {
-                    YAML_CONDA_DEPENDENCIES_FIELD_NAME: {
-                        "name": "project_environment",
-                        "dependencies": [
-                            f"python={DEFAULT_PYTHON_VERSION}",
-                            {
-                                "pip": pip_requirements,
-                            },
-                        ],
-                    }
-                }
-            return

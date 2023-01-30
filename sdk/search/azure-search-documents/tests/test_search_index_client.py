@@ -4,11 +4,7 @@
 # ------------------------------------
 
 import pytest
-
-try:
-    from unittest import mock
-except ImportError:
-    import mock
+from unittest import mock
 
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient, ApiVersion
@@ -18,7 +14,7 @@ from azure.search.documents.indexes.models import SearchIndexerDataContainer, Se
 CREDENTIAL = AzureKeyCredential(key="test_api_key")
 
 
-class TestSearchIndexClient(object):
+class TestSearchIndexClient:
     def test_index_init(self):
         client = SearchIndexClient("endpoint", CREDENTIAL)
         assert client._headers == {
@@ -46,7 +42,7 @@ class TestSearchIndexClient(object):
         assert isinstance(search_client, SearchClient)
 
     @mock.patch(
-        "azure.search.documents.indexes._generated.operations.SearchClientOperationsMixin.get_service_statistics"
+        "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
     )
     def test_get_service_statistics(self, mock_get_stats):
         client = SearchIndexClient("endpoint", CREDENTIAL)
@@ -56,7 +52,7 @@ class TestSearchIndexClient(object):
         assert mock_get_stats.call_args[1] == {"headers": client._headers}
 
     @mock.patch(
-        "azure.search.documents.indexes._generated.operations.SearchClientOperationsMixin.get_service_statistics"
+        "azure.search.documents.indexes._generated.operations._search_service_client_operations.SearchServiceClientOperationsMixin.get_service_statistics"
     )
     def test_get_service_statistics_v2020_06_30(self, mock_get_stats):
         client = SearchIndexClient("endpoint", CREDENTIAL, api_version=ApiVersion.V2020_06_30)
@@ -80,7 +76,7 @@ class TestSearchIndexClient(object):
             client = SearchIndexClient(12345, credential)
 
 
-class TestSearchIndexerClient(object):
+class TestSearchIndexerClient:
     def test_indexer_init(self):
         client = SearchIndexerClient("endpoint", CREDENTIAL)
         assert client._headers == {

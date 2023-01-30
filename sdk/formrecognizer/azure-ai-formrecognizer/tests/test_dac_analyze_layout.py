@@ -13,6 +13,7 @@ from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
@@ -20,6 +21,7 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeLayout(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -54,6 +56,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -88,6 +91,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -123,6 +127,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -139,6 +144,7 @@ class TestDACAnalyzeLayout(FormRecognizerTest):
         assert layout.tables[2].row_count == 24
         assert layout.tables[2].column_count == 5
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy

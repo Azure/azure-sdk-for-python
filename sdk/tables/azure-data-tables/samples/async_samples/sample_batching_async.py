@@ -24,7 +24,6 @@ USAGE:
 
 
 import os
-from time import sleep
 import asyncio
 from dotenv import find_dotenv, load_dotenv
 
@@ -84,7 +83,7 @@ class CreateClients(object):
             ("update", self.entity4, {"mode": "replace"}),
         ]
         try:
-            await self.table_client.submit_transaction(operations)
+            await self.table_client.submit_transaction(operations) # type: ignore[arg-type]
         except TableTransactionError as e:
             print("There was an error with the transaction operation")
             print("Error: {}".format(e))
@@ -102,5 +101,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

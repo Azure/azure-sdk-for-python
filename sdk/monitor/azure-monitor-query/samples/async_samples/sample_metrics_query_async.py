@@ -24,7 +24,7 @@ from azure.monitor.query import MetricAggregationType
 from azure.identity.aio import DefaultAzureCredential
 
 async def query_metrics():
-    credential  = DefaultAzureCredential()
+    credential = DefaultAzureCredential()
 
     client = MetricsQueryClient(credential)
 
@@ -43,7 +43,6 @@ async def query_metrics():
         for time_series_element in metric.timeseries:
             for metric_value in time_series_element.data:
                 print(metric_value.timestamp)
-    
+
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(query_metrics())
+    asyncio.run(query_metrics())

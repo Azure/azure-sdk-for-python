@@ -10,11 +10,12 @@ from typing import (  # pylint: disable=unused-import
     TYPE_CHECKING)
 from urllib.parse import urlparse
 
+from typing_extensions import Self
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
-
 from ._shared.base_client import StorageAccountHostsMixin, TransportWrapper, parse_connection_str, parse_query
 from ._shared.models import LocationMode
 from ._shared.response_handlers import process_storage_error
@@ -30,6 +31,7 @@ from ._serialize import get_api_version
 from ._queue_client import QueueClient
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import (
         CorsRule,
         Metrics,
@@ -87,11 +89,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     """
 
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -118,10 +119,10 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):  # type: (...) -> QueueServiceClient
+            cls, conn_str: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """Create QueueServiceClient from a Connection String.
 
         :param str conn_str:
@@ -292,7 +293,11 @@ class QueueServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
         :keyword int timeout:
-            The server timeout, expressed in seconds. This function may make multiple
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
+            #other-client--per-operation-configuration>`_. This function may make multiple
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.

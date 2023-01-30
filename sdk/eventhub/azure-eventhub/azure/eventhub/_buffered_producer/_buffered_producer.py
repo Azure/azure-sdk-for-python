@@ -32,6 +32,7 @@ class BufferedProducer:
         max_message_size_on_link: int,
         executor: ThreadPoolExecutor,
         *,
+        amqp_transport: AmqpTransport,
         max_buffer_length: int,
         max_wait_time: float = 1
     ):
@@ -50,10 +51,11 @@ class BufferedProducer:
         self._max_message_size_on_link = max_message_size_on_link
         self._check_max_wait_time_future = None
         self.partition_id = partition_id
+        self._amqp_transport = amqp_transport
 
     def start(self):
         with self._lock:
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()
@@ -113,12 +115,12 @@ class BufferedProducer:
                     self._buffered_queue.put(self._cur_batch)
                 self._buffered_queue.put(events)
             # create a new batch for incoming events
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
         except ValueError:
             # add single event exceeds the cur batch size, create new batch
             with self._lock:
                 self._buffered_queue.put(self._cur_batch)
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             self._cur_batch.add(events)
         with self._lock:
             self._cur_buffered_len += new_events_len
@@ -165,7 +167,10 @@ class BufferedProducer:
                             self.partition_id,
                             len(batch),
                         )
-                        self._on_success(batch._internal_events, self.partition_id)
+                        try:
+                            self._on_success(batch._internal_events, self.partition_id)
+                        except AttributeError:
+                            self._on_success(batch, self.partition_id)
                     except Exception as exc:  # pylint: disable=broad-except
                         _LOGGER.info(
                             "Partition %r sending %r events failed due to exception: %r ",
@@ -173,7 +178,10 @@ class BufferedProducer:
                             len(batch),
                             exc,
                         )
-                        self._on_error(batch._internal_events, self.partition_id, exc)
+                        try:
+                            self._on_error(batch._internal_events, self.partition_id, exc)
+                        except AttributeError:
+                            self._on_error(batch, self.partition_id, exc)
                     finally:
                         self._cur_buffered_len -= len(batch)
                 else:
@@ -191,7 +199,7 @@ class BufferedProducer:
             self._last_send_time = time.time()
             #reset buffered count
             self._cur_buffered_len = 0
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link)
+            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             _LOGGER.info("Partition %r finished flushing.", self.partition_id)
 
     def check_max_wait_time_worker(self):

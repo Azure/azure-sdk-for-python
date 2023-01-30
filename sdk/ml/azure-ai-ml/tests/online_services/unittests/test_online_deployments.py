@@ -1,4 +1,4 @@
-from lib2to3.pgen2.literals import simple_escapes
+import platform
 from pathlib import Path
 from typing import Callable
 from unittest.mock import Mock, patch
@@ -8,7 +8,7 @@ from pytest_mock import MockFixture
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_online_deployment
-from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._deployment.online_deployment import (
     KubernetesOnlineDeployment,
@@ -101,12 +101,12 @@ resources:
 @pytest.fixture
 def mock_workspace_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
 
@@ -119,25 +119,31 @@ def mock_local_deployment_helper() -> Mock:
 @pytest.fixture
 def mock_online_deployment_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2021_10_01: Mock,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> OnlineDeploymentOperations:
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
 
     yield OnlineDeploymentOperations(
         operation_scope=mock_workspace_scope,
-        service_client_02_2022_preview=mock_aml_services_2021_10_01,
+        operation_config=mock_operation_config,
+        service_client_02_2022_preview=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
         local_deployment_helper=mock_local_deployment_helper,
     )
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestOnlineDeploymentOperations:
+    @pytest.mark.skipif(
+        condition=platform.python_implementation == "PyPy",
+        reason="writing dumped entity back to file does not work on PyPy"
+    )
     def test_online_deployment_k8s_create(
         self,
         mock_online_deployment_operations: OnlineDeploymentOperations,
-        rand_compute_name: Callable[[], str],
         blue_online_k8s_deployment_yaml: str,
         mocker: MockFixture,
     ) -> None:
@@ -150,7 +156,7 @@ class TestOnlineDeploymentOperations:
         )
 
         def simple_deployment_validation(online_deployment):
-            online_deployment.name = rand_compute_name()
+            online_deployment.name = "random_name"
             assert online_deployment.instance_type
 
         online_deployment = verify_entity_load_and_dump(
@@ -162,12 +168,11 @@ class TestOnlineDeploymentOperations:
     def test_delete_online_deployment(
         self,
         mock_online_deployment_operations: OnlineDeploymentOperations,
-        mock_aml_services_2021_10_01: Mock,
+        mock_aml_services_2022_10_01: Mock,
         mocker: MockFixture,
-        randstr: Callable[[], str],
         mock_delete_poller: LROPoller,
     ) -> None:
-        random_name = randstr()
-        mock_aml_services_2021_10_01.online_deployments.begin_delete.return_value = mock_delete_poller
-        mock_online_deployment_operations.delete(endpoint_name="k8sendpoint", name=random_name)
+        random_name = "random_string"
+        mock_aml_services_2022_10_01.online_deployments.begin_delete.return_value = mock_delete_poller
+        mock_online_deployment_operations.begin_delete(endpoint_name="k8sendpoint", name=random_name)
         mock_online_deployment_operations._online_deployment.begin_delete.assert_called_once()

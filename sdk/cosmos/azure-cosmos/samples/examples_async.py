@@ -163,5 +163,4 @@ async def examples_async():
         print("Sample done running!")
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(examples_async())
+    asyncio.run(examples_async())

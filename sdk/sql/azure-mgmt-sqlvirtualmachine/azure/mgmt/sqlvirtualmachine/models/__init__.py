@@ -6,6 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._models_py3 import AADAuthenticationSettings
 from ._models_py3 import AdditionalFeaturesServerConfigurations
 from ._models_py3 import AgConfiguration
 from ._models_py3 import AgReplica
@@ -14,8 +15,12 @@ from ._models_py3 import AutoBackupSettings
 from ._models_py3 import AutoPatchingSettings
 from ._models_py3 import AvailabilityGroupListener
 from ._models_py3 import AvailabilityGroupListenerListResult
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import KeyVaultCredentialSettings
 from ._models_py3 import LoadBalancerConfiguration
+from ._models_py3 import MultiSubnetIpConfiguration
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
@@ -36,98 +41,119 @@ from ._models_py3 import SqlVirtualMachineGroupListResult
 from ._models_py3 import SqlVirtualMachineGroupUpdate
 from ._models_py3 import SqlVirtualMachineListResult
 from ._models_py3 import SqlVirtualMachineUpdate
+from ._models_py3 import SqlVmTroubleshooting
 from ._models_py3 import SqlWorkloadTypeUpdateSettings
 from ._models_py3 import StorageConfigurationSettings
 from ._models_py3 import SystemData
 from ._models_py3 import TrackedResource
+from ._models_py3 import TroubleshootingAdditionalProperties
+from ._models_py3 import TroubleshootingStatus
+from ._models_py3 import UnhealthyReplicaInfo
 from ._models_py3 import WsfcDomainCredentials
 from ._models_py3 import WsfcDomainProfile
 
-
-from ._sql_virtual_machine_management_client_enums import (
-    AssessmentDayOfWeek,
-    AutoBackupDaysOfWeek,
-    BackupScheduleType,
-    ClusterConfiguration,
-    ClusterManagerType,
-    Commit,
-    ConnectivityType,
-    CreatedByType,
-    DayOfWeek,
-    DiskConfigurationType,
-    Failover,
-    FullBackupFrequencyType,
-    IdentityType,
-    OperationOrigin,
-    ReadableSecondary,
-    Role,
-    ScaleType,
-    SqlImageSku,
-    SqlManagementMode,
-    SqlServerLicenseType,
-    SqlVmGroupImageSku,
-    SqlWorkloadType,
-    StorageWorkloadType,
-)
+from ._sql_virtual_machine_management_client_enums import AssessmentDayOfWeek
+from ._sql_virtual_machine_management_client_enums import AutoBackupDaysOfWeek
+from ._sql_virtual_machine_management_client_enums import BackupScheduleType
+from ._sql_virtual_machine_management_client_enums import ClusterConfiguration
+from ._sql_virtual_machine_management_client_enums import ClusterManagerType
+from ._sql_virtual_machine_management_client_enums import ClusterSubnetType
+from ._sql_virtual_machine_management_client_enums import Commit
+from ._sql_virtual_machine_management_client_enums import ConnectivityType
+from ._sql_virtual_machine_management_client_enums import CreatedByType
+from ._sql_virtual_machine_management_client_enums import DayOfWeek
+from ._sql_virtual_machine_management_client_enums import DiskConfigurationType
+from ._sql_virtual_machine_management_client_enums import Failover
+from ._sql_virtual_machine_management_client_enums import FullBackupFrequencyType
+from ._sql_virtual_machine_management_client_enums import IdentityType
+from ._sql_virtual_machine_management_client_enums import LeastPrivilegeMode
+from ._sql_virtual_machine_management_client_enums import OperationOrigin
+from ._sql_virtual_machine_management_client_enums import ReadableSecondary
+from ._sql_virtual_machine_management_client_enums import Role
+from ._sql_virtual_machine_management_client_enums import ScaleType
+from ._sql_virtual_machine_management_client_enums import SqlImageSku
+from ._sql_virtual_machine_management_client_enums import SqlManagementMode
+from ._sql_virtual_machine_management_client_enums import SqlServerLicenseType
+from ._sql_virtual_machine_management_client_enums import SqlVmGroupImageSku
+from ._sql_virtual_machine_management_client_enums import SqlWorkloadType
+from ._sql_virtual_machine_management_client_enums import StorageWorkloadType
+from ._sql_virtual_machine_management_client_enums import TroubleshootingScenario
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'AdditionalFeaturesServerConfigurations',
-    'AgConfiguration',
-    'AgReplica',
-    'AssessmentSettings',
-    'AutoBackupSettings',
-    'AutoPatchingSettings',
-    'AvailabilityGroupListener',
-    'AvailabilityGroupListenerListResult',
-    'KeyVaultCredentialSettings',
-    'LoadBalancerConfiguration',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'PrivateIPAddress',
-    'ProxyResource',
-    'Resource',
-    'ResourceIdentity',
-    'SQLInstanceSettings',
-    'SQLStorageSettings',
-    'SQLTempDbSettings',
-    'Schedule',
-    'ServerConfigurationsManagementSettings',
-    'SqlConnectivityUpdateSettings',
-    'SqlStorageUpdateSettings',
-    'SqlVirtualMachine',
-    'SqlVirtualMachineGroup',
-    'SqlVirtualMachineGroupListResult',
-    'SqlVirtualMachineGroupUpdate',
-    'SqlVirtualMachineListResult',
-    'SqlVirtualMachineUpdate',
-    'SqlWorkloadTypeUpdateSettings',
-    'StorageConfigurationSettings',
-    'SystemData',
-    'TrackedResource',
-    'WsfcDomainCredentials',
-    'WsfcDomainProfile',
-    'AssessmentDayOfWeek',
-    'AutoBackupDaysOfWeek',
-    'BackupScheduleType',
-    'ClusterConfiguration',
-    'ClusterManagerType',
-    'Commit',
-    'ConnectivityType',
-    'CreatedByType',
-    'DayOfWeek',
-    'DiskConfigurationType',
-    'Failover',
-    'FullBackupFrequencyType',
-    'IdentityType',
-    'OperationOrigin',
-    'ReadableSecondary',
-    'Role',
-    'ScaleType',
-    'SqlImageSku',
-    'SqlManagementMode',
-    'SqlServerLicenseType',
-    'SqlVmGroupImageSku',
-    'SqlWorkloadType',
-    'StorageWorkloadType',
+    "AADAuthenticationSettings",
+    "AdditionalFeaturesServerConfigurations",
+    "AgConfiguration",
+    "AgReplica",
+    "AssessmentSettings",
+    "AutoBackupSettings",
+    "AutoPatchingSettings",
+    "AvailabilityGroupListener",
+    "AvailabilityGroupListenerListResult",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "KeyVaultCredentialSettings",
+    "LoadBalancerConfiguration",
+    "MultiSubnetIpConfiguration",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "PrivateIPAddress",
+    "ProxyResource",
+    "Resource",
+    "ResourceIdentity",
+    "SQLInstanceSettings",
+    "SQLStorageSettings",
+    "SQLTempDbSettings",
+    "Schedule",
+    "ServerConfigurationsManagementSettings",
+    "SqlConnectivityUpdateSettings",
+    "SqlStorageUpdateSettings",
+    "SqlVirtualMachine",
+    "SqlVirtualMachineGroup",
+    "SqlVirtualMachineGroupListResult",
+    "SqlVirtualMachineGroupUpdate",
+    "SqlVirtualMachineListResult",
+    "SqlVirtualMachineUpdate",
+    "SqlVmTroubleshooting",
+    "SqlWorkloadTypeUpdateSettings",
+    "StorageConfigurationSettings",
+    "SystemData",
+    "TrackedResource",
+    "TroubleshootingAdditionalProperties",
+    "TroubleshootingStatus",
+    "UnhealthyReplicaInfo",
+    "WsfcDomainCredentials",
+    "WsfcDomainProfile",
+    "AssessmentDayOfWeek",
+    "AutoBackupDaysOfWeek",
+    "BackupScheduleType",
+    "ClusterConfiguration",
+    "ClusterManagerType",
+    "ClusterSubnetType",
+    "Commit",
+    "ConnectivityType",
+    "CreatedByType",
+    "DayOfWeek",
+    "DiskConfigurationType",
+    "Failover",
+    "FullBackupFrequencyType",
+    "IdentityType",
+    "LeastPrivilegeMode",
+    "OperationOrigin",
+    "ReadableSecondary",
+    "Role",
+    "ScaleType",
+    "SqlImageSku",
+    "SqlManagementMode",
+    "SqlServerLicenseType",
+    "SqlVmGroupImageSku",
+    "SqlWorkloadType",
+    "StorageWorkloadType",
+    "TroubleshootingScenario",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

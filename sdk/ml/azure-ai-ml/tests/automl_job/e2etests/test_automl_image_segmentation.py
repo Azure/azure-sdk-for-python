@@ -3,23 +3,30 @@
 # ---------------------------------------------------------
 
 import copy
+import platform
 from typing import Tuple
 
 import pytest
-from automl_job.jsonl_converter import convert_mask_in_VOC_to_jsonl
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
 from azure.ai.ml import MLClient, automl
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import Data
 from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image import ImageInstanceSegmentationJob, ImageObjectDetectionSearchSpace
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 
 
-@pytest.mark.automle2etest
-class TestAutoMLImageSegmentation:
+@pytest.mark.automl_test
+@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.skipif(
+    condition=not is_live() or platform.python_implementation() == "PyPy",
+    reason="Datasets downloaded by test are too large to record reliably"
+)
+class TestAutoMLImageSegmentation(AzureRecordedTestCase):
     def _create_jsonl_segmentation(self, client, train_path, val_path):
 
         fridge_data = Data(
@@ -28,9 +35,32 @@ class TestAutoMLImageSegmentation:
         )
         data_path_uri = client.data.create_or_update(fridge_data)
 
-        data_path = "./odFridgeObjectsMask/"
-        convert_mask_in_VOC_to_jsonl(data_path, data_path_uri.path, train_path, val_path)
+        import os
+        train_annotations_file = os.path.join(train_path, "train_annotations.jsonl")
+        validation_annotations_file = os.path.join(val_path, "validation_annotations.jsonl")
 
+        self._update_jsonl_path(data_path_uri.path, train_annotations_file)
+        self._update_jsonl_path(data_path_uri.path, validation_annotations_file)
+
+    def _update_jsonl_path(self, remote_path, file_path):
+        import json
+
+        jsonl_file = open(file_path, "r")
+        lines = jsonl_file.readlines()
+        jsonl_file.close()
+
+        data_path = "odFridgeObjectsMask/"
+
+        with open(file_path, "w") as jsonl_file_write:
+            for i in lines:
+                json_line = eval(i)
+                old_url = json_line["image_url"]
+                result = old_url.find(data_path)
+
+                # Update image url
+                json_line["image_url"] = remote_path + old_url[result + len(data_path) :]
+                jsonl_file_write.write(json.dumps(json_line) + "\n")
+    
     def test_image_segmentation_run(self, image_segmentation_dataset: Tuple[Input, Input], client: MLClient) -> None:
         # Note: this test launches two jobs in order to avoid calling the dataset fixture more than once. Ideally, it
         # would have sufficed to mark the fixture with session scope, but pytest-xdist breaks this functionality:
@@ -61,7 +91,7 @@ class TestAutoMLImageSegmentation:
         image_instance_segmentation_job_sweep.set_training_parameters(early_stopping=True, evaluation_frequency=1)
         image_instance_segmentation_job_sweep.extend_search_space(
             [
-                ImageObjectDetectionSearchSpace(
+                SearchSpace(
                     model_name=Choice(["maskrcnn_resnet50_fpn"]),
                     learning_rate=Uniform(0.0001, 0.001),
                     optimizer=Choice(["sgd", "adam", "adamw"]),
@@ -69,9 +99,8 @@ class TestAutoMLImageSegmentation:
                 ),
             ]
         )
+        image_instance_segmentation_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
         image_instance_segmentation_job_sweep.set_sweep(
-            max_trials=1,
-            max_concurrent_trials=1,
             sampling_algorithm="Random",
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
         )
@@ -89,7 +118,7 @@ class TestAutoMLImageSegmentation:
         submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
 
         # Assert completion of regular sweep job
-        assert_final_job_status(submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED)
+        assert_final_job_status(submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600)
 
         # Assert completion of Automode job
-        assert_final_job_status(submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED)
+        assert_final_job_status(submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=3600)

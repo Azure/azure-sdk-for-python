@@ -3,16 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from typing import Optional, Dict, Any, TypeVar
+from typing import Any, Dict, Optional, Union, TYPE_CHECKING
+from urllib.parse import urlparse
 
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse  # type: ignore
+from typing_extensions import Self
 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
-
 from azure.storage.blob import BlobServiceClient
 from ._shared.base_client import TransportWrapper, StorageAccountHostsMixin, parse_query, parse_connection_str
 from ._deserialize import get_datalake_service_properties
@@ -23,7 +20,8 @@ from ._models import UserDelegationKey, FileSystemPropertiesPaged, LocationMode
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
 from ._generated import AzureDataLakeStorageRESTAPI
 
-ClassType = TypeVar("ClassType")
+if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
 
 class DataLakeServiceClient(StorageAccountHostsMixin):
@@ -76,11 +74,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     """
 
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -128,11 +125,10 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
     @classmethod
     def from_connection_string(
-            cls,  # type: Type[ClassType]
-            conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):  # type: (...) -> ClassType
+            cls, conn_str: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """
         Create DataLakeServiceClient from a Connection String.
 
@@ -174,7 +170,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param ~datetime.datetime key_expiry_time:
             A DateTime value. Indicates when the key stops being valid.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: The user delegation key.
         :rtype: ~azure.storage.filedatalake.UserDelegationKey
 
@@ -211,7 +211,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             The maximum number of file system names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items per page.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :keyword bool include_deleted:
             Specifies that deleted file systems to be returned in the response. This is for file system restore enabled
             account. The default value is `False`.
@@ -265,7 +269,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
         :paramtype encryption_scope_options: dict or ~azure.storage.filedatalake.EncryptionScopeOptions
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
 
         .. admonition:: Example:
@@ -296,7 +304,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             matches the active lease ID of the source filesystem.
         :paramtype lease: ~azure.storage.filedatalake.DataLakeLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         self._blob_service_client._rename_container(name, new_name, **kwargs)   # pylint: disable=protected-access
@@ -318,7 +330,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :param str deleted_version:
             Specifies the version of the deleted filesystem to restore.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.filedatalake.FileSystemClient
         """
         new_name = kwargs.pop('new_name', None)
@@ -362,7 +378,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: None
 
         .. admonition:: Example:
@@ -547,7 +567,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             and if yes, indicates the index document and 404 error document to use.
         :type static_website: ~azure.storage.filedatalake.StaticWebsite
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: None
         """
         return self._blob_service_client.set_service_properties(**kwargs)  # pylint: disable=protected-access
@@ -561,7 +585,11 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             This operation was introduced in API version '2020-06-12'.
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: An object containing datalake service properties such as
             analytics logging, hour/minute metrics, cors rules, etc.
         :rtype: Dict[str, Any]

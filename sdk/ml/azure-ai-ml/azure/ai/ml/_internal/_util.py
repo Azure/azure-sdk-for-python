@@ -11,17 +11,26 @@ from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal._schema.node import HDInsightSchema, InternalBaseNodeSchema, ScopeSchema
 from azure.ai.ml._internal.entities import (
     Command,
+    DataTransfer,
     Distributed,
     HDInsight,
+    Hemera,
     InternalBaseNode,
     InternalComponent,
     Parallel,
     Scope,
+    Starlite,
 )
 from azure.ai.ml._schema import NestedField
-from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+_registered = False
+
+
+def _set_registered(value: bool):
+    global _registered  # pylint: disable=global-statement
+    _registered = value
 
 
 def _enable_internal_components():
@@ -33,29 +42,6 @@ def _enable_internal_components():
             create_schema_func=create_schema_func,
         )
 
-    # hack - internal primitive type
-    int_primitive_type = "int"
-    IOConstants.PRIMITIVE_STR_2_TYPE[int_primitive_type] = int
-    IOConstants.PARAM_PARSERS[int_primitive_type] = int
-    IOConstants.TYPE_MAPPING_YAML_2_REST[int_primitive_type] = "Int"
-
-    float_primitive_type = "float"
-    IOConstants.PRIMITIVE_STR_2_TYPE[float_primitive_type] = float
-    IOConstants.PARAM_PARSERS[float_primitive_type] = float
-    IOConstants.TYPE_MAPPING_YAML_2_REST[float_primitive_type] = "Float"
-
-    # TODO: do we support both Enum & enum?
-    enum_primitive_type = "Enum"
-    IOConstants.PRIMITIVE_STR_2_TYPE[enum_primitive_type] = str
-    IOConstants.TYPE_MAPPING_YAML_2_REST[enum_primitive_type] = "Enum"
-
-    enum_primitive_type = "enum"
-    IOConstants.PRIMITIVE_STR_2_TYPE[enum_primitive_type] = str
-    IOConstants.TYPE_MAPPING_YAML_2_REST[enum_primitive_type] = "enum"
-
-
-_registered = False
-
 
 def _register_node(_type, node_cls, schema_cls):
     pipeline_node_factory.register_type(
@@ -66,9 +52,9 @@ def _register_node(_type, node_cls, schema_cls):
     )
 
 
-def enable_internal_components_in_pipeline():
+def enable_internal_components_in_pipeline(*, force=False):
     global _registered  # pylint: disable=global-statement
-    if _registered:
+    if _registered and not force:
         return  # already registered
 
     _enable_internal_components()
@@ -78,9 +64,12 @@ def enable_internal_components_in_pipeline():
         _register_node(_type, InternalBaseNode, InternalBaseNodeSchema)
 
     # redo the registration for those with specific runsettings
+    _register_node(NodeType.DATA_TRANSFER, DataTransfer, InternalBaseNodeSchema)
+    _register_node(NodeType.HEMERA, Hemera, InternalBaseNodeSchema)
+    _register_node(NodeType.STARLITE, Starlite, InternalBaseNodeSchema)
     _register_node(NodeType.COMMAND, Command, CommandSchema)
     _register_node(NodeType.DISTRIBUTED, Distributed, DistributedSchema)
     _register_node(NodeType.SCOPE, Scope, ScopeSchema)
     _register_node(NodeType.PARALLEL, Parallel, ParallelSchema)
     _register_node(NodeType.HDI, HDInsight, HDInsightSchema)
-    _registered = True
+    _set_registered(True)

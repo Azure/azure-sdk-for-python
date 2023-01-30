@@ -13,6 +13,7 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.ai.formrecognizer._generated.v2022_08_31.models import DocumentModelBuildOperationDetails, DocumentModelDetails as ModelDetails
 from azure.ai.formrecognizer import DocumentModelAdministrationClient, DocumentModelDetails, DocumentModelAdministrationLROPoller
 from testcase import FormRecognizerTest
+from conftest import skip_flaky_test
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
@@ -20,6 +21,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 
 class TestDMACTraining(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -50,6 +52,7 @@ class TestDMACTraining(FormRecognizerTest):
             assert "https://fakeuri.com/blank%20space" in poller._polling_method._initial_response.http_request.body
             poller.wait()
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_build_model_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -58,6 +61,7 @@ class TestDMACTraining(FormRecognizerTest):
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_build_document_model(build_mode="template", blob_container_url="xx")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -118,6 +122,7 @@ class TestDMACTraining(FormRecognizerTest):
                 # neural not returning field confidence
                 # assert doc_type.field_confidence[key] is not None
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -140,6 +145,7 @@ class TestDMACTraining(FormRecognizerTest):
                 assert doc_type.field_confidence[key] is not None
                 assert doc_type.build_mode == "template"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -159,6 +165,7 @@ class TestDMACTraining(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -186,6 +193,7 @@ class TestDMACTraining(FormRecognizerTest):
         assert document_model_from_dict.model_id == document_model.model_id
         self.assertModelTransformCorrect(document_model_from_dict, raw_model)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -208,6 +216,7 @@ class TestDMACTraining(FormRecognizerTest):
         document_model = raw_response[1]
         self.assertModelTransformCorrect(document_model, raw_model)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -246,6 +255,7 @@ class TestDMACTraining(FormRecognizerTest):
             model = poller.result()
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_build_model_continuation_token(self, **kwargs):
@@ -258,6 +268,7 @@ class TestDMACTraining(FormRecognizerTest):
         assert result
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8,15 +9,14 @@
 
 from typing import Dict, List, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class ActionGroupList(msrest.serialization.Model):
+class ActionGroupList(_serialization.Model):
     """A list of action groups.
 
     :ivar value: The list of action groups.
@@ -26,16 +26,12 @@ class ActionGroupList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ActionGroupResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ActionGroupResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ActionGroupResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ActionGroupResource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of action groups.
@@ -43,15 +39,15 @@ class ActionGroupList(msrest.serialization.Model):
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
-        super(ActionGroupList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ActionGroupPatchBody(msrest.serialization.Model):
+class ActionGroupPatchBody(_serialization.Model):
     """An action group object for the body of patch operations.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar enabled: Indicates whether this action group is enabled. If an action group is not
      enabled, then none of its actions will be activated.
@@ -59,30 +55,24 @@ class ActionGroupPatchBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        enabled: Optional[bool] = True,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword enabled: Indicates whether this action group is enabled. If an action group is not
          enabled, then none of its actions will be activated.
         :paramtype enabled: bool
         """
-        super(ActionGroupPatchBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.enabled = enabled
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -95,41 +85,35 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -137,7 +121,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class ActionGroupResource(Resource):
+class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attributes
     """An action group resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -150,9 +134,9 @@ class ActionGroupResource(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
     :vartype group_short_name: str
@@ -178,27 +162,30 @@ class ActionGroupResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'group_short_name': {'max_length': 12, 'min_length': 0},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "group_short_name": {"max_length": 12},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'group_short_name': {'key': 'properties.groupShortName', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'email_receivers': {'key': 'properties.emailReceivers', 'type': '[EmailReceiver]'},
-        'sms_receivers': {'key': 'properties.smsReceivers', 'type': '[SmsReceiver]'},
-        'webhook_receivers': {'key': 'properties.webhookReceivers', 'type': '[WebhookReceiver]'},
-        'itsm_receivers': {'key': 'properties.itsmReceivers', 'type': '[ItsmReceiver]'},
-        'azure_app_push_receivers': {'key': 'properties.azureAppPushReceivers', 'type': '[AzureAppPushReceiver]'},
-        'automation_runbook_receivers': {'key': 'properties.automationRunbookReceivers', 'type': '[AutomationRunbookReceiver]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "group_short_name": {"key": "properties.groupShortName", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "email_receivers": {"key": "properties.emailReceivers", "type": "[EmailReceiver]"},
+        "sms_receivers": {"key": "properties.smsReceivers", "type": "[SmsReceiver]"},
+        "webhook_receivers": {"key": "properties.webhookReceivers", "type": "[WebhookReceiver]"},
+        "itsm_receivers": {"key": "properties.itsmReceivers", "type": "[ItsmReceiver]"},
+        "azure_app_push_receivers": {"key": "properties.azureAppPushReceivers", "type": "[AzureAppPushReceiver]"},
+        "automation_runbook_receivers": {
+            "key": "properties.automationRunbookReceivers",
+            "type": "[AutomationRunbookReceiver]",
+        },
     }
 
     def __init__(
@@ -207,7 +194,7 @@ class ActionGroupResource(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         group_short_name: Optional[str] = None,
-        enabled: Optional[bool] = True,
+        enabled: bool = True,
         email_receivers: Optional[List["_models.EmailReceiver"]] = None,
         sms_receivers: Optional[List["_models.SmsReceiver"]] = None,
         webhook_receivers: Optional[List["_models.WebhookReceiver"]] = None,
@@ -217,9 +204,9 @@ class ActionGroupResource(Resource):
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword group_short_name: The short name of the action group. This will be used in SMS
          messages.
@@ -245,7 +232,7 @@ class ActionGroupResource(Resource):
         :paramtype automation_runbook_receivers:
          list[~$(python-base-namespace).v2017_04_01.models.AutomationRunbookReceiver]
         """
-        super(ActionGroupResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
         self.enabled = enabled
         self.email_receivers = email_receivers
@@ -256,13 +243,13 @@ class ActionGroupResource(Resource):
         self.automation_runbook_receivers = automation_runbook_receivers
 
 
-class ActivityLogAlertActionGroup(msrest.serialization.Model):
+class ActivityLogAlertActionGroup(_serialization.Model):
     """A pointer to an Azure Action Group.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar action_group_id: Required. The resourceId of the action group. This cannot be null or
-     empty.
+    :ivar action_group_id: The resourceId of the action group. This cannot be null or empty.
+     Required.
     :vartype action_group_id: str
     :ivar webhook_properties: the dictionary of custom properties to include with the post
      operation. These data are appended to the webhook payload.
@@ -270,35 +257,29 @@ class ActivityLogAlertActionGroup(msrest.serialization.Model):
     """
 
     _validation = {
-        'action_group_id': {'required': True},
+        "action_group_id": {"required": True},
     }
 
     _attribute_map = {
-        'action_group_id': {'key': 'actionGroupId', 'type': 'str'},
-        'webhook_properties': {'key': 'webhookProperties', 'type': '{str}'},
+        "action_group_id": {"key": "actionGroupId", "type": "str"},
+        "webhook_properties": {"key": "webhookProperties", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        action_group_id: str,
-        webhook_properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, action_group_id: str, webhook_properties: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword action_group_id: Required. The resourceId of the action group. This cannot be null or
-         empty.
+        :keyword action_group_id: The resourceId of the action group. This cannot be null or empty.
+         Required.
         :paramtype action_group_id: str
         :keyword webhook_properties: the dictionary of custom properties to include with the post
          operation. These data are appended to the webhook payload.
         :paramtype webhook_properties: dict[str, str]
         """
-        super(ActivityLogAlertActionGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.action_group_id = action_group_id
         self.webhook_properties = webhook_properties
 
 
-class ActivityLogAlertActionList(msrest.serialization.Model):
+class ActivityLogAlertActionList(_serialization.Model):
     """A list of activity log alert actions.
 
     :ivar action_groups: The list of activity log alerts.
@@ -307,105 +288,89 @@ class ActivityLogAlertActionList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'action_groups': {'key': 'actionGroups', 'type': '[ActivityLogAlertActionGroup]'},
+        "action_groups": {"key": "actionGroups", "type": "[ActivityLogAlertActionGroup]"},
     }
 
-    def __init__(
-        self,
-        *,
-        action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, action_groups: Optional[List["_models.ActivityLogAlertActionGroup"]] = None, **kwargs):
         """
         :keyword action_groups: The list of activity log alerts.
         :paramtype action_groups:
          list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertActionGroup]
         """
-        super(ActivityLogAlertActionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.action_groups = action_groups
 
 
-class ActivityLogAlertAllOfCondition(msrest.serialization.Model):
+class ActivityLogAlertAllOfCondition(_serialization.Model):
     """An Activity Log alert condition that is met when all its member conditions are met.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar all_of: Required. The list of activity log alert conditions.
+    :ivar all_of: The list of activity log alert conditions. Required.
     :vartype all_of:
      list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertLeafCondition]
     """
 
     _validation = {
-        'all_of': {'required': True},
+        "all_of": {"required": True},
     }
 
     _attribute_map = {
-        'all_of': {'key': 'allOf', 'type': '[ActivityLogAlertLeafCondition]'},
+        "all_of": {"key": "allOf", "type": "[ActivityLogAlertLeafCondition]"},
     }
 
-    def __init__(
-        self,
-        *,
-        all_of: List["_models.ActivityLogAlertLeafCondition"],
-        **kwargs
-    ):
+    def __init__(self, *, all_of: List["_models.ActivityLogAlertLeafCondition"], **kwargs):
         """
-        :keyword all_of: Required. The list of activity log alert conditions.
+        :keyword all_of: The list of activity log alert conditions. Required.
         :paramtype all_of:
          list[~$(python-base-namespace).v2017_04_01.models.ActivityLogAlertLeafCondition]
         """
-        super(ActivityLogAlertAllOfCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.all_of = all_of
 
 
-class ActivityLogAlertLeafCondition(msrest.serialization.Model):
+class ActivityLogAlertLeafCondition(_serialization.Model):
     """An Activity Log alert condition that is met by comparing an activity log field and value.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar field: Required. The name of the field that this condition will examine. The possible
-     values for this field are (case-insensitive): 'resourceId', 'category', 'caller', 'level',
+    :ivar field: The name of the field that this condition will examine. The possible values for
+     this field are (case-insensitive): 'resourceId', 'category', 'caller', 'level',
      'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus', 'resourceType', or
-     anything beginning with 'properties.'.
+     anything beginning with 'properties.'. Required.
     :vartype field: str
-    :ivar equals: Required. The field value will be compared to this value (case-insensitive) to
-     determine if the condition is met.
+    :ivar equals: The field value will be compared to this value (case-insensitive) to determine if
+     the condition is met. Required.
     :vartype equals: str
     """
 
     _validation = {
-        'field': {'required': True},
-        'equals': {'required': True},
+        "field": {"required": True},
+        "equals": {"required": True},
     }
 
     _attribute_map = {
-        'field': {'key': 'field', 'type': 'str'},
-        'equals': {'key': 'equals', 'type': 'str'},
+        "field": {"key": "field", "type": "str"},
+        "equals": {"key": "equals", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        field: str,
-        equals: str,
-        **kwargs
-    ):
+    def __init__(self, *, field: str, equals: str, **kwargs):
         """
-        :keyword field: Required. The name of the field that this condition will examine. The possible
-         values for this field are (case-insensitive): 'resourceId', 'category', 'caller', 'level',
+        :keyword field: The name of the field that this condition will examine. The possible values for
+         this field are (case-insensitive): 'resourceId', 'category', 'caller', 'level',
          'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus', 'resourceType', or
-         anything beginning with 'properties.'.
+         anything beginning with 'properties.'. Required.
         :paramtype field: str
-        :keyword equals: Required. The field value will be compared to this value (case-insensitive) to
-         determine if the condition is met.
+        :keyword equals: The field value will be compared to this value (case-insensitive) to determine
+         if the condition is met. Required.
         :paramtype equals: str
         """
-        super(ActivityLogAlertLeafCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.field = field
         self.equals = equals
 
 
-class ActivityLogAlertList(msrest.serialization.Model):
+class ActivityLogAlertList(_serialization.Model):
     """A list of activity log alerts.
 
     :ivar value: The list of activity log alerts.
@@ -415,8 +380,8 @@ class ActivityLogAlertList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ActivityLogAlertResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ActivityLogAlertResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -432,15 +397,15 @@ class ActivityLogAlertList(msrest.serialization.Model):
         :keyword next_link: Provides the link to retrieve the next set of elements.
         :paramtype next_link: str
         """
-        super(ActivityLogAlertList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ActivityLogAlertPatchBody(msrest.serialization.Model):
+class ActivityLogAlertPatchBody(_serialization.Model):
     """An activity log alert object for the body of patch operations.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar enabled: Indicates whether this activity log alert is enabled. If an activity log alert
      is not enabled, then none of its actions will be activated.
@@ -448,25 +413,19 @@ class ActivityLogAlertPatchBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        enabled: Optional[bool] = True,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword enabled: Indicates whether this activity log alert is enabled. If an activity log
          alert is not enabled, then none of its actions will be activated.
         :paramtype enabled: bool
         """
-        super(ActivityLogAlertPatchBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.enabled = enabled
 
@@ -484,9 +443,9 @@ class ActivityLogAlertResource(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar scopes: A list of resourceIds that will be used as prefixes. The alert will only apply to
      activityLogs with resourceIds that fall under one of these prefixes. This list must include at
@@ -504,23 +463,23 @@ class ActivityLogAlertResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'scopes': {'key': 'properties.scopes', 'type': '[str]'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'condition': {'key': 'properties.condition', 'type': 'ActivityLogAlertAllOfCondition'},
-        'actions': {'key': 'properties.actions', 'type': 'ActivityLogAlertActionList'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "scopes": {"key": "properties.scopes", "type": "[str]"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "condition": {"key": "properties.condition", "type": "ActivityLogAlertAllOfCondition"},
+        "actions": {"key": "properties.actions", "type": "ActivityLogAlertActionList"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -529,16 +488,16 @@ class ActivityLogAlertResource(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         scopes: Optional[List[str]] = None,
-        enabled: Optional[bool] = True,
+        enabled: bool = True,
         condition: Optional["_models.ActivityLogAlertAllOfCondition"] = None,
         actions: Optional["_models.ActivityLogAlertActionList"] = None,
         description: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword scopes: A list of resourceIds that will be used as prefixes. The alert will only apply
          to activityLogs with resourceIds that fall under one of these prefixes. This list must include
@@ -555,7 +514,7 @@ class ActivityLogAlertResource(Resource):
         :keyword description: A description of this activity log alert.
         :paramtype description: str
         """
-        super(ActivityLogAlertResource, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.scopes = scopes
         self.enabled = enabled
         self.condition = condition
@@ -563,19 +522,19 @@ class ActivityLogAlertResource(Resource):
         self.description = description
 
 
-class AutomationRunbookReceiver(msrest.serialization.Model):
+class AutomationRunbookReceiver(_serialization.Model):
     """The Azure Automation Runbook notification receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar automation_account_id: Required. The Azure automation account Id which holds this runbook
-     and authenticate to Azure resource.
+    :ivar automation_account_id: The Azure automation account Id which holds this runbook and
+     authenticate to Azure resource. Required.
     :vartype automation_account_id: str
-    :ivar runbook_name: Required. The name for this runbook.
+    :ivar runbook_name: The name for this runbook. Required.
     :vartype runbook_name: str
-    :ivar webhook_resource_id: Required. The resource id for webhook linked to this runbook.
+    :ivar webhook_resource_id: The resource id for webhook linked to this runbook. Required.
     :vartype webhook_resource_id: str
-    :ivar is_global_runbook: Required. Indicates whether this instance is global runbook.
+    :ivar is_global_runbook: Indicates whether this instance is global runbook. Required.
     :vartype is_global_runbook: bool
     :ivar name: Indicates name of the webhook.
     :vartype name: str
@@ -584,19 +543,19 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
     """
 
     _validation = {
-        'automation_account_id': {'required': True},
-        'runbook_name': {'required': True},
-        'webhook_resource_id': {'required': True},
-        'is_global_runbook': {'required': True},
+        "automation_account_id": {"required": True},
+        "runbook_name": {"required": True},
+        "webhook_resource_id": {"required": True},
+        "is_global_runbook": {"required": True},
     }
 
     _attribute_map = {
-        'automation_account_id': {'key': 'automationAccountId', 'type': 'str'},
-        'runbook_name': {'key': 'runbookName', 'type': 'str'},
-        'webhook_resource_id': {'key': 'webhookResourceId', 'type': 'str'},
-        'is_global_runbook': {'key': 'isGlobalRunbook', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'service_uri': {'key': 'serviceUri', 'type': 'str'},
+        "automation_account_id": {"key": "automationAccountId", "type": "str"},
+        "runbook_name": {"key": "runbookName", "type": "str"},
+        "webhook_resource_id": {"key": "webhookResourceId", "type": "str"},
+        "is_global_runbook": {"key": "isGlobalRunbook", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "service_uri": {"key": "serviceUri", "type": "str"},
     }
 
     def __init__(
@@ -611,21 +570,21 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword automation_account_id: Required. The Azure automation account Id which holds this
-         runbook and authenticate to Azure resource.
+        :keyword automation_account_id: The Azure automation account Id which holds this runbook and
+         authenticate to Azure resource. Required.
         :paramtype automation_account_id: str
-        :keyword runbook_name: Required. The name for this runbook.
+        :keyword runbook_name: The name for this runbook. Required.
         :paramtype runbook_name: str
-        :keyword webhook_resource_id: Required. The resource id for webhook linked to this runbook.
+        :keyword webhook_resource_id: The resource id for webhook linked to this runbook. Required.
         :paramtype webhook_resource_id: str
-        :keyword is_global_runbook: Required. Indicates whether this instance is global runbook.
+        :keyword is_global_runbook: Indicates whether this instance is global runbook. Required.
         :paramtype is_global_runbook: bool
         :keyword name: Indicates name of the webhook.
         :paramtype name: str
         :keyword service_uri: The URI where webhooks should be sent.
         :paramtype service_uri: str
         """
-        super(AutomationRunbookReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.automation_account_id = automation_account_id
         self.runbook_name = runbook_name
         self.webhook_resource_id = webhook_resource_id
@@ -634,128 +593,111 @@ class AutomationRunbookReceiver(msrest.serialization.Model):
         self.service_uri = service_uri
 
 
-class AzureAppPushReceiver(msrest.serialization.Model):
+class AzureAppPushReceiver(_serialization.Model):
     """The Azure mobile App push notification receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the Azure mobile app push receiver. Names must be unique
-     across all receivers within an action group.
+    :ivar name: The name of the Azure mobile app push receiver. Names must be unique across all
+     receivers within an action group. Required.
     :vartype name: str
-    :ivar email_address: Required. The email address registered for the Azure mobile app.
+    :ivar email_address: The email address registered for the Azure mobile app. Required.
     :vartype email_address: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'email_address': {'required': True},
+        "name": {"required": True},
+        "email_address": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        email_address: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, email_address: str, **kwargs):
         """
-        :keyword name: Required. The name of the Azure mobile app push receiver. Names must be unique
-         across all receivers within an action group.
+        :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
+         receivers within an action group. Required.
         :paramtype name: str
-        :keyword email_address: Required. The email address registered for the Azure mobile app.
+        :keyword email_address: The email address registered for the Azure mobile app. Required.
         :paramtype email_address: str
         """
-        super(AzureAppPushReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.email_address = email_address
 
 
-class EmailReceiver(msrest.serialization.Model):
+class EmailReceiver(_serialization.Model):
     """An email receiver.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the email receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the email receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar email_address: Required. The email address of this receiver.
+    :ivar email_address: The email address of this receiver. Required.
     :vartype email_address: str
     :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
-     "Disabled".
+     and "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2017_04_01.models.ReceiverStatus
     """
 
     _validation = {
-        'name': {'required': True},
-        'email_address': {'required': True},
-        'status': {'readonly': True},
+        "name": {"required": True},
+        "email_address": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'email_address': {'key': 'emailAddress', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        email_address: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, email_address: str, **kwargs):
         """
-        :keyword name: Required. The name of the email receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the email receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword email_address: Required. The email address of this receiver.
+        :keyword email_address: The email address of this receiver. Required.
         :paramtype email_address: str
         """
-        super(EmailReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.email_address = email_address
         self.status = None
 
 
-class EnableRequest(msrest.serialization.Model):
+class EnableRequest(_serialization.Model):
     """Describes a receiver that should be resubscribed.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar receiver_name: Required. The name of the receiver to resubscribe.
+    :ivar receiver_name: The name of the receiver to resubscribe. Required.
     :vartype receiver_name: str
     """
 
     _validation = {
-        'receiver_name': {'required': True},
+        "receiver_name": {"required": True},
     }
 
     _attribute_map = {
-        'receiver_name': {'key': 'receiverName', 'type': 'str'},
+        "receiver_name": {"key": "receiverName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        receiver_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, receiver_name: str, **kwargs):
         """
-        :keyword receiver_name: Required. The name of the receiver to resubscribe.
+        :keyword receiver_name: The name of the receiver to resubscribe. Required.
         :paramtype receiver_name: str
         """
-        super(EnableRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.receiver_name = receiver_name
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -765,92 +707,81 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ItsmReceiver(msrest.serialization.Model):
+class ItsmReceiver(_serialization.Model):
     """An Itsm receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the Itsm receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the Itsm receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar workspace_id: Required. OMS LA instance identifier.
+    :ivar workspace_id: OMS LA instance identifier. Required.
     :vartype workspace_id: str
-    :ivar connection_id: Required. Unique identification of ITSM connection among multiple defined
-     in above workspace.
+    :ivar connection_id: Unique identification of ITSM connection among multiple defined in above
+     workspace. Required.
     :vartype connection_id: str
-    :ivar ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
-     CreateMultipleWorkItems option will be part of this blob as well.
+    :ivar ticket_configuration: JSON blob for the configurations of the ITSM action.
+     CreateMultipleWorkItems option will be part of this blob as well. Required.
     :vartype ticket_configuration: str
-    :ivar region: Required. Region in which workspace resides. Supported
+    :ivar region: Region in which workspace resides. Supported
      values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'.
+     Required.
     :vartype region: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'workspace_id': {'required': True},
-        'connection_id': {'required': True},
-        'ticket_configuration': {'required': True},
-        'region': {'required': True},
+        "name": {"required": True},
+        "workspace_id": {"required": True},
+        "connection_id": {"required": True},
+        "ticket_configuration": {"required": True},
+        "region": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'connection_id': {'key': 'connectionId', 'type': 'str'},
-        'ticket_configuration': {'key': 'ticketConfiguration', 'type': 'str'},
-        'region': {'key': 'region', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "connection_id": {"key": "connectionId", "type": "str"},
+        "ticket_configuration": {"key": "ticketConfiguration", "type": "str"},
+        "region": {"key": "region", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: str,
-        workspace_id: str,
-        connection_id: str,
-        ticket_configuration: str,
-        region: str,
-        **kwargs
+        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs
     ):
         """
-        :keyword name: Required. The name of the Itsm receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the Itsm receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword workspace_id: Required. OMS LA instance identifier.
+        :keyword workspace_id: OMS LA instance identifier. Required.
         :paramtype workspace_id: str
-        :keyword connection_id: Required. Unique identification of ITSM connection among multiple
-         defined in above workspace.
+        :keyword connection_id: Unique identification of ITSM connection among multiple defined in
+         above workspace. Required.
         :paramtype connection_id: str
-        :keyword ticket_configuration: Required. JSON blob for the configurations of the ITSM action.
-         CreateMultipleWorkItems option will be part of this blob as well.
+        :keyword ticket_configuration: JSON blob for the configurations of the ITSM action.
+         CreateMultipleWorkItems option will be part of this blob as well. Required.
         :paramtype ticket_configuration: str
-        :keyword region: Required. Region in which workspace resides. Supported
+        :keyword region: Region in which workspace resides. Supported
          values:'centralindia','japaneast','southeastasia','australiasoutheast','uksouth','westcentralus','canadacentral','eastus','westeurope'.
+         Required.
         :paramtype region: str
         """
-        super(ItsmReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.workspace_id = workspace_id
         self.connection_id = connection_id
@@ -858,99 +789,86 @@ class ItsmReceiver(msrest.serialization.Model):
         self.region = region
 
 
-class SmsReceiver(msrest.serialization.Model):
+class SmsReceiver(_serialization.Model):
     """An SMS receiver.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the SMS receiver. Names must be unique across all receivers
-     within an action group.
+    :ivar name: The name of the SMS receiver. Names must be unique across all receivers within an
+     action group. Required.
     :vartype name: str
-    :ivar country_code: Required. The country code of the SMS receiver.
+    :ivar country_code: The country code of the SMS receiver. Required.
     :vartype country_code: str
-    :ivar phone_number: Required. The phone number of the SMS receiver.
+    :ivar phone_number: The phone number of the SMS receiver. Required.
     :vartype phone_number: str
-    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled",
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled", and
      "Disabled".
     :vartype status: str or ~$(python-base-namespace).v2017_04_01.models.ReceiverStatus
     """
 
     _validation = {
-        'name': {'required': True},
-        'country_code': {'required': True},
-        'phone_number': {'required': True},
-        'status': {'readonly': True},
+        "name": {"required": True},
+        "country_code": {"required": True},
+        "phone_number": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'country_code': {'key': 'countryCode', 'type': 'str'},
-        'phone_number': {'key': 'phoneNumber', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        country_code: str,
-        phone_number: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
         """
-        :keyword name: Required. The name of the SMS receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the SMS receiver. Names must be unique across all receivers within
+         an action group. Required.
         :paramtype name: str
-        :keyword country_code: Required. The country code of the SMS receiver.
+        :keyword country_code: The country code of the SMS receiver. Required.
         :paramtype country_code: str
-        :keyword phone_number: Required. The phone number of the SMS receiver.
+        :keyword phone_number: The phone number of the SMS receiver. Required.
         :paramtype phone_number: str
         """
-        super(SmsReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.country_code = country_code
         self.phone_number = phone_number
         self.status = None
 
 
-class WebhookReceiver(msrest.serialization.Model):
+class WebhookReceiver(_serialization.Model):
     """A webhook receiver.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the webhook receiver. Names must be unique across all
-     receivers within an action group.
+    :ivar name: The name of the webhook receiver. Names must be unique across all receivers within
+     an action group. Required.
     :vartype name: str
-    :ivar service_uri: Required. The URI where webhooks should be sent.
+    :ivar service_uri: The URI where webhooks should be sent. Required.
     :vartype service_uri: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'service_uri': {'required': True},
+        "name": {"required": True},
+        "service_uri": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'service_uri': {'key': 'serviceUri', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "service_uri": {"key": "serviceUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        service_uri: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, service_uri: str, **kwargs):
         """
-        :keyword name: Required. The name of the webhook receiver. Names must be unique across all
-         receivers within an action group.
+        :keyword name: The name of the webhook receiver. Names must be unique across all receivers
+         within an action group. Required.
         :paramtype name: str
-        :keyword service_uri: Required. The URI where webhooks should be sent.
+        :keyword service_uri: The URI where webhooks should be sent. Required.
         :paramtype service_uri: str
         """
-        super(WebhookReceiver, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.service_uri = service_uri

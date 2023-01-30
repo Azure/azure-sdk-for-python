@@ -15,10 +15,11 @@ from .._util import _UTILS_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_UTILS_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestTelemetryValue:
     def test_component_node_telemetry_value(self):
         # From yaml
-        component_func = load_component(path="./tests/test_configs/components/helloworld_component.yml")
+        component_func = load_component("./tests/test_configs/components/helloworld_component.yml")
         v = component_func._get_telemetry_values()
         assert v["type"] == "command"
         assert v["source"] == "YAML.COMPONENT"
@@ -91,7 +92,7 @@ class TestTelemetryValue:
 
         # pipeline job
         test_path = "./tests/test_configs/pipeline_jobs/jobs_with_automl_nodes/onejob_automl_classification.yml"
-        job = load_job(path=test_path)
+        job = load_job(test_path)
         v = job._get_telemetry_values()
         assert v["type"] == "pipeline"
         assert v["source"] == "YAML.JOB"
@@ -104,7 +105,7 @@ class TestTelemetryValue:
 
         @dsl.pipeline()
         def pipeline_no_arg():
-            component_func = load_component(path=path)
+            component_func = load_component(path)
             component_func(component_in_path=Input(path="/a/path/on/ds"), component_in_number=1)
 
         pipeline1 = pipeline_no_arg()
@@ -118,7 +119,7 @@ class TestTelemetryValue:
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
     def test_dsl_subpipeline_telemetry_value(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
-        component_func1 = load_component(path=path)
+        component_func1 = load_component(path)
 
         @dsl.pipeline(name="sub_pipeline")
         def sub_pipeline(component_in_number: int, component_in_path: str):

@@ -21,14 +21,12 @@ USAGE:
 import os
 
 def authentication_maps_service_client_with_subscription_key_credential():
-    # [START create_maps_search_service_client_with_key]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
     subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
     maps_search_client = MapsSearchClient(credential=AzureKeyCredential(subscription_key))
-    # [END create_maps_search_service_client_with_key]
 
     result = maps_search_client.get_point_of_interest_categories()
 

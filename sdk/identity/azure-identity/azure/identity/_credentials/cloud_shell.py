@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import os
-from typing import TYPE_CHECKING
+from typing import Any, Optional, Dict
 
 from azure.core.pipeline.transport import HttpRequest
 
@@ -12,13 +12,9 @@ from .._constants import EnvironmentVariables
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.managed_identity_base import ManagedIdentityBase
 
-if TYPE_CHECKING:
-    from typing import Any, Optional
-
 
 class CloudShellCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs):
-        # type: (**Any) -> Optional[ManagedIdentityClient]
+    def get_client(self, **kwargs: Any) -> Optional[ManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.MSI_ENDPOINT)
         if url:
             return ManagedIdentityClient(
@@ -26,12 +22,10 @@ class CloudShellCredential(ManagedIdentityBase):
             )
         return None
 
-    def get_unavailable_message(self):
-        # type: () -> str
+    def get_unavailable_message(self) -> str:
         return "Cloud Shell managed identity configuration not found in environment"
 
 
-def _get_request(url, scope, identity_config):
-    # type: (str, str, dict) -> HttpRequest
+def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
     request = HttpRequest("POST", url, data=dict({"resource": scope}, **identity_config))
     return request

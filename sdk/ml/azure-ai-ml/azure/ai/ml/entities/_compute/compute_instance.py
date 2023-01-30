@@ -4,27 +4,38 @@
 
 # pylint: disable=protected-access,too-many-instance-attributes
 
+import logging
+import re
+import warnings
 from typing import Dict, List, Optional
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_01_01_preview.models import AssignedUser
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceProperties
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceProperties
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeInstanceSshSettings as CiSShSettings,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.compute_instance import ComputeInstanceSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
 from azure.ai.ml.entities._compute.compute import Compute, NetworkSettings
+from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
-from ._identity import IdentityConfiguration
+from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
+from ._setup_scripts import SetupScripts
+
+module_logger = logging.getLogger(__name__)
 
 
 class ComputeInstanceSshSettings:
@@ -37,7 +48,7 @@ class ComputeInstanceSshSettings:
     def __init__(
         self,
         *,
-        ssh_key_value: str = None,
+        ssh_key_value: Optional[str] = None,
         **kwargs,
     ):
         """[summary]
@@ -69,7 +80,7 @@ class ComputeInstanceSshSettings:
         return self._ssh_port
 
 
-class AssignedUserConfiguration:
+class AssignedUserConfiguration(DictMixin):
     """Settings to create a compute on behalf of another user."""
 
     def __init__(self, *, user_tenant_id: str, user_object_id: str):
@@ -120,6 +131,20 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
+    :param idle_time_before_shutdown: Deprecated. Use :param: `idle_time_before_shutdown_minutes` instead.
+        Stops compute instance after user defined period of inactivity.
+        Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+    :type idle_time_before_shutdown: Optional[str], optional
+    :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
+        inactivity in minutes. Minimum is 15 min, maximum is 3 days.
+    :type idle_time_before_shutdown_minutes: Optional[int], optional
+    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
+        True - Indicates that the compute nodes will have public IPs provisioned.
+        False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+        Default Value: True.
+    :type enable_node_public_ip: Optional[bool], optional
+    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
+    :type setup_scripts: Optional[SetupScripts], optional
     """
 
     def __init__(
@@ -133,12 +158,17 @@ class ComputeInstance(Compute):
         network_settings: Optional[NetworkSettings] = None,
         ssh_settings: Optional[ComputeInstanceSshSettings] = None,
         schedules: Optional[ComputeSchedules] = None,
-        identity: IdentityConfiguration = None,
+        identity: Optional[IdentityConfiguration] = None,
+        idle_time_before_shutdown: Optional[str] = None,
+        idle_time_before_shutdown_minutes: Optional[int] = None,
+        setup_scripts: Optional[SetupScripts] = None,
+        enable_node_public_ip: bool = True,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
         self._state = kwargs.pop("state", None)
         self._last_operation = kwargs.pop("last_operation", None)
+        self._os_image_metadata = kwargs.pop("os_image_metadata", None)
         self._services = kwargs.pop("services", None)
         super().__init__(
             name=name,
@@ -154,6 +184,10 @@ class ComputeInstance(Compute):
         self.ssh_settings = ssh_settings
         self.schedules = schedules
         self.identity = identity
+        self.idle_time_before_shutdown = idle_time_before_shutdown
+        self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
+        self.setup_scripts = setup_scripts
+        self.enable_node_public_ip = enable_node_public_ip
         self.subnet = None
 
     @property
@@ -182,6 +216,17 @@ class ComputeInstance(Compute):
         rtype: str
         """
         return self._state
+
+    @experimental
+    @property
+    def os_image_metadata(self) -> ImageMetadata:
+        """
+        Metadata about the operating system image for this compute instance.
+
+        return: Operating system image metadata.
+        rtype: ImageMetadata
+        """
+        return self._os_image_metadata
 
     def _to_rest_object(self) -> ComputeResource:
         if self.network_settings and self.network_settings.subnet:
@@ -214,13 +259,29 @@ class ComputeInstance(Compute):
                 )
             )
 
+        idle_time_before_shutdown = None
+        if self.idle_time_before_shutdown_minutes:
+            idle_time_before_shutdown = f"PT{self.idle_time_before_shutdown_minutes}M"
+        elif self.idle_time_before_shutdown:
+            warnings.warn(
+                """ The property 'idle_time_before_shutdown' is deprecated.
+                Please use'idle_time_before_shutdown_minutes' instead.""",
+                DeprecationWarning,
+            )
+            idle_time_before_shutdown = self.idle_time_before_shutdown
+
         compute_instance_prop = ComputeInstanceProperties(
             vm_size=self.size if self.size else ComputeDefaults.VMSIZE,
             subnet=subnet_resource,
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
-            schedules=self.schedules._to_rest_object() if self.schedules else None,
+            idle_time_before_shutdown=idle_time_before_shutdown,
+            enable_node_public_ip=self.enable_node_public_ip,
         )
+        compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
+        compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
+        compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
+        compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,
@@ -229,7 +290,7 @@ class ComputeInstance(Compute):
         return ComputeResource(
             location=self.location,
             properties=compute_instance,
-            identity=(self.identity._to_rest_object() if self.identity else None),
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
         )
 
     def _to_dict(self) -> Dict:
@@ -282,6 +343,27 @@ class ComputeInstance(Compute):
                 if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
             )
+        os_image_metadata = None
+        if prop.properties and prop.properties.os_image_metadata:
+            metadata = prop.properties.os_image_metadata
+            os_image_metadata = ImageMetadata(
+                is_latest_os_image_version=metadata.is_latest_os_image_version
+                if metadata.is_latest_os_image_version is not None
+                else None,
+                current_image_version=metadata.current_image_version if metadata.current_image_version else None,
+                latest_image_version=metadata.latest_image_version if metadata.latest_image_version else None,
+            )
+
+        idle_time_before_shutdown = None
+        idle_time_before_shutdown_minutes = None
+        idle_time_before_shutdown_pattern = r"PT([0-9]+)M"
+        if prop.properties and prop.properties.idle_time_before_shutdown:
+            idle_time_before_shutdown = prop.properties.idle_time_before_shutdown
+            idle_time_match = re.match(
+                pattern=idle_time_before_shutdown_pattern,
+                string=idle_time_before_shutdown,
+            )
+            idle_time_before_shutdown_minutes = int(idle_time_match[1]) if idle_time_match else None
 
         response = ComputeInstance(
             name=rest_obj.name,
@@ -311,7 +393,16 @@ class ComputeInstance(Compute):
             schedules=ComputeSchedules._from_rest_object(prop.properties.schedules)
             if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
             else None,
-            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
+            if prop.properties and prop.properties.setup_scripts
+            else None,
+            idle_time_before_shutdown=idle_time_before_shutdown,
+            idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
+            os_image_metadata=os_image_metadata,
+            enable_node_public_ip=prop.properties.enable_node_public_ip
+            if (prop.properties and prop.properties.enable_node_public_ip)
+            else True,
         )
         return response
 

@@ -1,5 +1,57 @@
 # Release History
 
+## 21.1.0 (2022-12-30)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter node_resource_group_profile
+
+## 21.0.0 (2022-12-15)
+
+### Features Added
+
+  - Model MaintenanceConfiguration has a new parameter maintenance_window
+  - Model ManagedClusterAutoUpgradeProfile has a new parameter node_os_upgrade_channel
+
+### Breaking Changes
+
+  - Renamed operation AgentPoolsOperations.abort_latest_operation to AgentPoolsOperations.begin_abort_latest_operation
+  - Renamed operation ManagedClustersOperations.abort_latest_operation to ManagedClustersOperations.begin_abort_latest_operation
+
+## 20.7.0 (2022-11-09)
+
+### Features Added
+
+  - Add new api-version `2022-09-02-preview` for operation group `fleets`
+
+## 20.6.0 (2022-10-25)
+
+### Features Added
+
+  - Model AgentPoolNetworkProfile has a new parameter allowed_host_ports
+  - Model AgentPoolNetworkProfile has a new parameter application_security_groups
+  - Model ContainerServiceNetworkProfile has a new parameter ebpf_dataplane
+  - Model ManagedClusterSecurityProfile has a new parameter custom_ca_trust_certificates
+
+## 20.5.0 (2022-10-18)
+
+### Features Added
+
+  - Model AgentPool has a new parameter network_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter network_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter network_profile
+
+## 20.4.0 (2022-09-20)
+
+### Features Added
+
+  - Model AgentPool has a new parameter windows_profile
+  - Model ContainerServiceNetworkProfile has a new parameter kube_proxy_config
+  - Model ManagedCluster has a new parameter guardrails_profile
+  - Model ManagedClusterAgentPoolProfile has a new parameter windows_profile
+  - Model ManagedClusterAgentPoolProfileProperties has a new parameter windows_profile
+  - Model ManagedClusterLoadBalancerProfile has a new parameter backend_pool_type
+
 ## 20.3.0 (2022-08-26)
 
 ### Features Added

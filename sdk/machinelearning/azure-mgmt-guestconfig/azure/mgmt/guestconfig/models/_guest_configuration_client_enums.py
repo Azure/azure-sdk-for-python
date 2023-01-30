@@ -6,35 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionAfterReboot(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class ActionAfterReboot(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies what happens after a reboot during the application of a configuration. The possible
-    values are ContinueConfiguration and StopConfiguration
+    values are ContinueConfiguration and StopConfiguration.
     """
 
     CONTINUE_CONFIGURATION = "ContinueConfiguration"
     STOP_CONFIGURATION = "StopConfiguration"
 
-class AssignmentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class AssignmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the assignment type and execution of the configuration. Possible values are Audit,
     DeployAndAutoCorrect, ApplyAndAutoCorrect and ApplyAndMonitor.
     """
@@ -44,15 +29,16 @@ class AssignmentType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     APPLY_AND_AUTO_CORRECT = "ApplyAndAutoCorrect"
     APPLY_AND_MONITOR = "ApplyAndMonitor"
 
-class ComplianceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """A value indicating compliance status of the machine for the assigned guest configuration.
-    """
+
+class ComplianceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A value indicating compliance status of the machine for the assigned guest configuration."""
 
     COMPLIANT = "Compliant"
     NON_COMPLIANT = "NonCompliant"
     PENDING = "Pending"
 
-class ConfigurationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ConfigurationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how the LCM(Local Configuration Manager) actually applies the configuration to the
     target nodes. Possible values are ApplyOnly, ApplyAndMonitor, and ApplyAndAutoCorrect.
     """
@@ -61,24 +47,33 @@ class ConfigurationMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     APPLY_AND_MONITOR = "ApplyAndMonitor"
     APPLY_AND_AUTO_CORRECT = "ApplyAndAutoCorrect"
 
-class Kind(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Kind of the guest configuration. For example:DSC
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
+
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of the guest configuration. For example:DSC."""
 
     DSC = "DSC"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state, which only appears in the response.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
     CREATED = "Created"
 
-class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of report, Consistency or Initial
-    """
+
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of report, Consistency or Initial."""
 
     CONSISTENCY = "Consistency"
     INITIAL = "Initial"

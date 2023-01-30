@@ -6,7 +6,7 @@
 # pylint: disable=invalid-overridden-method
 
 import functools
-from typing import (  # pylint: disable=unused-import
+from typing import (
     Any, Dict, List, Optional, Union,
     TYPE_CHECKING)
 
@@ -15,7 +15,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-
 from .._serialize import get_api_version
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.policies_async import ExponentialRetry
@@ -33,6 +32,7 @@ from ._models import QueuePropertiesPaged
 from ._queue_client_async import QueueClient
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from .._models import (
         CorsRule,
         Metrics,
@@ -86,11 +86,10 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
     """
 
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
         super(QueueServiceClient, self).__init__( # type: ignore
@@ -241,7 +240,11 @@ class QueueServiceClient(AsyncStorageAccountHostsMixin, QueueServiceClientBase, 
             The maximum number of queue names to retrieve per API
             call. If the request does not specify the server will return up to 5,000 items.
         :keyword int timeout:
-            The server timeout, expressed in seconds. This function may make multiple
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/en-us/rest/api/storageservices/setting-timeouts-for-queue-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-queue
+            #other-client--per-operation-configuration>`_. This function may make multiple
             calls to the service in which case the timeout value specified will be
             applied to each individual call.
         :returns: An iterable (auto-paging) of QueueProperties.

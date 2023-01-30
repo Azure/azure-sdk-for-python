@@ -9,6 +9,7 @@ from .assets.code_asset import AnonymousCodeAssetSchema, CodeAssetSchema
 from .assets.data import DataSchema
 from .assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
 from .assets.model import ModelSchema
+from .assets.workspace_model_reference import WorkspaceModelReferenceSchema
 from .component import CommandComponentSchema
 from .core.fields import (
     ArmStr,
@@ -51,4 +52,5 @@ __all__ = [
     "AnonymousCodeAssetSchema",
     "ExperimentalField",
     "RegistryStr",
+    "WorkspaceModelReferenceSchema",
 ]

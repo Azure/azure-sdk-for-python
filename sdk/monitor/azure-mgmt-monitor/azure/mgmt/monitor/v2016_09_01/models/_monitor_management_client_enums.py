@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class Unit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The unit of the metric.
-    """
+    """The unit of the metric."""
 
     COUNT = "Count"
     BYTES = "Bytes"

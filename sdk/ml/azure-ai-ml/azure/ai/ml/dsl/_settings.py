@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 import logging
 from collections import deque
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml.entities._builders import BaseNode
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.exceptions import UserErrorException
 
 module_logger = logging.getLogger(__name__)
 
@@ -103,8 +103,8 @@ class _DSLSettings:
 
 def set_pipeline_settings(
     *,
-    on_init: Union[BaseNode, str] = None,
-    on_finalize: Union[BaseNode, str] = None,
+    on_init: Optional[Union[BaseNode, str]] = None,
+    on_finalize: Optional[Union[BaseNode, str]] = None,
 ) -> None:
     """Set pipeline settings for current `dsl.pipeline` definition.
 

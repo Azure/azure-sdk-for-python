@@ -8,10 +8,11 @@ import base64
 from json import JSONEncoder
 from typing import Union, cast
 from datetime import datetime, date, time, timedelta
-from .utils._utils import _FixedOffset
+from datetime import timezone
 
 
 __all__ = ["NULL", "AzureJSONEncoder"]
+TZ_UTC = timezone.utc  # type: ignore
 
 
 class _Null(object):
@@ -102,14 +103,6 @@ def _datetime_as_isostr(dt):
     except AttributeError:
         dt = cast(timedelta, dt)
         return _timedelta_as_isostr(dt)
-
-
-try:
-    from datetime import timezone
-
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    TZ_UTC = _FixedOffset(0)  # type: ignore
 
 
 class AzureJSONEncoder(JSONEncoder):

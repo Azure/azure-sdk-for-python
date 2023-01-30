@@ -75,10 +75,12 @@ class TestNetAppBackupPolicies(AzureMgmtRecordedTestCase):
         assert len(list(backup_policies_list)) == 1
 
         delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
-
+        if self.is_live:
+            time.sleep(50)
         backup_policies_list = self.client.backup_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(backup_policies_list)) == 0
-
+        if self.is_live:
+            time.sleep(5)
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
 
     @recorded_by_proxy
@@ -96,10 +98,12 @@ class TestNetAppBackupPolicies(AzureMgmtRecordedTestCase):
 
         delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
         delete_backup_policy(self.client, TEST_BACKUP_POLICY_2, account_name=ACCOUNT1, live=self.is_live)
-
+        if self.is_live:
+            time.sleep(50)
         backup_policies_list = self.client.backup_policies.list(TEST_RG, ACCOUNT1)
         assert len(list(backup_policies_list)) == 0
-
+        if self.is_live:
+            time.sleep(5)
         delete_account(self.client, TEST_RG, ACCOUNT1)
 
     @recorded_by_proxy
@@ -111,6 +115,9 @@ class TestNetAppBackupPolicies(AzureMgmtRecordedTestCase):
         assert backup_policy.name == ACCOUNT1 + "/" + TEST_BACKUP_POLICY_1
 
         delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        if self.is_live:
+            time.sleep(50)
+
         delete_account(self.client, TEST_RG, ACCOUNT1)
 
     @recorded_by_proxy
@@ -129,4 +136,7 @@ class TestNetAppBackupPolicies(AzureMgmtRecordedTestCase):
         assert backup_policy.weekly_backups_to_keep == 1
 
         delete_backup_policy(self.client, TEST_BACKUP_POLICY_1, account_name=ACCOUNT1, live=self.is_live)
+        if self.is_live:
+            time.sleep(50)
+
         delete_account(self.client, TEST_RG, ACCOUNT1)

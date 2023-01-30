@@ -6,8 +6,7 @@
 import os
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationException
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Environment
@@ -16,6 +15,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntry
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 
 from .spark import Spark
 
@@ -79,33 +79,33 @@ def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Di
 
 def spark(
     *,
-    experiment_name: str = None,
-    name: str = None,
-    display_name: str = None,
-    description: str = None,
-    tags: Dict = None,
-    code: Union[str, os.PathLike] = None,
+    experiment_name: Optional[str] = None,
+    name: Optional[str] = None,
+    display_name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    code: Optional[Union[str, os.PathLike]] = None,
     entry: Union[Dict[str, str], SparkJobEntry, None] = None,
     py_files: Optional[List[str]] = None,
     jars: Optional[List[str]] = None,
     files: Optional[List[str]] = None,
     archives: Optional[List[str]] = None,
-    identity: Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity] = None,
-    driver_cores: int = None,
-    driver_memory: str = None,
-    executor_cores: int = None,
-    executor_memory: str = None,
-    executor_instances: int = None,
-    dynamic_allocation_enabled: bool = None,
-    dynamic_allocation_min_executors: int = None,
-    dynamic_allocation_max_executors: int = None,
+    identity: Optional[Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity]] = None,
+    driver_cores: Optional[int] = None,
+    driver_memory: Optional[str] = None,
+    executor_cores: Optional[int] = None,
+    executor_memory: Optional[str] = None,
+    executor_instances: Optional[int] = None,
+    dynamic_allocation_enabled: Optional[bool] = None,
+    dynamic_allocation_min_executors: Optional[int] = None,
+    dynamic_allocation_max_executors: Optional[int] = None,
     conf: Optional[Dict[str, str]] = None,
-    environment: Union[str, Environment] = None,
-    inputs: Dict = None,
-    outputs: Dict = None,
-    args: str = None,
-    compute: str = None,
-    resources: Union[Dict, SparkResourceConfiguration] = None,
+    environment: Optional[Union[str, Environment]] = None,
+    inputs: Optional[Dict] = None,
+    outputs: Optional[Dict] = None,
+    args: Optional[str] = None,
+    compute: Optional[str] = None,
+    resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
     **kwargs,
 ) -> Spark:
     """Create a Spark object which can be used inside dsl.pipeline as a function and
@@ -176,6 +176,7 @@ def spark(
     job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
     component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
     component = kwargs.pop("component", None)
+
     if component is None:
         component = SparkComponent(
             name=name,
@@ -204,29 +205,60 @@ def spark(
             _source=ComponentSource.BUILDER,
             **kwargs,
         )
-
-    spark_obj = Spark(
-        experiment_name=experiment_name,
-        name=name,
-        display_name=display_name,
-        tags=tags,
-        description=description,
-        component=component,
-        identity=identity,
-        driver_cores=driver_cores,
-        driver_memory=driver_memory,
-        executor_cores=executor_cores,
-        executor_memory=executor_memory,
-        executor_instances=executor_instances,
-        dynamic_allocation_enabled=dynamic_allocation_enabled,
-        dynamic_allocation_min_executors=dynamic_allocation_min_executors,
-        dynamic_allocation_max_executors=dynamic_allocation_max_executors,
-        conf=conf,
-        inputs=job_inputs,
-        outputs=job_outputs,
-        compute=compute,
-        resources=resources,
-        **kwargs,
-    )
-
+    if isinstance(component, SparkComponent):
+        spark_obj = Spark(
+            experiment_name=experiment_name,
+            name=name,
+            display_name=display_name,
+            tags=tags,
+            description=description,
+            component=component,
+            identity=identity,
+            driver_cores=driver_cores,
+            driver_memory=driver_memory,
+            executor_cores=executor_cores,
+            executor_memory=executor_memory,
+            executor_instances=executor_instances,
+            dynamic_allocation_enabled=dynamic_allocation_enabled,
+            dynamic_allocation_min_executors=dynamic_allocation_min_executors,
+            dynamic_allocation_max_executors=dynamic_allocation_max_executors,
+            conf=conf,
+            inputs=job_inputs,
+            outputs=job_outputs,
+            compute=compute,
+            resources=resources,
+            **kwargs,
+        )
+    else:
+        # when we load a remote job, component now is an arm_id, we need get entry from node level returned from
+        # service
+        spark_obj = Spark(
+            experiment_name=experiment_name,
+            name=name,
+            display_name=display_name,
+            tags=tags,
+            description=description,
+            component=component,
+            identity=identity,
+            driver_cores=driver_cores,
+            driver_memory=driver_memory,
+            executor_cores=executor_cores,
+            executor_memory=executor_memory,
+            executor_instances=executor_instances,
+            dynamic_allocation_enabled=dynamic_allocation_enabled,
+            dynamic_allocation_min_executors=dynamic_allocation_min_executors,
+            dynamic_allocation_max_executors=dynamic_allocation_max_executors,
+            conf=conf,
+            inputs=job_inputs,
+            outputs=job_outputs,
+            compute=compute,
+            resources=resources,
+            entry=entry,
+            py_files=py_files,
+            jars=jars,
+            files=files,
+            archives=archives,
+            args=args,
+            **kwargs,
+        )
     return spark_obj

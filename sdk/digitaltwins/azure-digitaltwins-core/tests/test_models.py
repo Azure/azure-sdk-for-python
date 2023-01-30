@@ -4,16 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-import random
 
-from devtools_testutils import AzureTestCase
-from _preparer import DigitalTwinsRGPreparer, DigitalTwinsPreparer
-
-from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsModelData
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
+from azure.digitaltwins.core import DigitalTwinsClient, DigitalTwinsModelData
+from devtools_testutils import AzureRecordedTestCase
 
 
-class DigitalTwinsModelsTests(AzureTestCase):
+class TestDigitalTwinsModels(AzureRecordedTestCase):
 
     def _get_client(self, endpoint, **kwargs):
         credential = self.get_credential(DigitalTwinsClient)
@@ -32,7 +29,7 @@ class DigitalTwinsModelsTests(AzureTestCase):
                 except:
                     pass
             models = [m.id for m in client.list_models()]
-    
+
     def _get_unique_component_id(self, client):
         id = "dtmi:com:samples:{};1".format(self.create_random_name("ComponentModel"))
         try:
@@ -41,7 +38,7 @@ class DigitalTwinsModelsTests(AzureTestCase):
             return id
         self._clean_up_models(client)
         return id
-    
+
     def _get_unique_model_id(self, client):
         id =  "dtmi:com:samples:{};1".format(self.create_random_name("TempModel"))
         try:
@@ -51,23 +48,19 @@ class DigitalTwinsModelsTests(AzureTestCase):
         self._clean_up_models(client)
         return id
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_models_empty(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_models_empty(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(HttpResponseError):
             client.create_models([])
 
         with pytest.raises(HttpResponseError):
             client.create_models([{}])
-        
+
         with pytest.raises(HttpResponseError):
             client.create_models(None)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_models(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_models(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         model_id = self._get_unique_model_id(client)
         component_id = self._get_unique_component_id(client)
         component = {
@@ -120,10 +113,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         assert isinstance(models[1], DigitalTwinsModelData)
         assert models[1].id == model_id
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_model_existing(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_model_existing(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         model_id = self._get_unique_model_id(client)
         component_id = self._get_unique_component_id(client)
         component = {
@@ -170,10 +161,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             client.get_model(component_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_model_invalid_model(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_model_invalid_model(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         model = {
             "@context": "dtmi:dtdl:context;2",
@@ -199,10 +188,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         with pytest.raises(HttpResponseError):
             client.create_models([model])
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_create_model_invalid_reference(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_create_model_invalid_reference(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         model_id = self._get_unique_model_id(client)
         model = {
@@ -231,10 +218,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         with pytest.raises(HttpResponseError):
             client.create_models([model])
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_get_model(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_get_model(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -260,10 +245,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         assert model.id == component_id
         assert model.model is None
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_get_model_with_definition(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_get_model_with_definition(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -289,17 +272,13 @@ class DigitalTwinsModelsTests(AzureTestCase):
         assert model.id == component_id
         assert model.model == component
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_get_model_not_existing(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_get_model_not_existing(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.get_model("dtmi:com:samples:NonExistingModel;1")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_list_models(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_list_models(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -324,10 +303,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         assert len(listed_models) >= 1
         assert component_id in listed_models
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_list_models_with_definition(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_list_models_with_definition(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -353,10 +330,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         assert component in listed_models
         assert all(listed_models)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_decommission_model(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_decommission_model(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -386,17 +361,13 @@ class DigitalTwinsModelsTests(AzureTestCase):
         model = client.get_model(component_id)
         assert model.decommissioned
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_decommission_model_not_existing(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_decommission_model_not_existing(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.decommission_model("dtmi:com:samples:NonExistingModel;1")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_decommission_model_already_decommissioned(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_decommission_model_already_decommissioned(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -426,10 +397,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         model = client.get_model(component_id)
         assert model.decommissioned
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_model(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_model(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -457,17 +426,13 @@ class DigitalTwinsModelsTests(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             client.get_model(component_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_model_not_existing(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_model_not_existing(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         with pytest.raises(ResourceNotFoundError):
             client.delete_model("dtmi:com:samples:NonExistingModel;1")
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_model_already_deleted(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_model_already_deleted(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         component = {
             "@id": component_id,
@@ -492,10 +457,8 @@ class DigitalTwinsModelsTests(AzureTestCase):
         with pytest.raises(ResourceNotFoundError):
             client.delete_model(component_id)
 
-    @DigitalTwinsRGPreparer(name_prefix="dttest")
-    @DigitalTwinsPreparer(name_prefix="dttest")
-    def test_delete_models_with_dependencies(self, resource_group, location, digitaltwin):
-        client = self._get_client(digitaltwin.host_name)
+    def test_delete_models_with_dependencies(self, recorded_test, digitaltwin):
+        client = self._get_client(digitaltwin["endpoint"])
         component_id = self._get_unique_component_id(client)
         model_id = self._get_unique_model_id(client)
         component = {
@@ -543,7 +506,7 @@ class DigitalTwinsModelsTests(AzureTestCase):
         client.create_models([component, model])
         with pytest.raises(ResourceExistsError):
             client.delete_model(component_id)
-        
+
         client.get_model(component_id)
         client.delete_model(model_id)
         client.delete_model(component_id)

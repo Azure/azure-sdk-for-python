@@ -1,6 +1,7 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_compute
 from azure.ai.ml.entities._compute.aml_compute import AmlCompute
@@ -10,9 +11,11 @@ from azure.core.polling import LROPoller
 
 @pytest.mark.e2etest
 @pytest.mark.mlc
-class TestCompute:
-    def test_aml_compute_create_and_delete(self, client: MLClient, rand_compute_name: Callable[[], str]) -> None:
-        compute_name = rand_compute_name()
+@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.core_sdk_test
+class TestCompute(AzureRecordedTestCase):
+    def test_aml_compute_create_and_delete(self, client: MLClient, rand_compute_name: Callable[[str], str]) -> None:
+        compute_name = rand_compute_name("compute_name")
         params_override = [{"name": compute_name}]
         compute = load_compute(
             source="./tests/test_configs/compute/compute-aml-no-identity.yaml", params_override=params_override
@@ -26,6 +29,7 @@ class TestCompute:
         compute_resource_get: AmlCompute = client.compute.get(name=compute_name)
         assert compute_resource_get.name == compute_name
         assert compute_resource_get.tier == "dedicated"
+        assert compute_resource_get.location == compute.location
 
         compute_resource_get.idle_time_before_scale_down = 200
         compute_update_poller = client.compute.begin_update(compute_resource_get)
@@ -43,8 +47,10 @@ class TestCompute:
         assert isinstance(outcome, LROPoller)
 
     @pytest.mark.skip(reason="not enough capacity")
-    def test_compute_instance_create_and_delete(self, client: MLClient, rand_compute_name: Callable[[], str]) -> None:
-        compute_name = rand_compute_name()
+    def test_compute_instance_create_and_delete(
+        self, client: MLClient, rand_compute_name: Callable[[str], str]
+    ) -> None:
+        compute_name = rand_compute_name("compute_name")
         params_override = [{"name": compute_name}]
         compute = load_compute(
             source="./tests/test_configs/compute/compute-ci.yaml",
@@ -65,8 +71,18 @@ class TestCompute:
         # so this is a preferred approach to assert
         assert isinstance(outcome, LROPoller)
 
-    def test_compute_instance_stop_start_restart(self, client: MLClient, rand_compute_name: Callable[[], str]) -> None:
-        compute_name = rand_compute_name()
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason=(
+            "Test takes 5 minutes in automation. "
+            "Already have unit tests verifying correct _restclient method is called. "
+            "Can be validated in live build only."
+        )
+    )
+    def test_compute_instance_stop_start_restart(
+        self, client: MLClient, rand_compute_name: Callable[[str], str]
+    ) -> None:
+        compute_name = rand_compute_name("compute_name")
         params_override = [{"name": compute_name}]
         compute = load_compute(
             source="./tests/test_configs/compute/compute-ci.yaml",

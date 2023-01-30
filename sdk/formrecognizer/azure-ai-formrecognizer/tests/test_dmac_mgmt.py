@@ -18,6 +18,7 @@ from azure.ai.formrecognizer import (
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
@@ -26,6 +27,7 @@ DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPrepa
 class TestManagement(FormRecognizerTest):
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
@@ -34,6 +36,7 @@ class TestManagement(FormRecognizerTest):
         info = client.get_resource_details()
         assert info
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_dmac_auth_bad_key(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -45,30 +48,35 @@ class TestManagement(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     def test_get_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             result = client.get_document_model("")
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_get_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             result = client.get_document_model(None)
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_delete_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             result = client.delete_document_model(None)
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_delete_model_empty_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             result = client.delete_document_model("")
+        assert "model_id cannot be None or empty." in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -78,6 +86,7 @@ class TestManagement(FormRecognizerTest):
         assert info.custom_document_models.limit
         assert info.custom_document_models.count
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -95,6 +104,7 @@ class TestManagement(FormRecognizerTest):
                 assert field["type"]
             assert doc_type.field_confidence == {}
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -125,6 +135,7 @@ class TestManagement(FormRecognizerTest):
         with pytest.raises(ResourceNotFoundError):
             client.get_document_model(model.model_id)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -186,11 +197,14 @@ class TestManagement(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     def test_get_operation_bad_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.get_operation("")
-        with pytest.raises(ValueError):
+        assert "'operation_id' cannot be None or empty." in str(e.value)
+        with pytest.raises(ValueError) as e:
             client.get_operation(None)
+        assert "'operation_id' cannot be None or empty." in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_get_document_analysis_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):

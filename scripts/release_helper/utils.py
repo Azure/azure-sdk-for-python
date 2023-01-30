@@ -26,7 +26,7 @@ _LOG = logging.getLogger(__name__)
 def get_origin_link_and_tag(issue_body_list: List[str]) -> (str, str):
     link, readme_tag = '', ''
     for row in issue_body_list:
-        if 'link' in row.lower() and link == '':
+        if 'link' in row.lower() and 'release request' not in row.lower() and link == '':
             link = row.split(":", 1)[-1].strip()
         if 'readme tag' in row.lower() and readme_tag == '':
             readme_tag = row.split(":", 1)[-1].strip()
@@ -125,9 +125,10 @@ def record_release(package_name: str, issue_info: Any, file: str, version: str) 
     created_at = issue_info.created_at.strftime('%Y-%m-%d')
     closed_at = issue_info.closed_at.strftime('%Y-%m-%d')
     assignee = issue_info.assignee.login
+    author = issue_info.user.login
     link = issue_info.html_url
     is_stable = True if 'b' not in version else ''
-    closed_issue_info = f'{package_name},{assignee},{created_at},{closed_at},{link},{version},{is_stable}\n'
+    closed_issue_info = f'{package_name},{author},{assignee},{created_at},{closed_at},{link},{version},{is_stable}\n'
     with open(file, 'r') as file_read:
         lines = file_read.readlines()
     with open(file, 'w') as file_write:

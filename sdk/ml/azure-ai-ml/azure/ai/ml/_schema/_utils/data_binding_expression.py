@@ -58,8 +58,8 @@ def support_data_binding_expression_for_fields(
     """
     if hasattr(schema, DATA_BINDING_SUPPORTED_KEY) and getattr(schema, DATA_BINDING_SUPPORTED_KEY):
         return
-    else:
-        setattr(schema, DATA_BINDING_SUPPORTED_KEY, True)
+
+    setattr(schema, DATA_BINDING_SUPPORTED_KEY, True)
 
     if attrs_to_skip is None:
         attrs_to_skip = []

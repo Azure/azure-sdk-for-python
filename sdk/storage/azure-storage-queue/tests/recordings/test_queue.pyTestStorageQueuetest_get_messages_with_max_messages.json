@@ -1,0 +1,465 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 27 Oct 2022 22:04:47 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage1\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E9ef65b6b-488a-4e78-a90e-850f27d069f7\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAjwNWIVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage2\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E8b509c70-5ff1-41cb-817a-fb156f026daa\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAhjdiIVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage3\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E854c2649-9bc7-400c-9150-7427d317fd32\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAYx1uIVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage4\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E889cb8b1-736d-42fc-aef1-c55c04a7fded\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAzLB7IVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage5\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E419814fe-8d6e-4560-9a48-5367e2d3ee11\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAg0iQIVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage6\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003Efb27a0db-73ac-4b49-b0bb-bef858ba8ddb\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:49 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAj\u002BSiIVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage7\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E40a7e4e4-030d-401d-9a0c-743562107ed3\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:49 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAavG3IVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage8\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E0bd52ece-69b3-4715-83ae-420015578931\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:49 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAA0p7LIVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "103",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage9\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:48 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003Ef0f404ae-ec3b-435d-b147-2ea7e347d985\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:49 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAREzfIVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "104",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003Emessage10\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E78457932-291f-479c-83af-fc01bf243c33\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:49 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAx27zIVDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:04:49 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages?numofmessages=1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E9ef65b6b-488a-4e78-a90e-850f27d069f7\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAA0GzhM1Dq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:05:19 GMT\u003C/TimeNextVisible\u003E\u003CDequeueCount\u003E1\u003C/DequeueCount\u003E\u003CMessageText\u003Emessage1\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages?numofmessages=1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E8b509c70-5ff1-41cb-817a-fb156f026daa\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAMdnuM1Dq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:05:19 GMT\u003C/TimeNextVisible\u003E\u003CDequeueCount\u003E1\u003C/DequeueCount\u003E\u003CMessageText\u003Emessage2\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages?numofmessages=1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E854c2649-9bc7-400c-9150-7427d317fd32\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAUIL7M1Dq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:05:19 GMT\u003C/TimeNextVisible\u003E\u003CDequeueCount\u003E1\u003C/DequeueCount\u003E\u003CMessageText\u003Emessage3\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages?numofmessages=1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E889cb8b1-736d-42fc-aef1-c55c04a7fded\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAABAAKNFDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:05:19 GMT\u003C/TimeNextVisible\u003E\u003CDequeueCount\u003E1\u003C/DequeueCount\u003E\u003CMessageText\u003Emessage4\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncdec72c19/messages?numofmessages=1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:04:49 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E419814fe-8d6e-4560-9a48-5367e2d3ee11\u003C/MessageId\u003E\u003CInsertionTime\u003EThu, 27 Oct 2022 22:04:48 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003EThu, 03 Nov 2022 22:04:48 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAAXEUXNFDq2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003EThu, 27 Oct 2022 22:05:19 GMT\u003C/TimeNextVisible\u003E\u003CDequeueCount\u003E1\u003C/DequeueCount\u003E\u003CMessageText\u003Emessage5\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    }
+  ],
+  "Variables": {}
+}

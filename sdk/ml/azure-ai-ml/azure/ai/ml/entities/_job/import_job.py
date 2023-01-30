@@ -5,7 +5,7 @@
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
@@ -32,8 +32,8 @@ class ImportSource(ABC):
     def __init__(
         self,
         *,
-        type: str = None,
-        connection: str = None,
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        connection: Optional[str] = None,
     ):
         self.type = type
         self.connection = connection
@@ -45,7 +45,7 @@ class ImportSource(ABC):
     @classmethod
     def _from_job_inputs(cls, job_inputs: Dict[str, str]) -> "ImportSource":
         """Translate job inputs to import source."""
-        type = job_inputs.get("type")
+        type = job_inputs.get("type")  # pylint: disable=redefined-builtin
         connection = job_inputs.get("connection")
         query = job_inputs.get("query")
         path = job_inputs.get("path")
@@ -62,9 +62,9 @@ class DatabaseImportSource(ImportSource):
     def __init__(
         self,
         *,
-        type: str = None,
-        connection: str = None,
-        query: str = None,
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        connection: Optional[str] = None,
+        query: Optional[str] = None,
     ):
         ImportSource.__init__(
             self,
@@ -87,9 +87,9 @@ class FileImportSource(ImportSource):
     def __init__(
         self,
         *,
-        type: str = None,
-        connection: str = None,
-        path: str = None,
+        type: Optional[str] = None,  # pylint: disable=redefined-builtin
+        connection: Optional[str] = None,
+        path: Optional[str] = None,
     ):
         ImportSource.__init__(
             self,
@@ -98,7 +98,7 @@ class FileImportSource(ImportSource):
         )
         self.path = path
 
-    def _to_job_inputs(self) -> Dict[str, str]:
+    def _to_job_inputs(self) -> Dict[str, Optional[str]]:
         """Translate source to command Inputs."""
         inputs = {
             "type": self.type,
@@ -117,7 +117,8 @@ class ImportJob(Job, JobIOMixin):
     :type description: str
     :param display_name: Display name of the job.
     :type display_name: str
-    :param experiment_name:  Name of the experiment the job will be created under, if None is provided, default will be set to current directory name.
+    :param experiment_name:  Name of the experiment the job will be created under.
+        If None is provided, default will be set to current directory name.
     :type experiment_name: str
     :param source: Input source parameters to the import job.
     :type source: azure.ai.ml.entities.DatabaseImportSource or FileImportSource
@@ -130,12 +131,12 @@ class ImportJob(Job, JobIOMixin):
     def __init__(
         self,
         *,
-        name: str = None,
-        description: str = None,
-        display_name: str = None,
-        experiment_name: str = None,
-        source: ImportSource = None,
-        output: Output = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        display_name: Optional[str] = None,
+        experiment_name: Optional[str] = None,
+        source: Optional[ImportSource] = None,
+        output: Optional[Output] = None,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.IMPORT
@@ -153,6 +154,7 @@ class ImportJob(Job, JobIOMixin):
         self.output = output
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return ImportJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     def _to_rest_object(self) -> JobBaseData:
@@ -164,7 +166,9 @@ class ImportJob(Job, JobIOMixin):
             description=self.description,
             compute_id=self.compute,
             experiment_name=self.experiment_name,
-            inputs=to_rest_dataset_literal_inputs(self.source._to_job_inputs(), job_type=self.type),
+            inputs=to_rest_dataset_literal_inputs(
+                self.source._to_job_inputs(), job_type=self.type  # pylint: disable=protected-access
+            ),
             outputs=to_rest_data_outputs({"output": self.output}),
             # TODO: Remove in PuP with native import job/component type support in MFE/Designer
             # No longer applicable once new import job type is ready on MFE in PuP
@@ -201,12 +205,12 @@ class ImportJob(Job, JobIOMixin):
             experiment_name=rest_command_job.experiment_name,
             status=rest_command_job.status,
             creation_context=obj.system_data,
-            source=ImportSource._from_job_inputs(inputs),
+            source=ImportSource._from_job_inputs(inputs),  # pylint: disable=protected-access
             output=outputs["output"] if "output" in outputs else None,
         )
         return import_job
 
-    def _to_component(self, context: Dict = None, **kwargs):
+    def _to_component(self, context: Optional[Dict] = None, **kwargs):
         """Translate a import job to component.
 
         :param context: Context of import job YAML file.
@@ -223,11 +227,14 @@ class ImportJob(Job, JobIOMixin):
             is_anonymous=True,
             base_path=context[BASE_PATH_CONTEXT_KEY],
             description=self.description,
-            source=self._to_inputs(inputs=self.source._to_job_inputs(), pipeline_job_dict=pipeline_job_dict),
+            source=self._to_inputs(
+                inputs=self.source._to_job_inputs(),  # pylint: disable=protected-access
+                pipeline_job_dict=pipeline_job_dict,
+            ),
             output=self._to_outputs(outputs={"output": self.output}, pipeline_job_dict=pipeline_job_dict)["output"],
         )
 
-    def _to_node(self, context: Dict = None, **kwargs):
+    def _to_node(self, context: Optional[Dict] = None, **kwargs):
         """Translate a import job to a pipeline node.
 
         :param context: Context of import job YAML file.
@@ -241,8 +248,9 @@ class ImportJob(Job, JobIOMixin):
         return Import(
             component=component,
             compute=self.compute,
-            inputs=self.source._to_job_inputs(),
+            inputs=self.source._to_job_inputs(),  # pylint: disable=protected-access
             outputs={"output": self.output},
             description=self.description,
             display_name=self.display_name,
+            properties=self.properties,
         )

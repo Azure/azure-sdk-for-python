@@ -1,30 +1,33 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict
+from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoPauseProperties,
     AutoScaleProperties,
     ComputeResource,
     SynapseSpark,
-    SynapseSparkProperties,
 )
 from azure.ai.ml._schema.compute.synapsespark_compute import SynapseSparkComputeSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.entities import Compute
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
-
-from ._identity import IdentityConfiguration
 
 
 class AutoScaleSettings:
     """Auto scale settings for synapse spark compute"""
 
-    def __init__(self, *, min_node_count: int = None, max_node_count: int = None, enabled: bool = None):
+    def __init__(
+        self,
+        *,
+        min_node_count: Optional[int] = None,
+        max_node_count: Optional[int] = None,
+        enabled: Optional[bool] = None,
+    ):
         """Auto scale settings for synapse spark compute
 
         :param min_node_count: Min node count
@@ -57,7 +60,7 @@ class AutoScaleSettings:
 class AutoPauseSettings:
     """Auto pause settings for synapse spark compute"""
 
-    def __init__(self, *, delay_in_minutes: int = None, enabled: bool = None):
+    def __init__(self, *, delay_in_minutes: Optional[int] = None, enabled: Optional[bool] = None):
         """Auto pause settings for synapse spark compute
 
         :param delay_in_minutes: ideal time delay in minutes before pause cluster
@@ -102,14 +105,14 @@ class SynapseSparkCompute(Compute):
         self,
         *,
         name: str,
-        description: str = None,
-        node_count: int = None,
-        node_family: str = None,
-        node_size: str = None,
-        spark_version: str = None,
-        identity: IdentityConfiguration = None,
-        scale_settings: AutoScaleSettings = None,
-        auto_pause_settings: AutoPauseSettings = None,
+        description: Optional[str] = None,
+        node_count: Optional[int] = None,
+        node_family: Optional[str] = None,
+        node_size: Optional[str] = None,
+        spark_version: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        scale_settings: Optional[AutoScaleSettings] = None,
+        auto_pause_settings: Optional[AutoPauseSettings] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
@@ -126,12 +129,14 @@ class SynapseSparkCompute(Compute):
     def _load_from_rest(cls, rest_obj: ComputeResource) -> "SynapseSparkCompute":
         prop = rest_obj.properties
         scale_settings = (
+            # pylint: disable=protected-access
             AutoScaleSettings._from_auto_scale_settings(prop.properties.auto_scale_properties)
             if prop.properties.auto_scale_properties
             else None
         )
 
         auto_pause_settings = (
+            # pylint: disable=protected-access
             AutoPauseSettings._from_auto_pause_settings(prop.properties.auto_pause_properties)
             if prop.properties.auto_pause_properties
             else None
@@ -148,7 +153,8 @@ class SynapseSparkCompute(Compute):
             node_family=prop.properties.node_size_family if prop.properties else None,
             node_size=prop.properties.node_size if prop.properties else None,
             spark_version=prop.properties.spark_version if prop.properties else None,
-            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            # pylint: disable=protected-access
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             scale_settings=scale_settings,
             auto_pause_settings=auto_pause_settings,
             provisioning_state=prop.provisioning_state,
@@ -158,6 +164,7 @@ class SynapseSparkCompute(Compute):
         )
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return SynapseSparkComputeSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
@@ -170,12 +177,16 @@ class SynapseSparkCompute(Compute):
             name=self.name,
             compute_type=self.type,
             resource_id=self.resource_id,
-            compute_location=self.location,
             description=self.description,
         )
         return ComputeResource(
             location=self.location,
             properties=synapsespark_comp,
             name=self.name,
-            identity=(self.identity._to_rest_object() if self.identity else None),
+            identity=(
+                # pylint: disable=protected-access
+                self.identity._to_compute_rest_object()
+                if self.identity
+                else None
+            ),
         )

@@ -50,7 +50,7 @@ class InsertDeleteEntity(object):
             "last_updated": datetime.today(),
             "product_id": uuid4(),
             "inventory_count": 42,
-            "barcode": b"135aefg8oj0ld58"
+            "barcode": b"135aefg8oj0ld58" # cspell:disable-line
         }
 
     async def create_entity(self):
@@ -78,7 +78,7 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceExistsError
         from azure.core.credentials import AzureNamedKeyCredential
 
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key) # type: ignore[arg-type]
         table_client = TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential)
 
         # [START delete_entity]
@@ -88,7 +88,7 @@ class InsertDeleteEntity(object):
             except ResourceExistsError:
                 print("Entity already exists!")
 
-            await table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
+            await table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"]) # type: ignore[call-overload]
             print("Successfully deleted!")
         # [END delete_entity]
 
@@ -111,5 +111,4 @@ async def main():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

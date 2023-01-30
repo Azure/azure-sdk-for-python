@@ -1,18 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import copy
 import hashlib
 import json
 import os
 import shutil
-from collections import OrderedDict
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 from unittest import mock
 
+import msrest
 from marshmallow.exceptions import ValidationError
 
-from azure.ai.ml._ml_exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -42,14 +42,18 @@ from azure.ai.ml._schema.job import CommandJobSchema, ParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
+from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from azure.ai.ml.constants._common import (
+    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
+    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     CommonYamlFields,
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -129,7 +133,7 @@ REF_DOC_ERROR_MESSAGE_MAP = {
 }
 
 
-def find_type_in_override(params_override: list = None) -> Optional[str]:
+def find_type_in_override(params_override: Optional[list] = None) -> Optional[str]:
     params_override = params_override or []
     for override in params_override:
         if CommonYamlFields.TYPE in override:
@@ -137,7 +141,7 @@ def find_type_in_override(params_override: list = None) -> Optional[str]:
     return None
 
 
-def is_compute_in_override(params_override: list = None) -> bool:
+def is_compute_in_override(params_override: Optional[list] = None) -> bool:
     return any([EndpointYamlFields.COMPUTE in param for param in params_override])
 
 
@@ -153,14 +157,17 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     ref_doc_link_error_msg = REF_DOC_ERROR_MESSAGE_MAP.get(schema, "")
     if ref_doc_link_error_msg:
         additional_message += f"\n{ref_doc_link_error_msg}"
-    additional_message += """\nThe easiest way to author a specification file is using IntelliSense and auto-completion Azure ML VS code extension provides: https://code.visualstudio.com/docs/datascience/azure-machine-learning
-To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code"""
+    additional_message += (
+        "\nThe easiest way to author a specification file is using IntelliSense and auto-completion Azure ML VS "
+        "code extension provides: https://code.visualstudio.com/docs/datascience/azure-machine-learning. "
+        "To set up: https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code"
+    )
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 
 
 def get_md5_string(text):
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest()
+        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
     except Exception as ex:
         raise ex
 
@@ -187,99 +194,37 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
             )
 
 
-class SnakeToPascalDescriptor(object):
-
-    """A data descriptor that transforms value from snake_case to CamelCase in
-    setter, CamelCase to snake_case in getter.
-
-    When the optional private_name is provided, the descriptor will set
-    the private_name in the object's __dict__.
-    """
-
-    def __init__(
-        self,
-        private_name=None,
-        *,
-        transformer=camel_to_snake,
-        reverse_transformer=snake_to_pascal,
-    ):
-        self.private_name = private_name
-        self.transformer = transformer
-        self.reverse_transformer = reverse_transformer
-
-    def __set_name__(self, owner, name):
-        self.public_name = name
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-
-        key = self.private_name or self.public_name
-        value = obj.__dict__.get(key, None)
-        return self.transformer(value) if value else None
-
-    def __set__(self, obj, val):
-
-        key = self.private_name or self.public_name
-        value = self.reverse_transformer(val)
-        obj.__dict__[key] = value
-
-    def __delete__(self, obj):
-        key = self.private_name or self.public_name
-        obj.__dict__.pop(key, None)
+def is_empty_target(obj):
+    """Determines if it's empty target"""
+    return (
+        obj is None
+        # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
+        or (isinstance(obj, dict) and len(obj) == 0)
+    )
 
 
-class LiteralToListDescriptor(object):
-
-    """A data descriptor that transforms singular literal values to lists in
-    the setter.
-
-    The getter always returns a list When the optional private_name is
-    provided, the descriptor will set the private_name in the object's
-    __dict__.
-    """
-
-    def __init__(self, private_name=None):
-        self.private_name = private_name
-
-    def __set_name__(self, owner, name):
-        self.public_name = name
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-
-        key = self.private_name or self.public_name
-        return obj.__dict__.get(key, None)
-
-    def __set__(self, obj, val):
-
-        key = self.private_name or self.public_name
-        if not isinstance(val, list) and val is not None:
-            val = [val]
-        obj.__dict__[key] = val
-
-    def __delete__(self, obj):
-        key = self.private_name or self.public_name
-        obj.__dict__.pop(key, None)
-
-
-def convert_ordered_dict_to_dict(target_object: Union[Dict, List]) -> Union[Dict, List]:
-    """Convert ordered dict to dict.
+def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
+    """Convert ordered dict to dict. Remove keys with None value.
 
     This is a workaround for rest request must be in dict instead of
     ordered dict.
     """
     # OrderedDict can appear nested in a list
     if isinstance(target_object, list):
-        target_object = [convert_ordered_dict_to_dict(obj) for obj in target_object]
+        new_list = []
+        for item in target_object:
+            item = convert_ordered_dict_to_dict(item)
+            if not is_empty_target(item) or not remove_empty:
+                new_list.append(item)
+        return new_list
     if isinstance(target_object, dict):
-        for key, dict_candidate in target_object.items():
-            target_object[key] = convert_ordered_dict_to_dict(dict_candidate)
-    if isinstance(target_object, OrderedDict):
-        return dict(**target_object)
-    else:
-        return target_object
+        new_dict = {}
+        for key, value in target_object.items():
+            value = convert_ordered_dict_to_dict(value)
+            if not is_empty_target(value) or not remove_empty:
+                new_dict[key] = value
+        return new_dict
+    return target_object
 
 
 def _general_copy(src, dst):
@@ -296,31 +241,99 @@ def _general_copy(src, dst):
         shutil.copy2(src, dst)
 
 
-def get_rest_dict(target_obj, clear_empty_value=False):
-    """Convert object to dict and convert OrderedDict to dict."""
+def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
+    """Convert object to dict and convert OrderedDict to dict.
+    Allow data binding expression as value, disregarding of the type defined in rest object.
+    """
+    # pylint: disable=too-many-return-statements
+    from azure.ai.ml.entities._job.pipeline._io import PipelineInput
+
     if target_obj is None:
         return None
-    result = convert_ordered_dict_to_dict(copy.deepcopy(target_obj.__dict__))
-    to_del = ["additional_properties"]
-    if clear_empty_value:
-        to_del.extend(filter(lambda x: result.get(x) is None, result.keys()))
-    for key in to_del:
-        if key in result:
-            del result[key]
-    return result
+    if isinstance(target_obj, dict):
+        result = {}
+        for key, value in target_obj.items():
+            if value is None:
+                continue
+            if key in ["additional_properties"]:
+                continue
+            result[key] = get_rest_dict_for_node_attrs(value, clear_empty_value)
+        return result
+    if isinstance(target_obj, list):
+        result = []
+        for item in target_obj:
+            result.append(get_rest_dict_for_node_attrs(item, clear_empty_value))
+        return result
+    if isinstance(target_obj, RestTranslatableMixin):
+        # note that the rest object may be invalid as data binding expression may not fit
+        # rest object structure
+        # pylint: disable=protected-access
+        from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
+
+        if isinstance(target_obj, _BaseIdentityConfiguration):
+            return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
+        return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
+
+    if isinstance(target_obj, msrest.serialization.Model):
+        # can't use result.as_dict() as data binding expression may not fit rest object structure
+        return get_rest_dict_for_node_attrs(target_obj.__dict__, clear_empty_value=clear_empty_value)
+
+    if isinstance(target_obj, PipelineInput):
+        return get_rest_dict_for_node_attrs(str(target_obj), clear_empty_value=clear_empty_value)
+
+    if not isinstance(target_obj, (str, int, float, bool)):
+        raise ValueError("Unexpected type {}".format(type(target_obj)))
+
+    return target_obj
+
+
+class _DummyRestModelFromDict(msrest.serialization.Model):
+    """A dummy rest model that can be initialized from dict, return base_dict[attr_name]
+    for getattr(self, attr_name) when attr_name is a public attrs; return None when trying to get
+    a non-existent public attribute.
+    """
+
+    def __init__(self, rest_dict):
+        self._rest_dict = rest_dict or {}
+        super().__init__()
+
+    def __getattribute__(self, item):
+        if not item.startswith("_"):
+            return self._rest_dict.get(item, None)
+        return super().__getattribute__(item)
+
+
+def from_rest_dict_to_dummy_rest_object(rest_dict):
+    """Create a dummy rest object based on a rest dict, which is a primitive dict containing
+    attributes in a rest object.
+    For example, for a rest object class like:
+        class A(msrest.serialization.Model):
+            def __init__(self, a, b):
+                self.a = a
+                self.b = b
+        rest_object = A(1, None)
+        rest_dict = {"a": 1}
+        regenerated_rest_object = from_rest_dict_to_fake_rest_object(rest_dict)
+        assert regenerated_rest_object.a == 1
+        assert regenerated_rest_object.b is None
+    """
+    if rest_dict is None or isinstance(rest_dict, dict):
+        return _DummyRestModelFromDict(rest_dict)
+    raise ValueError("Unexpected type {}".format(type(rest_dict)))
 
 
 def extract_label(input_str: str):
+    if not isinstance(input_str, str):
+        return None, None
     if "@" in input_str:
         return input_str.rsplit("@", 1)
-    else:
-        return input_str, None
+    return input_str, None
 
 
 def resolve_pipeline_parameters(pipeline_parameters: dict, remove_empty=False):
     """Resolve pipeline parameters.
 
-    1. Resolve BaseNode and OutputsAttrDict type to PipelineOutputBase.
+    1. Resolve BaseNode and OutputsAttrDict type to NodeOutput.
     2. Remove empty value (optional).
     """
 
@@ -347,7 +360,10 @@ def resolve_pipeline_parameter(data):
     from azure.ai.ml.entities._builders.base_node import BaseNode
     from azure.ai.ml.entities._builders.pipeline import Pipeline
     from azure.ai.ml.entities._job.pipeline._io import OutputsAttrDict
+    from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
+    if isinstance(data, PipelineExpression):
+        data = data.resolve()
     if isinstance(data, (BaseNode, Pipeline)):
         # For the case use a node/pipeline node as the input, we use its only one output as the real input.
         # Here we set node = node.outputs, then the following logic will get the output object.
@@ -365,3 +381,76 @@ def resolve_pipeline_parameter(data):
             )
         data = list(data.values())[0]
     return data
+
+
+def normalize_job_input_output_type(input_output_value):
+    """
+    We have changed the api starting v2022_06_01_preview version and there are some api interface changes, which will
+    result in pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block
+    az ml job list/show. So we convert the input/output type of camel to snake to be compatible with the Jun/Oct api.
+    """
+
+    FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING = {
+        JobInputType02.CUSTOM_MODEL: JobInputType10.CUSTOM_MODEL,
+        JobInputType02.LITERAL: JobInputType10.LITERAL,
+        JobInputType02.ML_FLOW_MODEL: JobInputType10.MLFLOW_MODEL,
+        JobInputType02.ML_TABLE: JobInputType10.MLTABLE,
+        JobInputType02.TRITON_MODEL: JobInputType10.TRITON_MODEL,
+        JobInputType02.URI_FILE: JobInputType10.URI_FILE,
+        JobInputType02.URI_FOLDER: JobInputType10.URI_FOLDER,
+    }
+    if (
+        hasattr(input_output_value, "job_input_type")
+        and input_output_value.job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
+    ):
+        input_output_value.job_input_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_input_type]
+    elif (
+        hasattr(input_output_value, "job_output_type")
+        and input_output_value.job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING
+    ):
+        input_output_value.job_output_type = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[input_output_value.job_output_type]
+    elif isinstance(input_output_value, dict):
+        job_output_type = input_output_value.get("job_output_type", None)
+        job_input_type = input_output_value.get("job_input_type", None)
+        job_type = input_output_value.get("type", None)
+
+        if job_output_type and job_output_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["job_output_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_output_type]
+        if job_input_type and job_input_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["job_input_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_input_type]
+        if job_type and job_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
+            input_output_value["type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_type]
+
+
+def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
+    """Get the type of the node or component from the yaml spec.
+    Yaml spec must have a key named "type" and exception will be raised if it's not once of valid_keys.
+
+    If internal components are enabled, related factory and schema will be updated.
+    """
+    _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))
+    schema = data.get(CommonYamlFields.SCHEMA, None)
+
+    # we should keep at least 1 place outside _internal to enable internal components
+    # and this is the only place
+    try_enable_internal_components()
+
+    if _type not in valid_keys:
+        if (
+            schema
+            and not is_internal_components_enabled()
+            and schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
+        ):
+            msg = (
+                f"Internal components is a private feature in v2, please set environment variable "
+                f"{AZUREML_INTERNAL_COMPONENTS_ENV_VAR} to true to use it."
+            )
+        else:
+            msg = f"Unsupported component type: {_type}."
+        raise ValidationException(
+            message=msg,
+            target=ErrorTarget.COMPONENT,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+    return extract_label(_type)[0]

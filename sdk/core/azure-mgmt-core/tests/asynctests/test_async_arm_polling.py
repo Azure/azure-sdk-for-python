@@ -28,17 +28,10 @@ import json
 import pickle
 import re
 import types
-import unittest
-try:
-    from unittest import mock
-except ImportError:
-    import mock
-
+from unittest import mock
 import pytest
 
 from requests import Request, Response
-
-from msrest import Deserializer
 
 from azure.core.polling import async_poller
 from azure.core.exceptions import DecodeError, HttpResponseError

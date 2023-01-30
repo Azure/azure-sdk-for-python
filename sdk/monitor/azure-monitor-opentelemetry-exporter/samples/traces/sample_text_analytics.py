@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 """
 Examples to show usage of the azure-core-tracing-opentelemetry
 with the Text Analytics SDK and exporting to Azure monitor backend.

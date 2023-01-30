@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the primary aggregation type value defining how to use the values for display.
-    """
+    """the primary aggregation type value defining how to use the values for display."""
 
     NONE = "None"
     AVERAGE = "Average"
@@ -21,18 +20,18 @@ class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
+
 class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operators allowed in the rule condition.
-    """
+    """Operators allowed in the rule condition."""
 
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
+
 class TimeAggregationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Aggregation operators allowed in a rule.
-    """
+    """Aggregation operators allowed in a rule."""
 
     AVERAGE = "Average"
     MINIMUM = "Minimum"
@@ -40,9 +39,9 @@ class TimeAggregationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TOTAL = "Total"
     LAST = "Last"
 
+
 class Unit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The unit of the metric.
-    """
+    """The unit of the metric."""
 
     COUNT = "Count"
     BYTES = "Bytes"

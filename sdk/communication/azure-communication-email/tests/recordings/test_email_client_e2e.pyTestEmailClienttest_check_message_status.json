@@ -8,23 +8,21 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "235",
+        "Content-Length": "211",
         "Content-Type": "application/json",
         "repeatability-first-sent": "sanitized",
         "repeatability-request-id": "sanitized",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b1 Python/3.10.4 (Windows-10-10.0.19044-SP0)",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25236-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Fri, 24 Jun 2022 21:20:56 GMT",
+        "x-ms-date": "Thu, 17 Nov 2022 17:37:33 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
-        "sender": "someSender@contoso.com",
         "content": {
           "subject": "This is the subject",
           "plainText": "This is the body"
         },
-        "importance": "normal",
         "recipients": {
           "to": [
             {
@@ -32,13 +30,15 @@
               "displayName": "Customer Name"
             }
           ]
-        }
+        },
+        "sender": "someSender@contoso.com"
       },
       "StatusCode": 202,
       "ResponseHeaders": {
         "api-supported-versions": "2021-10-01-preview",
         "Content-Length": "0",
         "Date": "sanitized",
+        "mise-correlation-id": "f974e5f8-b9e9-485d-83a1-b28769de2858",
         "Operation-Location": "https://someEndpoint/emails/someMessageId/status",
         "Repeatability-Result": "accepted",
         "X-Azure-Ref": "sanitized",
@@ -55,10 +55,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b1 Python/3.10.4 (Windows-10-10.0.19044-SP0)",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25236-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Fri, 24 Jun 2022 21:20:56 GMT",
+        "x-ms-date": "Thu, 17 Nov 2022 17:37:34 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -68,6 +68,7 @@
         "Content-Length": "48",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
+        "mise-correlation-id": "526665f6-6ebe-4972-872b-033994a98e16",
         "Retry-After": "60",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"

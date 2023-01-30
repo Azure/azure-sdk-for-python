@@ -1,5 +1,21 @@
 # Release History
 
+## 2.2.0b1 (2022-12-27)
+
+### Features Added
+
+  - Model ReservationsProperties has a new parameter applied_scope_properties
+  - Model ReservationsProperties has a new parameter swap_properties
+
+## 2.1.0 (2022-09-19)
+
+### Features Added
+
+  - Added operation ReservationOperations.archive
+  - Added operation ReservationOperations.unarchive
+  - Added operation group CalculateRefundOperations
+  - Added operation group ReturnOperations
+
 ## 2.0.0 (2022-04-20)
 
 **Features**

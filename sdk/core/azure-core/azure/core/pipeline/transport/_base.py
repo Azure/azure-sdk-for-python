@@ -23,20 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from __future__ import absolute_import
 import abc
 from email.message import Message
 import json
 import logging
 import time
 import copy
-
-try:
-    binary_type = str
-    from urlparse import urlparse  # type: ignore
-except ImportError:
-    binary_type = bytes  # type: ignore
-    from urllib.parse import urlparse
+from urllib.parse import urlparse  # type: ignore
 import xml.etree.ElementTree as ET
 
 from typing import (
@@ -52,7 +45,7 @@ from typing import (
     Optional,
     Tuple,
     Iterator,
-    Type
+    Type,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
@@ -83,6 +76,8 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
+
+binary_type = str
 
 
 def _format_url_section(template, **kwargs):
@@ -124,11 +119,11 @@ def _urljoin(base_url, stub_url):
     parsed = parsed._replace(path=parsed.path.rstrip("/") + "/" + stub_url)
     return parsed.geturl()
 
+
 class HttpTransport(
     AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
 ):  # type: ignore
-    """An http sender ABC.
-    """
+    """An http sender ABC."""
 
     @abc.abstractmethod
     def send(self, request, **kwargs):
@@ -176,9 +171,7 @@ class HttpRequest(object):
         self.multipart_mixed_info = None  # type: Optional[Tuple]
 
     def __repr__(self):
-        return "<HttpRequest [{}], url: '{}'>".format(
-            self.method, self.url
-        )
+        return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
 
     def __deepcopy__(self, memo=None):
         try:
@@ -341,7 +334,7 @@ class HttpRequest(object):
             requests,
             kwargs.pop("policies", []),
             kwargs.pop("boundary", None),
-            kwargs
+            kwargs,
         )
 
     def prepare_multipart_body(self, content_index=0):
@@ -366,6 +359,7 @@ class HttpRequest(object):
         :rtype: bytes
         """
         return _serialize_request(self)
+
 
 class _HttpResponseBase(object):
     """Represent a HTTP response.
@@ -392,8 +386,7 @@ class _HttpResponseBase(object):
 
     def body(self):
         # type: () -> bytes
-        """Return the whole body as bytes in memory.
-        """
+        """Return the whole body as bytes in memory."""
         raise NotImplementedError()
 
     def text(self, encoding=None):
@@ -410,7 +403,9 @@ class _HttpResponseBase(object):
     def _decode_parts(self, message, http_response_type, requests):
         # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]
         """Rebuild an HTTP response from pure string."""
-        return _decode_parts_helper(self, message, http_response_type, requests, _deserialize_response)
+        return _decode_parts_helper(
+            self, message, http_response_type, requests, _deserialize_response
+        )
 
     def _get_raw_parts(self, http_response_type=None):
         # type (Optional[Type[_HttpResponseBase]]) -> Iterator[HttpResponse]
@@ -419,7 +414,9 @@ class _HttpResponseBase(object):
         If parts are application/http use http_response_type or HttpClientTransportResponse
         as envelope.
         """
-        return _get_raw_parts_helper(self, http_response_type or HttpClientTransportResponse)
+        return _get_raw_parts_helper(
+            self, http_response_type or HttpClientTransportResponse
+        )
 
     def raise_for_status(self):
         # type () -> None

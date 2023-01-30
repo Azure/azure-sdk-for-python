@@ -2,12 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,too-many-instance-attributes
 
-from typing import Dict
+from typing import Dict, Optional
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import AmlCompute as AmlComputeRest
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    AmlCompute as AmlComputeRest,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AmlComputeProperties,
     ComputeResource,
     ResourceId,
@@ -16,12 +18,16 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 )
 from azure.ai.ml._schema._utils.utils import get_subnet_str
 from azure.ai.ml._schema.compute.aml_compute import AmlComputeSchema
-from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal, to_iso_duration_format
+from azure.ai.ml._utils.utils import (
+    camel_to_snake,
+    snake_to_pascal,
+    to_iso_duration_format,
+)
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeDefaults, ComputeType
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 
-from ._identity import IdentityConfiguration
 from .compute import Compute, NetworkSettings
 
 
@@ -32,8 +38,8 @@ class AmlComputeSshSettings:
         self,
         *,
         admin_username: str,
-        admin_password: str = None,
-        ssh_key_value: str = None,
+        admin_password: Optional[str] = None,
+        ssh_key_value: Optional[str] = None,
     ):
         """[summary]
 
@@ -95,22 +101,28 @@ class AmlCompute(Compute):
      else is open all public nodes. It can be default only during cluster creation time, after
      creation it will be either True or False. Possible values include: True, False, None. Default value: None.
      :type ssh_public_access_enabled: bool, optional
+    :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
+     True - Indicates that the compute nodes will have public IPs provisioned.
+     False - Indicates that the compute nodes will have a private endpoint and no public IPs.
+     Default Value: True.
+    :type enable_node_public_ip: Optional[bool], optional
     """
 
     def __init__(
         self,
         *,
         name: str,
-        description: str = None,
-        size: str = None,
-        ssh_public_access_enabled: bool = None,
-        ssh_settings: AmlComputeSshSettings = None,
-        min_instances: int = None,
-        max_instances: int = None,
-        network_settings: NetworkSettings = None,
-        idle_time_before_scale_down: int = None,
-        identity: IdentityConfiguration = None,
-        tier: str = None,
+        description: Optional[str] = None,
+        size: Optional[str] = None,
+        ssh_public_access_enabled: Optional[bool] = None,
+        ssh_settings: Optional[AmlComputeSshSettings] = None,
+        min_instances: Optional[int] = None,
+        max_instances: Optional[int] = None,
+        network_settings: Optional[NetworkSettings] = None,
+        idle_time_before_scale_down: Optional[int] = None,
+        identity: Optional[IdentityConfiguration] = None,
+        tier: Optional[str] = None,
+        enable_node_public_ip: bool = True,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.AMLCOMPUTE
@@ -129,6 +141,7 @@ class AmlCompute(Compute):
         self.ssh_settings = ssh_settings
         self.network_settings = network_settings
         self.tier = tier
+        self.enable_node_public_ip = enable_node_public_ip
         self.subnet = None
 
     @classmethod
@@ -166,8 +179,11 @@ class AmlCompute(Compute):
             idle_time_before_scale_down=prop.properties.scale_settings.node_idle_time_before_scale_down.total_seconds()
             if prop.properties.scale_settings and prop.properties.scale_settings.node_idle_time_before_scale_down
             else None,
-            identity=IdentityConfiguration._from_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
             created_on=prop.additional_properties.get("createdOn", None),
+            enable_node_public_ip=prop.properties.enable_node_public_ip
+            if prop.properties.enable_node_public_ip
+            else True,
         )
         return response
 
@@ -215,11 +231,12 @@ class AmlCompute(Compute):
             scale_settings=scale_settings,
             subnet=subnet_resource,
             remote_login_port_public_access=remote_login_public_access,
+            enable_node_public_ip=self.enable_node_public_ip,
         )
 
         aml_comp = AmlComputeRest(description=self.description, compute_type=self.type, properties=aml_prop)
         return ComputeResource(
             location=self.location,
             properties=aml_comp,
-            identity=(self.identity._to_rest_object() if self.identity else None),
+            identity=(self.identity._to_compute_rest_object() if self.identity else None),
         )

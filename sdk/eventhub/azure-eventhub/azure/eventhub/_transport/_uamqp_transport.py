@@ -24,6 +24,7 @@ try:
         compat,
         errors,
         Connection,
+        __version__,
     )
     from uamqp.message import (
         MessageHeader,
@@ -38,6 +39,7 @@ from ..amqp._constants import AmqpMessageBodyType
 from .._constants import (
     NO_RETRY_ERRORS,
     PROP_PARTITION_KEY,
+    UAMQP_LIBRARY,
 )
 
 from ..exceptions import (
@@ -91,6 +93,7 @@ if uamqp_installed:
                 c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
                 c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
             )
+        TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
         # define symbols
         PRODUCT_SYMBOL = types.AMQPSymbol("product")
@@ -103,16 +106,16 @@ if uamqp_installed:
         @staticmethod
         def build_message(**kwargs):
             """
-            Creates a uamqp.Message or pyamqp.Message with given arguments.
-            :rtype: uamqp.Message or pyamqp.Message
+            Creates a uamqp.Message with given arguments.
+            :rtype: uamqp.Message
             """
             return Message(**kwargs)
 
         @staticmethod
         def build_batch_message(**kwargs):
             """
-            Creates a uamqp.BatchMessage or pyamqp.BatchMessage with given arguments.
-            :rtype: uamqp.BatchMessage or pyamqp.BatchMessage
+            Creates a uamqp.BatchMessage with given arguments.
+            :rtype: uamqp.BatchMessage
             """
             return BatchMessage(**kwargs)
 
@@ -124,7 +127,9 @@ if uamqp_installed:
             :rtype: uamqp.Message
             """
             message_header = None
-            if annotated_message.header:
+            header_vals = annotated_message.header.values() if annotated_message.header else None
+            # If header and non-None header values, create outgoing header.
+            if annotated_message.header and header_vals.count(None) != len(header_vals):
                 message_header = MessageHeader()
                 message_header.delivery_count = annotated_message.header.delivery_count
                 message_header.time_to_live = annotated_message.header.time_to_live
@@ -133,7 +138,9 @@ if uamqp_installed:
                 message_header.priority = annotated_message.header.priority
 
             message_properties = None
-            if annotated_message.properties:
+            properties_vals = annotated_message.properties.values() if annotated_message.properties else None
+            # If properties and non-None properties values, create outgoing properties.
+            if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
                 message_properties = MessageProperties(
                     message_id=annotated_message.properties.message_id,
                     user_id=annotated_message.properties.user_id,
@@ -175,6 +182,20 @@ if uamqp_installed:
                 delivery_annotations=annotated_message.delivery_annotations,
                 footer=annotated_message.footer
             )
+
+        @staticmethod
+        def update_message_app_properties(message, key, value):
+            """
+            Adds the given key/value to the application properties of the message.
+            :param pyamqp.Message message: Message.
+            :param str key: Key to set in application properties.
+            :param str Value: Value to set for key in application properties.
+            :rtype: pyamqp.Message
+            """
+            if not message.application_properties:
+                message.application_properties = {}
+            message.application_properties.setdefault(key, value)
+            return message
 
         @staticmethod
         def get_batch_message_encoded_size(message):
@@ -238,6 +259,7 @@ if uamqp_installed:
             :keyword str encoding: Required.
             """
             endpoint = kwargs.pop("endpoint") # pylint:disable=unused-variable
+            custom_endpoint_address = kwargs.pop("custom_endpoint_address") # pylint:disable=unused-variable
             host = kwargs.pop("host")
             auth = kwargs.pop("auth")
             return Connection(
@@ -348,17 +370,17 @@ if uamqp_installed:
             return message
 
         @staticmethod
-        def add_batch(batch_message, outgoing_event_data, event_data):
+        def add_batch(event_data_batch, outgoing_event_data, event_data):
             """
             Add EventData to the data body of the BatchMessage.
-            :param batch_message: BatchMessage to add data to.
+            :param event_data_batch: BatchMessage to add data to.
             :param outgoing_event_data: Transformed EventData for sending.
             :param event_data: EventData to add to internal batch events. uamqp use only.
             :rtype: None
             """
             # pylint: disable=protected-access
-            batch_message._internal_events.append(event_data)
-            batch_message._message._body_gen.append(
+            event_data_batch._internal_events.append(event_data)
+            event_data_batch._message._body_gen.append(
                 outgoing_event_data._message
             )
 
@@ -506,6 +528,15 @@ if uamqp_installed:
             )
 
         @staticmethod
+        def open_mgmt_client(mgmt_client, conn):
+            """
+            Opens the mgmt AMQP client.
+            :param AMQPClient mgmt_client: uamqp AMQPClient.
+            :param conn: Connection.
+            """
+            mgmt_client.open(connection=conn)
+
+        @staticmethod
         def get_updated_token(mgmt_auth):
             """
             Return updated auth token.
@@ -526,12 +557,17 @@ if uamqp_installed:
             """
             operation_type = kwargs.pop("operation_type")
             operation = kwargs.pop("operation")
-            return mgmt_client.mgmt_request(
+            response = mgmt_client.mgmt_request(
                 mgmt_msg,
                 operation,
                 op_type=operation_type,
                 **kwargs
             )
+            status_code = response.application_properties[kwargs.get("status_code_field")]
+            description = response.application_properties.get(
+                kwargs.get("description_fields")
+            )  # type: Optional[Union[str, bytes]]
+            return status_code, description, response
 
         @staticmethod
         def get_error(status_code, description):
@@ -562,8 +598,7 @@ if uamqp_installed:
             if not base.running and isinstance(
                 exception, compat.TimeoutException
             ):
-                exception = UamqpTransport.get_error(
-                    errors.AuthenticationException,
+                exception = errors.AuthenticationException(
                     "Authorization timeout."
                 )
             return exception
@@ -595,7 +630,7 @@ if uamqp_installed:
 
         @staticmethod
         def _handle_exception(
-            exception, closable
+            exception, closable, *, is_consumer=False   # pylint:disable=unused-argument
         ):  # pylint:disable=too-many-branches, too-many-statements
             try:  # closable is a producer/consumer object
                 name = closable._name  # pylint: disable=protected-access

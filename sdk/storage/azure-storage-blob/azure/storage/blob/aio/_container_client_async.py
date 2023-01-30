@@ -7,7 +7,7 @@
 
 import functools
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
+    Any, AnyStr, AsyncIterable, AsyncIterator, Dict, List, IO, Iterable, Optional, overload, Union,
     TYPE_CHECKING
 )
 
@@ -41,6 +41,7 @@ from .._list_blobs_helper import IgnoreListBlobsDeserializer
 from ._models import FilteredBlobPaged
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from .._models import ( # pylint: disable=unused-import
         AccessPolicy,
@@ -110,12 +111,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             :caption: Creating the container client directly.
     """
     def __init__(
-            self, account_url,  # type: str
-            container_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            container_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         super(ContainerClient, self).__init__(
             account_url,
@@ -152,7 +152,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
         :paramtype container_encryption_scope: dict or ~azure.storage.blob.ContainerEncryptionScope
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
 
@@ -194,7 +198,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             matches the active lease ID of the source container.
         :paramtype lease: ~azure.storage.blob.BlobLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :rtype: ~azure.storage.blob.ContainerClient
         """
         lease = kwargs.pop('lease', None)
@@ -245,7 +253,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :rtype: None
 
         .. admonition:: Example:
@@ -307,7 +319,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: A BlobLeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.blob.aio.BlobLeaseClient
 
@@ -353,7 +369,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             container's lease is active and matches this ID.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :return: Properties for the specified container within a container object.
         :rtype: ~azure.storage.blob.ContainerProperties
 
@@ -387,7 +407,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         Returns True if a container exists and returns False otherwise.
 
         :kwarg int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
         try:
@@ -425,7 +449,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             Specify this header to perform the operation only
             if the resource has been modified since the specified time.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: Container-updated property dict (Etag and last modified).
 
         .. admonition:: Example:
@@ -500,7 +528,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             container's lease is active and matches this ID.
         :paramtype lease: ~azure.storage.blob.aio.BlobLeaseClient or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: Access policy information in a dict.
         :rtype: dict[str, Any]
 
@@ -563,7 +595,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: Container-updated property dict (Etag and last modified).
         :rtype: dict[str, str or ~datetime.datetime]
 
@@ -617,10 +653,14 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :param include:
             Specifies one or more additional datasets to include in the response.
             Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
-            'tags', 'versions'.
-        :paramtype include: list[str] or str
+            'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
+        :type include: list[str] or str
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.BlobProperties]
 
@@ -664,7 +704,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             Filters the results to return only blobs whose names
             begin with the specified prefix.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of blob names as strings.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         """
@@ -690,7 +734,7 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
     @distributed_trace
     def walk_blobs(
             self, name_starts_with=None, # type: Optional[str]
-            include=None, # type: Optional[Any]
+            include=None, # type: Optional[Union[List[str], str]]
             delimiter="/", # type: str
             **kwargs # type: Optional[Any]
         ):
@@ -703,16 +747,22 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :param str name_starts_with:
             Filters the results to return only blobs whose names
             begin with the specified prefix.
-        :param list[str] include:
+        :param include:
             Specifies one or more additional datasets to include in the response.
-            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted'.
+            Options include: 'snapshots', 'metadata', 'uncommittedblobs', 'copy', 'deleted', 'deletedwithversions',
+            'tags', 'versions', 'immutabilitypolicy', 'legalhold'.
+        :type include: list[str] or str
         :param str delimiter:
             When the request includes this parameter, the operation returns a BlobPrefix
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of BlobProperties.
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.blob.BlobProperties]
         """
@@ -750,7 +800,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
         :keyword int results_per_page:
             The max result per page when paginating.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :returns: An iterable (auto-paging) response of FilteredBlob.
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.blob.BlobProperties]
         """
@@ -767,14 +821,13 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
     @distributed_trace_async
     async def upload_blob(
-            self, name,  # type: Union[str, BlobProperties]
-            data,  # type: Union[Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+            self, name: Union[str, BlobProperties],
+            data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> BlobClient
+        ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
         :param name: The blob with which to interact. If specified, this value will override
@@ -835,7 +888,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds. This method may make
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :keyword ~azure.storage.blob.PremiumPageBlobTier premium_page_blob_tier:
@@ -963,7 +1021,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :rtype: None
         """
         blob = self.get_blob_client(blob) # type: ignore
@@ -1074,7 +1136,12 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
         :keyword int timeout:
-            The timeout parameter is expressed in seconds. This method may make
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_. This method may make multiple calls to the service and
+            the timeout will apply to each call individually.
             multiple calls to the Azure service and the timeout will apply to
             each call individually.
         :returns: A streaming object. (StorageStreamDownloader)
@@ -1161,7 +1228,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             is raised even if there is a single operation failure. For optimal performance,
             this should be set to False
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :return: An async iterator of responses, one for each blob in order
         :rtype: asynciterator[~azure.core.pipeline.transport.AsyncHttpResponse]
 
@@ -1236,7 +1307,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
             .. versionadded:: 12.4.0
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,
@@ -1285,9 +1360,11 @@ class ContainerClient(AsyncStorageAccountHostsMixin, ContainerClientBase, Storag
 
         :type blobs: str or dict(str, Any) or ~azure.storage.blob.BlobProperties
         :keyword int timeout:
-            The timeout parameter is expressed in seconds. This method may make
-            multiple calls to the Azure service and the timeout will apply to
-            each call individually.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob
+            #other-client--per-operation-configuration>`_.
         :keyword bool raise_on_any_failure:
             This is a boolean param which defaults to True. When this is set, an exception
             is raised even if there is a single operation failure. For optimal performance,

@@ -1,11 +1,11 @@
 {
-  "autorest": "3.7.2",
-  "use": [
-    "@autorest/python@5.12.0",
-    "@autorest/modelerfour@4.19.3"
-  ],
-  "commit": "927e50063ce9c3defdc8fc97906656dc64a37e51",
+  "commit": "7a54c1a83d14da431c0ae48c4315cba143084bce",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest_command": "autorest specification/iotcentral/resource-manager/readme.md --multiapi --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --python3-only --use=@autorest/python@5.12.0 --use=@autorest/modelerfour@4.19.3 --version=3.7.2",
+  "autorest": "3.9.2",
+  "use": [
+    "@autorest/python@6.2.7",
+    "@autorest/modelerfour@4.24.3"
+  ],
+  "autorest_command": "autorest specification/iotcentral/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --tag=package-2021-06 --use=@autorest/python@6.2.7 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
   "readme": "specification/iotcentral/resource-manager/readme.md"
 }

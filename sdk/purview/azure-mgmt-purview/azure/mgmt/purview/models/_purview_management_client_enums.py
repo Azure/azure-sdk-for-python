@@ -6,53 +6,36 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class LastModifiedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that last modified the resource.
-    """
+
+class LastModifiedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that last modified the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class Name(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the sku name.
-    """
+
+class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the sku name."""
 
     STANDARD = "Standard"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the state of the provisioning.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the state of the provisioning."""
 
     UNKNOWN = "Unknown"
     CREATING = "Creating"
@@ -64,31 +47,31 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     CANCELED = "Canceled"
 
-class PublicNetworkAccess(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the public network access.
-    """
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the public network access."""
 
     NOT_SPECIFIED = "NotSpecified"
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class Reason(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason the name is not available.
-    """
+
+class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason the name is not available."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class ScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The scope where the default account is set.
-    """
+
+class ScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scope where the default account is set."""
 
     TENANT = "Tenant"
     SUBSCRIPTION = "Subscription"
 
-class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status.
-    """
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status."""
 
     UNKNOWN = "Unknown"
     PENDING = "Pending"
@@ -96,8 +79,10 @@ class Status(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class Type(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Identity Type
-    """
 
+class Type(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identity Type."""
+
+    NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"

@@ -1,14 +1,35 @@
 # Release History
 
-## 1.25.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.26.3 (2023-02-02)
 
 ### Bugs Fixed
 
+- Fixed deflate decompression for aiohttp   #28483
+
+## 1.26.2 (2023-01-05)
+
+### Bugs Fixed
+
+- Fix 'ClientSession' object has no attribute 'auto_decompress'  (thanks to @mghextreme for the contribution)
+
 ### Other Changes
+
+- Add "x-ms-error-code" as secure header to log
+- Rename "DEFAULT_HEADERS_WHITELIST" to "DEFAULT_HEADERS_ALLOWLIST". Added a backward compatible alias.
+
+## 1.26.1 (2022-11-03)
+
+### Other Changes
+
+- Added example of RequestsTransport with custom session.  (thanks to @inirudebwoy for the contribution)   #26768
+- Added Python 3.11 support.
+
+## 1.26.0 (2022-10-06)
+
+### Other Changes
+
+- LRO polling will not wait anymore before doing the first status check  #26376
+- Added extra dependency for [aio]. pip install azure-core[aio] installs aiohttp too.
 
 ## 1.25.1 (2022-09-01)
 

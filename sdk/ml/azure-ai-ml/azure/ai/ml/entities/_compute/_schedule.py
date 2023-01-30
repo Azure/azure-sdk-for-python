@@ -2,17 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 # pylint: disable=protected-access
-from typing import List, Optional
+from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputePowerAction
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeSchedules as RestComputeSchedules
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ScheduleStatus as ScheduleState
-from azure.ai.ml._restclient.v2022_01_01_preview.models import TriggerType
-from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeSchedules as RestComputeSchedules
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeStartStopSchedule as RestComputeStartStopSchedule
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
-from .._schedule.trigger import CronTrigger, RecurrenceTrigger, TriggerBase
+from .._schedule.trigger import CronTrigger, RecurrenceTrigger
 
 
 class ComputeStartStopSchedule(RestTranslatableMixin):
@@ -31,8 +30,8 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        trigger: TriggerBase = None,
-        action: ComputePowerAction = None,
+        trigger: Optional[Union[CronTrigger, RecurrenceTrigger]] = None,
+        action: Optional[ComputePowerAction] = None,
         state: ScheduleState = ScheduleState.ENABLED,
         **kwargs
     ):
@@ -102,7 +101,6 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
         return schedule
 
 
-@experimental
 class ComputeSchedules(RestTranslatableMixin):
     """Compute schedules.
 
@@ -112,7 +110,7 @@ class ComputeSchedules(RestTranslatableMixin):
     :type kwargs: dict
     """
 
-    def __init__(self, *, compute_start_stop: List[ComputeStartStopSchedule] = None):
+    def __init__(self, *, compute_start_stop: Optional[List[ComputeStartStopSchedule]] = None):
         self.compute_start_stop = compute_start_stop
 
     def _to_rest_object(self) -> RestComputeSchedules:

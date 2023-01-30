@@ -6,41 +6,49 @@ import pytest
 from test_utilities.constants import Test_Resource_Group, Test_Workspace_Name
 
 from azure.ai.ml import load_data
-from azure.ai.ml._ml_exceptions import ErrorTarget
-from azure.ai.ml._restclient.v2021_10_01.models._models_py3 import (
-    DatasetContainerData,
-    DatasetContainerDetails,
-    DatasetVersionData,
-    DatasetVersionDetails,
+from azure.ai.ml._restclient.v2022_10_01.models._models_py3 import (
+    DataContainer,
+    DataContainerProperties,
+    DataVersionBase,
+    DataVersionBaseProperties,
 )
-from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
+from azure.ai.ml.constants._common import (
+    REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
+    AssetTypes,
+    YAMLRefDocLinks,
+    YAMLRefDocSchemaNames,
+)
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
+from azure.ai.ml.exceptions import ErrorTarget
 from azure.ai.ml.operations import DataOperations, DatastoreOperations
 from azure.core.paging import ItemPaged
 
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        operation_config=mock_operation_config,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
 
 @pytest.fixture
 def mock_data_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2022_05_01: Mock,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2022_10_01: Mock,
     mock_datastore_operation: Mock,
     mock_machinelearning_client: Mock,
 ) -> DataOperations:
     yield DataOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2022_05_01,
+        operation_config=mock_operation_config,
+        service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
@@ -61,14 +69,15 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
 @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
 @patch.object(Data, "_from_rest_object", new=Mock())
 @patch.object(Data, "_from_container_rest_object", new=Mock())
+@pytest.mark.data_experiences_test
 class TestDataOperations:
-    def test_list(self, mock_data_operations: DataOperations, randstr: Callable[[], str]) -> None:
+    def test_list(self, mock_data_operations: DataOperations) -> None:
         mock_data_operations._operation.list.return_value = [Mock(Data) for _ in range(10)]
         mock_data_operations._container_operation.list.return_value = [Mock(Data) for _ in range(10)]
         result = mock_data_operations.list()
         assert isinstance(result, Iterable)
         mock_data_operations._container_operation.list.assert_called_once()
-        mock_data_operations.list(name=randstr())
+        mock_data_operations.list(name="random_name")
         mock_data_operations._operation.list.assert_called_once()
 
     def test_get_with_version(self, mock_data_operations: DataOperations) -> None:
@@ -81,10 +90,11 @@ class TestDataOperations:
             name=name_only, version=version, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
         )
 
-    def test_get_no_version(self, mock_data_operations: DataOperations, randstr: Callable[[], str]) -> None:
-        name = randstr()
-        with pytest.raises(Exception):
+    def test_get_no_version(self, mock_data_operations: DataOperations) -> None:
+        name = "random_name"
+        with pytest.raises(Exception) as ex:
             mock_data_operations.get(name=name)
+        assert "At least one required parameter is missing" in str(ex.value)
 
     def test_create_with_spec_file(
         self,
@@ -118,6 +128,8 @@ class TestDataOperations:
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
+                show_progress=True,
+                ignore_file=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -156,21 +168,27 @@ class TestDataOperations:
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
+                show_progress=True,
+                ignore_file=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
 
-    def test_create_or_update_missing_path(self, mock_data_operations: DataOperations, randstr: Callable[[], str]):
+    def test_create_or_update_missing_path(self, mock_data_operations: DataOperations):
         """
         Expect to raise ValidationException for missing path
         """
-        name = randstr()
-        data = Data(name=name, version="1", description="this is an mltable dataset", type=AssetTypes.MLTABLE)
+        name = "random_name"
+        data1 = Data(name=name, version="1", description="this is an mltable dataset", type=AssetTypes.MLTABLE)
 
         with pytest.raises(Exception) as ex:
-            mock_data_operations.create_or_update(data)
+            mock_data_operations.create_or_update(data1)
         assert "At least one required parameter is missing" in str(ex.value)
         mock_data_operations._operation.create_or_update.assert_not_called()
+
+        with pytest.raises(Exception) as ex:
+            load_data("tests/test_configs/dataset/data_missing_path_test.yml")
+        assert REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA) in str(ex.value)
 
     @patch("azure.ai.ml.operations._data_operations.read_local_mltable_metadata_contents")
     @patch("azure.ai.ml.operations._data_operations.read_remote_mltable_metadata_contents")
@@ -182,14 +200,13 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_datastore_operation: DatastoreOperations,
         mock_data_operations: DataOperations,
-        randstr: Callable[[], str],
     ):
         """
         Expect to skip validation when remote metadata is inaccessible
         """
 
         data_path = "azureml://mltable_folder"  # actual path doesn't matter, only needs to trigger "remote" code branch for this test
-        name = randstr()
+        name = "random_name"
         data = Data(
             name=name, version="1", path=data_path, description="this is an mltable dataset", type=AssetTypes.MLTABLE
         )
@@ -199,7 +216,7 @@ class TestDataOperations:
         mock_data_operations.create_or_update(data)
 
         _mock_read_remote_mltable_metadata_contents.assert_called_once_with(
-            path=data_path,
+            base_uri=data_path,
             datastore_operations=mock_datastore_operation,
             requests_pipeline=mock_data_operations._requests_pipeline,
         )
@@ -217,7 +234,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_data_operations: DataOperations,
         tmp_path: Path,
-        randstr: Callable[[], str],
     ):
         """
         Expect to raise exception when local metadata is inaccessible
@@ -227,7 +243,7 @@ class TestDataOperations:
             tmp_path
             / "mltable_folder"  # actual path doesn't matter, only needs to trigger "local" code branch for this test
         )
-        name = randstr()
+        name = "random_name"
         data = Data(
             name=name, version="1", path=data_path, description="this is an mltable dataset", type=AssetTypes.MLTABLE
         )
@@ -255,7 +271,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_data_operations: DataOperations,
         tmp_path: Path,
-        randstr: Callable[[], str],
     ):
         """
         Expect to skip jsonschema validation when we fail to fetch mltable jsonschema
@@ -265,7 +280,7 @@ class TestDataOperations:
             tmp_path
             / "mltable_folder"  # actual path doesn't matter, only needs to trigger "local" code branch for this test
         )
-        name = randstr()
+        name = "random_name"
         data = Data(
             name=name, version="1", path=data_path, description="this is an mltable dataset", type=AssetTypes.MLTABLE
         )
@@ -298,7 +313,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_data_operations: DataOperations,
         tmp_path: Path,
-        randstr: Callable[[], str],
     ):
         """
         Expect to raise exception when jsonschema detects invalid mltable metadata
@@ -308,7 +322,7 @@ class TestDataOperations:
             tmp_path
             / "mltable_folder"  # actual path doesn't matter, only needs to trigger "local" code branch for this test
         )
-        name = randstr()
+        name = "random_name"
         data = Data(
             name=name, version="1", path=data_path, description="this is an mltable dataset", type=AssetTypes.MLTABLE
         )
@@ -344,7 +358,6 @@ class TestDataOperations:
         _mock_read_local_mltable_metadata_contents: Mock,
         mock_data_operations: DataOperations,
         tmp_path: Path,
-        randstr: Callable[[], str],
     ):
         """
         Expect to skip validation when skip_validation is set on Data
@@ -354,7 +367,7 @@ class TestDataOperations:
             tmp_path
             / "mltable_folder"  # actual path doesn't matter, only needs to trigger "local" code branch for this test
         )
-        name = randstr()
+        name = "random_name"
         data = Data(
             name=name, version="1", path=data_path, description="this is an mltable dataset", type=AssetTypes.MLTABLE
         )
@@ -376,9 +389,9 @@ class TestDataOperations:
         _mock_validate.assert_not_called()
         mock_data_operations._operation.create_or_update.assert_called_once()
 
-    def test_archive_version(self, mock_data_operations: DataOperations, randstr: Callable[[], str]):
-        name = randstr()
-        dataset_version = Mock(DatasetVersionData(properties=Mock(DatasetVersionDetails(paths=[]))))
+    def test_archive_version(self, mock_data_operations: DataOperations):
+        name = "random_name"
+        dataset_version = Mock(DataVersionBase(properties=Mock(DataVersionBaseProperties(data_uri="http://test.com"))))
         version = "1"
         mock_data_operations._operation.get.return_value = dataset_version
         mock_data_operations.archive(name=name, version=version)
@@ -390,9 +403,9 @@ class TestDataOperations:
             resource_group_name=mock_data_operations._resource_group_name,
         )
 
-    def test_archive_container(self, mock_data_operations: DataOperations, randstr: Callable[[], str]):
-        name = randstr()
-        dataset_container = Mock(DatasetContainerData(properties=Mock(DatasetContainerDetails())))
+    def test_archive_container(self, mock_data_operations: DataOperations):
+        name = "random_name"
+        dataset_container = Mock(DataContainer(properties=Mock(DataContainerProperties(data_type="uri_folder"))))
         mock_data_operations._container_operation.get.return_value = dataset_container
         mock_data_operations.archive(name=name)
         mock_data_operations._container_operation.create_or_update.assert_called_once_with(
@@ -402,9 +415,9 @@ class TestDataOperations:
             resource_group_name=mock_data_operations._resource_group_name,
         )
 
-    def test_restore_version(self, mock_data_operations: DataOperations, randstr: Callable[[], str]):
-        name = randstr()
-        dataset_version = Mock(DatasetVersionData(properties=Mock(DatasetVersionDetails(paths=[]))))
+    def test_restore_version(self, mock_data_operations: DataOperations):
+        name = "random_name"
+        dataset_version = Mock(DataVersionBase(properties=Mock(DataVersionBaseProperties(data_uri="http://test.com"))))
         version = "1"
         mock_data_operations._operation.get.return_value = dataset_version
         mock_data_operations.restore(name=name, version=version)
@@ -416,9 +429,9 @@ class TestDataOperations:
             resource_group_name=mock_data_operations._resource_group_name,
         )
 
-    def test_restore_container(self, mock_data_operations: DataOperations, randstr: Callable[[], str]):
-        name = randstr()
-        dataset_container = Mock(DatasetContainerData(properties=Mock(DatasetContainerDetails())))
+    def test_restore_container(self, mock_data_operations: DataOperations):
+        name = "random_name"
+        dataset_container = Mock(DataContainer(properties=Mock(DataContainerProperties(data_type="uri_folder"))))
         mock_data_operations._container_operation.get.return_value = dataset_container
         mock_data_operations.restore(name=name)
         mock_data_operations._container_operation.create_or_update.assert_called_once_with(
@@ -432,10 +445,9 @@ class TestDataOperations:
         self,
         mock_workspace_scope: OperationScope,
         mock_data_operations: DataOperations,
-        randstr: Callable[[], str],
     ) -> None:
         data_path = "./tests/test_configs/dataset/data_with_datastore.yaml"
-        data_name = f"data_{randstr()}"
+        data_name = f"data_random_name"
 
         with patch(
             "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
@@ -450,7 +462,7 @@ class TestDataOperations:
             "azure.ai.ml.operations._data_operations.Data._from_rest_object",
             return_value=None,
         ):
-            data = load_data(path=data_path)
+            data = load_data(data_path)
             path = Path(data._base_path, data.path).resolve()
             mock_data_operations.create_or_update(data)
             mock_thing.assert_called_once_with(
@@ -463,4 +475,6 @@ class TestDataOperations:
                 asset_hash=None,
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
+                show_progress=True,
+                ignore_file=None,
             )

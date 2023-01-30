@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRightsDescription(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Rights that this key has.
-    """
+class AccessRightsDescription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Rights that this key has."""
 
     SERVICE_CONFIG = "ServiceConfig"
     ENROLLMENT_READ = "EnrollmentRead"
@@ -22,75 +20,77 @@ class AccessRightsDescription(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     REGISTRATION_STATUS_READ = "RegistrationStatusRead"
     REGISTRATION_STATUS_WRITE = "RegistrationStatusWrite"
 
-class AllocationPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Allocation policy to be used by this provisioning service.
-    """
+
+class AllocationPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allocation policy to be used by this provisioning service."""
 
     HASHED = "Hashed"
     GEO_LATENCY = "GeoLatency"
     STATIC = "Static"
 
-class CertificatePurpose(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class CertificatePurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CertificatePurpose."""
 
     CLIENT_AUTHENTICATION = "clientAuthentication"
     SERVER_AUTHENTICATION = "serverAuthentication"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class IotDpsSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Sku name.
-    """
+
+class IotDpsSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sku name."""
 
     S1 = "S1"
 
-class IpFilterActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The desired action for requests captured by this rule.
-    """
+
+class IpFilterActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The desired action for requests captured by this rule."""
 
     ACCEPT = "Accept"
     REJECT = "Reject"
 
-class IpFilterTargetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Target for requests captured by this rule.
-    """
+
+class IpFilterTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Target for requests captured by this rule."""
 
     ALL = "all"
     SERVICE_API = "serviceApi"
     DEVICE_API = "deviceApi"
 
-class NameUnavailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """specifies the reason a name is unavailable
-    """
+
+class NameUnavailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """specifies the reason a name is unavailable."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class PrivateLinkServiceConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of a private endpoint connection
-    """
+
+class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of a private endpoint connection."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class PublicNetworkAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Whether requests from Public Network are allowed
-    """
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether requests from Public Network are allowed."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class State(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Current state of the provisioning service.
-    """
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current state of the provisioning service."""
 
     ACTIVATING = "Activating"
     ACTIVE = "Active"

@@ -25,7 +25,7 @@ from .._generated.models import (
     UpdateParticipantsRequest
 )
 
-class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
+class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
     This client provides operations to manage rooms.
@@ -34,6 +34,9 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         The endpoint url for Azure Communication Service resource.
     :param ~azure.core.credentials.AzureKeyCredential credential:
         The access key we use to authenticate against the service.
+    :keyword api_version: Azure Communication Rooms API version.
+        Default value is "2022-02-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
     def __init__(
             self, endpoint: str,

@@ -10,7 +10,7 @@ from typing import List, Union, Any
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
-from ._question_answering_client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
+from ._client import QuestionAnsweringClient as QuestionAnsweringClientGenerated
 
 
 def _authentication_policy(credential, **kwargs):
@@ -33,20 +33,24 @@ def _authentication_policy(credential, **kwargs):
 
 
 class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
-    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class Microsoft machine learning algorithms.
+    """The language service API is a suite of natural language processing (NLP) skills built with best-in-class
+    Microsoft machine learning algorithms.
 
     The API can be used to analyze unstructured text for tasks such as sentiment
     analysis, key phrase extraction, language detection and question answering.
-    Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
+    Further documentation can be found in https://learn.microsoft.com/azure/cognitive-services/language-service/overview
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://<resource-name>.api.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
         This can be the an instance of AzureKeyCredential if using a Language API key
         or a token credential from :mod:`azure.identity`.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str default_language: Sets the default language to use for all operations.
+    :keyword api_version: Api Version. Default value is "2021-10-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -56,7 +60,6 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
             endpoint = endpoint.rstrip("/")
         except AttributeError:
             raise ValueError("Parameter 'endpoint' must be a string.")
-
         super().__init__(
             endpoint=endpoint,
             credential=credential,  # type: ignore

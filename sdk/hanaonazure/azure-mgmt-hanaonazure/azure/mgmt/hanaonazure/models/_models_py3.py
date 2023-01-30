@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,13 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Display(msrest.serialization.Model):
+class Display(_serialization.Model):
     """Detailed HANA operation information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -39,26 +43,24 @@ class Display(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
-        'origin': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
+        "origin": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Display, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
@@ -66,28 +68,27 @@ class Display(msrest.serialization.Model):
         self.origin = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
-    :param error: Describes the error object.
-    :type error: ~azure.mgmt.hanaonazure.models.ErrorResponseError
+    :ivar error: Describes the error object.
+    :vartype error: ~azure.mgmt.hanaonazure.models.ErrorResponseError
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseError'},
+        "error": {"key": "error", "type": "ErrorResponseError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponseError"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorResponseError"] = None, **kwargs):
+        """
+        :keyword error: Describes the error object.
+        :paramtype error: ~azure.mgmt.hanaonazure.models.ErrorResponseError
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorResponseError(msrest.serialization.Model):
+class ErrorResponseError(_serialization.Model):
     """Describes the error object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -99,25 +100,23 @@ class ErrorResponseError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponseError, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """HANA operation information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -125,52 +124,50 @@ class Operation(msrest.serialization.Model):
     :ivar name: The name of the operation being performed on this particular object. This name
      should match the action name that appears in RBAC / the event service.
     :vartype name: str
-    :param display: Displayed HANA operation information.
-    :type display: ~azure.mgmt.hanaonazure.models.Display
+    :ivar display: Displayed HANA operation information.
+    :vartype display: ~azure.mgmt.hanaonazure.models.Display
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'Display'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "Display"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["Display"] = None,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, *, display: Optional["_models.Display"] = None, **kwargs):
+        """
+        :keyword display: Displayed HANA operation information.
+        :paramtype display: ~azure.mgmt.hanaonazure.models.Display
+        """
+        super().__init__(**kwargs)
         self.name = None
         self.display = display
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """List of HANA operations.
 
-    :param value: List of HANA operations.
-    :type value: list[~azure.mgmt.hanaonazure.models.Operation]
+    :ivar value: List of HANA operations.
+    :vartype value: list[~azure.mgmt.hanaonazure.models.Operation]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        **kwargs
-    ):
-        super(OperationList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+        """
+        :keyword value: List of HANA operations.
+        :paramtype value: list[~azure.mgmt.hanaonazure.models.Operation]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -186,22 +183,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -223,22 +218,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class ProviderInstance(ProxyResource):
@@ -254,32 +247,32 @@ class ProviderInstance(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param type_properties_type: The type of provider instance.
-    :type type_properties_type: str
-    :param properties: A JSON string containing the properties of the provider instance.
-    :type properties: str
-    :param metadata: A JSON string containing metadata of the provider instance.
-    :type metadata: str
-    :ivar provisioning_state: State of provisioning of the provider instance. Possible values
-     include: "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar type_properties_type: The type of provider instance.
+    :vartype type_properties_type: str
+    :ivar properties: A JSON string containing the properties of the provider instance.
+    :vartype properties: str
+    :ivar metadata: A JSON string containing metadata of the provider instance.
+    :vartype metadata: str
+    :ivar provisioning_state: State of provisioning of the provider instance. Known values are:
+     "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'properties': {'key': 'properties.properties', 'type': 'str'},
-        'metadata': {'key': 'properties.metadata', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "properties": {"key": "properties.properties", "type": "str"},
+        "metadata": {"key": "properties.metadata", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -290,35 +283,45 @@ class ProviderInstance(ProxyResource):
         metadata: Optional[str] = None,
         **kwargs
     ):
-        super(ProviderInstance, self).__init__(**kwargs)
+        """
+        :keyword type_properties_type: The type of provider instance.
+        :paramtype type_properties_type: str
+        :keyword properties: A JSON string containing the properties of the provider instance.
+        :paramtype properties: str
+        :keyword metadata: A JSON string containing metadata of the provider instance.
+        :paramtype metadata: str
+        """
+        super().__init__(**kwargs)
         self.type_properties_type = type_properties_type
         self.properties = properties
         self.metadata = metadata
         self.provisioning_state = None
 
 
-class ProviderInstanceListResult(msrest.serialization.Model):
+class ProviderInstanceListResult(_serialization.Model):
     """The response from the List provider instances operation.
 
-    :param value: The list of provider instances.
-    :type value: list[~azure.mgmt.hanaonazure.models.ProviderInstance]
-    :param next_link: The URL to get the next set of provider instances.
-    :type next_link: str
+    :ivar value: The list of provider instances.
+    :vartype value: list[~azure.mgmt.hanaonazure.models.ProviderInstance]
+    :ivar next_link: The URL to get the next set of provider instances.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProviderInstance]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProviderInstance]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ProviderInstance"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ProviderInstance"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(ProviderInstanceListResult, self).__init__(**kwargs)
+        """
+        :keyword value: The list of provider instances.
+        :paramtype value: list[~azure.mgmt.hanaonazure.models.ProviderInstance]
+        :keyword next_link: The URL to get the next set of provider instances.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -338,40 +341,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class SapMonitor(TrackedResource):
+class SapMonitor(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """SAP monitor info on Azure (ARM properties and SAP monitor properties).
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -386,57 +389,57 @@ class SapMonitor(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :ivar provisioning_state: State of provisioning of the HanaInstance. Possible values include:
-     "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", "Migrating".
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar provisioning_state: State of provisioning of the HanaInstance. Known values are:
+     "Accepted", "Creating", "Updating", "Failed", "Succeeded", "Deleting", and "Migrating".
     :vartype provisioning_state: str or ~azure.mgmt.hanaonazure.models.HanaProvisioningStatesEnum
     :ivar managed_resource_group_name: The name of the resource group the SAP Monitor resources get
      deployed into.
     :vartype managed_resource_group_name: str
-    :param log_analytics_workspace_arm_id: The ARM ID of the Log Analytics Workspace that is used
+    :ivar log_analytics_workspace_arm_id: The ARM ID of the Log Analytics Workspace that is used
      for monitoring.
-    :type log_analytics_workspace_arm_id: str
-    :param enable_customer_analytics: The value indicating whether to send analytics to Microsoft.
-    :type enable_customer_analytics: bool
-    :param log_analytics_workspace_id: The workspace ID of the log analytics workspace to be used
+    :vartype log_analytics_workspace_arm_id: str
+    :ivar enable_customer_analytics: The value indicating whether to send analytics to Microsoft.
+    :vartype enable_customer_analytics: bool
+    :ivar log_analytics_workspace_id: The workspace ID of the log analytics workspace to be used
      for monitoring.
-    :type log_analytics_workspace_id: str
-    :param log_analytics_workspace_shared_key: The shared key of the log analytics workspace that
-     is used for monitoring.
-    :type log_analytics_workspace_shared_key: str
+    :vartype log_analytics_workspace_id: str
+    :ivar log_analytics_workspace_shared_key: The shared key of the log analytics workspace that is
+     used for monitoring.
+    :vartype log_analytics_workspace_shared_key: str
     :ivar sap_monitor_collector_version: The version of the payload running in the Collector VM.
     :vartype sap_monitor_collector_version: str
-    :param monitor_subnet: The subnet which the SAP monitor will be deployed in.
-    :type monitor_subnet: str
+    :ivar monitor_subnet: The subnet which the SAP monitor will be deployed in.
+    :vartype monitor_subnet: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'managed_resource_group_name': {'readonly': True},
-        'sap_monitor_collector_version': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "managed_resource_group_name": {"readonly": True},
+        "sap_monitor_collector_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
-        'log_analytics_workspace_arm_id': {'key': 'properties.logAnalyticsWorkspaceArmId', 'type': 'str'},
-        'enable_customer_analytics': {'key': 'properties.enableCustomerAnalytics', 'type': 'bool'},
-        'log_analytics_workspace_id': {'key': 'properties.logAnalyticsWorkspaceId', 'type': 'str'},
-        'log_analytics_workspace_shared_key': {'key': 'properties.logAnalyticsWorkspaceSharedKey', 'type': 'str'},
-        'sap_monitor_collector_version': {'key': 'properties.sapMonitorCollectorVersion', 'type': 'str'},
-        'monitor_subnet': {'key': 'properties.monitorSubnet', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "managed_resource_group_name": {"key": "properties.managedResourceGroupName", "type": "str"},
+        "log_analytics_workspace_arm_id": {"key": "properties.logAnalyticsWorkspaceArmId", "type": "str"},
+        "enable_customer_analytics": {"key": "properties.enableCustomerAnalytics", "type": "bool"},
+        "log_analytics_workspace_id": {"key": "properties.logAnalyticsWorkspaceId", "type": "str"},
+        "log_analytics_workspace_shared_key": {"key": "properties.logAnalyticsWorkspaceSharedKey", "type": "str"},
+        "sap_monitor_collector_version": {"key": "properties.sapMonitorCollectorVersion", "type": "str"},
+        "monitor_subnet": {"key": "properties.monitorSubnet", "type": "str"},
     }
 
     def __init__(
@@ -451,7 +454,27 @@ class SapMonitor(TrackedResource):
         monitor_subnet: Optional[str] = None,
         **kwargs
     ):
-        super(SapMonitor, self).__init__(tags=tags, location=location, **kwargs)
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword log_analytics_workspace_arm_id: The ARM ID of the Log Analytics Workspace that is used
+         for monitoring.
+        :paramtype log_analytics_workspace_arm_id: str
+        :keyword enable_customer_analytics: The value indicating whether to send analytics to
+         Microsoft.
+        :paramtype enable_customer_analytics: bool
+        :keyword log_analytics_workspace_id: The workspace ID of the log analytics workspace to be used
+         for monitoring.
+        :paramtype log_analytics_workspace_id: str
+        :keyword log_analytics_workspace_shared_key: The shared key of the log analytics workspace that
+         is used for monitoring.
+        :paramtype log_analytics_workspace_shared_key: str
+        :keyword monitor_subnet: The subnet which the SAP monitor will be deployed in.
+        :paramtype monitor_subnet: str
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state = None
         self.managed_resource_group_name = None
         self.log_analytics_workspace_arm_id = log_analytics_workspace_arm_id
@@ -462,48 +485,49 @@ class SapMonitor(TrackedResource):
         self.monitor_subnet = monitor_subnet
 
 
-class SapMonitorListResult(msrest.serialization.Model):
+class SapMonitorListResult(_serialization.Model):
     """The response from the List SAP monitors operation.
 
-    :param value: The list of SAP monitors.
-    :type value: list[~azure.mgmt.hanaonazure.models.SapMonitor]
-    :param next_link: The URL to get the next set of SAP monitors.
-    :type next_link: str
+    :ivar value: The list of SAP monitors.
+    :vartype value: list[~azure.mgmt.hanaonazure.models.SapMonitor]
+    :ivar next_link: The URL to get the next set of SAP monitors.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SapMonitor]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SapMonitor]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["SapMonitor"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.SapMonitor"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(SapMonitorListResult, self).__init__(**kwargs)
+        """
+        :keyword value: The list of SAP monitors.
+        :paramtype value: list[~azure.mgmt.hanaonazure.models.SapMonitor]
+        :keyword next_link: The URL to get the next set of SAP monitors.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Tags(msrest.serialization.Model):
+class Tags(_serialization.Model):
     """Tags field of the resource.
 
-    :param tags: A set of tags. Tags field of the resource.
-    :type tags: dict[str, str]
+    :ivar tags: Tags field of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(Tags, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Tags field of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags

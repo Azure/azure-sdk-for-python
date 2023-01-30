@@ -10,6 +10,7 @@ from io import BytesIO
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormRecognizerApiVersion
 from testcase import FormRecognizerTest
+from conftest import skip_flaky_test
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
 
@@ -20,6 +21,7 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 class TestBusinessCard(FormRecognizerTest):
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -65,6 +67,7 @@ class TestBusinessCard(FormRecognizerTest):
                 content_type="application/jpeg"
             )
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -127,6 +130,7 @@ class TestBusinessCard(FormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy

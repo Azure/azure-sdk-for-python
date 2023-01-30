@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,66 +10,65 @@
 import datetime
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
 
 
-class Codec(msrest.serialization.Model):
+class Codec(_serialization.Model):
     """Describes the basic properties of all codecs.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: Audio, CopyAudio, CopyVideo, Video.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    Audio, CopyAudio, CopyVideo, Video
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.Audio': 'Audio', '#Microsoft.Media.CopyAudio': 'CopyAudio', '#Microsoft.Media.CopyVideo': 'CopyVideo', '#Microsoft.Media.Video': 'Video'}
+        "odata_type": {
+            "#Microsoft.Media.Audio": "Audio",
+            "#Microsoft.Media.CopyAudio": "CopyAudio",
+            "#Microsoft.Media.CopyVideo": "CopyVideo",
+            "#Microsoft.Media.Video": "Video",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        label: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, label: Optional[str] = None, **kwargs):
         """
         :keyword label: An optional label for the codec. The label can be used to control muxing
          behavior.
         :paramtype label: str
         """
-        super(Codec, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
         self.label = label
 
 
 class Audio(Codec):
     """Defines the common properties for all audio codecs.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AacAudio.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AacAudio, DDAudio
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
@@ -81,20 +81,18 @@ class Audio(Codec):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'channels': {'key': 'channels', 'type': 'int'},
-        'sampling_rate': {'key': 'samplingRate', 'type': 'int'},
-        'bitrate': {'key': 'bitrate', 'type': 'int'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "channels": {"key": "channels", "type": "int"},
+        "sampling_rate": {"key": "samplingRate", "type": "int"},
+        "bitrate": {"key": "bitrate", "type": "int"},
     }
 
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Media.AacAudio': 'AacAudio'}
-    }
+    _subtype_map = {"odata_type": {"#Microsoft.Media.AacAudio": "AacAudio", "#Microsoft.Media.DDAudio": "DDAudio"}}
 
     def __init__(
         self,
@@ -116,8 +114,8 @@ class Audio(Codec):
         :keyword bitrate: The bitrate, in bits per second, of the output encoded audio.
         :paramtype bitrate: int
         """
-        super(Audio, self).__init__(label=label, **kwargs)
-        self.odata_type = '#Microsoft.Media.Audio'  # type: str
+        super().__init__(label=label, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.Audio"
         self.channels = channels
         self.sampling_rate = sampling_rate
         self.bitrate = bitrate
@@ -128,7 +126,7 @@ class AacAudio(Audio):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
@@ -139,21 +137,21 @@ class AacAudio(Audio):
     :ivar bitrate: The bitrate, in bits per second, of the output encoded audio.
     :vartype bitrate: int
     :ivar profile: The encoding profile to be used when encoding audio with AAC. Known values are:
-     "AacLc", "HeAacV1", "HeAacV2".
+     "AacLc", "HeAacV1", and "HeAacV2".
     :vartype profile: str or ~azure.mgmt.media.models.AacAudioProfile
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'channels': {'key': 'channels', 'type': 'int'},
-        'sampling_rate': {'key': 'samplingRate', 'type': 'int'},
-        'bitrate': {'key': 'bitrate', 'type': 'int'},
-        'profile': {'key': 'profile', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "channels": {"key": "channels", "type": "int"},
+        "sampling_rate": {"key": "samplingRate", "type": "int"},
+        "bitrate": {"key": "bitrate", "type": "int"},
+        "profile": {"key": "profile", "type": "str"},
     }
 
     def __init__(
@@ -177,46 +175,45 @@ class AacAudio(Audio):
         :keyword bitrate: The bitrate, in bits per second, of the output encoded audio.
         :paramtype bitrate: int
         :keyword profile: The encoding profile to be used when encoding audio with AAC. Known values
-         are: "AacLc", "HeAacV1", "HeAacV2".
+         are: "AacLc", "HeAacV1", and "HeAacV2".
         :paramtype profile: str or ~azure.mgmt.media.models.AacAudioProfile
         """
-        super(AacAudio, self).__init__(label=label, channels=channels, sampling_rate=sampling_rate, bitrate=bitrate, **kwargs)
-        self.odata_type = '#Microsoft.Media.AacAudio'  # type: str
+        super().__init__(label=label, channels=channels, sampling_rate=sampling_rate, bitrate=bitrate, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.AacAudio"
         self.profile = profile
 
 
-class ClipTime(msrest.serialization.Model):
+class ClipTime(_serialization.Model):
     """Base class for specifying a clip time. Use sub classes of this class to specify the time position in the media.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AbsoluteClipTime, UtcClipTime.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AbsoluteClipTime, UtcClipTime
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.AbsoluteClipTime': 'AbsoluteClipTime', '#Microsoft.Media.UtcClipTime': 'UtcClipTime'}
+        "odata_type": {
+            "#Microsoft.Media.AbsoluteClipTime": "AbsoluteClipTime",
+            "#Microsoft.Media.UtcClipTime": "UtcClipTime",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ClipTime, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
 
 
 class AbsoluteClipTime(ClipTime):
@@ -224,44 +221,39 @@ class AbsoluteClipTime(ClipTime):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar time: Required. The time position on the timeline of the input media. It is usually
-     specified as an ISO8601 period. e.g PT30S for 30 seconds.
+    :ivar time: The time position on the timeline of the input media. It is usually specified as an
+     ISO8601 period. e.g PT30S for 30 seconds. Required.
     :vartype time: ~datetime.timedelta
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'time': {'required': True},
+        "odata_type": {"required": True},
+        "time": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'duration'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "time": {"key": "time", "type": "duration"},
     }
 
-    def __init__(
-        self,
-        *,
-        time: datetime.timedelta,
-        **kwargs
-    ):
+    def __init__(self, *, time: datetime.timedelta, **kwargs):
         """
-        :keyword time: Required. The time position on the timeline of the input media. It is usually
-         specified as an ISO8601 period. e.g PT30S for 30 seconds.
+        :keyword time: The time position on the timeline of the input media. It is usually specified as
+         an ISO8601 period. e.g PT30S for 30 seconds. Required.
         :paramtype time: ~datetime.timedelta
         """
-        super(AbsoluteClipTime, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.AbsoluteClipTime'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.AbsoluteClipTime"
         self.time = time
 
 
-class AccessControl(msrest.serialization.Model):
+class AccessControl(_serialization.Model):
     """AccessControl.
 
     :ivar default_action: The behavior for IP access control in Key Delivery. Known values are:
-     "Allow", "Deny".
+     "Allow" and "Deny".
     :vartype default_action: str or ~azure.mgmt.media.models.DefaultAction
     :ivar ip_allow_list: The IP allow list for access control in Key Delivery. If the default
      action is set to 'Allow', the IP allow list must be empty.
@@ -269,8 +261,8 @@ class AccessControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'default_action': {'key': 'defaultAction', 'type': 'str'},
-        'ip_allow_list': {'key': 'ipAllowList', 'type': '[str]'},
+        "default_action": {"key": "defaultAction", "type": "str"},
+        "ip_allow_list": {"key": "ipAllowList", "type": "[str]"},
     }
 
     def __init__(
@@ -282,26 +274,26 @@ class AccessControl(msrest.serialization.Model):
     ):
         """
         :keyword default_action: The behavior for IP access control in Key Delivery. Known values are:
-         "Allow", "Deny".
+         "Allow" and "Deny".
         :paramtype default_action: str or ~azure.mgmt.media.models.DefaultAction
         :keyword ip_allow_list: The IP allow list for access control in Key Delivery. If the default
          action is set to 'Allow', the IP allow list must be empty.
         :paramtype ip_allow_list: list[str]
         """
-        super(AccessControl, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.default_action = default_action
         self.ip_allow_list = ip_allow_list
 
 
-class AccountEncryption(msrest.serialization.Model):
+class AccountEncryption(_serialization.Model):
     """AccountEncryption.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of key used to encrypt the Account Key. Known values are:
-     "SystemKey", "CustomerKey".
+    :ivar type: The type of key used to encrypt the Account Key. Required. Known values are:
+     "SystemKey" and "CustomerKey".
     :vartype type: str or ~azure.mgmt.media.models.AccountEncryptionKeyType
     :ivar key_vault_properties: The properties of the key used to encrypt the account.
     :vartype key_vault_properties: ~azure.mgmt.media.models.KeyVaultProperties
@@ -312,15 +304,15 @@ class AccountEncryption(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'status': {'readonly': True},
+        "type": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'status': {'key': 'status', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "KeyVaultProperties"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -332,22 +324,22 @@ class AccountEncryption(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. The type of key used to encrypt the Account Key. Known values are:
-         "SystemKey", "CustomerKey".
+        :keyword type: The type of key used to encrypt the Account Key. Required. Known values are:
+         "SystemKey" and "CustomerKey".
         :paramtype type: str or ~azure.mgmt.media.models.AccountEncryptionKeyType
         :keyword key_vault_properties: The properties of the key used to encrypt the account.
         :paramtype key_vault_properties: ~azure.mgmt.media.models.KeyVaultProperties
         :keyword identity: The Key Vault identity.
         :paramtype identity: ~azure.mgmt.media.models.ResourceIdentity
         """
-        super(AccountEncryption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.key_vault_properties = key_vault_properties
         self.identity = identity
         self.status = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -363,24 +355,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -402,24 +390,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class AccountFilter(ProxyResource):
@@ -446,20 +430,20 @@ class AccountFilter(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'presentation_time_range': {'key': 'properties.presentationTimeRange', 'type': 'PresentationTimeRange'},
-        'first_quality': {'key': 'properties.firstQuality', 'type': 'FirstQuality'},
-        'tracks': {'key': 'properties.tracks', 'type': '[FilterTrackSelection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "presentation_time_range": {"key": "properties.presentationTimeRange", "type": "PresentationTimeRange"},
+        "first_quality": {"key": "properties.firstQuality", "type": "FirstQuality"},
+        "tracks": {"key": "properties.tracks", "type": "[FilterTrackSelection]"},
     }
 
     def __init__(
@@ -478,14 +462,14 @@ class AccountFilter(ProxyResource):
         :keyword tracks: The tracks selection conditions.
         :paramtype tracks: list[~azure.mgmt.media.models.FilterTrackSelection]
         """
-        super(AccountFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.presentation_time_range = presentation_time_range
         self.first_quality = first_quality
         self.tracks = tracks
 
 
-class AccountFilterCollection(msrest.serialization.Model):
+class AccountFilterCollection(_serialization.Model):
     """A collection of AccountFilter items.
 
     :ivar value: A collection of AccountFilter items.
@@ -496,16 +480,12 @@ class AccountFilterCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AccountFilter]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AccountFilter]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.AccountFilter"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.AccountFilter"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A collection of AccountFilter items.
@@ -514,12 +494,12 @@ class AccountFilterCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(AccountFilterCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class AkamaiAccessControl(msrest.serialization.Model):
+class AkamaiAccessControl(_serialization.Model):
     """Akamai access control.
 
     :ivar akamai_signature_header_authentication_key_list: authentication key list.
@@ -528,13 +508,18 @@ class AkamaiAccessControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'akamai_signature_header_authentication_key_list': {'key': 'akamaiSignatureHeaderAuthenticationKeyList', 'type': '[AkamaiSignatureHeaderAuthenticationKey]'},
+        "akamai_signature_header_authentication_key_list": {
+            "key": "akamaiSignatureHeaderAuthenticationKeyList",
+            "type": "[AkamaiSignatureHeaderAuthenticationKey]",
+        },
     }
 
     def __init__(
         self,
         *,
-        akamai_signature_header_authentication_key_list: Optional[List["_models.AkamaiSignatureHeaderAuthenticationKey"]] = None,
+        akamai_signature_header_authentication_key_list: Optional[
+            List["_models.AkamaiSignatureHeaderAuthenticationKey"]
+        ] = None,
         **kwargs
     ):
         """
@@ -542,11 +527,11 @@ class AkamaiAccessControl(msrest.serialization.Model):
         :paramtype akamai_signature_header_authentication_key_list:
          list[~azure.mgmt.media.models.AkamaiSignatureHeaderAuthenticationKey]
         """
-        super(AkamaiAccessControl, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.akamai_signature_header_authentication_key_list = akamai_signature_header_authentication_key_list
 
 
-class AkamaiSignatureHeaderAuthenticationKey(msrest.serialization.Model):
+class AkamaiSignatureHeaderAuthenticationKey(_serialization.Model):
     """Akamai Signature Header authentication key.
 
     :ivar identifier: identifier of the key.
@@ -558,9 +543,9 @@ class AkamaiSignatureHeaderAuthenticationKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'identifier': {'key': 'identifier', 'type': 'str'},
-        'base64_key': {'key': 'base64Key', 'type': 'str'},
-        'expiration': {'key': 'expiration', 'type': 'iso-8601'},
+        "identifier": {"key": "identifier", "type": "str"},
+        "base64_key": {"key": "base64Key", "type": "str"},
+        "expiration": {"key": "expiration", "type": "iso-8601"},
     }
 
     def __init__(
@@ -579,13 +564,13 @@ class AkamaiSignatureHeaderAuthenticationKey(msrest.serialization.Model):
         :keyword expiration: The expiration time of the authentication key.
         :paramtype expiration: ~datetime.datetime
         """
-        super(AkamaiSignatureHeaderAuthenticationKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.identifier = identifier
         self.base64_key = base64_key
         self.expiration = expiration
 
 
-class ArmStreamingEndpointCapacity(msrest.serialization.Model):
+class ArmStreamingEndpointCapacity(_serialization.Model):
     """The streaming endpoint sku capacity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -601,23 +586,18 @@ class ArmStreamingEndpointCapacity(msrest.serialization.Model):
     """
 
     _validation = {
-        'scale_type': {'readonly': True},
+        "scale_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'scale_type': {'key': 'scaleType', 'type': 'str'},
-        'default': {'key': 'default', 'type': 'int'},
-        'minimum': {'key': 'minimum', 'type': 'int'},
-        'maximum': {'key': 'maximum', 'type': 'int'},
+        "scale_type": {"key": "scaleType", "type": "str"},
+        "default": {"key": "default", "type": "int"},
+        "minimum": {"key": "minimum", "type": "int"},
+        "maximum": {"key": "maximum", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        default: Optional[int] = None,
-        minimum: Optional[int] = None,
-        maximum: Optional[int] = None,
-        **kwargs
+        self, *, default: Optional[int] = None, minimum: Optional[int] = None, maximum: Optional[int] = None, **kwargs
     ):
         """
         :keyword default: The streaming endpoint default capacity.
@@ -627,14 +607,14 @@ class ArmStreamingEndpointCapacity(msrest.serialization.Model):
         :keyword maximum: The streaming endpoint maximum capacity.
         :paramtype maximum: int
         """
-        super(ArmStreamingEndpointCapacity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.scale_type = None
         self.default = default
         self.minimum = minimum
         self.maximum = maximum
 
 
-class ArmStreamingEndpointCurrentSku(msrest.serialization.Model):
+class ArmStreamingEndpointCurrentSku(_serialization.Model):
     """The streaming endpoint current sku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -646,30 +626,25 @@ class ArmStreamingEndpointCurrentSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        capacity: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, capacity: Optional[int] = None, **kwargs):
         """
         :keyword capacity: The streaming endpoint sku capacity.
         :paramtype capacity: int
         """
-        super(ArmStreamingEndpointCurrentSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.capacity = capacity
 
 
-class ArmStreamingEndpointSku(msrest.serialization.Model):
+class ArmStreamingEndpointSku(_serialization.Model):
     """The streaming endpoint sku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -679,24 +654,20 @@ class ArmStreamingEndpointSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ArmStreamingEndpointSku, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
 
 
-class ArmStreamingEndpointSkuInfo(msrest.serialization.Model):
+class ArmStreamingEndpointSkuInfo(_serialization.Model):
     """ArmStreamingEndpointSkuInfo.
 
     :ivar resource_type:
@@ -708,9 +679,9 @@ class ArmStreamingEndpointSkuInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'ArmStreamingEndpointCapacity'},
-        'sku': {'key': 'sku', 'type': 'ArmStreamingEndpointSku'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "capacity": {"key": "capacity", "type": "ArmStreamingEndpointCapacity"},
+        "sku": {"key": "sku", "type": "ArmStreamingEndpointSku"},
     }
 
     def __init__(
@@ -729,13 +700,13 @@ class ArmStreamingEndpointSkuInfo(msrest.serialization.Model):
         :keyword sku: The streaming endpoint sku.
         :paramtype sku: ~azure.mgmt.media.models.ArmStreamingEndpointSku
         """
-        super(ArmStreamingEndpointSkuInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_type = resource_type
         self.capacity = capacity
         self.sku = sku
 
 
-class Asset(ProxyResource):
+class Asset(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """An Asset.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -765,35 +736,35 @@ class Asset(ProxyResource):
     :ivar storage_account_name: The name of the storage account.
     :vartype storage_account_name: str
     :ivar storage_encryption_format: The Asset encryption format. One of None or
-     MediaStorageEncryption. Known values are: "None", "MediaStorageClientEncryption".
+     MediaStorageEncryption. Known values are: "None" and "MediaStorageClientEncryption".
     :vartype storage_encryption_format: str or
      ~azure.mgmt.media.models.AssetStorageEncryptionFormat
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'asset_id': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
-        'storage_encryption_format': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "asset_id": {"readonly": True},
+        "created": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "storage_encryption_format": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'asset_id': {'key': 'properties.assetId', 'type': 'str'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
-        'alternate_id': {'key': 'properties.alternateId', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'container': {'key': 'properties.container', 'type': 'str'},
-        'storage_account_name': {'key': 'properties.storageAccountName', 'type': 'str'},
-        'storage_encryption_format': {'key': 'properties.storageEncryptionFormat', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "asset_id": {"key": "properties.assetId", "type": "str"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "last_modified": {"key": "properties.lastModified", "type": "iso-8601"},
+        "alternate_id": {"key": "properties.alternateId", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "container": {"key": "properties.container", "type": "str"},
+        "storage_account_name": {"key": "properties.storageAccountName", "type": "str"},
+        "storage_encryption_format": {"key": "properties.storageEncryptionFormat", "type": "str"},
     }
 
     def __init__(
@@ -815,7 +786,7 @@ class Asset(ProxyResource):
         :keyword storage_account_name: The name of the storage account.
         :paramtype storage_account_name: str
         """
-        super(Asset, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.asset_id = None
         self.created = None
@@ -827,7 +798,7 @@ class Asset(ProxyResource):
         self.storage_encryption_format = None
 
 
-class AssetCollection(msrest.serialization.Model):
+class AssetCollection(_serialization.Model):
     """A collection of Asset items.
 
     :ivar value: A collection of Asset items.
@@ -838,16 +809,12 @@ class AssetCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Asset]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Asset]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Asset"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Asset"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A collection of Asset items.
@@ -856,12 +823,12 @@ class AssetCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(AssetCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class AssetContainerSas(msrest.serialization.Model):
+class AssetContainerSas(_serialization.Model):
     """The Asset Storage container SAS URLs.
 
     :ivar asset_container_sas_urls: The list of Asset container SAS URLs.
@@ -869,24 +836,19 @@ class AssetContainerSas(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'asset_container_sas_urls': {'key': 'assetContainerSasUrls', 'type': '[str]'},
+        "asset_container_sas_urls": {"key": "assetContainerSasUrls", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        asset_container_sas_urls: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, asset_container_sas_urls: Optional[List[str]] = None, **kwargs):
         """
         :keyword asset_container_sas_urls: The list of Asset container SAS URLs.
         :paramtype asset_container_sas_urls: list[str]
         """
-        super(AssetContainerSas, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.asset_container_sas_urls = asset_container_sas_urls
 
 
-class AssetFileEncryptionMetadata(msrest.serialization.Model):
+class AssetFileEncryptionMetadata(_serialization.Model):
     """The Asset File Storage encryption metadata.
 
     All required parameters must be populated in order to send to Azure.
@@ -895,18 +857,18 @@ class AssetFileEncryptionMetadata(msrest.serialization.Model):
     :vartype initialization_vector: str
     :ivar asset_file_name: The Asset File name.
     :vartype asset_file_name: str
-    :ivar asset_file_id: Required. The Asset File Id.
+    :ivar asset_file_id: The Asset File Id. Required.
     :vartype asset_file_id: str
     """
 
     _validation = {
-        'asset_file_id': {'required': True},
+        "asset_file_id": {"required": True},
     }
 
     _attribute_map = {
-        'initialization_vector': {'key': 'initializationVector', 'type': 'str'},
-        'asset_file_name': {'key': 'assetFileName', 'type': 'str'},
-        'asset_file_id': {'key': 'assetFileId', 'type': 'str'},
+        "initialization_vector": {"key": "initializationVector", "type": "str"},
+        "asset_file_name": {"key": "assetFileName", "type": "str"},
+        "asset_file_id": {"key": "assetFileId", "type": "str"},
     }
 
     def __init__(
@@ -922,10 +884,10 @@ class AssetFileEncryptionMetadata(msrest.serialization.Model):
         :paramtype initialization_vector: str
         :keyword asset_file_name: The Asset File name.
         :paramtype asset_file_name: str
-        :keyword asset_file_id: Required. The Asset File Id.
+        :keyword asset_file_id: The Asset File Id. Required.
         :paramtype asset_file_id: str
         """
-        super(AssetFileEncryptionMetadata, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.initialization_vector = initialization_vector
         self.asset_file_name = asset_file_name
         self.asset_file_id = asset_file_id
@@ -955,20 +917,20 @@ class AssetFilter(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'presentation_time_range': {'key': 'properties.presentationTimeRange', 'type': 'PresentationTimeRange'},
-        'first_quality': {'key': 'properties.firstQuality', 'type': 'FirstQuality'},
-        'tracks': {'key': 'properties.tracks', 'type': '[FilterTrackSelection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "presentation_time_range": {"key": "properties.presentationTimeRange", "type": "PresentationTimeRange"},
+        "first_quality": {"key": "properties.firstQuality", "type": "FirstQuality"},
+        "tracks": {"key": "properties.tracks", "type": "[FilterTrackSelection]"},
     }
 
     def __init__(
@@ -987,14 +949,14 @@ class AssetFilter(ProxyResource):
         :keyword tracks: The tracks selection conditions.
         :paramtype tracks: list[~azure.mgmt.media.models.FilterTrackSelection]
         """
-        super(AssetFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.presentation_time_range = presentation_time_range
         self.first_quality = first_quality
         self.tracks = tracks
 
 
-class AssetFilterCollection(msrest.serialization.Model):
+class AssetFilterCollection(_serialization.Model):
     """A collection of AssetFilter items.
 
     :ivar value: A collection of AssetFilter items.
@@ -1005,16 +967,12 @@ class AssetFilterCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AssetFilter]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AssetFilter]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.AssetFilter"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.AssetFilter"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A collection of AssetFilter items.
@@ -1023,12 +981,12 @@ class AssetFilterCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(AssetFilterCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class AssetStreamingLocator(msrest.serialization.Model):
+class AssetStreamingLocator(_serialization.Model):
     """Properties of the Streaming Locator.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1053,34 +1011,30 @@ class AssetStreamingLocator(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'asset_name': {'readonly': True},
-        'created': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'streaming_locator_id': {'readonly': True},
-        'streaming_policy_name': {'readonly': True},
-        'default_content_key_policy_name': {'readonly': True},
+        "name": {"readonly": True},
+        "asset_name": {"readonly": True},
+        "created": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "streaming_locator_id": {"readonly": True},
+        "streaming_policy_name": {"readonly": True},
+        "default_content_key_policy_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'asset_name': {'key': 'assetName', 'type': 'str'},
-        'created': {'key': 'created', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'streaming_locator_id': {'key': 'streamingLocatorId', 'type': 'str'},
-        'streaming_policy_name': {'key': 'streamingPolicyName', 'type': 'str'},
-        'default_content_key_policy_name': {'key': 'defaultContentKeyPolicyName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "asset_name": {"key": "assetName", "type": "str"},
+        "created": {"key": "created", "type": "iso-8601"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "streaming_locator_id": {"key": "streamingLocatorId", "type": "str"},
+        "streaming_policy_name": {"key": "streamingPolicyName", "type": "str"},
+        "default_content_key_policy_name": {"key": "defaultContentKeyPolicyName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AssetStreamingLocator, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.asset_name = None
         self.created = None
@@ -1107,41 +1061,36 @@ class AssetTrack(ProxyResource):
     :ivar track: Detailed information about a track in the asset.
     :vartype track: ~azure.mgmt.media.models.TrackBase
     :ivar provisioning_state: Provisioning state of the asset track. Known values are: "Failed",
-     "InProgress", "Succeeded".
+     "InProgress", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.media.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'track': {'key': 'properties.track', 'type': 'TrackBase'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "track": {"key": "properties.track", "type": "TrackBase"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        track: Optional["_models.TrackBase"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, track: Optional["_models.TrackBase"] = None, **kwargs):
         """
         :keyword track: Detailed information about a track in the asset.
         :paramtype track: ~azure.mgmt.media.models.TrackBase
         """
-        super(AssetTrack, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.track = track
         self.provisioning_state = None
 
 
-class AssetTrackCollection(msrest.serialization.Model):
+class AssetTrackCollection(_serialization.Model):
     """A collection of AssetTrack items.
 
     :ivar value: A collection of AssetTrack items.
@@ -1149,29 +1098,24 @@ class AssetTrackCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AssetTrack]'},
+        "value": {"key": "value", "type": "[AssetTrack]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.AssetTrack"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.AssetTrack"]] = None, **kwargs):
         """
         :keyword value: A collection of AssetTrack items.
         :paramtype value: list[~azure.mgmt.media.models.AssetTrack]
         """
-        super(AssetTrackCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class AssetTrackOperationStatus(msrest.serialization.Model):
+class AssetTrackOperationStatus(_serialization.Model):
     """Status of asset track operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Operation identifier.
+    :ivar name: Operation identifier. Required.
     :vartype name: str
     :ivar id: Operation resource ID.
     :vartype id: str
@@ -1179,24 +1123,24 @@ class AssetTrackOperationStatus(msrest.serialization.Model):
     :vartype start_time: ~datetime.datetime
     :ivar end_time: Operation end time.
     :vartype end_time: ~datetime.datetime
-    :ivar status: Required. Operation status.
+    :ivar status: Operation status. Required.
     :vartype status: str
     :ivar error: The error detail.
     :vartype error: ~azure.mgmt.media.models.ErrorDetail
     """
 
     _validation = {
-        'name': {'required': True},
-        'status': {'required': True},
+        "name": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
@@ -1204,14 +1148,14 @@ class AssetTrackOperationStatus(msrest.serialization.Model):
         *,
         name: str,
         status: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. Operation identifier.
+        :keyword name: Operation identifier. Required.
         :paramtype name: str
         :keyword id: Operation resource ID.
         :paramtype id: str
@@ -1219,12 +1163,12 @@ class AssetTrackOperationStatus(msrest.serialization.Model):
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: Operation end time.
         :paramtype end_time: ~datetime.datetime
-        :keyword status: Required. Operation status.
+        :keyword status: Operation status. Required.
         :paramtype status: str
         :keyword error: The error detail.
         :paramtype error: ~azure.mgmt.media.models.ErrorDetail
         """
-        super(AssetTrackOperationStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.id = id
         self.start_time = start_time
@@ -1233,49 +1177,91 @@ class AssetTrackOperationStatus(msrest.serialization.Model):
         self.error = error
 
 
-class Preset(msrest.serialization.Model):
-    """Base type for all Presets, which define the recipe or instructions on how the input media files should be processed.
+class AsyncOperationResult(_serialization.Model):
+    """The status of an async operation.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AudioAnalyzerPreset, BuiltInStandardEncoderPreset, FaceDetectorPreset, StandardEncoderPreset.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
-    :vartype odata_type: str
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.media.models.ErrorDetail
+    :ivar name: Operation Id of the async operation.
+    :vartype name: str
+    :ivar status: Operation status of the async operation. Known values are: "Succeeded", "Failed",
+     and "InProgress".
+    :vartype status: str or ~azure.mgmt.media.models.AsyncOperationStatus
     """
 
-    _validation = {
-        'odata_type': {'required': True},
-    }
-
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Media.AudioAnalyzerPreset': 'AudioAnalyzerPreset', '#Microsoft.Media.BuiltInStandardEncoderPreset': 'BuiltInStandardEncoderPreset', '#Microsoft.Media.FaceDetectorPreset': 'FaceDetectorPreset', '#Microsoft.Media.StandardEncoderPreset': 'StandardEncoderPreset'}
+        "error": {"key": "error", "type": "ErrorDetail"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
+        *,
+        error: Optional["_models.ErrorDetail"] = None,
+        name: Optional[str] = None,
+        status: Optional[Union[str, "_models.AsyncOperationStatus"]] = None,
         **kwargs
     ):
         """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.media.models.ErrorDetail
+        :keyword name: Operation Id of the async operation.
+        :paramtype name: str
+        :keyword status: Operation status of the async operation. Known values are: "Succeeded",
+         "Failed", and "InProgress".
+        :paramtype status: str or ~azure.mgmt.media.models.AsyncOperationStatus
         """
-        super(Preset, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.error = error
+        self.name = name
+        self.status = status
+
+
+class Preset(_serialization.Model):
+    """Base type for all Presets, which define the recipe or instructions on how the input media files should be processed.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AudioAnalyzerPreset, BuiltInStandardEncoderPreset, FaceDetectorPreset, StandardEncoderPreset
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: The discriminator for derived types. Required.
+    :vartype odata_type: str
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+    }
+
+    _subtype_map = {
+        "odata_type": {
+            "#Microsoft.Media.AudioAnalyzerPreset": "AudioAnalyzerPreset",
+            "#Microsoft.Media.BuiltInStandardEncoderPreset": "BuiltInStandardEncoderPreset",
+            "#Microsoft.Media.FaceDetectorPreset": "FaceDetectorPreset",
+            "#Microsoft.Media.StandardEncoderPreset": "StandardEncoderPreset",
+        }
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
 
 
 class AudioAnalyzerPreset(Preset):
     """The Audio Analyzer preset applies a pre-defined set of AI-based analysis operations, including speech transcription. Currently, the preset supports processing of content with a single audio track.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: VideoAnalyzerPreset.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VideoAnalyzerPreset
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar audio_language: The language for the audio payload in the input using the BCP-47 format
      of 'language tag-region' (e.g: 'en-US').  If you know the language of your content, it is
@@ -1290,7 +1276,7 @@ class AudioAnalyzerPreset(Preset):
      https://go.microsoft.com/fwlink/?linkid=2109463.
     :vartype audio_language: str
     :ivar mode: Determines the set of audio analysis operations to be performed. If unspecified,
-     the Standard AudioAnalysisMode would be chosen. Known values are: "Standard", "Basic".
+     the Standard AudioAnalysisMode would be chosen. Known values are: "Standard" and "Basic".
     :vartype mode: str or ~azure.mgmt.media.models.AudioAnalysisMode
     :ivar experimental_options: Dictionary containing key value pairs for parameters not exposed in
      the preset itself.
@@ -1298,19 +1284,17 @@ class AudioAnalyzerPreset(Preset):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'audio_language': {'key': 'audioLanguage', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'experimental_options': {'key': 'experimentalOptions', 'type': '{str}'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "audio_language": {"key": "audioLanguage", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "experimental_options": {"key": "experimentalOptions", "type": "{str}"},
     }
 
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Media.VideoAnalyzerPreset': 'VideoAnalyzerPreset'}
-    }
+    _subtype_map = {"odata_type": {"#Microsoft.Media.VideoAnalyzerPreset": "VideoAnalyzerPreset"}}
 
     def __init__(
         self,
@@ -1334,33 +1318,34 @@ class AudioAnalyzerPreset(Preset):
          https://go.microsoft.com/fwlink/?linkid=2109463.
         :paramtype audio_language: str
         :keyword mode: Determines the set of audio analysis operations to be performed. If unspecified,
-         the Standard AudioAnalysisMode would be chosen. Known values are: "Standard", "Basic".
+         the Standard AudioAnalysisMode would be chosen. Known values are: "Standard" and "Basic".
         :paramtype mode: str or ~azure.mgmt.media.models.AudioAnalysisMode
         :keyword experimental_options: Dictionary containing key value pairs for parameters not exposed
          in the preset itself.
         :paramtype experimental_options: dict[str, str]
         """
-        super(AudioAnalyzerPreset, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.AudioAnalyzerPreset'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.AudioAnalyzerPreset"
         self.audio_language = audio_language
         self.mode = mode
         self.experimental_options = experimental_options
 
 
-class Overlay(msrest.serialization.Model):
+class Overlay(_serialization.Model):
     """Base type for all overlays - image, audio or video.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AudioOverlay, VideoOverlay.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AudioOverlay, VideoOverlay
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar input_label: Required. The label of the job input which is to be used as an overlay. The
-     Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
-     format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+    :ivar input_label: The label of the job input which is to be used as an overlay. The Input must
+     specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP format, or an
+     audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
      https://aka.ms/mesformats for the complete list of supported audio and video file formats.
+     Required.
     :vartype input_label: str
     :ivar start: The start position, with reference to the input video, at which the overlay
      starts. The value should be in ISO 8601 format. For example, PT05S to start the overlay at 5
@@ -1388,22 +1373,22 @@ class Overlay(msrest.serialization.Model):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'input_label': {'required': True},
+        "odata_type": {"required": True},
+        "input_label": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'input_label': {'key': 'inputLabel', 'type': 'str'},
-        'start': {'key': 'start', 'type': 'duration'},
-        'end': {'key': 'end', 'type': 'duration'},
-        'fade_in_duration': {'key': 'fadeInDuration', 'type': 'duration'},
-        'fade_out_duration': {'key': 'fadeOutDuration', 'type': 'duration'},
-        'audio_gain_level': {'key': 'audioGainLevel', 'type': 'float'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "input_label": {"key": "inputLabel", "type": "str"},
+        "start": {"key": "start", "type": "duration"},
+        "end": {"key": "end", "type": "duration"},
+        "fade_in_duration": {"key": "fadeInDuration", "type": "duration"},
+        "fade_out_duration": {"key": "fadeOutDuration", "type": "duration"},
+        "audio_gain_level": {"key": "audioGainLevel", "type": "float"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.AudioOverlay': 'AudioOverlay', '#Microsoft.Media.VideoOverlay': 'VideoOverlay'}
+        "odata_type": {"#Microsoft.Media.AudioOverlay": "AudioOverlay", "#Microsoft.Media.VideoOverlay": "VideoOverlay"}
     }
 
     def __init__(
@@ -1418,10 +1403,11 @@ class Overlay(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword input_label: Required. The label of the job input which is to be used as an overlay.
-         The Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
-         format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+        :keyword input_label: The label of the job input which is to be used as an overlay. The Input
+         must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP format, or
+         an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
          https://aka.ms/mesformats for the complete list of supported audio and video file formats.
+         Required.
         :paramtype input_label: str
         :keyword start: The start position, with reference to the input video, at which the overlay
          starts. The value should be in ISO 8601 format. For example, PT05S to start the overlay at 5
@@ -1447,8 +1433,8 @@ class Overlay(msrest.serialization.Model):
          range [0, 1.0]. The default is 1.0.
         :paramtype audio_gain_level: float
         """
-        super(Overlay, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
         self.input_label = input_label
         self.start = start
         self.end = end
@@ -1462,12 +1448,13 @@ class AudioOverlay(Overlay):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar input_label: Required. The label of the job input which is to be used as an overlay. The
-     Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
-     format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+    :ivar input_label: The label of the job input which is to be used as an overlay. The Input must
+     specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP format, or an
+     audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
      https://aka.ms/mesformats for the complete list of supported audio and video file formats.
+     Required.
     :vartype input_label: str
     :ivar start: The start position, with reference to the input video, at which the overlay
      starts. The value should be in ISO 8601 format. For example, PT05S to start the overlay at 5
@@ -1495,18 +1482,18 @@ class AudioOverlay(Overlay):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'input_label': {'required': True},
+        "odata_type": {"required": True},
+        "input_label": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'input_label': {'key': 'inputLabel', 'type': 'str'},
-        'start': {'key': 'start', 'type': 'duration'},
-        'end': {'key': 'end', 'type': 'duration'},
-        'fade_in_duration': {'key': 'fadeInDuration', 'type': 'duration'},
-        'fade_out_duration': {'key': 'fadeOutDuration', 'type': 'duration'},
-        'audio_gain_level': {'key': 'audioGainLevel', 'type': 'float'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "input_label": {"key": "inputLabel", "type": "str"},
+        "start": {"key": "start", "type": "duration"},
+        "end": {"key": "end", "type": "duration"},
+        "fade_in_duration": {"key": "fadeInDuration", "type": "duration"},
+        "fade_out_duration": {"key": "fadeOutDuration", "type": "duration"},
+        "audio_gain_level": {"key": "audioGainLevel", "type": "float"},
     }
 
     def __init__(
@@ -1521,10 +1508,11 @@ class AudioOverlay(Overlay):
         **kwargs
     ):
         """
-        :keyword input_label: Required. The label of the job input which is to be used as an overlay.
-         The Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
-         format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+        :keyword input_label: The label of the job input which is to be used as an overlay. The Input
+         must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP format, or
+         an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
          https://aka.ms/mesformats for the complete list of supported audio and video file formats.
+         Required.
         :paramtype input_label: str
         :keyword start: The start position, with reference to the input video, at which the overlay
          starts. The value should be in ISO 8601 format. For example, PT05S to start the overlay at 5
@@ -1550,150 +1538,209 @@ class AudioOverlay(Overlay):
          range [0, 1.0]. The default is 1.0.
         :paramtype audio_gain_level: float
         """
-        super(AudioOverlay, self).__init__(input_label=input_label, start=start, end=end, fade_in_duration=fade_in_duration, fade_out_duration=fade_out_duration, audio_gain_level=audio_gain_level, **kwargs)
-        self.odata_type = '#Microsoft.Media.AudioOverlay'  # type: str
+        super().__init__(
+            input_label=input_label,
+            start=start,
+            end=end,
+            fade_in_duration=fade_in_duration,
+            fade_out_duration=fade_out_duration,
+            audio_gain_level=audio_gain_level,
+            **kwargs
+        )
+        self.odata_type: str = "#Microsoft.Media.AudioOverlay"
 
 
-class TrackBase(msrest.serialization.Model):
+class TrackBase(_serialization.Model):
     """Base type for concrete track types. A derived type must be used to represent the Track.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AudioTrack, TextTrack, VideoTrack.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AudioTrack, TextTrack, VideoTrack
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.AudioTrack': 'AudioTrack', '#Microsoft.Media.TextTrack': 'TextTrack', '#Microsoft.Media.VideoTrack': 'VideoTrack'}
+        "odata_type": {
+            "#Microsoft.Media.AudioTrack": "AudioTrack",
+            "#Microsoft.Media.TextTrack": "TextTrack",
+            "#Microsoft.Media.VideoTrack": "VideoTrack",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(TrackBase, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
 
 
 class AudioTrack(TrackBase):
     """Represents an audio track in the asset.
 
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
-    :vartype odata_type: str
-    """
-
-    _validation = {
-        'odata_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AudioTrack, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.AudioTrack'  # type: str
-
-
-class TrackDescriptor(msrest.serialization.Model):
-    """Base type for all TrackDescriptor types, which define the metadata and selection for tracks that should be processed by a Job.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AudioTrackDescriptor, VideoTrackDescriptor.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
+    :ivar file_name: The file name to the source file. This file is located in the storage
+     container of the asset.
+    :vartype file_name: str
+    :ivar display_name: The display name of the audio track on a video player. In HLS, this maps to
+     the NAME attribute of EXT-X-MEDIA.
+    :vartype display_name: str
+    :ivar language_code: The RFC5646 language code for the audio track.
+    :vartype language_code: str
+    :ivar hls_settings: The HLS specific setting for the audio track.
+    :vartype hls_settings: ~azure.mgmt.media.models.HlsSettings
+    :ivar dash_settings: The DASH specific setting for the audio track.
+    :vartype dash_settings: ~azure.mgmt.media.models.DashSettings
+    :ivar mpeg4_track_id: The MPEG-4 audio track ID for the audio track.
+    :vartype mpeg4_track_id: int
+    :ivar bit_rate: The stream bit rate for the audio track.
+    :vartype bit_rate: int
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
+        "bit_rate": {"readonly": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Media.AudioTrackDescriptor': 'AudioTrackDescriptor', '#Microsoft.Media.VideoTrackDescriptor': 'VideoTrackDescriptor'}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(TrackDescriptor, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
-
-
-class AudioTrackDescriptor(TrackDescriptor):
-    """A TrackSelection to select audio tracks.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SelectAudioTrackByAttribute, SelectAudioTrackById.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
-    :vartype odata_type: str
-    :ivar channel_mapping: Optional designation for single channel audio tracks.  Can be used to
-     combine the tracks into stereo or multi-channel audio tracks. Known values are: "FrontLeft",
-     "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft",
-     "StereoRight".
-    :vartype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
-    """
-
-    _validation = {
-        'odata_type': {'required': True},
-    }
-
-    _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'channel_mapping': {'key': 'channelMapping', 'type': 'str'},
-    }
-
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Media.SelectAudioTrackByAttribute': 'SelectAudioTrackByAttribute', '#Microsoft.Media.SelectAudioTrackById': 'SelectAudioTrackById'}
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "file_name": {"key": "fileName", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "language_code": {"key": "languageCode", "type": "str"},
+        "hls_settings": {"key": "hlsSettings", "type": "HlsSettings"},
+        "dash_settings": {"key": "dashSettings", "type": "DashSettings"},
+        "mpeg4_track_id": {"key": "mpeg4TrackId", "type": "int"},
+        "bit_rate": {"key": "bitRate", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        channel_mapping: Optional[Union[str, "_models.ChannelMapping"]] = None,
+        file_name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        language_code: Optional[str] = None,
+        hls_settings: Optional["_models.HlsSettings"] = None,
+        dash_settings: Optional["_models.DashSettings"] = None,
+        mpeg4_track_id: Optional[int] = None,
         **kwargs
     ):
         """
+        :keyword file_name: The file name to the source file. This file is located in the storage
+         container of the asset.
+        :paramtype file_name: str
+        :keyword display_name: The display name of the audio track on a video player. In HLS, this maps
+         to the NAME attribute of EXT-X-MEDIA.
+        :paramtype display_name: str
+        :keyword language_code: The RFC5646 language code for the audio track.
+        :paramtype language_code: str
+        :keyword hls_settings: The HLS specific setting for the audio track.
+        :paramtype hls_settings: ~azure.mgmt.media.models.HlsSettings
+        :keyword dash_settings: The DASH specific setting for the audio track.
+        :paramtype dash_settings: ~azure.mgmt.media.models.DashSettings
+        :keyword mpeg4_track_id: The MPEG-4 audio track ID for the audio track.
+        :paramtype mpeg4_track_id: int
+        """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.AudioTrack"
+        self.file_name = file_name
+        self.display_name = display_name
+        self.language_code = language_code
+        self.hls_settings = hls_settings
+        self.dash_settings = dash_settings
+        self.mpeg4_track_id = mpeg4_track_id
+        self.bit_rate = None
+
+
+class TrackDescriptor(_serialization.Model):
+    """Base type for all TrackDescriptor types, which define the metadata and selection for tracks that should be processed by a Job.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AudioTrackDescriptor, VideoTrackDescriptor
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: The discriminator for derived types. Required.
+    :vartype odata_type: str
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+    }
+
+    _subtype_map = {
+        "odata_type": {
+            "#Microsoft.Media.AudioTrackDescriptor": "AudioTrackDescriptor",
+            "#Microsoft.Media.VideoTrackDescriptor": "VideoTrackDescriptor",
+        }
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
+
+
+class AudioTrackDescriptor(TrackDescriptor):
+    """A TrackSelection to select audio tracks.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SelectAudioTrackByAttribute, SelectAudioTrackById
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: The discriminator for derived types. Required.
+    :vartype odata_type: str
+    :ivar channel_mapping: Optional designation for single channel audio tracks.  Can be used to
+     combine the tracks into stereo or multi-channel audio tracks. Known values are: "FrontLeft",
+     "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft", and
+     "StereoRight".
+    :vartype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "channel_mapping": {"key": "channelMapping", "type": "str"},
+    }
+
+    _subtype_map = {
+        "odata_type": {
+            "#Microsoft.Media.SelectAudioTrackByAttribute": "SelectAudioTrackByAttribute",
+            "#Microsoft.Media.SelectAudioTrackById": "SelectAudioTrackById",
+        }
+    }
+
+    def __init__(self, *, channel_mapping: Optional[Union[str, "_models.ChannelMapping"]] = None, **kwargs):
+        """
         :keyword channel_mapping: Optional designation for single channel audio tracks.  Can be used to
          combine the tracks into stereo or multi-channel audio tracks. Known values are: "FrontLeft",
-         "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft",
+         "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft", and
          "StereoRight".
         :paramtype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
         """
-        super(AudioTrackDescriptor, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.AudioTrackDescriptor'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.AudioTrackDescriptor"
         self.channel_mapping = channel_mapping
 
 
@@ -1702,30 +1749,30 @@ class BuiltInStandardEncoderPreset(Preset):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar configurations: Optional configuration settings for encoder. Configurations is only
      supported for ContentAwareEncoding and H265ContentAwareEncoding BuiltInStandardEncoderPreset.
     :vartype configurations: ~azure.mgmt.media.models.PresetConfigurations
-    :ivar preset_name: Required. The built-in preset to be used for encoding videos. Known values
+    :ivar preset_name: The built-in preset to be used for encoding videos. Required. Known values
      are: "H264SingleBitrateSD", "H264SingleBitrate720p", "H264SingleBitrate1080p",
-     "AdaptiveStreaming", "AACGoodQualityAudio", "ContentAwareEncodingExperimental",
-     "ContentAwareEncoding", "CopyAllBitrateNonInterleaved", "H264MultipleBitrate1080p",
-     "H264MultipleBitrate720p", "H264MultipleBitrateSD", "H265ContentAwareEncoding",
-     "H265AdaptiveStreaming", "H265SingleBitrate720p", "H265SingleBitrate1080p",
-     "H265SingleBitrate4K".
+     "AdaptiveStreaming", "AACGoodQualityAudio", "DDGoodQualityAudio",
+     "ContentAwareEncodingExperimental", "ContentAwareEncoding", "CopyAllBitrateNonInterleaved",
+     "H264MultipleBitrate1080p", "H264MultipleBitrate720p", "H264MultipleBitrateSD",
+     "H265ContentAwareEncoding", "H265AdaptiveStreaming", "H265SingleBitrate720p",
+     "H265SingleBitrate1080p", and "H265SingleBitrate4K".
     :vartype preset_name: str or ~azure.mgmt.media.models.EncoderNamedPreset
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'preset_name': {'required': True},
+        "odata_type": {"required": True},
+        "preset_name": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'configurations': {'key': 'configurations', 'type': 'PresetConfigurations'},
-        'preset_name': {'key': 'presetName', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "configurations": {"key": "configurations", "type": "PresetConfigurations"},
+        "preset_name": {"key": "presetName", "type": "str"},
     }
 
     def __init__(
@@ -1739,22 +1786,22 @@ class BuiltInStandardEncoderPreset(Preset):
         :keyword configurations: Optional configuration settings for encoder. Configurations is only
          supported for ContentAwareEncoding and H265ContentAwareEncoding BuiltInStandardEncoderPreset.
         :paramtype configurations: ~azure.mgmt.media.models.PresetConfigurations
-        :keyword preset_name: Required. The built-in preset to be used for encoding videos. Known
+        :keyword preset_name: The built-in preset to be used for encoding videos. Required. Known
          values are: "H264SingleBitrateSD", "H264SingleBitrate720p", "H264SingleBitrate1080p",
-         "AdaptiveStreaming", "AACGoodQualityAudio", "ContentAwareEncodingExperimental",
-         "ContentAwareEncoding", "CopyAllBitrateNonInterleaved", "H264MultipleBitrate1080p",
-         "H264MultipleBitrate720p", "H264MultipleBitrateSD", "H265ContentAwareEncoding",
-         "H265AdaptiveStreaming", "H265SingleBitrate720p", "H265SingleBitrate1080p",
-         "H265SingleBitrate4K".
+         "AdaptiveStreaming", "AACGoodQualityAudio", "DDGoodQualityAudio",
+         "ContentAwareEncodingExperimental", "ContentAwareEncoding", "CopyAllBitrateNonInterleaved",
+         "H264MultipleBitrate1080p", "H264MultipleBitrate720p", "H264MultipleBitrateSD",
+         "H265ContentAwareEncoding", "H265AdaptiveStreaming", "H265SingleBitrate720p",
+         "H265SingleBitrate1080p", and "H265SingleBitrate4K".
         :paramtype preset_name: str or ~azure.mgmt.media.models.EncoderNamedPreset
         """
-        super(BuiltInStandardEncoderPreset, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.BuiltInStandardEncoderPreset'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.BuiltInStandardEncoderPreset"
         self.configurations = configurations
         self.preset_name = preset_name
 
 
-class CbcsDrmConfiguration(msrest.serialization.Model):
+class CbcsDrmConfiguration(_serialization.Model):
     """Class to specify DRM configurations of CommonEncryptionCbcs scheme in Streaming Policy.
 
     :ivar fair_play: FairPlay configurations.
@@ -1766,9 +1813,9 @@ class CbcsDrmConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'fair_play': {'key': 'fairPlay', 'type': 'StreamingPolicyFairPlayConfiguration'},
-        'play_ready': {'key': 'playReady', 'type': 'StreamingPolicyPlayReadyConfiguration'},
-        'widevine': {'key': 'widevine', 'type': 'StreamingPolicyWidevineConfiguration'},
+        "fair_play": {"key": "fairPlay", "type": "StreamingPolicyFairPlayConfiguration"},
+        "play_ready": {"key": "playReady", "type": "StreamingPolicyPlayReadyConfiguration"},
+        "widevine": {"key": "widevine", "type": "StreamingPolicyWidevineConfiguration"},
     }
 
     def __init__(
@@ -1787,13 +1834,13 @@ class CbcsDrmConfiguration(msrest.serialization.Model):
         :keyword widevine: Widevine configurations.
         :paramtype widevine: ~azure.mgmt.media.models.StreamingPolicyWidevineConfiguration
         """
-        super(CbcsDrmConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.fair_play = fair_play
         self.play_ready = play_ready
         self.widevine = widevine
 
 
-class CencDrmConfiguration(msrest.serialization.Model):
+class CencDrmConfiguration(_serialization.Model):
     """Class to specify DRM configurations of CommonEncryptionCenc scheme in Streaming Policy.
 
     :ivar play_ready: PlayReady configurations.
@@ -1803,8 +1850,8 @@ class CencDrmConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'play_ready': {'key': 'playReady', 'type': 'StreamingPolicyPlayReadyConfiguration'},
-        'widevine': {'key': 'widevine', 'type': 'StreamingPolicyWidevineConfiguration'},
+        "play_ready": {"key": "playReady", "type": "StreamingPolicyPlayReadyConfiguration"},
+        "widevine": {"key": "widevine", "type": "StreamingPolicyWidevineConfiguration"},
     }
 
     def __init__(
@@ -1820,12 +1867,12 @@ class CencDrmConfiguration(msrest.serialization.Model):
         :keyword widevine: Widevine configurations.
         :paramtype widevine: ~azure.mgmt.media.models.StreamingPolicyWidevineConfiguration
         """
-        super(CencDrmConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.play_ready = play_ready
         self.widevine = widevine
 
 
-class CheckNameAvailabilityInput(msrest.serialization.Model):
+class CheckNameAvailabilityInput(_serialization.Model):
     """The input to the check name availability request.
 
     :ivar name: The account name.
@@ -1835,29 +1882,53 @@ class CheckNameAvailabilityInput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
         """
         :keyword name: The account name.
         :paramtype name: str
         :keyword type: The account type. For a Media Services account, this should be 'MediaServices'.
         :paramtype type: str
         """
-        super(CheckNameAvailabilityInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class CommonEncryptionCbcs(msrest.serialization.Model):
+class ClearKeyEncryptionConfiguration(_serialization.Model):
+    """Class to specify ClearKey configuration of common encryption schemes in Streaming Policy.
+
+    :ivar custom_keys_acquisition_url_template: Template for the URL of the custom service
+     delivering content keys to end user players. Not required when using Azure Media Services for
+     issuing licenses. The template supports replaceable tokens that the service will update at
+     runtime with the value specific to the request.  The currently supported token value is
+     {AlternativeMediaId}, which is replaced with the value of
+     StreamingLocatorId.AlternativeMediaId.
+    :vartype custom_keys_acquisition_url_template: str
+    """
+
+    _attribute_map = {
+        "custom_keys_acquisition_url_template": {"key": "customKeysAcquisitionUrlTemplate", "type": "str"},
+    }
+
+    def __init__(self, *, custom_keys_acquisition_url_template: Optional[str] = None, **kwargs):
+        """
+        :keyword custom_keys_acquisition_url_template: Template for the URL of the custom service
+         delivering content keys to end user players. Not required when using Azure Media Services for
+         issuing licenses. The template supports replaceable tokens that the service will update at
+         runtime with the value specific to the request.  The currently supported token value is
+         {AlternativeMediaId}, which is replaced with the value of
+         StreamingLocatorId.AlternativeMediaId.
+        :paramtype custom_keys_acquisition_url_template: str
+        """
+        super().__init__(**kwargs)
+        self.custom_keys_acquisition_url_template = custom_keys_acquisition_url_template
+
+
+class CommonEncryptionCbcs(_serialization.Model):
     """Class for CommonEncryptionCbcs encryption scheme.
 
     :ivar enabled_protocols: Representing supported protocols.
@@ -1869,13 +1940,21 @@ class CommonEncryptionCbcs(msrest.serialization.Model):
     :vartype content_keys: ~azure.mgmt.media.models.StreamingPolicyContentKeys
     :ivar drm: Configuration of DRMs for current encryption scheme.
     :vartype drm: ~azure.mgmt.media.models.CbcsDrmConfiguration
+    :ivar clear_key_encryption_configuration: Optional configuration supporting ClearKey in
+     CommonEncryptionCbcs encryption scheme.
+    :vartype clear_key_encryption_configuration:
+     ~azure.mgmt.media.models.ClearKeyEncryptionConfiguration
     """
 
     _attribute_map = {
-        'enabled_protocols': {'key': 'enabledProtocols', 'type': 'EnabledProtocols'},
-        'clear_tracks': {'key': 'clearTracks', 'type': '[TrackSelection]'},
-        'content_keys': {'key': 'contentKeys', 'type': 'StreamingPolicyContentKeys'},
-        'drm': {'key': 'drm', 'type': 'CbcsDrmConfiguration'},
+        "enabled_protocols": {"key": "enabledProtocols", "type": "EnabledProtocols"},
+        "clear_tracks": {"key": "clearTracks", "type": "[TrackSelection]"},
+        "content_keys": {"key": "contentKeys", "type": "StreamingPolicyContentKeys"},
+        "drm": {"key": "drm", "type": "CbcsDrmConfiguration"},
+        "clear_key_encryption_configuration": {
+            "key": "clearKeyEncryptionConfiguration",
+            "type": "ClearKeyEncryptionConfiguration",
+        },
     }
 
     def __init__(
@@ -1885,6 +1964,7 @@ class CommonEncryptionCbcs(msrest.serialization.Model):
         clear_tracks: Optional[List["_models.TrackSelection"]] = None,
         content_keys: Optional["_models.StreamingPolicyContentKeys"] = None,
         drm: Optional["_models.CbcsDrmConfiguration"] = None,
+        clear_key_encryption_configuration: Optional["_models.ClearKeyEncryptionConfiguration"] = None,
         **kwargs
     ):
         """
@@ -1897,15 +1977,20 @@ class CommonEncryptionCbcs(msrest.serialization.Model):
         :paramtype content_keys: ~azure.mgmt.media.models.StreamingPolicyContentKeys
         :keyword drm: Configuration of DRMs for current encryption scheme.
         :paramtype drm: ~azure.mgmt.media.models.CbcsDrmConfiguration
+        :keyword clear_key_encryption_configuration: Optional configuration supporting ClearKey in
+         CommonEncryptionCbcs encryption scheme.
+        :paramtype clear_key_encryption_configuration:
+         ~azure.mgmt.media.models.ClearKeyEncryptionConfiguration
         """
-        super(CommonEncryptionCbcs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled_protocols = enabled_protocols
         self.clear_tracks = clear_tracks
         self.content_keys = content_keys
         self.drm = drm
+        self.clear_key_encryption_configuration = clear_key_encryption_configuration
 
 
-class CommonEncryptionCenc(msrest.serialization.Model):
+class CommonEncryptionCenc(_serialization.Model):
     """Class for envelope encryption scheme.
 
     :ivar enabled_protocols: Representing supported protocols.
@@ -1917,13 +2002,21 @@ class CommonEncryptionCenc(msrest.serialization.Model):
     :vartype content_keys: ~azure.mgmt.media.models.StreamingPolicyContentKeys
     :ivar drm: Configuration of DRMs for CommonEncryptionCenc encryption scheme.
     :vartype drm: ~azure.mgmt.media.models.CencDrmConfiguration
+    :ivar clear_key_encryption_configuration: Optional configuration supporting ClearKey in
+     CommonEncryptionCenc encryption scheme.
+    :vartype clear_key_encryption_configuration:
+     ~azure.mgmt.media.models.ClearKeyEncryptionConfiguration
     """
 
     _attribute_map = {
-        'enabled_protocols': {'key': 'enabledProtocols', 'type': 'EnabledProtocols'},
-        'clear_tracks': {'key': 'clearTracks', 'type': '[TrackSelection]'},
-        'content_keys': {'key': 'contentKeys', 'type': 'StreamingPolicyContentKeys'},
-        'drm': {'key': 'drm', 'type': 'CencDrmConfiguration'},
+        "enabled_protocols": {"key": "enabledProtocols", "type": "EnabledProtocols"},
+        "clear_tracks": {"key": "clearTracks", "type": "[TrackSelection]"},
+        "content_keys": {"key": "contentKeys", "type": "StreamingPolicyContentKeys"},
+        "drm": {"key": "drm", "type": "CencDrmConfiguration"},
+        "clear_key_encryption_configuration": {
+            "key": "clearKeyEncryptionConfiguration",
+            "type": "ClearKeyEncryptionConfiguration",
+        },
     }
 
     def __init__(
@@ -1933,6 +2026,7 @@ class CommonEncryptionCenc(msrest.serialization.Model):
         clear_tracks: Optional[List["_models.TrackSelection"]] = None,
         content_keys: Optional["_models.StreamingPolicyContentKeys"] = None,
         drm: Optional["_models.CencDrmConfiguration"] = None,
+        clear_key_encryption_configuration: Optional["_models.ClearKeyEncryptionConfiguration"] = None,
         **kwargs
     ):
         """
@@ -1945,12 +2039,17 @@ class CommonEncryptionCenc(msrest.serialization.Model):
         :paramtype content_keys: ~azure.mgmt.media.models.StreamingPolicyContentKeys
         :keyword drm: Configuration of DRMs for CommonEncryptionCenc encryption scheme.
         :paramtype drm: ~azure.mgmt.media.models.CencDrmConfiguration
+        :keyword clear_key_encryption_configuration: Optional configuration supporting ClearKey in
+         CommonEncryptionCenc encryption scheme.
+        :paramtype clear_key_encryption_configuration:
+         ~azure.mgmt.media.models.ClearKeyEncryptionConfiguration
         """
-        super(CommonEncryptionCenc, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled_protocols = enabled_protocols
         self.clear_tracks = clear_tracks
         self.content_keys = content_keys
         self.drm = drm
+        self.clear_key_encryption_configuration = clear_key_encryption_configuration
 
 
 class ContentKeyPolicy(ProxyResource):
@@ -1981,25 +2080,25 @@ class ContentKeyPolicy(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'policy_id': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "policy_id": {"readonly": True},
+        "created": {"readonly": True},
+        "last_modified": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'policy_id': {'key': 'properties.policyId', 'type': 'str'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'options': {'key': 'properties.options', 'type': '[ContentKeyPolicyOption]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "policy_id": {"key": "properties.policyId", "type": "str"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "last_modified": {"key": "properties.lastModified", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
+        "options": {"key": "properties.options", "type": "[ContentKeyPolicyOption]"},
     }
 
     def __init__(
@@ -2015,7 +2114,7 @@ class ContentKeyPolicy(ProxyResource):
         :keyword options: The Key Policy options.
         :paramtype options: list[~azure.mgmt.media.models.ContentKeyPolicyOption]
         """
-        super(ContentKeyPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.policy_id = None
         self.created = None
@@ -2024,38 +2123,42 @@ class ContentKeyPolicy(ProxyResource):
         self.options = options
 
 
-class ContentKeyPolicyConfiguration(msrest.serialization.Model):
+class ContentKeyPolicyConfiguration(_serialization.Model):
     """Base class for Content Key Policy configuration. A derived class must be used to create a configuration.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ContentKeyPolicyClearKeyConfiguration, ContentKeyPolicyFairPlayConfiguration, ContentKeyPolicyPlayReadyConfiguration, ContentKeyPolicyUnknownConfiguration, ContentKeyPolicyWidevineConfiguration.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ContentKeyPolicyClearKeyConfiguration, ContentKeyPolicyFairPlayConfiguration,
+    ContentKeyPolicyPlayReadyConfiguration, ContentKeyPolicyUnknownConfiguration,
+    ContentKeyPolicyWidevineConfiguration
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration': 'ContentKeyPolicyClearKeyConfiguration', '#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration': 'ContentKeyPolicyFairPlayConfiguration', '#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration': 'ContentKeyPolicyPlayReadyConfiguration', '#Microsoft.Media.ContentKeyPolicyUnknownConfiguration': 'ContentKeyPolicyUnknownConfiguration', '#Microsoft.Media.ContentKeyPolicyWidevineConfiguration': 'ContentKeyPolicyWidevineConfiguration'}
+        "odata_type": {
+            "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration": "ContentKeyPolicyClearKeyConfiguration",
+            "#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration": "ContentKeyPolicyFairPlayConfiguration",
+            "#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration": "ContentKeyPolicyPlayReadyConfiguration",
+            "#Microsoft.Media.ContentKeyPolicyUnknownConfiguration": "ContentKeyPolicyUnknownConfiguration",
+            "#Microsoft.Media.ContentKeyPolicyWidevineConfiguration": "ContentKeyPolicyWidevineConfiguration",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyConfiguration, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyClearKeyConfiguration(ContentKeyPolicyConfiguration):
@@ -2063,29 +2166,25 @@ class ContentKeyPolicyClearKeyConfiguration(ContentKeyPolicyConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyClearKeyConfiguration, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyClearKeyConfiguration"
 
 
-class ContentKeyPolicyCollection(msrest.serialization.Model):
+class ContentKeyPolicyCollection(_serialization.Model):
     """A collection of ContentKeyPolicy items.
 
     :ivar value: A collection of ContentKeyPolicy items.
@@ -2096,8 +2195,8 @@ class ContentKeyPolicyCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ContentKeyPolicy]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ContentKeyPolicy]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -2114,7 +2213,7 @@ class ContentKeyPolicyCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(ContentKeyPolicyCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
@@ -2124,50 +2223,54 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar ask: Required. The key that must be used as FairPlay Application Secret key.
-    :vartype ask: bytearray
-    :ivar fair_play_pfx_password: Required. The password encrypting FairPlay certificate in PKCS 12
-     (pfx) format.
+    :ivar ask: The key that must be used as FairPlay Application Secret key. This needs to be
+     base64 encoded. Required.
+    :vartype ask: bytes
+    :ivar fair_play_pfx_password: The password encrypting FairPlay certificate in PKCS 12 (pfx)
+     format. Required.
     :vartype fair_play_pfx_password: str
-    :ivar fair_play_pfx: Required. The Base64 representation of FairPlay certificate in PKCS 12
-     (pfx) format (including private key).
+    :ivar fair_play_pfx: The Base64 representation of FairPlay certificate in PKCS 12 (pfx) format
+     (including private key). Required.
     :vartype fair_play_pfx: str
-    :ivar rental_and_lease_key_type: Required. The rental and lease key type. Known values are:
-     "Unknown", "Undefined", "DualExpiry", "PersistentUnlimited", "PersistentLimited".
+    :ivar rental_and_lease_key_type: The rental and lease key type. Required. Known values are:
+     "Unknown", "Undefined", "DualExpiry", "PersistentUnlimited", and "PersistentLimited".
     :vartype rental_and_lease_key_type: str or
      ~azure.mgmt.media.models.ContentKeyPolicyFairPlayRentalAndLeaseKeyType
-    :ivar rental_duration: Required. The rental duration. Must be greater than or equal to 0.
-    :vartype rental_duration: long
+    :ivar rental_duration: The rental duration. Must be greater than or equal to 0. Required.
+    :vartype rental_duration: int
     :ivar offline_rental_configuration: Offline rental policy.
     :vartype offline_rental_configuration:
      ~azure.mgmt.media.models.ContentKeyPolicyFairPlayOfflineRentalConfiguration
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'ask': {'required': True},
-        'fair_play_pfx_password': {'required': True},
-        'fair_play_pfx': {'required': True},
-        'rental_and_lease_key_type': {'required': True},
-        'rental_duration': {'required': True},
+        "odata_type": {"required": True},
+        "ask": {"required": True},
+        "fair_play_pfx_password": {"required": True},
+        "fair_play_pfx": {"required": True},
+        "rental_and_lease_key_type": {"required": True},
+        "rental_duration": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'ask': {'key': 'ask', 'type': 'bytearray'},
-        'fair_play_pfx_password': {'key': 'fairPlayPfxPassword', 'type': 'str'},
-        'fair_play_pfx': {'key': 'fairPlayPfx', 'type': 'str'},
-        'rental_and_lease_key_type': {'key': 'rentalAndLeaseKeyType', 'type': 'str'},
-        'rental_duration': {'key': 'rentalDuration', 'type': 'long'},
-        'offline_rental_configuration': {'key': 'offlineRentalConfiguration', 'type': 'ContentKeyPolicyFairPlayOfflineRentalConfiguration'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "ask": {"key": "ask", "type": "bytearray"},
+        "fair_play_pfx_password": {"key": "fairPlayPfxPassword", "type": "str"},
+        "fair_play_pfx": {"key": "fairPlayPfx", "type": "str"},
+        "rental_and_lease_key_type": {"key": "rentalAndLeaseKeyType", "type": "str"},
+        "rental_duration": {"key": "rentalDuration", "type": "int"},
+        "offline_rental_configuration": {
+            "key": "offlineRentalConfiguration",
+            "type": "ContentKeyPolicyFairPlayOfflineRentalConfiguration",
+        },
     }
 
     def __init__(
         self,
         *,
-        ask: bytearray,
+        ask: bytes,
         fair_play_pfx_password: str,
         fair_play_pfx: str,
         rental_and_lease_key_type: Union[str, "_models.ContentKeyPolicyFairPlayRentalAndLeaseKeyType"],
@@ -2176,26 +2279,27 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
         **kwargs
     ):
         """
-        :keyword ask: Required. The key that must be used as FairPlay Application Secret key.
-        :paramtype ask: bytearray
-        :keyword fair_play_pfx_password: Required. The password encrypting FairPlay certificate in PKCS
-         12 (pfx) format.
+        :keyword ask: The key that must be used as FairPlay Application Secret key. This needs to be
+         base64 encoded. Required.
+        :paramtype ask: bytes
+        :keyword fair_play_pfx_password: The password encrypting FairPlay certificate in PKCS 12 (pfx)
+         format. Required.
         :paramtype fair_play_pfx_password: str
-        :keyword fair_play_pfx: Required. The Base64 representation of FairPlay certificate in PKCS 12
-         (pfx) format (including private key).
+        :keyword fair_play_pfx: The Base64 representation of FairPlay certificate in PKCS 12 (pfx)
+         format (including private key). Required.
         :paramtype fair_play_pfx: str
-        :keyword rental_and_lease_key_type: Required. The rental and lease key type. Known values are:
-         "Unknown", "Undefined", "DualExpiry", "PersistentUnlimited", "PersistentLimited".
+        :keyword rental_and_lease_key_type: The rental and lease key type. Required. Known values are:
+         "Unknown", "Undefined", "DualExpiry", "PersistentUnlimited", and "PersistentLimited".
         :paramtype rental_and_lease_key_type: str or
          ~azure.mgmt.media.models.ContentKeyPolicyFairPlayRentalAndLeaseKeyType
-        :keyword rental_duration: Required. The rental duration. Must be greater than or equal to 0.
-        :paramtype rental_duration: long
+        :keyword rental_duration: The rental duration. Must be greater than or equal to 0. Required.
+        :paramtype rental_duration: int
         :keyword offline_rental_configuration: Offline rental policy.
         :paramtype offline_rental_configuration:
          ~azure.mgmt.media.models.ContentKeyPolicyFairPlayOfflineRentalConfiguration
         """
-        super(ContentKeyPolicyFairPlayConfiguration, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyFairPlayConfiguration"
         self.ask = ask
         self.fair_play_pfx_password = fair_play_pfx_password
         self.fair_play_pfx = fair_play_pfx
@@ -2204,77 +2308,72 @@ class ContentKeyPolicyFairPlayConfiguration(ContentKeyPolicyConfiguration):
         self.offline_rental_configuration = offline_rental_configuration
 
 
-class ContentKeyPolicyFairPlayOfflineRentalConfiguration(msrest.serialization.Model):
+class ContentKeyPolicyFairPlayOfflineRentalConfiguration(_serialization.Model):
     """ContentKeyPolicyFairPlayOfflineRentalConfiguration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar playback_duration_seconds: Required. Playback duration.
-    :vartype playback_duration_seconds: long
-    :ivar storage_duration_seconds: Required. Storage duration.
-    :vartype storage_duration_seconds: long
+    :ivar playback_duration_seconds: Playback duration. Required.
+    :vartype playback_duration_seconds: int
+    :ivar storage_duration_seconds: Storage duration. Required.
+    :vartype storage_duration_seconds: int
     """
 
     _validation = {
-        'playback_duration_seconds': {'required': True},
-        'storage_duration_seconds': {'required': True},
+        "playback_duration_seconds": {"required": True},
+        "storage_duration_seconds": {"required": True},
     }
 
     _attribute_map = {
-        'playback_duration_seconds': {'key': 'playbackDurationSeconds', 'type': 'long'},
-        'storage_duration_seconds': {'key': 'storageDurationSeconds', 'type': 'long'},
+        "playback_duration_seconds": {"key": "playbackDurationSeconds", "type": "int"},
+        "storage_duration_seconds": {"key": "storageDurationSeconds", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        playback_duration_seconds: int,
-        storage_duration_seconds: int,
-        **kwargs
-    ):
+    def __init__(self, *, playback_duration_seconds: int, storage_duration_seconds: int, **kwargs):
         """
-        :keyword playback_duration_seconds: Required. Playback duration.
-        :paramtype playback_duration_seconds: long
-        :keyword storage_duration_seconds: Required. Storage duration.
-        :paramtype storage_duration_seconds: long
+        :keyword playback_duration_seconds: Playback duration. Required.
+        :paramtype playback_duration_seconds: int
+        :keyword storage_duration_seconds: Storage duration. Required.
+        :paramtype storage_duration_seconds: int
         """
-        super(ContentKeyPolicyFairPlayOfflineRentalConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.playback_duration_seconds = playback_duration_seconds
         self.storage_duration_seconds = storage_duration_seconds
 
 
-class ContentKeyPolicyRestriction(msrest.serialization.Model):
+class ContentKeyPolicyRestriction(_serialization.Model):
     """Base class for Content Key Policy restrictions. A derived class must be used to create a restriction.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ContentKeyPolicyOpenRestriction, ContentKeyPolicyTokenRestriction, ContentKeyPolicyUnknownRestriction.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ContentKeyPolicyOpenRestriction, ContentKeyPolicyTokenRestriction,
+    ContentKeyPolicyUnknownRestriction
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.ContentKeyPolicyOpenRestriction': 'ContentKeyPolicyOpenRestriction', '#Microsoft.Media.ContentKeyPolicyTokenRestriction': 'ContentKeyPolicyTokenRestriction', '#Microsoft.Media.ContentKeyPolicyUnknownRestriction': 'ContentKeyPolicyUnknownRestriction'}
+        "odata_type": {
+            "#Microsoft.Media.ContentKeyPolicyOpenRestriction": "ContentKeyPolicyOpenRestriction",
+            "#Microsoft.Media.ContentKeyPolicyTokenRestriction": "ContentKeyPolicyTokenRestriction",
+            "#Microsoft.Media.ContentKeyPolicyUnknownRestriction": "ContentKeyPolicyUnknownRestriction",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyRestriction, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyOpenRestriction(ContentKeyPolicyRestriction):
@@ -2282,29 +2381,25 @@ class ContentKeyPolicyOpenRestriction(ContentKeyPolicyRestriction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyOpenRestriction, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyOpenRestriction'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyOpenRestriction"
 
 
-class ContentKeyPolicyOption(msrest.serialization.Model):
+class ContentKeyPolicyOption(_serialization.Model):
     """Represents a policy option.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2315,24 +2410,24 @@ class ContentKeyPolicyOption(msrest.serialization.Model):
     :vartype policy_option_id: str
     :ivar name: The Policy Option description.
     :vartype name: str
-    :ivar configuration: Required. The key delivery configuration.
+    :ivar configuration: The key delivery configuration. Required.
     :vartype configuration: ~azure.mgmt.media.models.ContentKeyPolicyConfiguration
-    :ivar restriction: Required. The requirements that must be met to deliver keys with this
-     configuration.
+    :ivar restriction: The requirements that must be met to deliver keys with this configuration.
+     Required.
     :vartype restriction: ~azure.mgmt.media.models.ContentKeyPolicyRestriction
     """
 
     _validation = {
-        'policy_option_id': {'readonly': True},
-        'configuration': {'required': True},
-        'restriction': {'required': True},
+        "policy_option_id": {"readonly": True},
+        "configuration": {"required": True},
+        "restriction": {"required": True},
     }
 
     _attribute_map = {
-        'policy_option_id': {'key': 'policyOptionId', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'configuration': {'key': 'configuration', 'type': 'ContentKeyPolicyConfiguration'},
-        'restriction': {'key': 'restriction', 'type': 'ContentKeyPolicyRestriction'},
+        "policy_option_id": {"key": "policyOptionId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "configuration": {"key": "configuration", "type": "ContentKeyPolicyConfiguration"},
+        "restriction": {"key": "restriction", "type": "ContentKeyPolicyRestriction"},
     }
 
     def __init__(
@@ -2346,13 +2441,13 @@ class ContentKeyPolicyOption(msrest.serialization.Model):
         """
         :keyword name: The Policy Option description.
         :paramtype name: str
-        :keyword configuration: Required. The key delivery configuration.
+        :keyword configuration: The key delivery configuration. Required.
         :paramtype configuration: ~azure.mgmt.media.models.ContentKeyPolicyConfiguration
-        :keyword restriction: Required. The requirements that must be met to deliver keys with this
-         configuration.
+        :keyword restriction: The requirements that must be met to deliver keys with this
+         configuration. Required.
         :paramtype restriction: ~azure.mgmt.media.models.ContentKeyPolicyRestriction
         """
-        super(ContentKeyPolicyOption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.policy_option_id = None
         self.name = name
         self.configuration = configuration
@@ -2364,23 +2459,23 @@ class ContentKeyPolicyPlayReadyConfiguration(ContentKeyPolicyConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar licenses: Required. The PlayReady licenses.
+    :ivar licenses: The PlayReady licenses. Required.
     :vartype licenses: list[~azure.mgmt.media.models.ContentKeyPolicyPlayReadyLicense]
     :ivar response_custom_data: The custom response data.
     :vartype response_custom_data: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'licenses': {'required': True},
+        "odata_type": {"required": True},
+        "licenses": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'licenses': {'key': 'licenses', 'type': '[ContentKeyPolicyPlayReadyLicense]'},
-        'response_custom_data': {'key': 'responseCustomData', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "licenses": {"key": "licenses", "type": "[ContentKeyPolicyPlayReadyLicense]"},
+        "response_custom_data": {"key": "responseCustomData", "type": "str"},
     }
 
     def __init__(
@@ -2391,49 +2486,49 @@ class ContentKeyPolicyPlayReadyConfiguration(ContentKeyPolicyConfiguration):
         **kwargs
     ):
         """
-        :keyword licenses: Required. The PlayReady licenses.
+        :keyword licenses: The PlayReady licenses. Required.
         :paramtype licenses: list[~azure.mgmt.media.models.ContentKeyPolicyPlayReadyLicense]
         :keyword response_custom_data: The custom response data.
         :paramtype response_custom_data: str
         """
-        super(ContentKeyPolicyPlayReadyConfiguration, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyConfiguration"
         self.licenses = licenses
         self.response_custom_data = response_custom_data
 
 
-class ContentKeyPolicyPlayReadyContentKeyLocation(msrest.serialization.Model):
+class ContentKeyPolicyPlayReadyContentKeyLocation(_serialization.Model):
     """Base class for content key ID location. A derived class must be used to represent the location.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader, ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader,
+    ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader': 'ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader', '#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier': 'ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier'}
+        "odata_type": {
+            "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader": "ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader",
+            "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier": "ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyPlayReadyContentKeyLocation, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader(ContentKeyPolicyPlayReadyContentKeyLocation):
@@ -2441,26 +2536,22 @@ class ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader(ContentKeyPolicyPl
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromHeader"
 
 
 class ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier(ContentKeyPolicyPlayReadyContentKeyLocation):
@@ -2468,87 +2559,79 @@ class ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier(ContentKeyP
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar key_id: Required. The content key ID.
+    :ivar key_id: The content key ID. Required.
     :vartype key_id: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'key_id': {'required': True},
+        "odata_type": {"required": True},
+        "key_id": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'key_id': {'key': 'keyId', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "key_id": {"key": "keyId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, key_id: str, **kwargs):
         """
-        :keyword key_id: Required. The content key ID.
+        :keyword key_id: The content key ID. Required.
         :paramtype key_id: str
         """
-        super(ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyPlayReadyContentEncryptionKeyFromKeyIdentifier"
         self.key_id = key_id
 
 
-class ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction(msrest.serialization.Model):
+class ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction(_serialization.Model):
     """Configures the Explicit Analog Television Output Restriction control bits. For further details see the PlayReady Compliance Rules.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar best_effort: Required. Indicates whether this restriction is enforced on a Best Effort
-     basis.
+    :ivar best_effort: Indicates whether this restriction is enforced on a Best Effort basis.
+     Required.
     :vartype best_effort: bool
-    :ivar configuration_data: Required. Configures the restriction control bits. Must be between 0
-     and 3 inclusive.
+    :ivar configuration_data: Configures the restriction control bits. Must be between 0 and 3
+     inclusive. Required.
     :vartype configuration_data: int
     """
 
     _validation = {
-        'best_effort': {'required': True},
-        'configuration_data': {'required': True},
+        "best_effort": {"required": True},
+        "configuration_data": {"required": True},
     }
 
     _attribute_map = {
-        'best_effort': {'key': 'bestEffort', 'type': 'bool'},
-        'configuration_data': {'key': 'configurationData', 'type': 'int'},
+        "best_effort": {"key": "bestEffort", "type": "bool"},
+        "configuration_data": {"key": "configurationData", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        best_effort: bool,
-        configuration_data: int,
-        **kwargs
-    ):
+    def __init__(self, *, best_effort: bool, configuration_data: int, **kwargs):
         """
-        :keyword best_effort: Required. Indicates whether this restriction is enforced on a Best Effort
-         basis.
+        :keyword best_effort: Indicates whether this restriction is enforced on a Best Effort basis.
+         Required.
         :paramtype best_effort: bool
-        :keyword configuration_data: Required. Configures the restriction control bits. Must be between
-         0 and 3 inclusive.
+        :keyword configuration_data: Configures the restriction control bits. Must be between 0 and 3
+         inclusive. Required.
         :paramtype configuration_data: int
         """
-        super(ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.best_effort = best_effort
         self.configuration_data = configuration_data
 
 
-class ContentKeyPolicyPlayReadyLicense(msrest.serialization.Model):
+class ContentKeyPolicyPlayReadyLicense(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The PlayReady license.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar allow_test_devices: Required. A flag indicating whether test devices can use the license.
+    :ivar allow_test_devices: A flag indicating whether test devices can use the license. Required.
     :vartype allow_test_devices: bool
+    :ivar security_level: The security level. Known values are: "Unknown", "SL150", "SL2000", and
+     "SL3000".
+    :vartype security_level: str or ~azure.mgmt.media.models.SecurityLevel
     :ivar begin_date: The begin date of license.
     :vartype begin_date: ~datetime.datetime
     :ivar expiration_date: The expiration date of license.
@@ -2561,35 +2644,36 @@ class ContentKeyPolicyPlayReadyLicense(msrest.serialization.Model):
     :vartype grace_period: ~datetime.timedelta
     :ivar play_right: The license PlayRight.
     :vartype play_right: ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyPlayRight
-    :ivar license_type: Required. The license type. Known values are: "Unknown", "NonPersistent",
-     "Persistent".
+    :ivar license_type: The license type. Required. Known values are: "Unknown", "NonPersistent",
+     and "Persistent".
     :vartype license_type: str or ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyLicenseType
-    :ivar content_key_location: Required. The content key location.
+    :ivar content_key_location: The content key location. Required.
     :vartype content_key_location:
      ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyContentKeyLocation
-    :ivar content_type: Required. The PlayReady content type. Known values are: "Unknown",
-     "Unspecified", "UltraVioletDownload", "UltraVioletStreaming".
+    :ivar content_type: The PlayReady content type. Required. Known values are: "Unknown",
+     "Unspecified", "UltraVioletDownload", and "UltraVioletStreaming".
     :vartype content_type: str or ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyContentType
     """
 
     _validation = {
-        'allow_test_devices': {'required': True},
-        'license_type': {'required': True},
-        'content_key_location': {'required': True},
-        'content_type': {'required': True},
+        "allow_test_devices": {"required": True},
+        "license_type": {"required": True},
+        "content_key_location": {"required": True},
+        "content_type": {"required": True},
     }
 
     _attribute_map = {
-        'allow_test_devices': {'key': 'allowTestDevices', 'type': 'bool'},
-        'begin_date': {'key': 'beginDate', 'type': 'iso-8601'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'relative_begin_date': {'key': 'relativeBeginDate', 'type': 'duration'},
-        'relative_expiration_date': {'key': 'relativeExpirationDate', 'type': 'duration'},
-        'grace_period': {'key': 'gracePeriod', 'type': 'duration'},
-        'play_right': {'key': 'playRight', 'type': 'ContentKeyPolicyPlayReadyPlayRight'},
-        'license_type': {'key': 'licenseType', 'type': 'str'},
-        'content_key_location': {'key': 'contentKeyLocation', 'type': 'ContentKeyPolicyPlayReadyContentKeyLocation'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
+        "allow_test_devices": {"key": "allowTestDevices", "type": "bool"},
+        "security_level": {"key": "securityLevel", "type": "str"},
+        "begin_date": {"key": "beginDate", "type": "iso-8601"},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
+        "relative_begin_date": {"key": "relativeBeginDate", "type": "duration"},
+        "relative_expiration_date": {"key": "relativeExpirationDate", "type": "duration"},
+        "grace_period": {"key": "gracePeriod", "type": "duration"},
+        "play_right": {"key": "playRight", "type": "ContentKeyPolicyPlayReadyPlayRight"},
+        "license_type": {"key": "licenseType", "type": "str"},
+        "content_key_location": {"key": "contentKeyLocation", "type": "ContentKeyPolicyPlayReadyContentKeyLocation"},
+        "content_type": {"key": "contentType", "type": "str"},
     }
 
     def __init__(
@@ -2599,6 +2683,7 @@ class ContentKeyPolicyPlayReadyLicense(msrest.serialization.Model):
         license_type: Union[str, "_models.ContentKeyPolicyPlayReadyLicenseType"],
         content_key_location: "_models.ContentKeyPolicyPlayReadyContentKeyLocation",
         content_type: Union[str, "_models.ContentKeyPolicyPlayReadyContentType"],
+        security_level: Optional[Union[str, "_models.SecurityLevel"]] = None,
         begin_date: Optional[datetime.datetime] = None,
         expiration_date: Optional[datetime.datetime] = None,
         relative_begin_date: Optional[datetime.timedelta] = None,
@@ -2608,9 +2693,12 @@ class ContentKeyPolicyPlayReadyLicense(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword allow_test_devices: Required. A flag indicating whether test devices can use the
-         license.
+        :keyword allow_test_devices: A flag indicating whether test devices can use the license.
+         Required.
         :paramtype allow_test_devices: bool
+        :keyword security_level: The security level. Known values are: "Unknown", "SL150", "SL2000",
+         and "SL3000".
+        :paramtype security_level: str or ~azure.mgmt.media.models.SecurityLevel
         :keyword begin_date: The begin date of license.
         :paramtype begin_date: ~datetime.datetime
         :keyword expiration_date: The expiration date of license.
@@ -2623,18 +2711,19 @@ class ContentKeyPolicyPlayReadyLicense(msrest.serialization.Model):
         :paramtype grace_period: ~datetime.timedelta
         :keyword play_right: The license PlayRight.
         :paramtype play_right: ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyPlayRight
-        :keyword license_type: Required. The license type. Known values are: "Unknown",
-         "NonPersistent", "Persistent".
+        :keyword license_type: The license type. Required. Known values are: "Unknown",
+         "NonPersistent", and "Persistent".
         :paramtype license_type: str or ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyLicenseType
-        :keyword content_key_location: Required. The content key location.
+        :keyword content_key_location: The content key location. Required.
         :paramtype content_key_location:
          ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyContentKeyLocation
-        :keyword content_type: Required. The PlayReady content type. Known values are: "Unknown",
-         "Unspecified", "UltraVioletDownload", "UltraVioletStreaming".
+        :keyword content_type: The PlayReady content type. Required. Known values are: "Unknown",
+         "Unspecified", "UltraVioletDownload", and "UltraVioletStreaming".
         :paramtype content_type: str or ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyContentType
         """
-        super(ContentKeyPolicyPlayReadyLicense, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.allow_test_devices = allow_test_devices
+        self.security_level = security_level
         self.begin_date = begin_date
         self.expiration_date = expiration_date
         self.relative_begin_date = relative_begin_date
@@ -2646,7 +2735,7 @@ class ContentKeyPolicyPlayReadyLicense(msrest.serialization.Model):
         self.content_type = content_type
 
 
-class ContentKeyPolicyPlayReadyPlayRight(msrest.serialization.Model):
+class ContentKeyPolicyPlayReadyPlayRight(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Configures the Play Right in the PlayReady license.
 
     All required parameters must be populated in order to send to Azure.
@@ -2664,17 +2753,17 @@ class ContentKeyPolicyPlayReadyPlayRight(msrest.serialization.Model):
      Output Restriction in the license. Configuration data must be between 0 and 3 inclusive.
     :vartype explicit_analog_television_output_restriction:
      ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction
-    :ivar digital_video_only_content_restriction: Required. Enables the Image Constraint For Analog
-     Component Video Restriction in the license.
+    :ivar digital_video_only_content_restriction: Enables the Image Constraint For Analog Component
+     Video Restriction in the license. Required.
     :vartype digital_video_only_content_restriction: bool
-    :ivar image_constraint_for_analog_component_video_restriction: Required. Enables the Image
-     Constraint For Analog Component Video Restriction in the license.
+    :ivar image_constraint_for_analog_component_video_restriction: Enables the Image Constraint For
+     Analog Component Video Restriction in the license. Required.
     :vartype image_constraint_for_analog_component_video_restriction: bool
-    :ivar image_constraint_for_analog_computer_monitor_restriction: Required. Enables the Image
-     Constraint For Analog Component Video Restriction in the license.
+    :ivar image_constraint_for_analog_computer_monitor_restriction: Enables the Image Constraint
+     For Analog Component Video Restriction in the license. Required.
     :vartype image_constraint_for_analog_computer_monitor_restriction: bool
-    :ivar allow_passing_video_content_to_unknown_output: Required. Configures Unknown output
-     handling settings of the license. Known values are: "Unknown", "NotAllowed", "Allowed",
+    :ivar allow_passing_video_content_to_unknown_output: Configures Unknown output handling
+     settings of the license. Required. Known values are: "Unknown", "NotAllowed", "Allowed", and
      "AllowedWithVideoConstriction".
     :vartype allow_passing_video_content_to_unknown_output: str or
      ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyUnknownOutputPassingOption
@@ -2695,26 +2784,38 @@ class ContentKeyPolicyPlayReadyPlayRight(msrest.serialization.Model):
     """
 
     _validation = {
-        'digital_video_only_content_restriction': {'required': True},
-        'image_constraint_for_analog_component_video_restriction': {'required': True},
-        'image_constraint_for_analog_computer_monitor_restriction': {'required': True},
-        'allow_passing_video_content_to_unknown_output': {'required': True},
+        "digital_video_only_content_restriction": {"required": True},
+        "image_constraint_for_analog_component_video_restriction": {"required": True},
+        "image_constraint_for_analog_computer_monitor_restriction": {"required": True},
+        "allow_passing_video_content_to_unknown_output": {"required": True},
     }
 
     _attribute_map = {
-        'first_play_expiration': {'key': 'firstPlayExpiration', 'type': 'duration'},
-        'scms_restriction': {'key': 'scmsRestriction', 'type': 'int'},
-        'agc_and_color_stripe_restriction': {'key': 'agcAndColorStripeRestriction', 'type': 'int'},
-        'explicit_analog_television_output_restriction': {'key': 'explicitAnalogTelevisionOutputRestriction', 'type': 'ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction'},
-        'digital_video_only_content_restriction': {'key': 'digitalVideoOnlyContentRestriction', 'type': 'bool'},
-        'image_constraint_for_analog_component_video_restriction': {'key': 'imageConstraintForAnalogComponentVideoRestriction', 'type': 'bool'},
-        'image_constraint_for_analog_computer_monitor_restriction': {'key': 'imageConstraintForAnalogComputerMonitorRestriction', 'type': 'bool'},
-        'allow_passing_video_content_to_unknown_output': {'key': 'allowPassingVideoContentToUnknownOutput', 'type': 'str'},
-        'uncompressed_digital_video_opl': {'key': 'uncompressedDigitalVideoOpl', 'type': 'int'},
-        'compressed_digital_video_opl': {'key': 'compressedDigitalVideoOpl', 'type': 'int'},
-        'analog_video_opl': {'key': 'analogVideoOpl', 'type': 'int'},
-        'compressed_digital_audio_opl': {'key': 'compressedDigitalAudioOpl', 'type': 'int'},
-        'uncompressed_digital_audio_opl': {'key': 'uncompressedDigitalAudioOpl', 'type': 'int'},
+        "first_play_expiration": {"key": "firstPlayExpiration", "type": "duration"},
+        "scms_restriction": {"key": "scmsRestriction", "type": "int"},
+        "agc_and_color_stripe_restriction": {"key": "agcAndColorStripeRestriction", "type": "int"},
+        "explicit_analog_television_output_restriction": {
+            "key": "explicitAnalogTelevisionOutputRestriction",
+            "type": "ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction",
+        },
+        "digital_video_only_content_restriction": {"key": "digitalVideoOnlyContentRestriction", "type": "bool"},
+        "image_constraint_for_analog_component_video_restriction": {
+            "key": "imageConstraintForAnalogComponentVideoRestriction",
+            "type": "bool",
+        },
+        "image_constraint_for_analog_computer_monitor_restriction": {
+            "key": "imageConstraintForAnalogComputerMonitorRestriction",
+            "type": "bool",
+        },
+        "allow_passing_video_content_to_unknown_output": {
+            "key": "allowPassingVideoContentToUnknownOutput",
+            "type": "str",
+        },
+        "uncompressed_digital_video_opl": {"key": "uncompressedDigitalVideoOpl", "type": "int"},
+        "compressed_digital_video_opl": {"key": "compressedDigitalVideoOpl", "type": "int"},
+        "analog_video_opl": {"key": "analogVideoOpl", "type": "int"},
+        "compressed_digital_audio_opl": {"key": "compressedDigitalAudioOpl", "type": "int"},
+        "uncompressed_digital_audio_opl": {"key": "uncompressedDigitalAudioOpl", "type": "int"},
     }
 
     def __init__(
@@ -2723,11 +2824,15 @@ class ContentKeyPolicyPlayReadyPlayRight(msrest.serialization.Model):
         digital_video_only_content_restriction: bool,
         image_constraint_for_analog_component_video_restriction: bool,
         image_constraint_for_analog_computer_monitor_restriction: bool,
-        allow_passing_video_content_to_unknown_output: Union[str, "_models.ContentKeyPolicyPlayReadyUnknownOutputPassingOption"],
+        allow_passing_video_content_to_unknown_output: Union[
+            str, "_models.ContentKeyPolicyPlayReadyUnknownOutputPassingOption"
+        ],
         first_play_expiration: Optional[datetime.timedelta] = None,
         scms_restriction: Optional[int] = None,
         agc_and_color_stripe_restriction: Optional[int] = None,
-        explicit_analog_television_output_restriction: Optional["_models.ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction"] = None,
+        explicit_analog_television_output_restriction: Optional[
+            "_models.ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction"
+        ] = None,
         uncompressed_digital_video_opl: Optional[int] = None,
         compressed_digital_video_opl: Optional[int] = None,
         analog_video_opl: Optional[int] = None,
@@ -2750,17 +2855,17 @@ class ContentKeyPolicyPlayReadyPlayRight(msrest.serialization.Model):
          inclusive.
         :paramtype explicit_analog_television_output_restriction:
          ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyExplicitAnalogTelevisionRestriction
-        :keyword digital_video_only_content_restriction: Required. Enables the Image Constraint For
-         Analog Component Video Restriction in the license.
+        :keyword digital_video_only_content_restriction: Enables the Image Constraint For Analog
+         Component Video Restriction in the license. Required.
         :paramtype digital_video_only_content_restriction: bool
-        :keyword image_constraint_for_analog_component_video_restriction: Required. Enables the Image
-         Constraint For Analog Component Video Restriction in the license.
+        :keyword image_constraint_for_analog_component_video_restriction: Enables the Image Constraint
+         For Analog Component Video Restriction in the license. Required.
         :paramtype image_constraint_for_analog_component_video_restriction: bool
-        :keyword image_constraint_for_analog_computer_monitor_restriction: Required. Enables the Image
-         Constraint For Analog Component Video Restriction in the license.
+        :keyword image_constraint_for_analog_computer_monitor_restriction: Enables the Image Constraint
+         For Analog Component Video Restriction in the license. Required.
         :paramtype image_constraint_for_analog_computer_monitor_restriction: bool
-        :keyword allow_passing_video_content_to_unknown_output: Required. Configures Unknown output
-         handling settings of the license. Known values are: "Unknown", "NotAllowed", "Allowed",
+        :keyword allow_passing_video_content_to_unknown_output: Configures Unknown output handling
+         settings of the license. Required. Known values are: "Unknown", "NotAllowed", "Allowed", and
          "AllowedWithVideoConstriction".
         :paramtype allow_passing_video_content_to_unknown_output: str or
          ~azure.mgmt.media.models.ContentKeyPolicyPlayReadyUnknownOutputPassingOption
@@ -2779,14 +2884,18 @@ class ContentKeyPolicyPlayReadyPlayRight(msrest.serialization.Model):
          digital audio.
         :paramtype uncompressed_digital_audio_opl: int
         """
-        super(ContentKeyPolicyPlayReadyPlayRight, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.first_play_expiration = first_play_expiration
         self.scms_restriction = scms_restriction
         self.agc_and_color_stripe_restriction = agc_and_color_stripe_restriction
         self.explicit_analog_television_output_restriction = explicit_analog_television_output_restriction
         self.digital_video_only_content_restriction = digital_video_only_content_restriction
-        self.image_constraint_for_analog_component_video_restriction = image_constraint_for_analog_component_video_restriction
-        self.image_constraint_for_analog_computer_monitor_restriction = image_constraint_for_analog_computer_monitor_restriction
+        self.image_constraint_for_analog_component_video_restriction = (
+            image_constraint_for_analog_component_video_restriction
+        )
+        self.image_constraint_for_analog_computer_monitor_restriction = (
+            image_constraint_for_analog_computer_monitor_restriction
+        )
         self.allow_passing_video_content_to_unknown_output = allow_passing_video_content_to_unknown_output
         self.uncompressed_digital_video_opl = uncompressed_digital_video_opl
         self.compressed_digital_video_opl = compressed_digital_video_opl
@@ -2795,7 +2904,7 @@ class ContentKeyPolicyPlayReadyPlayRight(msrest.serialization.Model):
         self.uncompressed_digital_audio_opl = uncompressed_digital_audio_opl
 
 
-class ContentKeyPolicyProperties(msrest.serialization.Model):
+class ContentKeyPolicyProperties(_serialization.Model):
     """The properties of the Content Key Policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2810,39 +2919,33 @@ class ContentKeyPolicyProperties(msrest.serialization.Model):
     :vartype last_modified: ~datetime.datetime
     :ivar description: A description for the Policy.
     :vartype description: str
-    :ivar options: Required. The Key Policy options.
+    :ivar options: The Key Policy options. Required.
     :vartype options: list[~azure.mgmt.media.models.ContentKeyPolicyOption]
     """
 
     _validation = {
-        'policy_id': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
-        'options': {'required': True},
+        "policy_id": {"readonly": True},
+        "created": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "options": {"required": True},
     }
 
     _attribute_map = {
-        'policy_id': {'key': 'policyId', 'type': 'str'},
-        'created': {'key': 'created', 'type': 'iso-8601'},
-        'last_modified': {'key': 'lastModified', 'type': 'iso-8601'},
-        'description': {'key': 'description', 'type': 'str'},
-        'options': {'key': 'options', 'type': '[ContentKeyPolicyOption]'},
+        "policy_id": {"key": "policyId", "type": "str"},
+        "created": {"key": "created", "type": "iso-8601"},
+        "last_modified": {"key": "lastModified", "type": "iso-8601"},
+        "description": {"key": "description", "type": "str"},
+        "options": {"key": "options", "type": "[ContentKeyPolicyOption]"},
     }
 
-    def __init__(
-        self,
-        *,
-        options: List["_models.ContentKeyPolicyOption"],
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, options: List["_models.ContentKeyPolicyOption"], description: Optional[str] = None, **kwargs):
         """
         :keyword description: A description for the Policy.
         :paramtype description: str
-        :keyword options: Required. The Key Policy options.
+        :keyword options: The Key Policy options. Required.
         :paramtype options: list[~azure.mgmt.media.models.ContentKeyPolicyOption]
         """
-        super(ContentKeyPolicyProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.policy_id = None
         self.created = None
         self.last_modified = None
@@ -2850,38 +2953,39 @@ class ContentKeyPolicyProperties(msrest.serialization.Model):
         self.options = options
 
 
-class ContentKeyPolicyRestrictionTokenKey(msrest.serialization.Model):
+class ContentKeyPolicyRestrictionTokenKey(_serialization.Model):
     """Base class for Content Key Policy key for token validation. A derived class must be used to create a token key.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ContentKeyPolicyRsaTokenKey, ContentKeyPolicySymmetricTokenKey, ContentKeyPolicyX509CertificateTokenKey.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ContentKeyPolicyRsaTokenKey, ContentKeyPolicySymmetricTokenKey,
+    ContentKeyPolicyX509CertificateTokenKey
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.ContentKeyPolicyRsaTokenKey': 'ContentKeyPolicyRsaTokenKey', '#Microsoft.Media.ContentKeyPolicySymmetricTokenKey': 'ContentKeyPolicySymmetricTokenKey', '#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey': 'ContentKeyPolicyX509CertificateTokenKey'}
+        "odata_type": {
+            "#Microsoft.Media.ContentKeyPolicyRsaTokenKey": "ContentKeyPolicyRsaTokenKey",
+            "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey": "ContentKeyPolicySymmetricTokenKey",
+            "#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey": "ContentKeyPolicyX509CertificateTokenKey",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyRestrictionTokenKey, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
 
 
 class ContentKeyPolicyRsaTokenKey(ContentKeyPolicyRestrictionTokenKey):
@@ -2889,41 +2993,35 @@ class ContentKeyPolicyRsaTokenKey(ContentKeyPolicyRestrictionTokenKey):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar exponent: Required. The RSA Parameter exponent.
-    :vartype exponent: bytearray
-    :ivar modulus: Required. The RSA Parameter modulus.
-    :vartype modulus: bytearray
+    :ivar exponent: The RSA Parameter exponent. Required.
+    :vartype exponent: bytes
+    :ivar modulus: The RSA Parameter modulus. Required.
+    :vartype modulus: bytes
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'exponent': {'required': True},
-        'modulus': {'required': True},
+        "odata_type": {"required": True},
+        "exponent": {"required": True},
+        "modulus": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'exponent': {'key': 'exponent', 'type': 'bytearray'},
-        'modulus': {'key': 'modulus', 'type': 'bytearray'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "exponent": {"key": "exponent", "type": "bytearray"},
+        "modulus": {"key": "modulus", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        *,
-        exponent: bytearray,
-        modulus: bytearray,
-        **kwargs
-    ):
+    def __init__(self, *, exponent: bytes, modulus: bytes, **kwargs):
         """
-        :keyword exponent: Required. The RSA Parameter exponent.
-        :paramtype exponent: bytearray
-        :keyword modulus: Required. The RSA Parameter modulus.
-        :paramtype modulus: bytearray
+        :keyword exponent: The RSA Parameter exponent. Required.
+        :paramtype exponent: bytes
+        :keyword modulus: The RSA Parameter modulus. Required.
+        :paramtype modulus: bytes
         """
-        super(ContentKeyPolicyRsaTokenKey, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyRsaTokenKey'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyRsaTokenKey"
         self.exponent = exponent
         self.modulus = modulus
 
@@ -2933,38 +3031,33 @@ class ContentKeyPolicySymmetricTokenKey(ContentKeyPolicyRestrictionTokenKey):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar key_value: Required. The key value of the key.
-    :vartype key_value: bytearray
+    :ivar key_value: The key value of the key. Required.
+    :vartype key_value: bytes
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'key_value': {'required': True},
+        "odata_type": {"required": True},
+        "key_value": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'key_value': {'key': 'keyValue', 'type': 'bytearray'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "key_value": {"key": "keyValue", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_value: bytearray,
-        **kwargs
-    ):
+    def __init__(self, *, key_value: bytes, **kwargs):
         """
-        :keyword key_value: Required. The key value of the key.
-        :paramtype key_value: bytearray
+        :keyword key_value: The key value of the key. Required.
+        :paramtype key_value: bytes
         """
-        super(ContentKeyPolicySymmetricTokenKey, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicySymmetricTokenKey'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicySymmetricTokenKey"
         self.key_value = key_value
 
 
-class ContentKeyPolicyTokenClaim(msrest.serialization.Model):
+class ContentKeyPolicyTokenClaim(_serialization.Model):
     """Represents a token claim.
 
     :ivar claim_type: Token claim type.
@@ -2974,24 +3067,18 @@ class ContentKeyPolicyTokenClaim(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'claim_type': {'key': 'claimType', 'type': 'str'},
-        'claim_value': {'key': 'claimValue', 'type': 'str'},
+        "claim_type": {"key": "claimType", "type": "str"},
+        "claim_value": {"key": "claimValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        claim_type: Optional[str] = None,
-        claim_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, claim_type: Optional[str] = None, claim_value: Optional[str] = None, **kwargs):
         """
         :keyword claim_type: Token claim type.
         :paramtype claim_type: str
         :keyword claim_value: Token claim value.
         :paramtype claim_value: str
         """
-        super(ContentKeyPolicyTokenClaim, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.claim_type = claim_type
         self.claim_value = claim_value
 
@@ -3001,21 +3088,21 @@ class ContentKeyPolicyTokenRestriction(ContentKeyPolicyRestriction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar issuer: Required. The token issuer.
+    :ivar issuer: The token issuer. Required.
     :vartype issuer: str
-    :ivar audience: Required. The audience for the token.
+    :ivar audience: The audience for the token. Required.
     :vartype audience: str
-    :ivar primary_verification_key: Required. The primary verification key.
+    :ivar primary_verification_key: The primary verification key. Required.
     :vartype primary_verification_key: ~azure.mgmt.media.models.ContentKeyPolicyRestrictionTokenKey
     :ivar alternate_verification_keys: A list of alternative verification keys.
     :vartype alternate_verification_keys:
      list[~azure.mgmt.media.models.ContentKeyPolicyRestrictionTokenKey]
     :ivar required_claims: A list of required token claims.
     :vartype required_claims: list[~azure.mgmt.media.models.ContentKeyPolicyTokenClaim]
-    :ivar restriction_token_type: Required. The type of token. Known values are: "Unknown", "Swt",
-     "Jwt".
+    :ivar restriction_token_type: The type of token. Required. Known values are: "Unknown", "Swt",
+     and "Jwt".
     :vartype restriction_token_type: str or
      ~azure.mgmt.media.models.ContentKeyPolicyRestrictionTokenType
     :ivar open_id_connect_discovery_document: The OpenID connect discovery document.
@@ -3023,22 +3110,25 @@ class ContentKeyPolicyTokenRestriction(ContentKeyPolicyRestriction):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'issuer': {'required': True},
-        'audience': {'required': True},
-        'primary_verification_key': {'required': True},
-        'restriction_token_type': {'required': True},
+        "odata_type": {"required": True},
+        "issuer": {"required": True},
+        "audience": {"required": True},
+        "primary_verification_key": {"required": True},
+        "restriction_token_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'issuer': {'key': 'issuer', 'type': 'str'},
-        'audience': {'key': 'audience', 'type': 'str'},
-        'primary_verification_key': {'key': 'primaryVerificationKey', 'type': 'ContentKeyPolicyRestrictionTokenKey'},
-        'alternate_verification_keys': {'key': 'alternateVerificationKeys', 'type': '[ContentKeyPolicyRestrictionTokenKey]'},
-        'required_claims': {'key': 'requiredClaims', 'type': '[ContentKeyPolicyTokenClaim]'},
-        'restriction_token_type': {'key': 'restrictionTokenType', 'type': 'str'},
-        'open_id_connect_discovery_document': {'key': 'openIdConnectDiscoveryDocument', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "issuer": {"key": "issuer", "type": "str"},
+        "audience": {"key": "audience", "type": "str"},
+        "primary_verification_key": {"key": "primaryVerificationKey", "type": "ContentKeyPolicyRestrictionTokenKey"},
+        "alternate_verification_keys": {
+            "key": "alternateVerificationKeys",
+            "type": "[ContentKeyPolicyRestrictionTokenKey]",
+        },
+        "required_claims": {"key": "requiredClaims", "type": "[ContentKeyPolicyTokenClaim]"},
+        "restriction_token_type": {"key": "restrictionTokenType", "type": "str"},
+        "open_id_connect_discovery_document": {"key": "openIdConnectDiscoveryDocument", "type": "str"},
     }
 
     def __init__(
@@ -3054,11 +3144,11 @@ class ContentKeyPolicyTokenRestriction(ContentKeyPolicyRestriction):
         **kwargs
     ):
         """
-        :keyword issuer: Required. The token issuer.
+        :keyword issuer: The token issuer. Required.
         :paramtype issuer: str
-        :keyword audience: Required. The audience for the token.
+        :keyword audience: The audience for the token. Required.
         :paramtype audience: str
-        :keyword primary_verification_key: Required. The primary verification key.
+        :keyword primary_verification_key: The primary verification key. Required.
         :paramtype primary_verification_key:
          ~azure.mgmt.media.models.ContentKeyPolicyRestrictionTokenKey
         :keyword alternate_verification_keys: A list of alternative verification keys.
@@ -3066,15 +3156,15 @@ class ContentKeyPolicyTokenRestriction(ContentKeyPolicyRestriction):
          list[~azure.mgmt.media.models.ContentKeyPolicyRestrictionTokenKey]
         :keyword required_claims: A list of required token claims.
         :paramtype required_claims: list[~azure.mgmt.media.models.ContentKeyPolicyTokenClaim]
-        :keyword restriction_token_type: Required. The type of token. Known values are: "Unknown",
-         "Swt", "Jwt".
+        :keyword restriction_token_type: The type of token. Required. Known values are: "Unknown",
+         "Swt", and "Jwt".
         :paramtype restriction_token_type: str or
          ~azure.mgmt.media.models.ContentKeyPolicyRestrictionTokenType
         :keyword open_id_connect_discovery_document: The OpenID connect discovery document.
         :paramtype open_id_connect_discovery_document: str
         """
-        super(ContentKeyPolicyTokenRestriction, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyTokenRestriction'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyTokenRestriction"
         self.issuer = issuer
         self.audience = audience
         self.primary_verification_key = primary_verification_key
@@ -3089,26 +3179,22 @@ class ContentKeyPolicyUnknownConfiguration(ContentKeyPolicyConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyUnknownConfiguration, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyUnknownConfiguration'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyUnknownConfiguration"
 
 
 class ContentKeyPolicyUnknownRestriction(ContentKeyPolicyRestriction):
@@ -3116,26 +3202,22 @@ class ContentKeyPolicyUnknownRestriction(ContentKeyPolicyRestriction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContentKeyPolicyUnknownRestriction, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyUnknownRestriction'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyUnknownRestriction"
 
 
 class ContentKeyPolicyWidevineConfiguration(ContentKeyPolicyConfiguration):
@@ -3143,34 +3225,29 @@ class ContentKeyPolicyWidevineConfiguration(ContentKeyPolicyConfiguration):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar widevine_template: Required. The Widevine template.
+    :ivar widevine_template: The Widevine template. Required.
     :vartype widevine_template: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'widevine_template': {'required': True},
+        "odata_type": {"required": True},
+        "widevine_template": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'widevine_template': {'key': 'widevineTemplate', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "widevine_template": {"key": "widevineTemplate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        widevine_template: str,
-        **kwargs
-    ):
+    def __init__(self, *, widevine_template: str, **kwargs):
         """
-        :keyword widevine_template: Required. The Widevine template.
+        :keyword widevine_template: The Widevine template. Required.
         :paramtype widevine_template: str
         """
-        super(ContentKeyPolicyWidevineConfiguration, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyWidevineConfiguration'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyWidevineConfiguration"
         self.widevine_template = widevine_template
 
 
@@ -3179,36 +3256,31 @@ class ContentKeyPolicyX509CertificateTokenKey(ContentKeyPolicyRestrictionTokenKe
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar raw_body: Required. The raw data field of a certificate in PKCS 12 format
-     (X509Certificate2 in .NET).
-    :vartype raw_body: bytearray
+    :ivar raw_body: The raw data field of a certificate in PKCS 12 format (X509Certificate2 in
+     .NET). Required.
+    :vartype raw_body: bytes
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'raw_body': {'required': True},
+        "odata_type": {"required": True},
+        "raw_body": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'raw_body': {'key': 'rawBody', 'type': 'bytearray'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "raw_body": {"key": "rawBody", "type": "bytearray"},
     }
 
-    def __init__(
-        self,
-        *,
-        raw_body: bytearray,
-        **kwargs
-    ):
+    def __init__(self, *, raw_body: bytes, **kwargs):
         """
-        :keyword raw_body: Required. The raw data field of a certificate in PKCS 12 format
-         (X509Certificate2 in .NET).
-        :paramtype raw_body: bytearray
+        :keyword raw_body: The raw data field of a certificate in PKCS 12 format (X509Certificate2 in
+         .NET). Required.
+        :paramtype raw_body: bytes
         """
-        super(ContentKeyPolicyX509CertificateTokenKey, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.ContentKeyPolicyX509CertificateTokenKey"
         self.raw_body = raw_body
 
 
@@ -3217,34 +3289,29 @@ class CopyAudio(Codec):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        label: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, label: Optional[str] = None, **kwargs):
         """
         :keyword label: An optional label for the codec. The label can be used to control muxing
          behavior.
         :paramtype label: str
         """
-        super(CopyAudio, self).__init__(label=label, **kwargs)
-        self.odata_type = '#Microsoft.Media.CopyAudio'  # type: str
+        super().__init__(label=label, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.CopyAudio"
 
 
 class CopyVideo(Codec):
@@ -3252,37 +3319,32 @@ class CopyVideo(Codec):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        label: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, label: Optional[str] = None, **kwargs):
         """
         :keyword label: An optional label for the codec. The label can be used to control muxing
          behavior.
         :paramtype label: str
         """
-        super(CopyVideo, self).__init__(label=label, **kwargs)
-        self.odata_type = '#Microsoft.Media.CopyVideo'  # type: str
+        super().__init__(label=label, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.CopyVideo"
 
 
-class CrossSiteAccessPolicies(msrest.serialization.Model):
+class CrossSiteAccessPolicies(_serialization.Model):
     """The client access policy.
 
     :ivar client_access_policy: The content of clientaccesspolicy.xml used by Silverlight.
@@ -3292,16 +3354,12 @@ class CrossSiteAccessPolicies(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_access_policy': {'key': 'clientAccessPolicy', 'type': 'str'},
-        'cross_domain_policy': {'key': 'crossDomainPolicy', 'type': 'str'},
+        "client_access_policy": {"key": "clientAccessPolicy", "type": "str"},
+        "cross_domain_policy": {"key": "crossDomainPolicy", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        client_access_policy: Optional[str] = None,
-        cross_domain_policy: Optional[str] = None,
-        **kwargs
+        self, *, client_access_policy: Optional[str] = None, cross_domain_policy: Optional[str] = None, **kwargs
     ):
         """
         :keyword client_access_policy: The content of clientaccesspolicy.xml used by Silverlight.
@@ -3309,12 +3367,85 @@ class CrossSiteAccessPolicies(msrest.serialization.Model):
         :keyword cross_domain_policy: The content of crossdomain.xml used by Silverlight.
         :paramtype cross_domain_policy: str
         """
-        super(CrossSiteAccessPolicies, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.client_access_policy = client_access_policy
         self.cross_domain_policy = cross_domain_policy
 
 
-class DefaultKey(msrest.serialization.Model):
+class DashSettings(_serialization.Model):
+    """The DASH setting for a track.
+
+    :ivar role: The role for the DASH setting.
+    :vartype role: str
+    """
+
+    _attribute_map = {
+        "role": {"key": "role", "type": "str"},
+    }
+
+    def __init__(self, *, role: Optional[str] = None, **kwargs):
+        """
+        :keyword role: The role for the DASH setting.
+        :paramtype role: str
+        """
+        super().__init__(**kwargs)
+        self.role = role
+
+
+class DDAudio(Audio):
+    """Describes Dolby Digital Audio Codec (AC3) audio encoding settings. The current implementation for Dolby Digital Audio support are: Audio channel numbers at 1((mono), 2(stereo), 6(5.1side); Audio sampling frequency rates at: 32K/44.1K/48K Hz; Audio bitrate values as AC3 specification supports: 32000, 40000, 48000, 56000, 64000, 80000, 96000, 112000, 128000, 160000, 192000, 224000, 256000, 320000, 384000, 448000, 512000, 576000, 640000 bps.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar odata_type: The discriminator for derived types. Required.
+    :vartype odata_type: str
+    :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
+    :vartype label: str
+    :ivar channels: The number of channels in the audio.
+    :vartype channels: int
+    :ivar sampling_rate: The sampling rate to use for encoding in hertz.
+    :vartype sampling_rate: int
+    :ivar bitrate: The bitrate, in bits per second, of the output encoded audio.
+    :vartype bitrate: int
+    """
+
+    _validation = {
+        "odata_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "channels": {"key": "channels", "type": "int"},
+        "sampling_rate": {"key": "samplingRate", "type": "int"},
+        "bitrate": {"key": "bitrate", "type": "int"},
+    }
+
+    def __init__(
+        self,
+        *,
+        label: Optional[str] = None,
+        channels: Optional[int] = None,
+        sampling_rate: Optional[int] = None,
+        bitrate: Optional[int] = None,
+        **kwargs
+    ):
+        """
+        :keyword label: An optional label for the codec. The label can be used to control muxing
+         behavior.
+        :paramtype label: str
+        :keyword channels: The number of channels in the audio.
+        :paramtype channels: int
+        :keyword sampling_rate: The sampling rate to use for encoding in hertz.
+        :paramtype sampling_rate: int
+        :keyword bitrate: The bitrate, in bits per second, of the output encoded audio.
+        :paramtype bitrate: int
+        """
+        super().__init__(label=label, channels=channels, sampling_rate=sampling_rate, bitrate=bitrate, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.DDAudio"
+
+
+class DefaultKey(_serialization.Model):
     """Class to specify properties of default content key for each encryption scheme.
 
     :ivar label: Label can be used to specify Content Key when creating a Streaming Locator.
@@ -3324,42 +3455,36 @@ class DefaultKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
-        'policy_name': {'key': 'policyName', 'type': 'str'},
+        "label": {"key": "label", "type": "str"},
+        "policy_name": {"key": "policyName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        label: Optional[str] = None,
-        policy_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, label: Optional[str] = None, policy_name: Optional[str] = None, **kwargs):
         """
         :keyword label: Label can be used to specify Content Key when creating a Streaming Locator.
         :paramtype label: str
         :keyword policy_name: Policy used by Default Key.
         :paramtype policy_name: str
         """
-        super(DefaultKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.label = label
         self.policy_name = policy_name
 
 
-class Deinterlace(msrest.serialization.Model):
+class Deinterlace(_serialization.Model):
     """Describes the de-interlacing settings.
 
     :ivar parity: The field parity for de-interlacing, defaults to Auto. Known values are: "Auto",
-     "TopFieldFirst", "BottomFieldFirst".
+     "TopFieldFirst", and "BottomFieldFirst".
     :vartype parity: str or ~azure.mgmt.media.models.DeinterlaceParity
-    :ivar mode: The deinterlacing mode. Defaults to AutoPixelAdaptive. Known values are: "Off",
+    :ivar mode: The deinterlacing mode. Defaults to AutoPixelAdaptive. Known values are: "Off" and
      "AutoPixelAdaptive".
     :vartype mode: str or ~azure.mgmt.media.models.DeinterlaceMode
     """
 
     _attribute_map = {
-        'parity': {'key': 'parity', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
+        "parity": {"key": "parity", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
     }
 
     def __init__(
@@ -3371,18 +3496,18 @@ class Deinterlace(msrest.serialization.Model):
     ):
         """
         :keyword parity: The field parity for de-interlacing, defaults to Auto. Known values are:
-         "Auto", "TopFieldFirst", "BottomFieldFirst".
+         "Auto", "TopFieldFirst", and "BottomFieldFirst".
         :paramtype parity: str or ~azure.mgmt.media.models.DeinterlaceParity
-        :keyword mode: The deinterlacing mode. Defaults to AutoPixelAdaptive. Known values are: "Off",
-         "AutoPixelAdaptive".
+        :keyword mode: The deinterlacing mode. Defaults to AutoPixelAdaptive. Known values are: "Off"
+         and "AutoPixelAdaptive".
         :paramtype mode: str or ~azure.mgmt.media.models.DeinterlaceMode
         """
-        super(Deinterlace, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.parity = parity
         self.mode = mode
 
 
-class EdgePolicies(msrest.serialization.Model):
+class EdgePolicies(_serialization.Model):
     """EdgePolicies.
 
     :ivar usage_data_collection_policy:
@@ -3390,24 +3515,21 @@ class EdgePolicies(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'usage_data_collection_policy': {'key': 'usageDataCollectionPolicy', 'type': 'EdgeUsageDataCollectionPolicy'},
+        "usage_data_collection_policy": {"key": "usageDataCollectionPolicy", "type": "EdgeUsageDataCollectionPolicy"},
     }
 
     def __init__(
-        self,
-        *,
-        usage_data_collection_policy: Optional["_models.EdgeUsageDataCollectionPolicy"] = None,
-        **kwargs
+        self, *, usage_data_collection_policy: Optional["_models.EdgeUsageDataCollectionPolicy"] = None, **kwargs
     ):
         """
         :keyword usage_data_collection_policy:
         :paramtype usage_data_collection_policy: ~azure.mgmt.media.models.EdgeUsageDataCollectionPolicy
         """
-        super(EdgePolicies, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.usage_data_collection_policy = usage_data_collection_policy
 
 
-class EdgeUsageDataCollectionPolicy(msrest.serialization.Model):
+class EdgeUsageDataCollectionPolicy(_serialization.Model):
     """EdgeUsageDataCollectionPolicy.
 
     :ivar data_collection_frequency: Usage data collection frequency in ISO 8601 duration format
@@ -3424,10 +3546,10 @@ class EdgeUsageDataCollectionPolicy(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'data_collection_frequency': {'key': 'dataCollectionFrequency', 'type': 'str'},
-        'data_reporting_frequency': {'key': 'dataReportingFrequency', 'type': 'str'},
-        'max_allowed_unreported_usage_duration': {'key': 'maxAllowedUnreportedUsageDuration', 'type': 'str'},
-        'event_hub_details': {'key': 'eventHubDetails', 'type': 'EdgeUsageDataEventHub'},
+        "data_collection_frequency": {"key": "dataCollectionFrequency", "type": "str"},
+        "data_reporting_frequency": {"key": "dataReportingFrequency", "type": "str"},
+        "max_allowed_unreported_usage_duration": {"key": "maxAllowedUnreportedUsageDuration", "type": "str"},
+        "event_hub_details": {"key": "eventHubDetails", "type": "EdgeUsageDataEventHub"},
     }
 
     def __init__(
@@ -3452,14 +3574,14 @@ class EdgeUsageDataCollectionPolicy(msrest.serialization.Model):
         :keyword event_hub_details: Details of Event Hub where the usage will be reported.
         :paramtype event_hub_details: ~azure.mgmt.media.models.EdgeUsageDataEventHub
         """
-        super(EdgeUsageDataCollectionPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.data_collection_frequency = data_collection_frequency
         self.data_reporting_frequency = data_reporting_frequency
         self.max_allowed_unreported_usage_duration = max_allowed_unreported_usage_duration
         self.event_hub_details = event_hub_details
 
 
-class EdgeUsageDataEventHub(msrest.serialization.Model):
+class EdgeUsageDataEventHub(_serialization.Model):
     """EdgeUsageDataEventHub.
 
     :ivar name: Name of the Event Hub where usage will be reported.
@@ -3471,18 +3593,13 @@ class EdgeUsageDataEventHub(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'token': {'key': 'token', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "token": {"key": "token", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        namespace: Optional[str] = None,
-        token: Optional[str] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, namespace: Optional[str] = None, token: Optional[str] = None, **kwargs
     ):
         """
         :keyword name: Name of the Event Hub where usage will be reported.
@@ -3492,73 +3609,65 @@ class EdgeUsageDataEventHub(msrest.serialization.Model):
         :keyword token: SAS token needed to interact with Event Hub.
         :paramtype token: str
         """
-        super(EdgeUsageDataEventHub, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.namespace = namespace
         self.token = token
 
 
-class EnabledProtocols(msrest.serialization.Model):
+class EnabledProtocols(_serialization.Model):
     """Class to specify which protocols are enabled.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar download: Required. Enable Download protocol or not.
+    :ivar download: Enable Download protocol or not. Required.
     :vartype download: bool
-    :ivar dash: Required. Enable DASH protocol or not.
+    :ivar dash: Enable DASH protocol or not. Required.
     :vartype dash: bool
-    :ivar hls: Required. Enable HLS protocol or not.
+    :ivar hls: Enable HLS protocol or not. Required.
     :vartype hls: bool
-    :ivar smooth_streaming: Required. Enable SmoothStreaming protocol or not.
+    :ivar smooth_streaming: Enable SmoothStreaming protocol or not. Required.
     :vartype smooth_streaming: bool
     """
 
     _validation = {
-        'download': {'required': True},
-        'dash': {'required': True},
-        'hls': {'required': True},
-        'smooth_streaming': {'required': True},
+        "download": {"required": True},
+        "dash": {"required": True},
+        "hls": {"required": True},
+        "smooth_streaming": {"required": True},
     }
 
     _attribute_map = {
-        'download': {'key': 'download', 'type': 'bool'},
-        'dash': {'key': 'dash', 'type': 'bool'},
-        'hls': {'key': 'hls', 'type': 'bool'},
-        'smooth_streaming': {'key': 'smoothStreaming', 'type': 'bool'},
+        "download": {"key": "download", "type": "bool"},
+        "dash": {"key": "dash", "type": "bool"},
+        "hls": {"key": "hls", "type": "bool"},
+        "smooth_streaming": {"key": "smoothStreaming", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        download: bool,
-        dash: bool,
-        hls: bool,
-        smooth_streaming: bool,
-        **kwargs
-    ):
+    def __init__(self, *, download: bool, dash: bool, hls: bool, smooth_streaming: bool, **kwargs):
         """
-        :keyword download: Required. Enable Download protocol or not.
+        :keyword download: Enable Download protocol or not. Required.
         :paramtype download: bool
-        :keyword dash: Required. Enable DASH protocol or not.
+        :keyword dash: Enable DASH protocol or not. Required.
         :paramtype dash: bool
-        :keyword hls: Required. Enable HLS protocol or not.
+        :keyword hls: Enable HLS protocol or not. Required.
         :paramtype hls: bool
-        :keyword smooth_streaming: Required. Enable SmoothStreaming protocol or not.
+        :keyword smooth_streaming: Enable SmoothStreaming protocol or not. Required.
         :paramtype smooth_streaming: bool
         """
-        super(EnabledProtocols, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.download = download
         self.dash = dash
         self.hls = hls
         self.smooth_streaming = smooth_streaming
 
 
-class EntityNameAvailabilityCheckOutput(msrest.serialization.Model):
+class EntityNameAvailabilityCheckOutput(_serialization.Model):
     """The response from the check name availability request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name_available: Required. Specifies if the name is available.
+    :ivar name_available: Specifies if the name is available. Required.
     :vartype name_available: bool
     :ivar reason: Specifies the reason if the name is not available.
     :vartype reason: str
@@ -3567,38 +3676,31 @@ class EntityNameAvailabilityCheckOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'name_available': {'required': True},
+        "name_available": {"required": True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name_available: bool,
-        reason: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name_available: bool, reason: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
-        :keyword name_available: Required. Specifies if the name is available.
+        :keyword name_available: Specifies if the name is available. Required.
         :paramtype name_available: bool
         :keyword reason: Specifies the reason if the name is not available.
         :paramtype reason: str
         :keyword message: Specifies the detailed reason if the name is not available.
         :paramtype message: str
         """
-        super(EntityNameAvailabilityCheckOutput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
         self.message = message
 
 
-class EnvelopeEncryption(msrest.serialization.Model):
+class EnvelopeEncryption(_serialization.Model):
     """Class for EnvelopeEncryption encryption scheme.
 
     :ivar enabled_protocols: Representing supported protocols.
@@ -3619,10 +3721,10 @@ class EnvelopeEncryption(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled_protocols': {'key': 'enabledProtocols', 'type': 'EnabledProtocols'},
-        'clear_tracks': {'key': 'clearTracks', 'type': '[TrackSelection]'},
-        'content_keys': {'key': 'contentKeys', 'type': 'StreamingPolicyContentKeys'},
-        'custom_key_acquisition_url_template': {'key': 'customKeyAcquisitionUrlTemplate', 'type': 'str'},
+        "enabled_protocols": {"key": "enabledProtocols", "type": "EnabledProtocols"},
+        "clear_tracks": {"key": "clearTracks", "type": "[TrackSelection]"},
+        "content_keys": {"key": "contentKeys", "type": "StreamingPolicyContentKeys"},
+        "custom_key_acquisition_url_template": {"key": "customKeyAcquisitionUrlTemplate", "type": "str"},
     }
 
     def __init__(
@@ -3651,14 +3753,14 @@ class EnvelopeEncryption(msrest.serialization.Model):
          identifier of the key being requested.
         :paramtype custom_key_acquisition_url_template: str
         """
-        super(EnvelopeEncryption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled_protocols = enabled_protocols
         self.clear_tracks = clear_tracks
         self.content_keys = content_keys
         self.custom_key_acquisition_url_template = custom_key_acquisition_url_template
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3666,31 +3768,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3708,28 +3806,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -3737,7 +3831,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -3745,20 +3839,15 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.media.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
@@ -3767,7 +3856,7 @@ class FaceDetectorPreset(Preset):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar resolution: Specifies the maximum resolution at which your video is analyzed. The default
      behavior is "SourceResolution," which will keep the input video at its original resolution when
@@ -3778,7 +3867,7 @@ class FaceDetectorPreset(Preset):
      video. It may also reduce the cost of using this component (see
      https://azure.microsoft.com/en-us/pricing/details/media-services/#analytics for details).
      However, faces that end up being too small in the resized video may not be detected. Known
-     values are: "SourceResolution", "StandardDefinition".
+     values are: "SourceResolution" and "StandardDefinition".
     :vartype resolution: str or ~azure.mgmt.media.models.AnalysisResolution
     :ivar mode: This mode provides the ability to choose between the following settings: 1) Analyze
      - For detection only.This mode generates a metadata JSON file marking appearances of faces
@@ -3786,9 +3875,9 @@ class FaceDetectorPreset(Preset):
      2) Combined - Additionally redacts(blurs) detected faces. 3) Redact - This enables a 2-pass
      process, allowing for selective redaction of a subset of detected faces.It takes in the
      metadata file from a prior analyze pass, along with the source video, and a user-selected
-     subset of IDs that require redaction. Known values are: "Analyze", "Redact", "Combined".
+     subset of IDs that require redaction. Known values are: "Analyze", "Redact", and "Combined".
     :vartype mode: str or ~azure.mgmt.media.models.FaceRedactorMode
-    :ivar blur_type: Blur type. Known values are: "Box", "Low", "Med", "High", "Black".
+    :ivar blur_type: Blur type. Known values are: "Box", "Low", "Med", "High", and "Black".
     :vartype blur_type: str or ~azure.mgmt.media.models.BlurType
     :ivar experimental_options: Dictionary containing key value pairs for parameters not exposed in
      the preset itself.
@@ -3796,15 +3885,15 @@ class FaceDetectorPreset(Preset):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'resolution': {'key': 'resolution', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'blur_type': {'key': 'blurType', 'type': 'str'},
-        'experimental_options': {'key': 'experimentalOptions', 'type': '{str}'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "resolution": {"key": "resolution", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "blur_type": {"key": "blurType", "type": "str"},
+        "experimental_options": {"key": "experimentalOptions", "type": "{str}"},
     }
 
     def __init__(
@@ -3826,7 +3915,7 @@ class FaceDetectorPreset(Preset):
          resolution video. It may also reduce the cost of using this component (see
          https://azure.microsoft.com/en-us/pricing/details/media-services/#analytics for details).
          However, faces that end up being too small in the resized video may not be detected. Known
-         values are: "SourceResolution", "StandardDefinition".
+         values are: "SourceResolution" and "StandardDefinition".
         :paramtype resolution: str or ~azure.mgmt.media.models.AnalysisResolution
         :keyword mode: This mode provides the ability to choose between the following settings: 1)
          Analyze - For detection only.This mode generates a metadata JSON file marking appearances of
@@ -3834,43 +3923,104 @@ class FaceDetectorPreset(Preset):
          ID. 2) Combined - Additionally redacts(blurs) detected faces. 3) Redact - This enables a 2-pass
          process, allowing for selective redaction of a subset of detected faces.It takes in the
          metadata file from a prior analyze pass, along with the source video, and a user-selected
-         subset of IDs that require redaction. Known values are: "Analyze", "Redact", "Combined".
+         subset of IDs that require redaction. Known values are: "Analyze", "Redact", and "Combined".
         :paramtype mode: str or ~azure.mgmt.media.models.FaceRedactorMode
-        :keyword blur_type: Blur type. Known values are: "Box", "Low", "Med", "High", "Black".
+        :keyword blur_type: Blur type. Known values are: "Box", "Low", "Med", "High", and "Black".
         :paramtype blur_type: str or ~azure.mgmt.media.models.BlurType
         :keyword experimental_options: Dictionary containing key value pairs for parameters not exposed
          in the preset itself.
         :paramtype experimental_options: dict[str, str]
         """
-        super(FaceDetectorPreset, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.FaceDetectorPreset'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.FaceDetectorPreset"
         self.resolution = resolution
         self.mode = mode
         self.blur_type = blur_type
         self.experimental_options = experimental_options
 
 
-class Filters(msrest.serialization.Model):
+class Fade(_serialization.Model):
+    """Describes the properties of a Fade effect applied to the input media.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar duration: The Duration of the fade effect in the video. The value can be in ISO 8601
+     format (For example, PT05S to fade In/Out a color during 5 seconds), or a frame count (For
+     example, 10 to fade 10 frames from the start time), or a relative value to stream duration (For
+     example, 10% to fade 10% of stream duration). Required.
+    :vartype duration: ~datetime.timedelta
+    :ivar fade_color: The Color for the fade In/Out. it can be on the CSS Level1 colors
+     https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color_keywords or an RGB/hex
+     value: e.g: rgb(255,0,0), 0xFF0000 or #FF0000. Required.
+    :vartype fade_color: str
+    :ivar start: The position in the input video from where to start fade. The value can be in ISO
+     8601 format (For example, PT05S to start at 5 seconds), or a frame count (For example, 10 to
+     start at the 10th frame), or a relative value to stream duration (For example, 10% to start at
+     10% of stream duration). Default is 0.
+    :vartype start: str
+    """
+
+    _validation = {
+        "duration": {"required": True},
+        "fade_color": {"required": True},
+    }
+
+    _attribute_map = {
+        "duration": {"key": "duration", "type": "duration"},
+        "fade_color": {"key": "fadeColor", "type": "str"},
+        "start": {"key": "start", "type": "str"},
+    }
+
+    def __init__(self, *, duration: datetime.timedelta, fade_color: str, start: Optional[str] = None, **kwargs):
+        """
+        :keyword duration: The Duration of the fade effect in the video. The value can be in ISO 8601
+         format (For example, PT05S to fade In/Out a color during 5 seconds), or a frame count (For
+         example, 10 to fade 10 frames from the start time), or a relative value to stream duration (For
+         example, 10% to fade 10% of stream duration). Required.
+        :paramtype duration: ~datetime.timedelta
+        :keyword fade_color: The Color for the fade In/Out. it can be on the CSS Level1 colors
+         https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/color_keywords or an RGB/hex
+         value: e.g: rgb(255,0,0), 0xFF0000 or #FF0000. Required.
+        :paramtype fade_color: str
+        :keyword start: The position in the input video from where to start fade. The value can be in
+         ISO 8601 format (For example, PT05S to start at 5 seconds), or a frame count (For example, 10
+         to start at the 10th frame), or a relative value to stream duration (For example, 10% to start
+         at 10% of stream duration). Default is 0.
+        :paramtype start: str
+        """
+        super().__init__(**kwargs)
+        self.duration = duration
+        self.fade_color = fade_color
+        self.start = start
+
+
+class Filters(_serialization.Model):
     """Describes all the filtering operations, such as de-interlacing, rotation etc. that are to be applied to the input media before encoding.
 
     :ivar deinterlace: The de-interlacing settings.
     :vartype deinterlace: ~azure.mgmt.media.models.Deinterlace
     :ivar rotation: The rotation, if any, to be applied to the input video, before it is encoded.
-     Default is Auto. Known values are: "Auto", "None", "Rotate0", "Rotate90", "Rotate180",
+     Default is Auto. Known values are: "Auto", "None", "Rotate0", "Rotate90", "Rotate180", and
      "Rotate270".
     :vartype rotation: str or ~azure.mgmt.media.models.Rotation
     :ivar crop: The parameters for the rectangular window with which to crop the input video.
     :vartype crop: ~azure.mgmt.media.models.Rectangle
+    :ivar fade_in: Describes the properties of a Fade effect applied to the input media.
+    :vartype fade_in: ~azure.mgmt.media.models.Fade
+    :ivar fade_out: Describes the properties of a Fade effect applied to the input media.
+    :vartype fade_out: ~azure.mgmt.media.models.Fade
     :ivar overlays: The properties of overlays to be applied to the input video. These could be
      audio, image or video overlays.
     :vartype overlays: list[~azure.mgmt.media.models.Overlay]
     """
 
     _attribute_map = {
-        'deinterlace': {'key': 'deinterlace', 'type': 'Deinterlace'},
-        'rotation': {'key': 'rotation', 'type': 'str'},
-        'crop': {'key': 'crop', 'type': 'Rectangle'},
-        'overlays': {'key': 'overlays', 'type': '[Overlay]'},
+        "deinterlace": {"key": "deinterlace", "type": "Deinterlace"},
+        "rotation": {"key": "rotation", "type": "str"},
+        "crop": {"key": "crop", "type": "Rectangle"},
+        "fade_in": {"key": "fadeIn", "type": "Fade"},
+        "fade_out": {"key": "fadeOut", "type": "Fade"},
+        "overlays": {"key": "overlays", "type": "[Overlay]"},
     }
 
     def __init__(
@@ -3879,6 +4029,8 @@ class Filters(msrest.serialization.Model):
         deinterlace: Optional["_models.Deinterlace"] = None,
         rotation: Optional[Union[str, "_models.Rotation"]] = None,
         crop: Optional["_models.Rectangle"] = None,
+        fade_in: Optional["_models.Fade"] = None,
+        fade_out: Optional["_models.Fade"] = None,
         overlays: Optional[List["_models.Overlay"]] = None,
         **kwargs
     ):
@@ -3887,46 +4039,52 @@ class Filters(msrest.serialization.Model):
         :paramtype deinterlace: ~azure.mgmt.media.models.Deinterlace
         :keyword rotation: The rotation, if any, to be applied to the input video, before it is
          encoded. Default is Auto. Known values are: "Auto", "None", "Rotate0", "Rotate90", "Rotate180",
-         "Rotate270".
+         and "Rotate270".
         :paramtype rotation: str or ~azure.mgmt.media.models.Rotation
         :keyword crop: The parameters for the rectangular window with which to crop the input video.
         :paramtype crop: ~azure.mgmt.media.models.Rectangle
+        :keyword fade_in: Describes the properties of a Fade effect applied to the input media.
+        :paramtype fade_in: ~azure.mgmt.media.models.Fade
+        :keyword fade_out: Describes the properties of a Fade effect applied to the input media.
+        :paramtype fade_out: ~azure.mgmt.media.models.Fade
         :keyword overlays: The properties of overlays to be applied to the input video. These could be
          audio, image or video overlays.
         :paramtype overlays: list[~azure.mgmt.media.models.Overlay]
         """
-        super(Filters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.deinterlace = deinterlace
         self.rotation = rotation
         self.crop = crop
+        self.fade_in = fade_in
+        self.fade_out = fade_out
         self.overlays = overlays
 
 
-class FilterTrackPropertyCondition(msrest.serialization.Model):
+class FilterTrackPropertyCondition(_serialization.Model):
     """The class to specify one track property condition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar property: Required. The track property type. Known values are: "Unknown", "Type", "Name",
-     "Language", "FourCC", "Bitrate".
+    :ivar property: The track property type. Required. Known values are: "Unknown", "Type", "Name",
+     "Language", "FourCC", and "Bitrate".
     :vartype property: str or ~azure.mgmt.media.models.FilterTrackPropertyType
-    :ivar value: Required. The track property value.
+    :ivar value: The track property value. Required.
     :vartype value: str
-    :ivar operation: Required. The track property condition operation. Known values are: "Equal",
-     "NotEqual".
+    :ivar operation: The track property condition operation. Required. Known values are: "Equal"
+     and "NotEqual".
     :vartype operation: str or ~azure.mgmt.media.models.FilterTrackPropertyCompareOperation
     """
 
     _validation = {
-        'property': {'required': True},
-        'value': {'required': True},
-        'operation': {'required': True},
+        "property": {"required": True},
+        "value": {"required": True},
+        "operation": {"required": True},
     }
 
     _attribute_map = {
-        'property': {'key': 'property', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "property": {"key": "property", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
     }
 
     def __init__(
@@ -3938,154 +4096,143 @@ class FilterTrackPropertyCondition(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword property: Required. The track property type. Known values are: "Unknown", "Type",
-         "Name", "Language", "FourCC", "Bitrate".
+        :keyword property: The track property type. Required. Known values are: "Unknown", "Type",
+         "Name", "Language", "FourCC", and "Bitrate".
         :paramtype property: str or ~azure.mgmt.media.models.FilterTrackPropertyType
-        :keyword value: Required. The track property value.
+        :keyword value: The track property value. Required.
         :paramtype value: str
-        :keyword operation: Required. The track property condition operation. Known values are:
-         "Equal", "NotEqual".
+        :keyword operation: The track property condition operation. Required. Known values are: "Equal"
+         and "NotEqual".
         :paramtype operation: str or ~azure.mgmt.media.models.FilterTrackPropertyCompareOperation
         """
-        super(FilterTrackPropertyCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.property = property
         self.value = value
         self.operation = operation
 
 
-class FilterTrackSelection(msrest.serialization.Model):
+class FilterTrackSelection(_serialization.Model):
     """Representing a list of FilterTrackPropertyConditions to select a track.  The filters are combined using a logical AND operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar track_selections: Required. The track selections.
+    :ivar track_selections: The track selections. Required.
     :vartype track_selections: list[~azure.mgmt.media.models.FilterTrackPropertyCondition]
     """
 
     _validation = {
-        'track_selections': {'required': True},
+        "track_selections": {"required": True},
     }
 
     _attribute_map = {
-        'track_selections': {'key': 'trackSelections', 'type': '[FilterTrackPropertyCondition]'},
+        "track_selections": {"key": "trackSelections", "type": "[FilterTrackPropertyCondition]"},
     }
 
-    def __init__(
-        self,
-        *,
-        track_selections: List["_models.FilterTrackPropertyCondition"],
-        **kwargs
-    ):
+    def __init__(self, *, track_selections: List["_models.FilterTrackPropertyCondition"], **kwargs):
         """
-        :keyword track_selections: Required. The track selections.
+        :keyword track_selections: The track selections. Required.
         :paramtype track_selections: list[~azure.mgmt.media.models.FilterTrackPropertyCondition]
         """
-        super(FilterTrackSelection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.track_selections = track_selections
 
 
-class FirstQuality(msrest.serialization.Model):
+class FirstQuality(_serialization.Model):
     """Filter First Quality.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar bitrate: Required. The first quality bitrate.
+    :ivar bitrate: The first quality bitrate. Required.
     :vartype bitrate: int
     """
 
     _validation = {
-        'bitrate': {'required': True},
+        "bitrate": {"required": True},
     }
 
     _attribute_map = {
-        'bitrate': {'key': 'bitrate', 'type': 'int'},
+        "bitrate": {"key": "bitrate", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        bitrate: int,
-        **kwargs
-    ):
+    def __init__(self, *, bitrate: int, **kwargs):
         """
-        :keyword bitrate: Required. The first quality bitrate.
+        :keyword bitrate: The first quality bitrate. Required.
         :paramtype bitrate: int
         """
-        super(FirstQuality, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.bitrate = bitrate
 
 
-class Format(msrest.serialization.Model):
+class Format(_serialization.Model):
     """Base class for output.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ImageFormat, MultiBitrateFormat.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ImageFormat, MultiBitrateFormat
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: Required. The pattern of the file names for the generated output files.
-     The following macros are supported in the file name: {Basename} - An expansion macro that will
-     use the name of the input video file. If the base name(the file suffix is not included) of the
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
+     following macros are supported in the file name: {Basename} - An expansion macro that will use
+     the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'filename_pattern': {'required': True},
+        "odata_type": {"required": True},
+        "filename_pattern": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'filename_pattern': {'key': 'filenamePattern', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "filename_pattern": {"key": "filenamePattern", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.ImageFormat': 'ImageFormat', '#Microsoft.Media.MultiBitrateFormat': 'MultiBitrateFormat'}
+        "odata_type": {
+            "#Microsoft.Media.ImageFormat": "ImageFormat",
+            "#Microsoft.Media.MultiBitrateFormat": "MultiBitrateFormat",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        filename_pattern: str,
-        **kwargs
-    ):
+    def __init__(self, *, filename_pattern: str, **kwargs):
         """
-        :keyword filename_pattern: Required. The pattern of the file names for the generated output
-         files. The following macros are supported in the file name: {Basename} - An expansion macro
-         that will use the name of the input video file. If the base name(the file suffix is not
-         included) of the input video file is less than 32 characters long, the base name of input video
-         files will be used. If the length of base name of the input video file exceeds 32 characters,
-         the base name is truncated to the first 32 characters in total length. {Extension} - The
-         appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
-         - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-         bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
-         {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
-         from the filename.
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
+         following macros are supported in the file name: {Basename} - An expansion macro that will use
+         the name of the input video file. If the base name(the file suffix is not included) of the
+         input video file is less than 32 characters long, the base name of input video files will be
+         used. If the length of base name of the input video file exceeds 32 characters, the base name
+         is truncated to the first 32 characters in total length. {Extension} - The appropriate
+         extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         """
-        super(Format, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
         self.filename_pattern = filename_pattern
 
 
-class InputDefinition(msrest.serialization.Model):
+class InputDefinition(_serialization.Model):
     """Base class for defining an input. Use sub classes of this class to specify tracks selections and related metadata.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: FromAllInputFile, FromEachInputFile, InputFile.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FromAllInputFile, FromEachInputFile, InputFile
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar included_tracks: The list of TrackDescriptors which define the metadata and selection of
      tracks in the input.
@@ -4093,31 +4240,30 @@ class InputDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'included_tracks': {'key': 'includedTracks', 'type': '[TrackDescriptor]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "included_tracks": {"key": "includedTracks", "type": "[TrackDescriptor]"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.FromAllInputFile': 'FromAllInputFile', '#Microsoft.Media.FromEachInputFile': 'FromEachInputFile', '#Microsoft.Media.InputFile': 'InputFile'}
+        "odata_type": {
+            "#Microsoft.Media.FromAllInputFile": "FromAllInputFile",
+            "#Microsoft.Media.FromEachInputFile": "FromEachInputFile",
+            "#Microsoft.Media.InputFile": "InputFile",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        included_tracks: Optional[List["_models.TrackDescriptor"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, included_tracks: Optional[List["_models.TrackDescriptor"]] = None, **kwargs):
         """
         :keyword included_tracks: The list of TrackDescriptors which define the metadata and selection
          of tracks in the input.
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
-        super(InputDefinition, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
         self.included_tracks = included_tracks
 
 
@@ -4126,7 +4272,7 @@ class FromAllInputFile(InputDefinition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar included_tracks: The list of TrackDescriptors which define the metadata and selection of
      tracks in the input.
@@ -4134,27 +4280,22 @@ class FromAllInputFile(InputDefinition):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'included_tracks': {'key': 'includedTracks', 'type': '[TrackDescriptor]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "included_tracks": {"key": "includedTracks", "type": "[TrackDescriptor]"},
     }
 
-    def __init__(
-        self,
-        *,
-        included_tracks: Optional[List["_models.TrackDescriptor"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, included_tracks: Optional[List["_models.TrackDescriptor"]] = None, **kwargs):
         """
         :keyword included_tracks: The list of TrackDescriptors which define the metadata and selection
          of tracks in the input.
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
-        super(FromAllInputFile, self).__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = '#Microsoft.Media.FromAllInputFile'  # type: str
+        super().__init__(included_tracks=included_tracks, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.FromAllInputFile"
 
 
 class FromEachInputFile(InputDefinition):
@@ -4162,7 +4303,7 @@ class FromEachInputFile(InputDefinition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar included_tracks: The list of TrackDescriptors which define the metadata and selection of
      tracks in the input.
@@ -4170,30 +4311,25 @@ class FromEachInputFile(InputDefinition):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'included_tracks': {'key': 'includedTracks', 'type': '[TrackDescriptor]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "included_tracks": {"key": "includedTracks", "type": "[TrackDescriptor]"},
     }
 
-    def __init__(
-        self,
-        *,
-        included_tracks: Optional[List["_models.TrackDescriptor"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, included_tracks: Optional[List["_models.TrackDescriptor"]] = None, **kwargs):
         """
         :keyword included_tracks: The list of TrackDescriptors which define the metadata and selection
          of tracks in the input.
         :paramtype included_tracks: list[~azure.mgmt.media.models.TrackDescriptor]
         """
-        super(FromEachInputFile, self).__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = '#Microsoft.Media.FromEachInputFile'  # type: str
+        super().__init__(included_tracks=included_tracks, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.FromEachInputFile"
 
 
-class Layer(msrest.serialization.Model):
+class Layer(_serialization.Model):
     """The encoder can be configured to produce video and/or images (thumbnails) at different resolutions, by specifying a layer for each desired resolution. A layer represents the properties for the video or image at a resolution.
 
     :ivar width: The width of the output video for this layer. The value can be absolute (in
@@ -4210,18 +4346,13 @@ class Layer(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
+        "label": {"key": "label", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        width: Optional[str] = None,
-        height: Optional[str] = None,
-        label: Optional[str] = None,
-        **kwargs
+        self, *, width: Optional[str] = None, height: Optional[str] = None, label: Optional[str] = None, **kwargs
     ):
         """
         :keyword width: The width of the output video for this layer. The value can be absolute (in
@@ -4236,7 +4367,7 @@ class Layer(msrest.serialization.Model):
          different video and audio layers, or in naming the output file.
         :paramtype label: str
         """
-        super(Layer, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.width = width
         self.height = height
         self.label = label
@@ -4258,8 +4389,8 @@ class VideoLayer(Layer):
     :ivar label: The alphanumeric label for this layer, which can be used in multiplexing different
      video and audio layers, or in naming the output file.
     :vartype label: str
-    :ivar bitrate: Required. The average bitrate in bits per second at which to encode the input
-     video when generating this layer. This is a required field.
+    :ivar bitrate: The average bitrate in bits per second at which to encode the input video when
+     generating this layer. This is a required field. Required.
     :vartype bitrate: int
     :ivar max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should be
      assumed to refill. If not specified, defaults to the same value as bitrate.
@@ -4283,19 +4414,19 @@ class VideoLayer(Layer):
     """
 
     _validation = {
-        'bitrate': {'required': True},
+        "bitrate": {"required": True},
     }
 
     _attribute_map = {
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'bitrate': {'key': 'bitrate', 'type': 'int'},
-        'max_bitrate': {'key': 'maxBitrate', 'type': 'int'},
-        'b_frames': {'key': 'bFrames', 'type': 'int'},
-        'frame_rate': {'key': 'frameRate', 'type': 'str'},
-        'slices': {'key': 'slices', 'type': 'int'},
-        'adaptive_b_frame': {'key': 'adaptiveBFrame', 'type': 'bool'},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "bitrate": {"key": "bitrate", "type": "int"},
+        "max_bitrate": {"key": "maxBitrate", "type": "int"},
+        "b_frames": {"key": "bFrames", "type": "int"},
+        "frame_rate": {"key": "frameRate", "type": "str"},
+        "slices": {"key": "slices", "type": "int"},
+        "adaptive_b_frame": {"key": "adaptiveBFrame", "type": "bool"},
     }
 
     def __init__(
@@ -4324,8 +4455,8 @@ class VideoLayer(Layer):
         :keyword label: The alphanumeric label for this layer, which can be used in multiplexing
          different video and audio layers, or in naming the output file.
         :paramtype label: str
-        :keyword bitrate: Required. The average bitrate in bits per second at which to encode the input
-         video when generating this layer. This is a required field.
+        :keyword bitrate: The average bitrate in bits per second at which to encode the input video
+         when generating this layer. This is a required field. Required.
         :paramtype bitrate: int
         :keyword max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should
          be assumed to refill. If not specified, defaults to the same value as bitrate.
@@ -4347,7 +4478,7 @@ class VideoLayer(Layer):
          use.
         :paramtype adaptive_b_frame: bool
         """
-        super(VideoLayer, self).__init__(width=width, height=height, label=label, **kwargs)
+        super().__init__(width=width, height=height, label=label, **kwargs)
         self.bitrate = bitrate
         self.max_bitrate = max_bitrate
         self.b_frames = b_frames
@@ -4356,7 +4487,7 @@ class VideoLayer(Layer):
         self.adaptive_b_frame = adaptive_b_frame
 
 
-class H264Layer(VideoLayer):
+class H264Layer(VideoLayer):  # pylint: disable=too-many-instance-attributes
     """Describes the settings to be used when encoding the input video into a desired output bitrate layer with the H.264 video codec.
 
     All required parameters must be populated in order to send to Azure.
@@ -4372,8 +4503,8 @@ class H264Layer(VideoLayer):
     :ivar label: The alphanumeric label for this layer, which can be used in multiplexing different
      video and audio layers, or in naming the output file.
     :vartype label: str
-    :ivar bitrate: Required. The average bitrate in bits per second at which to encode the input
-     video when generating this layer. This is a required field.
+    :ivar bitrate: The average bitrate in bits per second at which to encode the input video when
+     generating this layer. This is a required field. Required.
     :vartype bitrate: int
     :ivar max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should be
      assumed to refill. If not specified, defaults to the same value as bitrate.
@@ -4395,7 +4526,7 @@ class H264Layer(VideoLayer):
      use.
     :vartype adaptive_b_frame: bool
     :ivar profile: We currently support Baseline, Main, High, High422, High444. Default is Auto.
-     Known values are: "Auto", "Baseline", "Main", "High", "High422", "High444".
+     Known values are: "Auto", "Baseline", "Main", "High", "High422", and "High444".
     :vartype profile: str or ~azure.mgmt.media.models.H264VideoProfile
     :ivar level: We currently support Level up to 6.2. The value can be Auto, or a number that
      matches the H.264 profile. If not specified, the default is Auto, which lets the encoder choose
@@ -4415,31 +4546,31 @@ class H264Layer(VideoLayer):
      setting.
     :vartype reference_frames: int
     :ivar entropy_mode: The entropy mode to be used for this layer. If not specified, the encoder
-     chooses the mode that is appropriate for the profile and level. Known values are: "Cabac",
+     chooses the mode that is appropriate for the profile and level. Known values are: "Cabac" and
      "Cavlc".
     :vartype entropy_mode: str or ~azure.mgmt.media.models.EntropyMode
     """
 
     _validation = {
-        'bitrate': {'required': True},
+        "bitrate": {"required": True},
     }
 
     _attribute_map = {
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'bitrate': {'key': 'bitrate', 'type': 'int'},
-        'max_bitrate': {'key': 'maxBitrate', 'type': 'int'},
-        'b_frames': {'key': 'bFrames', 'type': 'int'},
-        'frame_rate': {'key': 'frameRate', 'type': 'str'},
-        'slices': {'key': 'slices', 'type': 'int'},
-        'adaptive_b_frame': {'key': 'adaptiveBFrame', 'type': 'bool'},
-        'profile': {'key': 'profile', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'buffer_window': {'key': 'bufferWindow', 'type': 'duration'},
-        'crf': {'key': 'crf', 'type': 'float'},
-        'reference_frames': {'key': 'referenceFrames', 'type': 'int'},
-        'entropy_mode': {'key': 'entropyMode', 'type': 'str'},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "bitrate": {"key": "bitrate", "type": "int"},
+        "max_bitrate": {"key": "maxBitrate", "type": "int"},
+        "b_frames": {"key": "bFrames", "type": "int"},
+        "frame_rate": {"key": "frameRate", "type": "str"},
+        "slices": {"key": "slices", "type": "int"},
+        "adaptive_b_frame": {"key": "adaptiveBFrame", "type": "bool"},
+        "profile": {"key": "profile", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "buffer_window": {"key": "bufferWindow", "type": "duration"},
+        "crf": {"key": "crf", "type": "float"},
+        "reference_frames": {"key": "referenceFrames", "type": "int"},
+        "entropy_mode": {"key": "entropyMode", "type": "str"},
     }
 
     def __init__(
@@ -4474,8 +4605,8 @@ class H264Layer(VideoLayer):
         :keyword label: The alphanumeric label for this layer, which can be used in multiplexing
          different video and audio layers, or in naming the output file.
         :paramtype label: str
-        :keyword bitrate: Required. The average bitrate in bits per second at which to encode the input
-         video when generating this layer. This is a required field.
+        :keyword bitrate: The average bitrate in bits per second at which to encode the input video
+         when generating this layer. This is a required field. Required.
         :paramtype bitrate: int
         :keyword max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should
          be assumed to refill. If not specified, defaults to the same value as bitrate.
@@ -4497,7 +4628,7 @@ class H264Layer(VideoLayer):
          use.
         :paramtype adaptive_b_frame: bool
         :keyword profile: We currently support Baseline, Main, High, High422, High444. Default is Auto.
-         Known values are: "Auto", "Baseline", "Main", "High", "High422", "High444".
+         Known values are: "Auto", "Baseline", "Main", "High", "High422", and "High444".
         :paramtype profile: str or ~azure.mgmt.media.models.H264VideoProfile
         :keyword level: We currently support Level up to 6.2. The value can be Auto, or a number that
          matches the H.264 profile. If not specified, the default is Auto, which lets the encoder choose
@@ -4519,10 +4650,21 @@ class H264Layer(VideoLayer):
         :paramtype reference_frames: int
         :keyword entropy_mode: The entropy mode to be used for this layer. If not specified, the
          encoder chooses the mode that is appropriate for the profile and level. Known values are:
-         "Cabac", "Cavlc".
+         "Cabac" and "Cavlc".
         :paramtype entropy_mode: str or ~azure.mgmt.media.models.EntropyMode
         """
-        super(H264Layer, self).__init__(width=width, height=height, label=label, bitrate=bitrate, max_bitrate=max_bitrate, b_frames=b_frames, frame_rate=frame_rate, slices=slices, adaptive_b_frame=adaptive_b_frame, **kwargs)
+        super().__init__(
+            width=width,
+            height=height,
+            label=label,
+            bitrate=bitrate,
+            max_bitrate=max_bitrate,
+            b_frames=b_frames,
+            frame_rate=frame_rate,
+            slices=slices,
+            adaptive_b_frame=adaptive_b_frame,
+            **kwargs
+        )
         self.profile = profile
         self.level = level
         self.buffer_window = buffer_window
@@ -4534,12 +4676,12 @@ class H264Layer(VideoLayer):
 class Video(Codec):
     """Describes the basic properties for encoding the input video.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: H264Video, H265Video, Image.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    H264Video, H265Video, Image
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
@@ -4549,26 +4691,31 @@ class Video(Codec):
      value will follow the input source setting.
     :vartype key_frame_interval: ~datetime.timedelta
     :ivar stretch_mode: The resizing mode - how the input video will be resized to fit the desired
-     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", "AutoFit".
+     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and "AutoFit".
     :vartype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+     "Vfr".
     :vartype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
-        'sync_mode': {'key': 'syncMode', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "key_frame_interval": {"key": "keyFrameInterval", "type": "duration"},
+        "stretch_mode": {"key": "stretchMode", "type": "str"},
+        "sync_mode": {"key": "syncMode", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.H264Video': 'H264Video', '#Microsoft.Media.H265Video': 'H265Video', '#Microsoft.Media.Image': 'Image'}
+        "odata_type": {
+            "#Microsoft.Media.H264Video": "H264Video",
+            "#Microsoft.Media.H265Video": "H265Video",
+            "#Microsoft.Media.Image": "Image",
+        }
     }
 
     def __init__(
@@ -4590,14 +4737,15 @@ class Video(Codec):
          KeyFrameInterval value will follow the input source setting.
         :paramtype key_frame_interval: ~datetime.timedelta
         :keyword stretch_mode: The resizing mode - how the input video will be resized to fit the
-         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize",
+         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and
          "AutoFit".
         :paramtype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+         "Vfr".
         :paramtype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
         """
-        super(Video, self).__init__(label=label, **kwargs)
-        self.odata_type = '#Microsoft.Media.Video'  # type: str
+        super().__init__(label=label, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.Video"
         self.key_frame_interval = key_frame_interval
         self.stretch_mode = stretch_mode
         self.sync_mode = sync_mode
@@ -4608,7 +4756,7 @@ class H264Video(Video):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
@@ -4618,16 +4766,18 @@ class H264Video(Video):
      value will follow the input source setting.
     :vartype key_frame_interval: ~datetime.timedelta
     :ivar stretch_mode: The resizing mode - how the input video will be resized to fit the desired
-     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", "AutoFit".
+     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and "AutoFit".
     :vartype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+     "Vfr".
     :vartype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
     :ivar complexity: Tells the encoder how to choose its encoding settings. The default value is
-     Balanced. Known values are: "Speed", "Balanced", "Quality".
+     Balanced. Known values are: "Speed", "Balanced", and "Quality".
     :vartype complexity: str or ~azure.mgmt.media.models.H264Complexity
     :ivar layers: The collection of output H.264 layers to be produced by the encoder.
     :vartype layers: list[~azure.mgmt.media.models.H264Layer]
-    :ivar rate_control_mode: The video rate control mode. Known values are: "ABR", "CBR", "CRF".
+    :ivar rate_control_mode: The video rate control mode. Known values are: "ABR", "CBR", and
+     "CRF".
     :vartype rate_control_mode: str or ~azure.mgmt.media.models.H264RateControlMode
     :ivar scene_change_detection: Whether or not the encoder should insert key frames at scene
      changes. If not specified, the default is false. This flag should be set to true only when the
@@ -4636,19 +4786,19 @@ class H264Video(Video):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
-        'sync_mode': {'key': 'syncMode', 'type': 'str'},
-        'complexity': {'key': 'complexity', 'type': 'str'},
-        'layers': {'key': 'layers', 'type': '[H264Layer]'},
-        'rate_control_mode': {'key': 'rateControlMode', 'type': 'str'},
-        'scene_change_detection': {'key': 'sceneChangeDetection', 'type': 'bool'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "key_frame_interval": {"key": "keyFrameInterval", "type": "duration"},
+        "stretch_mode": {"key": "stretchMode", "type": "str"},
+        "sync_mode": {"key": "syncMode", "type": "str"},
+        "complexity": {"key": "complexity", "type": "str"},
+        "layers": {"key": "layers", "type": "[H264Layer]"},
+        "rate_control_mode": {"key": "rateControlMode", "type": "str"},
+        "scene_change_detection": {"key": "sceneChangeDetection", "type": "bool"},
     }
 
     def __init__(
@@ -4674,25 +4824,29 @@ class H264Video(Video):
          KeyFrameInterval value will follow the input source setting.
         :paramtype key_frame_interval: ~datetime.timedelta
         :keyword stretch_mode: The resizing mode - how the input video will be resized to fit the
-         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize",
+         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and
          "AutoFit".
         :paramtype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+         "Vfr".
         :paramtype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
         :keyword complexity: Tells the encoder how to choose its encoding settings. The default value
-         is Balanced. Known values are: "Speed", "Balanced", "Quality".
+         is Balanced. Known values are: "Speed", "Balanced", and "Quality".
         :paramtype complexity: str or ~azure.mgmt.media.models.H264Complexity
         :keyword layers: The collection of output H.264 layers to be produced by the encoder.
         :paramtype layers: list[~azure.mgmt.media.models.H264Layer]
-        :keyword rate_control_mode: The video rate control mode. Known values are: "ABR", "CBR", "CRF".
+        :keyword rate_control_mode: The video rate control mode. Known values are: "ABR", "CBR", and
+         "CRF".
         :paramtype rate_control_mode: str or ~azure.mgmt.media.models.H264RateControlMode
         :keyword scene_change_detection: Whether or not the encoder should insert key frames at scene
          changes. If not specified, the default is false. This flag should be set to true only when the
          encoder is being configured to produce a single output video.
         :paramtype scene_change_detection: bool
         """
-        super(H264Video, self).__init__(label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs)
-        self.odata_type = '#Microsoft.Media.H264Video'  # type: str
+        super().__init__(
+            label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
+        )
+        self.odata_type: str = "#Microsoft.Media.H264Video"
         self.complexity = complexity
         self.layers = layers
         self.rate_control_mode = rate_control_mode
@@ -4715,9 +4869,9 @@ class H265VideoLayer(Layer):
     :ivar label: The alphanumeric label for this layer, which can be used in multiplexing different
      video and audio layers, or in naming the output file.
     :vartype label: str
-    :ivar bitrate: Required. The average bitrate in bits per second at which to encode the input
-     video when generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this
-     value should be 3000000 This is a required field.
+    :ivar bitrate: The average bitrate in bits per second at which to encode the input video when
+     generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this value
+     should be 3000000 This is a required field. Required.
     :vartype bitrate: int
     :ivar max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should be
      assumed to refill. If not specified, defaults to the same value as bitrate.
@@ -4741,19 +4895,19 @@ class H265VideoLayer(Layer):
     """
 
     _validation = {
-        'bitrate': {'required': True},
+        "bitrate": {"required": True},
     }
 
     _attribute_map = {
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'bitrate': {'key': 'bitrate', 'type': 'int'},
-        'max_bitrate': {'key': 'maxBitrate', 'type': 'int'},
-        'b_frames': {'key': 'bFrames', 'type': 'int'},
-        'frame_rate': {'key': 'frameRate', 'type': 'str'},
-        'slices': {'key': 'slices', 'type': 'int'},
-        'adaptive_b_frame': {'key': 'adaptiveBFrame', 'type': 'bool'},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "bitrate": {"key": "bitrate", "type": "int"},
+        "max_bitrate": {"key": "maxBitrate", "type": "int"},
+        "b_frames": {"key": "bFrames", "type": "int"},
+        "frame_rate": {"key": "frameRate", "type": "str"},
+        "slices": {"key": "slices", "type": "int"},
+        "adaptive_b_frame": {"key": "adaptiveBFrame", "type": "bool"},
     }
 
     def __init__(
@@ -4782,9 +4936,9 @@ class H265VideoLayer(Layer):
         :keyword label: The alphanumeric label for this layer, which can be used in multiplexing
          different video and audio layers, or in naming the output file.
         :paramtype label: str
-        :keyword bitrate: Required. The average bitrate in bits per second at which to encode the input
-         video when generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this
-         value should be 3000000 This is a required field.
+        :keyword bitrate: The average bitrate in bits per second at which to encode the input video
+         when generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this value
+         should be 3000000 This is a required field. Required.
         :paramtype bitrate: int
         :keyword max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should
          be assumed to refill. If not specified, defaults to the same value as bitrate.
@@ -4806,7 +4960,7 @@ class H265VideoLayer(Layer):
          permits its use.
         :paramtype adaptive_b_frame: bool
         """
-        super(H265VideoLayer, self).__init__(width=width, height=height, label=label, **kwargs)
+        super().__init__(width=width, height=height, label=label, **kwargs)
         self.bitrate = bitrate
         self.max_bitrate = max_bitrate
         self.b_frames = b_frames
@@ -4815,7 +4969,7 @@ class H265VideoLayer(Layer):
         self.adaptive_b_frame = adaptive_b_frame
 
 
-class H265Layer(H265VideoLayer):
+class H265Layer(H265VideoLayer):  # pylint: disable=too-many-instance-attributes
     """Describes the settings to be used when encoding the input video into a desired output bitrate layer with the H.265 video codec.
 
     All required parameters must be populated in order to send to Azure.
@@ -4831,9 +4985,9 @@ class H265Layer(H265VideoLayer):
     :ivar label: The alphanumeric label for this layer, which can be used in multiplexing different
      video and audio layers, or in naming the output file.
     :vartype label: str
-    :ivar bitrate: Required. The average bitrate in bits per second at which to encode the input
-     video when generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this
-     value should be 3000000 This is a required field.
+    :ivar bitrate: The average bitrate in bits per second at which to encode the input video when
+     generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this value
+     should be 3000000 This is a required field. Required.
     :vartype bitrate: int
     :ivar max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should be
      assumed to refill. If not specified, defaults to the same value as bitrate.
@@ -4855,7 +5009,7 @@ class H265Layer(H265VideoLayer):
      its use.
     :vartype adaptive_b_frame: bool
     :ivar profile: We currently support Main. Default is Auto. Known values are: "Auto", "Main",
-     "Main10".
+     and "Main10".
     :vartype profile: str or ~azure.mgmt.media.models.H265VideoProfile
     :ivar level: We currently support Level up to 6.2. The value can be Auto, or a number that
      matches the H.265 profile. If not specified, the default is Auto, which lets the encoder choose
@@ -4877,24 +5031,24 @@ class H265Layer(H265VideoLayer):
     """
 
     _validation = {
-        'bitrate': {'required': True},
+        "bitrate": {"required": True},
     }
 
     _attribute_map = {
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'bitrate': {'key': 'bitrate', 'type': 'int'},
-        'max_bitrate': {'key': 'maxBitrate', 'type': 'int'},
-        'b_frames': {'key': 'bFrames', 'type': 'int'},
-        'frame_rate': {'key': 'frameRate', 'type': 'str'},
-        'slices': {'key': 'slices', 'type': 'int'},
-        'adaptive_b_frame': {'key': 'adaptiveBFrame', 'type': 'bool'},
-        'profile': {'key': 'profile', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'buffer_window': {'key': 'bufferWindow', 'type': 'duration'},
-        'crf': {'key': 'crf', 'type': 'float'},
-        'reference_frames': {'key': 'referenceFrames', 'type': 'int'},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "bitrate": {"key": "bitrate", "type": "int"},
+        "max_bitrate": {"key": "maxBitrate", "type": "int"},
+        "b_frames": {"key": "bFrames", "type": "int"},
+        "frame_rate": {"key": "frameRate", "type": "str"},
+        "slices": {"key": "slices", "type": "int"},
+        "adaptive_b_frame": {"key": "adaptiveBFrame", "type": "bool"},
+        "profile": {"key": "profile", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "buffer_window": {"key": "bufferWindow", "type": "duration"},
+        "crf": {"key": "crf", "type": "float"},
+        "reference_frames": {"key": "referenceFrames", "type": "int"},
     }
 
     def __init__(
@@ -4928,9 +5082,9 @@ class H265Layer(H265VideoLayer):
         :keyword label: The alphanumeric label for this layer, which can be used in multiplexing
          different video and audio layers, or in naming the output file.
         :paramtype label: str
-        :keyword bitrate: Required. The average bitrate in bits per second at which to encode the input
-         video when generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this
-         value should be 3000000 This is a required field.
+        :keyword bitrate: The average bitrate in bits per second at which to encode the input video
+         when generating this layer. For example: a target bitrate of 3000Kbps or 3Mbps means this value
+         should be 3000000 This is a required field. Required.
         :paramtype bitrate: int
         :keyword max_bitrate: The maximum bitrate (in bits per second), at which the VBV buffer should
          be assumed to refill. If not specified, defaults to the same value as bitrate.
@@ -4952,7 +5106,7 @@ class H265Layer(H265VideoLayer):
          permits its use.
         :paramtype adaptive_b_frame: bool
         :keyword profile: We currently support Main. Default is Auto. Known values are: "Auto", "Main",
-         "Main10".
+         and "Main10".
         :paramtype profile: str or ~azure.mgmt.media.models.H265VideoProfile
         :keyword level: We currently support Level up to 6.2. The value can be Auto, or a number that
          matches the H.265 profile. If not specified, the default is Auto, which lets the encoder choose
@@ -4973,7 +5127,18 @@ class H265Layer(H265VideoLayer):
          setting.
         :paramtype reference_frames: int
         """
-        super(H265Layer, self).__init__(width=width, height=height, label=label, bitrate=bitrate, max_bitrate=max_bitrate, b_frames=b_frames, frame_rate=frame_rate, slices=slices, adaptive_b_frame=adaptive_b_frame, **kwargs)
+        super().__init__(
+            width=width,
+            height=height,
+            label=label,
+            bitrate=bitrate,
+            max_bitrate=max_bitrate,
+            b_frames=b_frames,
+            frame_rate=frame_rate,
+            slices=slices,
+            adaptive_b_frame=adaptive_b_frame,
+            **kwargs
+        )
         self.profile = profile
         self.level = level
         self.buffer_window = buffer_window
@@ -4986,7 +5151,7 @@ class H265Video(Video):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
@@ -4996,9 +5161,10 @@ class H265Video(Video):
      value will follow the input source setting.
     :vartype key_frame_interval: ~datetime.timedelta
     :ivar stretch_mode: The resizing mode - how the input video will be resized to fit the desired
-     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", "AutoFit".
+     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and "AutoFit".
     :vartype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+     "Vfr".
     :vartype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
     :ivar scene_change_detection: Specifies whether or not the encoder should insert key frames at
      scene changes. If not specified, the default is false. This flag should be set to true only
@@ -5007,25 +5173,25 @@ class H265Video(Video):
     :ivar complexity: Tells the encoder how to choose its encoding settings.  Quality will provide
      for a higher compression ratio but at a higher cost and longer compute time.  Speed will
      produce a relatively larger file but is faster and more economical. The default value is
-     Balanced. Known values are: "Speed", "Balanced", "Quality".
+     Balanced. Known values are: "Speed", "Balanced", and "Quality".
     :vartype complexity: str or ~azure.mgmt.media.models.H265Complexity
     :ivar layers: The collection of output H.265 layers to be produced by the encoder.
     :vartype layers: list[~azure.mgmt.media.models.H265Layer]
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
-        'sync_mode': {'key': 'syncMode', 'type': 'str'},
-        'scene_change_detection': {'key': 'sceneChangeDetection', 'type': 'bool'},
-        'complexity': {'key': 'complexity', 'type': 'str'},
-        'layers': {'key': 'layers', 'type': '[H265Layer]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "key_frame_interval": {"key": "keyFrameInterval", "type": "duration"},
+        "stretch_mode": {"key": "stretchMode", "type": "str"},
+        "sync_mode": {"key": "syncMode", "type": "str"},
+        "scene_change_detection": {"key": "sceneChangeDetection", "type": "bool"},
+        "complexity": {"key": "complexity", "type": "str"},
+        "layers": {"key": "layers", "type": "[H265Layer]"},
     }
 
     def __init__(
@@ -5050,10 +5216,11 @@ class H265Video(Video):
          KeyFrameInterval value will follow the input source setting.
         :paramtype key_frame_interval: ~datetime.timedelta
         :keyword stretch_mode: The resizing mode - how the input video will be resized to fit the
-         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize",
+         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and
          "AutoFit".
         :paramtype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+         "Vfr".
         :paramtype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
         :keyword scene_change_detection: Specifies whether or not the encoder should insert key frames
          at scene changes. If not specified, the default is false. This flag should be set to true only
@@ -5062,19 +5229,21 @@ class H265Video(Video):
         :keyword complexity: Tells the encoder how to choose its encoding settings.  Quality will
          provide for a higher compression ratio but at a higher cost and longer compute time.  Speed
          will produce a relatively larger file but is faster and more economical. The default value is
-         Balanced. Known values are: "Speed", "Balanced", "Quality".
+         Balanced. Known values are: "Speed", "Balanced", and "Quality".
         :paramtype complexity: str or ~azure.mgmt.media.models.H265Complexity
         :keyword layers: The collection of output H.265 layers to be produced by the encoder.
         :paramtype layers: list[~azure.mgmt.media.models.H265Layer]
         """
-        super(H265Video, self).__init__(label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs)
-        self.odata_type = '#Microsoft.Media.H265Video'  # type: str
+        super().__init__(
+            label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
+        )
+        self.odata_type: str = "#Microsoft.Media.H265Video"
         self.scene_change_detection = scene_change_detection
         self.complexity = complexity
         self.layers = layers
 
 
-class Hls(msrest.serialization.Model):
+class Hls(_serialization.Model):
     """HTTP Live Streaming (HLS) packing setting for the live output.
 
     :ivar fragments_per_ts_segment: The number of fragments in an HTTP Live Streaming (HLS) TS
@@ -5084,27 +5253,22 @@ class Hls(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'fragments_per_ts_segment': {'key': 'fragmentsPerTsSegment', 'type': 'int'},
+        "fragments_per_ts_segment": {"key": "fragmentsPerTsSegment", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        fragments_per_ts_segment: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, fragments_per_ts_segment: Optional[int] = None, **kwargs):
         """
         :keyword fragments_per_ts_segment: The number of fragments in an HTTP Live Streaming (HLS) TS
          segment in the output of the live event. This value does not affect the packing ratio for HLS
          CMAF output.
         :paramtype fragments_per_ts_segment: int
         """
-        super(Hls, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.fragments_per_ts_segment = fragments_per_ts_segment
 
 
-class HlsSettings(msrest.serialization.Model):
-    """The HLS setting for a text track.
+class HlsSettings(_serialization.Model):
+    """The HLS setting for a track.
 
     :ivar default: The default for the HLS setting.
     :vartype default: bool
@@ -5115,9 +5279,9 @@ class HlsSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'default': {'key': 'default', 'type': 'bool'},
-        'forced': {'key': 'forced', 'type': 'bool'},
-        'characteristics': {'key': 'characteristics', 'type': 'str'},
+        "default": {"key": "default", "type": "bool"},
+        "forced": {"key": "forced", "type": "bool"},
+        "characteristics": {"key": "characteristics", "type": "str"},
     }
 
     def __init__(
@@ -5136,7 +5300,7 @@ class HlsSettings(msrest.serialization.Model):
         :keyword characteristics: The characteristics for the HLS setting.
         :paramtype characteristics: str
         """
-        super(HlsSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.default = default
         self.forced = forced
         self.characteristics = characteristics
@@ -5145,12 +5309,12 @@ class HlsSettings(msrest.serialization.Model):
 class Image(Video):
     """Describes the basic properties for generating thumbnails from the input video.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JpgImage, PngImage.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    JpgImage, PngImage
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
@@ -5160,17 +5324,18 @@ class Image(Video):
      value will follow the input source setting.
     :vartype key_frame_interval: ~datetime.timedelta
     :ivar stretch_mode: The resizing mode - how the input video will be resized to fit the desired
-     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", "AutoFit".
+     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and "AutoFit".
     :vartype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+     "Vfr".
     :vartype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
-    :ivar start: Required. The position in the input video from where to start generating
-     thumbnails. The value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or
-     a frame count (For example, 10 to start at the 10th frame), or a relative value to stream
-     duration (For example, 10% to start at 10% of stream duration). Also supports a macro {Best},
-     which tells the encoder to select the best thumbnail from the first few seconds of the video
-     and will only produce one thumbnail, no matter what other settings are for Step and Range. The
-     default value is macro {Best}.
+    :ivar start: The position in the input video from where to start generating thumbnails. The
+     value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or a frame count
+     (For example, 10 to start at the 10th frame), or a relative value to stream duration (For
+     example, 10% to start at 10% of stream duration). Also supports a macro {Best}, which tells the
+     encoder to select the best thumbnail from the first few seconds of the video and will only
+     produce one thumbnail, no matter what other settings are for Step and Range. The default value
+     is macro {Best}. Required.
     :vartype start: str
     :ivar step: The intervals at which thumbnails are generated. The value can be in ISO 8601
      format (For example, PT05S for one image every 5 seconds), or a frame count (For example, 30
@@ -5194,24 +5359,22 @@ class Image(Video):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'start': {'required': True},
+        "odata_type": {"required": True},
+        "start": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
-        'sync_mode': {'key': 'syncMode', 'type': 'str'},
-        'start': {'key': 'start', 'type': 'str'},
-        'step': {'key': 'step', 'type': 'str'},
-        'range': {'key': 'range', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "key_frame_interval": {"key": "keyFrameInterval", "type": "duration"},
+        "stretch_mode": {"key": "stretchMode", "type": "str"},
+        "sync_mode": {"key": "syncMode", "type": "str"},
+        "start": {"key": "start", "type": "str"},
+        "step": {"key": "step", "type": "str"},
+        "range": {"key": "range", "type": "str"},
     }
 
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Media.JpgImage': 'JpgImage', '#Microsoft.Media.PngImage': 'PngImage'}
-    }
+    _subtype_map = {"odata_type": {"#Microsoft.Media.JpgImage": "JpgImage", "#Microsoft.Media.PngImage": "PngImage"}}
 
     def __init__(
         self,
@@ -5235,18 +5398,19 @@ class Image(Video):
          KeyFrameInterval value will follow the input source setting.
         :paramtype key_frame_interval: ~datetime.timedelta
         :keyword stretch_mode: The resizing mode - how the input video will be resized to fit the
-         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize",
+         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and
          "AutoFit".
         :paramtype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+         "Vfr".
         :paramtype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
-        :keyword start: Required. The position in the input video from where to start generating
-         thumbnails. The value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or
-         a frame count (For example, 10 to start at the 10th frame), or a relative value to stream
-         duration (For example, 10% to start at 10% of stream duration). Also supports a macro {Best},
-         which tells the encoder to select the best thumbnail from the first few seconds of the video
-         and will only produce one thumbnail, no matter what other settings are for Step and Range. The
-         default value is macro {Best}.
+        :keyword start: The position in the input video from where to start generating thumbnails. The
+         value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or a frame count
+         (For example, 10 to start at the 10th frame), or a relative value to stream duration (For
+         example, 10% to start at 10% of stream duration). Also supports a macro {Best}, which tells the
+         encoder to select the best thumbnail from the first few seconds of the video and will only
+         produce one thumbnail, no matter what other settings are for Step and Range. The default value
+         is macro {Best}. Required.
         :paramtype start: str
         :keyword step: The intervals at which thumbnails are generated. The value can be in ISO 8601
          format (For example, PT05S for one image every 5 seconds), or a frame count (For example, 30
@@ -5268,8 +5432,10 @@ class Image(Video):
          which means to stop at the end of the stream.
         :paramtype range: str
         """
-        super(Image, self).__init__(label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs)
-        self.odata_type = '#Microsoft.Media.Image'  # type: str
+        super().__init__(
+            label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, **kwargs
+        )
+        self.odata_type: str = "#Microsoft.Media.Image"
         self.start = start
         self.step = step
         self.range = range
@@ -5278,62 +5444,58 @@ class Image(Video):
 class ImageFormat(Format):
     """Describes the properties for an output image file.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JpgFormat, PngFormat.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    JpgFormat, PngFormat
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: Required. The pattern of the file names for the generated output files.
-     The following macros are supported in the file name: {Basename} - An expansion macro that will
-     use the name of the input video file. If the base name(the file suffix is not included) of the
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
+     following macros are supported in the file name: {Basename} - An expansion macro that will use
+     the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'filename_pattern': {'required': True},
+        "odata_type": {"required": True},
+        "filename_pattern": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'filename_pattern': {'key': 'filenamePattern', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "filename_pattern": {"key": "filenamePattern", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.JpgFormat': 'JpgFormat', '#Microsoft.Media.PngFormat': 'PngFormat'}
+        "odata_type": {"#Microsoft.Media.JpgFormat": "JpgFormat", "#Microsoft.Media.PngFormat": "PngFormat"}
     }
 
-    def __init__(
-        self,
-        *,
-        filename_pattern: str,
-        **kwargs
-    ):
+    def __init__(self, *, filename_pattern: str, **kwargs):
         """
-        :keyword filename_pattern: Required. The pattern of the file names for the generated output
-         files. The following macros are supported in the file name: {Basename} - An expansion macro
-         that will use the name of the input video file. If the base name(the file suffix is not
-         included) of the input video file is less than 32 characters long, the base name of input video
-         files will be used. If the length of base name of the input video file exceeds 32 characters,
-         the base name is truncated to the first 32 characters in total length. {Extension} - The
-         appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
-         - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-         bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
-         {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
-         from the filename.
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
+         following macros are supported in the file name: {Basename} - An expansion macro that will use
+         the name of the input video file. If the base name(the file suffix is not included) of the
+         input video file is less than 32 characters long, the base name of input video files will be
+         used. If the length of base name of the input video file exceeds 32 characters, the base name
+         is truncated to the first 32 characters in total length. {Extension} - The appropriate
+         extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         """
-        super(ImageFormat, self).__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = '#Microsoft.Media.ImageFormat'  # type: str
+        super().__init__(filename_pattern=filename_pattern, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.ImageFormat"
 
 
 class InputFile(InputDefinition):
@@ -5341,7 +5503,7 @@ class InputFile(InputDefinition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar included_tracks: The list of TrackDescriptors which define the metadata and selection of
      tracks in the input.
@@ -5351,13 +5513,13 @@ class InputFile(InputDefinition):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'included_tracks': {'key': 'includedTracks', 'type': '[TrackDescriptor]'},
-        'filename': {'key': 'filename', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "included_tracks": {"key": "includedTracks", "type": "[TrackDescriptor]"},
+        "filename": {"key": "filename", "type": "str"},
     }
 
     def __init__(
@@ -5374,12 +5536,12 @@ class InputFile(InputDefinition):
         :keyword filename: Name of the file that this input definition applies to.
         :paramtype filename: str
         """
-        super(InputFile, self).__init__(included_tracks=included_tracks, **kwargs)
-        self.odata_type = '#Microsoft.Media.InputFile'  # type: str
+        super().__init__(included_tracks=included_tracks, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.InputFile"
         self.filename = filename
 
 
-class IPAccessControl(msrest.serialization.Model):
+class IPAccessControl(_serialization.Model):
     """The IP access control.
 
     :ivar allow: The IP allow list.
@@ -5387,24 +5549,19 @@ class IPAccessControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'allow': {'key': 'allow', 'type': '[IPRange]'},
+        "allow": {"key": "allow", "type": "[IPRange]"},
     }
 
-    def __init__(
-        self,
-        *,
-        allow: Optional[List["_models.IPRange"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, allow: Optional[List["_models.IPRange"]] = None, **kwargs):
         """
         :keyword allow: The IP allow list.
         :paramtype allow: list[~azure.mgmt.media.models.IPRange]
         """
-        super(IPAccessControl, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.allow = allow
 
 
-class IPRange(msrest.serialization.Model):
+class IPRange(_serialization.Model):
     """The IP address range in the CIDR scheme.
 
     :ivar name: The friendly name for the IP address range.
@@ -5416,9 +5573,9 @@ class IPRange(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'address': {'key': 'address', 'type': 'str'},
-        'subnet_prefix_length': {'key': 'subnetPrefixLength', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "address": {"key": "address", "type": "str"},
+        "subnet_prefix_length": {"key": "subnetPrefixLength", "type": "int"},
     }
 
     def __init__(
@@ -5437,13 +5594,13 @@ class IPRange(msrest.serialization.Model):
         :keyword subnet_prefix_length: The subnet mask prefix length (see CIDR notation).
         :paramtype subnet_prefix_length: int
         """
-        super(IPRange, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.address = address
         self.subnet_prefix_length = subnet_prefix_length
 
 
-class Job(ProxyResource):
+class Job(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """A Job resource type. The progress and state can be obtained by polling a Job or subscribing to events using EventGrid.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5462,7 +5619,7 @@ class Job(ProxyResource):
      'YYYY-MM-DDThh:mm:ssZ' format.
     :vartype created: ~datetime.datetime
     :ivar state: The current state of the job. Known values are: "Canceled", "Canceling", "Error",
-     "Finished", "Processing", "Queued", "Scheduled".
+     "Finished", "Processing", "Queued", and "Scheduled".
     :vartype state: str or ~azure.mgmt.media.models.JobState
     :ivar description: Optional customer supplied description of the Job.
     :vartype description: str
@@ -5475,7 +5632,7 @@ class Job(ProxyResource):
     :vartype outputs: list[~azure.mgmt.media.models.JobOutput]
     :ivar priority: Priority with which the job should be processed. Higher priority jobs are
      processed before lower priority jobs. If not set, the default is normal. Known values are:
-     "Low", "Normal", "High".
+     "Low", "Normal", and "High".
     :vartype priority: str or ~azure.mgmt.media.models.Priority
     :ivar correlation_data: Customer provided key, value pairs that will be returned in Job and
      JobOutput state events.
@@ -5487,32 +5644,32 @@ class Job(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created': {'readonly': True},
-        'state': {'readonly': True},
-        'last_modified': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created": {"readonly": True},
+        "state": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'input': {'key': 'properties.input', 'type': 'JobInput'},
-        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
-        'outputs': {'key': 'properties.outputs', 'type': '[JobOutput]'},
-        'priority': {'key': 'properties.priority', 'type': 'str'},
-        'correlation_data': {'key': 'properties.correlationData', 'type': '{str}'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "state": {"key": "properties.state", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "input": {"key": "properties.input", "type": "JobInput"},
+        "last_modified": {"key": "properties.lastModified", "type": "iso-8601"},
+        "outputs": {"key": "properties.outputs", "type": "[JobOutput]"},
+        "priority": {"key": "properties.priority", "type": "str"},
+        "correlation_data": {"key": "properties.correlationData", "type": "{str}"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -5534,13 +5691,13 @@ class Job(ProxyResource):
         :paramtype outputs: list[~azure.mgmt.media.models.JobOutput]
         :keyword priority: Priority with which the job should be processed. Higher priority jobs are
          processed before lower priority jobs. If not set, the default is normal. Known values are:
-         "Low", "Normal", "High".
+         "Low", "Normal", and "High".
         :paramtype priority: str or ~azure.mgmt.media.models.Priority
         :keyword correlation_data: Customer provided key, value pairs that will be returned in Job and
          JobOutput state events.
         :paramtype correlation_data: dict[str, str]
         """
-        super(Job, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.created = None
         self.state = None
@@ -5554,7 +5711,7 @@ class Job(ProxyResource):
         self.end_time = None
 
 
-class JobCollection(msrest.serialization.Model):
+class JobCollection(_serialization.Model):
     """A collection of Job items.
 
     :ivar value: A collection of Job items.
@@ -5565,17 +5722,11 @@ class JobCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Job]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Job]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Job"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Job"]] = None, odata_next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: A collection of Job items.
         :paramtype value: list[~azure.mgmt.media.models.Job]
@@ -5583,12 +5734,12 @@ class JobCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(JobCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class JobError(msrest.serialization.Model):
+class JobError(_serialization.Model):
     """Details of JobOutput errors.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5596,43 +5747,39 @@ class JobError(msrest.serialization.Model):
     :ivar code: Error code describing the error. Known values are: "ServiceError",
      "ServiceTransientError", "DownloadNotAccessible", "DownloadTransientError",
      "UploadNotAccessible", "UploadTransientError", "ConfigurationUnsupported", "ContentMalformed",
-     "ContentUnsupported".
+     "ContentUnsupported", and "IdentityUnsupported".
     :vartype code: str or ~azure.mgmt.media.models.JobErrorCode
     :ivar message: A human-readable language-dependent representation of the error.
     :vartype message: str
     :ivar category: Helps with categorization of errors. Known values are: "Service", "Download",
-     "Upload", "Configuration", "Content".
+     "Upload", "Configuration", "Content", and "Account".
     :vartype category: str or ~azure.mgmt.media.models.JobErrorCategory
     :ivar retry: Indicates that it may be possible to retry the Job. If retry is unsuccessful,
-     please contact Azure support via Azure Portal. Known values are: "DoNotRetry", "MayRetry".
+     please contact Azure support via Azure Portal. Known values are: "DoNotRetry" and "MayRetry".
     :vartype retry: str or ~azure.mgmt.media.models.JobRetry
     :ivar details: An array of details about specific errors that led to this reported error.
     :vartype details: list[~azure.mgmt.media.models.JobErrorDetail]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'category': {'readonly': True},
-        'retry': {'readonly': True},
-        'details': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "category": {"readonly": True},
+        "retry": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'category': {'key': 'category', 'type': 'str'},
-        'retry': {'key': 'retry', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[JobErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "category": {"key": "category", "type": "str"},
+        "retry": {"key": "retry", "type": "str"},
+        "details": {"key": "details", "type": "[JobErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(JobError, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.category = None
@@ -5640,7 +5787,7 @@ class JobError(msrest.serialization.Model):
         self.details = None
 
 
-class JobErrorDetail(msrest.serialization.Model):
+class JobErrorDetail(_serialization.Model):
     """Details of JobOutput errors.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5652,69 +5799,65 @@ class JobErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(JobErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class JobInput(msrest.serialization.Model):
+class JobInput(_serialization.Model):
     """Base class for inputs to a Job.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JobInputClip, JobInputSequence, JobInputs.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    JobInputClip, JobInputSequence, JobInputs
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.JobInputClip': 'JobInputClip', '#Microsoft.Media.JobInputSequence': 'JobInputSequence', '#Microsoft.Media.JobInputs': 'JobInputs'}
+        "odata_type": {
+            "#Microsoft.Media.JobInputClip": "JobInputClip",
+            "#Microsoft.Media.JobInputSequence": "JobInputSequence",
+            "#Microsoft.Media.JobInputs": "JobInputs",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(JobInput, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
 
 
 class JobInputClip(JobInput):
     """Represents input files for a Job.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JobInputAsset, JobInputHttp.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    JobInputAsset, JobInputHttp
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar files: List of files. Required for JobInputHttp. Maximum of 4000 characters each. Query
      strings will not be returned in service responses to prevent sensitive data exposure.
@@ -5737,20 +5880,23 @@ class JobInputClip(JobInput):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'files': {'key': 'files', 'type': '[str]'},
-        'start': {'key': 'start', 'type': 'ClipTime'},
-        'end': {'key': 'end', 'type': 'ClipTime'},
-        'label': {'key': 'label', 'type': 'str'},
-        'input_definitions': {'key': 'inputDefinitions', 'type': '[InputDefinition]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "files": {"key": "files", "type": "[str]"},
+        "start": {"key": "start", "type": "ClipTime"},
+        "end": {"key": "end", "type": "ClipTime"},
+        "label": {"key": "label", "type": "str"},
+        "input_definitions": {"key": "inputDefinitions", "type": "[InputDefinition]"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.JobInputAsset': 'JobInputAsset', '#Microsoft.Media.JobInputHttp': 'JobInputHttp'}
+        "odata_type": {
+            "#Microsoft.Media.JobInputAsset": "JobInputAsset",
+            "#Microsoft.Media.JobInputHttp": "JobInputHttp",
+        }
     }
 
     def __init__(
@@ -5783,8 +5929,8 @@ class JobInputClip(JobInput):
          defines a list of track selections and related metadata.
         :paramtype input_definitions: list[~azure.mgmt.media.models.InputDefinition]
         """
-        super(JobInputClip, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.JobInputClip'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.JobInputClip"
         self.files = files
         self.start = start
         self.end = end
@@ -5797,7 +5943,7 @@ class JobInputAsset(JobInputClip):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar files: List of files. Required for JobInputHttp. Maximum of 4000 characters each. Query
      strings will not be returned in service responses to prevent sensitive data exposure.
@@ -5817,23 +5963,23 @@ class JobInputAsset(JobInputClip):
     :ivar input_definitions: Defines a list of InputDefinitions. For each InputDefinition, it
      defines a list of track selections and related metadata.
     :vartype input_definitions: list[~azure.mgmt.media.models.InputDefinition]
-    :ivar asset_name: Required. The name of the input Asset.
+    :ivar asset_name: The name of the input Asset. Required.
     :vartype asset_name: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'asset_name': {'required': True},
+        "odata_type": {"required": True},
+        "asset_name": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'files': {'key': 'files', 'type': '[str]'},
-        'start': {'key': 'start', 'type': 'ClipTime'},
-        'end': {'key': 'end', 'type': 'ClipTime'},
-        'label': {'key': 'label', 'type': 'str'},
-        'input_definitions': {'key': 'inputDefinitions', 'type': '[InputDefinition]'},
-        'asset_name': {'key': 'assetName', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "files": {"key": "files", "type": "[str]"},
+        "start": {"key": "start", "type": "ClipTime"},
+        "end": {"key": "end", "type": "ClipTime"},
+        "label": {"key": "label", "type": "str"},
+        "input_definitions": {"key": "inputDefinitions", "type": "[InputDefinition]"},
+        "asset_name": {"key": "assetName", "type": "str"},
     }
 
     def __init__(
@@ -5866,11 +6012,11 @@ class JobInputAsset(JobInputClip):
         :keyword input_definitions: Defines a list of InputDefinitions. For each InputDefinition, it
          defines a list of track selections and related metadata.
         :paramtype input_definitions: list[~azure.mgmt.media.models.InputDefinition]
-        :keyword asset_name: Required. The name of the input Asset.
+        :keyword asset_name: The name of the input Asset. Required.
         :paramtype asset_name: str
         """
-        super(JobInputAsset, self).__init__(files=files, start=start, end=end, label=label, input_definitions=input_definitions, **kwargs)
-        self.odata_type = '#Microsoft.Media.JobInputAsset'  # type: str
+        super().__init__(files=files, start=start, end=end, label=label, input_definitions=input_definitions, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.JobInputAsset"
         self.asset_name = asset_name
 
 
@@ -5879,7 +6025,7 @@ class JobInputHttp(JobInputClip):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar files: List of files. Required for JobInputHttp. Maximum of 4000 characters each. Query
      strings will not be returned in service responses to prevent sensitive data exposure.
@@ -5907,17 +6053,17 @@ class JobInputHttp(JobInputClip):
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'files': {'key': 'files', 'type': '[str]'},
-        'start': {'key': 'start', 'type': 'ClipTime'},
-        'end': {'key': 'end', 'type': 'ClipTime'},
-        'label': {'key': 'label', 'type': 'str'},
-        'input_definitions': {'key': 'inputDefinitions', 'type': '[InputDefinition]'},
-        'base_uri': {'key': 'baseUri', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "files": {"key": "files", "type": "[str]"},
+        "start": {"key": "start", "type": "ClipTime"},
+        "end": {"key": "end", "type": "ClipTime"},
+        "label": {"key": "label", "type": "str"},
+        "input_definitions": {"key": "inputDefinitions", "type": "[InputDefinition]"},
+        "base_uri": {"key": "baseUri", "type": "str"},
     }
 
     def __init__(
@@ -5956,8 +6102,8 @@ class JobInputHttp(JobInputClip):
          responses to prevent sensitive data exposure.
         :paramtype base_uri: str
         """
-        super(JobInputHttp, self).__init__(files=files, start=start, end=end, label=label, input_definitions=input_definitions, **kwargs)
-        self.odata_type = '#Microsoft.Media.JobInputHttp'  # type: str
+        super().__init__(files=files, start=start, end=end, label=label, input_definitions=input_definitions, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.JobInputHttp"
         self.base_uri = base_uri
 
 
@@ -5966,33 +6112,28 @@ class JobInputs(JobInput):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar inputs: List of inputs to a Job.
     :vartype inputs: list[~azure.mgmt.media.models.JobInput]
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[JobInput]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[JobInput]"},
     }
 
-    def __init__(
-        self,
-        *,
-        inputs: Optional[List["_models.JobInput"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, inputs: Optional[List["_models.JobInput"]] = None, **kwargs):
         """
         :keyword inputs: List of inputs to a Job.
         :paramtype inputs: list[~azure.mgmt.media.models.JobInput]
         """
-        super(JobInputs, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.JobInputs'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.JobInputs"
         self.inputs = inputs
 
 
@@ -6001,47 +6142,42 @@ class JobInputSequence(JobInput):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar inputs: JobInputs that make up the timeline.
     :vartype inputs: list[~azure.mgmt.media.models.JobInputClip]
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[JobInputClip]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[JobInputClip]"},
     }
 
-    def __init__(
-        self,
-        *,
-        inputs: Optional[List["_models.JobInputClip"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, inputs: Optional[List["_models.JobInputClip"]] = None, **kwargs):
         """
         :keyword inputs: JobInputs that make up the timeline.
         :paramtype inputs: list[~azure.mgmt.media.models.JobInputClip]
         """
-        super(JobInputSequence, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.JobInputSequence'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.JobInputSequence"
         self.inputs = inputs
 
 
-class JobOutput(msrest.serialization.Model):
+class JobOutput(_serialization.Model):
     """Describes all the properties of a JobOutput.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JobOutputAsset.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    JobOutputAsset
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar error: If the JobOutput is in the Error state, it contains the details of the error.
     :vartype error: ~azure.mgmt.media.models.JobError
@@ -6049,7 +6185,7 @@ class JobOutput(msrest.serialization.Model):
      output.
     :vartype preset_override: ~azure.mgmt.media.models.Preset
     :ivar state: Describes the state of the JobOutput. Known values are: "Canceled", "Canceling",
-     "Error", "Finished", "Processing", "Queued", "Scheduled".
+     "Error", "Finished", "Processing", "Queued", and "Scheduled".
     :vartype state: str or ~azure.mgmt.media.models.JobState
     :ivar progress: If the JobOutput is in a Processing state, this contains the Job completion
      percentage. The value is an estimate and not intended to be used to predict Job completion
@@ -6073,36 +6209,28 @@ class JobOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'error': {'readonly': True},
-        'state': {'readonly': True},
-        'progress': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
+        "odata_type": {"required": True},
+        "error": {"readonly": True},
+        "state": {"readonly": True},
+        "progress": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'JobError'},
-        'preset_override': {'key': 'presetOverride', 'type': 'Preset'},
-        'state': {'key': 'state', 'type': 'str'},
-        'progress': {'key': 'progress', 'type': 'int'},
-        'label': {'key': 'label', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "error": {"key": "error", "type": "JobError"},
+        "preset_override": {"key": "presetOverride", "type": "Preset"},
+        "state": {"key": "state", "type": "str"},
+        "progress": {"key": "progress", "type": "int"},
+        "label": {"key": "label", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
     }
 
-    _subtype_map = {
-        'odata_type': {'#Microsoft.Media.JobOutputAsset': 'JobOutputAsset'}
-    }
+    _subtype_map = {"odata_type": {"#Microsoft.Media.JobOutputAsset": "JobOutputAsset"}}
 
-    def __init__(
-        self,
-        *,
-        preset_override: Optional["_models.Preset"] = None,
-        label: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, preset_override: Optional["_models.Preset"] = None, label: Optional[str] = None, **kwargs):
         """
         :keyword preset_override: A preset used to override the preset in the corresponding transform
          output.
@@ -6119,8 +6247,8 @@ class JobOutput(msrest.serialization.Model):
          corresponding TransformOutput within its Transform.
         :paramtype label: str
         """
-        super(JobOutput, self).__init__(**kwargs)
-        self.odata_type = None  # type: Optional[str]
+        super().__init__(**kwargs)
+        self.odata_type: Optional[str] = None
         self.error = None
         self.preset_override = preset_override
         self.state = None
@@ -6137,7 +6265,7 @@ class JobOutputAsset(JobOutput):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar error: If the JobOutput is in the Error state, it contains the details of the error.
     :vartype error: ~azure.mgmt.media.models.JobError
@@ -6145,7 +6273,7 @@ class JobOutputAsset(JobOutput):
      output.
     :vartype preset_override: ~azure.mgmt.media.models.Preset
     :ivar state: Describes the state of the JobOutput. Known values are: "Canceled", "Canceling",
-     "Error", "Finished", "Processing", "Queued", "Scheduled".
+     "Error", "Finished", "Processing", "Queued", and "Scheduled".
     :vartype state: str or ~azure.mgmt.media.models.JobState
     :ivar progress: If the JobOutput is in a Processing state, this contains the Job completion
      percentage. The value is an estimate and not intended to be used to predict Job completion
@@ -6166,30 +6294,30 @@ class JobOutputAsset(JobOutput):
     :vartype start_time: ~datetime.datetime
     :ivar end_time: The UTC date and time at which this Job Output finished processing.
     :vartype end_time: ~datetime.datetime
-    :ivar asset_name: Required. The name of the output Asset.
+    :ivar asset_name: The name of the output Asset. Required.
     :vartype asset_name: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'error': {'readonly': True},
-        'state': {'readonly': True},
-        'progress': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'asset_name': {'required': True},
+        "odata_type": {"required": True},
+        "error": {"readonly": True},
+        "state": {"readonly": True},
+        "progress": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "asset_name": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'JobError'},
-        'preset_override': {'key': 'presetOverride', 'type': 'Preset'},
-        'state': {'key': 'state', 'type': 'str'},
-        'progress': {'key': 'progress', 'type': 'int'},
-        'label': {'key': 'label', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'asset_name': {'key': 'assetName', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "error": {"key": "error", "type": "JobError"},
+        "preset_override": {"key": "presetOverride", "type": "Preset"},
+        "state": {"key": "state", "type": "str"},
+        "progress": {"key": "progress", "type": "int"},
+        "label": {"key": "label", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "asset_name": {"key": "assetName", "type": "str"},
     }
 
     def __init__(
@@ -6215,11 +6343,11 @@ class JobOutputAsset(JobOutput):
          JobOutput within the Job. Note that this index is the same as the relative index of the
          corresponding TransformOutput within its Transform.
         :paramtype label: str
-        :keyword asset_name: Required. The name of the output Asset.
+        :keyword asset_name: The name of the output Asset. Required.
         :paramtype asset_name: str
         """
-        super(JobOutputAsset, self).__init__(preset_override=preset_override, label=label, **kwargs)
-        self.odata_type = '#Microsoft.Media.JobOutputAsset'  # type: str
+        super().__init__(preset_override=preset_override, label=label, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.JobOutputAsset"
         self.asset_name = asset_name
 
 
@@ -6228,53 +6356,49 @@ class JpgFormat(ImageFormat):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: Required. The pattern of the file names for the generated output files.
-     The following macros are supported in the file name: {Basename} - An expansion macro that will
-     use the name of the input video file. If the base name(the file suffix is not included) of the
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
+     following macros are supported in the file name: {Basename} - An expansion macro that will use
+     the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'filename_pattern': {'required': True},
+        "odata_type": {"required": True},
+        "filename_pattern": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'filename_pattern': {'key': 'filenamePattern', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "filename_pattern": {"key": "filenamePattern", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        filename_pattern: str,
-        **kwargs
-    ):
+    def __init__(self, *, filename_pattern: str, **kwargs):
         """
-        :keyword filename_pattern: Required. The pattern of the file names for the generated output
-         files. The following macros are supported in the file name: {Basename} - An expansion macro
-         that will use the name of the input video file. If the base name(the file suffix is not
-         included) of the input video file is less than 32 characters long, the base name of input video
-         files will be used. If the length of base name of the input video file exceeds 32 characters,
-         the base name is truncated to the first 32 characters in total length. {Extension} - The
-         appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
-         - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-         bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
-         {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
-         from the filename.
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
+         following macros are supported in the file name: {Basename} - An expansion macro that will use
+         the name of the input video file. If the base name(the file suffix is not included) of the
+         input video file is less than 32 characters long, the base name of input video files will be
+         used. If the length of base name of the input video file exceeds 32 characters, the base name
+         is truncated to the first 32 characters in total length. {Extension} - The appropriate
+         extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         """
-        super(JpgFormat, self).__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = '#Microsoft.Media.JpgFormat'  # type: str
+        super().__init__(filename_pattern=filename_pattern, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.JpgFormat"
 
 
 class JpgImage(Image):
@@ -6282,7 +6406,7 @@ class JpgImage(Image):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
@@ -6292,17 +6416,18 @@ class JpgImage(Image):
      value will follow the input source setting.
     :vartype key_frame_interval: ~datetime.timedelta
     :ivar stretch_mode: The resizing mode - how the input video will be resized to fit the desired
-     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", "AutoFit".
+     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and "AutoFit".
     :vartype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+     "Vfr".
     :vartype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
-    :ivar start: Required. The position in the input video from where to start generating
-     thumbnails. The value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or
-     a frame count (For example, 10 to start at the 10th frame), or a relative value to stream
-     duration (For example, 10% to start at 10% of stream duration). Also supports a macro {Best},
-     which tells the encoder to select the best thumbnail from the first few seconds of the video
-     and will only produce one thumbnail, no matter what other settings are for Step and Range. The
-     default value is macro {Best}.
+    :ivar start: The position in the input video from where to start generating thumbnails. The
+     value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or a frame count
+     (For example, 10 to start at the 10th frame), or a relative value to stream duration (For
+     example, 10% to start at 10% of stream duration). Also supports a macro {Best}, which tells the
+     encoder to select the best thumbnail from the first few seconds of the video and will only
+     produce one thumbnail, no matter what other settings are for Step and Range. The default value
+     is macro {Best}. Required.
     :vartype start: str
     :ivar step: The intervals at which thumbnails are generated. The value can be in ISO 8601
      format (For example, PT05S for one image every 5 seconds), or a frame count (For example, 30
@@ -6334,21 +6459,21 @@ class JpgImage(Image):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'start': {'required': True},
+        "odata_type": {"required": True},
+        "start": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
-        'sync_mode': {'key': 'syncMode', 'type': 'str'},
-        'start': {'key': 'start', 'type': 'str'},
-        'step': {'key': 'step', 'type': 'str'},
-        'range': {'key': 'range', 'type': 'str'},
-        'layers': {'key': 'layers', 'type': '[JpgLayer]'},
-        'sprite_column': {'key': 'spriteColumn', 'type': 'int'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "key_frame_interval": {"key": "keyFrameInterval", "type": "duration"},
+        "stretch_mode": {"key": "stretchMode", "type": "str"},
+        "sync_mode": {"key": "syncMode", "type": "str"},
+        "start": {"key": "start", "type": "str"},
+        "step": {"key": "step", "type": "str"},
+        "range": {"key": "range", "type": "str"},
+        "layers": {"key": "layers", "type": "[JpgLayer]"},
+        "sprite_column": {"key": "spriteColumn", "type": "int"},
     }
 
     def __init__(
@@ -6375,18 +6500,19 @@ class JpgImage(Image):
          KeyFrameInterval value will follow the input source setting.
         :paramtype key_frame_interval: ~datetime.timedelta
         :keyword stretch_mode: The resizing mode - how the input video will be resized to fit the
-         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize",
+         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and
          "AutoFit".
         :paramtype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+         "Vfr".
         :paramtype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
-        :keyword start: Required. The position in the input video from where to start generating
-         thumbnails. The value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or
-         a frame count (For example, 10 to start at the 10th frame), or a relative value to stream
-         duration (For example, 10% to start at 10% of stream duration). Also supports a macro {Best},
-         which tells the encoder to select the best thumbnail from the first few seconds of the video
-         and will only produce one thumbnail, no matter what other settings are for Step and Range. The
-         default value is macro {Best}.
+        :keyword start: The position in the input video from where to start generating thumbnails. The
+         value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or a frame count
+         (For example, 10 to start at the 10th frame), or a relative value to stream duration (For
+         example, 10% to start at 10% of stream duration). Also supports a macro {Best}, which tells the
+         encoder to select the best thumbnail from the first few seconds of the video and will only
+         produce one thumbnail, no matter what other settings are for Step and Range. The default value
+         is macro {Best}. Required.
         :paramtype start: str
         :keyword step: The intervals at which thumbnails are generated. The value can be in ISO 8601
          format (For example, PT05S for one image every 5 seconds), or a frame count (For example, 30
@@ -6416,8 +6542,17 @@ class JpgImage(Image):
          resolution limit 65535x65535.
         :paramtype sprite_column: int
         """
-        super(JpgImage, self).__init__(label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, start=start, step=step, range=range, **kwargs)
-        self.odata_type = '#Microsoft.Media.JpgImage'  # type: str
+        super().__init__(
+            label=label,
+            key_frame_interval=key_frame_interval,
+            stretch_mode=stretch_mode,
+            sync_mode=sync_mode,
+            start=start,
+            step=step,
+            range=range,
+            **kwargs
+        )
+        self.odata_type: str = "#Microsoft.Media.JpgImage"
         self.layers = layers
         self.sprite_column = sprite_column
 
@@ -6442,10 +6577,10 @@ class JpgLayer(Layer):
     """
 
     _attribute_map = {
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'quality': {'key': 'quality', 'type': 'int'},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "quality": {"key": "quality", "type": "int"},
     }
 
     def __init__(
@@ -6473,11 +6608,11 @@ class JpgLayer(Layer):
          default is 70.
         :paramtype quality: int
         """
-        super(JpgLayer, self).__init__(width=width, height=height, label=label, **kwargs)
+        super().__init__(width=width, height=height, label=label, **kwargs)
         self.quality = quality
 
 
-class KeyDelivery(msrest.serialization.Model):
+class KeyDelivery(_serialization.Model):
     """KeyDelivery.
 
     :ivar access_control: The access control properties for Key Delivery.
@@ -6485,24 +6620,19 @@ class KeyDelivery(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'access_control': {'key': 'accessControl', 'type': 'AccessControl'},
+        "access_control": {"key": "accessControl", "type": "AccessControl"},
     }
 
-    def __init__(
-        self,
-        *,
-        access_control: Optional["_models.AccessControl"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, access_control: Optional["_models.AccessControl"] = None, **kwargs):
         """
         :keyword access_control: The access control properties for Key Delivery.
         :paramtype access_control: ~azure.mgmt.media.models.AccessControl
         """
-        super(KeyDelivery, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.access_control = access_control
 
 
-class KeyVaultProperties(msrest.serialization.Model):
+class KeyVaultProperties(_serialization.Model):
     """KeyVaultProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6517,36 +6647,31 @@ class KeyVaultProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'current_key_identifier': {'readonly': True},
+        "current_key_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
-        'current_key_identifier': {'key': 'currentKeyIdentifier', 'type': 'str'},
+        "key_identifier": {"key": "keyIdentifier", "type": "str"},
+        "current_key_identifier": {"key": "currentKeyIdentifier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_identifier: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key_identifier: Optional[str] = None, **kwargs):
         """
         :keyword key_identifier: The URL of the Key Vault key used to encrypt the account. The key may
          either be versioned (for example https://vault/keys/mykey/version1) or reference a key without
          a version (for example https://vault/keys/mykey).
         :paramtype key_identifier: str
         """
-        super(KeyVaultProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_identifier = key_identifier
         self.current_key_identifier = None
 
 
-class ListContainerSasInput(msrest.serialization.Model):
+class ListContainerSasInput(_serialization.Model):
     """The parameters to the list SAS request.
 
     :ivar permissions: The permissions to set on the SAS URL. Known values are: "Read",
-     "ReadWrite", "ReadWriteDelete".
+     "ReadWrite", and "ReadWriteDelete".
     :vartype permissions: str or ~azure.mgmt.media.models.AssetContainerPermission
     :ivar expiry_time: The SAS URL expiration time.  This must be less than 24 hours from the
      current time.
@@ -6554,8 +6679,8 @@ class ListContainerSasInput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'permissions': {'key': 'permissions', 'type': 'str'},
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
+        "permissions": {"key": "permissions", "type": "str"},
+        "expiry_time": {"key": "expiryTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -6567,18 +6692,18 @@ class ListContainerSasInput(msrest.serialization.Model):
     ):
         """
         :keyword permissions: The permissions to set on the SAS URL. Known values are: "Read",
-         "ReadWrite", "ReadWriteDelete".
+         "ReadWrite", and "ReadWriteDelete".
         :paramtype permissions: str or ~azure.mgmt.media.models.AssetContainerPermission
         :keyword expiry_time: The SAS URL expiration time.  This must be less than 24 hours from the
          current time.
         :paramtype expiry_time: ~datetime.datetime
         """
-        super(ListContainerSasInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.permissions = permissions
         self.expiry_time = expiry_time
 
 
-class ListContentKeysResponse(msrest.serialization.Model):
+class ListContentKeysResponse(_serialization.Model):
     """Class of response for listContentKeys action.
 
     :ivar content_keys: ContentKeys used by current Streaming Locator.
@@ -6586,24 +6711,19 @@ class ListContentKeysResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'content_keys': {'key': 'contentKeys', 'type': '[StreamingLocatorContentKey]'},
+        "content_keys": {"key": "contentKeys", "type": "[StreamingLocatorContentKey]"},
     }
 
-    def __init__(
-        self,
-        *,
-        content_keys: Optional[List["_models.StreamingLocatorContentKey"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, content_keys: Optional[List["_models.StreamingLocatorContentKey"]] = None, **kwargs):
         """
         :keyword content_keys: ContentKeys used by current Streaming Locator.
         :paramtype content_keys: list[~azure.mgmt.media.models.StreamingLocatorContentKey]
         """
-        super(ListContentKeysResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_keys = content_keys
 
 
-class ListEdgePoliciesInput(msrest.serialization.Model):
+class ListEdgePoliciesInput(_serialization.Model):
     """ListEdgePoliciesInput.
 
     :ivar device_id: Unique identifier of the edge device.
@@ -6611,24 +6731,19 @@ class ListEdgePoliciesInput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'device_id': {'key': 'deviceId', 'type': 'str'},
+        "device_id": {"key": "deviceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        device_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, device_id: Optional[str] = None, **kwargs):
         """
         :keyword device_id: Unique identifier of the edge device.
         :paramtype device_id: str
         """
-        super(ListEdgePoliciesInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.device_id = device_id
 
 
-class ListPathsResponse(msrest.serialization.Model):
+class ListPathsResponse(_serialization.Model):
     """Class of response for listPaths action.
 
     :ivar streaming_paths: Streaming Paths supported by current Streaming Locator.
@@ -6638,8 +6753,8 @@ class ListPathsResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'streaming_paths': {'key': 'streamingPaths', 'type': '[StreamingPath]'},
-        'download_paths': {'key': 'downloadPaths', 'type': '[str]'},
+        "streaming_paths": {"key": "streamingPaths", "type": "[StreamingPath]"},
+        "download_paths": {"key": "downloadPaths", "type": "[str]"},
     }
 
     def __init__(
@@ -6655,12 +6770,12 @@ class ListPathsResponse(msrest.serialization.Model):
         :keyword download_paths: Download Paths supported by current Streaming Locator.
         :paramtype download_paths: list[str]
         """
-        super(ListPathsResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.streaming_paths = streaming_paths
         self.download_paths = download_paths
 
 
-class ListStreamingLocatorsResponse(msrest.serialization.Model):
+class ListStreamingLocatorsResponse(_serialization.Model):
     """The Streaming Locators associated with this Asset.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6670,20 +6785,16 @@ class ListStreamingLocatorsResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'streaming_locators': {'readonly': True},
+        "streaming_locators": {"readonly": True},
     }
 
     _attribute_map = {
-        'streaming_locators': {'key': 'streamingLocators', 'type': '[AssetStreamingLocator]'},
+        "streaming_locators": {"key": "streamingLocators", "type": "[AssetStreamingLocator]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ListStreamingLocatorsResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.streaming_locators = None
 
 
@@ -6702,46 +6813,40 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class LiveEvent(TrackedResource):
+class LiveEvent(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """The live event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6756,9 +6861,9 @@ class LiveEvent(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: The system metadata relating to this resource.
     :vartype system_data: ~azure.mgmt.media.models.SystemData
@@ -6781,7 +6886,7 @@ class LiveEvent(TrackedResource):
     :vartype provisioning_state: str
     :ivar resource_state: The resource state of the live event. See
      https://go.microsoft.com/fwlink/?linkid=2139012 for more information. Known values are:
-     "Stopped", "Allocating", "StandBy", "Starting", "Running", "Stopping", "Deleting".
+     "Stopped", "Allocating", "StandBy", "Starting", "Running", "Stopping", and "Deleting".
     :vartype resource_state: str or ~azure.mgmt.media.models.LiveEventResourceState
     :ivar cross_site_access_policies: Live event cross site access policies.
     :vartype cross_site_access_policies: ~azure.mgmt.media.models.CrossSiteAccessPolicies
@@ -6805,37 +6910,37 @@ class LiveEvent(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "created": {"readonly": True},
+        "last_modified": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'input': {'key': 'properties.input', 'type': 'LiveEventInput'},
-        'preview': {'key': 'properties.preview', 'type': 'LiveEventPreview'},
-        'encoding': {'key': 'properties.encoding', 'type': 'LiveEventEncoding'},
-        'transcriptions': {'key': 'properties.transcriptions', 'type': '[LiveEventTranscription]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'cross_site_access_policies': {'key': 'properties.crossSiteAccessPolicies', 'type': 'CrossSiteAccessPolicies'},
-        'use_static_hostname': {'key': 'properties.useStaticHostname', 'type': 'bool'},
-        'hostname_prefix': {'key': 'properties.hostnamePrefix', 'type': 'str'},
-        'stream_options': {'key': 'properties.streamOptions', 'type': '[str]'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "input": {"key": "properties.input", "type": "LiveEventInput"},
+        "preview": {"key": "properties.preview", "type": "LiveEventPreview"},
+        "encoding": {"key": "properties.encoding", "type": "LiveEventEncoding"},
+        "transcriptions": {"key": "properties.transcriptions", "type": "[LiveEventTranscription]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
+        "cross_site_access_policies": {"key": "properties.crossSiteAccessPolicies", "type": "CrossSiteAccessPolicies"},
+        "use_static_hostname": {"key": "properties.useStaticHostname", "type": "bool"},
+        "hostname_prefix": {"key": "properties.hostnamePrefix", "type": "str"},
+        "stream_options": {"key": "properties.streamOptions", "type": "[str]"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "last_modified": {"key": "properties.lastModified", "type": "iso-8601"},
     }
 
     def __init__(
@@ -6855,9 +6960,9 @@ class LiveEvent(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword description: A description for the live event.
         :paramtype description: str
@@ -6890,7 +6995,7 @@ class LiveEvent(TrackedResource):
          and 'LowLatency'.
         :paramtype stream_options: list[str or ~azure.mgmt.media.models.StreamOptionsFlag]
         """
-        super(LiveEvent, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.description = description
         self.input = input
@@ -6907,7 +7012,7 @@ class LiveEvent(TrackedResource):
         self.last_modified = None
 
 
-class LiveEventActionInput(msrest.serialization.Model):
+class LiveEventActionInput(_serialization.Model):
     """The LiveEvent action input parameter definition.
 
     :ivar remove_outputs_on_stop: The flag indicates whether live outputs are automatically deleted
@@ -6916,26 +7021,21 @@ class LiveEventActionInput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'remove_outputs_on_stop': {'key': 'removeOutputsOnStop', 'type': 'bool'},
+        "remove_outputs_on_stop": {"key": "removeOutputsOnStop", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        remove_outputs_on_stop: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, remove_outputs_on_stop: Optional[bool] = None, **kwargs):
         """
         :keyword remove_outputs_on_stop: The flag indicates whether live outputs are automatically
          deleted when live event is being stopped. Deleting live outputs do not delete the underlying
          assets.
         :paramtype remove_outputs_on_stop: bool
         """
-        super(LiveEventActionInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.remove_outputs_on_stop = remove_outputs_on_stop
 
 
-class LiveEventEncoding(msrest.serialization.Model):
+class LiveEventEncoding(_serialization.Model):
     """Specifies the live event type and optional encoding settings for encoding live events.
 
     :ivar encoding_type: Live event type. When encodingType is set to PassthroughBasic or
@@ -6944,7 +7044,7 @@ class LiveEventEncoding(msrest.serialization.Model):
      incoming stream into multiple bitrates or layers. See
      https://go.microsoft.com/fwlink/?linkid=2095101 for more information. This property cannot be
      modified after the live event is created. Known values are: "None", "Standard", "Premium1080p",
-     "PassthroughBasic", "PassthroughStandard".
+     "PassthroughBasic", and "PassthroughStandard".
     :vartype encoding_type: str or ~azure.mgmt.media.models.LiveEventEncodingType
     :ivar preset_name: The optional encoding preset name, used when encodingType is not None. This
      value is specified at creation time and cannot be updated. If the encodingType is set to
@@ -6952,7 +7052,7 @@ class LiveEventEncoding(msrest.serialization.Model):
      Premium1080p, the default preset is ‘Default1080p’.
     :vartype preset_name: str
     :ivar stretch_mode: Specifies how the input video will be resized to fit the desired output
-     resolution(s). Default is None. Known values are: "None", "AutoSize", "AutoFit".
+     resolution(s). Default is None. Known values are: "None", "AutoSize", and "AutoFit".
     :vartype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
     :ivar key_frame_interval: Use an ISO 8601 time value between 0.5 to 20 seconds to specify the
      output fragment length for the video and audio tracks of an encoding live event. For example,
@@ -6964,10 +7064,10 @@ class LiveEventEncoding(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'encoding_type': {'key': 'encodingType', 'type': 'str'},
-        'preset_name': {'key': 'presetName', 'type': 'str'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
-        'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
+        "encoding_type": {"key": "encodingType", "type": "str"},
+        "preset_name": {"key": "presetName", "type": "str"},
+        "stretch_mode": {"key": "stretchMode", "type": "str"},
+        "key_frame_interval": {"key": "keyFrameInterval", "type": "duration"},
     }
 
     def __init__(
@@ -6986,7 +7086,7 @@ class LiveEventEncoding(msrest.serialization.Model):
          incoming stream into multiple bitrates or layers. See
          https://go.microsoft.com/fwlink/?linkid=2095101 for more information. This property cannot be
          modified after the live event is created. Known values are: "None", "Standard", "Premium1080p",
-         "PassthroughBasic", "PassthroughStandard".
+         "PassthroughBasic", and "PassthroughStandard".
         :paramtype encoding_type: str or ~azure.mgmt.media.models.LiveEventEncodingType
         :keyword preset_name: The optional encoding preset name, used when encodingType is not None.
          This value is specified at creation time and cannot be updated. If the encodingType is set to
@@ -6994,7 +7094,7 @@ class LiveEventEncoding(msrest.serialization.Model):
          Premium1080p, the default preset is ‘Default1080p’.
         :paramtype preset_name: str
         :keyword stretch_mode: Specifies how the input video will be resized to fit the desired output
-         resolution(s). Default is None. Known values are: "None", "AutoSize", "AutoFit".
+         resolution(s). Default is None. Known values are: "None", "AutoSize", and "AutoFit".
         :paramtype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
         :keyword key_frame_interval: Use an ISO 8601 time value between 0.5 to 20 seconds to specify
          the output fragment length for the video and audio tracks of an encoding live event. For
@@ -7004,14 +7104,14 @@ class LiveEventEncoding(msrest.serialization.Model):
          pass-through live events.
         :paramtype key_frame_interval: ~datetime.timedelta
         """
-        super(LiveEventEncoding, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.encoding_type = encoding_type
         self.preset_name = preset_name
         self.stretch_mode = stretch_mode
         self.key_frame_interval = key_frame_interval
 
 
-class LiveEventEndpoint(msrest.serialization.Model):
+class LiveEventEndpoint(_serialization.Model):
     """The live event endpoint.
 
     :ivar protocol: The endpoint protocol.
@@ -7021,35 +7121,29 @@ class LiveEventEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'url': {'key': 'url', 'type': 'str'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "url": {"key": "url", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        protocol: Optional[str] = None,
-        url: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, protocol: Optional[str] = None, url: Optional[str] = None, **kwargs):
         """
         :keyword protocol: The endpoint protocol.
         :paramtype protocol: str
         :keyword url: The endpoint URL.
         :paramtype url: str
         """
-        super(LiveEventEndpoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.protocol = protocol
         self.url = url
 
 
-class LiveEventInput(msrest.serialization.Model):
+class LiveEventInput(_serialization.Model):
     """The live event input.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar streaming_protocol: Required. The input protocol for the live event. This is specified at
-     creation time and cannot be updated. Known values are: "FragmentedMP4", "RTMP".
+    :ivar streaming_protocol: The input protocol for the live event. This is specified at creation
+     time and cannot be updated. Required. Known values are: "FragmentedMP4" and "RTMP".
     :vartype streaming_protocol: str or ~azure.mgmt.media.models.LiveEventInputProtocol
     :ivar access_control: Access control for live event input.
     :vartype access_control: ~azure.mgmt.media.models.LiveEventInputAccessControl
@@ -7066,15 +7160,15 @@ class LiveEventInput(msrest.serialization.Model):
     """
 
     _validation = {
-        'streaming_protocol': {'required': True},
+        "streaming_protocol": {"required": True},
     }
 
     _attribute_map = {
-        'streaming_protocol': {'key': 'streamingProtocol', 'type': 'str'},
-        'access_control': {'key': 'accessControl', 'type': 'LiveEventInputAccessControl'},
-        'key_frame_interval_duration': {'key': 'keyFrameIntervalDuration', 'type': 'str'},
-        'access_token': {'key': 'accessToken', 'type': 'str'},
-        'endpoints': {'key': 'endpoints', 'type': '[LiveEventEndpoint]'},
+        "streaming_protocol": {"key": "streamingProtocol", "type": "str"},
+        "access_control": {"key": "accessControl", "type": "LiveEventInputAccessControl"},
+        "key_frame_interval_duration": {"key": "keyFrameIntervalDuration", "type": "str"},
+        "access_token": {"key": "accessToken", "type": "str"},
+        "endpoints": {"key": "endpoints", "type": "[LiveEventEndpoint]"},
     }
 
     def __init__(
@@ -7088,8 +7182,8 @@ class LiveEventInput(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword streaming_protocol: Required. The input protocol for the live event. This is specified
-         at creation time and cannot be updated. Known values are: "FragmentedMP4", "RTMP".
+        :keyword streaming_protocol: The input protocol for the live event. This is specified at
+         creation time and cannot be updated. Required. Known values are: "FragmentedMP4" and "RTMP".
         :paramtype streaming_protocol: str or ~azure.mgmt.media.models.LiveEventInputProtocol
         :keyword access_control: Access control for live event input.
         :paramtype access_control: ~azure.mgmt.media.models.LiveEventInputAccessControl
@@ -7104,7 +7198,7 @@ class LiveEventInput(msrest.serialization.Model):
         :keyword endpoints: The input endpoints for the live event.
         :paramtype endpoints: list[~azure.mgmt.media.models.LiveEventEndpoint]
         """
-        super(LiveEventInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.streaming_protocol = streaming_protocol
         self.access_control = access_control
         self.key_frame_interval_duration = key_frame_interval_duration
@@ -7112,7 +7206,7 @@ class LiveEventInput(msrest.serialization.Model):
         self.endpoints = endpoints
 
 
-class LiveEventInputAccessControl(msrest.serialization.Model):
+class LiveEventInputAccessControl(_serialization.Model):
     """The IP access control for live event input.
 
     :ivar ip: The IP access control properties.
@@ -7120,24 +7214,19 @@ class LiveEventInputAccessControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ip': {'key': 'ip', 'type': 'IPAccessControl'},
+        "ip": {"key": "ip", "type": "IPAccessControl"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip: Optional["_models.IPAccessControl"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip: Optional["_models.IPAccessControl"] = None, **kwargs):
         """
         :keyword ip: The IP access control properties.
         :paramtype ip: ~azure.mgmt.media.models.IPAccessControl
         """
-        super(LiveEventInputAccessControl, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ip = ip
 
 
-class LiveEventInputTrackSelection(msrest.serialization.Model):
+class LiveEventInputTrackSelection(_serialization.Model):
     """A track selection condition. This property is reserved for future use, any value set on this property will be ignored.
 
     :ivar property: Property name to select. This property is reserved for future use, any value
@@ -7152,18 +7241,13 @@ class LiveEventInputTrackSelection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'property': {'key': 'property', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "property": {"key": "property", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        property: Optional[str] = None,
-        operation: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
+        self, *, property: Optional[str] = None, operation: Optional[str] = None, value: Optional[str] = None, **kwargs
     ):
         """
         :keyword property: Property name to select. This property is reserved for future use, any value
@@ -7176,13 +7260,13 @@ class LiveEventInputTrackSelection(msrest.serialization.Model):
          set on this property will be ignored.
         :paramtype value: str
         """
-        super(LiveEventInputTrackSelection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.property = property
         self.operation = operation
         self.value = value
 
 
-class LiveEventListResult(msrest.serialization.Model):
+class LiveEventListResult(_serialization.Model):
     """The LiveEvent list result.
 
     :ivar value: The result of the List Live Event operation.
@@ -7195,9 +7279,9 @@ class LiveEventListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LiveEvent]'},
-        'odata_count': {'key': '@odata\\.count', 'type': 'int'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LiveEvent]"},
+        "odata_count": {"key": "@odata\\.count", "type": "int"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -7217,46 +7301,41 @@ class LiveEventListResult(msrest.serialization.Model):
          incomplete list of live outputs.
         :paramtype odata_next_link: str
         """
-        super(LiveEventListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_count = odata_count
         self.odata_next_link = odata_next_link
 
 
-class LiveEventOutputTranscriptionTrack(msrest.serialization.Model):
+class LiveEventOutputTranscriptionTrack(_serialization.Model):
     """Describes a transcription track in the output of a live event, generated using speech-to-text transcription. This property is reserved for future use, any value set on this property will be ignored.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar track_name: Required. The output track name. This property is reserved for future use,
-     any value set on this property will be ignored.
+    :ivar track_name: The output track name. This property is reserved for future use, any value
+     set on this property will be ignored. Required.
     :vartype track_name: str
     """
 
     _validation = {
-        'track_name': {'required': True},
+        "track_name": {"required": True},
     }
 
     _attribute_map = {
-        'track_name': {'key': 'trackName', 'type': 'str'},
+        "track_name": {"key": "trackName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        track_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, track_name: str, **kwargs):
         """
-        :keyword track_name: Required. The output track name. This property is reserved for future use,
-         any value set on this property will be ignored.
+        :keyword track_name: The output track name. This property is reserved for future use, any value
+         set on this property will be ignored. Required.
         :paramtype track_name: str
         """
-        super(LiveEventOutputTranscriptionTrack, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.track_name = track_name
 
 
-class LiveEventPreview(msrest.serialization.Model):
+class LiveEventPreview(_serialization.Model):
     """Live event preview settings.
 
     :ivar endpoints: The endpoints for preview. Do not share the preview URL with the live event
@@ -7281,11 +7360,11 @@ class LiveEventPreview(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'endpoints': {'key': 'endpoints', 'type': '[LiveEventEndpoint]'},
-        'access_control': {'key': 'accessControl', 'type': 'LiveEventPreviewAccessControl'},
-        'preview_locator': {'key': 'previewLocator', 'type': 'str'},
-        'streaming_policy_name': {'key': 'streamingPolicyName', 'type': 'str'},
-        'alternative_media_id': {'key': 'alternativeMediaId', 'type': 'str'},
+        "endpoints": {"key": "endpoints", "type": "[LiveEventEndpoint]"},
+        "access_control": {"key": "accessControl", "type": "LiveEventPreviewAccessControl"},
+        "preview_locator": {"key": "previewLocator", "type": "str"},
+        "streaming_policy_name": {"key": "streamingPolicyName", "type": "str"},
+        "alternative_media_id": {"key": "alternativeMediaId", "type": "str"},
     }
 
     def __init__(
@@ -7319,7 +7398,7 @@ class LiveEventPreview(msrest.serialization.Model):
          field.
         :paramtype alternative_media_id: str
         """
-        super(LiveEventPreview, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.endpoints = endpoints
         self.access_control = access_control
         self.preview_locator = preview_locator
@@ -7327,7 +7406,7 @@ class LiveEventPreview(msrest.serialization.Model):
         self.alternative_media_id = alternative_media_id
 
 
-class LiveEventPreviewAccessControl(msrest.serialization.Model):
+class LiveEventPreviewAccessControl(_serialization.Model):
     """The IP access control for the live event preview endpoint.
 
     :ivar ip: The IP access control properties.
@@ -7335,24 +7414,19 @@ class LiveEventPreviewAccessControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ip': {'key': 'ip', 'type': 'IPAccessControl'},
+        "ip": {"key": "ip", "type": "IPAccessControl"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip: Optional["_models.IPAccessControl"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip: Optional["_models.IPAccessControl"] = None, **kwargs):
         """
         :keyword ip: The IP access control properties.
         :paramtype ip: ~azure.mgmt.media.models.IPAccessControl
         """
-        super(LiveEventPreviewAccessControl, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ip = ip
 
 
-class LiveEventTranscription(msrest.serialization.Model):
+class LiveEventTranscription(_serialization.Model):
     """Describes the transcription tracks in the output of a live event, generated using speech-to-text transcription. This property is reserved for future use, any value set on this property will be ignored.
 
     :ivar language: Specifies the language (locale) to be used for speech-to-text transcription –
@@ -7371,9 +7445,9 @@ class LiveEventTranscription(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'language': {'key': 'language', 'type': 'str'},
-        'input_track_selection': {'key': 'inputTrackSelection', 'type': '[LiveEventInputTrackSelection]'},
-        'output_transcription_track': {'key': 'outputTranscriptionTrack', 'type': 'LiveEventOutputTranscriptionTrack'},
+        "language": {"key": "language", "type": "str"},
+        "input_track_selection": {"key": "inputTrackSelection", "type": "[LiveEventInputTrackSelection]"},
+        "output_transcription_track": {"key": "outputTranscriptionTrack", "type": "LiveEventOutputTranscriptionTrack"},
     }
 
     def __init__(
@@ -7400,13 +7474,13 @@ class LiveEventTranscription(msrest.serialization.Model):
         :paramtype output_transcription_track:
          ~azure.mgmt.media.models.LiveEventOutputTranscriptionTrack
         """
-        super(LiveEventTranscription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.language = language
         self.input_track_selection = input_track_selection
         self.output_transcription_track = output_transcription_track
 
 
-class LiveOutput(ProxyResource):
+class LiveOutput(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The Live Output.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7430,6 +7504,12 @@ class LiveOutput(ProxyResource):
      maximum content length for the rewind window. For example, use PT1H30M to indicate 1 hour and
      30 minutes of archive window.
     :vartype archive_window_length: ~datetime.timedelta
+    :ivar rewind_window_length: ISO 8601 time between 1 minute to the duration of
+     archiveWindowLength to control seek-able window length during Live. The service won't use this
+     property once LiveOutput stops. The archived VOD will have full content with original
+     ArchiveWindowLength. For example, use PT1H30M to indicate 1 hour and 30 minutes of rewind
+     window length. Service will use implicit default value 30m only if Live Event enables LL.
+    :vartype rewind_window_length: ~datetime.timedelta
     :ivar manifest_name: The manifest file name. If not provided, the service will generate one
      automatically.
     :vartype manifest_name: str
@@ -7437,7 +7517,7 @@ class LiveOutput(ProxyResource):
     :vartype hls: ~azure.mgmt.media.models.Hls
     :ivar output_snap_time: The initial timestamp that the live output will start at, any content
      before this value will not be archived.
-    :vartype output_snap_time: long
+    :vartype output_snap_time: int
     :ivar created: The creation time the live output.
     :vartype created: ~datetime.datetime
     :ivar last_modified: The time the live output was last modified.
@@ -7445,36 +7525,37 @@ class LiveOutput(ProxyResource):
     :ivar provisioning_state: The provisioning state of the live output.
     :vartype provisioning_state: str
     :ivar resource_state: The resource state of the live output. Known values are: "Creating",
-     "Running", "Deleting".
+     "Running", and "Deleting".
     :vartype resource_state: str or ~azure.mgmt.media.models.LiveOutputResourceState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'resource_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created": {"readonly": True},
+        "last_modified": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "resource_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'asset_name': {'key': 'properties.assetName', 'type': 'str'},
-        'archive_window_length': {'key': 'properties.archiveWindowLength', 'type': 'duration'},
-        'manifest_name': {'key': 'properties.manifestName', 'type': 'str'},
-        'hls': {'key': 'properties.hls', 'type': 'Hls'},
-        'output_snap_time': {'key': 'properties.outputSnapTime', 'type': 'long'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "description": {"key": "properties.description", "type": "str"},
+        "asset_name": {"key": "properties.assetName", "type": "str"},
+        "archive_window_length": {"key": "properties.archiveWindowLength", "type": "duration"},
+        "rewind_window_length": {"key": "properties.rewindWindowLength", "type": "duration"},
+        "manifest_name": {"key": "properties.manifestName", "type": "str"},
+        "hls": {"key": "properties.hls", "type": "Hls"},
+        "output_snap_time": {"key": "properties.outputSnapTime", "type": "int"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "last_modified": {"key": "properties.lastModified", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
     }
 
     def __init__(
@@ -7483,6 +7564,7 @@ class LiveOutput(ProxyResource):
         description: Optional[str] = None,
         asset_name: Optional[str] = None,
         archive_window_length: Optional[datetime.timedelta] = None,
+        rewind_window_length: Optional[datetime.timedelta] = None,
         manifest_name: Optional[str] = None,
         hls: Optional["_models.Hls"] = None,
         output_snap_time: Optional[int] = None,
@@ -7498,6 +7580,12 @@ class LiveOutput(ProxyResource):
          the maximum content length for the rewind window. For example, use PT1H30M to indicate 1 hour
          and 30 minutes of archive window.
         :paramtype archive_window_length: ~datetime.timedelta
+        :keyword rewind_window_length: ISO 8601 time between 1 minute to the duration of
+         archiveWindowLength to control seek-able window length during Live. The service won't use this
+         property once LiveOutput stops. The archived VOD will have full content with original
+         ArchiveWindowLength. For example, use PT1H30M to indicate 1 hour and 30 minutes of rewind
+         window length. Service will use implicit default value 30m only if Live Event enables LL.
+        :paramtype rewind_window_length: ~datetime.timedelta
         :keyword manifest_name: The manifest file name. If not provided, the service will generate one
          automatically.
         :paramtype manifest_name: str
@@ -7505,13 +7593,14 @@ class LiveOutput(ProxyResource):
         :paramtype hls: ~azure.mgmt.media.models.Hls
         :keyword output_snap_time: The initial timestamp that the live output will start at, any
          content before this value will not be archived.
-        :paramtype output_snap_time: long
+        :paramtype output_snap_time: int
         """
-        super(LiveOutput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.description = description
         self.asset_name = asset_name
         self.archive_window_length = archive_window_length
+        self.rewind_window_length = rewind_window_length
         self.manifest_name = manifest_name
         self.hls = hls
         self.output_snap_time = output_snap_time
@@ -7521,7 +7610,7 @@ class LiveOutput(ProxyResource):
         self.resource_state = None
 
 
-class LiveOutputListResult(msrest.serialization.Model):
+class LiveOutputListResult(_serialization.Model):
     """The LiveOutput list result.
 
     :ivar value: The result of the List LiveOutput operation.
@@ -7534,9 +7623,9 @@ class LiveOutputListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LiveOutput]'},
-        'odata_count': {'key': '@odata\\.count', 'type': 'int'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LiveOutput]"},
+        "odata_count": {"key": "@odata\\.count", "type": "int"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -7556,13 +7645,13 @@ class LiveOutputListResult(msrest.serialization.Model):
          incomplete list of live outputs.
         :paramtype odata_next_link: str
         """
-        super(LiveOutputListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_count = odata_count
         self.odata_next_link = odata_next_link
 
 
-class LogSpecification(msrest.serialization.Model):
+class LogSpecification(_serialization.Model):
     """A diagnostic log emitted by service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7576,30 +7665,26 @@ class LogSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'blob_duration': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "blob_duration": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LogSpecification, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display_name = None
         self.blob_duration = None
 
 
-class MediaService(TrackedResource):
+class MediaService(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A Media Services account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7614,9 +7699,9 @@ class MediaService(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: The system metadata relating to this resource.
     :vartype system_data: ~azure.mgmt.media.models.SystemData
@@ -7626,17 +7711,17 @@ class MediaService(TrackedResource):
     :vartype media_service_id: str
     :ivar storage_accounts: The storage accounts for this resource.
     :vartype storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
-    :ivar storage_authentication: Known values are: "System", "ManagedIdentity".
+    :ivar storage_authentication: Known values are: "System" and "ManagedIdentity".
     :vartype storage_authentication: str or ~azure.mgmt.media.models.StorageAuthentication
     :ivar encryption: The account encryption properties.
     :vartype encryption: ~azure.mgmt.media.models.AccountEncryption
     :ivar key_delivery: The Key Delivery properties for Media Services account.
     :vartype key_delivery: ~azure.mgmt.media.models.KeyDelivery
     :ivar public_network_access: Whether or not public network access is allowed for resources
-     under the Media Services account. Known values are: "Enabled", "Disabled".
+     under the Media Services account. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.media.models.PublicNetworkAccess
     :ivar provisioning_state: Provisioning state of the Media Services account. Known values are:
-     "Failed", "InProgress", "Succeeded".
+     "Failed", "InProgress", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.media.models.ProvisioningState
     :ivar private_endpoint_connections: The Private Endpoint Connections created for the Media
      Service account.
@@ -7644,32 +7729,35 @@ class MediaService(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'media_service_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "media_service_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
-        'media_service_id': {'key': 'properties.mediaServiceId', 'type': 'str'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
-        'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
-        'key_delivery': {'key': 'properties.keyDelivery', 'type': 'KeyDelivery'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "MediaServiceIdentity"},
+        "media_service_id": {"key": "properties.mediaServiceId", "type": "str"},
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[StorageAccount]"},
+        "storage_authentication": {"key": "properties.storageAuthentication", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
+        "key_delivery": {"key": "properties.keyDelivery", "type": "KeyDelivery"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
     def __init__(
@@ -7686,25 +7774,25 @@ class MediaService(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword identity: The Managed Identity for the Media Services account.
         :paramtype identity: ~azure.mgmt.media.models.MediaServiceIdentity
         :keyword storage_accounts: The storage accounts for this resource.
         :paramtype storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
-        :keyword storage_authentication: Known values are: "System", "ManagedIdentity".
+        :keyword storage_authentication: Known values are: "System" and "ManagedIdentity".
         :paramtype storage_authentication: str or ~azure.mgmt.media.models.StorageAuthentication
         :keyword encryption: The account encryption properties.
         :paramtype encryption: ~azure.mgmt.media.models.AccountEncryption
         :keyword key_delivery: The Key Delivery properties for Media Services account.
         :paramtype key_delivery: ~azure.mgmt.media.models.KeyDelivery
         :keyword public_network_access: Whether or not public network access is allowed for resources
-         under the Media Services account. Known values are: "Enabled", "Disabled".
+         under the Media Services account. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access: str or ~azure.mgmt.media.models.PublicNetworkAccess
         """
-        super(MediaService, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.identity = identity
         self.media_service_id = None
@@ -7717,7 +7805,7 @@ class MediaService(TrackedResource):
         self.private_endpoint_connections = None
 
 
-class MediaServiceCollection(msrest.serialization.Model):
+class MediaServiceCollection(_serialization.Model):
     """A collection of MediaService items.
 
     :ivar value: A collection of MediaService items.
@@ -7728,16 +7816,12 @@ class MediaServiceCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MediaService]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MediaService]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.MediaService"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.MediaService"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A collection of MediaService items.
@@ -7746,19 +7830,19 @@ class MediaServiceCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(MediaServiceCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class MediaServiceIdentity(msrest.serialization.Model):
+class MediaServiceIdentity(_serialization.Model):
     """MediaServiceIdentity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The identity type.
+    :ivar type: The identity type. Required.
     :vartype type: str
     :ivar principal_id: The Principal ID of the identity.
     :vartype principal_id: str
@@ -7770,16 +7854,16 @@ class MediaServiceIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "type": {"required": True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedManagedIdentity}'},
+        "type": {"key": "type", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedManagedIdentity}"},
     }
 
     def __init__(
@@ -7790,25 +7874,25 @@ class MediaServiceIdentity(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword type: Required. The identity type.
+        :keyword type: The identity type. Required.
         :paramtype type: str
         :keyword user_assigned_identities: The user assigned managed identities.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.media.models.UserAssignedManagedIdentity]
         """
-        super(MediaServiceIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.principal_id = None
         self.tenant_id = None
         self.user_assigned_identities = user_assigned_identities
 
 
-class MediaServiceOperationStatus(msrest.serialization.Model):
+class MediaServiceOperationStatus(_serialization.Model):
     """Status of media service operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Operation identifier.
+    :ivar name: Operation identifier. Required.
     :vartype name: str
     :ivar id: Operation resource ID.
     :vartype id: str
@@ -7816,24 +7900,24 @@ class MediaServiceOperationStatus(msrest.serialization.Model):
     :vartype start_time: ~datetime.datetime
     :ivar end_time: Operation end time.
     :vartype end_time: ~datetime.datetime
-    :ivar status: Required. Operation status.
+    :ivar status: Operation status. Required.
     :vartype status: str
     :ivar error: The error detail.
     :vartype error: ~azure.mgmt.media.models.ErrorDetail
     """
 
     _validation = {
-        'name': {'required': True},
-        'status': {'required': True},
+        "name": {"required": True},
+        "status": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
@@ -7841,14 +7925,14 @@ class MediaServiceOperationStatus(msrest.serialization.Model):
         *,
         name: str,
         status: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. Operation identifier.
+        :keyword name: Operation identifier. Required.
         :paramtype name: str
         :keyword id: Operation resource ID.
         :paramtype id: str
@@ -7856,12 +7940,12 @@ class MediaServiceOperationStatus(msrest.serialization.Model):
         :paramtype start_time: ~datetime.datetime
         :keyword end_time: Operation end time.
         :paramtype end_time: ~datetime.datetime
-        :keyword status: Required. Operation status.
+        :keyword status: Operation status. Required.
         :paramtype status: str
         :keyword error: The error detail.
         :paramtype error: ~azure.mgmt.media.models.ErrorDetail
         """
-        super(MediaServiceOperationStatus, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.id = id
         self.start_time = start_time
@@ -7870,12 +7954,12 @@ class MediaServiceOperationStatus(msrest.serialization.Model):
         self.error = error
 
 
-class MediaServiceUpdate(msrest.serialization.Model):
+class MediaServiceUpdate(_serialization.Model):
     """A Media Services account update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: The Managed Identity for the Media Services account.
     :vartype identity: ~azure.mgmt.media.models.MediaServiceIdentity
@@ -7883,17 +7967,17 @@ class MediaServiceUpdate(msrest.serialization.Model):
     :vartype media_service_id: str
     :ivar storage_accounts: The storage accounts for this resource.
     :vartype storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
-    :ivar storage_authentication: Known values are: "System", "ManagedIdentity".
+    :ivar storage_authentication: Known values are: "System" and "ManagedIdentity".
     :vartype storage_authentication: str or ~azure.mgmt.media.models.StorageAuthentication
     :ivar encryption: The account encryption properties.
     :vartype encryption: ~azure.mgmt.media.models.AccountEncryption
     :ivar key_delivery: The Key Delivery properties for Media Services account.
     :vartype key_delivery: ~azure.mgmt.media.models.KeyDelivery
     :ivar public_network_access: Whether or not public network access is allowed for resources
-     under the Media Services account. Known values are: "Enabled", "Disabled".
+     under the Media Services account. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.media.models.PublicNetworkAccess
     :ivar provisioning_state: Provisioning state of the Media Services account. Known values are:
-     "Failed", "InProgress", "Succeeded".
+     "Failed", "InProgress", and "Succeeded".
     :vartype provisioning_state: str or ~azure.mgmt.media.models.ProvisioningState
     :ivar private_endpoint_connections: The Private Endpoint Connections created for the Media
      Service account.
@@ -7901,22 +7985,25 @@ class MediaServiceUpdate(msrest.serialization.Model):
     """
 
     _validation = {
-        'media_service_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
+        "media_service_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'MediaServiceIdentity'},
-        'media_service_id': {'key': 'properties.mediaServiceId', 'type': 'str'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
-        'storage_authentication': {'key': 'properties.storageAuthentication', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
-        'key_delivery': {'key': 'properties.keyDelivery', 'type': 'KeyDelivery'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "MediaServiceIdentity"},
+        "media_service_id": {"key": "properties.mediaServiceId", "type": "str"},
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[StorageAccount]"},
+        "storage_authentication": {"key": "properties.storageAuthentication", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
+        "key_delivery": {"key": "properties.keyDelivery", "type": "KeyDelivery"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
     def __init__(
@@ -7932,23 +8019,23 @@ class MediaServiceUpdate(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword identity: The Managed Identity for the Media Services account.
         :paramtype identity: ~azure.mgmt.media.models.MediaServiceIdentity
         :keyword storage_accounts: The storage accounts for this resource.
         :paramtype storage_accounts: list[~azure.mgmt.media.models.StorageAccount]
-        :keyword storage_authentication: Known values are: "System", "ManagedIdentity".
+        :keyword storage_authentication: Known values are: "System" and "ManagedIdentity".
         :paramtype storage_authentication: str or ~azure.mgmt.media.models.StorageAuthentication
         :keyword encryption: The account encryption properties.
         :paramtype encryption: ~azure.mgmt.media.models.AccountEncryption
         :keyword key_delivery: The Key Delivery properties for Media Services account.
         :paramtype key_delivery: ~azure.mgmt.media.models.KeyDelivery
         :keyword public_network_access: Whether or not public network access is allowed for resources
-         under the Media Services account. Known values are: "Enabled", "Disabled".
+         under the Media Services account. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access: str or ~azure.mgmt.media.models.PublicNetworkAccess
         """
-        super(MediaServiceUpdate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
         self.media_service_id = None
@@ -7961,7 +8048,7 @@ class MediaServiceUpdate(msrest.serialization.Model):
         self.private_endpoint_connections = None
 
 
-class MetricDimension(msrest.serialization.Model):
+class MetricDimension(_serialization.Model):
     """A metric dimension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7975,30 +8062,26 @@ class MetricDimension(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'to_be_exported_for_shoebox': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "to_be_exported_for_shoebox": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MetricDimension, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display_name = None
         self.to_be_exported_for_shoebox = None
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A metric emitted by service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8009,13 +8092,13 @@ class MetricSpecification(msrest.serialization.Model):
     :vartype display_name: str
     :ivar display_description: The metric display description.
     :vartype display_description: str
-    :ivar unit: The metric unit. Known values are: "Bytes", "Count", "Milliseconds".
+    :ivar unit: The metric unit. Known values are: "Bytes", "Count", and "Milliseconds".
     :vartype unit: str or ~azure.mgmt.media.models.MetricUnit
-    :ivar aggregation_type: The metric aggregation type. Known values are: "Average", "Count",
+    :ivar aggregation_type: The metric aggregation type. Known values are: "Average", "Count", and
      "Total".
     :vartype aggregation_type: str or ~azure.mgmt.media.models.MetricAggregationType
     :ivar lock_aggregation_type: The metric lock aggregation type. Known values are: "Average",
-     "Count", "Total".
+     "Count", and "Total".
     :vartype lock_aggregation_type: str or ~azure.mgmt.media.models.MetricAggregationType
     :ivar supported_aggregation_types: Supported aggregation types.
     :vartype supported_aggregation_types: list[str]
@@ -8032,45 +8115,40 @@ class MetricSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'display_description': {'readonly': True},
-        'unit': {'readonly': True},
-        'aggregation_type': {'readonly': True},
-        'lock_aggregation_type': {'readonly': True},
-        'dimensions': {'readonly': True},
-        'enable_regional_mdm_account': {'readonly': True},
-        'source_mdm_account': {'readonly': True},
-        'source_mdm_namespace': {'readonly': True},
-        'supported_time_grain_types': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "display_description": {"readonly": True},
+        "unit": {"readonly": True},
+        "aggregation_type": {"readonly": True},
+        "lock_aggregation_type": {"readonly": True},
+        "dimensions": {"readonly": True},
+        "enable_regional_mdm_account": {"readonly": True},
+        "source_mdm_account": {"readonly": True},
+        "source_mdm_namespace": {"readonly": True},
+        "supported_time_grain_types": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'lock_aggregation_type': {'key': 'lockAggregationType', 'type': 'str'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
-        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
-        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
-        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
-        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "lock_aggregation_type": {"key": "lockAggregationType", "type": "str"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
+        "dimensions": {"key": "dimensions", "type": "[MetricDimension]"},
+        "enable_regional_mdm_account": {"key": "enableRegionalMdmAccount", "type": "bool"},
+        "source_mdm_account": {"key": "sourceMdmAccount", "type": "str"},
+        "source_mdm_namespace": {"key": "sourceMdmNamespace", "type": "str"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        supported_aggregation_types: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, supported_aggregation_types: Optional[List[str]] = None, **kwargs):
         """
         :keyword supported_aggregation_types: Supported aggregation types.
         :paramtype supported_aggregation_types: list[str]
         """
-        super(MetricSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.display_name = None
         self.display_description = None
@@ -8088,23 +8166,24 @@ class MetricSpecification(msrest.serialization.Model):
 class MultiBitrateFormat(Format):
     """Describes the properties for producing a collection of GOP aligned multi-bitrate files. The default behavior is to produce one output file for each video layer which is muxed together with all the audios. The exact output files produced can be controlled by specifying the outputFiles collection.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: Mp4Format, TransportStreamFormat.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    Mp4Format, TransportStreamFormat
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: Required. The pattern of the file names for the generated output files.
-     The following macros are supported in the file name: {Basename} - An expansion macro that will
-     use the name of the input video file. If the base name(the file suffix is not included) of the
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
+     following macros are supported in the file name: {Basename} - An expansion macro that will use
+     the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     :ivar output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -8112,46 +8191,43 @@ class MultiBitrateFormat(Format):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'filename_pattern': {'required': True},
+        "odata_type": {"required": True},
+        "filename_pattern": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'filename_pattern': {'key': 'filenamePattern', 'type': 'str'},
-        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "filename_pattern": {"key": "filenamePattern", "type": "str"},
+        "output_files": {"key": "outputFiles", "type": "[OutputFile]"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.Mp4Format': 'Mp4Format', '#Microsoft.Media.TransportStreamFormat': 'TransportStreamFormat'}
+        "odata_type": {
+            "#Microsoft.Media.Mp4Format": "Mp4Format",
+            "#Microsoft.Media.TransportStreamFormat": "TransportStreamFormat",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        filename_pattern: str,
-        output_files: Optional[List["_models.OutputFile"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, filename_pattern: str, output_files: Optional[List["_models.OutputFile"]] = None, **kwargs):
         """
-        :keyword filename_pattern: Required. The pattern of the file names for the generated output
-         files. The following macros are supported in the file name: {Basename} - An expansion macro
-         that will use the name of the input video file. If the base name(the file suffix is not
-         included) of the input video file is less than 32 characters long, the base name of input video
-         files will be used. If the length of base name of the input video file exceeds 32 characters,
-         the base name is truncated to the first 32 characters in total length. {Extension} - The
-         appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
-         - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-         bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
-         {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
-         from the filename.
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
+         following macros are supported in the file name: {Basename} - An expansion macro that will use
+         the name of the input video file. If the base name(the file suffix is not included) of the
+         input video file is less than 32 characters long, the base name of input video files will be
+         used. If the length of base name of the input video file exceeds 32 characters, the base name
+         is truncated to the first 32 characters in total length. {Extension} - The appropriate
+         extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         :keyword output_files: The list of output files to produce.  Each entry in the list is a set of
          audio and video layer labels to be muxed together .
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
-        super(MultiBitrateFormat, self).__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = '#Microsoft.Media.MultiBitrateFormat'  # type: str
+        super().__init__(filename_pattern=filename_pattern, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.MultiBitrateFormat"
         self.output_files = output_files
 
 
@@ -8160,18 +8236,19 @@ class Mp4Format(MultiBitrateFormat):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: Required. The pattern of the file names for the generated output files.
-     The following macros are supported in the file name: {Basename} - An expansion macro that will
-     use the name of the input video file. If the base name(the file suffix is not included) of the
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
+     following macros are supported in the file name: {Basename} - An expansion macro that will use
+     the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     :ivar output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -8179,45 +8256,39 @@ class Mp4Format(MultiBitrateFormat):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'filename_pattern': {'required': True},
+        "odata_type": {"required": True},
+        "filename_pattern": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'filename_pattern': {'key': 'filenamePattern', 'type': 'str'},
-        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "filename_pattern": {"key": "filenamePattern", "type": "str"},
+        "output_files": {"key": "outputFiles", "type": "[OutputFile]"},
     }
 
-    def __init__(
-        self,
-        *,
-        filename_pattern: str,
-        output_files: Optional[List["_models.OutputFile"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, filename_pattern: str, output_files: Optional[List["_models.OutputFile"]] = None, **kwargs):
         """
-        :keyword filename_pattern: Required. The pattern of the file names for the generated output
-         files. The following macros are supported in the file name: {Basename} - An expansion macro
-         that will use the name of the input video file. If the base name(the file suffix is not
-         included) of the input video file is less than 32 characters long, the base name of input video
-         files will be used. If the length of base name of the input video file exceeds 32 characters,
-         the base name is truncated to the first 32 characters in total length. {Extension} - The
-         appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
-         - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-         bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
-         {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
-         from the filename.
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
+         following macros are supported in the file name: {Basename} - An expansion macro that will use
+         the name of the input video file. If the base name(the file suffix is not included) of the
+         input video file is less than 32 characters long, the base name of input video files will be
+         used. If the length of base name of the input video file exceeds 32 characters, the base name
+         is truncated to the first 32 characters in total length. {Extension} - The appropriate
+         extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         :keyword output_files: The list of output files to produce.  Each entry in the list is a set of
          audio and video layer labels to be muxed together .
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
-        super(Mp4Format, self).__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
-        self.odata_type = '#Microsoft.Media.Mp4Format'  # type: str
+        super().__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.Mp4Format"
 
 
-class NoEncryption(msrest.serialization.Model):
+class NoEncryption(_serialization.Model):
     """Class for NoEncryption scheme.
 
     :ivar enabled_protocols: Representing supported protocols.
@@ -8225,29 +8296,24 @@ class NoEncryption(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'enabled_protocols': {'key': 'enabledProtocols', 'type': 'EnabledProtocols'},
+        "enabled_protocols": {"key": "enabledProtocols", "type": "EnabledProtocols"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled_protocols: Optional["_models.EnabledProtocols"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled_protocols: Optional["_models.EnabledProtocols"] = None, **kwargs):
         """
         :keyword enabled_protocols: Representing supported protocols.
         :paramtype enabled_protocols: ~azure.mgmt.media.models.EnabledProtocols
         """
-        super(NoEncryption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled_protocols = enabled_protocols
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """An operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The operation name.
+    :ivar name: The operation name. Required.
     :vartype name: str
     :ivar display: The operation display name.
     :vartype display: ~azure.mgmt.media.models.OperationDisplay
@@ -8257,21 +8323,21 @@ class Operation(msrest.serialization.Model):
     :vartype properties: ~azure.mgmt.media.models.Properties
     :ivar is_data_action: Whether the operation applies to data-plane.
     :vartype is_data_action: bool
-    :ivar action_type: Indicates the action type. Known values are: "Internal".
+    :ivar action_type: Indicates the action type. "Internal"
     :vartype action_type: str or ~azure.mgmt.media.models.ActionType
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Properties'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "Properties"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
     def __init__(
@@ -8286,7 +8352,7 @@ class Operation(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. The operation name.
+        :keyword name: The operation name. Required.
         :paramtype name: str
         :keyword display: The operation display name.
         :paramtype display: ~azure.mgmt.media.models.OperationDisplay
@@ -8296,10 +8362,10 @@ class Operation(msrest.serialization.Model):
         :paramtype properties: ~azure.mgmt.media.models.Properties
         :keyword is_data_action: Whether the operation applies to data-plane.
         :paramtype is_data_action: bool
-        :keyword action_type: Indicates the action type. Known values are: "Internal".
+        :keyword action_type: Indicates the action type. "Internal"
         :paramtype action_type: str or ~azure.mgmt.media.models.ActionType
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
@@ -8308,7 +8374,7 @@ class Operation(msrest.serialization.Model):
         self.action_type = action_type
 
 
-class OperationCollection(msrest.serialization.Model):
+class OperationCollection(_serialization.Model):
     """A collection of Operation items.
 
     :ivar value: A collection of Operation items.
@@ -8316,24 +8382,19 @@ class OperationCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Operation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
         """
         :keyword value: A collection of Operation items.
         :paramtype value: list[~azure.mgmt.media.models.Operation]
         """
-        super(OperationCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Operation details.
 
     :ivar provider: The service provider.
@@ -8347,10 +8408,10 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -8372,49 +8433,44 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword description: The operation description.
         :paramtype description: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OutputFile(msrest.serialization.Model):
+class OutputFile(_serialization.Model):
     """Represents an output file produced.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar labels: Required. The list of labels that describe how the encoder should multiplex video
-     and audio into an output file. For example, if the encoder is producing two video layers with
-     labels v1 and v2, and one audio layer with label a1, then an array like '[v1, a1]' tells the
-     encoder to produce an output file with the video track represented by v1 and the audio track
-     represented by a1.
+    :ivar labels: The list of labels that describe how the encoder should multiplex video and audio
+     into an output file. For example, if the encoder is producing two video layers with labels v1
+     and v2, and one audio layer with label a1, then an array like '[v1, a1]' tells the encoder to
+     produce an output file with the video track represented by v1 and the audio track represented
+     by a1. Required.
     :vartype labels: list[str]
     """
 
     _validation = {
-        'labels': {'required': True},
+        "labels": {"required": True},
     }
 
     _attribute_map = {
-        'labels': {'key': 'labels', 'type': '[str]'},
+        "labels": {"key": "labels", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        labels: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, labels: List[str], **kwargs):
         """
-        :keyword labels: Required. The list of labels that describe how the encoder should multiplex
-         video and audio into an output file. For example, if the encoder is producing two video layers
-         with labels v1 and v2, and one audio layer with label a1, then an array like '[v1, a1]' tells
-         the encoder to produce an output file with the video track represented by v1 and the audio
-         track represented by a1.
+        :keyword labels: The list of labels that describe how the encoder should multiplex video and
+         audio into an output file. For example, if the encoder is producing two video layers with
+         labels v1 and v2, and one audio layer with label a1, then an array like '[v1, a1]' tells the
+         encoder to produce an output file with the video track represented by v1 and the audio track
+         represented by a1. Required.
         :paramtype labels: list[str]
         """
-        super(OutputFile, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.labels = labels
 
 
@@ -8423,53 +8479,49 @@ class PngFormat(ImageFormat):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: Required. The pattern of the file names for the generated output files.
-     The following macros are supported in the file name: {Basename} - An expansion macro that will
-     use the name of the input video file. If the base name(the file suffix is not included) of the
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
+     following macros are supported in the file name: {Basename} - An expansion macro that will use
+     the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'filename_pattern': {'required': True},
+        "odata_type": {"required": True},
+        "filename_pattern": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'filename_pattern': {'key': 'filenamePattern', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "filename_pattern": {"key": "filenamePattern", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        filename_pattern: str,
-        **kwargs
-    ):
+    def __init__(self, *, filename_pattern: str, **kwargs):
         """
-        :keyword filename_pattern: Required. The pattern of the file names for the generated output
-         files. The following macros are supported in the file name: {Basename} - An expansion macro
-         that will use the name of the input video file. If the base name(the file suffix is not
-         included) of the input video file is less than 32 characters long, the base name of input video
-         files will be used. If the length of base name of the input video file exceeds 32 characters,
-         the base name is truncated to the first 32 characters in total length. {Extension} - The
-         appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
-         - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-         bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
-         {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
-         from the filename.
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
+         following macros are supported in the file name: {Basename} - An expansion macro that will use
+         the name of the input video file. If the base name(the file suffix is not included) of the
+         input video file is less than 32 characters long, the base name of input video files will be
+         used. If the length of base name of the input video file exceeds 32 characters, the base name
+         is truncated to the first 32 characters in total length. {Extension} - The appropriate
+         extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         """
-        super(PngFormat, self).__init__(filename_pattern=filename_pattern, **kwargs)
-        self.odata_type = '#Microsoft.Media.PngFormat'  # type: str
+        super().__init__(filename_pattern=filename_pattern, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.PngFormat"
 
 
 class PngImage(Image):
@@ -8477,7 +8529,7 @@ class PngImage(Image):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar label: An optional label for the codec. The label can be used to control muxing behavior.
     :vartype label: str
@@ -8487,17 +8539,18 @@ class PngImage(Image):
      value will follow the input source setting.
     :vartype key_frame_interval: ~datetime.timedelta
     :ivar stretch_mode: The resizing mode - how the input video will be resized to fit the desired
-     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", "AutoFit".
+     output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and "AutoFit".
     :vartype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+    :ivar sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+     "Vfr".
     :vartype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
-    :ivar start: Required. The position in the input video from where to start generating
-     thumbnails. The value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or
-     a frame count (For example, 10 to start at the 10th frame), or a relative value to stream
-     duration (For example, 10% to start at 10% of stream duration). Also supports a macro {Best},
-     which tells the encoder to select the best thumbnail from the first few seconds of the video
-     and will only produce one thumbnail, no matter what other settings are for Step and Range. The
-     default value is macro {Best}.
+    :ivar start: The position in the input video from where to start generating thumbnails. The
+     value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or a frame count
+     (For example, 10 to start at the 10th frame), or a relative value to stream duration (For
+     example, 10% to start at 10% of stream duration). Also supports a macro {Best}, which tells the
+     encoder to select the best thumbnail from the first few seconds of the video and will only
+     produce one thumbnail, no matter what other settings are for Step and Range. The default value
+     is macro {Best}. Required.
     :vartype start: str
     :ivar step: The intervals at which thumbnails are generated. The value can be in ISO 8601
      format (For example, PT05S for one image every 5 seconds), or a frame count (For example, 30
@@ -8523,20 +8576,20 @@ class PngImage(Image):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'start': {'required': True},
+        "odata_type": {"required": True},
+        "start": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'key_frame_interval': {'key': 'keyFrameInterval', 'type': 'duration'},
-        'stretch_mode': {'key': 'stretchMode', 'type': 'str'},
-        'sync_mode': {'key': 'syncMode', 'type': 'str'},
-        'start': {'key': 'start', 'type': 'str'},
-        'step': {'key': 'step', 'type': 'str'},
-        'range': {'key': 'range', 'type': 'str'},
-        'layers': {'key': 'layers', 'type': '[PngLayer]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "key_frame_interval": {"key": "keyFrameInterval", "type": "duration"},
+        "stretch_mode": {"key": "stretchMode", "type": "str"},
+        "sync_mode": {"key": "syncMode", "type": "str"},
+        "start": {"key": "start", "type": "str"},
+        "step": {"key": "step", "type": "str"},
+        "range": {"key": "range", "type": "str"},
+        "layers": {"key": "layers", "type": "[PngLayer]"},
     }
 
     def __init__(
@@ -8562,18 +8615,19 @@ class PngImage(Image):
          KeyFrameInterval value will follow the input source setting.
         :paramtype key_frame_interval: ~datetime.timedelta
         :keyword stretch_mode: The resizing mode - how the input video will be resized to fit the
-         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize",
+         desired output resolution(s). Default is AutoSize. Known values are: "None", "AutoSize", and
          "AutoFit".
         :paramtype stretch_mode: str or ~azure.mgmt.media.models.StretchMode
-        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", "Vfr".
+        :keyword sync_mode: The Video Sync Mode. Known values are: "Auto", "Passthrough", "Cfr", and
+         "Vfr".
         :paramtype sync_mode: str or ~azure.mgmt.media.models.VideoSyncMode
-        :keyword start: Required. The position in the input video from where to start generating
-         thumbnails. The value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or
-         a frame count (For example, 10 to start at the 10th frame), or a relative value to stream
-         duration (For example, 10% to start at 10% of stream duration). Also supports a macro {Best},
-         which tells the encoder to select the best thumbnail from the first few seconds of the video
-         and will only produce one thumbnail, no matter what other settings are for Step and Range. The
-         default value is macro {Best}.
+        :keyword start: The position in the input video from where to start generating thumbnails. The
+         value can be in ISO 8601 format (For example, PT05S to start at 5 seconds), or a frame count
+         (For example, 10 to start at the 10th frame), or a relative value to stream duration (For
+         example, 10% to start at 10% of stream duration). Also supports a macro {Best}, which tells the
+         encoder to select the best thumbnail from the first few seconds of the video and will only
+         produce one thumbnail, no matter what other settings are for Step and Range. The default value
+         is macro {Best}. Required.
         :paramtype start: str
         :keyword step: The intervals at which thumbnails are generated. The value can be in ISO 8601
          format (For example, PT05S for one image every 5 seconds), or a frame count (For example, 30
@@ -8597,8 +8651,17 @@ class PngImage(Image):
         :keyword layers: A collection of output PNG image layers to be produced by the encoder.
         :paramtype layers: list[~azure.mgmt.media.models.PngLayer]
         """
-        super(PngImage, self).__init__(label=label, key_frame_interval=key_frame_interval, stretch_mode=stretch_mode, sync_mode=sync_mode, start=start, step=step, range=range, **kwargs)
-        self.odata_type = '#Microsoft.Media.PngImage'  # type: str
+        super().__init__(
+            label=label,
+            key_frame_interval=key_frame_interval,
+            stretch_mode=stretch_mode,
+            sync_mode=sync_mode,
+            start=start,
+            step=step,
+            range=range,
+            **kwargs
+        )
+        self.odata_type: str = "#Microsoft.Media.PngImage"
         self.layers = layers
 
 
@@ -8619,18 +8682,13 @@ class PngLayer(Layer):
     """
 
     _attribute_map = {
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
+        "label": {"key": "label", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        width: Optional[str] = None,
-        height: Optional[str] = None,
-        label: Optional[str] = None,
-        **kwargs
+        self, *, width: Optional[str] = None, height: Optional[str] = None, label: Optional[str] = None, **kwargs
     ):
         """
         :keyword width: The width of the output video for this layer. The value can be absolute (in
@@ -8645,33 +8703,33 @@ class PngLayer(Layer):
          different video and audio layers, or in naming the output file.
         :paramtype label: str
         """
-        super(PngLayer, self).__init__(width=width, height=height, label=label, **kwargs)
+        super().__init__(width=width, height=height, label=label, **kwargs)
 
 
-class PresentationTimeRange(msrest.serialization.Model):
+class PresentationTimeRange(_serialization.Model):
     """The presentation time range, this is asset related and not recommended for Account Filter.
 
     :ivar start_timestamp: The absolute start time boundary.
-    :vartype start_timestamp: long
+    :vartype start_timestamp: int
     :ivar end_timestamp: The absolute end time boundary.
-    :vartype end_timestamp: long
+    :vartype end_timestamp: int
     :ivar presentation_window_duration: The relative to end sliding window.
-    :vartype presentation_window_duration: long
+    :vartype presentation_window_duration: int
     :ivar live_backoff_duration: The relative to end right edge.
-    :vartype live_backoff_duration: long
+    :vartype live_backoff_duration: int
     :ivar timescale: The time scale of time stamps.
-    :vartype timescale: long
+    :vartype timescale: int
     :ivar force_end_timestamp: The indicator of forcing existing of end time stamp.
     :vartype force_end_timestamp: bool
     """
 
     _attribute_map = {
-        'start_timestamp': {'key': 'startTimestamp', 'type': 'long'},
-        'end_timestamp': {'key': 'endTimestamp', 'type': 'long'},
-        'presentation_window_duration': {'key': 'presentationWindowDuration', 'type': 'long'},
-        'live_backoff_duration': {'key': 'liveBackoffDuration', 'type': 'long'},
-        'timescale': {'key': 'timescale', 'type': 'long'},
-        'force_end_timestamp': {'key': 'forceEndTimestamp', 'type': 'bool'},
+        "start_timestamp": {"key": "startTimestamp", "type": "int"},
+        "end_timestamp": {"key": "endTimestamp", "type": "int"},
+        "presentation_window_duration": {"key": "presentationWindowDuration", "type": "int"},
+        "live_backoff_duration": {"key": "liveBackoffDuration", "type": "int"},
+        "timescale": {"key": "timescale", "type": "int"},
+        "force_end_timestamp": {"key": "forceEndTimestamp", "type": "bool"},
     }
 
     def __init__(
@@ -8687,19 +8745,19 @@ class PresentationTimeRange(msrest.serialization.Model):
     ):
         """
         :keyword start_timestamp: The absolute start time boundary.
-        :paramtype start_timestamp: long
+        :paramtype start_timestamp: int
         :keyword end_timestamp: The absolute end time boundary.
-        :paramtype end_timestamp: long
+        :paramtype end_timestamp: int
         :keyword presentation_window_duration: The relative to end sliding window.
-        :paramtype presentation_window_duration: long
+        :paramtype presentation_window_duration: int
         :keyword live_backoff_duration: The relative to end right edge.
-        :paramtype live_backoff_duration: long
+        :paramtype live_backoff_duration: int
         :keyword timescale: The time scale of time stamps.
-        :paramtype timescale: long
+        :paramtype timescale: int
         :keyword force_end_timestamp: The indicator of forcing existing of end time stamp.
         :paramtype force_end_timestamp: bool
         """
-        super(PresentationTimeRange, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_timestamp = start_timestamp
         self.end_timestamp = end_timestamp
         self.presentation_window_duration = presentation_window_duration
@@ -8708,17 +8766,17 @@ class PresentationTimeRange(msrest.serialization.Model):
         self.force_end_timestamp = force_end_timestamp
 
 
-class PresetConfigurations(msrest.serialization.Model):
+class PresetConfigurations(_serialization.Model):
     """An object of optional configuration settings for encoder.
 
     :ivar complexity: Allows you to configure the encoder settings to control the balance between
      speed and quality. Example: set Complexity as Speed for faster encoding but less compression
-     efficiency. Known values are: "Speed", "Balanced", "Quality".
+     efficiency. Known values are: "Speed", "Balanced", and "Quality".
     :vartype complexity: str or ~azure.mgmt.media.models.Complexity
     :ivar interleave_output: Sets the interleave mode of the output to control how audio and video
      are stored in the container format. Example: set InterleavedOutput as NonInterleavedOutput to
      produce audio-only and video-only outputs in separate MP4 files. Known values are:
-     "NonInterleavedOutput", "InterleavedOutput".
+     "NonInterleavedOutput" and "InterleavedOutput".
     :vartype interleave_output: str or ~azure.mgmt.media.models.InterleaveOutput
     :ivar key_frame_interval_in_seconds: The key frame interval in seconds. Example: set
      KeyFrameIntervalInSeconds as 2 to reduce the playback buffering for some players.
@@ -8743,14 +8801,14 @@ class PresetConfigurations(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'complexity': {'key': 'complexity', 'type': 'str'},
-        'interleave_output': {'key': 'interleaveOutput', 'type': 'str'},
-        'key_frame_interval_in_seconds': {'key': 'keyFrameIntervalInSeconds', 'type': 'float'},
-        'max_bitrate_bps': {'key': 'maxBitrateBps', 'type': 'int'},
-        'max_height': {'key': 'maxHeight', 'type': 'int'},
-        'max_layers': {'key': 'maxLayers', 'type': 'int'},
-        'min_bitrate_bps': {'key': 'minBitrateBps', 'type': 'int'},
-        'min_height': {'key': 'minHeight', 'type': 'int'},
+        "complexity": {"key": "complexity", "type": "str"},
+        "interleave_output": {"key": "interleaveOutput", "type": "str"},
+        "key_frame_interval_in_seconds": {"key": "keyFrameIntervalInSeconds", "type": "float"},
+        "max_bitrate_bps": {"key": "maxBitrateBps", "type": "int"},
+        "max_height": {"key": "maxHeight", "type": "int"},
+        "max_layers": {"key": "maxLayers", "type": "int"},
+        "min_bitrate_bps": {"key": "minBitrateBps", "type": "int"},
+        "min_height": {"key": "minHeight", "type": "int"},
     }
 
     def __init__(
@@ -8769,12 +8827,12 @@ class PresetConfigurations(msrest.serialization.Model):
         """
         :keyword complexity: Allows you to configure the encoder settings to control the balance
          between speed and quality. Example: set Complexity as Speed for faster encoding but less
-         compression efficiency. Known values are: "Speed", "Balanced", "Quality".
+         compression efficiency. Known values are: "Speed", "Balanced", and "Quality".
         :paramtype complexity: str or ~azure.mgmt.media.models.Complexity
         :keyword interleave_output: Sets the interleave mode of the output to control how audio and
          video are stored in the container format. Example: set InterleavedOutput as
          NonInterleavedOutput to produce audio-only and video-only outputs in separate MP4 files. Known
-         values are: "NonInterleavedOutput", "InterleavedOutput".
+         values are: "NonInterleavedOutput" and "InterleavedOutput".
         :paramtype interleave_output: str or ~azure.mgmt.media.models.InterleaveOutput
         :keyword key_frame_interval_in_seconds: The key frame interval in seconds. Example: set
          KeyFrameIntervalInSeconds as 2 to reduce the playback buffering for some players.
@@ -8797,7 +8855,7 @@ class PresetConfigurations(msrest.serialization.Model):
          to avoid output layers of smaller resolutions like 180P.
         :paramtype min_height: int
         """
-        super(PresetConfigurations, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.complexity = complexity
         self.interleave_output = interleave_output
         self.key_frame_interval_in_seconds = key_frame_interval_in_seconds
@@ -8808,7 +8866,7 @@ class PresetConfigurations(msrest.serialization.Model):
         self.min_height = min_height
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """The Private Endpoint resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8818,20 +8876,16 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PrivateEndpoint, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
@@ -8855,25 +8909,28 @@ class PrivateEndpointConnection(Resource):
     :vartype private_link_service_connection_state:
      ~azure.mgmt.media.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Known values are: "Succeeded", "Creating", "Deleting", "Failed".
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.media.models.PrivateEndpointConnectionProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -8891,13 +8948,13 @@ class PrivateEndpointConnection(Resource):
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.media.models.PrivateLinkServiceConnectionState
         """
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+class PrivateEndpointConnectionListResult(_serialization.Model):
     """List of private endpoint connection associated with the specified storage account.
 
     :ivar value: Array of private endpoint connections.
@@ -8905,20 +8962,15 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.media.models.PrivateEndpointConnection]
         """
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
@@ -8944,39 +8996,34 @@ class PrivateLinkResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
         """
         :keyword required_zone_names: The private link resource Private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
-        super(PrivateLinkResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.group_id = None
         self.required_members = None
         self.required_zone_names = required_zone_names
 
 
-class PrivateLinkResourceListResult(msrest.serialization.Model):
+class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
     :ivar value: Array of private link resources.
@@ -8984,28 +9031,23 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PrivateLinkResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.media.models.PrivateLinkResource]
         """
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+class PrivateLinkServiceConnectionState(_serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
     :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Known values are: "Pending", "Approved", "Rejected".
+     of the service. Known values are: "Pending", "Approved", and "Rejected".
     :vartype status: str or ~azure.mgmt.media.models.PrivateEndpointServiceConnectionStatus
     :ivar description: The reason for approval/rejection of the connection.
     :vartype description: str
@@ -9015,9 +9057,9 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
@@ -9030,7 +9072,7 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
     ):
         """
         :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
-         owner of the service. Known values are: "Pending", "Approved", "Rejected".
+         owner of the service. Known values are: "Pending", "Approved", and "Rejected".
         :paramtype status: str or ~azure.mgmt.media.models.PrivateEndpointServiceConnectionStatus
         :keyword description: The reason for approval/rejection of the connection.
         :paramtype description: str
@@ -9038,13 +9080,13 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
          updates on the consumer.
         :paramtype actions_required: str
         """
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = actions_required
 
 
-class Properties(msrest.serialization.Model):
+class Properties(_serialization.Model):
     """The service specification property.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9054,24 +9096,20 @@ class Properties(msrest.serialization.Model):
     """
 
     _validation = {
-        'service_specification': {'readonly': True},
+        "service_specification": {"readonly": True},
     }
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Properties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.service_specification = None
 
 
-class Rectangle(msrest.serialization.Model):
+class Rectangle(_serialization.Model):
     """Describes the properties of a rectangular window applied to the input media before processing it.
 
     :ivar left: The number of pixels from the left-margin. This can be absolute pixel value (e.g
@@ -9089,10 +9127,10 @@ class Rectangle(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'left': {'key': 'left', 'type': 'str'},
-        'top': {'key': 'top', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'str'},
-        'height': {'key': 'height', 'type': 'str'},
+        "left": {"key": "left", "type": "str"},
+        "top": {"key": "top", "type": "str"},
+        "width": {"key": "width", "type": "str"},
+        "height": {"key": "height", "type": "str"},
     }
 
     def __init__(
@@ -9118,14 +9156,14 @@ class Rectangle(msrest.serialization.Model):
          value (e.g 100), or relative to the size of the video (For example, 50%).
         :paramtype height: str
         """
-        super(Rectangle, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.left = left
         self.top = top
         self.width = width
         self.height = height
 
 
-class ResourceIdentity(msrest.serialization.Model):
+class ResourceIdentity(_serialization.Model):
     """ResourceIdentity.
 
     All required parameters must be populated in order to send to Azure.
@@ -9133,36 +9171,30 @@ class ResourceIdentity(msrest.serialization.Model):
     :ivar user_assigned_identity: The user assigned managed identity's ARM ID to use when accessing
      a resource.
     :vartype user_assigned_identity: str
-    :ivar use_system_assigned_identity: Required. Indicates whether to use System Assigned Managed
-     Identity. Mutual exclusive with User Assigned Managed Identity.
+    :ivar use_system_assigned_identity: Indicates whether to use System Assigned Managed Identity.
+     Mutual exclusive with User Assigned Managed Identity. Required.
     :vartype use_system_assigned_identity: bool
     """
 
     _validation = {
-        'use_system_assigned_identity': {'required': True},
+        "use_system_assigned_identity": {"required": True},
     }
 
     _attribute_map = {
-        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
-        'use_system_assigned_identity': {'key': 'useSystemAssignedIdentity', 'type': 'bool'},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
+        "use_system_assigned_identity": {"key": "useSystemAssignedIdentity", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        use_system_assigned_identity: bool,
-        user_assigned_identity: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, use_system_assigned_identity: bool, user_assigned_identity: Optional[str] = None, **kwargs):
         """
         :keyword user_assigned_identity: The user assigned managed identity's ARM ID to use when
          accessing a resource.
         :paramtype user_assigned_identity: str
-        :keyword use_system_assigned_identity: Required. Indicates whether to use System Assigned
-         Managed Identity. Mutual exclusive with User Assigned Managed Identity.
+        :keyword use_system_assigned_identity: Indicates whether to use System Assigned Managed
+         Identity. Mutual exclusive with User Assigned Managed Identity. Required.
         :paramtype use_system_assigned_identity: bool
         """
-        super(ResourceIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_assigned_identity = user_assigned_identity
         self.use_system_assigned_identity = use_system_assigned_identity
 
@@ -9172,18 +9204,18 @@ class SelectAudioTrackByAttribute(AudioTrackDescriptor):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar channel_mapping: Optional designation for single channel audio tracks.  Can be used to
      combine the tracks into stereo or multi-channel audio tracks. Known values are: "FrontLeft",
-     "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft",
+     "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft", and
      "StereoRight".
     :vartype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
-    :ivar attribute: Required. The TrackAttribute to filter the tracks by. Known values are:
-     "Bitrate", "Language".
+    :ivar attribute: The TrackAttribute to filter the tracks by. Required. Known values are:
+     "Bitrate" and "Language".
     :vartype attribute: str or ~azure.mgmt.media.models.TrackAttribute
-    :ivar filter: Required. The type of AttributeFilter to apply to the TrackAttribute in order to
-     select the tracks. Known values are: "All", "Top", "Bottom", "ValueEquals".
+    :ivar filter: The type of AttributeFilter to apply to the TrackAttribute in order to select the
+     tracks. Required. Known values are: "All", "Top", "Bottom", and "ValueEquals".
     :vartype filter: str or ~azure.mgmt.media.models.AttributeFilter
     :ivar filter_value: The value to filter the tracks by.  Only used when
      AttributeFilter.ValueEquals is specified for the Filter property.
@@ -9191,24 +9223,24 @@ class SelectAudioTrackByAttribute(AudioTrackDescriptor):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'attribute': {'required': True},
-        'filter': {'required': True},
+        "odata_type": {"required": True},
+        "attribute": {"required": True},
+        "filter": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'channel_mapping': {'key': 'channelMapping', 'type': 'str'},
-        'attribute': {'key': 'attribute', 'type': 'str'},
-        'filter': {'key': 'filter', 'type': 'str'},
-        'filter_value': {'key': 'filterValue', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "channel_mapping": {"key": "channelMapping", "type": "str"},
+        "attribute": {"key": "attribute", "type": "str"},
+        "filter": {"key": "filter", "type": "str"},
+        "filter_value": {"key": "filterValue", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         attribute: Union[str, "_models.TrackAttribute"],
-        filter: Union[str, "_models.AttributeFilter"],
+        filter: Union[str, "_models.AttributeFilter"],  # pylint: disable=redefined-builtin
         channel_mapping: Optional[Union[str, "_models.ChannelMapping"]] = None,
         filter_value: Optional[str] = None,
         **kwargs
@@ -9216,21 +9248,21 @@ class SelectAudioTrackByAttribute(AudioTrackDescriptor):
         """
         :keyword channel_mapping: Optional designation for single channel audio tracks.  Can be used to
          combine the tracks into stereo or multi-channel audio tracks. Known values are: "FrontLeft",
-         "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft",
+         "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft", and
          "StereoRight".
         :paramtype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
-        :keyword attribute: Required. The TrackAttribute to filter the tracks by. Known values are:
-         "Bitrate", "Language".
+        :keyword attribute: The TrackAttribute to filter the tracks by. Required. Known values are:
+         "Bitrate" and "Language".
         :paramtype attribute: str or ~azure.mgmt.media.models.TrackAttribute
-        :keyword filter: Required. The type of AttributeFilter to apply to the TrackAttribute in order
-         to select the tracks. Known values are: "All", "Top", "Bottom", "ValueEquals".
+        :keyword filter: The type of AttributeFilter to apply to the TrackAttribute in order to select
+         the tracks. Required. Known values are: "All", "Top", "Bottom", and "ValueEquals".
         :paramtype filter: str or ~azure.mgmt.media.models.AttributeFilter
         :keyword filter_value: The value to filter the tracks by.  Only used when
          AttributeFilter.ValueEquals is specified for the Filter property.
         :paramtype filter_value: str
         """
-        super(SelectAudioTrackByAttribute, self).__init__(channel_mapping=channel_mapping, **kwargs)
-        self.odata_type = '#Microsoft.Media.SelectAudioTrackByAttribute'  # type: str
+        super().__init__(channel_mapping=channel_mapping, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.SelectAudioTrackByAttribute"
         self.attribute = attribute
         self.filter = filter
         self.filter_value = filter_value
@@ -9241,81 +9273,76 @@ class SelectAudioTrackById(AudioTrackDescriptor):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar channel_mapping: Optional designation for single channel audio tracks.  Can be used to
      combine the tracks into stereo or multi-channel audio tracks. Known values are: "FrontLeft",
-     "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft",
+     "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft", and
      "StereoRight".
     :vartype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
-    :ivar track_id: Required. Track identifier to select.
-    :vartype track_id: long
+    :ivar track_id: Track identifier to select. Required.
+    :vartype track_id: int
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'track_id': {'required': True},
+        "odata_type": {"required": True},
+        "track_id": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'channel_mapping': {'key': 'channelMapping', 'type': 'str'},
-        'track_id': {'key': 'trackId', 'type': 'long'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "channel_mapping": {"key": "channelMapping", "type": "str"},
+        "track_id": {"key": "trackId", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        track_id: int,
-        channel_mapping: Optional[Union[str, "_models.ChannelMapping"]] = None,
-        **kwargs
+        self, *, track_id: int, channel_mapping: Optional[Union[str, "_models.ChannelMapping"]] = None, **kwargs
     ):
         """
         :keyword channel_mapping: Optional designation for single channel audio tracks.  Can be used to
          combine the tracks into stereo or multi-channel audio tracks. Known values are: "FrontLeft",
-         "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft",
+         "FrontRight", "Center", "LowFrequencyEffects", "BackLeft", "BackRight", "StereoLeft", and
          "StereoRight".
         :paramtype channel_mapping: str or ~azure.mgmt.media.models.ChannelMapping
-        :keyword track_id: Required. Track identifier to select.
-        :paramtype track_id: long
+        :keyword track_id: Track identifier to select. Required.
+        :paramtype track_id: int
         """
-        super(SelectAudioTrackById, self).__init__(channel_mapping=channel_mapping, **kwargs)
-        self.odata_type = '#Microsoft.Media.SelectAudioTrackById'  # type: str
+        super().__init__(channel_mapping=channel_mapping, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.SelectAudioTrackById"
         self.track_id = track_id
 
 
 class VideoTrackDescriptor(TrackDescriptor):
     """A TrackSelection to select video tracks.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SelectVideoTrackByAttribute, SelectVideoTrackById.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SelectVideoTrackByAttribute, SelectVideoTrackById
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
     _subtype_map = {
-        'odata_type': {'#Microsoft.Media.SelectVideoTrackByAttribute': 'SelectVideoTrackByAttribute', '#Microsoft.Media.SelectVideoTrackById': 'SelectVideoTrackById'}
+        "odata_type": {
+            "#Microsoft.Media.SelectVideoTrackByAttribute": "SelectVideoTrackByAttribute",
+            "#Microsoft.Media.SelectVideoTrackById": "SelectVideoTrackById",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VideoTrackDescriptor, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.VideoTrackDescriptor'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.VideoTrackDescriptor"
 
 
 class SelectVideoTrackByAttribute(VideoTrackDescriptor):
@@ -9323,13 +9350,13 @@ class SelectVideoTrackByAttribute(VideoTrackDescriptor):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar attribute: Required. The TrackAttribute to filter the tracks by. Known values are:
-     "Bitrate", "Language".
+    :ivar attribute: The TrackAttribute to filter the tracks by. Required. Known values are:
+     "Bitrate" and "Language".
     :vartype attribute: str or ~azure.mgmt.media.models.TrackAttribute
-    :ivar filter: Required. The type of AttributeFilter to apply to the TrackAttribute in order to
-     select the tracks. Known values are: "All", "Top", "Bottom", "ValueEquals".
+    :ivar filter: The type of AttributeFilter to apply to the TrackAttribute in order to select the
+     tracks. Required. Known values are: "All", "Top", "Bottom", and "ValueEquals".
     :vartype filter: str or ~azure.mgmt.media.models.AttributeFilter
     :ivar filter_value: The value to filter the tracks by.  Only used when
      AttributeFilter.ValueEquals is specified for the Filter property. For TrackAttribute.Bitrate,
@@ -9339,32 +9366,32 @@ class SelectVideoTrackByAttribute(VideoTrackDescriptor):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'attribute': {'required': True},
-        'filter': {'required': True},
+        "odata_type": {"required": True},
+        "attribute": {"required": True},
+        "filter": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'attribute': {'key': 'attribute', 'type': 'str'},
-        'filter': {'key': 'filter', 'type': 'str'},
-        'filter_value': {'key': 'filterValue', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "attribute": {"key": "attribute", "type": "str"},
+        "filter": {"key": "filter", "type": "str"},
+        "filter_value": {"key": "filterValue", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         attribute: Union[str, "_models.TrackAttribute"],
-        filter: Union[str, "_models.AttributeFilter"],
+        filter: Union[str, "_models.AttributeFilter"],  # pylint: disable=redefined-builtin
         filter_value: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword attribute: Required. The TrackAttribute to filter the tracks by. Known values are:
-         "Bitrate", "Language".
+        :keyword attribute: The TrackAttribute to filter the tracks by. Required. Known values are:
+         "Bitrate" and "Language".
         :paramtype attribute: str or ~azure.mgmt.media.models.TrackAttribute
-        :keyword filter: Required. The type of AttributeFilter to apply to the TrackAttribute in order
-         to select the tracks. Known values are: "All", "Top", "Bottom", "ValueEquals".
+        :keyword filter: The type of AttributeFilter to apply to the TrackAttribute in order to select
+         the tracks. Required. Known values are: "All", "Top", "Bottom", and "ValueEquals".
         :paramtype filter: str or ~azure.mgmt.media.models.AttributeFilter
         :keyword filter_value: The value to filter the tracks by.  Only used when
          AttributeFilter.ValueEquals is specified for the Filter property. For TrackAttribute.Bitrate,
@@ -9372,8 +9399,8 @@ class SelectVideoTrackByAttribute(VideoTrackDescriptor):
          TrackAttribute.Language is not supported for video tracks.
         :paramtype filter_value: str
         """
-        super(SelectVideoTrackByAttribute, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.SelectVideoTrackByAttribute'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.SelectVideoTrackByAttribute"
         self.attribute = attribute
         self.filter = filter
         self.filter_value = filter_value
@@ -9384,38 +9411,33 @@ class SelectVideoTrackById(VideoTrackDescriptor):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar track_id: Required. Track identifier to select.
-    :vartype track_id: long
+    :ivar track_id: Track identifier to select. Required.
+    :vartype track_id: int
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'track_id': {'required': True},
+        "odata_type": {"required": True},
+        "track_id": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'track_id': {'key': 'trackId', 'type': 'long'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "track_id": {"key": "trackId", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        track_id: int,
-        **kwargs
-    ):
+    def __init__(self, *, track_id: int, **kwargs):
         """
-        :keyword track_id: Required. Track identifier to select.
-        :paramtype track_id: long
+        :keyword track_id: Track identifier to select. Required.
+        :paramtype track_id: int
         """
-        super(SelectVideoTrackById, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.SelectVideoTrackById'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.SelectVideoTrackById"
         self.track_id = track_id
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """The service metric specifications.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9427,22 +9449,18 @@ class ServiceSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'log_specifications': {'readonly': True},
-        'metric_specifications': {'readonly': True},
+        "log_specifications": {"readonly": True},
+        "metric_specifications": {"readonly": True},
     }
 
     _attribute_map = {
-        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ServiceSpecification, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.log_specifications = None
         self.metric_specifications = None
 
@@ -9452,28 +9470,32 @@ class StandardEncoderPreset(Preset):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
+    :ivar experimental_options: Dictionary containing key value pairs for parameters not exposed in
+     the preset itself.
+    :vartype experimental_options: dict[str, str]
     :ivar filters: One or more filtering operations that are applied to the input media before
      encoding.
     :vartype filters: ~azure.mgmt.media.models.Filters
-    :ivar codecs: Required. The list of codecs to be used when encoding the input video.
+    :ivar codecs: The list of codecs to be used when encoding the input video. Required.
     :vartype codecs: list[~azure.mgmt.media.models.Codec]
-    :ivar formats: Required. The list of outputs to be produced by the encoder.
+    :ivar formats: The list of outputs to be produced by the encoder. Required.
     :vartype formats: list[~azure.mgmt.media.models.Format]
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'codecs': {'required': True},
-        'formats': {'required': True},
+        "odata_type": {"required": True},
+        "codecs": {"required": True},
+        "formats": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'filters': {'key': 'filters', 'type': 'Filters'},
-        'codecs': {'key': 'codecs', 'type': '[Codec]'},
-        'formats': {'key': 'formats', 'type': '[Format]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "experimental_options": {"key": "experimentalOptions", "type": "{str}"},
+        "filters": {"key": "filters", "type": "Filters"},
+        "codecs": {"key": "codecs", "type": "[Codec]"},
+        "formats": {"key": "formats", "type": "[Format]"},
     }
 
     def __init__(
@@ -9481,26 +9503,31 @@ class StandardEncoderPreset(Preset):
         *,
         codecs: List["_models.Codec"],
         formats: List["_models.Format"],
+        experimental_options: Optional[Dict[str, str]] = None,
         filters: Optional["_models.Filters"] = None,
         **kwargs
     ):
         """
+        :keyword experimental_options: Dictionary containing key value pairs for parameters not exposed
+         in the preset itself.
+        :paramtype experimental_options: dict[str, str]
         :keyword filters: One or more filtering operations that are applied to the input media before
          encoding.
         :paramtype filters: ~azure.mgmt.media.models.Filters
-        :keyword codecs: Required. The list of codecs to be used when encoding the input video.
+        :keyword codecs: The list of codecs to be used when encoding the input video. Required.
         :paramtype codecs: list[~azure.mgmt.media.models.Codec]
-        :keyword formats: Required. The list of outputs to be produced by the encoder.
+        :keyword formats: The list of outputs to be produced by the encoder. Required.
         :paramtype formats: list[~azure.mgmt.media.models.Format]
         """
-        super(StandardEncoderPreset, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.StandardEncoderPreset'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.StandardEncoderPreset"
+        self.experimental_options = experimental_options
         self.filters = filters
         self.codecs = codecs
         self.formats = formats
 
 
-class StorageAccount(msrest.serialization.Model):
+class StorageAccount(_serialization.Model):
     """The storage account details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9512,7 +9539,7 @@ class StorageAccount(msrest.serialization.Model):
      Microsoft.ClassicStorage or Microsoft.Storage). Blob only storage accounts can be added as
      secondary storage accounts.
     :vartype id: str
-    :ivar type: Required. The type of the storage account. Known values are: "Primary",
+    :ivar type: The type of the storage account. Required. Known values are: "Primary" and
      "Secondary".
     :vartype type: str or ~azure.mgmt.media.models.StorageAccountType
     :ivar identity: The storage account identity.
@@ -9522,22 +9549,22 @@ class StorageAccount(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'status': {'readonly': True},
+        "type": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'status': {'key': 'status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         type: Union[str, "_models.StorageAccountType"],
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         identity: Optional["_models.ResourceIdentity"] = None,
         **kwargs
     ):
@@ -9547,54 +9574,57 @@ class StorageAccount(msrest.serialization.Model):
          Microsoft.ClassicStorage or Microsoft.Storage). Blob only storage accounts can be added as
          secondary storage accounts.
         :paramtype id: str
-        :keyword type: Required. The type of the storage account. Known values are: "Primary",
+        :keyword type: The type of the storage account. Required. Known values are: "Primary" and
          "Secondary".
         :paramtype type: str or ~azure.mgmt.media.models.StorageAccountType
         :keyword identity: The storage account identity.
         :paramtype identity: ~azure.mgmt.media.models.ResourceIdentity
         """
-        super(StorageAccount, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.type = type
         self.identity = identity
         self.status = None
 
 
-class StorageEncryptedAssetDecryptionData(msrest.serialization.Model):
+class StorageEncryptedAssetDecryptionData(_serialization.Model):
     """Data needed to decrypt asset files encrypted with legacy storage encryption.
 
     :ivar key: The Asset File storage encryption key.
-    :vartype key: bytearray
+    :vartype key: bytes
     :ivar asset_file_encryption_metadata: Asset File encryption metadata.
     :vartype asset_file_encryption_metadata:
      list[~azure.mgmt.media.models.AssetFileEncryptionMetadata]
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'bytearray'},
-        'asset_file_encryption_metadata': {'key': 'assetFileEncryptionMetadata', 'type': '[AssetFileEncryptionMetadata]'},
+        "key": {"key": "key", "type": "bytearray"},
+        "asset_file_encryption_metadata": {
+            "key": "assetFileEncryptionMetadata",
+            "type": "[AssetFileEncryptionMetadata]",
+        },
     }
 
     def __init__(
         self,
         *,
-        key: Optional[bytearray] = None,
+        key: Optional[bytes] = None,
         asset_file_encryption_metadata: Optional[List["_models.AssetFileEncryptionMetadata"]] = None,
         **kwargs
     ):
         """
         :keyword key: The Asset File storage encryption key.
-        :paramtype key: bytearray
+        :paramtype key: bytes
         :keyword asset_file_encryption_metadata: Asset File encryption metadata.
         :paramtype asset_file_encryption_metadata:
          list[~azure.mgmt.media.models.AssetFileEncryptionMetadata]
         """
-        super(StorageEncryptedAssetDecryptionData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key = key
         self.asset_file_encryption_metadata = asset_file_encryption_metadata
 
 
-class StreamingEndpoint(TrackedResource):
+class StreamingEndpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """The streaming endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9609,9 +9639,9 @@ class StreamingEndpoint(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar location: Required. The geo-location where the resource lives.
+    :ivar location: The geo-location where the resource lives. Required.
     :vartype location: str
     :ivar system_data: The system metadata relating to this resource.
     :vartype system_data: ~azure.mgmt.media.models.SystemData
@@ -9626,7 +9656,7 @@ class StreamingEndpoint(TrackedResource):
     :ivar access_control: The access control definition of the streaming endpoint.
     :vartype access_control: ~azure.mgmt.media.models.StreamingEndpointAccessControl
     :ivar max_cache_age: Max cache age.
-    :vartype max_cache_age: long
+    :vartype max_cache_age: int
     :ivar custom_host_names: The custom host names of the streaming endpoint.
     :vartype custom_host_names: list[str]
     :ivar host_name: The streaming endpoint host name.
@@ -9640,7 +9670,7 @@ class StreamingEndpoint(TrackedResource):
     :ivar provisioning_state: The provisioning state of the streaming endpoint.
     :vartype provisioning_state: str
     :ivar resource_state: The resource state of the streaming endpoint. Known values are:
-     "Stopped", "Starting", "Running", "Stopping", "Deleting", "Scaling".
+     "Stopped", "Starting", "Running", "Stopping", "Deleting", and "Scaling".
     :vartype resource_state: str or ~azure.mgmt.media.models.StreamingEndpointResourceState
     :ivar cross_site_access_policies: The streaming endpoint access policies.
     :vartype cross_site_access_policies: ~azure.mgmt.media.models.CrossSiteAccessPolicies
@@ -9653,43 +9683,43 @@ class StreamingEndpoint(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'host_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'free_trial_end_time': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "host_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "free_trial_end_time": {"readonly": True},
+        "created": {"readonly": True},
+        "last_modified": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'sku': {'key': 'sku', 'type': 'ArmStreamingEndpointCurrentSku'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'scale_units': {'key': 'properties.scaleUnits', 'type': 'int'},
-        'availability_set_name': {'key': 'properties.availabilitySetName', 'type': 'str'},
-        'access_control': {'key': 'properties.accessControl', 'type': 'StreamingEndpointAccessControl'},
-        'max_cache_age': {'key': 'properties.maxCacheAge', 'type': 'long'},
-        'custom_host_names': {'key': 'properties.customHostNames', 'type': '[str]'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'cdn_enabled': {'key': 'properties.cdnEnabled', 'type': 'bool'},
-        'cdn_provider': {'key': 'properties.cdnProvider', 'type': 'str'},
-        'cdn_profile': {'key': 'properties.cdnProfile', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'cross_site_access_policies': {'key': 'properties.crossSiteAccessPolicies', 'type': 'CrossSiteAccessPolicies'},
-        'free_trial_end_time': {'key': 'properties.freeTrialEndTime', 'type': 'iso-8601'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "sku": {"key": "sku", "type": "ArmStreamingEndpointCurrentSku"},
+        "description": {"key": "properties.description", "type": "str"},
+        "scale_units": {"key": "properties.scaleUnits", "type": "int"},
+        "availability_set_name": {"key": "properties.availabilitySetName", "type": "str"},
+        "access_control": {"key": "properties.accessControl", "type": "StreamingEndpointAccessControl"},
+        "max_cache_age": {"key": "properties.maxCacheAge", "type": "int"},
+        "custom_host_names": {"key": "properties.customHostNames", "type": "[str]"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "cdn_enabled": {"key": "properties.cdnEnabled", "type": "bool"},
+        "cdn_provider": {"key": "properties.cdnProvider", "type": "str"},
+        "cdn_profile": {"key": "properties.cdnProfile", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
+        "cross_site_access_policies": {"key": "properties.crossSiteAccessPolicies", "type": "CrossSiteAccessPolicies"},
+        "free_trial_end_time": {"key": "properties.freeTrialEndTime", "type": "iso-8601"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "last_modified": {"key": "properties.lastModified", "type": "iso-8601"},
     }
 
     def __init__(
@@ -9711,9 +9741,9 @@ class StreamingEndpoint(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword location: Required. The geo-location where the resource lives.
+        :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
         :keyword sku: The streaming endpoint sku.
         :paramtype sku: ~azure.mgmt.media.models.ArmStreamingEndpointCurrentSku
@@ -9727,7 +9757,7 @@ class StreamingEndpoint(TrackedResource):
         :keyword access_control: The access control definition of the streaming endpoint.
         :paramtype access_control: ~azure.mgmt.media.models.StreamingEndpointAccessControl
         :keyword max_cache_age: Max cache age.
-        :paramtype max_cache_age: long
+        :paramtype max_cache_age: int
         :keyword custom_host_names: The custom host names of the streaming endpoint.
         :paramtype custom_host_names: list[str]
         :keyword cdn_enabled: The CDN enabled flag.
@@ -9739,7 +9769,7 @@ class StreamingEndpoint(TrackedResource):
         :keyword cross_site_access_policies: The streaming endpoint access policies.
         :paramtype cross_site_access_policies: ~azure.mgmt.media.models.CrossSiteAccessPolicies
         """
-        super(StreamingEndpoint, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.system_data = None
         self.sku = sku
         self.description = description
@@ -9760,7 +9790,7 @@ class StreamingEndpoint(TrackedResource):
         self.last_modified = None
 
 
-class StreamingEndpointAccessControl(msrest.serialization.Model):
+class StreamingEndpointAccessControl(_serialization.Model):
     """Streaming endpoint access control definition.
 
     :ivar akamai: The access control of Akamai.
@@ -9770,8 +9800,8 @@ class StreamingEndpointAccessControl(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'akamai': {'key': 'akamai', 'type': 'AkamaiAccessControl'},
-        'ip': {'key': 'ip', 'type': 'IPAccessControl'},
+        "akamai": {"key": "akamai", "type": "AkamaiAccessControl"},
+        "ip": {"key": "ip", "type": "IPAccessControl"},
     }
 
     def __init__(
@@ -9787,12 +9817,12 @@ class StreamingEndpointAccessControl(msrest.serialization.Model):
         :keyword ip: The IP access control of the streaming endpoint.
         :paramtype ip: ~azure.mgmt.media.models.IPAccessControl
         """
-        super(StreamingEndpointAccessControl, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.akamai = akamai
         self.ip = ip
 
 
-class StreamingEndpointListResult(msrest.serialization.Model):
+class StreamingEndpointListResult(_serialization.Model):
     """The streaming endpoint list result.
 
     :ivar value: The result of the List StreamingEndpoint operation.
@@ -9805,9 +9835,9 @@ class StreamingEndpointListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StreamingEndpoint]'},
-        'odata_count': {'key': '@odata\\.count', 'type': 'int'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[StreamingEndpoint]"},
+        "odata_count": {"key": "@odata\\.count", "type": "int"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -9827,13 +9857,13 @@ class StreamingEndpointListResult(msrest.serialization.Model):
          incomplete list of streaming endpoints.
         :paramtype odata_next_link: str
         """
-        super(StreamingEndpointListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_count = odata_count
         self.odata_next_link = odata_next_link
 
 
-class StreamingEndpointSkuInfoListResult(msrest.serialization.Model):
+class StreamingEndpointSkuInfoListResult(_serialization.Model):
     """StreamingEndpointSkuInfoListResult.
 
     :ivar value: The result of the List StreamingEndpoint skus.
@@ -9841,24 +9871,19 @@ class StreamingEndpointSkuInfoListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ArmStreamingEndpointSkuInfo]'},
+        "value": {"key": "value", "type": "[ArmStreamingEndpointSkuInfo]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ArmStreamingEndpointSkuInfo"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ArmStreamingEndpointSkuInfo"]] = None, **kwargs):
         """
         :keyword value: The result of the List StreamingEndpoint skus.
         :paramtype value: list[~azure.mgmt.media.models.ArmStreamingEndpointSkuInfo]
         """
-        super(StreamingEndpointSkuInfoListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class StreamingEntityScaleUnit(msrest.serialization.Model):
+class StreamingEntityScaleUnit(_serialization.Model):
     """scale units definition.
 
     :ivar scale_unit: The scale unit number of the streaming endpoint.
@@ -9866,24 +9891,19 @@ class StreamingEntityScaleUnit(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'scale_unit': {'key': 'scaleUnit', 'type': 'int'},
+        "scale_unit": {"key": "scaleUnit", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        scale_unit: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, scale_unit: Optional[int] = None, **kwargs):
         """
         :keyword scale_unit: The scale unit number of the streaming endpoint.
         :paramtype scale_unit: int
         """
-        super(StreamingEntityScaleUnit, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.scale_unit = scale_unit
 
 
-class StreamingLocator(ProxyResource):
+class StreamingLocator(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """A Streaming Locator resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9926,28 +9946,28 @@ class StreamingLocator(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'asset_name': {'key': 'properties.assetName', 'type': 'str'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'streaming_locator_id': {'key': 'properties.streamingLocatorId', 'type': 'str'},
-        'streaming_policy_name': {'key': 'properties.streamingPolicyName', 'type': 'str'},
-        'default_content_key_policy_name': {'key': 'properties.defaultContentKeyPolicyName', 'type': 'str'},
-        'content_keys': {'key': 'properties.contentKeys', 'type': '[StreamingLocatorContentKey]'},
-        'alternative_media_id': {'key': 'properties.alternativeMediaId', 'type': 'str'},
-        'filters': {'key': 'properties.filters', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "asset_name": {"key": "properties.assetName", "type": "str"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "streaming_locator_id": {"key": "properties.streamingLocatorId", "type": "str"},
+        "streaming_policy_name": {"key": "properties.streamingPolicyName", "type": "str"},
+        "default_content_key_policy_name": {"key": "properties.defaultContentKeyPolicyName", "type": "str"},
+        "content_keys": {"key": "properties.contentKeys", "type": "[StreamingLocatorContentKey]"},
+        "alternative_media_id": {"key": "properties.alternativeMediaId", "type": "str"},
+        "filters": {"key": "properties.filters", "type": "[str]"},
     }
 
     def __init__(
@@ -9989,7 +10009,7 @@ class StreamingLocator(ProxyResource):
         :keyword filters: A list of asset or account filters which apply to this streaming locator.
         :paramtype filters: list[str]
         """
-        super(StreamingLocator, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.asset_name = asset_name
         self.created = None
@@ -10003,7 +10023,7 @@ class StreamingLocator(ProxyResource):
         self.filters = filters
 
 
-class StreamingLocatorCollection(msrest.serialization.Model):
+class StreamingLocatorCollection(_serialization.Model):
     """A collection of StreamingLocator items.
 
     :ivar value: A collection of StreamingLocator items.
@@ -10014,8 +10034,8 @@ class StreamingLocatorCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StreamingLocator]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[StreamingLocator]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -10032,22 +10052,22 @@ class StreamingLocatorCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(StreamingLocatorCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class StreamingLocatorContentKey(msrest.serialization.Model):
+class StreamingLocatorContentKey(_serialization.Model):
     """Class for content key in Streaming Locator.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. ID of Content Key.
+    :ivar id: ID of Content Key. Required.
     :vartype id: str
     :ivar type: Encryption type of Content Key. Known values are: "CommonEncryptionCenc",
-     "CommonEncryptionCbcs", "EnvelopeEncryption".
+     "CommonEncryptionCbcs", and "EnvelopeEncryption".
     :vartype type: str or ~azure.mgmt.media.models.StreamingLocatorContentKeyType
     :ivar label_reference_in_streaming_policy: Label of Content Key as specified in the Streaming
      Policy.
@@ -10061,31 +10081,31 @@ class StreamingLocatorContentKey(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'required': True},
-        'type': {'readonly': True},
-        'policy_name': {'readonly': True},
-        'tracks': {'readonly': True},
+        "id": {"required": True},
+        "type": {"readonly": True},
+        "policy_name": {"readonly": True},
+        "tracks": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'label_reference_in_streaming_policy': {'key': 'labelReferenceInStreamingPolicy', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'policy_name': {'key': 'policyName', 'type': 'str'},
-        'tracks': {'key': 'tracks', 'type': '[TrackSelection]'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "label_reference_in_streaming_policy": {"key": "labelReferenceInStreamingPolicy", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "policy_name": {"key": "policyName", "type": "str"},
+        "tracks": {"key": "tracks", "type": "[TrackSelection]"},
     }
 
     def __init__(
         self,
         *,
-        id: str,
+        id: str,  # pylint: disable=redefined-builtin
         label_reference_in_streaming_policy: Optional[str] = None,
         value: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword id: Required. ID of Content Key.
+        :keyword id: ID of Content Key. Required.
         :paramtype id: str
         :keyword label_reference_in_streaming_policy: Label of Content Key as specified in the
          Streaming Policy.
@@ -10093,7 +10113,7 @@ class StreamingLocatorContentKey(msrest.serialization.Model):
         :keyword value: Value of Content Key.
         :paramtype value: str
         """
-        super(StreamingLocatorContentKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.type = None
         self.label_reference_in_streaming_policy = label_reference_in_streaming_policy
@@ -10102,30 +10122,30 @@ class StreamingLocatorContentKey(msrest.serialization.Model):
         self.tracks = None
 
 
-class StreamingPath(msrest.serialization.Model):
+class StreamingPath(_serialization.Model):
     """Class of paths for streaming.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar streaming_protocol: Required. Streaming protocol. Known values are: "Hls", "Dash",
-     "SmoothStreaming", "Download".
+    :ivar streaming_protocol: Streaming protocol. Required. Known values are: "Hls", "Dash",
+     "SmoothStreaming", and "Download".
     :vartype streaming_protocol: str or ~azure.mgmt.media.models.StreamingPolicyStreamingProtocol
-    :ivar encryption_scheme: Required. Encryption scheme. Known values are: "NoEncryption",
-     "EnvelopeEncryption", "CommonEncryptionCenc", "CommonEncryptionCbcs".
+    :ivar encryption_scheme: Encryption scheme. Required. Known values are: "NoEncryption",
+     "EnvelopeEncryption", "CommonEncryptionCenc", and "CommonEncryptionCbcs".
     :vartype encryption_scheme: str or ~azure.mgmt.media.models.EncryptionScheme
     :ivar paths: Streaming paths for each protocol and encryptionScheme pair.
     :vartype paths: list[str]
     """
 
     _validation = {
-        'streaming_protocol': {'required': True},
-        'encryption_scheme': {'required': True},
+        "streaming_protocol": {"required": True},
+        "encryption_scheme": {"required": True},
     }
 
     _attribute_map = {
-        'streaming_protocol': {'key': 'streamingProtocol', 'type': 'str'},
-        'encryption_scheme': {'key': 'encryptionScheme', 'type': 'str'},
-        'paths': {'key': 'paths', 'type': '[str]'},
+        "streaming_protocol": {"key": "streamingProtocol", "type": "str"},
+        "encryption_scheme": {"key": "encryptionScheme", "type": "str"},
+        "paths": {"key": "paths", "type": "[str]"},
     }
 
     def __init__(
@@ -10137,16 +10157,16 @@ class StreamingPath(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword streaming_protocol: Required. Streaming protocol. Known values are: "Hls", "Dash",
-         "SmoothStreaming", "Download".
+        :keyword streaming_protocol: Streaming protocol. Required. Known values are: "Hls", "Dash",
+         "SmoothStreaming", and "Download".
         :paramtype streaming_protocol: str or ~azure.mgmt.media.models.StreamingPolicyStreamingProtocol
-        :keyword encryption_scheme: Required. Encryption scheme. Known values are: "NoEncryption",
-         "EnvelopeEncryption", "CommonEncryptionCenc", "CommonEncryptionCbcs".
+        :keyword encryption_scheme: Encryption scheme. Required. Known values are: "NoEncryption",
+         "EnvelopeEncryption", "CommonEncryptionCenc", and "CommonEncryptionCbcs".
         :paramtype encryption_scheme: str or ~azure.mgmt.media.models.EncryptionScheme
         :keyword paths: Streaming paths for each protocol and encryptionScheme pair.
         :paramtype paths: list[str]
         """
-        super(StreamingPath, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.streaming_protocol = streaming_protocol
         self.encryption_scheme = encryption_scheme
         self.paths = paths
@@ -10182,24 +10202,24 @@ class StreamingPolicy(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'default_content_key_policy_name': {'key': 'properties.defaultContentKeyPolicyName', 'type': 'str'},
-        'envelope_encryption': {'key': 'properties.envelopeEncryption', 'type': 'EnvelopeEncryption'},
-        'common_encryption_cenc': {'key': 'properties.commonEncryptionCenc', 'type': 'CommonEncryptionCenc'},
-        'common_encryption_cbcs': {'key': 'properties.commonEncryptionCbcs', 'type': 'CommonEncryptionCbcs'},
-        'no_encryption': {'key': 'properties.noEncryption', 'type': 'NoEncryption'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "default_content_key_policy_name": {"key": "properties.defaultContentKeyPolicyName", "type": "str"},
+        "envelope_encryption": {"key": "properties.envelopeEncryption", "type": "EnvelopeEncryption"},
+        "common_encryption_cenc": {"key": "properties.commonEncryptionCenc", "type": "CommonEncryptionCenc"},
+        "common_encryption_cbcs": {"key": "properties.commonEncryptionCbcs", "type": "CommonEncryptionCbcs"},
+        "no_encryption": {"key": "properties.noEncryption", "type": "NoEncryption"},
     }
 
     def __init__(
@@ -10224,7 +10244,7 @@ class StreamingPolicy(ProxyResource):
         :keyword no_encryption: Configurations of NoEncryption.
         :paramtype no_encryption: ~azure.mgmt.media.models.NoEncryption
         """
-        super(StreamingPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.created = None
         self.default_content_key_policy_name = default_content_key_policy_name
@@ -10234,7 +10254,7 @@ class StreamingPolicy(ProxyResource):
         self.no_encryption = no_encryption
 
 
-class StreamingPolicyCollection(msrest.serialization.Model):
+class StreamingPolicyCollection(_serialization.Model):
     """A collection of StreamingPolicy items.
 
     :ivar value: A collection of StreamingPolicy items.
@@ -10245,8 +10265,8 @@ class StreamingPolicyCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[StreamingPolicy]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[StreamingPolicy]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
@@ -10263,12 +10283,12 @@ class StreamingPolicyCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(StreamingPolicyCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class StreamingPolicyContentKey(msrest.serialization.Model):
+class StreamingPolicyContentKey(_serialization.Model):
     """Class to specify properties of content key.
 
     :ivar label: Label can be used to specify Content Key when creating a Streaming Locator.
@@ -10280,9 +10300,9 @@ class StreamingPolicyContentKey(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'label': {'key': 'label', 'type': 'str'},
-        'policy_name': {'key': 'policyName', 'type': 'str'},
-        'tracks': {'key': 'tracks', 'type': '[TrackSelection]'},
+        "label": {"key": "label", "type": "str"},
+        "policy_name": {"key": "policyName", "type": "str"},
+        "tracks": {"key": "tracks", "type": "[TrackSelection]"},
     }
 
     def __init__(
@@ -10301,13 +10321,13 @@ class StreamingPolicyContentKey(msrest.serialization.Model):
         :keyword tracks: Tracks which use this content key.
         :paramtype tracks: list[~azure.mgmt.media.models.TrackSelection]
         """
-        super(StreamingPolicyContentKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.label = label
         self.policy_name = policy_name
         self.tracks = tracks
 
 
-class StreamingPolicyContentKeys(msrest.serialization.Model):
+class StreamingPolicyContentKeys(_serialization.Model):
     """Class to specify properties of all content keys in Streaming Policy.
 
     :ivar default_key: Default content key for an encryption scheme.
@@ -10317,8 +10337,8 @@ class StreamingPolicyContentKeys(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'default_key': {'key': 'defaultKey', 'type': 'DefaultKey'},
-        'key_to_track_mappings': {'key': 'keyToTrackMappings', 'type': '[StreamingPolicyContentKey]'},
+        "default_key": {"key": "defaultKey", "type": "DefaultKey"},
+        "key_to_track_mappings": {"key": "keyToTrackMappings", "type": "[StreamingPolicyContentKey]"},
     }
 
     def __init__(
@@ -10334,12 +10354,12 @@ class StreamingPolicyContentKeys(msrest.serialization.Model):
         :keyword key_to_track_mappings: Representing tracks needs separate content key.
         :paramtype key_to_track_mappings: list[~azure.mgmt.media.models.StreamingPolicyContentKey]
         """
-        super(StreamingPolicyContentKeys, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.default_key = default_key
         self.key_to_track_mappings = key_to_track_mappings
 
 
-class StreamingPolicyFairPlayConfiguration(msrest.serialization.Model):
+class StreamingPolicyFairPlayConfiguration(_serialization.Model):
     """Class to specify configurations of FairPlay in Streaming Policy.
 
     All required parameters must be populated in order to send to Azure.
@@ -10352,25 +10372,21 @@ class StreamingPolicyFairPlayConfiguration(msrest.serialization.Model):
      StreamingLocatorId.AlternativeMediaId, and {ContentKeyId}, which is replaced with the value of
      identifier of the key being requested.
     :vartype custom_license_acquisition_url_template: str
-    :ivar allow_persistent_license: Required. All license to be persistent or not.
+    :ivar allow_persistent_license: All license to be persistent or not. Required.
     :vartype allow_persistent_license: bool
     """
 
     _validation = {
-        'allow_persistent_license': {'required': True},
+        "allow_persistent_license": {"required": True},
     }
 
     _attribute_map = {
-        'custom_license_acquisition_url_template': {'key': 'customLicenseAcquisitionUrlTemplate', 'type': 'str'},
-        'allow_persistent_license': {'key': 'allowPersistentLicense', 'type': 'bool'},
+        "custom_license_acquisition_url_template": {"key": "customLicenseAcquisitionUrlTemplate", "type": "str"},
+        "allow_persistent_license": {"key": "allowPersistentLicense", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        allow_persistent_license: bool,
-        custom_license_acquisition_url_template: Optional[str] = None,
-        **kwargs
+        self, *, allow_persistent_license: bool, custom_license_acquisition_url_template: Optional[str] = None, **kwargs
     ):
         """
         :keyword custom_license_acquisition_url_template: Template for the URL of the custom service
@@ -10381,15 +10397,15 @@ class StreamingPolicyFairPlayConfiguration(msrest.serialization.Model):
          StreamingLocatorId.AlternativeMediaId, and {ContentKeyId}, which is replaced with the value of
          identifier of the key being requested.
         :paramtype custom_license_acquisition_url_template: str
-        :keyword allow_persistent_license: Required. All license to be persistent or not.
+        :keyword allow_persistent_license: All license to be persistent or not. Required.
         :paramtype allow_persistent_license: bool
         """
-        super(StreamingPolicyFairPlayConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.custom_license_acquisition_url_template = custom_license_acquisition_url_template
         self.allow_persistent_license = allow_persistent_license
 
 
-class StreamingPolicyPlayReadyConfiguration(msrest.serialization.Model):
+class StreamingPolicyPlayReadyConfiguration(_serialization.Model):
     """Class to specify configurations of PlayReady in Streaming Policy.
 
     :ivar custom_license_acquisition_url_template: Template for the URL of the custom service
@@ -10405,8 +10421,8 @@ class StreamingPolicyPlayReadyConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'custom_license_acquisition_url_template': {'key': 'customLicenseAcquisitionUrlTemplate', 'type': 'str'},
-        'play_ready_custom_attributes': {'key': 'playReadyCustomAttributes', 'type': 'str'},
+        "custom_license_acquisition_url_template": {"key": "customLicenseAcquisitionUrlTemplate", "type": "str"},
+        "play_ready_custom_attributes": {"key": "playReadyCustomAttributes", "type": "str"},
     }
 
     def __init__(
@@ -10428,12 +10444,12 @@ class StreamingPolicyPlayReadyConfiguration(msrest.serialization.Model):
         :keyword play_ready_custom_attributes: Custom attributes for PlayReady.
         :paramtype play_ready_custom_attributes: str
         """
-        super(StreamingPolicyPlayReadyConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.custom_license_acquisition_url_template = custom_license_acquisition_url_template
         self.play_ready_custom_attributes = play_ready_custom_attributes
 
 
-class StreamingPolicyWidevineConfiguration(msrest.serialization.Model):
+class StreamingPolicyWidevineConfiguration(_serialization.Model):
     """Class to specify configurations of Widevine in Streaming Policy.
 
     :ivar custom_license_acquisition_url_template: Template for the URL of the custom service
@@ -10447,15 +10463,10 @@ class StreamingPolicyWidevineConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'custom_license_acquisition_url_template': {'key': 'customLicenseAcquisitionUrlTemplate', 'type': 'str'},
+        "custom_license_acquisition_url_template": {"key": "customLicenseAcquisitionUrlTemplate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        custom_license_acquisition_url_template: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, custom_license_acquisition_url_template: Optional[str] = None, **kwargs):
         """
         :keyword custom_license_acquisition_url_template: Template for the URL of the custom service
          delivering licenses to end user players.  Not required when using Azure Media Services for
@@ -10466,11 +10477,11 @@ class StreamingPolicyWidevineConfiguration(msrest.serialization.Model):
          identifier of the key being requested.
         :paramtype custom_license_acquisition_url_template: str
         """
-        super(StreamingPolicyWidevineConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.custom_license_acquisition_url_template = custom_license_acquisition_url_template
 
 
-class SyncStorageKeysInput(msrest.serialization.Model):
+class SyncStorageKeysInput(_serialization.Model):
     """The input to the sync storage keys request.
 
     :ivar id: The ID of the storage account resource.
@@ -10478,49 +10489,44 @@ class SyncStorageKeysInput(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: The ID of the storage account resource.
         :paramtype id: str
         """
-        super(SyncStorageKeysInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", "Key".
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.media.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", "Key".
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.media.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -10538,19 +10544,19 @@ class SystemData(msrest.serialization.Model):
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", "Key".
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.media.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", "Key".
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.media.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -10566,7 +10572,7 @@ class TextTrack(TrackBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar file_name: The file name to the source file. This file is located in the storage
      container of the asset.
@@ -10579,24 +10585,24 @@ class TextTrack(TrackBase):
     :ivar player_visibility: When PlayerVisibility is set to "Visible", the text track will be
      present in the DASH manifest or HLS playlist when requested by a client. When the
      PlayerVisibility is set to "Hidden", the text will not be available to the client. The default
-     value is "Visible". Known values are: "Hidden", "Visible".
+     value is "Visible". Known values are: "Hidden" and "Visible".
     :vartype player_visibility: str or ~azure.mgmt.media.models.Visibility
     :ivar hls_settings: The HLS specific setting for the text track.
     :vartype hls_settings: ~azure.mgmt.media.models.HlsSettings
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'language_code': {'readonly': True},
+        "odata_type": {"required": True},
+        "language_code": {"readonly": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'file_name': {'key': 'fileName', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'language_code': {'key': 'languageCode', 'type': 'str'},
-        'player_visibility': {'key': 'playerVisibility', 'type': 'str'},
-        'hls_settings': {'key': 'hlsSettings', 'type': 'HlsSettings'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "file_name": {"key": "fileName", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "language_code": {"key": "languageCode", "type": "str"},
+        "player_visibility": {"key": "playerVisibility", "type": "str"},
+        "hls_settings": {"key": "hlsSettings", "type": "HlsSettings"},
     }
 
     def __init__(
@@ -10618,13 +10624,13 @@ class TextTrack(TrackBase):
         :keyword player_visibility: When PlayerVisibility is set to "Visible", the text track will be
          present in the DASH manifest or HLS playlist when requested by a client. When the
          PlayerVisibility is set to "Hidden", the text will not be available to the client. The default
-         value is "Visible". Known values are: "Hidden", "Visible".
+         value is "Visible". Known values are: "Hidden" and "Visible".
         :paramtype player_visibility: str or ~azure.mgmt.media.models.Visibility
         :keyword hls_settings: The HLS specific setting for the text track.
         :paramtype hls_settings: ~azure.mgmt.media.models.HlsSettings
         """
-        super(TextTrack, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.TextTrack'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.TextTrack"
         self.file_name = file_name
         self.display_name = display_name
         self.language_code = None
@@ -10632,14 +10638,14 @@ class TextTrack(TrackBase):
         self.hls_settings = hls_settings
 
 
-class TrackPropertyCondition(msrest.serialization.Model):
+class TrackPropertyCondition(_serialization.Model):
     """Class to specify one track property condition.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar property: Required. Track property type. Known values are: "Unknown", "FourCC".
+    :ivar property: Track property type. Required. Known values are: "Unknown" and "FourCC".
     :vartype property: str or ~azure.mgmt.media.models.TrackPropertyType
-    :ivar operation: Required. Track property condition operation. Known values are: "Unknown",
+    :ivar operation: Track property condition operation. Required. Known values are: "Unknown" and
      "Equal".
     :vartype operation: str or ~azure.mgmt.media.models.TrackPropertyCompareOperation
     :ivar value: Track property value.
@@ -10647,14 +10653,14 @@ class TrackPropertyCondition(msrest.serialization.Model):
     """
 
     _validation = {
-        'property': {'required': True},
-        'operation': {'required': True},
+        "property": {"required": True},
+        "operation": {"required": True},
     }
 
     _attribute_map = {
-        'property': {'key': 'property', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "property": {"key": "property", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
     def __init__(
@@ -10666,21 +10672,21 @@ class TrackPropertyCondition(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword property: Required. Track property type. Known values are: "Unknown", "FourCC".
+        :keyword property: Track property type. Required. Known values are: "Unknown" and "FourCC".
         :paramtype property: str or ~azure.mgmt.media.models.TrackPropertyType
-        :keyword operation: Required. Track property condition operation. Known values are: "Unknown",
-         "Equal".
+        :keyword operation: Track property condition operation. Required. Known values are: "Unknown"
+         and "Equal".
         :paramtype operation: str or ~azure.mgmt.media.models.TrackPropertyCompareOperation
         :keyword value: Track property value.
         :paramtype value: str
         """
-        super(TrackPropertyCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.property = property
         self.operation = operation
         self.value = value
 
 
-class TrackSelection(msrest.serialization.Model):
+class TrackSelection(_serialization.Model):
     """Class to select a track.
 
     :ivar track_selections: TrackSelections is a track property condition list which can specify
@@ -10689,21 +10695,16 @@ class TrackSelection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'track_selections': {'key': 'trackSelections', 'type': '[TrackPropertyCondition]'},
+        "track_selections": {"key": "trackSelections", "type": "[TrackPropertyCondition]"},
     }
 
-    def __init__(
-        self,
-        *,
-        track_selections: Optional[List["_models.TrackPropertyCondition"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, track_selections: Optional[List["_models.TrackPropertyCondition"]] = None, **kwargs):
         """
         :keyword track_selections: TrackSelections is a track property condition list which can specify
          track(s).
         :paramtype track_selections: list[~azure.mgmt.media.models.TrackPropertyCondition]
         """
-        super(TrackSelection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.track_selections = track_selections
 
 
@@ -10735,31 +10736,27 @@ class Transform(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'created': {'readonly': True},
-        'last_modified': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "created": {"readonly": True},
+        "last_modified": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'created': {'key': 'properties.created', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'last_modified': {'key': 'properties.lastModified', 'type': 'iso-8601'},
-        'outputs': {'key': 'properties.outputs', 'type': '[TransformOutput]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "created": {"key": "properties.created", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
+        "last_modified": {"key": "properties.lastModified", "type": "iso-8601"},
+        "outputs": {"key": "properties.outputs", "type": "[TransformOutput]"},
     }
 
     def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        outputs: Optional[List["_models.TransformOutput"]] = None,
-        **kwargs
+        self, *, description: Optional[str] = None, outputs: Optional[List["_models.TransformOutput"]] = None, **kwargs
     ):
         """
         :keyword description: An optional verbose description of the Transform.
@@ -10767,7 +10764,7 @@ class Transform(ProxyResource):
         :keyword outputs: An array of one or more TransformOutputs that the Transform should generate.
         :paramtype outputs: list[~azure.mgmt.media.models.TransformOutput]
         """
-        super(Transform, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.created = None
         self.description = description
@@ -10775,7 +10772,7 @@ class Transform(ProxyResource):
         self.outputs = outputs
 
 
-class TransformCollection(msrest.serialization.Model):
+class TransformCollection(_serialization.Model):
     """A collection of Transform items.
 
     :ivar value: A collection of Transform items.
@@ -10786,16 +10783,12 @@ class TransformCollection(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Transform]'},
-        'odata_next_link': {'key': '@odata\\.nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Transform]"},
+        "odata_next_link": {"key": "@odata\\.nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Transform"]] = None,
-        odata_next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Transform"]] = None, odata_next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: A collection of Transform items.
@@ -10804,12 +10797,12 @@ class TransformCollection(msrest.serialization.Model):
          contains too many results to return in one response).
         :paramtype odata_next_link: str
         """
-        super(TransformCollection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.odata_next_link = odata_next_link
 
 
-class TransformOutput(msrest.serialization.Model):
+class TransformOutput(_serialization.Model):
     """Describes the properties of a TransformOutput, which are the rules to be applied while generating the desired output.
 
     All required parameters must be populated in order to send to Azure.
@@ -10818,25 +10811,25 @@ class TransformOutput(msrest.serialization.Model):
      service should do when one output fails - either continue to produce other outputs, or, stop
      the other outputs. The overall Job state will not reflect failures of outputs that are
      specified with 'ContinueJob'. The default is 'StopProcessingJob'. Known values are:
-     "StopProcessingJob", "ContinueJob".
+     "StopProcessingJob" and "ContinueJob".
     :vartype on_error: str or ~azure.mgmt.media.models.OnErrorType
     :ivar relative_priority: Sets the relative priority of the TransformOutputs within a Transform.
      This sets the priority that the service uses for processing TransformOutputs. The default
-     priority is Normal. Known values are: "Low", "Normal", "High".
+     priority is Normal. Known values are: "Low", "Normal", and "High".
     :vartype relative_priority: str or ~azure.mgmt.media.models.Priority
-    :ivar preset: Required. Preset that describes the operations that will be used to modify,
-     transcode, or extract insights from the source file to generate the output.
+    :ivar preset: Preset that describes the operations that will be used to modify, transcode, or
+     extract insights from the source file to generate the output. Required.
     :vartype preset: ~azure.mgmt.media.models.Preset
     """
 
     _validation = {
-        'preset': {'required': True},
+        "preset": {"required": True},
     }
 
     _attribute_map = {
-        'on_error': {'key': 'onError', 'type': 'str'},
-        'relative_priority': {'key': 'relativePriority', 'type': 'str'},
-        'preset': {'key': 'preset', 'type': 'Preset'},
+        "on_error": {"key": "onError", "type": "str"},
+        "relative_priority": {"key": "relativePriority", "type": "str"},
+        "preset": {"key": "preset", "type": "Preset"},
     }
 
     def __init__(
@@ -10852,17 +10845,17 @@ class TransformOutput(msrest.serialization.Model):
          service should do when one output fails - either continue to produce other outputs, or, stop
          the other outputs. The overall Job state will not reflect failures of outputs that are
          specified with 'ContinueJob'. The default is 'StopProcessingJob'. Known values are:
-         "StopProcessingJob", "ContinueJob".
+         "StopProcessingJob" and "ContinueJob".
         :paramtype on_error: str or ~azure.mgmt.media.models.OnErrorType
         :keyword relative_priority: Sets the relative priority of the TransformOutputs within a
          Transform. This sets the priority that the service uses for processing TransformOutputs. The
-         default priority is Normal. Known values are: "Low", "Normal", "High".
+         default priority is Normal. Known values are: "Low", "Normal", and "High".
         :paramtype relative_priority: str or ~azure.mgmt.media.models.Priority
-        :keyword preset: Required. Preset that describes the operations that will be used to modify,
-         transcode, or extract insights from the source file to generate the output.
+        :keyword preset: Preset that describes the operations that will be used to modify, transcode,
+         or extract insights from the source file to generate the output. Required.
         :paramtype preset: ~azure.mgmt.media.models.Preset
         """
-        super(TransformOutput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.on_error = on_error
         self.relative_priority = relative_priority
         self.preset = preset
@@ -10873,18 +10866,19 @@ class TransportStreamFormat(MultiBitrateFormat):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar filename_pattern: Required. The pattern of the file names for the generated output files.
-     The following macros are supported in the file name: {Basename} - An expansion macro that will
-     use the name of the input video file. If the base name(the file suffix is not included) of the
+    :ivar filename_pattern: The file naming pattern used for the creation of output files. The
+     following macros are supported in the file name: {Basename} - An expansion macro that will use
+     the name of the input video file. If the base name(the file suffix is not included) of the
      input video file is less than 32 characters long, the base name of input video files will be
      used. If the length of base name of the input video file exceeds 32 characters, the base name
      is truncated to the first 32 characters in total length. {Extension} - The appropriate
      extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
-     index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video bitrate. Not
-     applicable to thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video
-     resolution. Any unsubstituted macros will be collapsed and removed from the filename.
+     index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+     stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+     thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+     Any unsubstituted macros will be collapsed and removed from the filename. Required.
     :vartype filename_pattern: str
     :ivar output_files: The list of output files to produce.  Each entry in the list is a set of
      audio and video layer labels to be muxed together .
@@ -10892,45 +10886,39 @@ class TransportStreamFormat(MultiBitrateFormat):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'filename_pattern': {'required': True},
+        "odata_type": {"required": True},
+        "filename_pattern": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'filename_pattern': {'key': 'filenamePattern', 'type': 'str'},
-        'output_files': {'key': 'outputFiles', 'type': '[OutputFile]'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "filename_pattern": {"key": "filenamePattern", "type": "str"},
+        "output_files": {"key": "outputFiles", "type": "[OutputFile]"},
     }
 
-    def __init__(
-        self,
-        *,
-        filename_pattern: str,
-        output_files: Optional[List["_models.OutputFile"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, filename_pattern: str, output_files: Optional[List["_models.OutputFile"]] = None, **kwargs):
         """
-        :keyword filename_pattern: Required. The pattern of the file names for the generated output
-         files. The following macros are supported in the file name: {Basename} - An expansion macro
-         that will use the name of the input video file. If the base name(the file suffix is not
-         included) of the input video file is less than 32 characters long, the base name of input video
-         files will be used. If the length of base name of the input video file exceeds 32 characters,
-         the base name is truncated to the first 32 characters in total length. {Extension} - The
-         appropriate extension for this format. {Label} - The label assigned to the codec/layer. {Index}
-         - A unique index for thumbnails. Only applicable to thumbnails. {Bitrate} - The audio/video
-         bitrate. Not applicable to thumbnails. {Codec} - The type of the audio/video codec.
-         {Resolution} - The video resolution. Any unsubstituted macros will be collapsed and removed
-         from the filename.
+        :keyword filename_pattern: The file naming pattern used for the creation of output files. The
+         following macros are supported in the file name: {Basename} - An expansion macro that will use
+         the name of the input video file. If the base name(the file suffix is not included) of the
+         input video file is less than 32 characters long, the base name of input video files will be
+         used. If the length of base name of the input video file exceeds 32 characters, the base name
+         is truncated to the first 32 characters in total length. {Extension} - The appropriate
+         extension for this format. {Label} - The label assigned to the codec/layer. {Index} - A unique
+         index for thumbnails. Only applicable to thumbnails. {AudioStream} - string "Audio" plus audio
+         stream number(start from 1). {Bitrate} - The audio/video bitrate in kbps. Not applicable to
+         thumbnails. {Codec} - The type of the audio/video codec. {Resolution} - The video resolution.
+         Any unsubstituted macros will be collapsed and removed from the filename. Required.
         :paramtype filename_pattern: str
         :keyword output_files: The list of output files to produce.  Each entry in the list is a set of
          audio and video layer labels to be muxed together .
         :paramtype output_files: list[~azure.mgmt.media.models.OutputFile]
         """
-        super(TransportStreamFormat, self).__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
-        self.odata_type = '#Microsoft.Media.TransportStreamFormat'  # type: str
+        super().__init__(filename_pattern=filename_pattern, output_files=output_files, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.TransportStreamFormat"
 
 
-class UserAssignedManagedIdentity(msrest.serialization.Model):
+class UserAssignedManagedIdentity(_serialization.Model):
     """UserAssignedManagedIdentity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10942,22 +10930,18 @@ class UserAssignedManagedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'client_id': {'readonly': True},
-        'principal_id': {'readonly': True},
+        "client_id": {"readonly": True},
+        "principal_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedManagedIdentity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.client_id = None
         self.principal_id = None
 
@@ -10967,35 +10951,30 @@ class UtcClipTime(ClipTime):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar time: Required. The time position on the timeline of the input media based on Utc time.
+    :ivar time: The time position on the timeline of the input media based on Utc time. Required.
     :vartype time: ~datetime.datetime
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'time': {'required': True},
+        "odata_type": {"required": True},
+        "time": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'time': {'key': 'time', 'type': 'iso-8601'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "time": {"key": "time", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        time: datetime.datetime,
-        **kwargs
-    ):
+    def __init__(self, *, time: datetime.datetime, **kwargs):
         """
-        :keyword time: Required. The time position on the timeline of the input media based on Utc
-         time.
+        :keyword time: The time position on the timeline of the input media based on Utc time.
+         Required.
         :paramtype time: ~datetime.datetime
         """
-        super(UtcClipTime, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.UtcClipTime'  # type: str
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.UtcClipTime"
         self.time = time
 
 
@@ -11004,7 +10983,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     :ivar audio_language: The language for the audio payload in the input using the BCP-47 format
      of 'language tag-region' (e.g: 'en-US').  If you know the language of your content, it is
@@ -11019,7 +10998,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
      https://go.microsoft.com/fwlink/?linkid=2109463.
     :vartype audio_language: str
     :ivar mode: Determines the set of audio analysis operations to be performed. If unspecified,
-     the Standard AudioAnalysisMode would be chosen. Known values are: "Standard", "Basic".
+     the Standard AudioAnalysisMode would be chosen. Known values are: "Standard" and "Basic".
     :vartype mode: str or ~azure.mgmt.media.models.AudioAnalysisMode
     :ivar experimental_options: Dictionary containing key value pairs for parameters not exposed in
      the preset itself.
@@ -11031,20 +11010,20 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
      generated. It is recommended that you not use AudioInsightsOnly if you expect some of your
      inputs to be video only; or use VideoInsightsOnly if you expect some of your inputs to be audio
      only. Your Jobs in such conditions would error out. Known values are: "AudioInsightsOnly",
-     "VideoInsightsOnly", "AllInsights".
+     "VideoInsightsOnly", and "AllInsights".
     :vartype insights_to_extract: str or ~azure.mgmt.media.models.InsightsType
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'audio_language': {'key': 'audioLanguage', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'experimental_options': {'key': 'experimentalOptions', 'type': '{str}'},
-        'insights_to_extract': {'key': 'insightsToExtract', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "audio_language": {"key": "audioLanguage", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "experimental_options": {"key": "experimentalOptions", "type": "{str}"},
+        "insights_to_extract": {"key": "insightsToExtract", "type": "str"},
     }
 
     def __init__(
@@ -11070,7 +11049,7 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
          https://go.microsoft.com/fwlink/?linkid=2109463.
         :paramtype audio_language: str
         :keyword mode: Determines the set of audio analysis operations to be performed. If unspecified,
-         the Standard AudioAnalysisMode would be chosen. Known values are: "Standard", "Basic".
+         the Standard AudioAnalysisMode would be chosen. Known values are: "Standard" and "Basic".
         :paramtype mode: str or ~azure.mgmt.media.models.AudioAnalysisMode
         :keyword experimental_options: Dictionary containing key value pairs for parameters not exposed
          in the preset itself.
@@ -11082,11 +11061,11 @@ class VideoAnalyzerPreset(AudioAnalyzerPreset):
          insights are generated. It is recommended that you not use AudioInsightsOnly if you expect some
          of your inputs to be video only; or use VideoInsightsOnly if you expect some of your inputs to
          be audio only. Your Jobs in such conditions would error out. Known values are:
-         "AudioInsightsOnly", "VideoInsightsOnly", "AllInsights".
+         "AudioInsightsOnly", "VideoInsightsOnly", and "AllInsights".
         :paramtype insights_to_extract: str or ~azure.mgmt.media.models.InsightsType
         """
-        super(VideoAnalyzerPreset, self).__init__(audio_language=audio_language, mode=mode, experimental_options=experimental_options, **kwargs)
-        self.odata_type = '#Microsoft.Media.VideoAnalyzerPreset'  # type: str
+        super().__init__(audio_language=audio_language, mode=mode, experimental_options=experimental_options, **kwargs)
+        self.odata_type: str = "#Microsoft.Media.VideoAnalyzerPreset"
         self.insights_to_extract = insights_to_extract
 
 
@@ -11095,12 +11074,13 @@ class VideoOverlay(Overlay):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
-    :ivar input_label: Required. The label of the job input which is to be used as an overlay. The
-     Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
-     format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+    :ivar input_label: The label of the job input which is to be used as an overlay. The Input must
+     specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP format, or an
+     audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
      https://aka.ms/mesformats for the complete list of supported audio and video file formats.
+     Required.
     :vartype input_label: str
     :ivar start: The start position, with reference to the input video, at which the overlay
      starts. The value should be in ISO 8601 format. For example, PT05S to start the overlay at 5
@@ -11135,21 +11115,21 @@ class VideoOverlay(Overlay):
     """
 
     _validation = {
-        'odata_type': {'required': True},
-        'input_label': {'required': True},
+        "odata_type": {"required": True},
+        "input_label": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
-        'input_label': {'key': 'inputLabel', 'type': 'str'},
-        'start': {'key': 'start', 'type': 'duration'},
-        'end': {'key': 'end', 'type': 'duration'},
-        'fade_in_duration': {'key': 'fadeInDuration', 'type': 'duration'},
-        'fade_out_duration': {'key': 'fadeOutDuration', 'type': 'duration'},
-        'audio_gain_level': {'key': 'audioGainLevel', 'type': 'float'},
-        'position': {'key': 'position', 'type': 'Rectangle'},
-        'opacity': {'key': 'opacity', 'type': 'float'},
-        'crop_rectangle': {'key': 'cropRectangle', 'type': 'Rectangle'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
+        "input_label": {"key": "inputLabel", "type": "str"},
+        "start": {"key": "start", "type": "duration"},
+        "end": {"key": "end", "type": "duration"},
+        "fade_in_duration": {"key": "fadeInDuration", "type": "duration"},
+        "fade_out_duration": {"key": "fadeOutDuration", "type": "duration"},
+        "audio_gain_level": {"key": "audioGainLevel", "type": "float"},
+        "position": {"key": "position", "type": "Rectangle"},
+        "opacity": {"key": "opacity", "type": "float"},
+        "crop_rectangle": {"key": "cropRectangle", "type": "Rectangle"},
     }
 
     def __init__(
@@ -11167,10 +11147,11 @@ class VideoOverlay(Overlay):
         **kwargs
     ):
         """
-        :keyword input_label: Required. The label of the job input which is to be used as an overlay.
-         The Input must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP
-         format, or an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
+        :keyword input_label: The label of the job input which is to be used as an overlay. The Input
+         must specify exactly one file. You can specify an image file in JPG, PNG, GIF or BMP format, or
+         an audio file (such as a WAV, MP3, WMA or M4A file), or a video file. See
          https://aka.ms/mesformats for the complete list of supported audio and video file formats.
+         Required.
         :paramtype input_label: str
         :keyword start: The start position, with reference to the input video, at which the overlay
          starts. The value should be in ISO 8601 format. For example, PT05S to start the overlay at 5
@@ -11204,8 +11185,16 @@ class VideoOverlay(Overlay):
          video.
         :paramtype crop_rectangle: ~azure.mgmt.media.models.Rectangle
         """
-        super(VideoOverlay, self).__init__(input_label=input_label, start=start, end=end, fade_in_duration=fade_in_duration, fade_out_duration=fade_out_duration, audio_gain_level=audio_gain_level, **kwargs)
-        self.odata_type = '#Microsoft.Media.VideoOverlay'  # type: str
+        super().__init__(
+            input_label=input_label,
+            start=start,
+            end=end,
+            fade_in_duration=fade_in_duration,
+            fade_out_duration=fade_out_duration,
+            audio_gain_level=audio_gain_level,
+            **kwargs
+        )
+        self.odata_type: str = "#Microsoft.Media.VideoOverlay"
         self.position = position
         self.opacity = opacity
         self.crop_rectangle = crop_rectangle
@@ -11216,23 +11205,19 @@ class VideoTrack(TrackBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar odata_type: Required. The discriminator for derived types.Constant filled by server.
+    :ivar odata_type: The discriminator for derived types. Required.
     :vartype odata_type: str
     """
 
     _validation = {
-        'odata_type': {'required': True},
+        "odata_type": {"required": True},
     }
 
     _attribute_map = {
-        'odata_type': {'key': '@odata\\.type', 'type': 'str'},
+        "odata_type": {"key": "@odata\\.type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(VideoTrack, self).__init__(**kwargs)
-        self.odata_type = '#Microsoft.Media.VideoTrack'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.odata_type: str = "#Microsoft.Media.VideoTrack"

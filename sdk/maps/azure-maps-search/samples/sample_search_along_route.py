@@ -21,7 +21,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def search_along_route():
-    # [START search_along_route]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -45,7 +44,6 @@ def search_along_route():
     )
 
     print(result.results[0].address.__dict__)
-    # [END search_along_route]
 
 if __name__ == '__main__':
     search_along_route()

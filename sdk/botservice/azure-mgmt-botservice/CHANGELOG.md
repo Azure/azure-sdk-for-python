@@ -1,5 +1,124 @@
 # Release History
 
+## 2.0.0 (2023-01-12)
+
+### Features Added
+
+  - Added operation group EmailOperations
+  - Added operation group OperationResultsOperations
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Added operation group PrivateLinkResourcesOperations
+  - Added operation group QnAMakerEndpointKeysOperations
+  - Model AlexaChannel has a new parameter etag
+  - Model AlexaChannel has a new parameter location
+  - Model AlexaChannel has a new parameter provisioning_state
+  - Model Bot has a new parameter zones
+  - Model BotChannel has a new parameter zones
+  - Model BotProperties has a new parameter all_settings
+  - Model BotProperties has a new parameter app_password_hint
+  - Model BotProperties has a new parameter cmek_encryption_status
+  - Model BotProperties has a new parameter disable_local_auth
+  - Model BotProperties has a new parameter is_developer_app_insights_api_key_set
+  - Model BotProperties has a new parameter is_streaming_supported
+  - Model BotProperties has a new parameter manifest_url
+  - Model BotProperties has a new parameter migration_token
+  - Model BotProperties has a new parameter msa_app_msi_resource_id
+  - Model BotProperties has a new parameter msa_app_tenant_id
+  - Model BotProperties has a new parameter msa_app_type
+  - Model BotProperties has a new parameter open_with_hint
+  - Model BotProperties has a new parameter parameters
+  - Model BotProperties has a new parameter private_endpoint_connections
+  - Model BotProperties has a new parameter provisioning_state
+  - Model BotProperties has a new parameter public_network_access
+  - Model BotProperties has a new parameter publishing_credentials
+  - Model BotProperties has a new parameter storage_resource_id
+  - Model BotProperties has a new parameter tenant_id
+  - Model Channel has a new parameter etag
+  - Model Channel has a new parameter location
+  - Model Channel has a new parameter provisioning_state
+  - Model CheckNameAvailabilityResponseBody has a new parameter abs_code
+  - Model ConnectionSetting has a new parameter zones
+  - Model ConnectionSettingProperties has a new parameter provisioning_state
+  - Model DirectLineChannel has a new parameter etag
+  - Model DirectLineChannel has a new parameter location
+  - Model DirectLineChannel has a new parameter provisioning_state
+  - Model DirectLineChannelProperties has a new parameter direct_line_embed_code
+  - Model DirectLineChannelProperties has a new parameter extension_key1
+  - Model DirectLineChannelProperties has a new parameter extension_key2
+  - Model DirectLineSite has a new parameter is_block_user_upload_enabled
+  - Model DirectLineSpeechChannel has a new parameter etag
+  - Model DirectLineSpeechChannel has a new parameter location
+  - Model DirectLineSpeechChannel has a new parameter provisioning_state
+  - Model DirectLineSpeechChannelProperties has a new parameter cognitive_service_region
+  - Model DirectLineSpeechChannelProperties has a new parameter cognitive_service_resource_id
+  - Model DirectLineSpeechChannelProperties has a new parameter cognitive_service_subscription_key
+  - Model EmailChannel has a new parameter etag
+  - Model EmailChannel has a new parameter location
+  - Model EmailChannel has a new parameter provisioning_state
+  - Model EmailChannelProperties has a new parameter auth_method
+  - Model EmailChannelProperties has a new parameter magic_code
+  - Model FacebookChannel has a new parameter etag
+  - Model FacebookChannel has a new parameter location
+  - Model FacebookChannel has a new parameter provisioning_state
+  - Model KikChannel has a new parameter etag
+  - Model KikChannel has a new parameter location
+  - Model KikChannel has a new parameter provisioning_state
+  - Model LineChannel has a new parameter etag
+  - Model LineChannel has a new parameter location
+  - Model LineChannel has a new parameter provisioning_state
+  - Model MsTeamsChannel has a new parameter etag
+  - Model MsTeamsChannel has a new parameter location
+  - Model MsTeamsChannel has a new parameter provisioning_state
+  - Model MsTeamsChannelProperties has a new parameter accepted_terms
+  - Model MsTeamsChannelProperties has a new parameter calling_webhook
+  - Model MsTeamsChannelProperties has a new parameter deployment_environment
+  - Model MsTeamsChannelProperties has a new parameter incoming_call_route
+  - Model Resource has a new parameter zones
+  - Model ServiceProviderParameter has a new parameter metadata
+  - Model SkypeChannel has a new parameter etag
+  - Model SkypeChannel has a new parameter location
+  - Model SkypeChannel has a new parameter provisioning_state
+  - Model SkypeChannelProperties has a new parameter incoming_call_route
+  - Model SlackChannel has a new parameter etag
+  - Model SlackChannel has a new parameter location
+  - Model SlackChannel has a new parameter provisioning_state
+  - Model SlackChannelProperties has a new parameter scopes
+  - Model SmsChannel has a new parameter etag
+  - Model SmsChannel has a new parameter location
+  - Model SmsChannel has a new parameter provisioning_state
+  - Model TelegramChannel has a new parameter etag
+  - Model TelegramChannel has a new parameter location
+  - Model TelegramChannel has a new parameter provisioning_state
+  - Model WebChatChannel has a new parameter etag
+  - Model WebChatChannel has a new parameter location
+  - Model WebChatChannel has a new parameter provisioning_state
+
+### Breaking Changes
+
+  - Model BotProperties no longer has parameter is_isolated
+  - Model DirectLineSpeechChannelProperties no longer has parameter cognitive_services_subscription_id
+  - Model MsTeamsChannelProperties no longer has parameter calling_web_hook
+  - Model WebChatSite has a new required parameter is_webchat_preview_enabled
+  - Model WebChatSite no longer has parameter enable_preview
+
+## 2.0.0b4 (2022-11-30)
+
+### Features Added
+
+  - Added operation group EmailOperations
+  - Added operation group QnAMakerEndpointKeysOperations
+  - Model BotProperties has a new parameter tenant_id
+  - Model DirectLineChannelProperties has a new parameter extension_key1
+  - Model DirectLineChannelProperties has a new parameter extension_key2
+  - Model DirectLineSpeechChannelProperties has a new parameter cognitive_service_resource_id
+  - Model EmailChannelProperties has a new parameter auth_method
+  - Model EmailChannelProperties has a new parameter magic_code
+  - Model MsTeamsChannelProperties has a new parameter calling_webhook
+
+### Breaking Changes
+
+  - Model MsTeamsChannelProperties no longer has parameter calling_web_hook
+
 ## 2.0.0b3 (2022-06-27)
 
 **Bugfixes**

@@ -4,7 +4,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from devtools_testutils import AzureTestCase
+from devtools_testutils import AzureRecordedTestCase
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
@@ -19,7 +19,7 @@ from consts import (
 )
 
 
-class AppConfigTestCase(AzureTestCase):
+class AppConfigTestCase(AzureRecordedTestCase):
     def create_aad_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred)
@@ -57,7 +57,7 @@ class AppConfigTestCase(AzureTestCase):
         )
         if exist:
             client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
-        client.add_configuration_setting(config_setting)
+        return client.add_configuration_setting(config_setting)
     
     def set_up(self, appconfiguration_string, is_aad=False):
         if is_aad:

@@ -76,6 +76,7 @@ setup(
         'azure',
         'azure.maps',
     ]),
+    include_package_data=True,
     install_requires=[
         'msrest>=0.6.21',
         'azure-common~=1.1',

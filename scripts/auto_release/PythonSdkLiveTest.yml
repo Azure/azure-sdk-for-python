@@ -55,8 +55,8 @@ jobs:
 
           # install autorest
           sudo npm install -g n
-          sudo n 14.15.0
-          export PATH=/usr/local/n/versions/node/14.15.0/bin:$PATH
+          sudo n 16.15.0
+          export PATH=/usr/local/n/versions/node/16.15.0/bin:$PATH
           sudo npm init -f
           sudo npm install -g autorest --save
 
@@ -74,7 +74,7 @@ jobs:
         pip install -r $script_path/requirement.txt
 
         # import env variable
-        export AZURE_TEST_RUN_LIVE=true
+        export AZURE_TEST_RUN_LIVE=$(AZURE_TEST_RUN_LIVE)
         export TENANT_ID=$(ENV-TENANT-ID)
         export CLIENT_ID=$(ENV-CLIENT-ID)
         export CLIENT_SECRET=$(ENV-CLIENT-SECRET)

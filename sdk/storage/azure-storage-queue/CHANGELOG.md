@@ -1,6 +1,14 @@
 # Release History
 
-## 12.5.0 (Unreleased)
+## 12.6.0b1 (Unreleased)
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-queue[aio]` to install.
+
+## 12.5.0 (2022-10-11)
 
 ### Features Added
 - Stable release of features from 12.5.0b1.

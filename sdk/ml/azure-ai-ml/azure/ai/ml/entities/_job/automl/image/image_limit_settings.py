@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ImageLimitSettings as RestImageLimitSettings
+from typing import Optional
+
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageLimitSettings as RestImageLimitSettings
 from azure.ai.ml._utils.utils import from_iso_duration_format_mins, to_iso_duration_format_mins
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
@@ -11,19 +13,19 @@ class ImageLimitSettings(RestTranslatableMixin):
     """Limit settings for all AutoML Image Verticals.
 
     :param max_concurrent_trials: Maximum number of concurrent AutoML iterations.
-    :type max_concurrent_trials: int
+    :type max_concurrent_trials: int, optional
     :param max_trials: Maximum number of AutoML iterations.
-    :type max_trials: int
-    :param timeout: AutoML job timeout.
-    :type timeout: ~datetime.timedelta
+    :type max_trials: int, optional
+    :param timeout_minutes: AutoML job timeout.
+    :type timeout_minutes: int, optional
     """
 
     def __init__(
         self,
         *,
-        max_concurrent_trials: int = None,
-        max_trials: int = None,
-        timeout_minutes: int = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_trials: Optional[int] = None,
+        timeout_minutes: Optional[int] = None,
     ):
         self.max_concurrent_trials = max_concurrent_trials
         self.max_trials = max_trials

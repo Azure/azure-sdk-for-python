@@ -1,5 +1,4 @@
 import pytest
-import yaml
 from marshmallow.exceptions import ValidationError
 from marshmallow.schema import Schema
 
@@ -18,6 +17,7 @@ class DummySchema(Schema):
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestScaleSettingsSchema:
     def test_default_scale_settings(self, mock_workspace_scope: OperationScope) -> None:
         schema = DummySchema()
@@ -65,4 +65,4 @@ class TestScaleSettingsSchema:
             }
         }
         data = schema.load(input_data)
-        assert data["scale_settings"].scale_type == "target_utilization"
+        assert data["scale_settings"].type == "target_utilization"

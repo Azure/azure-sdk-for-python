@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-
+import copy
+import decimal
 import hashlib
 import json
 import logging
@@ -27,7 +28,6 @@ import isodate
 import pydash
 import yaml
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType, ManagedServiceIdentity
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -35,6 +35,8 @@ from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
+    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -50,7 +52,7 @@ def _get_mfe_url_override() -> Optional[str]:
     return os.getenv(DEVELOPER_URL_MFE_ENV_VAR)
 
 
-def _is_https_url(url: str) -> bool:
+def _is_https_url(url: str) -> Union[bool, str]:
     if url:
         return url.lower().startswith("https")
     return False
@@ -73,6 +75,11 @@ def _snake_to_pascal_convert(text: str) -> str:
 
 def snake_to_pascal(text: Optional[str]) -> str:
     return _csv_parser(text, _snake_to_pascal_convert)
+
+
+def snake_to_kebab(text: Optional[str]) -> Optional[str]:
+    if text:
+        return re.sub("_", "-", text)
 
 
 # https://stackoverflow.com/questions/1175208
@@ -104,9 +111,17 @@ def camel_case_transformer(key, value):
     return (snake_to_camel(key), value)
 
 
+def float_to_str(f):
+    with decimal.localcontext() as ctx:
+        ctx.prec = 20  # Support up to 20 significant figures.
+        float_as_dec = ctx.create_decimal(repr(f))
+        return format(float_as_dec, "f")
+
+
 def create_requests_pipeline_with_retry(*, requests_pipeline: HttpPipeline, retries: int = 3) -> HttpPipeline:
-    """Creates an HttpPipeline identical to the provided one, except
-       with a new override
+    """Creates an HttpPipeline that reuses the same configuration as the
+    supplied pipeline (including the transport), but overwrites the
+    retry policy
 
     Args:
         requests_pipeline (HttpPipeline): Pipeline to base new one off of.
@@ -138,7 +153,7 @@ def get_retry_policy(num_retry=3) -> RetryPolicy:
 def download_text_from_url(
     source_uri: str,
     requests_pipeline: HttpPipeline,
-    timeout: Union[float, Tuple[float, float]] = None,
+    timeout: Optional[Union[float, Tuple[float, float]]] = None,
 ) -> str:
     """Downloads the content from an URL
 
@@ -155,7 +170,7 @@ def download_text_from_url(
         timeout_params = {}
     else:
         connect_timeout, read_timeout = timeout if isinstance(timeout, tuple) else (timeout, timeout)
-        timeout_params = dict(timeout=read_timeout, connection_timeout=connect_timeout)
+        timeout_params = dict(read_timeout=read_timeout, connection_timeout=connect_timeout)
 
     response = requests_pipeline.get(source_uri, **timeout_params)
     # Match old behavior from execution service's status API.
@@ -167,6 +182,19 @@ def download_text_from_url(
 
 
 def load_file(file_path: str) -> str:
+    """Load a local file.
+
+    :param file_path: The relative or absolute path to the local file.
+    :type file_path: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be found.
+    :return: A string representation of the local file's contents.
+    :rtype: str
+    """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     try:
         with open(file_path, "r") as f:
             cfg = f.read()
@@ -182,7 +210,20 @@ def load_file(file_path: str) -> str:
     return cfg
 
 
-def load_json(file_path: Union[str, os.PathLike, None]) -> Dict:
+def load_json(file_path: Optional[Union[str, os.PathLike]]) -> Dict:
+    """Load a local json file.
+
+    :param file_path: The relative or absolute path to the local file.
+    :type file_path: Union[str, os.PathLike]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be found.
+    :return: A dictionary representation of the local file's contents.
+    :rtype: Dict
+    """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     try:
         with open(file_path, "r") as f:
             cfg = json.load(f)
@@ -198,13 +239,28 @@ def load_json(file_path: Union[str, os.PathLike, None]) -> Dict:
     return cfg
 
 
-def load_yaml(source: Union[AnyStr, PathLike, IO, None]) -> Dict:
+def load_yaml(source: Optional[Union[AnyStr, PathLike, IO]]) -> Dict:
     # null check - just return an empty dict.
     # Certain CLI commands rely on this behavior to produce a resource
     # via CLI, which is then populated through CLArgs.
+    """Load a local YAML file.
+
+    :param file_path: The relative or absolute path to the local file.
+    :type file_path: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if file or folder cannot be successfully loaded.
+        Details will be provided in the error message.
+    :return: A dictionary representation of the local file's contents.
+    :rtype: Dict
+    """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     if source is None:
         return {}
 
+    # pylint: disable=redefined-builtin
     input = None  # type: IOBase
     must_open_file = False
     try:  # check source type by duck-typing it as an IOBase
@@ -272,18 +328,36 @@ def dump_yaml(*args, **kwargs):
 
 
 def dump_yaml_to_file(
-    dest: Union[AnyStr, PathLike, IO, None],
-    data_dict: Union[OrderedDict, dict],
+    dest: Optional[Union[AnyStr, PathLike, IO]],
+    data_dict: Union[OrderedDict, Dict],
     default_flow_style=False,
-    path: Union[AnyStr, PathLike] = None,  # deprecated input
-    args=None,  # deprecated* input
+    args=None,  # pylint: disable=unused-argument
     **kwargs,
 ) -> None:
+    """Dump dictionary to a local YAML file.
+
+    :param dest: The relative or absolute path where the YAML dictionary will be dumped.
+    :type dest: Optional[Union[AnyStr, PathLike, IO]]
+    :param data_dict: Dictionary representing a YAML object
+    :type data_dict: Union[OrderedDict, Dict]
+    :param default_flow_style: Use flow style for formatting nested YAML collections
+        instead of block style. Defaults to False.
+    :type default_flow_style: bool
+    :param path: Deprecated. Use 'dest' param instead.
+    :type path: Optional[Union[AnyStr, PathLike]]
+    :param args: Deprecated.
+    :type: Any
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if object cannot be successfully dumped.
+        Details will be provided in the error message.
+    """
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
     # Check for deprecated path input, either named or as first unnamed input
+    path = kwargs.pop("path", None)
     if dest is None:
-        if args is not None and len(args) > 0:
-            dest = args[0]
-        elif path is not None:
+        if path is not None:
             dest = path
             warnings.warn(
                 "the 'path' input for dump functions is deprecated. Please use 'dest' instead.", DeprecationWarning
@@ -375,6 +449,11 @@ def is_url(value: Union[PathLike, str]) -> bool:
 
 # Resolve an URL to long form if it is an azureml short from datastore URL, otherwise return the same value
 def resolve_short_datastore_url(value: Union[PathLike, str], workspace: OperationScope) -> str:
+    from azure.ai.ml.exceptions import ValidationException
+
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     try:
         # Check if the URL is an azureml URL
         if urlparse(str(value)).scheme == "azureml":
@@ -405,6 +484,11 @@ def is_mlflow_uri(value: Union[PathLike, str]) -> bool:
 
 
 def validate_ml_flow_folder(path: str, model_type: string) -> None:
+    from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
     if not isinstance(path, str):
         path = path.as_posix()
     path_array = path.split("/")
@@ -430,7 +514,7 @@ def is_valid_uuid(test_uuid: str) -> bool:
 
 
 @singledispatch
-def from_iso_duration_format(duration: Any = None) -> int:  # pylint: disable=unused-argument
+def from_iso_duration_format(duration: Optional[Any] = None) -> int:  # pylint: disable=unused-argument
     return None
 
 
@@ -524,13 +608,13 @@ def hash_dict(items: dict, keys_to_omit=None):
     items = pydash.omit(items, keys_to_omit)
     # serialize dict with order so same dict will have same content
     serialized_component_interface = json.dumps(items, sort_keys=True)
-    object_hash = hashlib.md5()
+    object_hash = hashlib.md5()  # nosec
     object_hash.update(serialized_component_interface.encode("utf-8"))
     return str(UUID(object_hash.hexdigest()))
 
 
 def convert_identity_dict(
-    identity: ManagedServiceIdentity = None,
+    identity: Optional[ManagedServiceIdentity] = None,
 ) -> ManagedServiceIdentity:
     if identity:
         if identity.type.lower() in ("system_assigned", "none"):
@@ -588,6 +672,18 @@ def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], excl
         else:
             transformed_dict[casing_transform(key)] = transform_dict_keys(data[key], casing_transform)
     return transformed_dict
+
+
+def merge_dict(origin, delta, dep=0):
+    result = copy.deepcopy(origin) if dep == 0 else origin
+    for key, val in delta.items():
+        origin_val = origin.get(key)
+        # Merge delta dict with original dict
+        if isinstance(origin_val, dict) and isinstance(val, dict):
+            result[key] = merge_dict(origin_val, val, dep + 1)
+            continue
+        result[key] = copy.deepcopy(val)
+    return result
 
 
 def retry(
@@ -676,15 +772,28 @@ def is_private_preview_enabled():
     return os.getenv(AZUREML_PRIVATE_FEATURES_ENV_VAR) in ["True", "true", True]
 
 
+def is_on_disk_cache_enabled():
+    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
+
+
+def is_concurrent_component_registration_enabled():
+    return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
+
+
 def is_internal_components_enabled():
     return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
 
 
-def try_enable_internal_components():
+def try_enable_internal_components(*, force=False):
+    """Try to enable internal components for the current process.
+    This is the only function outside _internal that references _internal
+
+    :param force: Force enable internal components even if enabled before.
+    """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
 
-        enable_internal_components_in_pipeline()
+        enable_internal_components_in_pipeline(force=force)
 
 
 def is_valid_node_name(name):
@@ -778,3 +887,71 @@ def _is_user_error_from_exception_type(e: Union[Exception, None]):
     # For OSError/IOError with error no 28: "No space left on device" should be sdk user error
     if isinstance(e, (ConnectionError, KeyboardInterrupt)) or (isinstance(e, (IOError, OSError)) and e.errno == 28):
         return True
+
+
+class DockerProxy:
+    def __getattribute__(self, name: str) -> Any:
+        try:
+            import docker  # pylint: disable=import-error
+
+            return getattr(docker, name)
+        except ModuleNotFoundError:
+            raise Exception(
+                "Please install docker in the current python environment with `pip install docker` and try again."
+            )
+
+
+def get_all_enum_values_iter(enum_type):
+    """Get all values of an enum type."""
+    for key in dir(enum_type):
+        if not key.startswith("_"):
+            yield getattr(enum_type, key)
+
+
+def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resource_group: Optional[str]):
+    """Determine if subscription or resource group is missing and raise exception
+    as appropriate."""
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+
+    # These imports can't be placed in at top file level because it will cause a circular import in
+    # exceptions.py via _get_mfe_url_override
+
+    msg = "Both subscription id and resource group are required for this operation, missing {}"
+    sub_msg = None
+    if not subscription_id and not resource_group:
+        sub_msg = "subscription id and resource group"
+    elif not subscription_id and resource_group:
+        sub_msg = "subscription id"
+    elif subscription_id and not resource_group:
+        sub_msg = "resource group"
+
+    if sub_msg:
+        raise ValidationException(
+            message=msg.format(sub_msg),
+            no_personal_data_message=msg.format(sub_msg),
+            target=ErrorTarget.GENERAL,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+
+
+@contextmanager
+def open_file_with_int_mode(file: Union[str, PathLike], mode: str = 'r', int_mode: int = 0o666, **kwargs) -> IO:
+    """Open file with specific mode and return the file object.
+
+    :param file: Path to the file.
+    :param mode: Mode to open the file.
+    :param int_mode: Mode for opener in integer. Default value is 0o666, which means
+    w+r for owner, group and others.
+    :param int_mode: Mode for the opener.
+    :return: The file object.
+    """
+    origin_mask = os.umask(0)
+    try:
+        def opener(path, flags):
+            # w+r for owner, group and others
+            return os.open(path, flags, int_mode)
+
+        with open(file=file, mode=mode, **kwargs, opener=opener) as f:
+            yield f
+    finally:
+        os.umask(origin_mask)

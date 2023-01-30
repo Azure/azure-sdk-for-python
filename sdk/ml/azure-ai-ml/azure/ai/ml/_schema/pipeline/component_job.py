@@ -5,7 +5,6 @@
 # pylint: disable=no-self-use,protected-access
 
 import logging
-from pathlib import Path
 
 from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump
 
@@ -20,7 +19,7 @@ from azure.ai.ml._schema.component import (
     ParallelComponentFileRefField,
     SparkComponentFileRefField,
 )
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField, NestedField, RegistryStr, UnionField
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, RegistryStr, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
@@ -32,8 +31,8 @@ from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._inputs_outputs import Input
 
-from ..._ml_exceptions import ValidationException
 from ...entities._job.pipeline._attr_dict import _AttrDict
+from ...exceptions import ValidationException
 from .._sweep.parameterized_sweep import ParameterizedSweepSchema
 from .._utils.data_binding_expression import support_data_binding_expression_for_fields
 from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnionField
@@ -49,15 +48,20 @@ module_logger = logging.getLogger(__name__)
 class BaseNodeSchema(PathAwareSchema):
     unknown = INCLUDE
 
-    inputs = InputsField()
+    inputs = InputsField(support_databinding=True)
     outputs = fields.Dict(
         keys=fields.Str(),
         values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
     )
+    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
+    comment = fields.Str()
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        support_data_binding_expression_for_fields(self, ["type"])
+        # data binding expression is not supported inside component field, while validation error
+        # message will be very long when component is an object as error message will include
+        # str(component), so just add component to skip list. The same to trial in Sweep.
+        support_data_binding_expression_for_fields(self, ["type", "component", "trial", "inputs"])
 
     @post_dump(pass_original=True)
     def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
@@ -67,6 +71,17 @@ class BaseNodeSchema(PathAwareSchema):
             data.update(user_setting_attr_dict)
         return data
 
+    # an alternative would be set schema property to be load_only, but sub-schemas like CommandSchema usually also
+    # inherit from other schema classes which also have schema property. Set post dump here would be more efficient.
+    @post_dump()
+    def remove_meaningless_key_for_node(
+        self,
+        data,
+        **kwargs,  # pylint: disable=unused-argument
+    ):
+        data.pop("$schema", None)
+        return data
+
 
 def _delete_type_for_binding(io):
     for key in io:
@@ -74,18 +89,26 @@ def _delete_type_for_binding(io):
             io[key].type = None
 
 
+def _resolve_inputs(result, original_job):
+    result._inputs = original_job._build_inputs()
+    # delete type for literal binding input
+    _delete_type_for_binding(result._inputs)
+
+
+def _resolve_outputs(result, original_job):
+    result._outputs = original_job._build_outputs()
+    # delete type for literal binding output
+    _delete_type_for_binding(result._outputs)
+
+
 def _resolve_inputs_outputs(job):
     # Try resolve object's inputs & outputs and return a resolved new object
     import copy
 
     result = copy.copy(job)
-    result._inputs = job._build_inputs()
-    # delete type for literal binding input
-    _delete_type_for_binding(result._inputs)
+    _resolve_inputs(result, job)
+    _resolve_outputs(result, job)
 
-    result._outputs = job._build_outputs()
-    # delete type for literal binding output
-    _delete_type_for_binding(result._outputs)
     return result
 
 
@@ -108,6 +131,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         ],
         required=True,
     )
+    # code is directly linked to component.code, so no need to validate or dump it
+    code = fields.Str(allow_none=True, load_only=True)
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND])
     compute = ComputeField()
     # do not promote it as CommandComponent has no field named 'limits'
@@ -117,7 +142,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         metadata={
             "description": "The command run and the parameters passed. \
             This string may contain place holders of inputs in {}. "
-        }
+        },
+        load_only=True,
     )
     environment = UnionField(
         [
@@ -127,6 +153,13 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         ],
     )
     services = fields.Dict(keys=fields.Str(), values=NestedField(JobServiceSchema))
+    identity = UnionField(
+        [
+            NestedField(ManagedIdentitySchema),
+            NestedField(AMLTokenIdentitySchema),
+            NestedField(UserIdentitySchema),
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs) -> "Command":
@@ -146,29 +179,6 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
-
-    @post_dump(pass_original=True)
-    def resolve_code_path(self, data, original_data, **kwargs):
-        # Command.code is relative to pipeline instead of Command.component after serialization,
-        # so we need to transform it. Not sure if this is the best way to do it
-        # maybe move this logic to LocalPathField
-        if (
-            hasattr(original_data.component, "code")
-            and original_data.component.code is not None
-            and original_data.component.base_path != original_data._base_path
-        ):
-            try:
-                code_path = Path(original_data.component.base_path) / original_data.component.code
-                if code_path.exists():
-                    # relative path can't be calculated if component.base_path & pipeline.base_path are in different
-                    # drive, so just use absolute path
-                    rebased_path = code_path.resolve().absolute().as_posix()
-                    data["code"], data["component"]["code"] = rebased_path, rebased_path
-            except OSError:
-                # OSError will be raised when _base_path or code is an arm_str or an invalid path,
-                # then just return the origin value to avoid blocking serialization
-                pass
-        return data
 
 
 class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
@@ -314,6 +324,9 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
         ]
     )
 
+    # code is directly linked to component.code, so no need to validate or dump it
+    code = fields.Str(allow_none=True, load_only=True)
+
     @post_load
     def make(self, data, **kwargs) -> "Spark":
         from azure.ai.ml.entities._builders import parse_inputs_outputs
@@ -332,26 +345,3 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
-
-    @post_dump(pass_original=True)
-    def resolve_code_path(self, data, original_data, **kwargs):
-        # Command.code is relative to pipeline instead of Command.component after serialization,
-        # so we need to transform it. Not sure if this is the best way to do it
-        # maybe move this logic to LocalPathField
-        if (
-            hasattr(original_data.component, "code")
-            and original_data.component.code is not None
-            and original_data.component.base_path != original_data._base_path
-        ):
-            try:
-                code_path = Path(original_data.component.base_path) / original_data.component.code
-                if code_path.exists():
-                    # relative path can't be calculated if component.base_path & pipeline.base_path are in different
-                    # drive, so just use absolute path
-                    rebased_path = code_path.resolve().absolute().as_posix()
-                    data["code"], data["component"]["code"] = rebased_path, rebased_path
-            except OSError:
-                # OSError will be raised when _base_path or code is an arm_str or an invalid path,
-                # then just return the origin value to avoid blocking serialization
-                pass
-        return data

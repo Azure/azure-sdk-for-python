@@ -12,11 +12,11 @@ from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 from azure.mgmt.core.policies import ARMChallengeAuthenticationPolicy, ARMHttpLoggingPolicy
 
+from ._version import VERSION
+
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
-
-VERSION = "unknown"
 
 
 class ContainerServiceClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
@@ -45,10 +45,7 @@ class ContainerServiceClientConfiguration(Configuration):  # pylint: disable=too
         kwargs.setdefault("sdk_moniker", "mgmt-containerservice/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

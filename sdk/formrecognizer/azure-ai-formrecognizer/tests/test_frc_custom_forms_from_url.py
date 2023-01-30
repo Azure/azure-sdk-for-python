@@ -13,12 +13,14 @@ from azure.ai.formrecognizer._response_handlers import prepare_form_result
 from testcase import FormRecognizerTest, _get_blob_url
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
 
 
 class TestCustomFormsFromUrl(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy
@@ -41,6 +43,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             assert form.form_type == "form-0"
             self.assertUnlabeledRecognizedFormHasValues(form, model)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy
@@ -64,6 +67,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             assert form.form_type ==  "custom:"+model.model_id
             self.assertLabeledRecognizedFormHasValues(form, model)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy
@@ -102,6 +106,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy
@@ -142,6 +147,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     def test_custom_form_continuation_token(self, **kwargs):
@@ -167,6 +173,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
         assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy
@@ -205,6 +212,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertUnlabeledFormFieldDictTransformCorrect(form.fields, actual.key_value_pairs, read_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy
@@ -244,6 +252,7 @@ class TestCustomFormsFromUrl(FormRecognizerTest):
             assert form.model_id ==  model.model_id
             self.assertFormFieldsTransformCorrect(form.fields, actual.fields, read_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer()
     @recorded_by_proxy

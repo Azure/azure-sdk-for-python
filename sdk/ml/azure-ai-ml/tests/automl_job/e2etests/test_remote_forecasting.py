@@ -1,6 +1,11 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 from typing import Tuple
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import assert_final_job_status, get_automl_job_properties
 
 from azure.ai.ml import MLClient
@@ -10,8 +15,13 @@ from azure.ai.ml.entities._job.automl.tabular.forecasting_job import Forecasting
 from azure.ai.ml.operations._run_history_constants import JobStatus
 
 
-@pytest.mark.automle2etest
-class TestAutoMLForecasting:
+@pytest.mark.automl_test
+@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.skipif(
+    condition=not is_live(),
+    reason="Datasets downloaded by test are too large to record reliably"
+)
+class TestAutoMLForecasting(AzureRecordedTestCase):
     def get_forecasting_task(
         self,
         dataset: Tuple[Input, ForecastingSettings, str],

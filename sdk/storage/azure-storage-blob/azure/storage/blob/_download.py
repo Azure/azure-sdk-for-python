@@ -9,7 +9,7 @@ import threading
 import time
 import warnings
 from io import BytesIO
-from typing import Generic, Iterator, Optional, TypeVar
+from typing import Generic, IO, Iterator, Optional, TypeVar
 
 from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError
 from azure.core.tracing.common import with_current_context
@@ -431,7 +431,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 # Parse the total file size and adjust the download size if ranges
                 # were specified
                 self._file_size = parse_length_from_content_range(response.properties.content_range)
-                if not self._file_size:
+                if self._file_size is None:
                     raise ValueError("Required Content-Range response header is missing or malformed.")
                 # Remove any extra encryption data size from blob size
                 self._file_size = adjust_blob_size_for_encryption(self._file_size, self._encryption_data)
@@ -646,8 +646,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             return data.decode(self._encoding)
         return data
 
-    def readall(self):
-        # type: () -> T
+    def readall(self) -> T:
         """
         Read the entire contents of this blob.
         This operation is blocking until all data is downloaded.
@@ -697,7 +696,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         self._encoding = encoding
         return self.readall()
 
-    def readinto(self, stream):
+    def readinto(self, stream: IO[T]) -> int:
         """Download the contents of this file to a stream.
 
         :param stream:

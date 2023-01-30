@@ -4,16 +4,15 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Any
 
+from azure.core.credentials import AccessToken
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,7 +34,7 @@ class ManagedIdentityCredential(AsyncContextManager):
     :paramtype identity_config: Mapping[str, str]
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self._credential = None  # type: Optional[AsyncTokenCredential]
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
@@ -96,18 +95,20 @@ class ManagedIdentityCredential(AsyncContextManager):
             await self._credential.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the credential's transport session."""
         if self._credential:
-            await self._credential.__aexit__()
+            await self._credential.close()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: managed identity isn't available in the hosting environment
         """

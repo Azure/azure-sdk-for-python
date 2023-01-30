@@ -86,6 +86,8 @@ class DocumentTranslationClient:
             raise ValueError("Parameter 'endpoint' must be a string.")
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)
+        if hasattr(self._api_version, "value"):
+            self._api_version = self._api_version.value
 
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)

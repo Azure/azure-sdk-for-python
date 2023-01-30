@@ -16,7 +16,7 @@ from azure.ai.formrecognizer import FormContentType, FormRecognizerApiVersion
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
-
+from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
@@ -44,6 +44,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -100,6 +101,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
                 result = await poller.result()
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -127,6 +129,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -154,6 +157,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -176,6 +180,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         assert layout.tables[1].page_number== 1
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -190,6 +195,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(result)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -217,6 +223,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_content_continuation_token(self, **kwargs):
@@ -233,6 +240,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -261,6 +269,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(result)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -278,6 +287,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
 
     @pytest.mark.skip()
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy_async
@@ -294,6 +304,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
         self.assertFormPagesHasValues(result)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -319,6 +330,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             assert len(result) == 3
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -334,6 +346,7 @@ class TestContentFromStreamAsync(AsyncFormRecognizerTest):
             assert result
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async

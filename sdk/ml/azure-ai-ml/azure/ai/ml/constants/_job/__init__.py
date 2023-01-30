@@ -4,17 +4,30 @@
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from .automl import AutoMLConstants, AutoMLTransformerParameterKeys
+from .automl import (
+    AutoMLConstants,
+    AutoMLTransformerParameterKeys,
+    ImageClassificationModelNames,
+    ImageInstanceSegmentationModelNames,
+    ImageObjectDetectionModelNames,
+    NlpLearningRateScheduler,
+    NlpModels,
+)
 from .job import DistributionType, ImportSourceType, JobType
 from .pipeline import PipelineConstants
 from .sweep import SearchSpace
 
 __all__ = [
-    "ImportSourceType",
-    "JobType",
-    "PipelineConstants",
     "AutoMLConstants",
-    "AutoMLTransformerParameterKeys"
+    "AutoMLTransformerParameterKeys",
     "DistributionType",
+    "ImageClassificationModelNames",
+    "ImageObjectDetectionModelNames",
+    "ImageInstanceSegmentationModelNames",
+    "JobType",
+    "ImportSourceType",
+    "PipelineConstants",
     "SearchSpace",
+    "NlpModels",
+    "NlpLearningRateScheduler",
 ]

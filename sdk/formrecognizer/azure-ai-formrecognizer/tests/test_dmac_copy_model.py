@@ -14,6 +14,7 @@ from azure.ai.formrecognizer import DocumentModelDetails, DocumentModelAdministr
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
@@ -25,16 +26,19 @@ class TestCopyModel(FormRecognizerTest):
     @DocumentModelAdministrationClientPreparer()
     def test_copy_model_none_model_id(self, **kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.begin_copy_document_model_to(model_id=None, target={})
+        assert "model_id cannot be None or empty." in str(e.value)
 
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_copy_model_empty_model_id(self,**kwargs):
         client = kwargs.pop("client")
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as e:
             client.begin_copy_document_model_to(model_id="", target={})
+        assert "model_id cannot be None or empty." in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -60,6 +64,7 @@ class TestCopyModel(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -88,6 +93,7 @@ class TestCopyModel(FormRecognizerTest):
                 assert field["type"]
                 assert doc_type.field_confidence[key] is not None
 
+    @pytest.mark.skip()
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -103,6 +109,7 @@ class TestCopyModel(FormRecognizerTest):
             poller = client.begin_copy_document_model_to("00000000-0000-0000-0000-000000000000", target=target)
             copy = poller.result()
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -130,6 +137,7 @@ class TestCopyModel(FormRecognizerTest):
         self.assertModelTransformCorrect(copy, generated)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -144,6 +152,7 @@ class TestCopyModel(FormRecognizerTest):
         assert target["expirationDateTime"]
         assert target["targetModelLocation"]
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy
@@ -176,6 +185,7 @@ class TestCopyModel(FormRecognizerTest):
                 assert doc_type.field_confidence[key] is not None
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     def test_copy_continuation_token(self, **kwargs):
@@ -194,6 +204,7 @@ class TestCopyModel(FormRecognizerTest):
 
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy

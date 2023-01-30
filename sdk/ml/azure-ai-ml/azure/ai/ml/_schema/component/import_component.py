@@ -46,7 +46,7 @@ class AnonymousImportComponentSchema(AnonymousAssetSchema, ImportComponentSchema
     """
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         from azure.ai.ml.entities._component.import_component import ImportComponent
 
         # Inline component will have source=YAML.JOB

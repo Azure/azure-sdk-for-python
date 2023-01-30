@@ -62,7 +62,7 @@
                 "tier": "Standard"
             },
             "kind": "StorageV2",
-            "properties": { 
+            "properties": {
                 "supportsHttpsTrafficOnly": true,
                 "encryption": {
                     "keySource": "Microsoft.Storage",
@@ -70,9 +70,9 @@
                         "blob": {
                             "enabled": true
                         }
-                    },
+                    }
                 },
-                "accessTier": "Hot" 
+                "accessTier": "Hot"
             }
         },
         {

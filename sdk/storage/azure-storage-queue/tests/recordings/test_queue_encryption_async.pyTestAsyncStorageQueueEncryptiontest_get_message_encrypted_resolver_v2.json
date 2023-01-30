@@ -1,0 +1,84 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/encryptionqueue230f3a84",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Tue, 01 Nov 2022 00:18:19 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Tue, 01 Nov 2022 00:18:19 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/encryptionqueue230f3a84/messages",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "569",
+        "Content-Type": "application/xml",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Tue, 01 Nov 2022 00:18:19 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": [
+        "\u003C?xml version=\u00271.0\u0027 encoding=\u0027utf-8\u0027?\u003E\n",
+        "\u003CQueueMessage\u003E\u003CMessageText\u003E{\u0022EncryptedMessageContents\u0022: \u0022TWLVTsK9oMikTPugqLtzfO5u8yYLr3KJsyE7OJPBZMVg3ecqv7i090v5w8XNHCP9FaY=\u0022, \u0022EncryptionData\u0022: {\u0022WrappedContentKey\u0022: {\u0022KeyId\u0022: \u0022key1\u0022, \u0022EncryptedKey\u0022: \u0022c3EwcBUQIku7ptntzfboaKwfdJmsOcVcOgfPAe30gAhEPkek8GsgMKRREXKhWZfG\u0022, \u0022Algorithm\u0022: \u0022A256KW\u0022}, \u0022EncryptionAgent\u0022: {\u0022Protocol\u0022: \u00222.0\u0022, \u0022EncryptionAlgorithm\u0022: \u0022AES_GCM_256\u0022}, \u0022EncryptedRegionInfo\u0022: {\u0022DataLength\u0022: 4194304, \u0022NonceLength\u0022: 12}, \u0022KeyWrappingMetadata\u0022: {\u0022EncryptionLibrary\u0022: \u0022Python x.x.x\u0022}}}\u003C/MessageText\u003E\u003C/QueueMessage\u003E"
+      ],
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Type": "application/xml",
+        "Date": "Tue, 01 Nov 2022 00:18:19 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003E9034ed66-74c8-47f3-bd65-fa4fb03d2a9c\u003C/MessageId\u003E\u003CInsertionTime\u003ETue, 01 Nov 2022 00:18:20 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003ETue, 08 Nov 2022 00:18:20 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAATxxAcoft2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003ETue, 01 Nov 2022 00:18:20 GMT\u003C/TimeNextVisible\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/encryptionqueue230f3a84/messages?numofmessages=1",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Tue, 01 Nov 2022 00:18:19 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/xml",
+        "Date": "Tue, 01 Nov 2022 00:18:19 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CQueueMessagesList\u003E\u003CQueueMessage\u003E\u003CMessageId\u003Ea47251f6-d1e5-4174-b5e2-cd27378d5a70\u003C/MessageId\u003E\u003CInsertionTime\u003ETue, 01 Nov 2022 00:16:29 GMT\u003C/InsertionTime\u003E\u003CExpirationTime\u003ETue, 08 Nov 2022 00:16:29 GMT\u003C/ExpirationTime\u003E\u003CPopReceipt\u003EAgAAAAMAAAAAAAAA3ccvhIft2AE=\u003C/PopReceipt\u003E\u003CTimeNextVisible\u003ETue, 01 Nov 2022 00:18:50 GMT\u003C/TimeNextVisible\u003E\u003CDequeueCount\u003E2\u003C/DequeueCount\u003E\u003CMessageText\u003E{\u0022EncryptedMessageContents\u0022: \u0022TWLVTsK9oMikTPugqLtzfO5u8yYLr3KJsyE7OJPBZMVg3ecqv7i090v5w8XNHCP9FaY=\u0022, \u0022EncryptionData\u0022: {\u0022WrappedContentKey\u0022: {\u0022KeyId\u0022: \u0022key1\u0022, \u0022EncryptedKey\u0022: \u0022c3EwcBUQIku7ptntzfboaKwfdJmsOcVcOgfPAe30gAhEPkek8GsgMKRREXKhWZfG\u0022, \u0022Algorithm\u0022: \u0022A256KW\u0022}, \u0022EncryptionAgent\u0022: {\u0022Protocol\u0022: \u00222.0\u0022, \u0022EncryptionAlgorithm\u0022: \u0022AES_GCM_256\u0022}, \u0022EncryptedRegionInfo\u0022: {\u0022DataLength\u0022: 4194304, \u0022NonceLength\u0022: 12}, \u0022KeyWrappingMetadata\u0022: {\u0022EncryptionLibrary\u0022: \u0022Python x.x.x\u0022}}}\u003C/MessageText\u003E\u003C/QueueMessage\u003E\u003C/QueueMessagesList\u003E"
+    }
+  ],
+  "Variables": {}
+}

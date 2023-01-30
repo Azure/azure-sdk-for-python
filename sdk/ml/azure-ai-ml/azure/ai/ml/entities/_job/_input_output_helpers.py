@@ -6,36 +6,31 @@ import collections.abc
 import re
 from typing import Any, Dict, Union
 
-from azure.ai.ml._ml_exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    JobException,
-    ValidationErrorType,
-    ValidationException,
-)
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType as JobInputType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobOutputType as JobOutputType
-from azure.ai.ml._restclient.v2022_06_01_preview.models import LiteralJobInput as LiteralJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutputType, LiteralJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput as RestMLTableJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFileJobInput as RestUriFileJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
+from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.input_output_entry import InputOutputEntry
+from azure.ai.ml.entities._util import normalize_job_input_output_type
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException, ValidationErrorType, ValidationException
 
 INPUT_MOUNT_MAPPING_FROM_REST = {
     InputDeliveryMode.READ_WRITE_MOUNT: InputOutputModes.RW_MOUNT,
@@ -70,6 +65,7 @@ OUTPUT_MOUNT_MAPPING_TO_REST = {
 }
 
 
+# TODO: Remove this as both rest type and sdk type are snake case now.
 def get_output_type_mapping_from_rest():
     """Get output type mapping."""
     return {
@@ -82,78 +78,36 @@ def get_output_type_mapping_from_rest():
     }
 
 
-def get_input_rest_init_func_dict():
+def get_input_rest_cls_dict():
     """Get input rest init func dict."""
     return {
-        AssetTypes.URI_FILE: lambda uri, mode: RestUriFileJobInput(uri=uri, mode=mode),
-        AssetTypes.URI_FOLDER: lambda uri, mode: RestUriFolderJobInput(uri=uri, mode=mode),
-        AssetTypes.MLTABLE: lambda uri, mode: RestMLTableJobInput(uri=uri, mode=mode),
-        AssetTypes.MLFLOW_MODEL: lambda uri, mode: RestMLFlowModelJobInput(uri=uri, mode=mode),
-        AssetTypes.CUSTOM_MODEL: lambda uri, mode: RestCustomModelJobInput(uri=uri, mode=mode),
-        AssetTypes.TRITON_MODEL: lambda uri, mode: RestTritonModelJobInput(uri=uri, mode=mode),
+        AssetTypes.URI_FILE: RestUriFileJobInput,
+        AssetTypes.URI_FOLDER: RestUriFolderJobInput,
+        AssetTypes.MLTABLE: RestMLTableJobInput,
+        AssetTypes.MLFLOW_MODEL: RestMLFlowModelJobInput,
+        AssetTypes.CUSTOM_MODEL: RestCustomModelJobInput,
+        AssetTypes.TRITON_MODEL: RestTritonModelJobInput,
     }
 
 
-def get_output_rest_init_func_dict():
-    """Get output rest init func dict."""
+def get_output_rest_cls_dict():
+    """Get output rest init cls dict."""
 
     return {
-        AssetTypes.URI_FILE: lambda uri, mode: RestUriFileJobOutput(uri=uri, mode=mode),
-        AssetTypes.URI_FOLDER: lambda uri, mode: RestUriFolderJobOutput(uri=uri, mode=mode),
-        AssetTypes.MLTABLE: lambda uri, mode: RestMLTableJobOutput(uri=uri, mode=mode),
-        AssetTypes.MLFLOW_MODEL: lambda uri, mode: RestMLFlowModelJobOutput(uri=uri, mode=mode),
-        AssetTypes.CUSTOM_MODEL: lambda uri, mode: RestCustomModelJobOutput(uri=uri, mode=mode),
-        AssetTypes.TRITON_MODEL: lambda uri, mode: RestTritonModelJobOutput(uri=uri, mode=mode),
+        AssetTypes.URI_FILE: RestUriFileJobOutput,
+        AssetTypes.URI_FOLDER: RestUriFolderJobOutput,
+        AssetTypes.MLTABLE: RestMLTableJobOutput,
+        AssetTypes.MLFLOW_MODEL: RestMLFlowModelJobOutput,
+        AssetTypes.CUSTOM_MODEL: RestCustomModelJobOutput,
+        AssetTypes.TRITON_MODEL: RestTritonModelJobOutput,
     }
-
-
-class BindingJobInput(LiteralJobInput):
-    """Literal input type.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar description: Description for the input.
-    :vartype description: str
-    :ivar job_input_type: Required. [Required] Specifies the type of job.Constant filled by server.
-     Possible values include: "Literal".
-    :vartype job_input_type: str or ~azure.mgmt.machinelearningservices.models.JobInputType
-    :ivar value: Required. [Required] Literal value for the input.
-    :vartype value: str
-    :keyword mode: Input Asset Delivery Mode. Possible values include: "ReadOnlyMount",
-    "ReadWriteMount", "Download", "Direct", "EvalMount", "EvalDownload".
-    :paramtype mode: str or ~azure.mgmt.machinelearningservices.models.InputDeliveryMode
-    """
-
-    _validation = {
-        "job_input_type": {"required": True},
-        "value": {"required": True, "pattern": r"[a-zA-Z0-9_]"},
-    }
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "job_input_type": {"key": "jobInputType", "type": "str"},
-        "value": {"key": "value", "type": "str"},
-        "mode": {"key": "mode", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """
-        :keyword description: Description for the input.
-        :paramtype description: str
-        :keyword value: Required. [Required] Literal value for the input.
-        :paramtype value: str
-        """
-        super(LiteralJobInput, self).__init__(**kwargs)
-        self.job_input_type = "literal"  # type: str
-        self.value = kwargs["value"]
-        self.mode = kwargs.get("mode", None)
 
 
 def build_input_output(
     item: Union[InputOutputEntry, Input, Output, str, bool, int, float],
     inputs: bool = True,
 ) -> Union[InputOutputEntry, Input, Output, str, bool, int, float]:
-    if isinstance(item, InputOutputEntry) or isinstance(item, Input) or isinstance(item, Output):
+    if isinstance(item, (Input, InputOutputEntry, Output)):
         # return objects constructed at yaml load or specified in sdk
         return item
     # parse dictionary into supported class
@@ -168,8 +122,10 @@ def build_input_output(
 
 def _validate_inputs_for(input_consumer_name: str, input_consumer: str, inputs: Dict[str, Any]) -> None:
     implicit_inputs = re.findall(r"\${{inputs\.([\w\.-]+)}}", input_consumer)
+    # optional inputs no need to validate whether they're in inputs
+    optional_inputs = re.findall(r"\[[\w\.\s-]*\${{inputs\.([\w\.-]+)}}]", input_consumer)
     for key in implicit_inputs:
-        if inputs.get(key, None) is None:
+        if inputs.get(key, None) is None and key not in optional_inputs:
             msg = "Inputs to job does not contain '{}' referenced in " + input_consumer_name
             raise ValidationException(
                 message=msg.format(key),
@@ -204,7 +160,7 @@ def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
     # Pipeline input allow '.' to support parameter group in key.
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
-    if re.match(r"^([a-zA-Z_]+[a-zA-Z0-9_]*)([.]([a-zA-Z_]+[a-zA-Z0-9_]*))*$", key) is None:
+    if re.match(IOConstants.VALID_KEY_PATTERN, key) is None:
         msg = (
             "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
         )
@@ -236,24 +192,23 @@ def to_rest_dataset_literal_inputs(
     for input_name, input_value in inputs.items():
         if job_type == JobType.PIPELINE:
             validate_pipeline_input_key_contains_allowed_characters(input_name)
-        else:
+        elif job_type:
+            # We pass job_type=None for pipeline node, and want skip this check for nodes.
             validate_key_contains_allowed_characters(input_name)
         if isinstance(input_value, Input):
             if input_value.path and isinstance(input_value.path, str) and is_data_binding_expression(input_value.path):
+                input_data = LiteralJobInput(value=input_value.path)
+                # set mode attribute manually for binding job input
                 if input_value.mode:
-                    input_data = BindingJobInput(
-                        value=input_value.path, mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
-                    )
-                else:
-                    input_data = LiteralJobInput(value=input_value.path)
+                    input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
                 input_data.job_input_type = JobInputType.LITERAL
             else:
-                target_init_func_dict = get_input_rest_init_func_dict()
+                target_cls_dict = get_input_rest_cls_dict()
 
-                if input_value.type in target_init_func_dict:
-                    input_data = target_init_func_dict[input_value.type](
-                        input_value.path,
-                        INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
+                if input_value.type in target_cls_dict:
+                    input_data = target_cls_dict[input_value.type](
+                        uri=input_value.path,
+                        mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
                     )
 
                 else:
@@ -271,10 +226,10 @@ def to_rest_dataset_literal_inputs(
         else:
             # otherwise, the input is a literal input
             if isinstance(input_value, dict):
+                input_data = LiteralJobInput(value=str(input_value["value"]))
+                # set mode attribute manually for binding job input
                 if "mode" in input_value:
-                    input_data = BindingJobInput(value=str(input_value["value"]), mode=input_value["mode"])
-                else:
-                    input_data = LiteralJobInput(value=str(input_value["value"]))
+                    input_data.mode = input_value["mode"]
             else:
                 input_data = LiteralJobInput(value=str(input_value))
             input_data.job_input_type = JobInputType.LITERAL
@@ -302,7 +257,11 @@ def from_rest_inputs_to_dataset_literal(
         if input_value is None:
             continue
 
+        # TODO: Remove this as both rest type and sdk type are snake case now.
         type_transfer_dict = get_output_type_mapping_from_rest()
+        # deal with invalid input type submitted by feb api
+        # todo: backend help convert node level input/output type
+        normalize_job_input_output_type(input_value)
 
         if input_value.job_input_type in type_transfer_dict:
             if input_value.uri:
@@ -346,13 +305,14 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
             output_cls = RestUriFolderJobOutput
             rest_outputs[output_name] = output_cls(mode=None)
         else:
-            target_init_func_dict = get_output_rest_init_func_dict()
+            target_cls_dict = get_output_rest_cls_dict()
 
             output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
-            if output_value_type in target_init_func_dict:
-                output = target_init_func_dict[output_value_type](
-                    output_value.path,
-                    OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+            if output_value_type in target_cls_dict:
+                output = target_cls_dict[output_value_type](
+                    uri=output_value.path,
+                    mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                    description=output_value.description,
                 )
             else:
                 msg = "unsupported JobOutput type: {}".format(output_value.type)
@@ -382,11 +342,16 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
     for output_name, output_value in outputs.items():
         if output_value is None:
             continue
+        # deal with invalid output type submitted by feb api
+        # todo: backend help convert node level input/output type
+        normalize_job_input_output_type(output_value)
+
         if output_value.job_output_type in output_type_mapping:
             from_rest_outputs[output_name] = Output(
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
                 mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
+                description=output_value.description,
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)

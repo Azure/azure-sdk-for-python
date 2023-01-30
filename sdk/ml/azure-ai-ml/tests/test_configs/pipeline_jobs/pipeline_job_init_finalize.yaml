@@ -24,7 +24,7 @@ jobs:
     outputs:
       world_output:
   c:
-    command: echo ${{inputs.world_input}}/world.txt
+    command: echo hello ${{inputs.hello_string}}
     environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
     inputs:
-      world_input: ${{parent.jobs.b.outputs.world_output}}
+      hello_string: ${{parent.inputs.hello_string_top_level_input}}

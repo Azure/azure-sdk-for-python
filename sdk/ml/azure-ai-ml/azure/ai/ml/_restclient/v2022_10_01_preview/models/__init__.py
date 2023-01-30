@@ -10,12 +10,14 @@ try:
     from ._models_py3 import AKS
     from ._models_py3 import AKSSchema
     from ._models_py3 import AKSSchemaProperties
+    from ._models_py3 import AccessKeyAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import AccountKeyDatastoreCredentials
     from ._models_py3 import AccountKeyDatastoreSecrets
     from ._models_py3 import AcrDetails
     from ._models_py3 import AksComputeSecrets
     from ._models_py3 import AksComputeSecretsProperties
     from ._models_py3 import AksNetworkingConfiguration
+    from ._models_py3 import AllNodes
     from ._models_py3 import AmlCompute
     from ._models_py3 import AmlComputeNodeInformation
     from ._models_py3 import AmlComputeNodesInformation
@@ -42,6 +44,7 @@ try:
     from ._models_py3 import AutoSeasonality
     from ._models_py3 import AutoTargetLags
     from ._models_py3 import AutoTargetRollingWindowSize
+    from ._models_py3 import AutologgerSettings
     from ._models_py3 import AzureBlobDatastore
     from ._models_py3 import AzureDataLakeGen1Datastore
     from ._models_py3 import AzureDataLakeGen2Datastore
@@ -84,6 +87,7 @@ try:
     from ._models_py3 import Compute
     from ._models_py3 import ComputeInstance
     from ._models_py3 import ComputeInstanceApplication
+    from ._models_py3 import ComputeInstanceAutologgerSettings
     from ._models_py3 import ComputeInstanceConnectivityEndpoints
     from ._models_py3 import ComputeInstanceContainer
     from ._models_py3 import ComputeInstanceCreatedBy
@@ -103,6 +107,7 @@ try:
     from ._models_py3 import ContainerResourceRequirements
     from ._models_py3 import ContainerResourceSettings
     from ._models_py3 import CosmosDbSettings
+    from ._models_py3 import Cron
     from ._models_py3 import CronTrigger
     from ._models_py3 import CsvExportSummary
     from ._models_py3 import CustomForecastHorizon
@@ -196,6 +201,7 @@ try:
     from ._models_py3 import ImageClassificationMultilabel
     from ._models_py3 import ImageInstanceSegmentation
     from ._models_py3 import ImageLimitSettings
+    from ._models_py3 import ImageMetadata
     from ._models_py3 import ImageModelDistributionSettings
     from ._models_py3 import ImageModelDistributionSettingsClassification
     from ._models_py3 import ImageModelDistributionSettingsObjectDetection
@@ -204,7 +210,6 @@ try:
     from ._models_py3 import ImageModelSettingsObjectDetection
     from ._models_py3 import ImageObjectDetection
     from ._models_py3 import ImageObjectDetectionBase
-    from ._models_py3 import ImageSweepLimitSettings
     from ._models_py3 import ImageSweepSettings
     from ._models_py3 import ImageVertical
     from ._models_py3 import InferenceContainerProperties
@@ -266,10 +271,14 @@ try:
     from ._models_py3 import ModelVersionResourceArmPaginatedResult
     from ._models_py3 import Mpi
     from ._models_py3 import NCrossValidations
+    from ._models_py3 import NlpFixedParameters
+    from ._models_py3 import NlpParameterSubspace
+    from ._models_py3 import NlpSweepSettings
     from ._models_py3 import NlpVertical
     from ._models_py3 import NlpVerticalFeaturizationSettings
     from ._models_py3 import NlpVerticalLimitSettings
     from ._models_py3 import NodeStateCounts
+    from ._models_py3 import Nodes
     from ._models_py3 import NoneAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import NoneDatastoreCredentials
     from ._models_py3 import NotebookAccessTokenResult
@@ -310,6 +319,7 @@ try:
     from ._models_py3 import QuotaBaseProperties
     from ._models_py3 import QuotaUpdateParameters
     from ._models_py3 import RandomSamplingAlgorithm
+    from ._models_py3 import Recurrence
     from ._models_py3 import RecurrenceSchedule
     from ._models_py3 import RecurrenceTrigger
     from ._models_py3 import RegenerateEndpointKeysRequest
@@ -342,6 +352,7 @@ try:
     from ._models_py3 import ScriptsToExecute
     from ._models_py3 import Seasonality
     from ._models_py3 import ServiceManagedResourcesSettings
+    from ._models_py3 import ServicePrincipalAuthTypeWorkspaceConnectionProperties
     from ._models_py3 import ServicePrincipalDatastoreCredentials
     from ._models_py3 import ServicePrincipalDatastoreSecrets
     from ._models_py3 import SetupScripts
@@ -368,6 +379,9 @@ try:
     from ._models_py3 import SystemCreatedStorageAccount
     from ._models_py3 import SystemData
     from ._models_py3 import SystemService
+    from ._models_py3 import TableFixedParameters
+    from ._models_py3 import TableParameterSubspace
+    from ._models_py3 import TableSweepSettings
     from ._models_py3 import TableVertical
     from ._models_py3 import TableVerticalFeaturizationSettings
     from ._models_py3 import TableVerticalLimitSettings
@@ -414,11 +428,13 @@ try:
     from ._models_py3 import VolumeDefinition
     from ._models_py3 import VolumeOptions
     from ._models_py3 import Workspace
+    from ._models_py3 import WorkspaceConnectionAccessKey
     from ._models_py3 import WorkspaceConnectionManagedIdentity
     from ._models_py3 import WorkspaceConnectionPersonalAccessToken
     from ._models_py3 import WorkspaceConnectionPropertiesV2
     from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResource
     from ._models_py3 import WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult
+    from ._models_py3 import WorkspaceConnectionServicePrincipal
     from ._models_py3 import WorkspaceConnectionSharedAccessSignature
     from ._models_py3 import WorkspaceConnectionUsernamePassword
     from ._models_py3 import WorkspaceListResult
@@ -427,12 +443,14 @@ except (SyntaxError, ImportError):
     from ._models import AKS  # type: ignore
     from ._models import AKSSchema  # type: ignore
     from ._models import AKSSchemaProperties  # type: ignore
+    from ._models import AccessKeyAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import AccountKeyDatastoreCredentials  # type: ignore
     from ._models import AccountKeyDatastoreSecrets  # type: ignore
     from ._models import AcrDetails  # type: ignore
     from ._models import AksComputeSecrets  # type: ignore
     from ._models import AksComputeSecretsProperties  # type: ignore
     from ._models import AksNetworkingConfiguration  # type: ignore
+    from ._models import AllNodes  # type: ignore
     from ._models import AmlCompute  # type: ignore
     from ._models import AmlComputeNodeInformation  # type: ignore
     from ._models import AmlComputeNodesInformation  # type: ignore
@@ -459,6 +477,7 @@ except (SyntaxError, ImportError):
     from ._models import AutoSeasonality  # type: ignore
     from ._models import AutoTargetLags  # type: ignore
     from ._models import AutoTargetRollingWindowSize  # type: ignore
+    from ._models import AutologgerSettings  # type: ignore
     from ._models import AzureBlobDatastore  # type: ignore
     from ._models import AzureDataLakeGen1Datastore  # type: ignore
     from ._models import AzureDataLakeGen2Datastore  # type: ignore
@@ -501,6 +520,7 @@ except (SyntaxError, ImportError):
     from ._models import Compute  # type: ignore
     from ._models import ComputeInstance  # type: ignore
     from ._models import ComputeInstanceApplication  # type: ignore
+    from ._models import ComputeInstanceAutologgerSettings  # type: ignore
     from ._models import ComputeInstanceConnectivityEndpoints  # type: ignore
     from ._models import ComputeInstanceContainer  # type: ignore
     from ._models import ComputeInstanceCreatedBy  # type: ignore
@@ -520,6 +540,7 @@ except (SyntaxError, ImportError):
     from ._models import ContainerResourceRequirements  # type: ignore
     from ._models import ContainerResourceSettings  # type: ignore
     from ._models import CosmosDbSettings  # type: ignore
+    from ._models import Cron  # type: ignore
     from ._models import CronTrigger  # type: ignore
     from ._models import CsvExportSummary  # type: ignore
     from ._models import CustomForecastHorizon  # type: ignore
@@ -613,6 +634,7 @@ except (SyntaxError, ImportError):
     from ._models import ImageClassificationMultilabel  # type: ignore
     from ._models import ImageInstanceSegmentation  # type: ignore
     from ._models import ImageLimitSettings  # type: ignore
+    from ._models import ImageMetadata  # type: ignore
     from ._models import ImageModelDistributionSettings  # type: ignore
     from ._models import ImageModelDistributionSettingsClassification  # type: ignore
     from ._models import ImageModelDistributionSettingsObjectDetection  # type: ignore
@@ -621,7 +643,6 @@ except (SyntaxError, ImportError):
     from ._models import ImageModelSettingsObjectDetection  # type: ignore
     from ._models import ImageObjectDetection  # type: ignore
     from ._models import ImageObjectDetectionBase  # type: ignore
-    from ._models import ImageSweepLimitSettings  # type: ignore
     from ._models import ImageSweepSettings  # type: ignore
     from ._models import ImageVertical  # type: ignore
     from ._models import InferenceContainerProperties  # type: ignore
@@ -683,10 +704,14 @@ except (SyntaxError, ImportError):
     from ._models import ModelVersionResourceArmPaginatedResult  # type: ignore
     from ._models import Mpi  # type: ignore
     from ._models import NCrossValidations  # type: ignore
+    from ._models import NlpFixedParameters  # type: ignore
+    from ._models import NlpParameterSubspace  # type: ignore
+    from ._models import NlpSweepSettings  # type: ignore
     from ._models import NlpVertical  # type: ignore
     from ._models import NlpVerticalFeaturizationSettings  # type: ignore
     from ._models import NlpVerticalLimitSettings  # type: ignore
     from ._models import NodeStateCounts  # type: ignore
+    from ._models import Nodes  # type: ignore
     from ._models import NoneAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import NoneDatastoreCredentials  # type: ignore
     from ._models import NotebookAccessTokenResult  # type: ignore
@@ -727,6 +752,7 @@ except (SyntaxError, ImportError):
     from ._models import QuotaBaseProperties  # type: ignore
     from ._models import QuotaUpdateParameters  # type: ignore
     from ._models import RandomSamplingAlgorithm  # type: ignore
+    from ._models import Recurrence  # type: ignore
     from ._models import RecurrenceSchedule  # type: ignore
     from ._models import RecurrenceTrigger  # type: ignore
     from ._models import RegenerateEndpointKeysRequest  # type: ignore
@@ -759,6 +785,7 @@ except (SyntaxError, ImportError):
     from ._models import ScriptsToExecute  # type: ignore
     from ._models import Seasonality  # type: ignore
     from ._models import ServiceManagedResourcesSettings  # type: ignore
+    from ._models import ServicePrincipalAuthTypeWorkspaceConnectionProperties  # type: ignore
     from ._models import ServicePrincipalDatastoreCredentials  # type: ignore
     from ._models import ServicePrincipalDatastoreSecrets  # type: ignore
     from ._models import SetupScripts  # type: ignore
@@ -785,6 +812,9 @@ except (SyntaxError, ImportError):
     from ._models import SystemCreatedStorageAccount  # type: ignore
     from ._models import SystemData  # type: ignore
     from ._models import SystemService  # type: ignore
+    from ._models import TableFixedParameters  # type: ignore
+    from ._models import TableParameterSubspace  # type: ignore
+    from ._models import TableSweepSettings  # type: ignore
     from ._models import TableVertical  # type: ignore
     from ._models import TableVerticalFeaturizationSettings  # type: ignore
     from ._models import TableVerticalLimitSettings  # type: ignore
@@ -831,11 +861,13 @@ except (SyntaxError, ImportError):
     from ._models import VolumeDefinition  # type: ignore
     from ._models import VolumeOptions  # type: ignore
     from ._models import Workspace  # type: ignore
+    from ._models import WorkspaceConnectionAccessKey  # type: ignore
     from ._models import WorkspaceConnectionManagedIdentity  # type: ignore
     from ._models import WorkspaceConnectionPersonalAccessToken  # type: ignore
     from ._models import WorkspaceConnectionPropertiesV2  # type: ignore
     from ._models import WorkspaceConnectionPropertiesV2BasicResource  # type: ignore
     from ._models import WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult  # type: ignore
+    from ._models import WorkspaceConnectionServicePrincipal  # type: ignore
     from ._models import WorkspaceConnectionSharedAccessSignature  # type: ignore
     from ._models import WorkspaceConnectionUsernamePassword  # type: ignore
     from ._models import WorkspaceListResult  # type: ignore
@@ -844,6 +876,7 @@ except (SyntaxError, ImportError):
 from ._azure_machine_learning_workspaces_enums import (
     AllocationState,
     ApplicationSharingPolicy,
+    AssetProvisioningState,
     Autosave,
     BatchLoggingLevel,
     BatchOutputAction,
@@ -860,7 +893,6 @@ from ._azure_machine_learning_workspaces_enums import (
     ComputeProvisioningState,
     ComputeType,
     ConnectionAuthType,
-    ConnectionCategory,
     ContainerType,
     CreatedByType,
     CredentialsType,
@@ -901,14 +933,18 @@ from ._azure_machine_learning_workspaces_enums import (
     LoadBalancerType,
     LogVerbosity,
     MLAssistConfigurationType,
+    MLFlowAutologgerState,
     ManagedServiceIdentityType,
     MediaType,
+    MlflowAutologger,
     ModelSize,
     MountAction,
     MountState,
     NCrossValidationsMode,
     Network,
+    NlpLearningRateScheduler,
     NodeState,
+    NodesValueType,
     ObjectDetectionPrimaryMetrics,
     OperatingSystemType,
     OperationName,
@@ -933,6 +969,7 @@ from ._azure_machine_learning_workspaces_enums import (
     SamplingAlgorithmType,
     ScaleType,
     ScheduleActionType,
+    ScheduleListViewType,
     ScheduleProvisioningState,
     ScheduleProvisioningStatus,
     ScheduleStatus,
@@ -975,12 +1012,14 @@ __all__ = [
     'AKS',
     'AKSSchema',
     'AKSSchemaProperties',
+    'AccessKeyAuthTypeWorkspaceConnectionProperties',
     'AccountKeyDatastoreCredentials',
     'AccountKeyDatastoreSecrets',
     'AcrDetails',
     'AksComputeSecrets',
     'AksComputeSecretsProperties',
     'AksNetworkingConfiguration',
+    'AllNodes',
     'AmlCompute',
     'AmlComputeNodeInformation',
     'AmlComputeNodesInformation',
@@ -1007,6 +1046,7 @@ __all__ = [
     'AutoSeasonality',
     'AutoTargetLags',
     'AutoTargetRollingWindowSize',
+    'AutologgerSettings',
     'AzureBlobDatastore',
     'AzureDataLakeGen1Datastore',
     'AzureDataLakeGen2Datastore',
@@ -1049,6 +1089,7 @@ __all__ = [
     'Compute',
     'ComputeInstance',
     'ComputeInstanceApplication',
+    'ComputeInstanceAutologgerSettings',
     'ComputeInstanceConnectivityEndpoints',
     'ComputeInstanceContainer',
     'ComputeInstanceCreatedBy',
@@ -1068,6 +1109,7 @@ __all__ = [
     'ContainerResourceRequirements',
     'ContainerResourceSettings',
     'CosmosDbSettings',
+    'Cron',
     'CronTrigger',
     'CsvExportSummary',
     'CustomForecastHorizon',
@@ -1161,6 +1203,7 @@ __all__ = [
     'ImageClassificationMultilabel',
     'ImageInstanceSegmentation',
     'ImageLimitSettings',
+    'ImageMetadata',
     'ImageModelDistributionSettings',
     'ImageModelDistributionSettingsClassification',
     'ImageModelDistributionSettingsObjectDetection',
@@ -1169,7 +1212,6 @@ __all__ = [
     'ImageModelSettingsObjectDetection',
     'ImageObjectDetection',
     'ImageObjectDetectionBase',
-    'ImageSweepLimitSettings',
     'ImageSweepSettings',
     'ImageVertical',
     'InferenceContainerProperties',
@@ -1231,10 +1273,14 @@ __all__ = [
     'ModelVersionResourceArmPaginatedResult',
     'Mpi',
     'NCrossValidations',
+    'NlpFixedParameters',
+    'NlpParameterSubspace',
+    'NlpSweepSettings',
     'NlpVertical',
     'NlpVerticalFeaturizationSettings',
     'NlpVerticalLimitSettings',
     'NodeStateCounts',
+    'Nodes',
     'NoneAuthTypeWorkspaceConnectionProperties',
     'NoneDatastoreCredentials',
     'NotebookAccessTokenResult',
@@ -1275,6 +1321,7 @@ __all__ = [
     'QuotaBaseProperties',
     'QuotaUpdateParameters',
     'RandomSamplingAlgorithm',
+    'Recurrence',
     'RecurrenceSchedule',
     'RecurrenceTrigger',
     'RegenerateEndpointKeysRequest',
@@ -1307,6 +1354,7 @@ __all__ = [
     'ScriptsToExecute',
     'Seasonality',
     'ServiceManagedResourcesSettings',
+    'ServicePrincipalAuthTypeWorkspaceConnectionProperties',
     'ServicePrincipalDatastoreCredentials',
     'ServicePrincipalDatastoreSecrets',
     'SetupScripts',
@@ -1333,6 +1381,9 @@ __all__ = [
     'SystemCreatedStorageAccount',
     'SystemData',
     'SystemService',
+    'TableFixedParameters',
+    'TableParameterSubspace',
+    'TableSweepSettings',
     'TableVertical',
     'TableVerticalFeaturizationSettings',
     'TableVerticalLimitSettings',
@@ -1379,17 +1430,20 @@ __all__ = [
     'VolumeDefinition',
     'VolumeOptions',
     'Workspace',
+    'WorkspaceConnectionAccessKey',
     'WorkspaceConnectionManagedIdentity',
     'WorkspaceConnectionPersonalAccessToken',
     'WorkspaceConnectionPropertiesV2',
     'WorkspaceConnectionPropertiesV2BasicResource',
     'WorkspaceConnectionPropertiesV2BasicResourceArmPaginatedResult',
+    'WorkspaceConnectionServicePrincipal',
     'WorkspaceConnectionSharedAccessSignature',
     'WorkspaceConnectionUsernamePassword',
     'WorkspaceListResult',
     'WorkspaceUpdateParameters',
     'AllocationState',
     'ApplicationSharingPolicy',
+    'AssetProvisioningState',
     'Autosave',
     'BatchLoggingLevel',
     'BatchOutputAction',
@@ -1406,7 +1460,6 @@ __all__ = [
     'ComputeProvisioningState',
     'ComputeType',
     'ConnectionAuthType',
-    'ConnectionCategory',
     'ContainerType',
     'CreatedByType',
     'CredentialsType',
@@ -1447,14 +1500,18 @@ __all__ = [
     'LoadBalancerType',
     'LogVerbosity',
     'MLAssistConfigurationType',
+    'MLFlowAutologgerState',
     'ManagedServiceIdentityType',
     'MediaType',
+    'MlflowAutologger',
     'ModelSize',
     'MountAction',
     'MountState',
     'NCrossValidationsMode',
     'Network',
+    'NlpLearningRateScheduler',
     'NodeState',
+    'NodesValueType',
     'ObjectDetectionPrimaryMetrics',
     'OperatingSystemType',
     'OperationName',
@@ -1479,6 +1536,7 @@ __all__ = [
     'SamplingAlgorithmType',
     'ScaleType',
     'ScheduleActionType',
+    'ScheduleListViewType',
     'ScheduleProvisioningState',
     'ScheduleProvisioningStatus',
     'ScheduleStatus',

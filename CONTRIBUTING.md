@@ -43,13 +43,13 @@ sdist
 
 ```
 
-Unfortunately, the command `tox -l` only returns the _default_ test builds. The common `tox.ini` file also supports `lint` and `mypy` environments.
+Unfortunately, the command `tox -l` only returns the _default_ test builds. The common `tox.ini` file also supports `pylint` and `mypy` environments.
 
 ### Example Usage of the common Azure SDK For Python `tox.ini`
 
 Basic usage of `tox` within this monorepo is:
 
-1. `pip install tox tox-monorepo`
+1. `pip install tox<4 tox-monorepo`
 2. `cd` to target package folder
 3. run `tox -c path/to/tox.ini`
 
@@ -91,11 +91,11 @@ Used for the local dev loop.
 
 ```
 
-#### `lint` environment
+#### `pylint` environment
 Pylint install and run.
 
 ```
-\> tox -e lint -c <path to tox.ini>
+\> tox -e pylint -c <path to tox.ini>
 ```
 
 
@@ -104,6 +104,13 @@ Mypy install and run.
 
 ```
 \> tox -e mypy -c <path to tox.ini>
+```
+
+#### `sphinx` environment
+Generate shpinx doc for this package.
+
+```
+\> tox -e sphinx -c <path to tox.ini>
 ```
 
 ### Custom Pytest Arguments

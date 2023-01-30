@@ -9,7 +9,14 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +27,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._tenant_activity_logs_operations import build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class TenantActivityLogsOperations:
     """
@@ -42,14 +51,10 @@ class TenantActivityLogsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list(
-        self,
-        filter: Optional[str] = None,
-        select: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.EventDataCollection]:
+        self, filter: Optional[str] = None, select: Optional[str] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.EventData"]:
         """Gets the Activity Logs for the Tenant.:code:`<br>`Everything that is applicable to the API to
         get the Activity Logs for the subscription is applicable to this API (the parameters, $filter,
         etc.).:code:`<br>`One thing to point out here is that this API does *not* retrieve the logs at
@@ -81,33 +86,34 @@ class TenantActivityLogsOperations:
          *resourceId*\ , *status*\ , *submissionTimestamp*\ , *subStatus*\ , *subscriptionId*. Default
          value is None.
         :type select: str
-        :keyword api_version: Api Version. Default value is "2015-04-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either EventDataCollection or the result of cls(response)
+        :return: An iterator like instance of either EventData or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2015_04_01.models.EventDataCollection]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~$(python-base-namespace).v2015_04_01.models.EventData]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2015-04-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.EventDataCollection]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2015-04-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EventDataCollection]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
-                    api_version=api_version,
                     filter=filter,
                     select=select,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -115,15 +121,7 @@ class TenantActivityLogsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    api_version=api_version,
-                    filter=filter,
-                    select=select,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -139,10 +137,8 @@ class TenantActivityLogsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -153,8 +149,6 @@ class TenantActivityLogsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/providers/Microsoft.Insights/eventtypes/management/values"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.Insights/eventtypes/management/values"}  # type: ignore

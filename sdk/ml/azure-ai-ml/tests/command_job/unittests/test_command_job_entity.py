@@ -4,8 +4,7 @@ from collections import OrderedDict
 import pytest
 
 from azure.ai.ml import Input, MpiDistribution
-from azure.ai.ml._ml_exceptions import ValidationException
-from azure.ai.ml._restclient.v2022_06_01_preview.models import AmlToken, JobBase
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken, JobBase
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import CommandJob, Environment, Job
@@ -15,9 +14,11 @@ from azure.ai.ml.entities._job.job_limits import CommandJobLimits
 from azure.ai.ml.entities._job.job_name_generator import generate_job_name
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
+from azure.ai.ml.exceptions import ValidationException
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestCommandJobEntity:
     def test_job_name_generator(self):
         job1 = generate_job_name()

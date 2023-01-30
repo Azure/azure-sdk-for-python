@@ -8,17 +8,12 @@ from typing import Dict, Any, Optional, Mapping, Union, TYPE_CHECKING
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
-    DistributedTracingPolicy,
-    HttpLoggingPolicy,
     AsyncBearerTokenCredentialPolicy,
-    ContentDecodePolicy,
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.exceptions import (
     HttpResponseError,
     ClientAuthenticationError,
@@ -34,7 +29,6 @@ from .._utils import (
     prep_if_none_match,
 )
 from .._generated.aio import AzureAppConfiguration
-from .._generated.aio._configuration import AzureAppConfigurationConfiguration
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._models import ConfigurationSetting
@@ -45,13 +39,16 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-keyword
-    # pylint:disable=line-too-long
+class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
 
-        :param str base_url: base url of the service
+        :param str base_url: Base url of the service.
         :param credential: An object which can provide secrets for the app configuration service
-        :type credential: :class:`azure.appconfiguration.AppConfigConnectionStringCredential` or :class:`~azure.core.credentials_async.AsyncTokenCredential`
+        :type credential: :class:`azure.appconfiguration.AppConfigConnectionStringCredential`
+            or :class:`~azure.core.credentials_async.AsyncTokenCredential`
+        :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
+            value may result in unsupported behavior.
+        :paramtype api_version: str
 
     This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -74,26 +71,34 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
         if not credential:
             raise ValueError("Missing credential")
 
-        self._credential_scopes = base_url.strip("/") + "/.default"
+        credential_scopes = base_url.strip("/") + "/.default"
 
-        self._config = AzureAppConfigurationConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, **kwargs  # type: ignore
-        )
-        self._config.user_agent_policy = UserAgentPolicy(
-            base_user_agent=USER_AGENT, **kwargs
-        )
+        user_agent_policy = UserAgentPolicy(base_user_agent=USER_AGENT, **kwargs)
 
-        pipeline = kwargs.get("pipeline")
         self._sync_token_policy = AsyncSyncTokenPolicy()
 
-        if pipeline is None:
-            aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
-            pipeline = self._create_appconfig_pipeline(
-                credential=credential, aad_mode=aad_mode, base_url=base_url, **kwargs
-            )
+        aad_mode = not isinstance(credential, AppConfigConnectionStringCredential)
+        if aad_mode:
+            if hasattr(credential, "get_token"):
+                credential_policy = AsyncBearerTokenCredentialPolicy(
+                    credential, # type: ignore
+                    credential_scopes,
+                )
+            else:
+                raise TypeError(
+                    "Please provide an instance from azure-identity "
+                    "or a class that implement the 'get_token protocol"
+                )
+        else:
+            credential_policy = AppConfigRequestsCredentialsPolicy(credential) # type: ignore
 
         self._impl = AzureAppConfiguration(
-            credential, base_url, credential_scopes=self._credential_scopes, pipeline=pipeline  # type: ignore
+            base_url,
+            credential_scopes=credential_scopes,
+            authentication_policy=credential_policy,
+            user_agent_policy=user_agent_policy,
+            per_call_policies=self._sync_token_policy,
+            **kwargs
         )
 
     @classmethod
@@ -122,47 +127,6 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
             **kwargs
         )
 
-    def _create_appconfig_pipeline(
-        self, credential, base_url=None, aad_mode=False, **kwargs
-    ):
-        transport = kwargs.get("transport")
-        policies = kwargs.get("policies")
-
-        if policies is None:  # [] is a valid policy list
-            if aad_mode:
-                scope = base_url.strip("/") + "/.default"
-                if hasattr(credential, "get_token"):
-                    credential_policy = AsyncBearerTokenCredentialPolicy(
-                        credential, scope
-                    )
-                else:
-                    raise TypeError(
-                        "Please provide an instance from azure-identity "
-                        "or a class that implement the 'get_token protocol"
-                    )
-            else:
-                credential_policy = AppConfigRequestsCredentialsPolicy(credential)
-
-            policies = [
-                self._config.headers_policy,
-                self._config.user_agent_policy,
-                self._config.retry_policy,
-                self._sync_token_policy,
-                credential_policy,
-                self._config.logging_policy,  # HTTP request/response log
-                DistributedTracingPolicy(**kwargs),
-                HttpLoggingPolicy(**kwargs),
-                ContentDecodePolicy(**kwargs),
-            ]
-
-        if not transport:
-            transport = AsyncioRequestsTransport(**kwargs)
-
-        return AsyncPipeline(
-            transport,
-            policies,
-        )
-
     @distributed_trace
     def list_configuration_settings(
         self,
@@ -181,7 +145,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -308,7 +272,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
         .. code-block:: python
 
-            # in async fuction
+            # in async function
             config_setting = ConfigurationSetting(
                 key="MyKey",
                 label="MyLabel",
@@ -483,7 +447,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`

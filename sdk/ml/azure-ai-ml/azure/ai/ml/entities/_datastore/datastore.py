@@ -7,16 +7,16 @@
 from abc import ABC, abstractclassmethod, abstractmethod
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, AnyStr, Dict, Union
+from typing import IO, Any, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
+from azure.ai.ml._restclient.v2022_10_01.models import Datastore as DatastoreData, DatastoreType
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class Datastore(Resource, RestTranslatableMixin, ABC):
@@ -40,10 +40,10 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     def __init__(
         self,
         credentials: Any,
-        name: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        properties: Optional[Dict] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", None)
@@ -55,15 +55,13 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             **kwargs,
         )
 
-        self.credentials = NoneCredentials() if credentials is None else credentials
+        self.credentials = NoneCredentialConfiguration() if credentials is None else credentials
 
     @property
     def type(self) -> str:
         return self._type
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the datastore content into a file in yaml format.
 
         :param dest: The destination to receive this datastore's content.
@@ -73,15 +71,9 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, **kwargs)
 
     @abstractmethod
     def _to_dict(self) -> Dict:
@@ -90,9 +82,9 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
     @classmethod
     def _load(
         cls,
-        data: Dict = None,
-        yaml_path: Union[PathLike, str] = None,
-        params_override: list = None,
+        data: Optional[Dict] = None,
+        yaml_path: Optional[Union[PathLike, str]] = None,
+        params_override: Optional[list] = None,
         **kwargs,
     ) -> "Datastore":
         data = data or {}

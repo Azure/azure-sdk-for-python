@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import NginxManagementClientConfiguration
 from .operations import CertificatesOperations, ConfigurationsOperations, DeploymentsOperations, Operations
@@ -37,7 +37,7 @@ class NginxManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Required. Default value is "".
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword api_version: Api Version. Default value is "2022-08-01". Note that overriding this
      default value may result in unsupported behavior.
@@ -47,14 +47,18 @@ class NginxManagementClient:  # pylint: disable=client-accepts-api-version-keywo
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: str = "", **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: str = "https://management.azure.com",
+        **kwargs: Any
     ) -> None:
         self._config = NginxManagementClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False

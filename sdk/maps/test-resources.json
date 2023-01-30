@@ -1,100 +1,104 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-      "baseName": {
-        "type": "string",
-        "defaultValue": "[resourceGroup().name]",
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "baseName": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().name]",
+      "metadata": {
+        "description": "The base resource name."
+      }
+    },
+    "tenantId": {
+      "type": "string",
         "metadata": {
-          "description": "The base resource name."
-        }
-      },
-      "endpointPrefix": {
-        "defaultValue": "maps",
-        "type": "string"
-      },
-      "mapsServicesEndpointSuffix": {
-        "defaultValue": ".maps.azure.com",
-        "type": "string"
-      },
-      "testApplicationOid": {
+          "description": "The tenant id to which the application and resources belong."
+      }
+    },
+    "testApplicationOid": {
         "type": "string",
         "metadata": {
-          "description": "The client OID to grant access to test resources."
+            "description": "The client OID to grant access to test resources."
         }
-      },
-      "tenantId": {
-        "type": "string",
-          "metadata": {
-            "description": "The tenant id to which the application and resources belong."
+    },
+    "testApplicationId": {
+      "type": "string",
+        "metadata": {
+            "description": "The application client id used to run tests."
         }
+    },
+    "testApplicationSecret": {
+      "type": "string",
+        "metadata": {
+            "description": "The application client secret used to run tests."
+        }
+    }
+  },
+  "variables": {
+    "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/8f5e0ce6-4f7b-4dcf-bddf-e6f48634a204')]",
+    "mapsAccountName": "[guid(resourceGroup().id, deployment().name, parameters('baseName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Maps/accounts",
+      "apiVersion": "2021-12-01-preview",
+      "name": "[variables('mapsAccountName')]",
+      "location": "eastus",
+      "sku": {
+          "name": "G2",
+          "tier": "Standard"
       },
-      "testApplicationId": {
-        "type": "string",
-          "metadata": {
-              "description": "The application client id used to run tests."
-          }
+      "kind": "Gen2",
+      "identity": {
+          "type": "None"
       },
-      "testApplicationSecret": {
-        "type": "string",
-          "metadata": {
-              "description": "The application client secret used to run tests."
+      "properties": {
+          "disableLocalAuth": false,
+          "cors": {
+              "corsRules": [
+                  {
+                      "allowedOrigins": [
+                          "*"
+                      ]
+                  }
+              ]
           }
       }
     },
-    "variables": {
-      "uniqueSubDomainName": "[format('{0}-{1}', parameters('baseName'), parameters('endpointPrefix'))]",
-      "contributorRoleId": "b24988ac-6180-42a0-ab88-20f7382dd24c",
-      "mapsAccountName": "[guid(resourceGroup().id, deployment().name, parameters('baseName'))]"
-    },
-    "resources": [
-      {
-        "type": "Microsoft.Maps/accounts",
-        "apiVersion": "2021-12-01-preview",
-        "name": "[variables('mapsAccountName')]",
-        "location": "eastus",
-        "sku": {
-            "name": "G2",
-            "tier": "Standard"
-        },
-        "kind": "Gen2",
-        "identity": {
-            "type": "None"
-        },
+    {
+        "type": "Microsoft.Authorization/roleAssignments",
+        "apiVersion": "2018-09-01-preview",
+        "name": "[guid(resourceGroup().id)]",
         "properties": {
-            "disableLocalAuth": false,
-            "cors": {
-                "corsRules": [
-                    {
-                        "allowedOrigins": [
-                            "*"
-                        ]
-                    }
-                ]
-            }
+            "roleDefinitionId": "[variables('roleDefinitionId')]",
+            "principalId": "[parameters('testApplicationOid')]"
         }
-      }
-    ],
-    "outputs": {
-      "AZURE_TENANT_ID": {
-            "type": "string",
-            "value": "[parameters('tenantId')]"
-      },
-      "AZURE_CLIENT_ID": {
-            "type": "string",
-            "value": "[parameters('testApplicationId')]"
-      },
-      "AZURE_CLIENT_SECRET": {
-            "type": "string",
-            "value": "[parameters('testApplicationSecret')]"
-      },
-      "AZURE_SUBSCRIPTION_KEY": {
+    }
+  ],
+  "outputs": {
+    "AZURE_TENANT_ID": {
+          "type": "string",
+          "value": "[parameters('tenantId')]"
+    },
+    "AZURE_CLIENT_ID": {
+          "type": "string",
+          "value": "[parameters('testApplicationId')]"
+    },
+    "AZURE_CLIENT_SECRET": {
+          "type": "string",
+          "value": "[parameters('testApplicationSecret')]"
+    },
+    "AZURE_MAPS_CLIENT_ID": {
         "type": "string",
-        "value": "[listKeys(resourceId('Microsoft.Maps/accounts',variables('mapsAccountName')), '2021-12-01-preview').primaryKey]"
-      },
-      "RESOURCE_GROUP_NAME": {
-        "type": "string",
-        "value": "[resourceGroup().Name]"
-      }
+        "value": "[reference(resourceId('Microsoft.Maps/accounts',variables('mapsAccountName'))).uniqueId]"
+    },
+    "AZURE_SUBSCRIPTION_KEY": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.Maps/accounts',variables('mapsAccountName')), '2021-12-01-preview').primaryKey]"
+    },
+    "RESOURCE_GROUP_NAME": {
+      "type": "string",
+      "value": "[resourceGroup().Name]"
     }
   }
+}

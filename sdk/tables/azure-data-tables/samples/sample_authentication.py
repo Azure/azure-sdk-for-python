@@ -42,7 +42,7 @@ class TableAuthSamples(object):
             self.account_name, self.access_key, self.endpoint_suffix
         )
 
-    def copy_table_from_table_to_blob(self):
+    def authentication_by_connection_string(self):
         # Instantiate a TableServiceClient using a connection string
         # [START auth_from_connection_string]
         from azure.data.tables import TableServiceClient
@@ -52,13 +52,13 @@ class TableAuthSamples(object):
             print("Connection String: {}".format(properties))
         # [END auth_from_connection_string]
 
-    def copy_table_from_blob_to_table(self):
+    def authentication_by_shared_key(self):
         # Instantiate a TableServiceClient using a shared access key
         # [START auth_from_shared_key]
         from azure.data.tables import TableServiceClient
         from azure.core.credentials import AzureNamedKeyCredential
 
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key) # type: ignore[arg-type]
         with TableServiceClient(endpoint=self.endpoint, credential=credential) as table_service:
             properties = table_service.get_service_properties()
             print("Shared Key: {}".format(properties))
@@ -75,7 +75,7 @@ class TableAuthSamples(object):
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
 
         print("Account name: {}".format(self.account_name))
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key) # type: ignore[arg-type]
         sas_token = generate_account_sas(
             credential,
             resource_types=ResourceTypes(service=True),

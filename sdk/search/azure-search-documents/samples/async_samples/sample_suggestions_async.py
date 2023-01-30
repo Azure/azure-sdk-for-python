@@ -45,5 +45,4 @@ async def suggest_query():
     # [END suggest_query_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(suggest_query())
+    asyncio.run(suggest_query())

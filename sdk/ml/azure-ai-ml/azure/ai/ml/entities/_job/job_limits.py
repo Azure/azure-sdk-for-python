@@ -4,9 +4,10 @@
 
 import logging
 from abc import ABC
+from typing import Optional
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_06_01_preview.models import SweepJobLimits as RestSweepJobLimits
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SweepJobLimits as RestSweepJobLimits
 from azure.ai.ml._utils.utils import from_iso_duration_format, to_iso_duration_format
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -36,7 +37,8 @@ class CommandJobLimits(JobLimits):
     :type timeout: int
     """
 
-    def __init__(self, *, timeout: int = None):
+    def __init__(self, *, timeout: Optional[int] = None):
+        super().__init__()
         self.type = JobType.COMMAND
         self.timeout = timeout
 
@@ -71,11 +73,12 @@ class SweepJobLimits(JobLimits):
     def __init__(
         self,
         *,
-        max_concurrent_trials: int = None,
-        max_total_trials: int = None,
-        timeout: int = None,
-        trial_timeout: int = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_total_trials: Optional[int] = None,
+        timeout: Optional[int] = None,
+        trial_timeout: Optional[int] = None,
     ):
+        super().__init__()
         self.type = JobType.SWEEP
         self.max_concurrent_trials = max_concurrent_trials
         self.max_total_trials = max_total_trials
@@ -123,3 +126,26 @@ def _get_floored_timeout(value: int) -> int:
     # Bug 1335978:  Service rounds durations less than 60 seconds to 60 days.
     # If duration is non-0 and less than 60, set to 60.
     return value if not value or value > 60 else 60
+
+
+class DoWhileJobLimits(JobLimits):
+    """DoWhile Job limit class.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :param max_iteration_count:
+    :type max_iteration_count: int
+    """
+
+    def __init__(
+        self,
+        *,
+        max_iteration_count: Optional[int] = None,
+        **kwargs,  # pylint: disable=unused-argument
+    ):
+        super().__init__()
+        self._max_iteration_count = max_iteration_count
+
+    @property
+    def max_iteration_count(self) -> int:
+        return self._max_iteration_count

@@ -9,6 +9,7 @@ from azure.ai.ml._azure_environments import (
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
+    _get_registry_discovery_endpoint_from_metadata,
     _get_storage_endpoint_from_metadata,
     _set_cloud,
 )
@@ -16,6 +17,7 @@ from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestCloudEnvironments:
     @mock.patch.dict(os.environ, {AZUREML_CLOUD_ENV_NAME: AzureEnvironments.ENV_DEFAULT}, clear=True)
     def test_set_valid_cloud_details_china(self):
@@ -68,3 +70,22 @@ class TestCloudEnvironments:
         with mock.patch("os.environ", {AZUREML_CLOUD_ENV_NAME: "yadadada"}):
             cloud_name = _get_default_cloud_name()
             assert cloud_name == "yadadada"
+
+    
+    def test_get_registry_endpoint_from_public(self):
+        cloud_environment = AzureEnvironments.ENV_DEFAULT
+        _set_cloud(cloud_environment)
+        base_url = _get_registry_discovery_endpoint_from_metadata(cloud_environment)
+        assert "https://eastus.api.azureml.ms/" in base_url
+    
+    def test_get_registry_endpoint_from_china(self):
+        cloud_environment = AzureEnvironments.ENV_CHINA
+        _set_cloud(cloud_environment)
+        base_url = _get_registry_discovery_endpoint_from_metadata(cloud_environment)
+        assert "https://chinaeast2.api.ml.azure.cn/" in base_url
+
+    def test_get_registry_endpoint_from_us_gov(self):
+        cloud_environment = AzureEnvironments.ENV_US_GOVERNMENT
+        _set_cloud(cloud_environment)
+        base_url = _get_registry_discovery_endpoint_from_metadata(cloud_environment)
+        assert "https://usgovarizona.api.ml.azure.us/" in base_url

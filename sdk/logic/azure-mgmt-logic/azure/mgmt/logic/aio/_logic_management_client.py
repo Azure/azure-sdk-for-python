@@ -9,20 +9,48 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
 from .. import models
+from .._serialization import Deserializer, Serializer
 from ._configuration import LogicManagementClientConfiguration
-from .operations import IntegrationAccountAgreementsOperations, IntegrationAccountAssembliesOperations, IntegrationAccountBatchConfigurationsOperations, IntegrationAccountCertificatesOperations, IntegrationAccountMapsOperations, IntegrationAccountPartnersOperations, IntegrationAccountSchemasOperations, IntegrationAccountSessionsOperations, IntegrationAccountsOperations, IntegrationServiceEnvironmentManagedApiOperationsOperations, IntegrationServiceEnvironmentManagedApisOperations, IntegrationServiceEnvironmentNetworkHealthOperations, IntegrationServiceEnvironmentSkusOperations, IntegrationServiceEnvironmentsOperations, Operations, WorkflowRunActionRepetitionsOperations, WorkflowRunActionRepetitionsRequestHistoriesOperations, WorkflowRunActionRequestHistoriesOperations, WorkflowRunActionScopeRepetitionsOperations, WorkflowRunActionsOperations, WorkflowRunOperationsOperations, WorkflowRunsOperations, WorkflowTriggerHistoriesOperations, WorkflowTriggersOperations, WorkflowVersionTriggersOperations, WorkflowVersionsOperations, WorkflowsOperations
+from .operations import (
+    IntegrationAccountAgreementsOperations,
+    IntegrationAccountAssembliesOperations,
+    IntegrationAccountBatchConfigurationsOperations,
+    IntegrationAccountCertificatesOperations,
+    IntegrationAccountMapsOperations,
+    IntegrationAccountPartnersOperations,
+    IntegrationAccountSchemasOperations,
+    IntegrationAccountSessionsOperations,
+    IntegrationAccountsOperations,
+    IntegrationServiceEnvironmentManagedApiOperationsOperations,
+    IntegrationServiceEnvironmentManagedApisOperations,
+    IntegrationServiceEnvironmentNetworkHealthOperations,
+    IntegrationServiceEnvironmentSkusOperations,
+    IntegrationServiceEnvironmentsOperations,
+    Operations,
+    WorkflowRunActionRepetitionsOperations,
+    WorkflowRunActionRepetitionsRequestHistoriesOperations,
+    WorkflowRunActionRequestHistoriesOperations,
+    WorkflowRunActionScopeRepetitionsOperations,
+    WorkflowRunActionsOperations,
+    WorkflowRunOperationsOperations,
+    WorkflowRunsOperations,
+    WorkflowTriggerHistoriesOperations,
+    WorkflowTriggersOperations,
+    WorkflowVersionTriggersOperations,
+    WorkflowVersionsOperations,
+    WorkflowsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class LogicManagementClient:    # pylint: disable=too-many-instance-attributes
+
+class LogicManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """REST API for Azure Logic Apps.
 
     :ivar workflows: WorkflowsOperations operations
@@ -107,9 +135,9 @@ class LogicManagementClient:    # pylint: disable=too-many-instance-attributes
      azure.mgmt.logic.aio.operations.IntegrationServiceEnvironmentManagedApiOperationsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.logic.aio.operations.Operations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The subscription id.
+    :param subscription_id: The subscription id. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -127,7 +155,9 @@ class LogicManagementClient:    # pylint: disable=too-many-instance-attributes
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = LogicManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = LogicManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -135,39 +165,84 @@ class LogicManagementClient:    # pylint: disable=too-many-instance-attributes
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.workflows = WorkflowsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_versions = WorkflowVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_triggers = WorkflowTriggersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_version_triggers = WorkflowVersionTriggersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_trigger_histories = WorkflowTriggerHistoriesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workflow_versions = WorkflowVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_triggers = WorkflowTriggersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_version_triggers = WorkflowVersionTriggersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_trigger_histories = WorkflowTriggerHistoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.workflow_runs = WorkflowRunsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_actions = WorkflowRunActionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_action_repetitions = WorkflowRunActionRepetitionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_action_repetitions_request_histories = WorkflowRunActionRepetitionsRequestHistoriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_action_request_histories = WorkflowRunActionRequestHistoriesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_action_scope_repetitions = WorkflowRunActionScopeRepetitionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.workflow_run_operations = WorkflowRunOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_accounts = IntegrationAccountsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_assemblies = IntegrationAccountAssembliesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_batch_configurations = IntegrationAccountBatchConfigurationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_schemas = IntegrationAccountSchemasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_maps = IntegrationAccountMapsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_partners = IntegrationAccountPartnersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_agreements = IntegrationAccountAgreementsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_certificates = IntegrationAccountCertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_account_sessions = IntegrationAccountSessionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environments = IntegrationServiceEnvironmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environment_skus = IntegrationServiceEnvironmentSkusOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environment_network_health = IntegrationServiceEnvironmentNetworkHealthOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environment_managed_apis = IntegrationServiceEnvironmentManagedApisOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.integration_service_environment_managed_api_operations = IntegrationServiceEnvironmentManagedApiOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workflow_run_actions = WorkflowRunActionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_action_repetitions = WorkflowRunActionRepetitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_action_repetitions_request_histories = WorkflowRunActionRepetitionsRequestHistoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_action_request_histories = WorkflowRunActionRequestHistoriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_action_scope_repetitions = WorkflowRunActionScopeRepetitionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workflow_run_operations = WorkflowRunOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_accounts = IntegrationAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_assemblies = IntegrationAccountAssembliesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_batch_configurations = IntegrationAccountBatchConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_schemas = IntegrationAccountSchemasOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_maps = IntegrationAccountMapsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_partners = IntegrationAccountPartnersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_agreements = IntegrationAccountAgreementsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_certificates = IntegrationAccountCertificatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_account_sessions = IntegrationAccountSessionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environments = IntegrationServiceEnvironmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environment_skus = IntegrationServiceEnvironmentSkusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environment_network_health = IntegrationServiceEnvironmentNetworkHealthOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environment_managed_apis = IntegrationServiceEnvironmentManagedApisOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.integration_service_environment_managed_api_operations = (
+            IntegrationServiceEnvironmentManagedApiOperationsOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -176,7 +251,7 @@ class LogicManagementClient:    # pylint: disable=too-many-instance-attributes
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
