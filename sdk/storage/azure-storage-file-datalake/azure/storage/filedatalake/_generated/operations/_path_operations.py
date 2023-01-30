@@ -1355,10 +1355,10 @@ class PathOperations:
         _if_unmodified_since = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
-            _content_MD5 = path_http_headers.content_MD5
             _content_disposition = path_http_headers.content_disposition
             _content_encoding = path_http_headers.content_encoding
             _content_language = path_http_headers.content_language
+            _content_md5 = path_http_headers.content_md5
             _content_type_parameter = path_http_headers.content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -2404,10 +2404,10 @@ class PathOperations:
         _encryption_algorithm = None
         if path_http_headers is not None:
             _cache_control = path_http_headers.cache_control
-            _content_MD5 = path_http_headers.content_MD5
             _content_disposition = path_http_headers.content_disposition
             _content_encoding = path_http_headers.content_encoding
             _content_language = path_http_headers.content_language
+            _content_md5 = path_http_headers.content_md5
             _content_type_parameter = path_http_headers.content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
