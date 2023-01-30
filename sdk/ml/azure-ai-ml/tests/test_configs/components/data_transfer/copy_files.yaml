@@ -1,6 +1,6 @@
 $schema: http://azureml/sdk-2-0/DataTransferComponent.json
 name: datatransfer_copy_files
-display_name: Data Transfer Pipeline copy-files
+display_name: Data Transfer Component copy-files
 
 type: data_transfer
 task: copy_data

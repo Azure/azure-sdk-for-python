@@ -1,6 +1,6 @@
 $schema: http://azureml/sdk-2-0/DataTransferComponent.json
 name: datatransfer_merge_files
-display_name: Data Transfer Pipeline merge-files
+display_name: Data Transfer Component merge-files
 
 type: data_transfer
 task: copy_data

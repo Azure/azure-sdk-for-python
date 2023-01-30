@@ -3,10 +3,8 @@ import pytest
 
 from azure.ai.ml import MLClient
 from azure.ai.ml import load_component
-from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
     DataTransferImportComponent, DataTransferExportComponent
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.constants._component import DataCopyMode, DataTransferTaskType
 from .test_component_schema import load_component_entity_from_rest_json, load_component_entity_from_yaml
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -27,7 +25,7 @@ class TestDataTransferComponentEntity:
         data_transfer_copy_component = DataTransferCopyComponent(
             task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_copy_files",
-            display_name="Data Transfer Pipeline copy-files",
+            display_name="Data Transfer Component copy-files",
             inputs={"folder1": {"type": "uri_folder"}},
             outputs={"output_folder": {"type": "uri_folder"}},
             data_copy_mode= DataCopyMode.MERGE_WITH_OVERWRITE,
@@ -52,7 +50,7 @@ class TestDataTransferComponentEntity:
         data_transfer_copy_component = DataTransferCopyComponent(
             task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_merge_files",
-            display_name="Data Transfer Pipeline merge-files",
+            display_name="Data Transfer Component merge-files",
             inputs={"folder1": {"type": "uri_folder"}, "folder2": {"type": "uri_folder"}},
             outputs={"output_folder": {"type": "uri_folder"}},
             data_copy_mode= DataCopyMode.MERGE_WITH_OVERWRITE,
@@ -118,7 +116,7 @@ class TestDataTransferComponentEntity:
         component = DataTransferCopyComponent(
             task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_copy_files",
-            display_name="Data Transfer Pipeline copy-files",
+            display_name="Data Transfer Component copy-files",
             inputs={
                 "folder1": {"type": "uri_folder"},
             },
