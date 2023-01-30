@@ -32,6 +32,10 @@ from .entities._load_functions import (
     load_workspace,
     load_workspace_connection,
 )
+from .entities._manage_clouds import (
+    add_cloud,
+    update_cloud,
+)
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="\n")
@@ -63,6 +67,8 @@ __all__ = [
     "load_workspace",
     "load_registry",
     "load_workspace_connection",
+    "add_cloud",
+    "update_cloud",
 ]
 
 __version__ = VERSION

@@ -4,8 +4,10 @@
 
 """Metadata to interact with different Azure clouds."""
 
+import configparser
 import logging
 import os
+import sys
 from typing import Dict, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
@@ -75,7 +77,8 @@ def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT):
         )
         cloud = _get_default_cloud_name()
     try:
-        azure_environment = _environments[cloud]
+        all_clouds = _get_all_clouds()
+        azure_environment = all_clouds[cloud]
         module_logger.debug("Using the cloud configuration: '%s'.", azure_environment)
     except KeyError:
         raise Exception('Unknown cloud environment "{0}".'.format(cloud))
@@ -84,7 +87,7 @@ def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT):
 
 def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
     if cloud is not None:
-        if cloud not in _environments:
+        if cloud not in _get_all_clouds():
             raise Exception('Unknown cloud environment supplied: "{0}".'.format(cloud))
     else:
         cloud = _get_default_cloud_name()
@@ -189,3 +192,130 @@ def _resource_to_scopes(resource):
     """
     scope = resource + "/.default"
     return [scope]
+
+
+_AZUREML_AUTH_CONFIG_DIR_ENV_NAME = 'AZUREML_AUTH_CONFIG_DIR'
+def _get_config_dir():
+    """Folder path for azureml-core to store authentication config"""
+    _AUTH_FOLDER_PATH = os.path.expanduser(os.path.join('~', '.azureml', "auth"))
+    if os.getenv(_AZUREML_AUTH_CONFIG_DIR_ENV_NAME, None):
+        return os.getenv(_AZUREML_AUTH_CONFIG_DIR_ENV_NAME, None)
+    else:
+        if sys.version_info > (3, 0):
+            os.makedirs(_AUTH_FOLDER_PATH, exist_ok=True)
+        else:
+            if not os.path.exists(_AUTH_FOLDER_PATH):
+                os.makedirs(_AUTH_FOLDER_PATH)
+
+        return _AUTH_FOLDER_PATH
+
+GLOBAL_CONFIG_DIR = _get_config_dir()
+CLOUD_CONFIG_FILE = os.path.join(GLOBAL_CONFIG_DIR, 'clouds.config')
+DEFAULT_TIMEOUT = 30
+_DEFAULT_ARM_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+_ARM_METADATA_URL_ENV_NAME = "ARM_METADATA_URL"
+
+def _get_clouds_by_metadata_url(metadata_url, timeout=DEFAULT_TIMEOUT):
+    """Get all the clouds by the specified metadata url
+
+        :return: list of the clouds
+    """
+    try:
+        import requests
+        module_logger.debug('Start : Loading cloud metatdata from the url specified by {0}'.format(metadata_url))
+        with requests.get(metadata_url, timeout=timeout) as meta_response:
+            arm_cloud_dict = meta_response.json()
+            cli_cloud_dict = _convert_arm_to_cli(arm_cloud_dict)
+            module_logger.debug('Finish : Loading cloud metatdata from the url specified by {0}'.format(metadata_url))
+            return cli_cloud_dict
+    except Exception as ex:  # pylint: disable=broad-except
+        module_logger.warning("Error: Azure ML was unable to load cloud metadata from the url specified by {0}. {1}. "
+                        "This may be due to a misconfiguration of networking controls. Azure Machine Learning Python SDK "
+                        "requires outbound access to Azure Resource Manager. Please contact your networking team to configure "
+                        "outbound access to Azure Resource Manager on both Network Security Group and Firewall. "
+                        "For more details on required configurations, see "
+                        "https://docs.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall.".format(
+            metadata_url, ex))
+
+def _convert_arm_to_cli(arm_cloud_metadata_dict):
+    cli_cloud_metadata_dict = {}
+    for cloud in arm_cloud_metadata_dict:
+        cli_cloud_metadata_dict[cloud['name']] = {
+            EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud["portal"],
+            EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud["resourceManager"],
+            EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"]["loginEndpoint"],
+            EndpointURLS.AML_RESOURCE_ID: cloud["resourceManager"],
+            EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"]
+        }
+    return cli_cloud_metadata_dict
+
+def _get_cloud(cloud_name):
+    return next((data for name,data in _get_all_clouds().items() if name == cloud_name), None)
+
+
+def _get_all_clouds():
+    # Start with the hard coded list of clouds in this file
+    all_clouds = {}
+    all_clouds.update(_environments)
+    # Get configs from the config file
+    config = configparser.ConfigParser()
+    try:
+        config.read(CLOUD_CONFIG_FILE)
+    except configparser.MissingSectionHeaderError:
+        os.remove(CLOUD_CONFIG_FILE)
+        module_logger.warning("'%s' is in bad format and has been removed.", CLOUD_CONFIG_FILE)
+    for section in config.sections():
+        all_clouds[section] = dict(config.items(section))
+    # Now do the metadata URL
+    arm_url = os.environ[_ARM_METADATA_URL_ENV_NAME] if _ARM_METADATA_URL_ENV_NAME in os.environ else _DEFAULT_ARM_URL
+    all_clouds.update(_get_clouds_by_metadata_url(arm_url))
+    # Send them all along with the hardcoded environments
+    return all_clouds
+
+class CloudNotRegisteredException(Exception):
+    def __init__(self, cloud_name):
+        super(CloudNotRegisteredException, self).__init__(cloud_name)
+        self.cloud_name = cloud_name
+
+    def __str__(self):
+        return "The cloud '{}' is not registered.".format(self.cloud_name)
+
+
+class CloudAlreadyRegisteredException(Exception):
+    def __init__(self, cloud_name):
+        super(CloudAlreadyRegisteredException, self).__init__(cloud_name)
+        self.cloud_name = cloud_name
+
+    def __str__(self):
+        return "The cloud '{}' is already registered.".format(self.cloud_name)
+
+def _config_add_cloud(config, cloud, overwrite=False):
+    """ Add a cloud to a config object """
+    try:
+        config.add_section(cloud["name"])
+    except configparser.DuplicateSectionError:
+        if not overwrite:
+            raise CloudAlreadyRegisteredException(cloud["name"])
+    for k,v in cloud.items():
+        if k != "name" and v is not None:
+            config.set(cloud["name"], k, v)
+
+def _save_cloud(cloud, overwrite=False):
+    config = configparser.ConfigParser()
+    config.read(CLOUD_CONFIG_FILE)
+    _config_add_cloud(config, cloud, overwrite=overwrite)
+    if not os.path.isdir(GLOBAL_CONFIG_DIR):
+        os.makedirs(GLOBAL_CONFIG_DIR)
+    with open(CLOUD_CONFIG_FILE, 'w') as configfile:
+        config.write(configfile)
+
+def _add_cloud(cloud):
+    if _get_cloud(cloud["name"]):
+        raise CloudAlreadyRegisteredException(cloud["name"])
+    _save_cloud(cloud)
+
+
+def _update_cloud(cloud):
+    if not _get_cloud(cloud["name"]):
+        raise CloudNotRegisteredException(cloud["name"])
+    _save_cloud(cloud, overwrite=True)
