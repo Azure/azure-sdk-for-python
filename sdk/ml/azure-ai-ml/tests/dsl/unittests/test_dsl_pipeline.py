@@ -8,7 +8,7 @@ from unittest.mock import patch
 import pydash
 import pytest
 from test_configs.dsl_pipeline import data_binding_expression
-from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
+from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated, assert_job_cancel
 
 from azure.ai.ml import (
     AmlTokenConfiguration,
@@ -2596,3 +2596,48 @@ class TestDSLPipeline:
             'description': 'new description', 'job_output_type': 'uri_folder', 'mode': 'Upload'
         }}
         assert pipeline_job._to_rest_object().as_dict()["properties"]["outputs"] == expected_outputs
+
+    def test_register_output_without_name_sdk(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+
+        @dsl.pipeline()
+        def register_node_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.version = 1
+        
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:   
+            assert_job_cancel(pipeline, client)
+        assert "Output name is required when output version is specified." in str(e.value)
+
+        @dsl.pipeline()
+        def register_pipeline_output():
+            node = component(component_in_path=component_input)
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_pipeline_output()
+        pipeline.outputs.pipeine_a_output.version = 1
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:
+            assert_job_cancel(pipeline, client)
+        assert "Output name is required when output version is specified." in str(e.value)
+
+    def test_register_output_with_ilvalid_name_sdk(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+
+        @dsl.pipeline()
+        def register_node_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = '@'
+            node.outputs.component_out_path.version = '1'
+
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:
+            assert_job_cancel(pipeline, client)
+        assert 'The output name @ can only contain alphanumeric characters, dashes, and underscores, with a limit of 255 characters.' in str(e.value)

@@ -12,6 +12,6 @@ outputs:
   component_out_path:
     type: mltable
     name: pipeline_output
-    version: '1'
+    version: 1
 settings:
   default_compute: azureml:cpu-cluster

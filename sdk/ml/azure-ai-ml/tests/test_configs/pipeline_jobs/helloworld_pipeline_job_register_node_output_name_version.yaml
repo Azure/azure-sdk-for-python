@@ -11,7 +11,7 @@ jobs:
     outputs:
       component_out_path:
         name: node_output
-        version: '1'
+        version: 1
 outputs:
   pipeline_out_path:
     type: uri_folder

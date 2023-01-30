@@ -2522,3 +2522,58 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job: PipelineJob = my_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
+
+    def test_register_output_sdk(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+
+        @dsl.pipeline()
+        def register_node_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = 'a_output'
+            node.outputs.component_out_path.version = '1'
+
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.jobs['node'].outputs.component_out_path
+        assert output.name == 'a_output'
+        assert output.version == '1'
+
+        @dsl.pipeline()
+        def register_pipeline_output():
+            node = component(component_in_path=component_input)
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_pipeline_output()
+        pipeline.outputs.pipeine_a_output.name = 'a_output'
+        pipeline.outputs.pipeine_a_output.version = '1'
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.outputs.pipeine_a_output
+        assert output.name == 'a_output'
+        assert output.version == '1'
+
+        @dsl.pipeline()
+        def register_both_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = 'a_output'
+            node.outputs.component_out_path.version = '1'
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_both_output()
+        pipeline.outputs.pipeine_a_output.name = 'b_output'
+        pipeline.outputs.pipeine_a_output.version = '2'
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        pipeline_output = pipeline_job.outputs.pipeine_a_output
+        assert pipeline_output.name == 'b_output'
+        assert pipeline_output.version == '2'
+        node_output = pipeline_job.jobs['node'].outputs.component_out_path
+        assert node_output.name == 'a_output'
+        assert node_output.version == '1'

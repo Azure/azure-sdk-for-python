@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 
 import copy
+import re
 from abc import ABC, abstractmethod
 from typing import List, Optional, Union
 
@@ -74,12 +75,6 @@ class InputOutputBase(ABC):
         self._data = self._build_data(data)
         self._default_data = default_data
         self._type = meta.type if meta is not None else kwargs.pop("type", None)
-        # if meta:
-        #     self._type = meta.type
-        # elif data and hasattr(data, 'type'):
-        #     self._type = data.type
-        # else:
-        #     self._type = kwargs.pop("type", None)
         self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description
@@ -357,8 +352,12 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     ):
         """Initialize an Output of a component.
 
-        :param name: The name of the output.
+        :param port_name: The port_name of the output.
+        :type port_name: str
+        :param name: The name used to register NodeOutput/PipelineOutput data.
         :type name: str
+        :param version: The version used to register NodeOutput/PipelineOutput data.
+        :ype version: str
         :param data: The output data. Valid types include str, Output
         :type data: Union[str
                           azure.ai.ml.entities.Output]
@@ -385,7 +384,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         self._name = data.name if isinstance(data, Output) else None
         self._version = data.version if isinstance(data, Output) else None
 
-        self._assert_name_and_version_exist()
+        self._assert_name_and_version()
 
         self._is_control = meta.is_control if meta is not None else None
 
@@ -395,41 +394,57 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     @property
     def port_name(self) -> str:
+        """The output port name, eg: node.outputs.port_name"""
         return self._port_name
 
     @property
     def name(self):
+        """Used in registering output data"""
         return self._name
 
     @name.setter
     def name(self, name):
+        """Receive input name, assign the name to NodeOutput/PipelineOutput and build data according to the name"""
         self._build_default_data()
         self._name = name
         if isinstance(self._data, (Input, Output)):
             self._data.name = name
-        else:
+        elif isinstance(self._data, InputOutputBase):
             self._data._name = name
+        else:
+            raise UserErrorException(
+                f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
+                f"but got type: {type(self._data)}."
+                )
 
     @property
     def version(self) -> str:
+        """Used in registering output data"""
         return self._version
 
     @version.setter
     def version(self, version):
+        """Receive input version, assign the version to NodeOutput/PipelineOutput and build data according to the version"""
         self._build_default_data()
         self._data.type = self.type
         self._version = version
         if isinstance(self._data, (Input, Output)):
             self._data.version = version
-        else:
+        elif isinstance(self._data, InputOutputBase):
             self._data._version = version
-
-    def _assert_name_and_version_exist(self):
-        if self.version and not self.name:
-            class_name = self.__class__.__name__
+        else:
             raise UserErrorException(
-                f"""{class_name}.name is missing. We don't support registering output only with version.
-                Please assign {class_name}.name before {class_name}.version""")
+                f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
+                f"but got type: {type(self._data)}."
+                )
+
+    def _assert_name_and_version(self):
+        if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
+            raise UserErrorException(
+                f"The output name {self.name} can only contain alphanumeric characters, dashes, and underscores, with a limit of 255 characters."
+                )
+        if self.version and not self.name:
+            raise UserErrorException("Output name is required when output version is specified.")
 
     def _build_default_data(self):
         """Build default data when output not configured."""

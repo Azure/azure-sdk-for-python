@@ -16,7 +16,7 @@ from azure.ai.ml.entities import Component, Job, PipelineJob
 from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
-from azure.ai.ml.exceptions import JobException, UserErrorException, JobParsingError
+from azure.ai.ml.exceptions import JobException
 from azure.core.exceptions import HttpResponseError
 
 from .._util import (
@@ -1344,70 +1344,27 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
-    def test_register_output_without_name_cli(self, client: MLClient):
-        register_pipeline_output_path = "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_without_name.yaml"
-        register_node_output_path = "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_without_name.yaml"
-        error_message_pipeline = "PipelineOutput.name is missing."
-        error_message_node = "NodeOutput.name is missing."
-
-        with pytest.raises(UserErrorException) as e:
-            pipeline = load_job(source=register_pipeline_output_path)
-            pipeline_job = client.jobs.create_or_update(pipeline)
-        assert error_message_pipeline in str(e.value)
-
-        with pytest.raises(UserErrorException) as e:
-            pipeline = load_job(source=register_node_output_path)
-            pipeline_job = client.jobs.create_or_update(pipeline)
-        assert error_message_node in str(e.value)
-
-    def test_register_output_without_name_sdk(self, client: MLClient):
-        from azure.ai.ml import dsl
-        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
-        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
-
-        @dsl.pipeline()
-        def register_node_output():
-            node = component(component_in_path=component_input)
-            node.outputs.component_out_path.version = '1'
-
-        with pytest.raises(UserErrorException) as e:
-            pipeline = register_node_output()
-            pipeline.settings.default_compute = "azureml:cpu-cluster"
-            pipeline_job = client.jobs.create_or_update(pipeline)
-        assert "NodeOutput.name is missing." in str(e.value)
-
-        @dsl.pipeline()
-        def register_pipeline_output():
-            node = component(component_in_path=component_input)
-            return {
-                'pipeine_a_output': node.outputs.component_out_path
-            }
-
-        with pytest.raises(JobParsingError) as e:
-            pipeline = register_pipeline_output()
-            pipeline.outputs.pipeine_a_output.version = '1'
-            pipeline.settings.default_compute = "azureml:cpu-cluster"
-            pipeline_job = client.jobs.create_or_update(pipeline)
-        assert "PipelineOutput.name is missing." in str(e.value)
-
-    def test_register_output_cli(self, client: MLClient):
+    def test_register_output_yaml(self, client: MLClient):
+        # only register pipeline output
         register_pipeline_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_name_version.yaml"
         pipeline = load_job(source=register_pipeline_output_path)
-        pipeline_job = client.jobs.create_or_update(pipeline)
+        pipeline_job = assert_job_cancel(pipeline, client)
         output = pipeline_job.outputs.component_out_path
         assert output.name == 'pipeline_output'
         assert output.version == '1'
 
+        # only register node output
         register_node_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_name_version.yaml"
         pipeline = load_job(source=register_node_output_path)
-        pipeline_job = client.jobs.create_or_update(pipeline)
+        pipeline_job = assert_job_cancel(pipeline, client)
         output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
         assert output.name == 'node_output'
         assert output.version == '1'
 
+        # register node output and pipeline output while the node output isn't binding to pipeline output
         register_both_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_and_node_output.yaml"
         pipeline = load_job(source=register_both_output_path)
-        pipeline_job = client.jobs.create_or_update(pipeline)
+        pipeline_job = assert_job_cancel(pipeline, client)
         
         pipeline_output = pipeline_job.outputs.pipeline_out_path
         assert pipeline_output.name == 'pipeline_output'
@@ -1416,60 +1373,16 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.name == 'node_output'
         assert node_output.version == '1'
 
-    def test_register_output_sdk(self, client: MLClient):
-        from azure.ai.ml import dsl
-        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
-        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
-
-        @dsl.pipeline()
-        def register_node_output():
-            node = component(component_in_path=component_input)
-            node.outputs.component_out_path.name = 'a_output'
-            node.outputs.component_out_path.version = '1'
-
-        pipeline = register_node_output()
-        pipeline.settings.default_compute = "azureml:cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline)
-        output = pipeline_job.jobs['node'].outputs.component_out_path
-        assert output.name == 'a_output'
-        assert output.version == '1'
-
-        @dsl.pipeline()
-        def register_pipeline_output():
-            node = component(component_in_path=component_input)
-            return {
-                'pipeine_a_output': node.outputs.component_out_path
-            }
-
-        pipeline = register_pipeline_output()
-        pipeline.outputs.pipeine_a_output.name = 'a_output'
-        pipeline.outputs.pipeine_a_output.version = '1'
-        pipeline.settings.default_compute = "azureml:cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline)
-        output = pipeline_job.outputs.pipeine_a_output
-        assert output.name == 'a_output'
-        assert output.version == '1'
-
-        @dsl.pipeline()
-        def register_both_output():
-            node = component(component_in_path=component_input)
-            node.outputs.component_out_path.name = 'a_output'
-            node.outputs.component_out_path.version = '1'
-            return {
-                'pipeine_a_output': node.outputs.component_out_path
-            }
-
-        pipeline = register_both_output()
-        pipeline.outputs.pipeine_a_output.name = 'b_output'
-        pipeline.outputs.pipeine_a_output.version = '2'
-        pipeline.settings.default_compute = "azureml:cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline)
-
-        pipeline_output = pipeline_job.outputs.pipeine_a_output
-        assert pipeline_output.name == 'b_output'
+        # register node output and pipeline output while the node output is binding to pipeline output
+        register_both_output_binding_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_and_node_binding_output.yaml"
+        pipeline = load_job(source=register_both_output_binding_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+        
+        pipeline_output = pipeline_job.outputs.pipeline_out_path
+        assert pipeline_output.name == 'pipeline_output'
         assert pipeline_output.version == '2'
-        node_output = pipeline_job.jobs['node'].outputs.component_out_path
-        assert node_output.name == 'a_output'
+        node_output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
+        assert node_output.name == 'node_output'
         assert node_output.version == '1'
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

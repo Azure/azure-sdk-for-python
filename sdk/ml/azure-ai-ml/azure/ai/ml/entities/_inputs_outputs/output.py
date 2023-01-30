@@ -3,13 +3,14 @@
 # ---------------------------------------------------------
 
 # pylint: disable=redefined-builtin
-
+import re
 from typing import Dict, overload
 
 from typing_extensions import Literal
 
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import IOConstants
+from azure.ai.ml.exceptions import UserErrorException
 
 from .base import _InputOutputBase
 from .utils import _remove_empty_values
@@ -30,6 +31,10 @@ class Output(_InputOutputBase):
     :type mode: str
     :param description: Description of the output
     :type description: str
+    :param name: The name used to register output data. Name can be set without setting version.
+    :type name: str
+    :param version: The version used to register output data. Version can be set only when name is set. 
+    :type version: str
     """
 
     @overload
@@ -48,6 +53,10 @@ class Output(_InputOutputBase):
         :type mode: str
         :param description: Description of the output
         :type description: str
+        :param name: The name used to register output data. Name can be set without setting version.
+        :type name: str
+        :param version: The version used to register output data. Version can be set only when name is set. 
+        :type version: str
         """
 
     @overload
@@ -66,13 +75,17 @@ class Output(_InputOutputBase):
         :type mode: str
         :param description: Description of the output
         :type description: str
+        :param name: The name used to register output data. Name can be set without setting version.
+        :type name: str
+        :param version: The version used to register output data. Version can be set only when name is set. 
+        :type version: str
         """
 
     def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs):
         super(Output, self).__init__(type=type)
-        # As an annotation, it is not allowed to initialize the arg_name.
-        # The arg_name will be updated by the annotated variable arg_name.
-        self.arg_name = None
+        # As an annotation, it is not allowed to initialize the _arg_name.
+        # The _arg_name will be updated by the annotated variable _arg_name.
+        self._arg_name = None
         self.name = kwargs.pop('name', None)
         self.version = kwargs.pop('version', None)
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
@@ -83,17 +96,16 @@ class Output(_InputOutputBase):
         self.is_control = kwargs.pop("is_control", None)
         # use this field to mark Output for early node orchestrate, currently hide in kwargs
         self.early_available = kwargs.pop("early_available", None)
+        self._assert_name_and_version()
 
     def _get_hint(self, new_line_style=False):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
         return '"""%s"""' % comment_str if comment_str and new_line_style else comment_str
 
-    def _to_dict(self, remove_name=True):
+    def _to_dict(self):
         """Convert the Output object to a dict."""
-        keys = ["arg_name", "name", "version", "path", "type", "mode",
+        keys = ["name", "version", "path", "type", "mode",
                 "description", "is_control", "early_available"]
-        if remove_name:
-            keys.remove("arg_name")
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
@@ -106,3 +118,12 @@ class Output(_InputOutputBase):
     def _from_rest_object(cls, obj: Dict) -> "Output":
         # this is for component rest object when using Output as component outputs
         return Output(**obj)
+    
+    def _assert_name_and_version(self):
+        if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
+            raise UserErrorException(
+                f"The output name {self.name} can only contain alphanumeric characters, dashes, and underscores, with a limit of 255 characters."
+                )
+        if self.version and not self.name:
+            raise UserErrorException("Output name is required when output version is specified.")
+

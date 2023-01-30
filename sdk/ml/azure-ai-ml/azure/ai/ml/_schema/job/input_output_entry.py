@@ -13,6 +13,7 @@ from azure.ai.ml._schema.core.fields import (
     StringTransformedEnum,
     UnionField,
     LocalPathField,
+    VersionField,
 )
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
@@ -135,7 +136,7 @@ class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
 
 class OutputSchema(PathAwareSchema):
     name = fields.Str()
-    version = fields.Str()
+    version = VersionField()
     mode = StringTransformedEnum(
         allowed_values=[
             InputOutputModes.MOUNT,
