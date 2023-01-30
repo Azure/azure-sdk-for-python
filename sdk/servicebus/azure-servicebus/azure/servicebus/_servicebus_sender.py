@@ -421,13 +421,10 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         with send_trace_context_manager() as send_span:
             if isinstance(message, ServiceBusMessageBatch):
                 # If AmqpTransports are not the same, create batch with correct BatchMessage.
-                print(self._amqp_transport)
-                print(message._amqp_transport)
-                print(self._amqp_transport is not message._amqp_transport)
                 if self._amqp_transport is not message._amqp_transport: # pylint: disable=protected-access
                     # pylint: disable=protected-access
                     batch = self.create_message_batch()
-                    batch._from_list(obj_message, send_span)  # type: ignore # pylint: disable=protected-access
+                    batch._from_list(message._messages, send_span)  # type: ignore
                     obj_message = batch
                 else:
                     obj_message = message  # type: MessageObjTypes
