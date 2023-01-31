@@ -2650,7 +2650,7 @@ class TestDSLPipeline:
             assert_job_cancel(pipeline, client)
         assert "Output name is required when output version is specified." in str(e.value)
 
-    def test_register_output_with_ilvalid_name_sdk(self, client: MLClient):
+    def test_register_output_with_invalid_name_sdk(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
 
@@ -2664,4 +2664,4 @@ class TestDSLPipeline:
         pipeline.settings.default_compute = "azureml:cpu-cluster"
         with pytest.raises(UserErrorException) as e:
             assert_job_cancel(pipeline, client)
-        assert 'The output name @ can only contain alphanumeric characters, dashes, and underscores, with a limit of 255 characters.' in str(e.value)
+        assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)

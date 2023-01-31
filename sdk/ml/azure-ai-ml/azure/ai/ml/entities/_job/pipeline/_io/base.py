@@ -442,7 +442,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     def _assert_name_and_version(self):
         if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
             raise UserErrorException(
-                f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores,"
+                f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
                 f"with a limit of 255 characters."
                 )
         if self.version and not self.name:

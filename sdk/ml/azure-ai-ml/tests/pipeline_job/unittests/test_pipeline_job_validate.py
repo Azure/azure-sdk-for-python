@@ -260,7 +260,7 @@ class TestPipelineJobValidate:
             ),
             (
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_with_invalid_name.yaml",
-                "The output name pipeline_output@ can only contain alphanumeric characters, dashes, and underscores, with a limit of 255 characters."
+                "The output name pipeline_output@ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters."
             ),
         ],
     )
