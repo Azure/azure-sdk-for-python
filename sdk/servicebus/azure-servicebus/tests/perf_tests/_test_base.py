@@ -48,7 +48,7 @@ class _ReceiveTest():
             current_topic_message_count = topic_properties.scheduled_message_count
     
 
-        print(f"The current topic {self.topic_name} has {current_topic_message_count} messages already")
+        print(f"The current topic {self.topic_name} has {current_topic_message_count} messages")
 
         async with self.async_servicebus_client.get_topic_sender(self.topic_name) as sender:
             batch = await sender.create_message_batch()
@@ -75,7 +75,7 @@ class _ReceiveTest():
             current_queue_message_count = queue_properties.active_message_count
     
 
-        print(f"The current queue {self.queue_name} has {current_queue_message_count} already")
+        print(f"The current queue {self.queue_name} has {current_queue_message_count} messages")
 
         async with self.async_servicebus_client.get_queue_sender(self.queue_name) as sender:
             batch = await sender.create_message_batch()
@@ -121,7 +121,7 @@ class _QueueReceiveTest(_ReceiveTest, PerfStressTest):
     def add_arguments(parser) -> None:
         super(_QueueReceiveTest, _QueueReceiveTest).add_arguments(parser)
         parser.add_argument('--message-size', nargs='?', type=int, help='Size of a single message. Defaults to 100 bytes', default=100)
-        parser.add_argument('--num-messages', nargs='?', type=int, help='Number of messages to send or receive. Defaults to 100', default=100)
+        parser.add_argument('--num-messages', nargs='?', type=int, help='Maximum number of messages to receive. Defaults to 100', default=100)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)
@@ -160,7 +160,7 @@ class _SubscriptionReceiveTest(_ReceiveTest, PerfStressTest):
     def add_arguments(parser) -> None:
         super(_SubscriptionReceiveTest, _SubscriptionReceiveTest).add_arguments(parser)
         parser.add_argument('--message-size', nargs='?', type=int, help='Size of a single message. Defaults to 100 bytes', default=100)
-        parser.add_argument('--num-messages', nargs='?', type=int, help='Number of messages to send or receive. Defaults to 100', default=100)
+        parser.add_argument('--num-messages', nargs='?', type=int, help='Maximum number of messages to receive. Defaults to 100', default=100)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)
@@ -198,7 +198,7 @@ class _QueueReceiveBatchTest(_ReceiveTest, BatchPerfTest):
     def add_arguments(parser) -> None:
         super(_QueueReceiveBatchTest, _QueueReceiveBatchTest).add_arguments(parser)
         parser.add_argument('--message-size', nargs='?', type=int, help='Size of a single message. Defaults to 100 bytes', default=100)
-        parser.add_argument('--num-messages', nargs='?', type=int, help='Number of messages to send or receive. Defaults to 100', default=100)
+        parser.add_argument('--num-messages', nargs='?', type=int, help='Maximum number of messages to receive in a batch. Defaults to 100', default=100)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)
@@ -238,7 +238,7 @@ class _SubscriptionReceiveBatchTest(_ReceiveTest, BatchPerfTest):
     def add_arguments(parser) -> None:
         super(_SubscriptionReceiveBatchTest, _SubscriptionReceiveBatchTest).add_arguments(parser)
         parser.add_argument('--message-size', nargs='?', type=int, help='Size of a single message. Defaults to 100 bytes', default=100)
-        parser.add_argument('--num-messages', nargs='?', type=int, help='Number of messages to send or receive. Defaults to 100', default=100)
+        parser.add_argument('--num-messages', nargs='?', type=int, help='Maximum number of messages to receive in a batch. Defaults to 100', default=100)
         parser.add_argument('--peeklock', action='store_true', help='Receive using PeekLock mode and message settlement.', default=False)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)
