@@ -45,7 +45,7 @@ import logging
 
 import certifi
 
-from .._platform import KNOWN_TCP_OPTS, SOL_TCP
+from .._platform import SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
 from ..constants import DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS, TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
@@ -236,7 +236,6 @@ class AsyncTransport(
         **kwargs,  # pylint: disable=unused-argument
     ):
         self.connected = False
-        self.sock = None
         self.reader = None
         self.writer = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
@@ -281,9 +280,10 @@ class AsyncTransport(
         except (OSError, IOError, SSLError) as e:
             _LOGGER.info("Transport connect failed: %r", e, extra=self.network_trace_params)
             # if not fully connected, close socket, and reraise error
-            if self.sock and not self.connected:
-                self.sock.close()
-                self.sock = None
+            if self.writer and not self.connected:
+                self.writer.close()
+                await self.writer.wait_closed()
+                self.connected = False
             raise
 
     async def _read(
