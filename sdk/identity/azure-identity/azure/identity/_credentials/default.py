@@ -124,7 +124,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
-            client_id = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+            client_id: str = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
             credentials.append(WorkloadIdentityCredential(
                 client_id=client_id,
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
