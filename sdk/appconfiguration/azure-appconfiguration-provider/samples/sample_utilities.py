@@ -19,6 +19,7 @@ from azure.identity import AzureAuthorityHosts, ClientSecretCredential, DefaultA
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
 def get_authority(endpoint):
+    # cSpell:ignore azconfig
     if ".azconfig.io" in endpoint:
         return AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
     if ".azconfig.azure.cn" in endpoint:
