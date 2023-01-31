@@ -40,17 +40,19 @@ def clean_up_rg_deployments_on_subscription(
         base_url=_get_base_url_from_metadata(),
         api_version=ArmConstants.AZURE_MGMT_RESOURCE_API_VERSION,
     )
-    # get all deployments that are succeeded with DeployResourceGroup pattern
+    logger = logging.getLogger("rg-cleanup")
+    logging.basicConfig(level=logging.INFO)
+    # get all deployments that are succeeded with AzureMLDefaultResourceGroupDeployment pattern
     deployments = client.deployments.list_at_subscription_scope(filter="provisioningState eq 'Succeeded'")
-    rg_deployments = [d.name for d in list(deployments) if "DeployResourceGroup" in d.name]
+    rg_deployments = [d.name for d in list(deployments) if "AzureMLDefaultResourceGroupDeployment" in d.name]
     if len(rg_deployments) > 0:
-        print("Cleaning up past default Resource Group Deployments on the subscription to avoid limit of 10")
+        logger.info("Cleaning up past default Resource Group Deployments on the subscription to avoid limit of 10")
     for name in rg_deployments:
         try:
-            print(f"Deleting past Resource Group Deployment with name: {name}")
+            logger.info(f"Deleting past Resource Group Deployment with name: {name}")
             client.deployments.begin_delete_at_subscription_scope(deployment_name=name)
         except Exception: # pylint: disable=broad-except
-            print(f"Failed to delete past Resource Group Deployment with name: {name}")
+            logger.info(f"Failed to delete past Resource Group Deployment with name: {name}")
 
 
 def default_log_analytics_workspace_exists(credentials: TokenCredential, subscription_id: str, location: str) -> bool:
