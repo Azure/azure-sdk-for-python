@@ -799,6 +799,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-ai-anomalydetector typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-vmwarecloudsimple msrest>=0.7.1
 #override azure-developer-devcenter azure-core<2.0.0,>=1.24.0
+#override azure-developer-devcenter typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-messaging-webpubsubservice isodate<1.0.0,>=0.6.1
 #override azure-ai-ml pyyaml<7.0.0,>=5.1.0
 #override azure-ai-ml marshmallow<4.0.0,>=3.5
