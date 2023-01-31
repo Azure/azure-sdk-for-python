@@ -4,4 +4,4 @@
 # license information.
 # -------------------------------------------------------------------------
 
-KEY_VAULT_REFERENCE_CONTENT_TYPE = "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8"
+FEATURE_MANAGEMENT_KEY = "FeatureManagement"

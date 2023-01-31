@@ -5,12 +5,13 @@
 # -------------------------------------------------------------------------
 import json
 from typing import overload, List, Tuple
+from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from .._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
 from .._settingselector import SettingSelector
-from .._constants import KEY_VAULT_REFERENCE_CONTENT_TYPE
+from .._constants import FEATURE_MANAGEMENT_KEY
 
 from .._user_agent import USER_AGENT
 
@@ -95,9 +96,14 @@ async def load_provider(**kwargs):
                     trimmed_key = config.key[len(trim) :]
                     break
 
-            if config.content_type == KEY_VAULT_REFERENCE_CONTENT_TYPE:
+            if config.content_type == SecretReferenceConfigurationSetting._secret_reference_content_type:
                 secret = await __resolve_keyvault_reference(config, key_vault_options, provider)
                 provider._dict[trimmed_key] = secret
+            elif config.content_type == FeatureFlagConfigurationSetting._feature_flag_content_type:
+                feature_management = provider._dict.get(FEATURE_MANAGEMENT_KEY, {})
+                feature_management[trimmed_key] = config.value
+                if FEATURE_MANAGEMENT_KEY not in provider._dict.keys():
+                    provider._dict[FEATURE_MANAGEMENT_KEY] = feature_management
             elif __is_json_content_type(config.content_type):
                 try:
                     j_object = json.loads(config.value)

@@ -23,6 +23,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         async with await self.build_provider_aad(appconfiguration_endpoint_string) as client:
             assert client["message"] == "hi"
             assert client["my_json"]["key"] == "value"
+            assert client["FeatureManagement"][".appconfig.featureflag/Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
 
     # method: provider_trimmed_key_prefixes
     @app_config_decorator_async
@@ -34,6 +35,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
             assert client["my_json"]["key"] == "value"
             assert client["trimmed"] == "key"
             assert "test.trimmed" not in client
+            assert client["FeatureManagement"][".appconfig.featureflag/Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
 
     # method: provider_selectors
     @app_config_decorator_async
@@ -43,3 +45,4 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         async with await self.build_provider_aad(appconfiguration_endpoint_string, selects=selects) as client:
             assert client["message"] == "test"
             assert "test.trimmed" not in client
+            assert "FeatureManagement" not in client
