@@ -130,7 +130,7 @@ def __buildprovider(connection_string:str, endpoint:str, credential,
     useragent = USER_AGENT
 
     if connection_string and endpoint:
-        raise AttributeError("Both connection_string and endpoint are set. Only one of these should be set.")
+        raise ValueError("Both connection_string and endpoint are set. Only one of these should be set.")
 
     if connection_string:
         #pylint:disable=protected-access
