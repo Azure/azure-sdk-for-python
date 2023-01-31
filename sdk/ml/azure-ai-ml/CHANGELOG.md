@@ -9,6 +9,8 @@
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.
 - Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected.
+- Fixed an issue where ignore files weren't considered during upload directory size calculations.
+- Fixed an issue where symlinks crashed upload directory size calculations.
 - Fixes a bug where enable_node_public_ip returned an improper value when fetching a Compute.
 
 ### Other Changes
