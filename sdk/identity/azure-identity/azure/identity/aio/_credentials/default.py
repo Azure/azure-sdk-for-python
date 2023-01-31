@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING, Any
+from typing import List, TYPE_CHECKING, Any, cast
 
 from azure.core.credentials import AccessToken
 from ..._constants import EnvironmentVariables
@@ -114,9 +114,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
-            client_id: str = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+            client_id = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
             credentials.append(WorkloadIdentityCredential(
-                client_id=client_id,
+                client_id=cast(client_id, str),
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 file=os.environ[EnvironmentVariables.AZURE_FEDERATED_TOKEN_FILE],
                 **kwargs))
