@@ -59,6 +59,14 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
 
     @staticmethod
+    def encode_message(message):
+        """
+        Encodes the outgoing uamqp/pyamqp.Message of the message.
+        :param ServiceBusMessage message: Message.
+        :rtype: bytes
+        """
+
+    @staticmethod
     @abstractmethod
     def update_message_app_properties(message, key, value):
         """

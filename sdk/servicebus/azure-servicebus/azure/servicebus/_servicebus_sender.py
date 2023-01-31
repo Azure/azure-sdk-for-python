@@ -85,7 +85,7 @@ class SenderMixin(object):
         self.entity_name = self._entity_name
 
     @classmethod
-    def _build_schedule_request(cls, schedule_time_utc, send_span, *messages):
+    def _build_schedule_request(cls, schedule_time_utc, send_span, amqp_transport, *messages):
         request_body = {MGMT_REQUEST_MESSAGES: []}
         for message in messages:
             if not isinstance(message, ServiceBusMessage):
@@ -96,7 +96,7 @@ class SenderMixin(object):
                     )
                 )
             message.scheduled_enqueue_time_utc = schedule_time_utc
-            message = transform_outbound_messages(message, ServiceBusMessage)
+            message = transform_outbound_messages(message, ServiceBusMessage, to_outgoing_amqp_message=amqp_transport.to_outgoing_amqp_message)
             trace_message(message, send_span)
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -105,7 +105,7 @@ class SenderMixin(object):
             if message.partition_key:
                 message_data[MGMT_REQUEST_PARTITION_KEY] = message.partition_key
             message_data[MGMT_REQUEST_MESSAGE] = bytearray(
-                message._encode_message()  # pylint: disable=protected-access
+                amqp_transport.encode_message(message)  # pylint: disable=protected-access
             )
             request_body[MGMT_REQUEST_MESSAGES].append(message_data)
         return request_body
@@ -299,20 +299,20 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        obj_messages = transform_outbound_messages(messages, ServiceBusMessage)
+        obj_messages = transform_outbound_messages(messages, ServiceBusMessage, to_outgoing_amqp_message=self._amqp_transport.to_outgoing_amqp_message)
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
         with send_trace_context_manager(span_name=SPAN_NAME_SCHEDULE) as send_span:
             if isinstance(obj_messages, ServiceBusMessage):
                 request_body = self._build_schedule_request(
-                    schedule_time_utc, send_span, obj_messages
+                    schedule_time_utc, send_span, self._amqp_transport, obj_messages
                 )
             else:
                 if len(obj_messages) == 0:
                     return []  # No-op on empty list.
                 request_body = self._build_schedule_request(
-                    schedule_time_utc, send_span, *obj_messages
+                    schedule_time_utc, send_span, self._amqp_transport, *obj_messages
                 )
             if send_span:
                 self._add_span_request_attributes(send_span)

@@ -16,6 +16,7 @@ from .._pyamqp import (
     ReceiveClient,
     __version__,
 )
+from .._pyamqp._encode import encode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
 from .._pyamqp.endpoints import Source, ApacheFilters
@@ -247,6 +248,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         }
 
         return Message(**message_dict)
+
+    @staticmethod
+    def encode_message(message):
+        """
+        Encodes the outgoing pyamqp.Message of the message.
+        :param ServiceBusMessage message: Message.
+        :rtype: bytes
+        """
+        output = bytearray()
+        return encode_payload(output, message._message)  # pylint: disable=protected-access
 
     @staticmethod
     def update_message_app_properties(message, key, value):

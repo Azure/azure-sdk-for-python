@@ -15,7 +15,6 @@ from azure.core.tracing import AbstractSpan
 
 from .._pyamqp.performatives import TransferFrame
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
-from .._pyamqp._encode import encode_payload
 from .._transport._pyamqp_transport import PyamqpTransport
 
 from .constants import (

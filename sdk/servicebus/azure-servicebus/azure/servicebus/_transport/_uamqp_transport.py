@@ -279,15 +279,24 @@ if uamqp_installed:
                 delivery_annotations=annotated_message.delivery_annotations,
                 footer=annotated_message.footer
             )
+        
+        @staticmethod
+        def encode_message(message):
+            """
+            Encodes the outgoing uamqp.Message of the message.
+            :param ServiceBusMessage message: Message.
+            :rtype: bytes
+            """
+            return message._message.encode_message()
 
         @staticmethod
         def update_message_app_properties(message, key, value):
             """
             Adds the given key/value to the application properties of the message.
-            :param pyamqp.Message message: Message.
+            :param uamqp.Message message: Message.
             :param str key: Key to set in application properties.
             :param str Value: Value to set for key in application properties.
-            :rtype: pyamqp.Message
+            :rtype: uamqp.Message
             """
             if not message.application_properties:
                 message.application_properties = {}
