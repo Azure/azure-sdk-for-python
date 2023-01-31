@@ -779,7 +779,7 @@ class KeyClient(AsyncKeyVaultClientBase):
         :param str name: The name of the key to get.
         :param str target_attestation_token: The attestation assertion for the target of the key release.
 
-        :keyword version: A specific version of the key to release. If unspeccified, the latest version is released.
+        :keyword version: A specific version of the key to release. If unspecified, the latest version is released.
         :paramtype version: str or None
         :keyword algorithm: The encryption algorithm to use to protect the released key material.
         :paramtype algorithm: str or ~azure.keyvault.keys.KeyExportEncryptionAlgorithm or None

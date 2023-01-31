@@ -418,12 +418,14 @@ class CertificateOperation(object):
     :type issuer_name: str or ~azure.keyvault.certificates.WellKnownIssuerNames or None
     :param certificate_type: Type of certificate requested from the issuer provider.
     :type certificate_type: str or None
-    :param bool certificate_transparency: Indicates if the certificate this operation is running for is published to
+    :param certificate_transparency: Indicates if the certificate this operation is running for is published to
         certificate transparency logs. Defaults to False.
+    :type certificate_transparency: bool or None
     :param csr: The certificate signing request (CSR) that is being used in the certificate operation.
     :type csr: bytes or None
-    :param bool cancellation_requested: Indicates if cancellation was requested on the certificate operation. Defaults
+    :param cancellation_requested: Indicates if cancellation was requested on the certificate operation. Defaults
         to False.
+    :type cancellation_requested: bool or None
     :param status: Status of the certificate operation.
     :type status: str or None
     :param status_details: The status details of the certificate operation
@@ -441,9 +443,9 @@ class CertificateOperation(object):
         cert_operation_id: "Optional[str]" = None,
         issuer_name: "Optional[Union[str, WellKnownIssuerNames]]" = None,
         certificate_type: "Optional[str]" = None,
-        certificate_transparency: bool = False,
+        certificate_transparency: "Optional[bool]" = False,
         csr: "Optional[bytes]" = None,
-        cancellation_requested: bool = False,
+        cancellation_requested: "Optional[bool]" = False,
         status: "Optional[str]" = None,
         status_details: "Optional[str]" = None,
         error: "Optional[CertificateOperationError]" = None,
@@ -1232,7 +1234,7 @@ class LifetimeAction(object):
 
     def __init__(
         self,
-        action: "Optional[Union[str, CertificatePolicyAction]]",
+        action: "Union[str, CertificatePolicyAction, None]",
         lifetime_percentage: "Optional[int]" = None,
         days_before_expiry: "Optional[int]" = None,
     ) -> None:
@@ -1264,10 +1266,10 @@ class LifetimeAction(object):
         return self._days_before_expiry
 
     @property
-    def action(self) -> "Optional[CertificatePolicyAction]":
+    def action(self) -> "Union[str, CertificatePolicyAction, None]":
         """The type of the action that will be executed. Valid values are "EmailContacts" and "AutoRenew".
 
-        :rtype: ~azure.keyvault.certificates.CertificatePolicyAction or None
+        :rtype: str or ~azure.keyvault.certificates.CertificatePolicyAction or None
         """
         return self._action
 

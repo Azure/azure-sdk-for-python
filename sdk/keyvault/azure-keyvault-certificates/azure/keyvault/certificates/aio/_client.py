@@ -4,7 +4,7 @@
 # ------------------------------------
 # pylint:disable=too-many-lines,too-many-public-methods
 import base64
-from typing import Any, Optional, Iterable, List, Union
+from typing import Any, Optional, List, Union
 from functools import partial
 
 from azure.core.polling import async_poller
