@@ -7,8 +7,6 @@
 import asyncio
 from azure.appconfiguration.provider.aio import load_provider
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
-from azure.identity.aio import DefaultAzureCredential
-from azure.identity import DefaultAzureCredential
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 

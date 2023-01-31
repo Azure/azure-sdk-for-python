@@ -8,7 +8,6 @@ from azure.appconfiguration.provider import (
     load_provider,
     SettingSelector
 )
-from azure.identity import DefaultAzureCredential
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 

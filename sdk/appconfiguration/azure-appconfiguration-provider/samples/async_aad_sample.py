@@ -7,14 +7,12 @@
 import asyncio
 from azure.appconfiguration.provider.aio import load_provider
 from azure.appconfiguration.provider import SettingSelector
-from azure.identity.aio import DefaultAzureCredential
 import os
 from sample_utilities import get_authority, get_audience, get_credential
 
 async def main():
     endpoint = os.environ.get("AZURE_APPCONFIG_ENDPOINT")
     authority = get_authority(endpoint)
-    audience = get_audience(authority)
     credential = get_credential(authority, is_async=True)
 
     # Connecting to Azure App Configuration using AAD

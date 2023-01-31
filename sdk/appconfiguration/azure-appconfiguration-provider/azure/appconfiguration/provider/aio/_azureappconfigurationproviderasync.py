@@ -9,13 +9,14 @@ from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretRefere
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
+from azure.core.credentials_async import AsyncTokenCredential
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from .._constants import FEATURE_MANAGEMENT_KEY
 
 from .._user_agent import USER_AGENT
 
 @overload
-async def load_provider(endpoint: str, credential: str, **kwargs):
+async def load_provider(endpoint: str, credential: AsyncTokenCredential, **kwargs):
     """
     Loads configuration settings from Azure App Configuration into a Python application.
 
