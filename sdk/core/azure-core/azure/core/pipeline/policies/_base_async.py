@@ -25,9 +25,9 @@
 # --------------------------------------------------------------------------
 import abc
 
-from typing import TYPE_CHECKING, Generic, TypeVar, Union
+from typing import TYPE_CHECKING, Generic, TypeVar
 
-from .. import PipelineRequest
+from .. import PipelineRequest, PipelineResponse
 
 if TYPE_CHECKING:
     from ..transport._base_async import AsyncHttpTransport
@@ -48,14 +48,13 @@ class AsyncHTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, AsyncHTTPResponseType
     :type next: ~azure.core.pipeline.policies.AsyncHTTPPolicy or ~azure.core.pipeline.transport.AsyncHttpTransport
     """
 
-    next: Union[
-        "AsyncHTTPPolicy[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]",
-        "AsyncHttpTransport[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]",
-    ]
-    """Pointer to the next policy or a transport. Will be set at pipeline creation."""
+    next: "AsyncHTTPPolicy[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]"
+    """Pointer to the next policy or a transport (wrapped as a policy). Will be set at pipeline creation."""
 
     @abc.abstractmethod
-    async def send(self, request: PipelineRequest[HTTPRequestTypeVar]):
+    async def send(
+        self, request: PipelineRequest[HTTPRequestTypeVar]
+    ) -> PipelineResponse[HTTPRequestTypeVar, AsyncHTTPResponseTypeVar]:
         """Abstract send method for a asynchronous pipeline. Mutates the request.
 
         Context content is dependent on the HttpTransport.

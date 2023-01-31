@@ -33,15 +33,13 @@ from typing import (
     AsyncContextManager,
     Generator,
     Generic,
-    Union,
     Optional,
-    overload,
     cast,
     TYPE_CHECKING,
 )
-from typing_extensions import Protocol, Literal
+from typing_extensions import Protocol
 from .configuration import Configuration
-from .pipeline import AsyncPipeline, PipelineResponse
+from .pipeline import AsyncPipeline
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
     ContentDecodePolicy,
@@ -175,12 +173,7 @@ class AsyncPipelineClient(
         super(AsyncPipelineClient, self).__init__(base_url)
         self._config = kwargs.pop("config", None) or Configuration(**kwargs)
         self._base_url = base_url
-
-        self._pipeline: AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]
-        if kwargs.get("pipeline"):
-            self._pipeline = kwargs["pipeline"]
-        else:
-            self._pipeline = self._build_pipeline(self._config, **kwargs)
+        self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
     async def __aenter__(self):
         await self._pipeline.__aenter__()

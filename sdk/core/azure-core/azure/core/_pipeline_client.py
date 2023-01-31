@@ -29,15 +29,12 @@ from collections.abc import Iterable
 from typing import (
     TypeVar,
     Generic,
-    Union,
     Optional,
-    overload,
-    TYPE_CHECKING,
 )
-from typing_extensions import Literal
 from .configuration import Configuration
-from .pipeline import Pipeline, PipelineResponse
+from .pipeline import Pipeline
 from .pipeline.transport._base import PipelineClientBase
+from .pipeline.transport import HttpTransport
 from .pipeline.policies import (
     ContentDecodePolicy,
     DistributedTracingPolicy,
@@ -46,9 +43,8 @@ from .pipeline.policies import (
     RetryPolicy,
 )
 
-if TYPE_CHECKING:
-    HTTPResponseType = TypeVar("HTTPResponseType")
-    HTTPRequestType = TypeVar("HTTPRequestType")
+HTTPResponseType = TypeVar("HTTPResponseType")
+HTTPRequestType = TypeVar("HTTPRequestType")
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -86,20 +82,14 @@ class PipelineClient(
         self,
         base_url,
         *,
-        pipeline: Optional[
-            PipelineResponse["HTTPRequestType", "HTTPResponseType"]
-        ] = None,
+        pipeline: Optional[Pipeline["HTTPRequestType", "HTTPResponseType"]] = None,
         **kwargs
     ):
         super(PipelineClient, self).__init__(base_url)
         self._config = kwargs.pop("config", None) or Configuration(**kwargs)
         self._base_url = base_url
 
-        self._pipeline: Pipeline["HTTPRequestType", "HTTPResponseType"]
-        if kwargs.get("pipeline"):
-            self._pipeline = kwargs["pipeline"]
-        else:
-            self._pipeline = self._build_pipeline(self._config, **kwargs)
+        self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 
     def __enter__(self):
         self._pipeline.__enter__()
@@ -111,13 +101,20 @@ class PipelineClient(
     def close(self):
         self.__exit__()
 
-    def _build_pipeline(
-        self, config, **kwargs
-    ) -> Pipeline["HTTPRequestType", "HTTPResponseType"]:  # pylint: disable=no-self-use
-        transport = kwargs.get("transport")
-        policies = kwargs.get("policies")
-        per_call_policies = kwargs.get("per_call_policies", [])
-        per_retry_policies = kwargs.get("per_retry_policies", [])
+    def _build_pipeline(  # pylint: disable=no-self-use
+        self,
+        config,
+        *,
+        transport: Optional[
+            HttpTransport["HTTPRequestType", "HTTPResponseType"]
+        ] = None,
+        policies=None,
+        per_call_policies=None,
+        per_retry_policies=None,
+        **kwargs
+    ) -> Pipeline["HTTPRequestType", "HTTPResponseType"]:
+        per_call_policies = per_call_policies or []
+        per_retry_policies = per_retry_policies or []
 
         if policies is None:  # [] is a valid policy list
             policies = [
@@ -180,7 +177,7 @@ class PipelineClient(
                 policies_1.extend(policies_2)
                 policies = policies_1
 
-        if not transport:
+        if transport is None:
             from .pipeline.transport import RequestsTransport
 
             transport = RequestsTransport(**kwargs)
