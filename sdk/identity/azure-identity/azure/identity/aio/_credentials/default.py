@@ -17,6 +17,7 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .vscode import VisualStudioCodeCredential
+from .workload_identity import WorkloadIdentityCredential
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -32,12 +33,15 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
     1. A service principal configured by environment variables. See :class:`~azure.identity.aio.EnvironmentCredential`
        for more details.
-    2. An Azure managed identity. See :class:`~azure.identity.aio.ManagedIdentityCredential` for more details.
-    3. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
+    2. WorkloadIdentityCredential if environment variable configuration is set by the Azure workload
+       identity webhook.
+    3. An Azure managed identity. See :class:`~azure.identity.aio.ManagedIdentityCredential` for more details.
+    4. The identity currently logged in to the Azure Developer CLI.
+    5. On Windows only: a user who has signed in with a Microsoft application, such as Visual Studio. If multiple
        identities are in the cache, then the value of  the environment variable ``AZURE_USERNAME`` is used to select
        which identity to use. See :class:`~azure.identity.aio.SharedTokenCacheCredential` for more details.
-    4. The identity currently logged in to the Azure CLI.
-    5. The identity currently logged in to Azure PowerShell.
+    6. The identity currently logged in to the Azure CLI.
+    7. The identity currently logged in to Azure PowerShell.
 
     This default behavior is configurable with keyword arguments.
 
@@ -109,6 +113,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         credentials = []  # type: List[AsyncTokenCredential]
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
+        credentials.append(WorkloadIdentityCredential(client_id=managed_identity_client_id, **kwargs))
         if not exclude_managed_identity_credential:
             credentials.append(ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs))
         if not exclude_azd_cli_credential:

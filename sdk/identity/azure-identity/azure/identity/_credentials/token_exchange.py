@@ -21,7 +21,7 @@ class TokenFileMixin:
 
     def get_service_account_token(self) -> str:
         now = int(time.time())
-        if now - self._last_read_time > 300:
+        if now - self._last_read_time > 600:
             with open(self._token_file_path) as f:
                 self._jwt = f.read()
             self._last_read_time = now
