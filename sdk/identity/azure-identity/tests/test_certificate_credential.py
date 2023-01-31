@@ -171,7 +171,7 @@ def test_regional_authority():
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
         if region == RegionalAuthority.AUTO_DISCOVER_REGION:
-            assert kwargs["azure_region"]
+            assert kwargs["azure_region"] == msal.ConfidentialClientApplication.ATTEMPT_REGION_DISCOVERY
         else:
             assert kwargs["azure_region"] == region.value
 
