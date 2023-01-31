@@ -444,3 +444,42 @@ class TestDSLPipelineSamples:
             "properties.jobs.add_greeting_column.componentId",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_copy_job_in_pipeline(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.jobs.merge_files.componentId",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_copy_inline_job_in_pipeline(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.jobs.merge_files.componentId",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_copy_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/copy_data/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.jobs.merge_files.componentId",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
