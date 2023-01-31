@@ -219,11 +219,13 @@ def get_expected_runsettings_items(runsettings_dict, client=None):
 ANONYMOUS_COMPONENT_TEST_PARAMS = [
     (
         "simple-command/powershell_copy.yaml",
+        # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
         "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
     ),
     (
         "additional-includes/component_spec.yaml",
-        "1928c330-6272-fc7d-818c-f411a3e6eb09"
+        # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
+        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
     ),
     # TODO(2076035): skip tests related to zip additional includes for now
     # (
@@ -280,18 +282,3 @@ def extract_non_primitive(obj):
     if isinstance(obj, (float, int, str)):
         return None
     return obj
-
-
-def unregister_internal_components():
-    from azure.ai.ml._internal._schema.component import NodeType
-    from azure.ai.ml._internal._util import _set_registered
-    from azure.ai.ml.entities._component.component_factory import component_factory
-    from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
-
-    for _type in NodeType.all_values():
-        pipeline_node_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
-        pipeline_node_factory._load_from_rest_object_funcs.pop(_type, None)  # pylint: disable=protected-access
-        component_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
-        component_factory._create_schema_funcs.pop(_type, None)  # pylint: disable=protected-access
-
-    _set_registered(False)

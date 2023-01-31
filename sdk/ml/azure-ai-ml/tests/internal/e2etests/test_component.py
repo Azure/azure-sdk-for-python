@@ -99,6 +99,7 @@ class TestComponent(AzureRecordedTestCase):
                 json.dump(loaded_dict, f, indent=2)
         with open(json_path, "r") as f:
             expected_dict = json.load(f)
+            expected_dict["_source"] = "REMOTE.WORKSPACE.COMPONENT"
 
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)

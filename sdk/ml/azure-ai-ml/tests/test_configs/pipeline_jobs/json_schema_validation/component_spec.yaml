@@ -1,0 +1,17 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+
+jobs:
+  process_data:
+    type: command
+    component: ./1process_data_component.yaml
+    inputs:
+      raw_data: ${{parent.inputs.raw_data}}
+    outputs:
+      train:
+      validation:
+    compute: azureml:cpu-cluster
