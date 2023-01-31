@@ -171,8 +171,6 @@ class _SubscriptionReceiveTest(_ReceiveTest, PerfStressTest):
 class _QueueReceiveBatchTest(_ReceiveTest, BatchPerfTest):
     def __init__(self, arguments) -> None:
         super().__init__(arguments)
-        self.max_message_count = arguments.num_messages
-        self.max_wait_time = arguments.max_wait_time
         self.setup_servicebus_clients(
             arguments.transport_type, 
             arguments.peeklock, 
@@ -180,6 +178,8 @@ class _QueueReceiveBatchTest(_ReceiveTest, BatchPerfTest):
             arguments.max_wait_time, 
             arguments.uamqp_transport
         )
+        self.max_message_count = arguments.num_messages
+        self.max_wait_time = arguments.max_wait_time
         self.queue_name=self.get_from_env('AZURE_SERVICEBUS_QUEUE_NAME')
         self.receiver=self.servicebus_client.get_queue_receiver(self.queue_name)
         self.async_receiver=self.async_servicebus_client.get_queue_receiver(self.queue_name)
@@ -209,8 +209,6 @@ class _QueueReceiveBatchTest(_ReceiveTest, BatchPerfTest):
 class _SubscriptionReceiveBatchTest(_ReceiveTest, BatchPerfTest):
     def __init__(self, arguments) -> None:
         super().__init__(arguments)
-        self.max_message_count = arguments.num_messages
-        self.max_wait_time = arguments.max_wait_time
         self.setup_servicebus_clients(
             arguments.transport_type, 
             arguments.peeklock, 
@@ -218,6 +216,8 @@ class _SubscriptionReceiveBatchTest(_ReceiveTest, BatchPerfTest):
             arguments.max_wait_time, 
             arguments.uamqp_transport
         )
+        self.max_message_count = arguments.num_messages
+        self.max_wait_time = arguments.max_wait_time
         self.topic_name=self.get_from_env('AZURE_SERVICEBUS_TOPIC_NAME')
         self.subscription_name=self.get_from_env('AZURE_SERVICE_BUS_SUBSCRIPTION_NAME')
 

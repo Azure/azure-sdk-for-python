@@ -11,8 +11,8 @@ from ._test_base import _QueueReceiveBatchTest
 class ReceiveQueueMessageBatchTest(_QueueReceiveBatchTest):
     def run_batch_sync(self) -> None:
         batch = self.receiver.receive_messages(
-            max_message_count=self.args.max_message_count,
-            max_wait_time=self.args.max_wait_time or None
+            max_message_count=self.max_message_count,
+            max_wait_time=self.max_wait_time or None
         )
         if self.args.peeklock:
             for msg in batch:
