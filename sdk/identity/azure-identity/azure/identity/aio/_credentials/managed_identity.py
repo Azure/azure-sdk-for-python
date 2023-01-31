@@ -70,7 +70,7 @@ class ManagedIdentityCredential(AsyncContextManager):
                 from .cloud_shell import CloudShellCredential
 
                 self._credential = CloudShellCredential(**kwargs)
-        elif all(os.environ.get(var) for var in EnvironmentVariables.TOKEN_EXCHANGE_VARS):
+        elif all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
             _LOGGER.info("%s will use workload identity", self.__class__.__name__)
             from .workload_identity import WorkloadIdentityCredential
 
