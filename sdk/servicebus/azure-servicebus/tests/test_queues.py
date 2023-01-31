@@ -68,7 +68,7 @@ _logger = get_logger(logging.DEBUG)
 # are ported to offline-compatible code.
 class ServiceBusQueueTests(AzureMgmtTestCase):
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -94,7 +94,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                count += 1
             assert count == 5
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer()
@@ -117,7 +117,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                             receiver.complete_message(message)
                             time.sleep(10)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -207,7 +207,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             assert count == 10
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -368,7 +368,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             sub_test_releasing_messages_iterator()
             sub_test_non_releasing_messages()
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -433,7 +433,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             with pytest.raises(ValueError):
                 receiver.peek_messages()
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -484,7 +484,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages.append(message)
                 assert len(messages) == 0
     
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -521,7 +521,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert not receiver._running
             assert len(messages) == 6
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -555,7 +555,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     next(receiver)
             assert count == 10
     
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -593,7 +593,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -631,7 +631,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     count += 1
             assert count == 0
     
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -669,7 +669,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(ServiceBusError):
                     receiver.receive_deferred_messages(deferred_messages)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -711,7 +711,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     receiver.renew_message_lock(message)
                     receiver.complete_message(message)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -760,7 +760,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     receiver.complete_message(message)
             assert count == 10
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -796,7 +796,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(ServiceBusError):
                     deferred = receiver.receive_deferred_messages(deferred_messages)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -831,7 +831,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 with pytest.raises(ServiceBusError):
                     deferred = receiver.receive_deferred_messages([5, 6, 7])
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -889,7 +889,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert message.application_properties[b'DeadLetterErrorDescription'] == b'Testing description'
                 assert count == 10
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -982,7 +982,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     with pytest.raises(ValueError):
                         receiver.complete_message(message)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1126,7 +1126,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     with pytest.raises(ServiceBusError):
                         receiver.complete_message(messages[2])
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1244,7 +1244,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert renewer._is_max_workers_greater_than_one
             renewer.close()
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1299,7 +1299,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             renewer.close()
             assert len(messages) == 11
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1334,7 +1334,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     count += 1
             assert count == 1
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1584,7 +1584,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 else:
                     raise Exception("Failed to receive schdeduled message.")
             
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1926,7 +1926,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         assert message.scheduled_enqueue_time_utc is None
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1993,7 +1993,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 # Network/server might be unstable making flow control ineffective in the leading rounds of connection iteration
                 assert receive_counter < 10  # Dynamic link credit issuing come info effect
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2045,7 +2045,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     messages = receiver.receive_messages()
                     assert not messages
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2081,7 +2081,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert len(messages) == 0  # make sure messages are removed from the queue
                 assert receiver_handler == receiver._handler  # make sure no reconnection happened
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2108,7 +2108,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         messages.append(message)
                 assert len(messages) == 2
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="TODO: _counter doesn't exist in pyamqp")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2156,7 +2156,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     assert timedelta(seconds=3) < timedelta(milliseconds=(time_7 - time_6)) <= timedelta(seconds=6)
                     assert len(messages) == 1
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2376,7 +2376,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             finally:
                 client.ReceiveClient.settle_messages = original_settlement
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2438,7 +2438,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                                                   max_wait_time=5) as receiver:
                     raise Exception("Should not get here, should be case sensitive.")
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2472,7 +2472,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                         received_messages.append(message)
                 assert len(received_messages) == 6
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2632,7 +2632,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     with pytest.raises(TypeError):
                         sender.schedule_messages(list_message_dicts, scheduled_enqueue_time)
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2646,17 +2646,16 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 self._open()
                 # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
                 if self.execution_times == 1:
-                    from uamqp.errors import LinkDetach
-                    from uamqp.constants import ErrorCodes
+                    from azure.servicebus._pyamqp.error import ErrorCondition, AMQPConnectionError
                     self.execution_times += 1
                     self.error_raised = True
-                    raise LinkDetach(ErrorCodes.LinkDetachForced)
+                    raise AMQPConnectionError(condition=ErrorCondition.LinkDetachForced)
                 else:
                     self.execution_times += 1
                 if not self._message_iter:
                     self._message_iter = self._handler.receive_messages_iter()
-                uamqp_message = next(self._message_iter)
-                message = self._build_message(uamqp_message)
+                pyamqp_message = next(self._message_iter)
+                message = self._build_message(pyamqp_message)
                 return message
             finally:
                 self._receive_context.clear()
@@ -2679,7 +2678,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 assert receiver.error_raised
                 assert receiver.execution_times >= 4  # at least 1 failure and 3 successful receiving iterator
 
-    @pytest.mark.skip(reason="TODO: iterator support")
+    #@pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -2731,8 +2730,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             dict_message = {"body": content}
             sb_message = ServiceBusMessage(body=content)
             message_with_ttl = AmqpAnnotatedMessage(data_body=data_body, header=AmqpMessageHeader(time_to_live=60000))
-            uamqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
-            assert uamqp_with_ttl.properties.absolute_expiry_time == uamqp_with_ttl.properties.creation_time + uamqp_with_ttl.header.ttl
+            pyamqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
+            assert pyamqp_with_ttl.properties.absolute_expiry_time == pyamqp_with_ttl.properties.creation_time + pyamqp_with_ttl.header.ttl
 
             recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0
             with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
