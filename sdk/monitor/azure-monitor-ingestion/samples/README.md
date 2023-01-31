@@ -15,7 +15,7 @@ This library allows you to send data from virtually any source to supported buil
 |**File Name**|**Description**|
 |-------------|---------------|
 |[sample_send_small_logs.py][sample_send_small_logs] and [sample_send_small_logs_async.py][sample_send_small_logs_async]|Send a small number of logs to a Log Analytics workspace.|
-|[sample_custom_error_callback.py][sample_custom_error_callback] and [sample_custom_error_callback_async.py][sample_custom_error_callback_async]|Use custom error handlers to retry and ignore errors during upload. |
+|[sample_custom_error_callback.py][sample_custom_error_callback] and [sample_custom_error_callback_async.py][sample_custom_error_callback_async]|Use error callbacks to customize how errors are handled during upload. |
 |[sample_upload_file_contents.py][sample_upload_file_contents] and [sample_upload_file_contents_async.py][sample_upload_file_contents_async]|Upload the contents of a file to a Log Analytics workspace.|
 |[sample_upload_pandas_dataframe.py][sample_upload_pandas_dataframe] and [sample_upload_pandas_dataframe_async.py][sample_upload_pandas_dataframe_async]|Upload data in a pandas DataFrame to a Log Analytics workspace.|
 
