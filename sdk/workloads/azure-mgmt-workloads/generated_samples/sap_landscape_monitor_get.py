@@ -14,7 +14,7 @@ from azure.mgmt.workloads import WorkloadsClient
     pip install azure-identity
     pip install azure-mgmt-workloads
 # USAGE
-    python php_workloads_list_by_resource_group.py
+    python sap_landscape_monitor_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,16 +26,16 @@ from azure.mgmt.workloads import WorkloadsClient
 def main():
     client = WorkloadsClient(
         credential=DefaultAzureCredential(),
-        subscription_id="8e17e36c-42e9-4cd5-a078-7b44883414e0",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.php_workloads.list_by_resource_group(
-        resource_group_name="test-rg",
+    response = client.sap_landscape_monitor.get(
+        resource_group_name="myResourceGroup",
+        monitor_name="mySapMonitor",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2021-12-01-preview/examples/phpworkloads/PhpWorkloads_ListByResourceGroup.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/workloadmonitor/SapLandscapeMonitor_Get.json
 if __name__ == "__main__":
     main()

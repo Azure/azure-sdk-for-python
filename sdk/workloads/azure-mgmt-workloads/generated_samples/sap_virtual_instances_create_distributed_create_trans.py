@@ -14,7 +14,7 @@ from azure.mgmt.workloads import WorkloadsClient
     pip install azure-identity
     pip install azure-mgmt-workloads
 # USAGE
-    python php_workloads_delete.py
+    python sap_virtual_instances_create_distributed_create_trans.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,13 @@ def main():
         subscription_id="8e17e36c-42e9-4cd5-a078-7b44883414e0",
     )
 
-    response = client.php_workloads.begin_delete(
+    response = client.sap_virtual_instances.begin_create(
         resource_group_name="test-rg",
-        php_workload_name="wp39",
+        sap_virtual_instance_name="X00",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2021-12-01-preview/examples/phpworkloads/PhpWorkloads_Delete.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/sapvirtualinstances/SAPVirtualInstances_Create_Distributed_CreateTrans.json
 if __name__ == "__main__":
     main()

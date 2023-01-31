@@ -14,7 +14,7 @@ from azure.mgmt.workloads import WorkloadsClient
     pip install azure-identity
     pip install azure-mgmt-workloads
 # USAGE
-    python wordpress_instances_get.py
+    python sap_virtual_instances_create_custom_full_resource_names_distributed.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,13 @@ def main():
         subscription_id="8e17e36c-42e9-4cd5-a078-7b44883414e0",
     )
 
-    response = client.wordpress_instances.get(
+    response = client.sap_virtual_instances.begin_create(
         resource_group_name="test-rg",
-        php_workload_name="wp39",
-    )
+        sap_virtual_instance_name="X00",
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2021-12-01-preview/examples/phpworkloads/WordpressInstances_Get.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/sapvirtualinstances/SAPVirtualInstances_Create_CustomFullResourceNames_Distributed.json
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ from azure.mgmt.workloads import WorkloadsClient
     pip install azure-identity
     pip install azure-mgmt-workloads
 # USAGE
-    python wordpress_instances_list.py
+    python sap_application_server_instances_start_instance.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,14 @@ def main():
         subscription_id="8e17e36c-42e9-4cd5-a078-7b44883414e0",
     )
 
-    response = client.wordpress_instances.list(
+    response = client.sap_application_server_instances.begin_start_instance(
         resource_group_name="test-rg",
-        php_workload_name="wp39",
-    )
-    for item in response:
-        print(item)
+        sap_virtual_instance_name="X00",
+        application_instance_name="app01",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2021-12-01-preview/examples/phpworkloads/WordpressInstances_List.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/sapvirtualinstances/SAPApplicationServerInstances_StartInstance.json
 if __name__ == "__main__":
     main()
