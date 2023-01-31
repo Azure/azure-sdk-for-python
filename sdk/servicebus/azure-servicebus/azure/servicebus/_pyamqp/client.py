@@ -10,6 +10,7 @@
 # pylint: disable=too-many-lines
 # TODO: Check types of kwargs (issue exists for this)
 import logging
+import threading
 import queue
 import time
 import uuid
@@ -166,6 +167,7 @@ class AMQPClient(
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
         self._keep_alive_interval = int(kwargs.get("keep_alive_interval") or 0)
         self._keep_alive_thread = None
+        self._lock = threading.Lock()
 
         # Connection settings
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
@@ -409,16 +411,16 @@ class AMQPClient(
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop("timeout", 0)
-        try:
-            mgmt_link = self._mgmt_links[node]
-        except KeyError:
-            mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-            self._mgmt_links[node] = mgmt_link
-            mgmt_link.open()
-
+        with self._lock:
+            try: 
+                mgmt_link = self._mgmt_links[node]
+            except KeyError:
+                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                self._mgmt_links[node] = mgmt_link
+                mgmt_link.open()
+                
             while not mgmt_link.ready():
                 self._connection.listen(wait=False)
-
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
             message, operation=operation, operation_type=operation_type, timeout=timeout
@@ -620,6 +622,9 @@ class SendClient(AMQPClient):
         timeout = kwargs.pop("timeout", 0)
         expire_time = (time.time() + timeout) if timeout else None
         self.open()
+
+        _logger.debug(message)
+        
         message_delivery = _MessageDelivery(
             message, MessageDeliveryState.WaitingToBeSent, expire_time
         )
@@ -762,6 +767,9 @@ class ReceiveClient(AMQPClient):
         self._max_message_size = kwargs.pop("max_message_size", MAX_FRAME_SIZE_BYTES)
         self._link_properties = kwargs.pop("link_properties", None)
         self._link_credit = kwargs.pop("link_credit", 300)
+        self._timeout = kwargs.pop("timeout", 0)
+        self._timeout_reached = False
+        self.auto_complete = kwargs.pop("auto_complete", True)
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -894,6 +902,53 @@ class ReceiveClient(AMQPClient):
         :type timeout: float
         """
         return self._do_retryable_operation(self._receive_message_batch_impl, **kwargs)
+
+    def receive_messages_iter(self, on_message_received=None):
+        """Receive messages by generator. Messages returned in the generator have already been
+        accepted - if you wish to add logic to accept or reject messages based on custom
+        criteria, pass in a callback.
+
+        :param on_message_received: A callback to process messages as they arrive from the
+         service. It takes a single argument, a ~uamqp.message.Message object.
+        :type on_message_received: callable[~uamqp.message.Message]
+        """
+        self._message_received_callback = on_message_received
+        return self._message_generator()
+
+    def _message_generator(self):
+        """Iterate over processed messages in the receive queue.
+
+        :rtype: generator[~uamqp.message.Message]
+        """
+
+        auto_complete = self.auto_complete
+        self.auto_complete = False
+        receiving = True
+        message = None
+        try:
+
+            while receiving:
+
+                receiving = self.do_work()
+                # while not self._received_messages.empty():
+                message = self._received_messages.get(block=True, timeout=self._timeout)
+                if not self._received_messages.empty():
+                    self._received_messages.task_done()
+                yield message
+                
+                self._complete_message(message, auto_complete)
+        except:
+
+            # do we want to close receiver straight out, or as below, only when we have shutdown
+      
+            if self._shutdown:
+                self.close()
+    
+    def _complete_message(self, message, auto):
+        if not message or not auto:
+            return
+        # this is off here, message delivery id?
+        self.settle_messages(message[0][1], "accepted")
 
     @overload
     def settle_messages(

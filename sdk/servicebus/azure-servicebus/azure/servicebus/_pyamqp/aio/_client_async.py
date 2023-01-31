@@ -829,6 +829,50 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             **kwargs
         )
 
+    async def receive_messages_iter_async(self, on_message_received=None):
+        """Receive messages by generator. Messages returned in the generator have already been
+        accepted - if you wish to add logic to accept or reject messages based on custom
+        criteria, pass in a callback.
+
+        :param on_message_received: A callback to process messages as they arrive from the
+         service. It takes a single argument, a ~uamqp.message.Message object.
+        :type on_message_received: callable[~uamqp.message.Message]
+        """
+        self._message_received_callback = on_message_received
+        return self._message_generator_async()
+
+    async def _message_generator_async(self):
+        """Iterate over processed messages in the receive queue.
+
+        :rtype: generator[~uamqp.message.Message]
+        """
+  
+        auto_complete = self.auto_complete
+        self.auto_complete = False
+        receiving = True
+        message = None
+        try:
+            # I think if it is just this one loop then when we close the connection we still might have items in queue
+            while receiving:
+                receiving = await self.do_work_async()
+                # while not self._received_messages.empty():
+                message = self._received_messages.get(block=True, timeout=self._timeout)
+                self._received_messages.task_done()
+                yield message
+                await self._complete_message_async(message, auto_complete)
+        except:
+            #Check what self._received_messages is 
+            # what happens to queue when Empty exception thrown, do we need to reset it?
+            if self._shutdown:
+                self.close()
+
+    async def _complete_message_async(self, message, auto):
+        if not message or not auto:
+            return
+        # this is off here, message delivery id?
+        await self.settle_messages_async(message[0][1], "accepted")
+
+
     @overload
     async def settle_messages_async(
         self,

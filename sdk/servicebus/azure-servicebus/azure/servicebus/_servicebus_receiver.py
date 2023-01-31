@@ -233,8 +233,8 @@ class ServiceBusReceiver(
             # different max_wait_times to different iterators and uses them in concert.
             if max_wait_time:
                 # _timeout to _idle_timeout
-                original_timeout = self._handler._idle_timeout
-                self._handler._idle_timeout = max_wait_time * 1000
+                original_timeout = self._handler._timeout
+                self._handler._timeout = max_wait_time * 1
             try:
                 message = self._inner_next()
                 links = get_receive_links(message)
@@ -277,10 +277,10 @@ class ServiceBusReceiver(
             self._receive_context.set()
             self._open()
             # TODO: Add in Recieve Message Iterator
-            # if not self._message_iter:
-            #     self._message_iter = self._handler.receive_messages_iter()
-            uamqp_message = next(self._message_iter)
-            message = self._build_message(uamqp_message)
+            if not self._message_iter:
+                self._message_iter = self._handler.receive_messages_iter()
+            pyamqp_message = next(self._message_iter)
+            message = self._build_message(pyamqp_message)
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -366,6 +366,7 @@ class ServiceBusReceiver(
             hostname,
             self._get_source(),
             auth=auth,
+            auto_complete=False,
             network_trace=self._config.logging_enable,
             properties=self._properties,
             retry_policy=self._error_policy,
@@ -375,7 +376,7 @@ class ServiceBusReceiver(
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else SenderSettleMode.Unsettled,
-            timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
+            timeout=self._max_wait_time * 1 if self._max_wait_time else 0,
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive
