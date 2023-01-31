@@ -934,24 +934,19 @@ def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resour
         )
 
 
-def write_with_int_mode(file: Union[str, PathLike], content: str, *, int_mode: int = 0o666, encoding="utf-8"):
+def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     """Open file with specific mode and return the file object.
 
-    :param file: Path to the file.
+    :param file_path: Path to the file.
     :param content: Content to write to the file.
-    :param int_mode: Mode for opener in integer. Default value is 0o666, which means
-    w+r for owner, group and others.
-    :param encoding: Encoding for the file. Default value is utf-8.
     """
-    origin_mask = os.umask(0)
-    try:
-        fd = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, int_mode)
-        os.write(fd, content.encode(encoding=encoding))
-        os.close(fd)
-        if os.stat(file).st_mode & 0o777 != int_mode:
-            try:
-                os.chmod(file, int_mode)
-            except PermissionError:
-                pass
-    finally:
-        os.umask(origin_mask)
+    with open(file_path, "w") as f:
+        f.write(content)
+
+    # share_mode means read/write for owner, group and others
+    share_mode, mode_mask = 0o666, 0o777
+    if os.stat(file_path).st_mode & mode_mask != share_mode:
+        try:
+            os.chmod(file_path, share_mode)
+        except PermissionError:
+            pass

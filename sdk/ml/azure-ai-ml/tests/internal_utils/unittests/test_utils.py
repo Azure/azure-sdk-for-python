@@ -10,7 +10,7 @@ from azure.ai.ml._utils.utils import (
     get_all_data_binding_expressions,
     is_data_binding_expression,
     map_single_brackets_and_warn,
-    write_with_int_mode,
+    write_to_shared_file,
 )
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -82,12 +82,11 @@ class TestUtils:
             return oct(int_mode)
         with tempfile.TemporaryDirectory() as temp_dir:
             target_file_path = temp_dir + "/test.txt"
-            write_with_int_mode(target_file_path, "test1", int_mode=0o600)
-            if os.name == "nt":
-                # Windows does not support the mode argument for os.open and will always create file with 0o666
-                assert get_int_mode(target_file_path) == "0o666"
-            else:
-                assert get_int_mode(target_file_path) == "0o600"
-            write_with_int_mode(target_file_path, "test2", int_mode=0o666)
+            with open(target_file_path, "w") as f:
+                # default mode is 0o666 for windows and 0o755 for linux
+                f.write("test")
+            write_to_shared_file(target_file_path, "test2")
+            # check that the file mode is preserved
             assert get_int_mode(target_file_path) == "0o666"
-
+            with open(target_file_path, "r") as f:
+                assert f.read() == "test2"

@@ -889,9 +889,7 @@
         "SEPS",
         "wargs",
         "pycache",
-        "ruamel",
-        "WRONLY",
-        "CREAT"
+        "ruamel"
       ]
     },
     {
