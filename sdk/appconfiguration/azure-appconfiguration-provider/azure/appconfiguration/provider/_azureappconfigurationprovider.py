@@ -262,3 +262,22 @@ class AzureAppConfigurationProvider:
 
     def __ne__(self, other):
         return not self == other
+
+    def close(self):
+        """
+        Closes the connection to Azure App Configuration.
+        """
+        for client in self._secret_clients.values():
+            client.close()
+        self._client.close()
+
+    def __enter__(self):
+        self._client.__enter__()
+        for client in self._secret_clients.values():
+            client.__enter__()
+        return self
+
+    def __exit__(self, *args):
+        self._client.__exit__(*args)
+        for client in self._secret_clients.values():
+            client.__exit__()
