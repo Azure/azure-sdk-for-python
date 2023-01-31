@@ -28,10 +28,14 @@ import logging
 from collections.abc import Iterable
 from typing import (
     TypeVar,
+    Generic,
+    Union,
+    overload,
     TYPE_CHECKING,
 )
+from typing_extensions import Literal
 from .configuration import Configuration
-from .pipeline import Pipeline
+from .pipeline import Pipeline, PipelineResponse
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
     ContentDecodePolicy,
@@ -48,7 +52,9 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 
-class PipelineClient(PipelineClientBase):
+class PipelineClient(
+    PipelineClientBase, Generic["HTTPRequestType", "HTTPResponseType"]
+):
     """Service client core methods.
 
     Builds a Pipeline client.
@@ -75,10 +81,18 @@ class PipelineClient(PipelineClientBase):
             :caption: Builds the pipeline client.
     """
 
-    def __init__(self, base_url, **kwargs):
+    def __init__(
+        self,
+        base_url,
+        *,
+        pipeline: PipelineResponse["HTTPRequestType", "HTTPResponseType"],
+        **kwargs
+    ):
         super(PipelineClient, self).__init__(base_url)
         self._config = kwargs.pop("config", None) or Configuration(**kwargs)
         self._base_url = base_url
+
+        self._pipeline: Pipeline["HTTPRequestType", "HTTPResponseType"]
         if kwargs.get("pipeline"):
             self._pipeline = kwargs["pipeline"]
         else:
@@ -94,7 +108,9 @@ class PipelineClient(PipelineClientBase):
     def close(self):
         self.__exit__()
 
-    def _build_pipeline(self, config, **kwargs):  # pylint: disable=no-self-use
+    def _build_pipeline(
+        self, config, **kwargs
+    ) -> Pipeline["HTTPRequestType", "HTTPResponseType"]:  # pylint: disable=no-self-use
         transport = kwargs.get("transport")
         policies = kwargs.get("policies")
         per_call_policies = kwargs.get("per_call_policies", [])
@@ -168,7 +184,31 @@ class PipelineClient(PipelineClientBase):
 
         return Pipeline(transport, policies)
 
-    def send_request(self, request: "HTTPRequestType", **kwargs) -> "HTTPResponseType":
+    @overload
+    def send_request(
+        self,
+        request: "HTTPRequestType",
+        *,
+        _return_pipeline_response: Literal[True],
+        **kwargs
+    ) -> PipelineResponse["HTTPRequestType", "HTTPResponseType"]:
+        ...
+
+    @overload
+    def send_request(
+        self,
+        request: "HTTPRequestType",
+        *,
+        _return_pipeline_response: Literal[False],
+        **kwargs
+    ) -> "HTTPResponseType":
+        ...
+
+    def send_request(
+        self, request: "HTTPRequestType", **kwargs
+    ) -> Union[
+        "HTTPResponseType", PipelineResponse["HTTPRequestType", "HTTPResponseType"]
+    ]:
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

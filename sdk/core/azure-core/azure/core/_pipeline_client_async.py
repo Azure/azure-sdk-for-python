@@ -32,6 +32,7 @@ from typing import (
     TypeVar,
     AsyncContextManager,
     Generator,
+    Generic,
     cast,
     TYPE_CHECKING,
 )
@@ -127,7 +128,9 @@ class _Coroutine(Awaitable[AsyncHTTPResponseType]):
 
 
 class AsyncPipelineClient(
-    PipelineClientBase, AsyncContextManager["AsyncPipelineClient"]
+    PipelineClientBase,
+    AsyncContextManager["AsyncPipelineClient"],
+    Generic[HTTPRequestType, AsyncHTTPResponseType],
 ):
     """Service client core methods.
 
