@@ -75,7 +75,7 @@ class SendEventMessage:
     ) -> None:
         self.kind: Literal["sendEvent"] = "sendEvent"
         self.data_type = data_type
-        self.data = (data,)
+        self.data = data
         self.event = event
         self.ack_id = ack_id
 
@@ -315,9 +315,9 @@ def get_pay_load(data: Any, data_type: WebPubSubDataType) -> Any:
     if data_type == WebPubSubDataType.JSON:
         return data
     if data_type in (WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF):
-        if isinstance(data, (bytes, bytearray)):
-            return base64.b64encode(data).decode()
-        raise TypeError("Message must be a bytes or bytearray")
+        if isinstance(data, memoryview):
+            return base64.b64encode(bytes(data)).decode()
+        raise Exception("data must be memoryview when dataType is binary or protobuf") 
     raise TypeError(f"Unsupported dataType: {data_type}")
 
 
@@ -326,13 +326,15 @@ def parse_payload(data: Any, data_type: WebPubSubDataType) -> Any:
         if not isinstance(data, str):
             raise TypeError("Message must be a string when dataType is text")
         return data
-    if data_type == "json":
+    if data_type == WebPubSubDataType.JSON:
         return data
-    if data_type in ("binary", "protobuf"):
-        if isinstance(data, (bytes, bytearray)):
-            return data
-        return bytes(base64.b64decode(data))
-    raise TypeError(f"Unsupported dataType: {data_type}")
+    if data_type in (WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF):
+        if not isinstance(data, (bytes, bytearray)):
+            data = bytes(base64.b64decode(data))
+        return memoryview(data)
+
+    # Forward compatible
+    return None
 
 
 class WebPubSubClientProtocol:
@@ -379,10 +381,13 @@ class WebPubSubClientProtocol:
             _LOGGER.error("wrong message from type: %s", message["from"])
             return None
         if message["type"] == "ack":
+            error = message.get("error")
             return AckMessage(
                 ack_id=message["ackId"],
                 success=message["success"],
-                error=message.get("error"),
+                error=AckMessageError(name=error["name"], message=error["message"])
+                if isinstance(error, dict)
+                else None,
             )
         _LOGGER.error("wrong message type: %s", message["type"])
         return None
@@ -412,10 +417,10 @@ class WebPubSubClientProtocol:
             data = SequenceAckData(sequence_id=message.sequence_id)
         else:
             raise Exception(f"Unsupported type: {message.kind}")
-        
+
         for k in list(data.keys()):
             if data[k] is None:
-                data.pop(k) 
+                data.pop(k)
 
         return json.dumps(data, cls=AzureJSONEncoder)
 

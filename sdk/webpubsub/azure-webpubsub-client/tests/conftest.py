@@ -25,12 +25,14 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
+import json
 
 from dotenv import load_dotenv
 
 from devtools_testutils import test_proxy, add_general_regex_sanitizer
 
 load_dotenv()
+
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

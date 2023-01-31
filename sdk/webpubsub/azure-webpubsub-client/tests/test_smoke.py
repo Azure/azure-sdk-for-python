@@ -24,3 +24,4 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         client.start()
         with pytest.raises(Exception):
             client.start()
+        client.stop()
