@@ -2,7 +2,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Callable, Tuple
+from typing import Tuple
 
 import pytest
 
@@ -12,7 +12,6 @@ from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     get_ignore_file,
     get_object_hash,
-    traverse_directory,
     get_directory_size,
     get_local_paths,
     construct_local_and_remote_paths,
