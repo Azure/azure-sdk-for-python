@@ -30,7 +30,8 @@ class TokenFileMixin:
 
 class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     """WorkloadIdentityCredential supports Azure workload identity on Kubernetes.
-    See the `workload identity overview <https://learn.microsoft.com/azure/aks/workload-identity-overview>`_ for more information.
+    See the `workload identity overview <https://learn.microsoft.com/azure/aks/workload-identity-overview>`_
+    for more information.
 
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
     :param str client_id: The client ID of an Azure AD app registration.
