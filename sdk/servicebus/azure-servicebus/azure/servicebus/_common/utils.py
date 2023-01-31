@@ -35,7 +35,6 @@ except ImportError:
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
-from .._pyamqp import authentication
 from .._version import VERSION
 from .constants import (
     JWT_TOKEN_SCOPE,

@@ -176,6 +176,9 @@ if uamqp_installed:
         AMQP_LONG_VALUE = types.AMQPLong
         AMQP_ARRAY_VALUE = types.AMQPArray
 
+        # errors
+        TIMEOUT_ERROR = compat.TimeoutException
+
         @staticmethod
         def build_message(**kwargs):
             """
@@ -329,6 +332,15 @@ if uamqp_installed:
             :rtype: int
             """
             return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
+        
+        @staticmethod
+        def get_handler_link_name(handler):
+            """
+            Returns link name.
+            :param AMQPClient handler: Client to get name of link from.
+            :rtype: str
+            """
+            return handler.message_handler.name
 
         @staticmethod
         def create_retry_policy(config):
@@ -607,21 +619,21 @@ if uamqp_installed:
                 token_auth.update_token()
             return token_auth
 
-        @staticmethod
-        def create_mgmt_client(address, mgmt_auth, config):
-            """
-            Creates and returns the mgmt AMQP client.
-            :param _Address address: Required. The Address.
-            :param JWTTokenAuth mgmt_auth: Auth for client.
-            :param ~azure.eventhub._configuration.Configuration config: The configuration.
-            """
+        #@staticmethod
+        #def create_mgmt_client(address, mgmt_auth, config):
+        #    """
+        #    Creates and returns the mgmt AMQP client.
+        #    :param _Address address: Required. The Address.
+        #    :param JWTTokenAuth mgmt_auth: Auth for client.
+        #    :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        #    """
 
-            mgmt_target = f"amqps://{address.hostname}{address.path}"
-            return AMQPClient(
-                mgmt_target,
-                auth=mgmt_auth,
-                debug=config.network_tracing
-            )
+        #    mgmt_target = f"amqps://{address.hostname}{address.path}"
+        #    return AMQPClient(
+        #        mgmt_target,
+        #        auth=mgmt_auth,
+        #        debug=config.network_tracing
+        #    )
 
         @staticmethod
         def open_mgmt_client(mgmt_client, conn):
@@ -641,29 +653,60 @@ if uamqp_installed:
             return mgmt_auth.token
 
         @staticmethod
-        def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+        def create_mgmt_msg(
+            message,
+            application_properties,
+            config, # pylint:disable=unused-argument
+            reply_to,
+            **kwargs
+        ):
+            """
+            :param message: The message to send in the management request.
+            :paramtype message: Any
+            :param Dict[bytes, str] application_properties: App props.
+            :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
+            :param str reply_to: Reply to.
+            :rtype: pyamqp.Message
+            """
+            return Message( # type: ignore # TODO: fix mypy error
+                body=message,
+                properties=MessageProperties(
+                    reply_to=reply_to,
+                    encoding=config.encoding,
+                    **kwargs
+                ),
+                application_properties=application_properties,
+            )
+
+        @staticmethod
+        def mgmt_client_request(
+            mgmt_client,
+            mgmt_msg,
+            *,
+            operation,
+            operation_type,
+            node,
+            timeout,
+            callback
+        ):
             """
             Send mgmt request.
-            :param AMQP Client mgmt_client: Client to send request with.
-            :param str mgmt_msg: Message.
+            :param AMQPClient mgmt_client: Client to send request with.
+            :param Message mgmt_msg: Message.
             :keyword bytes operation: Operation.
-            :keyword operation_type: Op type.
-            :keyword status_code_field: mgmt status code.
-            :keyword description_fields: mgmt status desc.
+            :keyword bytes operation_type: Op type.
+            :keyword bytes node: Mgmt target.
+            :keyword int timeout: Timeout.
+            :keyword Callable callback: Callback to process request response.
             """
-            operation_type = kwargs.pop("operation_type")
-            operation = kwargs.pop("operation")
-            response = mgmt_client.mgmt_request(
+            return mgmt_client.mgmt_request(
                 mgmt_msg,
                 operation,
                 op_type=operation_type,
-                **kwargs
+                node=node,
+                timeout=timeout * UamqpTransport.TIMEOUT_FACTOR if timeout else None,
+                callback=callback
             )
-            status_code = response.application_properties[kwargs.get("status_code_field")]
-            description = response.application_properties.get(
-                kwargs.get("description_fields")
-            )  # type: Optional[Union[str, bytes]]
-            return status_code, description, response
 
         #@staticmethod
         #def get_error(status_code, description):

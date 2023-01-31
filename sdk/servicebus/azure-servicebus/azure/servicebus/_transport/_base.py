@@ -59,6 +59,7 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         """
 
     @staticmethod
+    @abstractmethod
     def encode_message(message):
         """
         Encodes the outgoing uamqp/pyamqp.Message of the message.
@@ -93,6 +94,15 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         Returns max peer message size.
         :param AMQPClient handler: Client to get remote max message size on link from.
         :rtype: int
+        """
+
+    @staticmethod
+    @abstractmethod
+    def get_handler_link_name(handler):
+        """
+        Returns link name.
+        :param AMQPClient handler: Client to get name of link from.
+        :rtype: str
         """
 
     @staticmethod

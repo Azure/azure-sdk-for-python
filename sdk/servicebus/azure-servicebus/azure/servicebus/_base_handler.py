@@ -22,7 +22,6 @@ from ._pyamqp.client import AMQPClient as AMQPClientSync
 
 from ._common._configuration import Configuration
 from .exceptions import (
-    ServiceBusError,
     ServiceBusConnectionError,
     OperationTimeoutError,
     SessionLockLostError,
@@ -43,6 +42,7 @@ from ._common.constants import (
 )
 
 if TYPE_CHECKING:
+    from .exceptions import ServiceBusError
     try:
         from uamqp import AMQPClient as uamqp_AMQPClientSync
     except ImportError:
@@ -338,7 +338,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     def __exit__(self, *args):
         self.close()
 
-    def _handle_exception(self, exception: BaseException) -> ServiceBusError:
+    def _handle_exception(self, exception: BaseException) -> "ServiceBusError":
         # pylint: disable=protected-access, line-too-long
         error = self._amqp_transport._create_servicebus_exception(_LOGGER, exception)
 
@@ -468,14 +468,13 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     def _mgmt_request_response(
         self,
-        mgmt_operation,
-        message,
-        callback,
-        keep_alive_associated_link=True,
-        timeout=None,
-        **kwargs
-    ):
-        # type: (bytes, Any, Callable, bool, Optional[float], Any) -> Message
+        mgmt_operation: bytes,
+        message: Any,
+        callback: Callable,
+        keep_alive_associated_link: bool = True,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> "Message":
         """
         Execute an amqp management operation.
 
@@ -485,7 +484,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         :param message: The message to send in the management request.
         :paramtype message: Any
         :param callback: The callback which is used to parse the returning message.
-        :paramtype callback: Callable[int, ~uamqp.message.Message, str]
+        :paramtype callback: Callable[int, Union[~uamqp.message.Message, Message], str]
         :param keep_alive_associated_link: A boolean flag for keeping associated amqp sender/receiver link alive when
          executing operation on mgmt links.
         :param timeout: timeout in seconds executing the mgmt operation.
@@ -498,27 +497,31 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._handler._link.name  # pylint: disable=protected-access
+                    ASSOCIATEDLINKPROPERTYNAME: self._amqp_transport.get_handler_link_name(self._handler)
                 }
             except AttributeError:
                 pass
-
-        mgmt_msg = Message( # type: ignore # TODO: fix mypy error
-            value=message,
-            properties=Properties(reply_to=self._mgmt_target, **kwargs),
+        
+        mgmt_msg = self._amqp_transport.create_mgmt_msg(
+            message=message,
             application_properties=application_properties,
+            config=self._config,
+            reply_to=self._mgmt_target,
+            **kwargs
         )
+
         try:
-            status, description, response = self._handler.mgmt_request(
+            return self._amqp_transport.mgmt_client_request(
+                self._handler,
                 mgmt_msg,
-                operation=amqp_string_value(mgmt_operation),
-                operation_type=amqp_string_value(MGMT_REQUEST_OP_TYPE_ENTITY_MGMT),
+                operation=mgmt_operation,
+                operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
+                timeout=timeout,
+                callback=callback
             )
-            return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, TimeoutError): #TODO: was compat.TimeoutException
+            if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
                 raise OperationTimeoutError(error=exp)
             raise
 
@@ -528,7 +531,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return self._do_retryable_operation(
             self._mgmt_request_response,
-            mgmt_operation=mgmt_operation.decode("UTF-8"),
+            mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
             timeout=timeout,

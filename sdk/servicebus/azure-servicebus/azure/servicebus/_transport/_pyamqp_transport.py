@@ -5,7 +5,7 @@
 
 import logging
 import time
-from typing import Optional, Union, Any, Tuple, cast, List
+from typing import Optional, Union, Any, Tuple, cast, List, TYPE_CHECKING
 
 from .._pyamqp import (
     error as AMQPErrors,
@@ -16,6 +16,7 @@ from .._pyamqp import (
     ReceiveClient,
     __version__,
 )
+from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value
 from .._pyamqp._encode import encode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
@@ -62,6 +63,7 @@ from ..exceptions import (
     SessionLockLostError,
     OperationTimeoutError
 )
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -139,8 +141,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     #ERROR_CONDITIONS = [condition.value for condition in AMQPErrors.ErrorCondition]
 
     # amqp value types
-    AMQP_LONG_VALUE = utils.amqp_long_value
-    AMQP_ARRAY_VALUE = utils.amqp_array_value
+    AMQP_LONG_VALUE = amqp_long_value
+    AMQP_ARRAY_VALUE = amqp_array_value
+
+    # errors
+    TIMEOUT_ERROR = TimeoutError
 
     @staticmethod
     def build_message(**kwargs):
@@ -302,6 +307,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return handler._link.remote_max_message_size  # pylint: disable=protected-access
 
     @staticmethod
+    def get_handler_link_name(handler):
+        """
+        Returns link name.
+        :param AMQPClient handler: Client to get name of link from.
+        :rtype: str
+        """
+        return handler._link.name
+
+    @staticmethod
     def create_retry_policy(config):
         """
         Creates the error retry policy.
@@ -324,7 +338,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: dict
         """
         return {
-            symbol: utils.amqp_long_value(value)
+            symbol: amqp_long_value(value)
             for (symbol, value) in link_properties.items()
         }
 
@@ -461,7 +475,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         source = Source(address=source, filters={})
         if offset is not None:
             filter_key = ApacheFilters.selector_filter
-            source.filters[filter_key] = (filter_key, utils.amqp_string_value(selector))
+            source.filters[filter_key] = (filter_key, amqp_string_value(selector))
         return source
 
     @staticmethod
@@ -561,26 +575,26 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             verify=config.connection_verify,
         )
 
-    @staticmethod
-    def create_mgmt_client(
-        address, mgmt_auth, config
-    ):  # pylint: disable=unused-argument
-        """
-        Creates and returns the mgmt AMQP client.
-        :param _Address address: Required. The Address.
-        :param JWTTokenAuth mgmt_auth: Auth for client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
-        """
+    #@staticmethod
+    #def create_mgmt_client(
+    #    address, mgmt_auth, config
+    #):  # pylint: disable=unused-argument
+    #    """
+    #    Creates and returns the mgmt AMQP client.
+    #    :param _Address address: Required. The Address.
+    #    :param JWTTokenAuth mgmt_auth: Auth for client.
+    #    :param ~azure.eventhub._configuration.Configuration config: The configuration.
+    #    """
 
-        return AMQPClient(
-            config.hostname,
-            auth=mgmt_auth,
-            network_trace=config.network_tracing,
-            transport_type=config.transport_type,
-            http_proxy=config.http_proxy,
-            custom_endpoint_address=config.custom_endpoint_address,
-            connection_verify=config.connection_verify,
-        )
+    #    return AMQPClient(
+    #        config.hostname,
+    #        auth=mgmt_auth,
+    #        network_trace=config.network_tracing,
+    #        transport_type=config.transport_type,
+    #        http_proxy=config.http_proxy,
+    #        custom_endpoint_address=config.custom_endpoint_address,
+    #        connection_verify=config.connection_verify,
+    #    )
 
     @staticmethod
     def get_updated_token(mgmt_auth):
@@ -589,26 +603,61 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param mgmt_auth: Auth.
         """
         return mgmt_auth.get_token()
+    
+    @staticmethod
+    def create_mgmt_msg(
+        message,
+        application_properties,
+        config, # pylint:disable=unused-argument
+        reply_to,
+        **kwargs
+    ):
+        """
+        :param message: The message to send in the management request.
+        :paramtype message: Any
+        :param Dict[bytes, str] application_properties: App props.
+        :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
+        :param str reply_to: Reply to.
+        :rtype: pyamqp.Message
+        """
+        return Message( # type: ignore # TODO: fix mypy error
+            value=message,
+            properties=Properties(
+                reply_to=reply_to,
+                **kwargs
+            ),
+            application_properties=application_properties,
+        )
 
     @staticmethod
-    def mgmt_client_request(mgmt_client, mgmt_msg, **kwargs):
+    def mgmt_client_request(
+        mgmt_client,
+        mgmt_msg,
+        *,
+        operation,
+        operation_type,
+        node,
+        timeout,
+        callback
+    ):
         """
         Send mgmt request.
         :param AMQPClient mgmt_client: Client to send request with.
-        :param str mgmt_msg: Message.
+        :param Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
-        :keyword operation_type: Op type.
-        :keyword status_code_field: mgmt status code.
-        :keyword description_fields: mgmt status desc.
+        :keyword bytes operation_type: Op type.
+        :keyword bytes node: Mgmt target.
+        :keyword int timeout: Timeout.
+        :keyword Callable callback: Callback to process request response.
         """
-        operation_type = kwargs.pop("operation_type")
-        operation = kwargs.pop("operation")
-        return mgmt_client.mgmt_request(
+        status, description, response = mgmt_client.mgmt_request(
             mgmt_msg,
-            operation=operation.decode(),
-            operation_type=operation_type.decode(),
-            **kwargs,
+            operation=amqp_string_value(operation.decode("UTF-8")),
+            operation_type=amqp_string_value(operation_type),
+            node=node,
+            timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
         )
+        return callback(status, response, description)
 
     #@staticmethod
     #def get_error(status_code, description):
