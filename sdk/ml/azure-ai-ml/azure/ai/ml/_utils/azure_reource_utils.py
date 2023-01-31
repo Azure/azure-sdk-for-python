@@ -31,7 +31,7 @@ def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential,
     return argClient.resources(argQuery)
 
 
-def get_vitual_clusters_from_subscriptions(credential: TokenCredential, subscription_list: Optional[List[str]] = None) -> List[Dict]:
+def get_virtual_clusters_from_subscriptions(credential: TokenCredential, subscription_list: Optional[List[str]] = None) -> List[Dict]:
     strQuery = "resources | where type == 'microsoft.machinelearningservices/virtualclusters' | order by tolower(name) asc | project id, subscriptionId, resourceGroup, name, location, tags, type"
     return get_resources_from_subscriptions(strQuery, credential, subscription_list).data
 

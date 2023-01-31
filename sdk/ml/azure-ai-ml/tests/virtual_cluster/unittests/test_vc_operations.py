@@ -23,7 +23,7 @@ def mock_vc_operation(mock_workspace_scope: OperationScope, mock_credential) -> 
 @pytest.mark.vc_test
 class TestVCOperations:
 
-    @patch("azure.ai.ml.operations._virtual_cluster_operations.get_vitual_clusters_from_subscriptions")
+    @patch("azure.ai.ml.operations._virtual_cluster_operations.get_virtual_clusters_from_subscriptions")
     def test_list(self, mock_function, mock_vc_operation: VirtualClusterOperations, mock_workspace_scope: OperationScope, mock_credential: Mock) -> None:
         dummy_vc_list = [
             {
