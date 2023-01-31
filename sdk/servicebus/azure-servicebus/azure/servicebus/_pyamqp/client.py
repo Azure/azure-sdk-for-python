@@ -10,6 +10,7 @@
 # pylint: disable=too-many-lines
 # TODO: Check types of kwargs (issue exists for this)
 import logging
+import threading
 import queue
 import time
 import uuid
@@ -166,6 +167,7 @@ class AMQPClient(
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
         self._keep_alive_interval = int(kwargs.get("keep_alive_interval") or 0)
         self._keep_alive_thread = None
+        self._lock = threading.Lock()
 
         # Connection settings
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)
@@ -409,16 +411,16 @@ class AMQPClient(
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop("timeout", 0)
-        try:
-            mgmt_link = self._mgmt_links[node]
-        except KeyError:
-            mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-            self._mgmt_links[node] = mgmt_link
-            mgmt_link.open()
-
+        with self._lock:
+            try: 
+                mgmt_link = self._mgmt_links[node]
+            except KeyError:
+                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                self._mgmt_links[node] = mgmt_link
+                mgmt_link.open()
+                
             while not mgmt_link.ready():
                 self._connection.listen(wait=False)
-
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
             message, operation=operation, operation_type=operation_type, timeout=timeout
