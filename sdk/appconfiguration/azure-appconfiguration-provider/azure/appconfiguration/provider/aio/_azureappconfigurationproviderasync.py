@@ -12,7 +12,7 @@ from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from azure.core.credentials_async import AsyncTokenCredential
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from .._constants import FEATURE_MANAGEMENT_KEY
-
+from .._azureappconfigurationprovider import __is_json_content_type
 from .._user_agent import USER_AGENT
 
 @overload
@@ -171,27 +171,6 @@ async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigu
     raise ValueError(
         "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
     )
-
-def __is_json_content_type(content_type: str) -> bool:
-    if not content_type:
-        return False
-
-    content_type = content_type.strip().lower()
-    mime_type = content_type.split(";")[0].strip()
-
-    type_parts = mime_type.split("/")
-    if len(type_parts) != 2:
-        return False
-
-    (main_type, sub_type) = type_parts
-    if main_type != "application":
-        return False
-
-    sub_types = sub_type.split("+")
-    if "json" in sub_types:
-        return True
-
-    return False
 
 class AzureAppConfigurationProvider:
 
