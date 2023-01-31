@@ -947,8 +947,8 @@ class ReceiveClient(AMQPClient):
     def _complete_message(self, message, auto):
         if not message or not auto:
             return
-        # this is off here, message delivery id?
-        self.settle_messages(message[0][1], "accepted")
+        # TODO: this is off here, message delivery id?
+        # self.settle_messages(message[0][1], "accepted")
 
     @overload
     def settle_messages(

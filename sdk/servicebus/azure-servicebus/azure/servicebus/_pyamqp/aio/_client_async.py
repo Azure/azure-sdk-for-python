@@ -869,8 +869,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def _complete_message_async(self, message, auto):
         if not message or not auto:
             return
-        # this is off here, message delivery id?
-        await self.settle_messages_async(message[0][1], "accepted")
+        # TODO: this is off here, message delivery id?
+        # await self.settle_messages_async(message[0][1], "accepted")
 
 
     @overload
