@@ -20,7 +20,7 @@ from azure.ai.ml import (
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
 
@@ -917,6 +917,51 @@ class TestCommandFunction:
                 services=invalid_services_2,
             )
             assert node
+
+    def test_command_services_subtypes(self) -> None:
+        services = {
+            "my_ssh": SshJobService(),
+            "my_tensorboard": TensorBoardJobService(
+                    log_dir="~/tblog"
+            ),
+            "my_jupyterlab": JupyterLabJobService(),
+            "my_vscode": VsCodeJobService(),
+        }
+        rest_services = {
+            "my_ssh": {"job_service_type": "SSH"},
+            "my_tensorboard": {
+                "job_service_type": "TensorBoard",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+            "my_jupyterlab": {"job_service_type": "JupyterLab"},
+            "my_vscode": { "job_service_type": "VSCode"},
+        }
+        node = command(
+            name="interactive-command-job",
+            description="description",
+            environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
+            command="ls",
+            compute="testCompute",
+            services=services,
+        )
+
+        node_services = node.services
+        assert isinstance(node_services.get("my_ssh"), SshJobService)
+        assert isinstance(node_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(node_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(node_services.get("my_vscode"), VsCodeJobService)
+
+
+        command_job_services = node._to_job().services
+        assert isinstance(command_job_services.get("my_ssh"), SshJobService)
+        assert isinstance(command_job_services.get("my_tensorboard"), TensorBoardJobService)
+        assert isinstance(command_job_services.get("my_jupyterlab"), JupyterLabJobService)
+        assert isinstance(command_job_services.get("my_vscode"), VsCodeJobService)
+
+        node_rest_obj = node._to_rest_object()
+        assert node_rest_obj["services"] == rest_services
 
     def test_command_hash(self, test_command_params):
         node1 = command(**test_command_params)

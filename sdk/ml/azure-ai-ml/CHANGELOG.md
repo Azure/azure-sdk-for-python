@@ -3,10 +3,12 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
--
+-Add dedicated classes for each type of job service. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected
+- Fixed an issue where ignore files weren't considered during upload directory size calculations
+- Fixed an issue where symlinks crashed upload directory size calculations.
 - Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected
 
 ### Other Changes
