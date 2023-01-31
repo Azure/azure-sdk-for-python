@@ -188,6 +188,7 @@
 
 # PRLabel: %ML-Jobs
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/                         @DouglasXiaoMS @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @DouglasXiaoMS @TonyJ1 @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @DouglasXiaoMS @TonyJ1 @wangchao1230
 /sdk/ml/training-experiences.tests.yml                               @DouglasXiaoMS @TonyJ1
 
