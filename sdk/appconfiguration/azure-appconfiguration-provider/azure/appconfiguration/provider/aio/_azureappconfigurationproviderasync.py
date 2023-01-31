@@ -23,7 +23,7 @@ async def load_provider(endpoint: str, credential: AsyncTokenCredential, **kwarg
     :keyword endpoint: Endpoint (one of connection_string or endpoint and credential must be set)
     :type endpoint: str
     :keyword credential: Credential (one of connection_string or endpoint and credential must be set)
-    :type credential: Union[AppConfigConnectionStringCredential, TokenCredential]
+    :type credential: AsyncTokenCredential
     :keyword selects: List of setting selectors to filter configuration settings
     :type selects: list[~azure.appconfigurationprovider.SettingSelector]
     :keyword trim_prefixes: List of prefixes to trim from configuration keys
