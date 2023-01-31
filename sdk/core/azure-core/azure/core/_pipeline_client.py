@@ -30,6 +30,7 @@ from typing import (
     TypeVar,
     Generic,
     Union,
+    Optional,
     overload,
     TYPE_CHECKING,
 )
@@ -85,7 +86,9 @@ class PipelineClient(
         self,
         base_url,
         *,
-        pipeline: PipelineResponse["HTTPRequestType", "HTTPResponseType"],
+        pipeline: Optional[
+            PipelineResponse["HTTPRequestType", "HTTPResponseType"]
+        ] = None,
         **kwargs
     ):
         super(PipelineClient, self).__init__(base_url)
@@ -184,31 +187,7 @@ class PipelineClient(
 
         return Pipeline(transport, policies)
 
-    @overload
-    def send_request(
-        self,
-        request: "HTTPRequestType",
-        *,
-        _return_pipeline_response: Literal[True],
-        **kwargs
-    ) -> PipelineResponse["HTTPRequestType", "HTTPResponseType"]:
-        ...
-
-    @overload
-    def send_request(
-        self,
-        request: "HTTPRequestType",
-        *,
-        _return_pipeline_response: Literal[False],
-        **kwargs
-    ) -> "HTTPResponseType":
-        ...
-
-    def send_request(
-        self, request: "HTTPRequestType", **kwargs
-    ) -> Union[
-        "HTTPResponseType", PipelineResponse["HTTPRequestType", "HTTPResponseType"]
-    ]:
+    def send_request(self, request: "HTTPRequestType", **kwargs) -> "HTTPResponseType":
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -229,5 +208,5 @@ class PipelineClient(
             request, stream=stream, **kwargs
         )  # pylint: disable=protected-access
         if return_pipeline_response:
-            return pipeline_response
+            return pipeline_response  # type: ignore  # This is a private API we don't want to type in signature
         return pipeline_response.http_response

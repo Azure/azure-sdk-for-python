@@ -33,12 +33,15 @@ from typing import (
     AsyncContextManager,
     Generator,
     Generic,
+    Union,
+    Optional,
+    overload,
     cast,
     TYPE_CHECKING,
 )
-from typing_extensions import Protocol
+from typing_extensions import Protocol, Literal
 from .configuration import Configuration
-from .pipeline import AsyncPipeline
+from .pipeline import AsyncPipeline, PipelineResponse
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
     ContentDecodePolicy,
@@ -160,10 +163,20 @@ class AsyncPipelineClient(
             :caption: Builds the async pipeline client.
     """
 
-    def __init__(self, base_url, **kwargs):
+    def __init__(
+        self,
+        base_url,
+        *,
+        pipeline: Optional[
+            AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]
+        ] = None,
+        **kwargs
+    ):
         super(AsyncPipelineClient, self).__init__(base_url)
         self._config = kwargs.pop("config", None) or Configuration(**kwargs)
         self._base_url = base_url
+
+        self._pipeline: AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]
         if kwargs.get("pipeline"):
             self._pipeline = kwargs["pipeline"]
         else:
@@ -179,7 +192,11 @@ class AsyncPipelineClient(
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(self, config, **kwargs):  # pylint: disable=no-self-use
+    def _build_pipeline(
+        self, config, **kwargs
+    ) -> AsyncPipeline[
+        HTTPRequestType, AsyncHTTPResponseType
+    ]:  # pylint: disable=no-self-use
         transport = kwargs.get("transport")
         policies = kwargs.get("policies")
         per_call_policies = kwargs.get("per_call_policies", [])
@@ -250,15 +267,19 @@ class AsyncPipelineClient(
 
             transport = AioHttpTransport(**kwargs)
 
-        return AsyncPipeline(transport, policies)
+        return AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType](
+            transport, policies
+        )
 
-    async def _make_pipeline_call(self, request, **kwargs):
+    async def _make_pipeline_call(
+        self, request: HTTPRequestType, **kwargs
+    ) -> AsyncHTTPResponseType:
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
         pipeline_response = await self._pipeline.run(
             request, **kwargs  # pylint: disable=protected-access
         )
         if return_pipeline_response:
-            return pipeline_response
+            return pipeline_response  # type: ignore  # This is a private API we don't want to type in signature
         return pipeline_response.http_response
 
     def send_request(

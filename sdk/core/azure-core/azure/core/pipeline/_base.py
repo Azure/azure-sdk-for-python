@@ -184,7 +184,9 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         self._prepare_multipart_mixed_request(request)
         request.prepare_multipart_body()  # type: ignore
 
-    def run(self, request: HTTPRequestType, **kwargs: Any) -> PipelineResponse:
+    def run(
+        self, request: HTTPRequestType, **kwargs: Any
+    ) -> PipelineResponse[HTTPRequestType, HTTPResponseType]:
         """Runs the HTTP Request through the chained policies.
 
         :param request: The HTTP request object.
