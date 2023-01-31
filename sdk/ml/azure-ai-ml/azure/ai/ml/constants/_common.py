@@ -273,6 +273,10 @@ class ArmConstants(object):
     AZURE_MGMT_KEYVAULT_API_VERSION = "2019-09-01"
     AZURE_MGMT_CONTAINER_REG_API_VERSION = "2019-05-01"
 
+    DEFAULT_TIMEOUT = 30
+    DEFAULT_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+    METADATA_URL_ENV_NAME = "ARM_CLOUD_METADATA_URL"
+
 
 class HttpResponseStatusCode(object):
     NOT_FOUND = 404
