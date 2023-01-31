@@ -48,6 +48,8 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline.transport import HttpTransport
 from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAzureCredential
 
+from test_utilities.utils import reload_schema_for_nodes_in_pipeline_job
+
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
 
@@ -840,14 +842,28 @@ def pytest_configure(config):
 
 @pytest.fixture()
 def enable_private_preview_pipeline_node_types():
-    # Update the node types in pipeline jobs to include the private preview node types
-    from azure.ai.ml._schema.pipeline import pipeline_job
-
-    schema = pipeline_job.PipelineJobSchema
-    original_jobs = schema._declared_fields["jobs"]
-    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
-
-    try:
+    with reload_schema_for_nodes_in_pipeline_job():
         yield
-    finally:
-        schema._declared_fields["jobs"] = original_jobs
+
+
+@pytest.fixture()
+def disable_internal_components():
+    """Some global changes are made in enable_internal_components, so we need to explicitly disable it.
+    It's not recommended to use this fixture along with other related fixtures like enable_internal_components
+    and enable_private_preview_features, as the execution order of fixtures is not guaranteed.
+    """
+    from azure.ai.ml._internal._schema.component import NodeType
+    from azure.ai.ml._internal._util import _set_registered
+    from azure.ai.ml.entities._component.component_factory import component_factory
+    from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+    for _type in NodeType.all_values():
+        pipeline_node_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
+        pipeline_node_factory._load_from_rest_object_funcs.pop(_type, None)  # pylint: disable=protected-access
+        component_factory._create_instance_funcs.pop(_type, None)  # pylint: disable=protected-access
+        component_factory._create_schema_funcs.pop(_type, None)  # pylint: disable=protected-access
+
+    _set_registered(False)
+
+    with reload_schema_for_nodes_in_pipeline_job(revert_after_yield=False):
+        yield

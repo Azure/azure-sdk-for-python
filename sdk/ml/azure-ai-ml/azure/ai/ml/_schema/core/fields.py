@@ -455,6 +455,7 @@ class UnionField(fields.Field):
                 resolve_field_instance(cls_or_instance)
                 for cls_or_instance in union_fields
             ]
+            # TODO: make serialization/de-serialization work in the same way as json schema when is_strict is True
             self.is_strict = is_strict  # S\When True, combine fields with oneOf instead of anyOf at schema generation
         except FieldInstanceResolutionError as error:
             raise ValueError(
