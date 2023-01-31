@@ -144,7 +144,7 @@ def __buildprovider(connection_string:str, endpoint:str, credential,
 
 async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions, provider) -> str:
     if key_vault_options is None:
-        raise AttributeError("Key Vault options must be set to resolve Key Vault references.")
+        raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
         raise AttributeError("Key Vault reference must have a uri value.")
