@@ -34,7 +34,7 @@ from azure.ai.ml.constants._common import (
     InputOutputModes,
 )
 from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
-from azure.ai.ml.entities._builders import Command, Spark
+from azure.ai.ml.entities._builders import Command, Spark, DataTransferCopy
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 from azure.ai.ml.exceptions import (
@@ -2301,6 +2301,70 @@ class TestDSLPipeline:
             },
             "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
             "settings": {"_source": "DSL"},
+        }
+
+    def test_dsl_pipeline_with_data_transfer_copy_node(self) -> None:
+        merge_files = load_component(
+            "./tests/test_configs/components/data_transfer/merge_files.yaml"
+        )
+
+        @dsl.pipeline(description="submit a pipeline with data transfer copy job")
+        def data_transfer_copy_pipeline_from_yaml(folder1, folder2):
+            merge_files_node = merge_files(folder1=folder1, folder2=folder2)
+            return {"output": merge_files_node.outputs.output_folder}
+
+        dsl_pipeline: PipelineJob = data_transfer_copy_pipeline_from_yaml(
+            folder1=Input(
+                path="azureml://datastores/my_cosmos/paths/source_cosmos",
+                type=AssetTypes.URI_FOLDER,
+            ),
+            folder2=Input(
+                path="azureml://datastores/my_cosmos/paths/source_cosmos",
+                type=AssetTypes.URI_FOLDER,
+            ),
+        )
+        dsl_pipeline.outputs.output.path = "azureml://datastores/my_blob/paths/merged_blob"
+
+        data_transfer_copy_node = dsl_pipeline.jobs["merge_files_node"]
+        job_data_path_input = data_transfer_copy_node.inputs["folder1"]._meta
+        assert job_data_path_input
+        spark_node_dict = data_transfer_copy_node._to_dict()
+
+        spark_node_rest_obj = data_transfer_copy_node._to_rest_object()
+        regenerated_spark_node = DataTransferCopy._from_rest_object(spark_node_rest_obj)
+
+        spark_node_dict_from_rest = regenerated_spark_node._to_dict()
+        omit_fields = []
+        assert pydash.omit(spark_node_dict, *omit_fields) == pydash.omit(spark_node_dict_from_rest, *omit_fields)
+        omit_fields = [
+            "jobs.merge_files_node.componentId",
+        ]
+        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            'description': 'submit a pipeline with data transfer copy job',
+            'display_name': 'data_transfer_copy_pipeline_from_yaml',
+            'inputs': {'folder1': {'job_input_type': 'uri_folder',
+                                   'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'},
+                       'folder2': {'job_input_type': 'uri_folder',
+                                   'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+            'is_archived': False,
+            'job_type': 'Pipeline',
+            'jobs': {'merge_files_node': {'_source': 'YAML.COMPONENT',
+                                          'data_copy_mode': 'merge_with_overwrite',
+                                           'inputs': {'folder1': {'job_input_type': 'literal',
+                                                                  'value': '${{parent.inputs.folder1}}'},
+                                                      'folder2': {'job_input_type': 'literal',
+                                                                  'value': '${{parent.inputs.folder2}}'}},
+                                           'name': 'merge_files_node',
+                                           'outputs': {'output_folder': {'type': 'literal',
+                                                                         'value': '${{parent.outputs.output}}'}},
+                                           'task': 'copy_data',
+                                           'type': 'data_transfer'}},
+            'outputs': {'output': {'job_output_type': 'uri_folder',
+                                   'uri': 'azureml://datastores/my_blob/paths/merged_blob'}},
+            'properties': {},
+            'settings': {'_source': 'DSL'},
+            'tags': {}
         }
 
     def test_node_sweep_with_optional_input(self) -> None:

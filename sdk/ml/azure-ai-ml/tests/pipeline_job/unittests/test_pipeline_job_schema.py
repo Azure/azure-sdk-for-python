@@ -27,6 +27,7 @@ from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import CommandComponent, Component, Job, PipelineJob, SparkComponent
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
+from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     INPUT_MOUNT_MAPPING_FROM_REST,
@@ -585,7 +586,8 @@ class TestPipelineJobSchema:
             assert from_rest_output.mode == rest_output_data.mode
 
     def assert_inline_component(self, component_job, component_dict):
-        assert isinstance(component_job.component, (CommandComponent, ParallelComponent, SparkComponent))
+        assert isinstance(component_job.component, (CommandComponent, ParallelComponent, SparkComponent,
+                                                    DataTransferComponent))
         component = component_job.component or component_job.trial
         assert component._is_anonymous
         # hash will be generated before create_or_update, so can't check it in unit tests
@@ -614,6 +616,15 @@ class TestPipelineJobSchema:
         spark_component = job.jobs["add_greeting_column"]
         component_dict = load_yaml(
             "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+        )
+        self.assert_inline_component(spark_component, component_dict)
+
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
+        job = load_job(test_path)
+        # make sure inline component is parsed into component entity
+        spark_component = job.jobs["merge_files_job"]
+        component_dict = load_yaml(
+            "./tests/test_configs/components/data_transfer/merge_files.yaml"
         )
         self.assert_inline_component(spark_component, component_dict)
 

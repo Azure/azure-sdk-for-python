@@ -7,11 +7,14 @@ from test_utilities.utils import omit_with_wildcard, parse_local_path
 from azure.ai.ml import Input, Output, command, dsl, load_component, spark
 from azure.ai.ml.automl import classification, regression
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
+from azure.ai.ml.constants._component import DataTransferTaskType, DataCopyMode
 from azure.ai.ml.dsl._load_import import to_component
+from azure.ai.ml.data_transfer import copy_data
 from azure.ai.ml.entities import CommandComponent, CommandJob, Data, ParallelTask, PipelineJob, SparkJob
 from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
+from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
@@ -469,6 +472,101 @@ class TestDSLPipelineWithSpecificNodes:
                 'tags': {}
                }
             }
+
+    def test_pipeline_with_data_transfer_copy_function(self):
+        # component func
+        yaml_file = "./tests/test_configs/components/data_transfer/merge_files.yaml"
+        component_func = load_component(yaml_file)
+
+        folder1 = Input(
+            path="azureml://datastores/my_cosmos/paths/source_cosmos",
+            type=AssetTypes.URI_FOLDER,
+        )
+        folder2 = Input(
+            path="azureml://datastores/my_cosmos/paths/source_cosmos",
+            type=AssetTypes.URI_FOLDER,
+        )
+
+        inputs = {
+            "folder1": folder1,
+            "folder2": folder2,
+        }
+        outputs = {"output": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_blob/paths/merged_blob")}
+
+        data_transfer_job = DataTransferCopyJob(
+            inputs=inputs,
+            outputs=outputs,
+            task=DataTransferTaskType.COPY_DATA,
+            data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        # DataTransferCopy from copy_data() function
+        data_transfer_function = copy_data(
+            inputs=inputs,
+            outputs=outputs,
+            task=DataTransferTaskType.COPY_DATA,
+            data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
+        )
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_copy_function")
+        def pipeline(folder1, folder2):
+            node1 = component_func(folder1=folder1, folder2=folder2)
+            node2 = data_transfer_job_func(folder1=node1.outputs.output_folder, folder2=node1.outputs.output_folder)
+            node3 = data_transfer_function(folder1=node2.outputs.output, folder2=node2.outputs.output)
+            return {
+                "pipeline_output": node3.outputs.output,
+            }
+
+        omit_fields = [
+            "properties.jobs.*.componentId",
+        ]
+
+        pipeline1 = pipeline(folder1, folder2)
+        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {'properties': {'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_copy_function',
+                'inputs': {'folder1': {'job_input_type': 'uri_folder',
+                                       'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'},
+                           'folder2': {'job_input_type': 'uri_folder',
+                                       'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'YAML.COMPONENT',
+                                   'data_copy_mode': 'merge_with_overwrite',
+                                   'inputs': {'folder1': {'job_input_type': 'literal',
+                                                          'value': '${{parent.inputs.folder1}}'},
+                                              'folder2': {'job_input_type': 'literal',
+                                                          'value': '${{parent.inputs.folder2}}'}},
+                                   'name': 'node1',
+                                   'task': 'copy_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'CLASS',
+                                   'data_copy_mode': 'merge_with_overwrite',
+                                   'inputs': {'folder1': {'job_input_type': 'literal',
+                                                          'value': '${{parent.jobs.node1.outputs.output_folder}}'},
+                                              'folder2': {'job_input_type': 'literal',
+                                                          'value': '${{parent.jobs.node1.outputs.output_folder}}'}},
+                                   'name': 'node2',
+                                   'task': 'copy_data',
+                                   'type': 'data_transfer'},
+                         'node3': {'_source': 'BUILDER',
+                                   'data_copy_mode': 'merge_with_overwrite',
+                                   'inputs': {'folder1': {'job_input_type': 'literal',
+                                                          'value': '${{parent.jobs.node2.outputs.output}}'},
+                                              'folder2': {'job_input_type': 'literal',
+                                                          'value': '${{parent.jobs.node2.outputs.output}}'}},
+                                   'name': 'node3',
+                                   'outputs': {'output': {'type': 'literal',
+                                                          'value': '${{parent.outputs.pipeline_output}}'}},
+                                   'task': 'copy_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {'pipeline_output': {'job_output_type': 'uri_folder'}},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}}
+
     def test_pipeline_with_spark_function(self):
         # component func
         yaml_file = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_component.yml"
@@ -953,6 +1051,72 @@ class TestDSLPipelineWithSpecificNodes:
                 'tags': {}
             }
         }
+
+    def test_pipeline_with_data_transfer_copy_job(self):
+        folder1 = Input(
+            path="azureml://datastores/my_cosmos/paths/source_cosmos",
+            type=AssetTypes.URI_FOLDER,
+        )
+        folder2 = Input(
+            path="azureml://datastores/my_cosmos/paths/source_cosmos",
+            type=AssetTypes.URI_FOLDER,
+        )
+
+        inputs = {
+            "folder1": folder1,
+            "folder2": folder2,
+        }
+        outputs = {"output": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_blob/paths/merged_blob")}
+
+        data_transfer_job = DataTransferCopyJob(
+            inputs=inputs,
+            outputs=outputs,
+            task=DataTransferTaskType.COPY_DATA,
+            data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_copy_job")
+        def pipeline(folder1, folder2):
+            data_transfer_node = data_transfer_job_func(folder1=folder1, folder2=folder2)
+            return {
+                "pipeline_output": data_transfer_node.outputs.output,
+            }
+        pipeline1 = pipeline(folder1, folder2)
+        pipeline_rest_obj = pipeline1._to_rest_object()
+        pipeline_job1 = pipeline_rest_obj.as_dict()
+
+        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
+
+        pipeline1_dict = pipeline1._to_dict()
+        assert pipeline1_dict == pipeline_regenerated_from_rest._to_dict()
+        omit_fields = [
+            "properties.jobs.data_transfer_node.componentId",
+        ]
+        pipeline_job1 = pydash.omit(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {'properties': {'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_copy_job',
+                'inputs': {'folder1': {'job_input_type': 'uri_folder',
+                                       'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'},
+                           'folder2': {'job_input_type': 'uri_folder',
+                                       'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'data_transfer_node': {'_source': 'CLASS',
+                                                'data_copy_mode': 'merge_with_overwrite',
+                                                'inputs': {'folder1': {'job_input_type': 'literal',
+                                                                       'value': '${{parent.inputs.folder1}}'},
+                                                           'folder2': {'job_input_type': 'literal',
+                                                                       'value': '${{parent.inputs.folder2}}'}},
+                                                'name': 'data_transfer_node',
+                                                'outputs': {'output': {'type': 'literal',
+                                                                       'value': '${{parent.outputs.pipeline_output}}'}},
+                                                'task': 'copy_data',
+                                                'type': 'data_transfer'}},
+                'outputs': {'pipeline_output': {'job_output_type': 'uri_folder'}},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}}
 
     def test_pipeline_with_parallel_job(self):
         # command job with dict distribution

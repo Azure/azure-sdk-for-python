@@ -142,7 +142,7 @@ class DataTransferCopy(DataTransfer):
         is_component = isinstance(component, DataTransferCopyComponent)
         if is_component:
             self.task = component.task or self.task
-            self.driver_cores = component.data_copy_mode or self.data_copy_mode
+            self.data_copy_mode = component.data_copy_mode or self.data_copy_mode
         self._init = False
 
     @classmethod
@@ -169,12 +169,13 @@ class DataTransferCopy(DataTransfer):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["type"]
+        return ["type", "task", "data_copy_mode"]
 
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         for key, value in {
             "componentId": self._get_component_id(),
+            "data_copy_mode": self.data_copy_mode
         }.items():
             if value is not None:
                 rest_obj[key] = value
