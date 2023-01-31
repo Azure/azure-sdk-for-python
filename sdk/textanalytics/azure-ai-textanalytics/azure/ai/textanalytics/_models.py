@@ -14,7 +14,6 @@ from ._generated.models import (
     MultiLanguageInput,
     AgeResolution,
     AreaResolution,
-    BooleanResolution,
     CurrencyResolution,
     DateTimeResolution,
     InformationResolution,
@@ -729,7 +728,6 @@ class CategorizedEntity(DictMixin):
             Union[
                 AgeResolution,
                 AreaResolution,
-                BooleanResolution,
                 CurrencyResolution,
                 DateTimeResolution,
                 InformationResolution,

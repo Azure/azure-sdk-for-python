@@ -11,7 +11,6 @@ from typing_extensions import Literal
 from ._models_py3 import (
     AgeResolution as GeneratedAgeResolution,
     AreaResolution as GeneratedAreaResolution,
-    BooleanResolution as GeneratedBooleanResolution,
     CurrencyResolution as GeneratedCurrencyResolution,
     DateTimeResolution as GeneratedDateTimeResolution,
     InformationResolution as GeneratedInformationResolution,
@@ -35,7 +34,7 @@ class AgeResolution(GeneratedAgeResolution, DictMixin):
 
     resolution_kind: Literal["AgeResolution"] = "AgeResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -62,7 +61,7 @@ class AreaResolution(GeneratedAreaResolution, DictMixin):
 
     resolution_kind: Literal["AreaResolution"] = "AreaResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -85,36 +84,13 @@ class AreaResolution(GeneratedAreaResolution, DictMixin):
         super().__init__(value=value, unit=unit, **kwargs)
 
 
-class BooleanResolution(GeneratedBooleanResolution, DictMixin):
-    """A resolution for boolean expressions.
-    """
-
-    resolution_kind: Literal["BooleanResolution"] = "BooleanResolution"
-    """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
-     "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
-     "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
-     "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
-     Described in ~azure.ai.textanalytics.ResolutionKind."""
-    value: bool
-    """The boolean value that the extracted text denotes. Required."""
-
-    def __init__(
-        self,
-        *,
-        value: bool,
-        **kwargs
-    ):
-        super().__init__(value=value, **kwargs)
-
-
 class CurrencyResolution(GeneratedCurrencyResolution, DictMixin):
     """Represents the currency entity resolution model.
     """
 
     resolution_kind: Literal["CurrencyResolution"] = "CurrencyResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -146,7 +122,7 @@ class DateTimeResolution(GeneratedDateTimeResolution, DictMixin):
 
     resolution_kind: Literal["DateTimeResolution"] = "DateTimeResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -184,7 +160,7 @@ class InformationResolution(GeneratedInformationResolution, DictMixin):
 
     resolution_kind: Literal["InformationResolution"] = "InformationResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -213,7 +189,7 @@ class LengthResolution(GeneratedLengthResolution, DictMixin):
 
     resolution_kind: Literal["LengthResolution"] = "LengthResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -242,7 +218,7 @@ class NumberResolution(GeneratedNumberResolution, DictMixin):
 
     resolution_kind: Literal["NumberResolution"] = "NumberResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -270,7 +246,7 @@ class NumericRangeResolution(GeneratedNumericRangeResolution, DictMixin):
 
     resolution_kind: Literal["NumericRangeResolution"] = "NumericRangeResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -301,7 +277,7 @@ class OrdinalResolution(GeneratedOrdinalResolution, DictMixin):
 
     resolution_kind: Literal["OrdinalResolution"] = "OrdinalResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -332,7 +308,7 @@ class SpeedResolution(GeneratedSpeedResolution, DictMixin):
 
     resolution_kind: Literal["SpeedResolution"] = "SpeedResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -362,7 +338,7 @@ class TemperatureResolution(GeneratedTemperatureResolution, DictMixin):
 
     resolution_kind: Literal["TemperatureResolution"] = "TemperatureResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -389,7 +365,7 @@ class TemporalSpanResolution(GeneratedTemporalSpanResolution, DictMixin):
 
     resolution_kind: Literal["TemporalSpanResolution"] = "TemporalSpanResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -431,7 +407,7 @@ class VolumeResolution(GeneratedVolumeResolution, DictMixin):
 
     resolution_kind: Literal["VolumeResolution"] = "VolumeResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -461,7 +437,7 @@ class WeightResolution(GeneratedWeightResolution, DictMixin):
 
     resolution_kind: Literal["WeightResolution"] = "WeightResolution"
     """The entity resolution object kind. Required. Known values are:
-     "BooleanResolution", "DateTimeResolution", "NumberResolution", "OrdinalResolution",
+     "DateTimeResolution" "NumberResolution", "OrdinalResolution",
      "SpeedResolution", "WeightResolution", "LengthResolution", "VolumeResolution",
      "AreaResolution", "AgeResolution", "InformationResolution", "TemperatureResolution",
      "CurrencyResolution", "NumericRangeResolution", and "TemporalSpanResolution".
@@ -487,7 +463,6 @@ class WeightResolution(GeneratedWeightResolution, DictMixin):
 __all__: List[str] = [
     "AgeResolution",
     "AreaResolution",
-    "BooleanResolution",
     "CurrencyResolution",
     "DateTimeResolution",
     "InformationResolution",
