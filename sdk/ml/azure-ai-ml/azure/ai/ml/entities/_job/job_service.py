@@ -162,7 +162,6 @@ class SshJobService(JobServiceBase):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["ssh"]] = "ssh",
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -172,13 +171,13 @@ class SshJobService(JobServiceBase):
     ) -> None:
         super().__init__(
             endpoint=endpoint,
-            job_service_type=job_service_type,
             nodes=nodes,
             status=status,
             port=port,
             properties=properties,
             **kwargs,
         )
+        self.job_service_type = JobServiceTypeNames.EntityNames.SSH
         self.ssh_public_keys = ssh_public_keys
 
     @classmethod
@@ -198,7 +197,6 @@ class TensorBoardJobService(JobServiceBase):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["tensor_board"]] = "tensor_board",
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -208,13 +206,13 @@ class TensorBoardJobService(JobServiceBase):
     ) -> None:
         super().__init__(
             endpoint=endpoint,
-            job_service_type=job_service_type,
             nodes=nodes,
             status=status,
             port=port,
             properties=properties,
             **kwargs,
         )
+        self.job_service_type = JobServiceTypeNames.EntityNames.TENSOR_BOARD
         self.log_dir = log_dir
 
     @classmethod
@@ -234,7 +232,6 @@ class JupyterLabJobService(JobServiceBase):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["jupyter_lab"]] = "jupyter_lab",
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -243,13 +240,13 @@ class JupyterLabJobService(JobServiceBase):
     ) -> None:
         super().__init__(
             endpoint=endpoint,
-            job_service_type=job_service_type,
             nodes=nodes,
             status=status,
             port=port,
             properties=properties,
             **kwargs,
         )
+        self.job_service_type = JobServiceTypeNames.EntityNames.JUPYTER_LAB
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "JupyterLabJobService":
@@ -265,7 +262,6 @@ class VsCodeJobService(JobServiceBase):
         self,
         *,
         endpoint: Optional[str] = None,
-        job_service_type: Optional[Literal["vs_code"]] = "vs_code",
         nodes: Optional[Literal["all"]] = None,
         status: Optional[str] = None,
         port: Optional[int] = None,
@@ -274,13 +270,13 @@ class VsCodeJobService(JobServiceBase):
     ) -> None:
         super().__init__(
             endpoint=endpoint,
-            job_service_type=job_service_type,
             nodes=nodes,
             status=status,
             port=port,
             properties=properties,
             **kwargs,
         )
+        self.job_service_type = JobServiceTypeNames.EntityNames.VS_CODE
 
     @classmethod
     def _from_rest_object(cls, obj: RestJobService) -> "VsCodeJobService":

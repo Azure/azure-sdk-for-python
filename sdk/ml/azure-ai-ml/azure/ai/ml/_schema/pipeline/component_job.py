@@ -169,7 +169,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
                 # JobServiceSchema should be the last in the list.
                 # To support types not set by users like Custom, Tracking, Studio.
                 NestedField(JobServiceSchema),
-            ]
+            ],
+            is_strict=True,
         ),
     )
     identity = UnionField(
