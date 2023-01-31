@@ -27,7 +27,6 @@
 import logging
 from collections.abc import Iterable
 from typing import (
-    Any,
     TypeVar,
     TYPE_CHECKING,
 )
@@ -169,8 +168,7 @@ class PipelineClient(PipelineClientBase):
 
         return Pipeline(transport, policies)
 
-    def send_request(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> HTTPResponseType
+    def send_request(self, request: "HTTPRequestType", **kwargs) -> "HTTPResponseType":
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest

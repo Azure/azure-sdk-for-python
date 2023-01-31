@@ -248,6 +248,7 @@ from ._models_py3 import ProtectionPolicyResourceList
 from ._models_py3 import RecoveryPoint
 from ._models_py3 import RecoveryPointDiskConfiguration
 from ._models_py3 import RecoveryPointMoveReadinessInfo
+from ._models_py3 import RecoveryPointProperties
 from ._models_py3 import RecoveryPointRehydrationInfo
 from ._models_py3 import RecoveryPointResource
 from ._models_py3 import RecoveryPointResourceList
@@ -616,6 +617,7 @@ __all__ = [
     "RecoveryPoint",
     "RecoveryPointDiskConfiguration",
     "RecoveryPointMoveReadinessInfo",
+    "RecoveryPointProperties",
     "RecoveryPointRehydrationInfo",
     "RecoveryPointResource",
     "RecoveryPointResourceList",

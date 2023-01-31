@@ -34,7 +34,7 @@ from typing import (
     TYPE_CHECKING,
     overload,
 )
-import urllib3  # type: ignore
+import urllib3
 
 import requests
 
@@ -115,7 +115,7 @@ class AsyncioRequestsTransport(RequestsAsyncTransportBase):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    @overload  # type: ignore
+    @overload
     async def send(  # pylint:disable=invalid-overridden-method
         self, request: "RestHttpRequest", **kwargs: Any
     ) -> "RestAsyncHttpResponse":
@@ -282,4 +282,4 @@ class AsyncioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportRespo
 
     def stream_download(self, pipeline, **kwargs) -> AsyncIteratorType[bytes]:  # type: ignore
         """Generator for streaming request body data."""
-        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs)  # type: ignore
+        return AsyncioStreamDownloadGenerator(pipeline, self, **kwargs)

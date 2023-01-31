@@ -162,7 +162,7 @@ The result from the `send` call contains a `messageId` which can be used to quer
 
 ```python
 response = client.send(message)
-status = client.get_sent_status(response['messageId'])
+status = client.get_send_status(response['messageId'])
 ```
 
 ## Troubleshooting
