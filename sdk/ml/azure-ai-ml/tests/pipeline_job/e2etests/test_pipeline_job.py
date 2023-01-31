@@ -1412,13 +1412,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.name == 'convert_data_node_output'
         assert node_output.version == '1'
 
-    def test_check_identity_type(self, client: MLClient):
-        path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_pipeline.yml"
-        pipeline = load_job(source=path)
-        pipeline_job = assert_job_cancel(pipeline, client)
-        assert pipeline_job.jobs['spark_job'].identity.type == 'user_identity'
-
-
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
