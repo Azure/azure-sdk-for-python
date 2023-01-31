@@ -271,7 +271,6 @@ class AsyncTransport(
                 family=socket.AF_UNSPEC,
                 proto=SOL_TCP,
                 server_hostname=self.host if self.sslopts else None,
-                happy_eyeballs_delay=0.25,
             )
             # we've sent the banner; signal connect
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
@@ -361,7 +360,6 @@ class AsyncTransport(
                 # Sometimes SSL raises APPLICATION_DATA_AFTER_CLOSE_NOTIFY here on close.
                 _LOGGER.debug("Error shutting down socket: %r", e, extra=self.network_trace_params)
             self.writer, self.reader = None, None
-        self.sock = None
         self.connected = False
 
     async def negotiate(self):
