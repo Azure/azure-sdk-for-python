@@ -128,7 +128,8 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
             complete_annotation._update_default(default)
         if isinstance(complete_annotation, Output) and default is not None:
             msg = (
-                f"Default value of Output {complete_annotation._arg_name!r} cannot be set: " f"Output has no default value."
+                f"Default value of Output {complete_annotation._arg_name!r} cannot be set:"
+                f"Output has no default value."
             )
             raise UserErrorException(msg)
         return complete_annotation

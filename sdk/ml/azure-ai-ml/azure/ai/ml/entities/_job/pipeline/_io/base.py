@@ -424,7 +424,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     @version.setter
     def version(self, version):
-        """Receive input version, assign the version to NodeOutput/PipelineOutput and build data according to the version"""
+        """Receive input version,
+        assign the version to NodeOutput/PipelineOutput and build data according to the version"""
         self._build_default_data()
         self._data.type = self.type
         self._version = version
@@ -441,7 +442,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
     def _assert_name_and_version(self):
         if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
             raise UserErrorException(
-                f"The output name {self.name} can only contain alphanumeric characters, dashes, and underscores, with a limit of 255 characters."
+                f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores,"
+                f"with a limit of 255 characters."
                 )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")

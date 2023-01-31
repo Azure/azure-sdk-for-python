@@ -31,9 +31,10 @@ class Output(_InputOutputBase):
     :type mode: str
     :param description: Description of the output
     :type description: str
-    :param name: The name used to register output data. Name can be set without setting version.
+    :param name: The name used to register output as data or model asset. Name can be set without setting version.
     :type name: str
-    :param version: The version used to register output data. Version can be set only when name is set. 
+    :param version: The version used to register output as data or model asset.
+        Version can be set only when name is set.
     :type version: str
     """
 
@@ -53,9 +54,10 @@ class Output(_InputOutputBase):
         :type mode: str
         :param description: Description of the output
         :type description: str
-        :param name: The name used to register output data. Name can be set without setting version.
+        :param name: The name used to register output as data or model asset. Name can be set without setting version.
         :type name: str
-        :param version: The version used to register output data. Version can be set only when name is set. 
+        :param version: The version used to register output as data or model asset.
+            Version can be set only when name is set.
         :type version: str
         """
 
@@ -75,9 +77,10 @@ class Output(_InputOutputBase):
         :type mode: str
         :param description: Description of the output
         :type description: str
-        :param name: The name used to register output data. Name can be set without setting version.
+        :param name: The name used to register output as data or model asset. Name can be set without setting version.
         :type name: str
-        :param version: The version used to register output data. Version can be set only when name is set. 
+        :param version: The version used to register output as data or model asset.
+            Version can be set only when name is set.
         :type version: str
         """
 
@@ -118,12 +121,12 @@ class Output(_InputOutputBase):
     def _from_rest_object(cls, obj: Dict) -> "Output":
         # this is for component rest object when using Output as component outputs
         return Output(**obj)
-    
+
     def _assert_name_and_version(self):
         if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
             raise UserErrorException(
-                f"The output name {self.name} can only contain alphanumeric characters, dashes, and underscores, with a limit of 255 characters."
+                f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
+                f"with a limit of 255 characters."
                 )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")
-
