@@ -25,7 +25,7 @@ client = SipRoutingClient.from_connection_string(connection_string)
 
 async def get_sip_routes_sample():
     async with client:
-        sip_routes = await client.get_routes()
+        sip_routes = await client.list_routes()
 
         for route in sip_routes:
             print(route.name)

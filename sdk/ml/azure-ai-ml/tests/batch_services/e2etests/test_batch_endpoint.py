@@ -1,12 +1,11 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase, is_live
 
-from azure.ai.ml import MLClient, load_batch_endpoint, load_batch_deployment
+from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.core.exceptions import ResourceNotFoundError
-
-from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.mark.e2etest
@@ -145,7 +144,7 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
         assert job
 
-    def test_batch_invoke_outputs(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+    def test_batch_invoke_outputs(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str], randstr: Callable[[str], str]) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -170,9 +169,10 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         )
 
         # Invoke using outputs: Dict[str, Output]
+        output_file_name = randstr("output_file")
         output_1 = Output(
             type="uri_file",
-            path='azureml://datastores/workspaceblobstore/paths/batchendpointinvoke/mnistOutput/output.csv',
+            path='azureml://datastores/workspaceblobstore/paths/batchendpointinvoke/mnistOutput/' + output_file_name +'.csv',
         )
 
         batchjob = client.batch_endpoints.invoke(

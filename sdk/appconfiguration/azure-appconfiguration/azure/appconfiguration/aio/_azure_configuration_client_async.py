@@ -39,13 +39,16 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-keyword
-    # pylint:disable=line-too-long
+class AzureAppConfigurationClient:
     """Represents a client that calls restful API of Azure App Configuration service.
 
-        :param str base_url: base url of the service
+        :param str base_url: Base url of the service.
         :param credential: An object which can provide secrets for the app configuration service
-        :type credential: :class:`azure.appconfiguration.AppConfigConnectionStringCredential` or :class:`~azure.core.credentials_async.AsyncTokenCredential`
+        :type credential: :class:`azure.appconfiguration.AppConfigConnectionStringCredential`
+            or :class:`~azure.core.credentials_async.AsyncTokenCredential`
+        :keyword api_version: Api Version. Default value is "1.0". Note that overriding this default
+            value may result in unsupported behavior.
+        :paramtype api_version: str
 
     This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -142,7 +145,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
@@ -269,7 +272,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
 
         .. code-block:: python
 
-            # in async fuction
+            # in async function
             config_setting = ConfigurationSetting(
                 key="MyKey",
                 label="MyLabel",
@@ -444,7 +447,7 @@ class AzureAppConfigurationClient: # pylint: disable=client-accepts-api-version-
          used as wildcard in the beginning or end of the filter
         :type label_filter: str
         :keyword datetime accept_datetime: filter out ConfigurationSetting created after this datetime
-        :keyword list[str] fields: specify which fields to include in the results. Leave None to include all fields
+        :keyword List[str] fields: specify which fields to include in the results. Leave None to include all fields
         :return: An iterator of :class:`ConfigurationSetting`
         :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSetting]
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`

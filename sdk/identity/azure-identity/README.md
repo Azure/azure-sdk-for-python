@@ -48,6 +48,16 @@ the browser to authenticate a user.
 When no default browser is available, `az login` will use the device code
 authentication flow. This can also be selected manually by running `az login --use-device-code`.
 
+#### Authenticate via the Azure Developer CLI
+
+`DefaultAzureCredential` and `AzureDeveloperCliCredential` can authenticate as the user
+signed in to the [Azure Developer CLI][azd_cli]. To sign in to the Azure Developer CLI, run
+`azd login`. On a system with a default web browser, the Azure Developer CLI will launch
+the browser to authenticate a user.
+
+When no default browser is available, `azd login` will use the device code
+authentication flow. This can also be selected manually by running `azd login --use-device-code`.
+
 ## Key concepts
 
 ### Credentials
@@ -397,6 +407,7 @@ additional questions or comments.
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [azure_storage_queue]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-queue
+[azd_cli]:https://aka.ms/azure-dev
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential

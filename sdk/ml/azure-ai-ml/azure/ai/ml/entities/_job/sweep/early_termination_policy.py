@@ -10,8 +10,8 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import MedianStoppingPol
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TruncationSelectionPolicy as RestTruncationSelectionPolicy,
 )
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 class EarlyTerminationPolicy(ABC, RestTranslatableMixin):

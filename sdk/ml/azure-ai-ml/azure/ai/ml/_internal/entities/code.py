@@ -2,22 +2,44 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List, Optional, Union
 from pathlib import Path
+from typing import List, Optional, Union
 
+from ..._utils._asset_utils import IgnoreFile
 from ...entities._assets import Code
 from ...entities._component.code import ComponentIgnoreFile
 
 
 class InternalComponentIgnoreFile(ComponentIgnoreFile):
-    _INTERNAL_COMPONENT_CODE_IGNORES = ["*.additional_includes"]
-
-    def __init__(self, directory_path: Union[str, Path]):
+    def __init__(self, directory_path: Union[str, Path], additional_include_file_name: Optional[str]):
         super(InternalComponentIgnoreFile, self).__init__(directory_path=directory_path)
+        # only the additional include file in root directory is ignored
+        # additional include files in subdirectories are not processed so keep them
+        self._additional_include_file_name = additional_include_file_name
+        self._other_ignores = []
 
     def _get_ignore_list(self) -> List[str]:
         """Override to add custom ignores for internal component."""
-        return super(InternalComponentIgnoreFile, self)._get_ignore_list() + self._INTERNAL_COMPONENT_CODE_IGNORES
+        if self._additional_include_file_name is None:
+            return super(InternalComponentIgnoreFile, self)._get_ignore_list()
+        return super(InternalComponentIgnoreFile, self)._get_ignore_list() + [self._additional_include_file_name]
+
+    def merge(self, other: IgnoreFile):
+        """Merge other ignore file with this one and create a new IgnoreFile for it.
+        """
+        ignore_file = InternalComponentIgnoreFile(self._base_path, self._additional_include_file_name)
+        ignore_file._other_ignores.append(other)  # pylint: disable=protected-access
+        return ignore_file
+
+    def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
+        """Override to check if file is excluded in other ignore files."""
+        # TODO: current design of ignore file can't distinguish between files and directories of the same name
+        if super(InternalComponentIgnoreFile, self).is_file_excluded(file_path):
+            return True
+        for other in self._other_ignores:
+            if other.is_file_excluded(file_path):
+                return True
+        return False
 
 
 class InternalCode(Code):

@@ -6,17 +6,17 @@ import os
 from pathlib import Path
 from typing import List, Union
 
-from azure.ai.ml._utils._asset_utils import get_ignore_file, IgnoreFile
+from azure.ai.ml._utils._asset_utils import IgnoreFile, get_ignore_file
 
 
 class ComponentIgnoreFile(IgnoreFile):
     _COMPONENT_CODE_IGNORES = ["__pycache__"]
 
     def __init__(self, directory_path: Union[str, Path]):
+        self._base_path = Path(directory_path)
         # note: the parameter changes to directory path in this class, rather than file path
         file_path = get_ignore_file(directory_path).path
         super(ComponentIgnoreFile, self).__init__(file_path=file_path)
-        self._base_path = Path(directory_path)
 
     def exists(self) -> bool:
         """Override to always return True as we do have default ignores."""

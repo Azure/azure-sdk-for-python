@@ -3,8 +3,36 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import gzip
+import json
+import os
+import uuid
+
+import pytest
+
+from azure.core.exceptions import HttpResponseError
 from azure.monitor.ingestion import LogsIngestionClient
 from devtools_testutils import AzureRecordedTestCase
+
+
+LOGS_BODY = [
+    {
+        "Time": "2021-12-08T23:51:14.1104269Z",
+        "Computer": "Computer1",
+        "AdditionalContext": {
+            "testContextKey": 3,
+            "CounterName": "AppMetric1"
+        }
+    },
+    {
+        "Time": "2021-12-08T23:51:14.1104269Z",
+        "Computer": "Computer2",
+        "AdditionalContext": {
+            "testContextKey": 2,
+            "CounterName": "AppMetric1"
+        }
+    }
+]
 
 
 class TestLogsIngestionClient(AzureRecordedTestCase):
@@ -13,23 +41,54 @@ class TestLogsIngestionClient(AzureRecordedTestCase):
         client = self.create_client_from_credential(
             LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
         with client:
-            body = [
-                {
-                    "Time": "2021-12-08T23:51:14.1104269Z",
-                    "Computer": "Computer1",
-                    "AdditionalContext": {
-                        "testContextKey": 3,
-                        "CounterName": "AppMetric1"
-                    }
-                },
-                {
-                    "Time": "2021-12-08T23:51:14.1104269Z",
-                    "Computer": "Computer2",
-                    "AdditionalContext": {
-                        "testContextKey": 2,
-                        "CounterName": "AppMetric1"
-                    }
-                }
-            ]
+            client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=LOGS_BODY)
 
-            client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=body)
+    def test_send_logs_error(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(
+            LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
+        body = [{"foo": "bar"}]
+
+        with pytest.raises(HttpResponseError) as ex:
+            client.upload(rule_id='bad-rule', stream_name=monitor_info['stream_name'], logs=body)
+
+    def test_send_logs_error_custom(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(
+            LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
+        body = [{"foo": "bar"}]
+
+        def on_error(e):
+            on_error.called = True
+            assert isinstance(e.error, HttpResponseError)
+            assert e.failed_logs == body
+
+        on_error.called = False
+
+        client.upload(
+            rule_id='bad-rule', stream_name=monitor_info['stream_name'], logs=body, on_error=on_error)
+        assert on_error.called
+
+    def test_send_logs_json_file(self, recorded_test, monitor_info):
+        client = self.create_client_from_credential(
+            LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
+
+        temp_file = str(uuid.uuid4()) + '.json'
+        with open(temp_file, 'w') as f:
+            json.dump(LOGS_BODY, f)
+
+        with client:
+            with open(temp_file, 'r') as f:
+                client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=f)
+        os.remove(temp_file)
+
+    @pytest.mark.live_test_only("Issues recording binary streams with test-proxy")
+    def test_send_logs_gzip_file(self, monitor_info):
+        client = self.create_client_from_credential(
+            LogsIngestionClient, self.get_credential(LogsIngestionClient), endpoint=monitor_info['dce'])
+
+        temp_file = str(uuid.uuid4()) + '.json.gz'
+        with gzip.open(temp_file, 'wb') as f:
+            f.write(json.dumps(LOGS_BODY).encode('utf-8'))
+
+        with open(temp_file, 'rb') as f:
+            client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=f)
+        os.remove(temp_file)

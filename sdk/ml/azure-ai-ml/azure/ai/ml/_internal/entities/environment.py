@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import FILE_PREFIX
@@ -22,12 +22,12 @@ class InternalEnvironment:
 
     def __init__(
         self,
-        docker: Dict = None,
-        conda: Dict = None,
-        os: str = None,
-        name: str = None,
-        version: str = None,
-        python: Dict = None,
+        docker: Optional[Dict] = None,
+        conda: Optional[Dict] = None,
+        os: Optional[str] = None,
+        name: Optional[str] = None,
+        version: Optional[str] = None,
+        python: Optional[Dict] = None,
     ):
         self.docker = docker
         self.conda = conda
@@ -84,7 +84,7 @@ class InternalEnvironment:
 
     def _validate(self, base_path: str, skip_path_validation: bool = False) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
-        if self.os is not None and self.os not in {"Linux", "Windows"}:
+        if self.os is not None and self.os not in {"Linux", "Windows", "linux", "windows"}:
             validation_result.append_error(
                 yaml_path="os",
                 message=f"Only support 'Linux' and 'Windows', but got {self.os!r}",

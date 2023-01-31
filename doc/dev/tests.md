@@ -378,6 +378,17 @@ to the process of updating recordings.
 
 #### Update test recordings
 
+##### Environment prerequisites
+
+- The targeted library is already migrated to use the test proxy.
+- Git version > 2.25.0 is to on the machine and in the path. Git is used by the script and test proxy.
+- [Docker][docker_install] or [Podman][podman] is installed.
+- Global [git config settings][git_setup] are configured for `user.name` and `user.email`.
+  - These settings are also set with environment variables `GIT_COMMIT_OWNER` and `GIT_COMMIT_EMAIL`, respectively (in your environment or your local `.env` file).
+- The environment variable `GIT_TOKEN` is set to a valid [personal access token][git_token] for your user (in your environment or your local `.env` file).
+  - This token is necessary for authenticating git requests made in a Docker/Podman container.
+- Membership in the `azure-sdk-write` GitHub group.
+
 Test recordings will be updated if tests are run while `AZURE_TEST_RUN_LIVE` is set to "true" and
 `AZURE_SKIP_LIVE_RECORDING` is unset or "false". Since the recordings themselves are no longer in the
 `azure-sdk-for-python` repo, though, these updates will be reflected in a git-excluded `.assets` folder at the root of
@@ -385,7 +396,8 @@ the repo.
 
 The `.assets` folder contains one or more directories with random names, which each are a git directory containing
 recordings. If you `cd` into the folder containing your package's recordings, you can use `git status` to view the
-recording updates you've made.
+recording updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see
+specific file changes, or `git restore {file name}` to undo changes you don't want to keep.
 
 To find the directory containing your package's recordings, open the `.breadcrumb` file in the `.assets` folder. This
 file lists a package name on each line, followed by the recording directory name; for example:
@@ -405,7 +417,6 @@ python scripts/manage_recordings.py push sdk/{service}/{package}/assets.json
 The verbs that can be provided to this script are "push", "restore", and "reset":
 - **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
 - **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
-- **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 
 After pushing your recordings, the `assets.json` file for your package will be updated to point to a new `Tag` that
 contains the updates. Include this `assets.json` update in any pull request to update the recordings pointer in the
@@ -709,6 +720,8 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 
 [generate_sas]: https://github.com/Azure/azure-sdk-for-python/blob/bf4749babb363e2dc972775f4408036e31f361b4/tools/azure-sdk-tools/devtools_testutils/azure_recorded_testcase.py#L196
 [generate_sas_example]: https://github.com/Azure/azure-sdk-for-python/blob/3e3fbe818eb3c80ffdf6f9f1a86affd7e879b6ce/sdk/tables/azure-data-tables/tests/test_table_entity.py#L1691
+[git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
+[git_token]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 
 [kv_test_resources]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/test-resources.json
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255

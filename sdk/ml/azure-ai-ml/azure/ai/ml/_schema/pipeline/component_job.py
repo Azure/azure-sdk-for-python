@@ -39,7 +39,13 @@ from ..core.fields import ComputeField, StringTransformedEnum, TypeSensitiveUnio
 from ..job import ParameterizedCommandSchema, ParameterizedParallelSchema, ParameterizedSparkSchema
 from ..job.job_limits import CommandJobLimitsSchema
 from ..job.parameterized_spark import SparkEntryClassSchema, SparkEntryFileSchema
-from ..job.services import JobServiceSchema
+from ..job.services import (
+    JobServiceSchema,
+    SshJobServiceSchema,
+    JupyterLabJobServiceSchema,
+    VsCodeJobServiceSchema,
+    TensorBoardJobServiceSchema,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -48,7 +54,7 @@ module_logger = logging.getLogger(__name__)
 class BaseNodeSchema(PathAwareSchema):
     unknown = INCLUDE
 
-    inputs = InputsField()
+    inputs = InputsField(support_databinding=True)
     outputs = fields.Dict(
         keys=fields.Str(),
         values=UnionField([OutputBindingStr, NestedField(OutputSchema)], allow_none=True),
@@ -61,7 +67,7 @@ class BaseNodeSchema(PathAwareSchema):
         # data binding expression is not supported inside component field, while validation error
         # message will be very long when component is an object as error message will include
         # str(component), so just add component to skip list. The same to trial in Sweep.
-        support_data_binding_expression_for_fields(self, ["type", "component", "trial"])
+        support_data_binding_expression_for_fields(self, ["type", "component", "trial", "inputs"])
 
     @post_dump(pass_original=True)
     def add_user_setting_attr_dict(self, data, original_data, **kwargs):  # pylint: disable=unused-argument
@@ -77,7 +83,7 @@ class BaseNodeSchema(PathAwareSchema):
     def remove_meaningless_key_for_node(
         self,
         data,
-        **kwargs, # pylint: disable=unused-argument
+        **kwargs,  # pylint: disable=unused-argument
     ):
         data.pop("$schema", None)
         return data
@@ -89,18 +95,26 @@ def _delete_type_for_binding(io):
             io[key].type = None
 
 
+def _resolve_inputs(result, original_job):
+    result._inputs = original_job._build_inputs()
+    # delete type for literal binding input
+    _delete_type_for_binding(result._inputs)
+
+
+def _resolve_outputs(result, original_job):
+    result._outputs = original_job._build_outputs()
+    # delete type for literal binding output
+    _delete_type_for_binding(result._outputs)
+
+
 def _resolve_inputs_outputs(job):
     # Try resolve object's inputs & outputs and return a resolved new object
     import copy
 
     result = copy.copy(job)
-    result._inputs = job._build_inputs()
-    # delete type for literal binding input
-    _delete_type_for_binding(result._inputs)
+    _resolve_inputs(result, job)
+    _resolve_outputs(result, job)
 
-    result._outputs = job._build_outputs()
-    # delete type for literal binding output
-    _delete_type_for_binding(result._outputs)
     return result
 
 
@@ -144,7 +158,21 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
             ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
         ],
     )
-    services = fields.Dict(keys=fields.Str(), values=NestedField(JobServiceSchema))
+    services = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(SshJobServiceSchema),
+                NestedField(JupyterLabJobServiceSchema),
+                NestedField(TensorBoardJobServiceSchema),
+                NestedField(VsCodeJobServiceSchema),
+                # JobServiceSchema should be the last in the list.
+                # To support types not set by users like Custom, Tracking, Studio.
+                NestedField(JobServiceSchema),
+            ],
+            is_strict=True,
+        ),
+    )
     identity = UnionField(
         [
             NestedField(ManagedIdentitySchema),

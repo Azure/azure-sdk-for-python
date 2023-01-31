@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, INCLUDE, EXCLUDE
+from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
-from azure.ai.ml.constants._common import AzureMLResourceType, LABELLED_RESOURCE_NAME
+from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType
 
+from ..._utils._arm_id_utils import parse_name_label
 from .environment import InternalEnvironmentSchema
 from .input_output import (
     InternalEnumParameterSchema,
@@ -17,7 +18,6 @@ from .input_output import (
     InternalParameterSchema,
     InternalPrimitiveOutputSchema,
 )
-from ..._utils._arm_id_utils import parse_name_label
 
 
 class NodeType:
@@ -46,6 +46,7 @@ class NodeType:
 class InternalComponentSchema(ComponentSchema):
     class Meta:
         unknown = INCLUDE
+
     # override name as 1p components allow . in name, which is not allowed in v2 components
     name = fields.Str()
 
@@ -109,6 +110,30 @@ class InternalComponentSchema(ComponentSchema):
                 ret[attr_name] = self.get_attribute(obj, attr_name, None)
         return ret
 
+    @pre_load()
+    def convert_input_value_to_str(self, data: dict, **kwargs) -> dict:
+        """
+        Convert the non-str value in input to str.
+
+        When load the v1.5 component yaml, true/false will be converted to bool type and yyyy-mm-dd will be
+        converted to date type. In order to be consistent with before, it needs to be converted to str type.
+        """
+        def convert_to_str(value):
+            if isinstance(value, bool):
+                return str(value).lower()
+            return str(value)
+
+        if "inputs" in data and isinstance(data["inputs"], dict):
+            for input_port in data["inputs"].values():
+                input_type = input_port["type"]
+                # input type can be a list for internal component
+                if isinstance(input_type, str) and input_type.lower() in ["string", "enum"]:
+                    if not isinstance(input_port.get("default", ""), str):
+                        input_port["default"] = convert_to_str(input_port["default"])
+                    if "enum" in input_port and any([not isinstance(item, str) for item in input_port["enum"]]):
+                        input_port["enum"] = [convert_to_str(item) for item in input_port["enum"]]
+        return data
+
     @post_dump(pass_original=True)
     def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
         # remove None in input & output
@@ -134,5 +159,5 @@ class InternalComponentSchema(ComponentSchema):
     def add_back_type_label(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
         type_label = original._type_label  # pylint:disable=protected-access
         if type_label:
-            data["type"] = LABELLED_RESOURCE_NAME.format(data['type'], type_label)
+            data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)
         return data

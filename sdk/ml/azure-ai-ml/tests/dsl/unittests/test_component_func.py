@@ -11,7 +11,7 @@ from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException, UnexpectedAttributeError
+from azure.ai.ml.exceptions import UnexpectedAttributeError, UnexpectedKeywordError, ValidationException
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -48,9 +48,9 @@ class TestComponentFunc:
         }
 
         # positional args is not allowed
-        with pytest.raises(Exception) as error_info:
+        with pytest.raises(ValidationException) as error_info:
             component_func(10, "fake_path")
-        assert "[component] CommandComponentBasic() takes 0 positional arguments but 2 were given" in str(error_info)
+        assert "Component function doesn't support positional arguments" in str(error_info)
 
         # wrong kwargs is not allowed
         with pytest.raises(UnexpectedKeywordError) as error_info:
@@ -60,6 +60,18 @@ class TestComponentFunc:
             "[component] CommandComponentBasic() got an unexpected keyword argument 'wrong_kwarg', "
             "valid keywords: 'component_in_number', 'component_in_path'." in str(error_info)
         )
+
+        params_override = [{"inputs": {}}]
+        new_func = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml", params_override=params_override
+        )
+
+        # hint user when component func don't take any parameters.
+        with pytest.raises(ValidationException) as error_info:
+            new_func(10)
+        assert (
+            "Component function doesn't has any parameters"
+        ) in str(error_info.value)
 
     def test_required_component_inputs_missing(self):
         component_func = load_component(source="./tests/test_configs/components/helloworld_component.yml")

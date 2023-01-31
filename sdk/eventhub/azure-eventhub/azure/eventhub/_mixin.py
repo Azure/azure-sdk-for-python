@@ -8,7 +8,6 @@ from typing import (
     Optional,
 )
 
-
 class DictMixin(object):
     def __setitem__(self, key, item):
         # type: (Any, Any) -> None

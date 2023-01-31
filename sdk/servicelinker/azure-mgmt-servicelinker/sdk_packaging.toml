@@ -5,4 +5,5 @@ package_pprint_name = "Service Linker Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
-sample_link = "servicelinker"
+sample_link = ""
+title = "ServiceLinkerManagementClient"

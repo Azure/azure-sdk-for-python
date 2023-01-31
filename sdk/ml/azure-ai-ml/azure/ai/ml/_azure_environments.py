@@ -6,7 +6,7 @@
 
 import logging
 import os
-from typing import Dict
+from typing import Dict, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
@@ -91,7 +91,7 @@ def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
     os.environ[AZUREML_CLOUD_ENV_NAME] = cloud
 
 
-def _get_base_url_from_metadata(cloud_name: str = None, is_local_mfe: bool = False):
+def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: bool = False):
     """Retrieve the base url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -107,7 +107,7 @@ def _get_base_url_from_metadata(cloud_name: str = None, is_local_mfe: bool = Fal
     return base_url
 
 
-def _get_aml_resource_id_from_metadata(cloud_name: str = None):
+def _get_aml_resource_id_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the aml_resource_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -118,7 +118,7 @@ def _get_aml_resource_id_from_metadata(cloud_name: str = None):
     return aml_resource_id
 
 
-def _get_active_directory_url_from_metadata(cloud_name: str = None):
+def _get_active_directory_url_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the active_directory_url for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -129,7 +129,7 @@ def _get_active_directory_url_from_metadata(cloud_name: str = None):
     return active_directory_url
 
 
-def _get_storage_endpoint_from_metadata(cloud_name: str = None):
+def _get_storage_endpoint_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the storage_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -140,7 +140,7 @@ def _get_storage_endpoint_from_metadata(cloud_name: str = None):
     return storage_endpoint
 
 
-def _get_azure_portal_id_from_metadata(cloud_name: str = None):
+def _get_azure_portal_id_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the azure_portal_id for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -151,7 +151,7 @@ def _get_azure_portal_id_from_metadata(cloud_name: str = None):
     return azure_portal_id
 
 
-def _get_cloud_information_from_metadata(cloud_name: str = None, **kwargs) -> Dict:
+def _get_cloud_information_from_metadata(cloud_name: Optional[str] = None, **kwargs) -> Dict:
     """Retrieve the cloud information from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -167,7 +167,8 @@ def _get_cloud_information_from_metadata(cloud_name: str = None, **kwargs) -> Di
     kwargs.update(client_kwargs)
     return kwargs
 
-def _get_registry_discovery_endpoint_from_metadata(cloud_name: str = None):
+
+def _get_registry_discovery_endpoint_from_metadata(cloud_name: Optional[str] = None):
     """Retrieve the registry_discovery_endpoint for a cloud from the metadata in SDK.
 
     :param cloud_name: cloud name
@@ -176,7 +177,6 @@ def _get_registry_discovery_endpoint_from_metadata(cloud_name: str = None):
     cloud_details = _get_cloud_details(cloud_name)
     registry_discovery_endpoint = cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
     return registry_discovery_endpoint
-
 
 
 def _resource_to_scopes(resource):

@@ -248,6 +248,7 @@ from ._models_py3 import ProtectionPolicyResourceList
 from ._models_py3 import RecoveryPoint
 from ._models_py3 import RecoveryPointDiskConfiguration
 from ._models_py3 import RecoveryPointMoveReadinessInfo
+from ._models_py3 import RecoveryPointProperties
 from ._models_py3 import RecoveryPointRehydrationInfo
 from ._models_py3 import RecoveryPointResource
 from ._models_py3 import RecoveryPointResourceList
@@ -370,7 +371,7 @@ from ._recovery_services_backup_client_enums import WorkloadItemType
 from ._recovery_services_backup_client_enums import WorkloadType
 from ._recovery_services_backup_client_enums import XcoolState
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -616,6 +617,7 @@ __all__ = [
     "RecoveryPoint",
     "RecoveryPointDiskConfiguration",
     "RecoveryPointMoveReadinessInfo",
+    "RecoveryPointProperties",
     "RecoveryPointRehydrationInfo",
     "RecoveryPointResource",
     "RecoveryPointResourceList",

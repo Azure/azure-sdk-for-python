@@ -5,20 +5,26 @@
 # pylint: disable=protected-access
 
 import os
-from typing import Callable, Dict, Tuple, Union
+from typing import Callable, Dict, Optional, Tuple, Union
 
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
-from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
 )
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.job_service import (
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
@@ -103,28 +109,30 @@ def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Di
 
 def command(
     *,
-    name: str = None,
-    description: str = None,
-    tags: Dict = None,
-    properties: Dict = None,
-    display_name: str = None,
-    command: str = None,  # pylint: disable=redefined-outer-name
-    experiment_name: str = None,
-    environment: Union[str, Environment] = None,
-    environment_variables: Dict = None,
-    distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
-    compute: str = None,
-    inputs: Dict = None,
-    outputs: Dict = None,
-    instance_count: int = None,
-    instance_type: str = None,
-    docker_args: str = None,
-    shm_size: str = None,
-    timeout: int = None,
-    code: Union[str, os.PathLike] = None,
-    identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    properties: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    command: Optional[str] = None,  # pylint: disable=redefined-outer-name
+    experiment_name: Optional[str] = None,
+    environment: Optional[Union[str, Environment]] = None,
+    environment_variables: Optional[Dict] = None,
+    distribution: Optional[Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution]] = None,
+    compute: Optional[str] = None,
+    inputs: Optional[Dict] = None,
+    outputs: Optional[Dict] = None,
+    instance_count: Optional[int] = None,
+    instance_type: Optional[str] = None,
+    docker_args: Optional[str] = None,
+    shm_size: Optional[str] = None,
+    timeout: Optional[int] = None,
+    code: Optional[Union[str, os.PathLike]] = None,
+    identity: Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]] = None,
     is_deterministic: bool = True,
-    services: Dict[str, JobService] = None,
+    services: Optional[
+        Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+    ] = None,
     **kwargs,
 ) -> Command:
     """Create a Command object which can be used inside dsl.pipeline as a
@@ -215,7 +223,6 @@ def command(
             is_deterministic=is_deterministic,
             **kwargs,
         )
-
     command_obj = Command(
         component=component,
         name=name,
