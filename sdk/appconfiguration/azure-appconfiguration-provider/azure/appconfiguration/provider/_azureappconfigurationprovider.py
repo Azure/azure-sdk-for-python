@@ -6,8 +6,8 @@
 import json
 from typing import overload, List, Tuple
 from azure.appconfiguration import (
-    AzureAppConfigurationClient, 
-    FeatureFlagConfigurationSetting, 
+    AzureAppConfigurationClient,
+    FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting
 )
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
