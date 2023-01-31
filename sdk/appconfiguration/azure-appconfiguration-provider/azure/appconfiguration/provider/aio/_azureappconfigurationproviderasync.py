@@ -147,7 +147,7 @@ async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigu
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
-        raise AttributeError("Key Vault reference must have a uri value.")
+        raise ValueError("Key Vault reference must have a uri value.")
 
     key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
