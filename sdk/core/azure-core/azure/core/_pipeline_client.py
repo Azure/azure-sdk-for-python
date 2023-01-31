@@ -50,7 +50,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class PipelineClient(
-    PipelineClientBase, Generic["HTTPRequestType", "HTTPResponseType"]
+    PipelineClientBase, Generic[HTTPRequestType, HTTPResponseType]
 ):
     """Service client core methods.
 
@@ -82,7 +82,7 @@ class PipelineClient(
         self,
         base_url,
         *,
-        pipeline: Optional[Pipeline["HTTPRequestType", "HTTPResponseType"]] = None,
+        pipeline: Optional[Pipeline[HTTPRequestType, HTTPResponseType]] = None,
         **kwargs
     ):
         super(PipelineClient, self).__init__(base_url)
@@ -106,13 +106,13 @@ class PipelineClient(
         config,
         *,
         transport: Optional[
-            HttpTransport["HTTPRequestType", "HTTPResponseType"]
+            HttpTransport[HTTPRequestType, HTTPResponseType]
         ] = None,
         policies=None,
         per_call_policies=None,
         per_retry_policies=None,
         **kwargs
-    ) -> Pipeline["HTTPRequestType", "HTTPResponseType"]:
+    ) -> Pipeline[HTTPRequestType, HTTPResponseType]:
         per_call_policies = per_call_policies or []
         per_retry_policies = per_retry_policies or []
 
@@ -184,7 +184,7 @@ class PipelineClient(
 
         return Pipeline(transport, policies)
 
-    def send_request(self, request: "HTTPRequestType", **kwargs) -> "HTTPResponseType":
+    def send_request(self, request: HTTPRequestType, **kwargs) -> HTTPResponseType:
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
