@@ -11,8 +11,7 @@ from azure.appconfiguration import (
     SecretReferenceConfigurationSetting
 )
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
-from ._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
-from ._settingselector import SettingSelector
+from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import FEATURE_MANAGEMENT_KEY
 
 from ._user_agent import USER_AGENT

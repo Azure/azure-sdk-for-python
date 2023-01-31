@@ -5,8 +5,7 @@
 # -------------------------------------------------------------------------
 
 from ._azureappconfigurationprovider import load_provider
-from ._azureappconfigurationkeyvaultoptions import AzureAppConfigurationKeyVaultOptions
-from ._settingselector import SettingSelector
+from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 
 from ._version import VERSION
 
