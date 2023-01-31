@@ -8,7 +8,7 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.azure_reource_utils import get_vitual_clusters_from_subscriptions, get_vc_by_id
+from azure.ai.ml._utils.azure_reource_utils import get_virtual_clusters_from_subscriptions, get_vc_by_id
 from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.exceptions import UserErrorException
 from azure.core.tracing.decorator import distributed_trace
@@ -39,7 +39,7 @@ class VirtualClusterOperations():
 
     @distributed_trace
     # @monitor_with_activity(logger, "VirtualCluster.List", ActivityType.PUBLICAPI)
-    def list(self, *, scope: Optional[str] = None) -> Iterable[Dict]:
+    def list(self, *, scope: Optional[str] = None, **kwargs: Dict) -> Iterable[Dict]:
         """List virtual clusters a user has access to.
 
         :param scope: scope of the listing, "subscription" or None, defaults to None. If None, list virtual clusters across all subscriptions a customer has access to. 
@@ -56,11 +56,11 @@ class VirtualClusterOperations():
             message = "Invalid scope: {}. Valid values are 'subscription' or None.".format(scope)
             raise UserErrorException(message=message, no_personal_data_message=message)
 
-        return get_vitual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
+        return get_virtual_clusters_from_subscriptions(self._credentials, subscription_list=subscription_list)
 
     @distributed_trace
     # @monitor_with_activity(logger, "VirtualCluster.Get", ActivityType.PUBLICAPI)
-    def get(self, name: str, **kwargs: Dict) -> Dict:
+    def get(self, name: str, *, **kwargs: Dict) -> Dict:
         """Get a virtual cluster resource.
 
         :param name: Name of the virtual cluster.
