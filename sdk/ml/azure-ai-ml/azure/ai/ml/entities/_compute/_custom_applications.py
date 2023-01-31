@@ -21,6 +21,12 @@ from azure.ai.ml.constants._compute import CustomApplicationDefaults
 
 
 class ImageSettings:
+    """Specifies an image configuration for a Custom Application.
+
+    :param reference: Image reference URL.
+    :type reference: str
+    """
+
     def __init__(self, *, reference: str):
         self.reference = reference
 
@@ -33,6 +39,14 @@ class ImageSettings:
 
 
 class EndpointsSettings:
+    """Specifies an endpoint configuration for a Custom Application.
+
+    :param target: Application port inside the container.
+    :type target: int
+    :param published: Port over which the application is exposed from container.
+    :type published: int
+    """
+
     def __init__(self, *, target: int, published: int):
         self.target = target
         self.published = published
@@ -80,6 +94,14 @@ class EndpointsSettings:
 
 
 class VolumeSettings:
+    """Specifies the Bind Mount settings for a Custom Application.
+
+    :param source: The host path of the mount.
+    :type source: str
+    :param target: The path in the container for the mount.
+    :type target: str
+    """
+
     def __init__(self, *, source: str, target: str):
         self.source = source
         self.target = target
@@ -98,12 +120,26 @@ class VolumeSettings:
 
 
 class CustomApplications:
+    """Specifies the custom service application configuration.
+
+    :param name: Name of the Custom Application.
+    :type name: str
+    :param image: Describes the Image Specifications.
+    :type image: ImageSettings
+    :param endpoints: Configuring the endpoints for the container.
+    :type endpoints: List[EndpointsSettings]
+    :param environment_variables: Environment Variables for the container.
+    :type environment_variables: Optional[Dict[str, str]]
+    :param bind_mounts: Configuration of the bind mounts for the container.
+    :type bind_mounts: Optional[List[VolumeSettings]]
+    """
+
     def __init__(
         self,
         *,
         name: str,
         image: ImageSettings,
-        endpoints: EndpointsSettings,
+        endpoints: List[EndpointsSettings],
         environment_variables: Optional[Dict] = None,
         bind_mounts: Optional[List[VolumeSettings]] = None,
     ):
@@ -114,8 +150,12 @@ class CustomApplications:
         self.bind_mounts = bind_mounts
 
     def _to_rest_object(self):
+        endpoints = []
+        for endpoint in self.endpoints:
+            endpoints.append(endpoint._to_rest_object())
+
         environment_variables = {}
-        for name, value in self.environment_variables:
+        for name, value in self.environment_variables.items():
             environment_variables[name] = RestEnvironmentVariable(
                 type=RestEnvironmentVariableType.LOCAL, value=value
             )
@@ -126,7 +166,7 @@ class CustomApplications:
         return CustomService(
             name=self.name,
             image=self.image._to_rest_object(),
-            endpoints=[self.endpoints._to_rest_object()],
+            endpoints=endpoints,
             environment_variables=environment_variables,
             volumes=volumes,
             docker=Docker(privileged=True),
@@ -134,6 +174,10 @@ class CustomApplications:
 
     @classmethod
     def _from_rest_object(cls, obj: CustomService) -> "CustomApplications":
+        endpoints = []
+        for endpoint in obj.endpoints:
+            endpoints.append(EndpointsSettings._from_rest_object(endpoint))
+
         environment_variables = (
             {name: value.value for name, value in obj.environment_variables.items()}
             if obj.environment_variables
@@ -148,12 +192,11 @@ class CustomApplications:
         return CustomApplications(
             name=obj.name,
             image=ImageSettings._from_rest_object(obj.image),
-            endpoints=EndpointsSettings._from_rest_object(obj.endpoints[0]),
+            endpoints=endpoints,
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
         )
 
-@staticmethod
 def validate_custom_applications(custom_apps: List[CustomApplications]):
     unique_error = "Value of {} is should be unique accross all custom applications"
 
@@ -166,7 +209,8 @@ def validate_custom_applications(custom_apps: List[CustomApplications]):
             error_category=ErrorCategory.USER_ERROR,
         )
 
-    published_ports = [app.endpoints.published for app in custom_apps]
+    published_ports = [endpoint.published for app in custom_apps for endpoint in app.endpoints]
+
     if len(set(published_ports)) != len(published_ports):
         raise ValidationException(
             message=unique_error.format("published_port"),

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
@@ -17,15 +18,15 @@ class ImageSettingsSchema(metaclass=PatchedSchemaMeta):
 
         return ImageSettings(**data)
 
-class EndpointSettingsSchema(metaclass=PatchedSchemaMeta):
+class EndpointsSettingsSchema(metaclass=PatchedSchemaMeta):
     target = fields.Int()
     published = fields.Int()
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._compute._custom_applications import EndpointSettings
+        from azure.ai.ml.entities._compute._custom_applications import EndpointsSettings
 
-        return EndpointSettings(**data)
+        return EndpointsSettings(**data)
 
 class VolumeSettingsSchema(metaclass=PatchedSchemaMeta):
     source = fields.Str()
@@ -41,7 +42,7 @@ class CustomApplicationsSchema(metaclass=PatchedSchemaMeta):
 
     name = fields.Str(required=True)
     image = NestedField(ImageSettingsSchema)
-    endpoints = NestedField(EndpointSettingsSchema)
+    endpoints = fields.List(NestedField(EndpointsSettingsSchema))
     environment_variables = fields.Dict()
     bind_mounts = fields.List(NestedField(VolumeSettingsSchema))
 

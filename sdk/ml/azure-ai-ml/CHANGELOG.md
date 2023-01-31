@@ -3,7 +3,8 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
--Add dedicated classes for each type of job service. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Add dedicated classes for each type of job service. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Added Custom Applications Support to Compute Instances.
 
 ### Bugs Fixed
 - Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected
