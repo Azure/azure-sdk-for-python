@@ -12,8 +12,7 @@ from marshmallow import fields, post_load, validates, ValidationError
 from azure.ai.ml._schema import NestedField, PatchedSchemaMeta, StringTransformedEnum
 from azure.ai.ml._schema._deployment.online.destination_schema import DestinationSchema
 from azure.ai.ml._schema._deployment.online.request_logging_schema import RequestLoggingSchema
-from azure.ai.ml._schema._deployment.online.payload_request_schema import PayloadRequestSchema
-from azure.ai.ml._schema._deployment.online.payload_response_schema import PayloadResponseSchema
+from azure.ai.ml._schema._deployment.online.deployment_collection_schema import DeploymentCollectionSchema
 
 from azure.ai.ml.constants._common import RollingRate
 
@@ -21,8 +20,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class DataCollectorSchema(metaclass=PatchedSchemaMeta):
-    request = NestedField(PayloadRequestSchema)
-    response = NestedField(PayloadResponseSchema)
+    collections = fields.List(DeploymentCollectionSchema)
     rolling_rate = StringTransformedEnum(
         required=False,
         allowed_values=[ RollingRate.MINUTE, RollingRate.DAY, RollingRate.HOUR],
@@ -35,7 +33,7 @@ class DataCollectorSchema(metaclass=PatchedSchemaMeta):
     @validates("sampling_rate")
     def validate_sampling_rate(self, value, **kwargs):
         if value > 1.0 or value < 0.0:
-            raise ValidationError("Random Sample Percentage must be an number between 0.0-1.0")
+            raise ValidationError("Sampling rate must be an number between 0.0-1.0")
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
