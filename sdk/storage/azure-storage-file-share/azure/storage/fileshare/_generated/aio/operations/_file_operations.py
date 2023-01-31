@@ -159,10 +159,10 @@ class FileOperations:
         _lease_id = None
         if file_http_headers is not None:
             _file_cache_control = file_http_headers.file_cache_control
-            _file_content_MD5 = file_http_headers.file_content_MD5
             _file_content_disposition = file_http_headers.file_content_disposition
             _file_content_encoding = file_http_headers.file_content_encoding
             _file_content_language = file_http_headers.file_content_language
+            _file_content_md5 = file_http_headers.file_content_md5
             _file_content_type = file_http_headers.file_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
@@ -722,10 +722,10 @@ class FileOperations:
         _lease_id = None
         if file_http_headers is not None:
             _file_cache_control = file_http_headers.file_cache_control
-            _file_content_MD5 = file_http_headers.file_content_MD5
             _file_content_disposition = file_http_headers.file_content_disposition
             _file_content_encoding = file_http_headers.file_content_encoding
             _file_content_language = file_http_headers.file_content_language
+            _file_content_md5 = file_http_headers.file_content_md5
             _file_content_type = file_http_headers.file_content_type
         if lease_access_conditions is not None:
             _lease_id = lease_access_conditions.lease_id
