@@ -168,7 +168,7 @@ async def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigu
     if key_vault_options.secret_resolver is not None:
         return key_vault_options.secret_resolver(config.secret_id)
 
-    raise AttributeError(
+    raise ValueError(
         "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
     )
 
