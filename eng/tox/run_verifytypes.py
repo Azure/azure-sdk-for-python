@@ -98,7 +98,7 @@ if __name__ == "__main__":
     module = package_name.replace("-", ".")
     setup_path = os.path.abspath(args.target_package)
 
-    if not is_check_enabled(args.target_package, "type_check_samples") or is_ignored_package(package_name):
+    if not is_check_enabled(args.target_package, "verifytypes") or is_ignored_package(package_name):
         logging.info(
             f"{package_name} opts-out of verifytypes check. See https://aka.ms/python/typing-guide for information."
         )
