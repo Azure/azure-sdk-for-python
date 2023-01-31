@@ -267,14 +267,32 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_mgmt_client(address, mgmt_auth, config):
+    def create_mgmt_msg(
+        message,
+        application_properties,
+        config, # pylint:disable=unused-argument
+        reply_to,
+        **kwargs
+    ):
         """
-        Creates and returns the mgmt AMQP client.
-        :param _Address address: Required. The Address.
-        :param JWTTokenAuth mgmt_auth: Auth for client.
-        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+        :param message: The message to send in the management request.
+        :paramtype message: Any
+        :param Dict[bytes, str] application_properties: App props.
+        :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
+        :param str reply_to: Reply to.
+        :rtype: uamqp.Message or pyamqp.Message
         """
 
+#    @staticmethod
+#    @abstractmethod
+#    def create_mgmt_client(address, mgmt_auth, config):
+#        """
+#        Creates and returns the mgmt AMQP client.
+#        :param _Address address: Required. The Address.
+#        :param JWTTokenAuth mgmt_auth: Auth for client.
+#        :param ~azure.eventhub._configuration.Configuration config: The configuration.
+#        """
+#
     @staticmethod
     @abstractmethod
     def get_updated_token(mgmt_auth):

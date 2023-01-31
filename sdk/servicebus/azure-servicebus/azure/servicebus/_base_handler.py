@@ -16,9 +16,7 @@ try:
 except ImportError:
     from urlparse import urlparse  # type: ignore
 
-from ._pyamqp.utils import generate_sas_token, amqp_string_value
-from ._pyamqp.message import Message, Properties
-from ._pyamqp.client import AMQPClient as AMQPClientSync
+from ._pyamqp.utils import generate_sas_token
 
 from ._common._configuration import Configuration
 from .exceptions import (
@@ -47,6 +45,8 @@ if TYPE_CHECKING:
         from uamqp import AMQPClient as uamqp_AMQPClientSync
     except ImportError:
         pass
+    from ._pyamqp.message import Message
+    from ._pyamqp.client import AMQPClient as AMQPClientSync
     from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)

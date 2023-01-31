@@ -6,8 +6,7 @@ from typing import Optional, Dict, Any
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import RetryMode
-from .constants import DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT
-from .._pyamqp.constants import TransportType
+from .constants import DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT, TransportType
 from .._transport._pyamqp_transport import PyamqpTransport
 
 

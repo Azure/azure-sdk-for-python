@@ -13,7 +13,6 @@ import uuid
 from typing import Optional, Dict, List, Union, Iterable, Any, Mapping, cast, TYPE_CHECKING
 from azure.core.tracing import AbstractSpan
 
-from .._pyamqp.performatives import TransferFrame
 from .._pyamqp._message_backcompat import LegacyMessage, LegacyBatchMessage
 from .._transport._pyamqp_transport import PyamqpTransport
 
@@ -60,6 +59,7 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from .._pyamqp.message import Message as pyamqp_Message
+    from .._pyamqp.performatives import TransferFrame
     from ..aio._servicebus_receiver_async import (
         ServiceBusReceiver as AsyncServiceBusReceiver,
     )
@@ -809,7 +809,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             self,
             message: Union["Message", "pyamqp_Message"],
             receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
-            frame: Optional[TransferFrame] = None,
+            frame: Optional["TransferFrame"] = None,
             **kwargs
     ) -> None:
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore

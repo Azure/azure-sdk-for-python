@@ -666,7 +666,7 @@ if uamqp_installed:
             :param Dict[bytes, str] application_properties: App props.
             :param ~azure.servicebus._common._configuration.Configuration config: Configuration.
             :param str reply_to: Reply to.
-            :rtype: pyamqp.Message
+            :rtype: uamqp.Message
             """
             return Message( # type: ignore # TODO: fix mypy error
                 body=message,

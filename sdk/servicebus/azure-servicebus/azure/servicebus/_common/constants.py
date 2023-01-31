@@ -23,9 +23,6 @@ ASSOCIATEDLINKPROPERTYNAME = b"associated-link-name"
 SESSION_FILTER = VENDOR + b":session-filter"
 SESSION_LOCKED_UNTIL = VENDOR + b":locked-until-utc"
 
-DEFAULT_AMQPS_PORT = 5671
-DEFAULT_AMQP_WSS_PORT = 443
-
 # Error codes
 ERROR_CODE_SESSION_LOCK_LOST = VENDOR + b":session-lock-lost"
 ERROR_CODE_MESSAGE_LOCK_LOST = VENDOR + b":message-lock-lost"
@@ -200,3 +197,17 @@ class ServiceBusSubQueue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 NEXT_AVAILABLE_SESSION = ServiceBusSessionFilter.NEXT_AVAILABLE
+
+## all below - previously uamqp
+class TransportType(Enum):
+    """Transport type
+    The underlying transport protocol type:
+     Amqp: AMQP over the default TCP transport protocol, it uses port 5671.
+     AmqpOverWebsocket: Amqp over the Web Sockets transport protocol, it uses
+     port 443.
+    """
+    Amqp = 1
+    AmqpOverWebsocket = 2
+
+DEFAULT_AMQPS_PORT = 5671
+DEFAULT_AMQP_WSS_PORT = 443
