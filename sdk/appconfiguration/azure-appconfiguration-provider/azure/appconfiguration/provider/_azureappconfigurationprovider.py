@@ -131,7 +131,7 @@ def __buildprovider(connection_string:str, endpoint:str, credential,
     useragent = USER_AGENT
 
     if connection_string and endpoint:
-        raise AttributeError("Both connection_string and endpoint are set. Only one of these should be set.")
+        raise ValueError("Both connection_string and endpoint are set. Only one of these should be set.")
 
     if connection_string:
         #pylint:disable=protected-access
@@ -145,10 +145,10 @@ def __buildprovider(connection_string:str, endpoint:str, credential,
 
 def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions, provider) -> str:
     if key_vault_options is None:
-        raise AttributeError("Key Vault options must be set to resolve Key Vault references.")
+        raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
     if config.secret_id is None:
-        raise AttributeError("Key Vault reference must have a uri value.")
+        raise ValueError("Key Vault reference must have a uri value.")
 
     key_vault_identifier = KeyVaultSecretIdentifier(config.secret_id)
 
@@ -167,7 +167,7 @@ def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfiguration
     if key_vault_options.secret_resolver is not None:
         return key_vault_options.secret_resolver(config.secret_id)
 
-    raise AttributeError(
+    raise ValueError(
         "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
     )
 
