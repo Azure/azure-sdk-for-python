@@ -33,7 +33,7 @@ class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     See https://learn.microsoft.com/azure/aks/workload-identity-overview for more information
 
     :param str tenant_id: ID of the application's Azure Active Directory tenant. Also called its "directory" ID.
-    :param str client_id: the client ID of an Azure AD app registration.
+    :param str client_id: The client ID of an Azure AD app registration.
     :param str file: The path to a file containing a Kubernetes service account token that authenticates the identity.
     """
 
