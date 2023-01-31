@@ -125,6 +125,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :keyword bool allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
+        Default value is None.
+    :keyword bool allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
+        URI. Default value is None.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -177,7 +181,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         self._query_str, credential = self._format_query_string(
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline)
+        self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
+        self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
+        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline, allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
@@ -906,7 +912,7 @@ class ShareFileClient(StorageAccountHostsMixin):
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
             credential=new_file_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode
+            _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))

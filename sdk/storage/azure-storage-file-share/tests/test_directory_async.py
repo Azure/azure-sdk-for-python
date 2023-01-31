@@ -134,6 +134,30 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_create_directory_with_trailing_dot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_name = 'dir1'
+
+        directory_client = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, directory_name + '.',
+            credential=storage_account_key,
+            allow_trailing_dot=True)
+
+        # Act
+        created = await directory_client.create_directory()
+
+        # Assert
+        assert created
+        assert directory_client.directory_path == directory_name + '.'
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_create_subdirectories(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -279,6 +303,30 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         assert props.etag is not None
         assert props.last_modified is not None
         assert metadata == props.metadata
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_get_directory_properties_with_trailing_dot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=storage_account_key,
+            allow_trailing_dot=True)
+
+        # Act
+        await directory.create_directory()
+        props = await directory.get_directory_properties()
+
+        # Assert
+        assert props is not None
+        assert props.etag is not None
+        assert props.last_modified is not None
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -510,6 +558,46 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_set_http_headers_with_trailing_dot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory_client = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=storage_account_key,
+            allow_trailing_dot=True)
+        await directory_client.create_directory()
+
+        directory_properties_on_creation = await directory_client.get_directory_properties()
+        permission_key = directory_properties_on_creation.permission_key
+        last_write_time = directory_properties_on_creation.last_write_time
+        creation_time = directory_properties_on_creation.creation_time
+        change_time = directory_properties_on_creation.change_time
+
+        new_last_write_time = last_write_time + timedelta(hours=1)
+        new_creation_time = creation_time + timedelta(hours=1)
+        new_change_time = change_time + timedelta(hours=1)
+
+        # Act
+        await directory_client.set_http_headers(
+            file_attributes='None',
+            file_creation_time=new_creation_time,
+            file_last_write_time=new_last_write_time,
+            file_change_time=new_change_time,
+            permission_key=permission_key)
+        directory_properties = await directory_client.get_directory_properties()
+
+        # Assert
+        assert directory_properties is not None
+        assert directory_properties.creation_time == new_creation_time
+        assert directory_properties.last_write_time == new_last_write_time
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_list_subdirectories_and_files(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -549,6 +637,41 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         assert list_dir[5]['name'] == 'file3'
         assert list_dir[5]['is_directory'] == False
         assert list_dir[5]['size'] == 5
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_subdirectories_with_trailing_dot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        directory = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=storage_account_key,
+            allow_trailing_dot=True)
+        await directory.create_directory()
+        await asyncio.gather(
+            directory.create_subdirectory("subdir1."),
+            directory.create_subdirectory("subdir2."),
+            directory.create_subdirectory("subdir3.")
+        )
+
+        # Act
+        list_dir = []
+        async for d in directory.list_directories_and_files():
+            list_dir.append(d)
+
+        # Assert
+        assert len(list_dir) == 3
+        assert list_dir[0]['name'] == 'subdir1.'
+        assert list_dir[0]['is_directory'] == True
+        assert list_dir[1]['name'] == 'subdir2.'
+        assert list_dir[1]['is_directory'] == True
+        assert list_dir[2]['name'] == 'subdir3.'
+        assert list_dir[2]['is_directory'] == True
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -776,6 +899,31 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         directory = await share_client.create_directory('dir1')
 
         # Act
+        deleted = await directory.delete_directory()
+
+        # Assert
+        assert deleted is None
+        with pytest.raises(ResourceNotFoundError):
+            await directory.get_directory_properties()
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_delete_directory_with_trailing_dot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        directory = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=storage_account_key,
+            allow_trailing_dot=True)
+
+        # Act
+        await directory.create_directory()
         deleted = await directory.delete_directory()
 
         # Assert
@@ -1021,5 +1169,31 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
         # Assert
         props = await new_directory.get_directory_properties()
         assert props is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_rename_directory_trailing_dot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+        dest_dir_name = 'dir2' + '.'
+
+        directory_client = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1.',
+            credential=storage_account_key,
+            allow_trailing_dot=True,
+            allow_source_trailing_dot=True)
+
+        # Act
+        await directory_client.create_directory()
+        new_directory_client = await directory_client.rename_directory(dest_dir_name)
+
+        # Assert
+        assert new_directory_client.directory_path == dest_dir_name
+
 
 # ------------------------------------------------------------------------------
