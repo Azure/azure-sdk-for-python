@@ -2,16 +2,33 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import time
 from typing import Any
-import logging
-from azure.core.credentials import AccessToken
-from .token_exchange import TokenExchangeCredential
-from .._internal.decorators import log_get_token
 
-_LOGGER = logging.getLogger(__name__)
+from .client_assertion import ClientAssertionCredential
 
 
-class WorkloadIdentityCredential:
+class TokenFileMixin:
+    def __init__(
+            self,
+            file: str,
+            **_: Any
+    ) -> None:
+        super(TokenFileMixin, self).__init__()
+        self._jwt = ""
+        self._last_read_time = 0
+        self._file = file
+
+    def get_service_account_token(self) -> str:
+        now = int(time.time())
+        if now - self._last_read_time > 600:
+            with open(self._file) as f:
+                self._jwt = f.read()
+            self._last_read_time = now
+        return self._jwt
+
+
+class WorkloadIdentityCredential(ClientAssertionCredential, TokenFileMixin):
     """WorkloadIdentityCredential supports Azure workload identity on Kubernetes.
     See https://learn.microsoft.com/azure/aks/workload-identity-overview for more information
 
@@ -27,40 +44,10 @@ class WorkloadIdentityCredential:
             file: str,
             **kwargs: Any
     ) -> None:
-        kwargs.pop("token_file_path", None)
-        self._credential = TokenExchangeCredential(
+        super(WorkloadIdentityCredential, self).__init__(
             tenant_id=tenant_id,
             client_id=client_id,
-            token_file_path=file,
+            func=self.get_service_account_token,
+            file=file,
             **kwargs
         )
-
-    def __enter__(self):
-        if self._credential:
-            self._credential.__enter__()
-        return self
-
-    def __exit__(self, *args):
-        if self._credential:
-            self._credential.__exit__(*args)
-
-    def close(self) -> None:
-        """Close the credential's transport session."""
-        self.__exit__()
-
-    @log_get_token("WorkloadIdentityCredential")
-    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
-        """Request an access token for `scopes`.
-
-        This method is called automatically by Azure SDK clients.
-
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-            For more information about scopes, see
-            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
-        :keyword str tenant_id: optional tenant to include in the token request.
-
-        :rtype: :class:`azure.core.credentials.AccessToken`
-
-        :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
-        """
-        return self._credential.get_token(*scopes, **kwargs)
