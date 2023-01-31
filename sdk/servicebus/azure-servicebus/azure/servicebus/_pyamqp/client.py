@@ -623,8 +623,6 @@ class SendClient(AMQPClient):
         expire_time = (time.time() + timeout) if timeout else None
         self.open()
 
-        _logger.debug(message)
-        
         message_delivery = _MessageDelivery(
             message, MessageDeliveryState.WaitingToBeSent, expire_time
         )
