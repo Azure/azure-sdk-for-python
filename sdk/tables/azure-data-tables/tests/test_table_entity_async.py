@@ -493,6 +493,22 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
 
     @tables_decorator_async
     @recorded_by_proxy_async
+    async def test_delete_entity_with_empty_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_random_entity(rk="")
+            await self.table.delete_entity(entity)
+            entity, _ = await self._insert_random_entity(pk="", rk="")
+            await self.table.delete_entity(partition_key="", row_key="")
+            count = 0
+            async for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
+        finally:
+            await self._tear_down()
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
     async def test_get_entity_full_metadata(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
