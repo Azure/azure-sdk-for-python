@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 import os
 import pytest
-import json
 
 from dotenv import load_dotenv
 
