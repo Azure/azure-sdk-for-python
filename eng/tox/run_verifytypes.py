@@ -117,6 +117,10 @@ if __name__ == "__main__":
     # get type completeness score from current code
     # install_editable(setup_path)
     score_from_current = get_type_complete_score(commands, check_pytyped=True)
+    try:
+        subprocess.check_call(commands[:-1])
+    except subprocess.CalledProcessError:
+        pass  # we don't fail on verifytypes, only if type completeness score worsens from last release
 
     # get type completeness score from latest release
     latest_version = install_latest_release(package_name)
@@ -124,11 +128,6 @@ if __name__ == "__main__":
         score_from_released = get_type_complete_score(commands)
     else:
         score_from_released = None
-
-    try:
-        subprocess.check_call(commands[:-1])
-    except subprocess.CalledProcessError:
-        pass  # we don't fail on verifytypes, only if type completeness score worsens from last release
 
     if score_from_released is not None:
         score_from_released_rounded = round(score_from_released * 100, 1)
