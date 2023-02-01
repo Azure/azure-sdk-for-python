@@ -8,9 +8,8 @@ import pytest
 from devtools_testutils import recorded_by_proxy
 from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer
 
-
+@pytest.mark.live_test_only
 class TestWebpubsubClientSmoke(WebpubsubClientTest):
-    # @pytest.mark.live_test_only
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
     def test_start_stop(self, webpubsubclient_connection_string):
@@ -18,7 +17,6 @@ class TestWebpubsubClientSmoke(WebpubsubClientTest):
         client.start()
         client.stop()
 
-    # @pytest.mark.live_test_only
     @WebpubsubClientPowerShellPreparer()
     @recorded_by_proxy
     def test_duplicated_start(self, webpubsubclient_connection_string):

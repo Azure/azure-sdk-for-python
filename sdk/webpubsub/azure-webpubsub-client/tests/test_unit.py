@@ -14,7 +14,7 @@ from azure.webpubsub.client._models import (
     SendEventMessage,
     SequenceAckMessage,
 )
-from testcase import WebpubsubClientTest, WebpubsubClientPowerShellPreparer
+from testcase import WebpubsubClientPowerShellPreparer
 
 
 def compare_dict(dict1, dict2):
