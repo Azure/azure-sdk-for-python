@@ -82,14 +82,14 @@ class ACRExchangeClient(object):
             access_token=self._credential.get_token(*self.credential_scopes).token,
             **kwargs
         )
-        return refresh_token.refresh_token # type: ignore
+        return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
     def exchange_refresh_token_for_access_token(self, refresh_token, service, scope, **kwargs):
         # type: (str, str, str, Any) -> str
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, **kwargs
         )
-        return access_token.access_token # type: ignore
+        return access_token.access_token if access_token.access_token is not None else ""
 
     def __enter__(self):
         self._client.__enter__()

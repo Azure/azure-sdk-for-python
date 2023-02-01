@@ -200,3 +200,14 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
             with pytest.raises(ClientAuthenticationError):
                 client.update_manifest_properties(HELLO_WORLD, "latest", properties, can_delete=True)
+
+    @acr_preparer()
+    @recorded_by_proxy
+    def test_get_acr_access_token(self, containerregistry_anonregistry_endpoint):
+        if not self.is_public_endpoint(containerregistry_anonregistry_endpoint):
+            pytest.skip("Not a public endpoint")
+
+        with self.create_anon_client(containerregistry_anonregistry_endpoint) as client:
+            challenge = "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtestsanon.azurecr.io\u0022,scope=\u0022repository:library/hello-world:metadata_read\u0022"
+            accrss_token = client._auth_policy._exchange_client.get_acr_access_token(challenge)
+            # access_token = client._auth_policy._exchange_client.exchange_refresh_token_for_access_token()

@@ -18,7 +18,15 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has at least one repository with more than three tags.
+    This sample assumes your registry has at least one repository with more than three tags,
+    run load_registry() if you don't have.
+    Set the environment variables with your own values before running load_registry():
+    1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
+    2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
+    3) CONTAINERREGISTRY_CLIENT_ID - The service principal's client ID
+    4) CONTAINERREGISTRY_CLIENT_SECRET - The service principal's client secret
+    5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
+    6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
 import asyncio
 import os
@@ -40,7 +48,7 @@ class DeleteTagsAsync(object):
 
     async def delete_tags(self):
         load_registry()
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client: # type: ignore[arg-type]
             # [START list_repository_names]
             async for repository in client.list_repository_names():
                 print(repository)

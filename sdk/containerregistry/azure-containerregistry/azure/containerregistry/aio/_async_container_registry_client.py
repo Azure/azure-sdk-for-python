@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional, overload, Union
+from typing import TYPE_CHECKING, Any, Optional, overload, Union, cast
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -122,8 +122,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
-
-        cls = kwargs.pop("cls", None) # type: str
+        cls = kwargs.pop("cls", None)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
@@ -579,16 +578,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a repository.
         :keyword bool can_write: Write permissions for a repository.
         :rtype: ~azure.containerregistry.RepositoryProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
-        repository = args[0]
-        if not isinstance(repository, str):
-            raise TypeError("Parameter repository should be type of string.")
+        repository = str(args[0])
         properties = None
         if len(args) == 2:
-            properties = args[1]
-            if not isinstance(properties, RepositoryProperties):
-                raise TypeError("Parameter tag_or_digest should be type of RepositoryProperties.")
+            properties = cast(RepositoryProperties, args[1])
         else:
             properties = RepositoryProperties()
 
@@ -615,7 +610,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     ) -> "ArtifactManifestProperties":
         ...
 
-    @distributed_trace_async # type: ignore
+    @distributed_trace_async
     async def update_manifest_properties(
         self, *args: Union[str, "ArtifactManifestProperties"], **kwargs: Any
     ) -> "ArtifactManifestProperties":
@@ -633,7 +628,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a manifest.
         :keyword bool can_write: Write permissions for a manifest.
         :rtype: ~azure.containerregistry.ArtifactManifestProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
 
@@ -653,17 +648,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     can_write=False,
                 )
         """
-        repository = args[0]
-        if not isinstance(repository, str):
-            raise TypeError("Parameter repository should be type of string.")
-        tag_or_digest = args[1]
-        if not isinstance(tag_or_digest, str):
-            raise TypeError("Parameter tag_or_digest should be type of string.")
+        repository = str(args[0])
+        tag_or_digest = str(args[1])
         properties = None
         if len(args) == 3:
-            properties = args[2]
-            if not isinstance(properties, ArtifactManifestProperties):
-                raise TypeError("Parameter tag_or_digest should be type of ArtifactManifestProperties.")
+            properties = cast(ArtifactManifestProperties, args[2])
         else:
             properties = ArtifactManifestProperties()
 
@@ -714,7 +703,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :keyword bool can_read: Read permissions for a tag.
         :keyword bool can_write: Write permissions for a tag.
         :rtype: ~azure.containerregistry.ArtifactTagProperties
-        :raises: ~azure.core.exceptions.ResourceNotFoundError, or TypeError when any arg is in invlid type.
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
 
         Example
 
@@ -734,17 +723,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 can_write=False
             )
         """
-        repository = args[0]
-        if not isinstance(repository, str):
-            raise TypeError("Parameter repository should be type of string.")
-        tag = args[1]
-        if not isinstance(tag, str):
-            raise TypeError("Parameter tag should be type of string.")
+        repository = str(args[0])
+        tag = str(args[1])
         properties = None
         if len(args) == 3:
-            properties = args[2]
-            if not isinstance(properties, ArtifactTagProperties):
-                raise TypeError("Parameter tag_or_digest should be type of ArtifactTagProperties.")
+            properties = cast(ArtifactTagProperties, args[2])
         else:
             properties = ArtifactTagProperties()
 
@@ -757,7 +740,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             await self._client.container_registry.update_tag_attributes(
                 repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ),
-            repository=repository,
+            repository=repository
         )
 
     @distributed_trace_async
