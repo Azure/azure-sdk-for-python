@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
@@ -36,7 +36,7 @@ class AnonymousACRExchangeClient(object):
             **kwargs
         )
 
-    async def get_acr_access_token(self, challenge: str, **kwargs: Any) -> str:
+    async def get_acr_access_token(self, challenge: str, **kwargs: Any) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
         parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return await self.exchange_refresh_token_for_access_token(
@@ -49,11 +49,11 @@ class AnonymousACRExchangeClient(object):
 
     async def exchange_refresh_token_for_access_token(
         self, refresh_token: str, service: str, scope: str, grant_type: str, **kwargs: Any
-    ) -> str:
+    ) -> Optional[str]:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )
-        return access_token.access_token if access_token.access_token is not None else ""
+        return access_token.access_token
 
     async def __aenter__(self):
         await self._client.__aenter__()
