@@ -1,5 +1,5 @@
 # Azure Purview Catalog client library for Python
-
+ 
 Azure Purview Catalog is a fully managed cloud service whose users can discover the data sources they need and understand the data sources they find. At the same time, Data Catalog helps organizations get more value from their existing investments.
 
 - Search for data using technical or business terms
