@@ -21,11 +21,6 @@ from ci_tools.environment_exclusions import is_ignored_package, is_check_enabled
 logging.getLogger().setLevel(logging.INFO)
 
 
-def install_editable(setup_path):
-    commands = [sys.executable, "-m", "pip", "install", "-e", setup_path]
-    subprocess.check_call(commands)
-
-
 def install_latest_release(package_name):
     from pypi_tools.pypi import PyPIClient
 
@@ -47,7 +42,7 @@ def install_latest_release(package_name):
         ]
 
         commands.extend(packages)
-        subprocess.check_call(commands)
+        subprocess.check_call(commands, stdout=subprocess.DEVNULL)
     return latest_version
 
 
@@ -114,21 +109,19 @@ if __name__ == "__main__":
         "--outputjson",
     ]
 
+    # get type completeness score from current code
+    score_from_current = get_type_complete_score(commands, check_pytyped=True)
+    try:
+        subprocess.check_call(commands[:-1])
+    except subprocess.CalledProcessError:
+        pass  # we don't fail on verifytypes, only if type completeness score worsens from last release
+
     # get type completeness score from latest release
     latest_version = install_latest_release(package_name)
     if latest_version:
         score_from_released = get_type_complete_score(commands)
     else:
         score_from_released = None
-
-    # get type completeness score from current code
-    install_editable(setup_path)
-    score_from_current = get_type_complete_score(commands, check_pytyped=True)
-
-    try:
-        subprocess.check_call(commands[:-1])
-    except subprocess.CalledProcessError:
-        pass  # we don't fail on verifytypes, only if type completeness score worsens from last release
 
     if score_from_released is not None:
         score_from_released_rounded = round(score_from_released * 100, 1)
