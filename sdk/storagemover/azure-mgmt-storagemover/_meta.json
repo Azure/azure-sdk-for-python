@@ -1,0 +1,11 @@
+{
+  "commit": "64fe6ca10ff6a40a8c0c5bc82eb34486c202fee7",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.9.2",
+  "use": [
+    "@autorest/python@6.2.16",
+    "@autorest/modelerfour@4.24.3"
+  ],
+  "autorest_command": "autorest specification/storagemover/resource-manager/readme.md --generate-sample=True --include-x-ms-examples-original-file=True --python --python-sdks-folder=/home/vsts/work/1/azure-sdk-for-python/sdk --tag=package-2022-07-01-preview --use=@autorest/python@6.2.16 --use=@autorest/modelerfour@4.24.3 --version=3.9.2 --version-tolerant=False",
+  "readme": "specification/storagemover/resource-manager/readme.md"
+}
