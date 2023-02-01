@@ -85,7 +85,7 @@ class ACRExchangeClient(object):
         return refresh_token.refresh_token
 
     def exchange_refresh_token_for_access_token(self, refresh_token, service, scope, **kwargs):
-        # type: (str, str, str, Any) -> Optional[str]
+        # type: (Optional[str], str, str, Any) -> Optional[str]
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, **kwargs
         )

@@ -40,7 +40,7 @@ class AnonymousACRExchangeClient(object):
         parsed_challenge = _parse_challenge(challenge)
         parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return await self.exchange_refresh_token_for_access_token(
-            "",
+            None,
             service=parsed_challenge["service"],
             scope=parsed_challenge["scope"],
             grant_type=TokenGrantType.PASSWORD,
@@ -48,7 +48,7 @@ class AnonymousACRExchangeClient(object):
         )
 
     async def exchange_refresh_token_for_access_token(
-        self, refresh_token: str, service: str, scope: str, grant_type: str, **kwargs: Any
+        self, refresh_token: Optional[str], service: str, scope: str, grant_type: str, **kwargs: Any
     ) -> Optional[str]:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
