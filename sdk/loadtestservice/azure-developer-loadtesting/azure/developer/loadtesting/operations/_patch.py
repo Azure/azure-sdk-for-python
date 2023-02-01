@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import logging
 import time
 from functools import partial
-from typing import List, IO, Optional, Any, Union
+from typing import List, IO, Optional, Any, Union, overload
 
 from azure.core.polling import NoPolling, PollingMethod, LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -179,6 +179,76 @@ class TestRunOperations(TestRunOperationsGenerated):
 
     def __init__(self, *args, **kwargs):
         super(TestRunOperations, self).__init__(*args, **kwargs)
+
+    @overload
+    async def begin_test_run(
+        self,
+        test_run_id: str,
+        body: JSON,
+        *,
+        poll_for_test_run_status=True,
+        old_test_run_id: Optional[str] = None,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> LoadTestingLROPoller:
+        """Create and start a new test run with the given name.
+
+        Create and start a new test run with the given name.
+
+        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
+         numeric, underscore or hyphen characters. Required.
+        :type test_run_id: str
+        :param body: Load test run model. Required.
+        :type body: IO
+        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
+         provided, the test will run with the JMX file, configuration and app components from the
+         existing test run. You can override the configuration values for new test run in the request
+         body. Default value is None.
+        :param poll_for_test_run_status: If true, polls for test run status, else does not
+        :type poll_for_test_run_status: bool
+        :paramtype old_test_run_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_test_run(
+        self,
+        test_run_id: str,
+        body: IO,
+        *,
+        poll_for_test_run_status=True,
+        old_test_run_id: Optional[str] = None,
+        content_type: str = "application/merge-patch+json",
+        **kwargs: Any
+    ) -> LoadTestingLROPoller:
+        """Create and start a new test run with the given name.
+
+        Create and start a new test run with the given name.
+
+        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
+         numeric, underscore or hyphen characters. Required.
+        :type test_run_id: str
+        :param body: Load test run model. Required.
+        :type body: IO
+        :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
+         provided, the test will run with the JMX file, configuration and app components from the
+         existing test run. You can override the configuration values for new test run in the request
+         body. Default value is None.
+        :param poll_for_test_run_status: If true, polls for test run status, else does not
+        :type poll_for_test_run_status: bool
+        :paramtype old_test_run_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
     @distributed_trace
     def begin_test_run(

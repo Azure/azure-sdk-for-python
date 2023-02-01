@@ -19,7 +19,13 @@ directive:
   - from: swagger-document
     where: $["paths"]["/test-runs/{testRunId}"].patch
     transform: $["operationId"] = "LoadTestRun_BeginTestRun";
-    
+  - from: swagger-document
+    where: $["paths"]["/test-runs/{testRunId}/metric-namespaces"].get
+    transform: $["operationId"] = "LoadTestRun_GetMetricNamespaces";
+  - from: swagger-document
+    where: $["paths"]["/test-runs/{testRunId}/metric-definitions"].get
+    transform: $["operationId"] = "LoadTestRun_GetMetricDefinitions";
+  
   - from: swagger-document
     where: '$.paths.*[?(@.tags=="Test")]'
     transform: >

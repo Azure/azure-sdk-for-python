@@ -45,12 +45,12 @@ from ...operations._operations import (
     build_test_run_create_or_update_server_metrics_config_request,
     build_test_run_delete_test_run_request,
     build_test_run_get_app_components_request,
+    build_test_run_get_metric_definitions_request,
+    build_test_run_get_metric_namespaces_request,
     build_test_run_get_server_metrics_config_request,
     build_test_run_get_test_run_file_request,
     build_test_run_get_test_run_request,
-    build_test_run_list_metric_definitions_request,
     build_test_run_list_metric_dimension_values_request,
-    build_test_run_list_metric_namespaces_request,
     build_test_run_list_metrics_request,
     build_test_run_list_test_runs_request,
     build_test_run_stop_test_run_request,
@@ -4673,7 +4673,7 @@ class TestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def list_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> JSON:
+    async def get_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> JSON:
         """List the metric namespaces for a load test run.
 
         List the metric namespaces for a load test run.
@@ -4711,7 +4711,7 @@ class TestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_test_run_list_metric_namespaces_request(
+        request = build_test_run_get_metric_namespaces_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4743,7 +4743,7 @@ class TestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def list_metric_definitions(self, test_run_id: str, *, metric_namespace: str, **kwargs: Any) -> JSON:
+    async def get_metric_definitions(self, test_run_id: str, *, metric_namespace: str, **kwargs: Any) -> JSON:
         """List the metric definitions for a load test run.
 
         List the metric definitions for a load test run.
@@ -4811,7 +4811,7 @@ class TestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_test_run_list_metric_definitions_request(
+        request = build_test_run_get_metric_definitions_request(
             test_run_id=test_run_id,
             metric_namespace=metric_namespace,
             api_version=self._config.api_version,

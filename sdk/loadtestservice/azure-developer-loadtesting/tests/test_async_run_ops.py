@@ -185,10 +185,10 @@ class TestRunOps(LoadtestingAsyncTest):
         test_run_response = await run_client.test_run.get_test_run(loadtesting_test_run_id)
         assert test_run_response is not None
 
-        metric_namespaces = await run_client.test_run.list_metric_namespaces(loadtesting_test_run_id)
+        metric_namespaces = await run_client.test_run.get_metric_namespaces(loadtesting_test_run_id)
         assert metric_namespaces is not None
 
-        metric_definitions = await run_client.test_run.list_metric_definitions(loadtesting_test_run_id,
+        metric_definitions = await run_client.test_run.get_metric_definitions(loadtesting_test_run_id,
                             metric_namespace=metric_namespaces["value"][0]["name"])
         assert metric_definitions is not None
 

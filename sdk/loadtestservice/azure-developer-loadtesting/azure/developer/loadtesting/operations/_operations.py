@@ -542,7 +542,7 @@ def build_test_run_stop_test_run_request(test_run_id: str, **kwargs: Any) -> Htt
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_test_run_list_metric_namespaces_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+def build_test_run_get_metric_namespaces_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -568,7 +568,7 @@ def build_test_run_list_metric_namespaces_request(test_run_id: str, **kwargs: An
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_test_run_list_metric_definitions_request(
+def build_test_run_get_metric_definitions_request(
     test_run_id: str, *, metric_namespace: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -5401,7 +5401,7 @@ class TestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> JSON:
+    def get_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> JSON:
         """List the metric namespaces for a load test run.
 
         List the metric namespaces for a load test run.
@@ -5439,7 +5439,7 @@ class TestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_test_run_list_metric_namespaces_request(
+        request = build_test_run_get_metric_namespaces_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5471,7 +5471,7 @@ class TestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_metric_definitions(self, test_run_id: str, *, metric_namespace: str, **kwargs: Any) -> JSON:
+    def get_metric_definitions(self, test_run_id: str, *, metric_namespace: str, **kwargs: Any) -> JSON:
         """List the metric definitions for a load test run.
 
         List the metric definitions for a load test run.
@@ -5539,7 +5539,7 @@ class TestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_test_run_list_metric_definitions_request(
+        request = build_test_run_get_metric_definitions_request(
             test_run_id=test_run_id,
             metric_namespace=metric_namespace,
             api_version=self._config.api_version,
