@@ -5,9 +5,11 @@
 from typing import Any, Dict, Optional
 
 from azure.ai.ml._schema._deployment.batch.run_settings_schema import RunSettingsSchema
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 
 
+@experimental
 class RunSettings:
     """Run Settings entity
 

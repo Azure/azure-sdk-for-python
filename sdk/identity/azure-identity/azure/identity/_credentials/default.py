@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Any
 
 from azure.core.credentials import AccessToken
 from .._constants import EnvironmentVariables
@@ -16,8 +16,8 @@ from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .shared_cache import SharedTokenCacheCredential
 from .azure_cli import AzureCliCredential
+from .azd_cli import AzureDeveloperCliCredential
 from .vscode import VisualStudioCodeCredential
-
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -45,6 +45,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example 'login.microsoftonline.com',
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds. Managed identities ignore this because they reside in a single cloud.
+    :keyword bool exclude_azd_cli_credential: Whether to exclude the Azure Developer CLI
+        from the credential. Defaults to **False**.
     :keyword bool exclude_cli_credential: Whether to exclude the Azure CLI from the credential. Defaults to **False**.
     :keyword bool exclude_environment_credential: Whether to exclude a service principal configured by environment
         variables from the credential. Defaults to **False**.
@@ -74,7 +76,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -109,6 +111,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
         exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
+        exclude_azd_cli_credential = kwargs.pop("exclude_azd_cli_credential", False)
         exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
         exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
@@ -118,6 +121,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if not exclude_managed_identity_credential:
             credentials.append(ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs))
+        if not exclude_azd_cli_credential:
+            credentials.append(AzureDeveloperCliCredential())
         if not exclude_shared_token_cache_credential and SharedTokenCacheCredential.supported():
             try:
                 # username and/or tenant_id are only required when the cache contains tokens for multiple identities

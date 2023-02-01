@@ -43,7 +43,9 @@ def build_get_request(resource_group_name: str, operation_id: str, subscription_
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01"))
+    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-11-01-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -52,9 +54,7 @@ def build_get_request(resource_group_name: str, operation_id: str, subscription_
         "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataProtection/operationStatus/{operationId}",
     )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
@@ -95,7 +95,7 @@ class OperationStatusResourceGroupContextOperations:
 
         Gets the operation status for an operation over a ResourceGroup's context.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param operation_id: Required.
@@ -116,7 +116,7 @@ class OperationStatusResourceGroupContextOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.OperationResource] = kwargs.pop("cls", None)

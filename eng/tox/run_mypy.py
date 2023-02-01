@@ -15,8 +15,7 @@ import sys
 
 from ci_tools.environment_exclusions import (
     is_ignored_package,
-    MYPY_OPT_OUT,
-    TYPE_CHECK_SAMPLES_OPT_OUT,
+    is_check_enabled
 )
 
 logging.getLogger().setLevel(logging.INFO)
@@ -36,7 +35,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-    if package_name in MYPY_OPT_OUT or is_ignored_package(package_name):
+    if not is_check_enabled(args.target_package, "mypy", True) or is_ignored_package(package_name):
         logging.info(
             f"Package {package_name} opts-out of mypy check. See https://aka.ms/python/typing-guide for information."
         )
@@ -62,7 +61,7 @@ if __name__ == "__main__":
     except CalledProcessError as src_err:
         src_code_error = src_err
 
-    if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
+    if not is_check_enabled(args.target_package, "type_check_samples", True):
         logging.info(
             f"Package {package_name} opts-out of mypy check on samples."
         )

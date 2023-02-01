@@ -15,6 +15,7 @@ from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
+from ._assets.workspace_model_reference import WorkspaceModelReference
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
 from ._component.component import Component
@@ -76,7 +77,7 @@ from ._job.input_port import InputPort
 from ._job.job import Job
 from ._job.job_limits import CommandJobLimits
 from ._job.job_resource_configuration import JobResourceConfiguration
-from ._job.job_service import JobService
+from ._job.job_service import JobService, SshJobService,JupyterLabJobService, TensorBoardJobService, VsCodeJobService
 from ._job.parallel.parallel_task import ParallelTask
 from ._job.parallel.retry_settings import RetrySettings
 from ._job.parameterized_command import ParameterizedCommand
@@ -146,6 +147,10 @@ __all__ = [
     "ResourceConfiguration",
     "JobResourceConfiguration",
     "JobService",
+    "SshJobService",
+    "TensorBoardJobService",
+    "VsCodeJobService",
+    "JupyterLabJobService",
     "SparkResourceConfiguration",
     "ParameterizedCommand",
     "InputPort",
@@ -241,6 +246,7 @@ __all__ = [
     "SynapseSparkCompute",
     "AutoScaleSettings",
     "AutoPauseSettings",
+    "WorkspaceModelReference",
     # builders
     "Command",
     "Parallel",
