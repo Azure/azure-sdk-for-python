@@ -574,8 +574,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
-    def test_construct_container_registry_client(self, **kwargs):
-        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
+    def test_construct_container_registry_client(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
 

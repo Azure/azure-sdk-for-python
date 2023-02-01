@@ -27,7 +27,7 @@
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
     "**/assets.json",
-
+    "**/pyproject.toml",
     "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/batch/azure-batch/**",
@@ -75,6 +75,7 @@
     "sdk/servicebus/azure-servicebus/**",
     "sdk/storage/azure-storage-queue/**",
     "sdk/synapse/azure-synapse/**",
+    "sdk/synapse/azure-synapse-artifacts/**",
     "sdk/translation/azure-ai-translation-document/samples/assets/**",
     "sdk/translation/azure-ai-translation-document/tests/glossaries-valid.csv",
     "sdk/storage/azure-storage-blob/**",
@@ -92,10 +93,15 @@
     "eng/common/docgeneration/Generate-DocIndex.ps1",
     "eng/**/*.py",
     ".gitignore",
+    "tools/azure-sdk-tools/devtools_testutils/fake_credentials.py",
     "tools/azure-sdk-tools/packaging_tools/**",
-    "tools/azure-sdk-tools/setup.py"
+    "tools/azure-sdk-tools/setup.py",
+    "tools/azure-sdk-tools/tests/test_servicemetadata.py"
   ],
   "words": [
+    "pyprojecttoml",
+    "tomli",
+    "sdkrel",
     "qnamaker",
     "mindependency",
     "automl",
@@ -164,6 +170,7 @@
     "dtlksd",
     "DWORD",
     "eastus",
+    "euap",
     "eckey",
     "ekus",
     "encryptor",
@@ -1177,6 +1184,18 @@
         "wday",
         "mday",
         "deseralize",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/receipt/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
         "wday",
         "mday",
         "deseralize",

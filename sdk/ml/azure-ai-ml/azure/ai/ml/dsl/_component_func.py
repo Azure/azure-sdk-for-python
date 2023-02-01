@@ -48,6 +48,9 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
     except Exception:  # pylint: disable=broad-except
         pass
 
+    params_assignment_str = ", ".join([f"{param.name}=xxx" for param in all_params])
+    example = f"component_func({params_assignment_str})"
+
     dynamic_func = create_kw_function_from_parameters(
         component_creation_func,
         documentation=doc_string,
@@ -56,4 +59,6 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
         flattened_group_keys=flattened_group_keys,
     )
 
+    dynamic_func._func_calling_example = example
+    dynamic_func._has_parameters = bool(all_params)
     return dynamic_func

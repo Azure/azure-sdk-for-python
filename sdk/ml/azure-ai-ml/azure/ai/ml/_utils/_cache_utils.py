@@ -16,7 +16,7 @@ from typing import List, Dict, Optional, Union, Callable
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import is_on_disk_cache_enabled, is_concurrent_component_registration_enabled, \
-    is_private_preview_enabled, open_file_with_int_mode
+    is_private_preview_enabled, write_to_shared_file
 from azure.ai.ml.constants._common import AzureMLResourceType, AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
@@ -245,8 +245,7 @@ class CachedNodeResolver(object):
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         on_disk_cache_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            with open_file_with_int_mode(on_disk_cache_path, "w") as f:
-                f.write(arm_id)
+            write_to_shared_file(on_disk_cache_path, arm_id)
         except PermissionError:
             logger.warning(
                 "Failed to save on-disk cache for component due to permission error. "

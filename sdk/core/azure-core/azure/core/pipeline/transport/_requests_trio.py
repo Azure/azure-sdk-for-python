@@ -151,7 +151,7 @@ class TrioRequestsTransportResponse(AsyncHttpResponse, RequestsTransportResponse
         return TrioStreamDownloadGenerator(pipeline, self, **kwargs)
 
 
-class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
+class TrioRequestsTransport(RequestsAsyncTransportBase):
     """Identical implementation as the synchronous RequestsTransport wrapped in a class with
     asynchronous methods. Uses the third party trio event loop.
 
@@ -190,7 +190,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    @overload  # type: ignore
+    @overload
     async def send(  # pylint:disable=invalid-overridden-method
         self, request: "RestHttpRequest", **kwargs: Any
     ) -> "RestAsyncHttpResponse":
@@ -223,7 +223,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):  # type: ignore
         self.open()
         trio_limiter = kwargs.get("trio_limiter", None)
         response = None
-        error = None  # type: Optional[AzureErrorUnion]
+        error: Optional[AzureErrorUnion] = None
         data_to_send = await self._retrieve_request_data(request)
         try:
             try:
