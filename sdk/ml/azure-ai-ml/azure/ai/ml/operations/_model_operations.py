@@ -139,7 +139,7 @@ class ModelOperations(_ScopeDependentOperations):
                         raise ValidationException(
                             message=msg,
                             no_personal_data_message=msg,
-                            error_target=ErrorTarget.MODEL,
+                            target=ErrorTarget.MODEL,
                             error_category=ErrorCategory.USER_ERROR,
                         )
 
