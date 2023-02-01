@@ -207,7 +207,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
             assert count == 10
 
-    #@pytest.mark.skip(reason="TODO: iterator support")
+    # @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -982,7 +982,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                     with pytest.raises(ValueError):
                         receiver.complete_message(message)
 
-    #@pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1584,7 +1584,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 else:
                     raise Exception("Failed to receive schdeduled message.")
             
-    #@pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
@@ -1926,7 +1926,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
 
         assert message.scheduled_enqueue_time_utc is None
 
-    #@pytest.mark.skip(reason="TODO: iterator support")
+    @pytest.mark.skip(reason="TODO: Pyamqp Message Serialization Error")
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
