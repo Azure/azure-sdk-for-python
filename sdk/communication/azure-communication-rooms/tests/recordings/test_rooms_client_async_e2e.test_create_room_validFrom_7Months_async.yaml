@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:09:51 GMT
+      - Wed, 01 Feb 2023 00:17:27 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 18 Nov 2022 19:09:54 GMT
+      - Wed, 01 Feb 2023 00:17:27 GMT
       ms-cv:
-      - RWUVXDSG7U6M8hW/h2z1fw.2.0
+      - JnH/Wv7aKEGPQTGFaqKxEg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 39ms
+      - 19ms
     status:
       code: 201
       message: Created
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:09:52 GMT
+      - Wed, 01 Feb 2023 00:17:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -79,9 +79,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 18 Nov 2022 19:09:55 GMT
+      - Wed, 01 Feb 2023 00:17:27 GMT
       ms-cv:
-      - HmLJE1rVl0KscwVP2FZpqQ.2.0
+      - FixfJ27dzEiCT4NoBqAVgA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 205ms
+      - 19ms
     status:
       code: 201
       message: Created
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:09:53 GMT
+      - Wed, 01 Feb 2023 00:17:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -126,9 +126,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 18 Nov 2022 19:09:56 GMT
+      - Wed, 01 Feb 2023 00:17:27 GMT
       ms-cv:
-      - 9U9yF6JyS0mvjwmPYdQ6xw.2.0
+      - ocDrJ6ndwUasmL7xQj/TFg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -136,27 +136,27 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 46ms
+      - 18ms
     status:
       code: 201
       message: Created
 - request:
-    body: '{"validFrom": "2023-06-09T11:09:53.7244Z"}'
+    body: '{"validFrom": "2023-08-22T16:17:28.174016Z"}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '42'
+      - '44'
       Content-Type:
       - application/json
       Repeatability-First-Sent:
-      - '2022-11-18T19:09:53.7244Z'
+      - '2023-02-01T00:17:28.17501Z'
       Repeatability-Request-ID:
-      - 954f9f62-6774-11ed-bd01-d03c1f2e0bde
+      - cf96d057-a1c5-11ed-a1eb-d03c1f2e0bde
       User-Agent:
       - azsdk-python-communication-rooms/1.0.0b3 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:09:53 GMT
+      - Wed, 01 Feb 2023 00:17:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -164,12 +164,12 @@ interactions:
   response:
     body:
       string: '{"type":"https://tools.ietf.org/html/rfc7231#section-6.5.1","title":"One
-        or more validation errors occurred.","status":400,"traceId":"00-6aa47a029bd5b0e5adecee8517e67e3d-e4150e6bb00b34da-00","errors":{"ValidFrom":["Value
+        or more validation errors occurred.","status":400,"traceId":"00-b57f2260167321da009a11a1c0ed328d-3022d4f27b376a61-01","errors":{"ValidFrom":["Value
         is incorrect or more than 180 days in the future"]}}'
     headers:
       content-type: application/problem+json; charset=utf-8
-      date: Fri, 18 Nov 2022 19:09:56 GMT
-      ms-cv: vKPx8M9Xx0e4LF0re6GkNg.0
+      date: Wed, 01 Feb 2023 00:17:26 GMT
+      ms-cv: fUAnqwpISEiWMnq5eByZ0A.0
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
     status:
@@ -190,7 +190,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:09:54 GMT
+      - Wed, 01 Feb 2023 00:17:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -203,9 +203,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Fri, 18 Nov 2022 19:09:57 GMT
+      - Wed, 01 Feb 2023 00:17:27 GMT
       ms-cv:
-      - aaSrABLfpkuVwJKLzLURIw.2.0
+      - p7wtwndLs0GO2Dw3OOC7uw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -213,7 +213,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 178ms
+      - 144ms
     status:
       code: 204
       message: No Content
@@ -231,7 +231,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:09:54 GMT
+      - Wed, 01 Feb 2023 00:17:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -244,9 +244,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Fri, 18 Nov 2022 19:09:58 GMT
+      - Wed, 01 Feb 2023 00:17:28 GMT
       ms-cv:
-      - 6gWRSxIW4USdbsnXvX+D9g.2.0
+      - xZWoDVL3Eku/aQm5kHF5wg.0
       request-context:
       - appId=
       strict-transport-security:
@@ -254,7 +254,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 235ms
+      - 137ms
     status:
       code: 204
       message: No Content
@@ -272,7 +272,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:09:55 GMT
+      - Wed, 01 Feb 2023 00:17:28 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -285,9 +285,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Fri, 18 Nov 2022 19:09:58 GMT
+      - Wed, 01 Feb 2023 00:17:28 GMT
       ms-cv:
-      - Wp8AJtNJ7kaBTRBZsCcCDg.2.0
+      - G96pu5++40OH/+X2MnIR1g.0
       request-context:
       - appId=
       strict-transport-security:
@@ -295,7 +295,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 210ms
+      - 130ms
     status:
       code: 204
       message: No Content

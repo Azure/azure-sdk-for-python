@@ -375,17 +375,7 @@ class DataLakeDirectoryClient(PathClient):
                 :dedent: 4
                 :caption: Rename the source directory.
         """
-        new_name = new_name.strip('/')
-        new_file_system = new_name.split('/')[0]
-        new_path_and_token = new_name[len(new_file_system):].strip('/').split('?')
-        new_path = new_path_and_token[0]
-        try:
-            new_dir_sas = new_path_and_token[1] or self._query_str.strip('?')
-        except IndexError:
-            if not self._raw_credential and new_file_system != self.file_system_name:
-                raise ValueError("please provide the sas token for the new file")
-            if not self._raw_credential and new_file_system == self.file_system_name:
-                new_dir_sas = self._query_str.strip('?')
+        new_file_system, new_path, new_dir_sas = self._parse_rename_path(new_name)
 
         new_directory_client = DataLakeDirectoryClient(
             "{}://{}".format(self.scheme, self.primary_hostname), new_file_system, directory_name=new_path,
