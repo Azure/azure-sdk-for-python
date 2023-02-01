@@ -16,7 +16,6 @@ from . import models as _models
 from ._configuration import DataProtectionClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
-    BackupInstancesExtensionRoutingOperations,
     BackupInstancesOperations,
     BackupPoliciesOperations,
     BackupVaultOperationResultsOperations,
@@ -24,7 +23,6 @@ from .operations import (
     DataProtectionOperations,
     DataProtectionOperationsOperations,
     DeletedBackupInstancesOperations,
-    DppResourceGuardProxyOperations,
     ExportJobsOperationResultOperations,
     ExportJobsOperations,
     JobsOperations,
@@ -71,9 +69,6 @@ class DataProtectionClient:  # pylint: disable=client-accepts-api-version-keywor
     :vartype backup_policies: azure.mgmt.dataprotection.operations.BackupPoliciesOperations
     :ivar backup_instances: BackupInstancesOperations operations
     :vartype backup_instances: azure.mgmt.dataprotection.operations.BackupInstancesOperations
-    :ivar backup_instances_extension_routing: BackupInstancesExtensionRoutingOperations operations
-    :vartype backup_instances_extension_routing:
-     azure.mgmt.dataprotection.operations.BackupInstancesExtensionRoutingOperations
     :ivar recovery_points: RecoveryPointsOperations operations
     :vartype recovery_points: azure.mgmt.dataprotection.operations.RecoveryPointsOperations
     :ivar jobs: JobsOperations operations
@@ -91,17 +86,14 @@ class DataProtectionClient:  # pylint: disable=client-accepts-api-version-keywor
      azure.mgmt.dataprotection.operations.DeletedBackupInstancesOperations
     :ivar resource_guards: ResourceGuardsOperations operations
     :vartype resource_guards: azure.mgmt.dataprotection.operations.ResourceGuardsOperations
-    :ivar dpp_resource_guard_proxy: DppResourceGuardProxyOperations operations
-    :vartype dpp_resource_guard_proxy:
-     azure.mgmt.dataprotection.operations.DppResourceGuardProxyOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The subscription Id. Required.
+    :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -147,9 +139,6 @@ class DataProtectionClient:  # pylint: disable=client-accepts-api-version-keywor
         self.backup_instances = BackupInstancesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.backup_instances_extension_routing = BackupInstancesExtensionRoutingOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.recovery_points = RecoveryPointsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.restorable_time_ranges = RestorableTimeRangesOperations(
@@ -163,9 +152,6 @@ class DataProtectionClient:  # pylint: disable=client-accepts-api-version-keywor
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_guards = ResourceGuardsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dpp_resource_guard_proxy = DppResourceGuardProxyOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
