@@ -18,6 +18,7 @@ from azure.ai.ml._utils._arm_id_utils import (
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
+    is_singularity_id_for_resource,
     parse_name_label,
     parse_prefixed_name_version,
 )
@@ -124,6 +125,7 @@ class OperationOrchestrator(object):
             asset is None
             or is_ARM_id_for_resource(asset, azureml_type, sub_workspace_resource)
             or is_registry_id_for_resource(asset)
+            or is_singularity_id_for_resource(asset)
         ):
             return asset
         if isinstance(asset, str):
