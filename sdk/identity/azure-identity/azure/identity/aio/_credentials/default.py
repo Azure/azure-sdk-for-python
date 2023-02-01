@@ -62,8 +62,8 @@ class DefaultAzureCredential(ChainedTokenCredential):
         **False**.
     :keyword str managed_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
-    :keyword str workload_identity_client_id: The client ID of a user-assigned managed identity. Defaults to the value
-        of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
+    :keyword str workload_identity_client_id: The client ID of an identity assigned to the pod. Defaults to the value
+        of the environment variable AZURE_CLIENT_ID, if any. If not specified, the pod's default identity will be used.
     :keyword str shared_cache_username: Preferred username for :class:`~azure.identity.aio.SharedTokenCacheCredential`.
         Defaults to the value of environment variable AZURE_USERNAME, if any.
     :keyword str shared_cache_tenant_id: Preferred tenant for :class:`~azure.identity.aio.SharedTokenCacheCredential`.
