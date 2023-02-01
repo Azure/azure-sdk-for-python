@@ -84,36 +84,51 @@ class IgnoreFile(object):
 
     def exists(self) -> bool:
         """Checks if ignore file exists."""
+        return self._file_exists()
+
+    def _file_exists(self) -> bool:
         return self._path and self._path.exists()
+
+    @property
+    def base_path(self) -> Path:
+        return self._path.parent
 
     def _get_ignore_list(self) -> List[str]:
         """Get ignore list from ignore file contents."""
         if not self.exists():
             return []
-        with open(self._path, "r") as fh:
-            return [line for line in fh if line]
+        if self._file_exists():
+            with open(self._path, "r") as fh:
+                return [line.rstrip() for line in fh if line]
+        return []
 
     def _create_pathspec(self) -> List[GitWildMatchPattern]:
         """Creates path specification based on ignore list."""
         return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
+
+    def _get_rel_path(self, file_path: Union[str, Path]) -> Optional[str]:
+        """Get relative path of given file_path."""
+        file_path = Path(file_path).absolute()
+        try:
+            # use os.path.relpath instead of Path.relative_to in case file_path is not a child of self.base_path
+            return os.path.relpath(file_path, self.base_path)
+        except ValueError:
+            # 2 paths are on different drives
+            return None
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Checks if given file_path is excluded.
 
         :param file_path: File path to be checked against ignore file specifications
         """
-        if not self.exists():
-            return False
-        if not self._path_spec:
+        # TODO: current design of ignore file can't distinguish between files and directories of the same name
+        if self._path_spec is None:
             self._path_spec = self._create_pathspec()
-        file_path = Path(file_path)
-        if file_path.is_absolute():
-            ignore_dirname = self._path.parent
-            try:
-                file_path = os.path.relpath(file_path, ignore_dirname)
-            except ValueError:
-                # 2 paths are on different drives
-                return True
+        if not self._path_spec:
+            return False
+        file_path = self._get_rel_path(file_path)
+        if file_path is None:
+            return True
 
         norm_file = normalize_file(file_path)
         matched = False
