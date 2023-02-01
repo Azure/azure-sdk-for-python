@@ -847,7 +847,16 @@ class TestAzureTraceExporter(unittest.TestCase):
         self.assertEqual(envelope.data.base_data.url, "https://www.wikipedia.org/wiki/Rabbit")
         self.assertEqual(len(envelope.data.base_data.properties), 0)
         
-        
+        # success
+        span._attributes = {
+            "http.method": "GET",
+            "net.peer.ip": "peer_ip",
+            "http.status_code": 400,
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertFalse(envelope.data.base_data.success)
+
+
         # location
         span._attributes = {
             "http.method": "GET",

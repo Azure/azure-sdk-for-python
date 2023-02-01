@@ -7,6 +7,9 @@
 - Added support for new blob tier, `Cold`.
 - Added support for `AsyncIterable` as data type for async blob upload.
 
+### Bugs Fixed
+- Changed how async streams are detected on async `upload_blob` to increase compatiblity with different types.
+
 ### Other Changes
 - Removed `msrest` dependency.
 - Added `typing-extensions>=4.0.1` as a dependency.
