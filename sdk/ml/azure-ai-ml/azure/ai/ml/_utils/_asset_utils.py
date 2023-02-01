@@ -106,6 +106,16 @@ class IgnoreFile(object):
         """Creates path specification based on ignore list."""
         return [GitWildMatchPattern(ignore) for ignore in self._get_ignore_list()]
 
+    def _get_rel_path(self, file_path: Union[str, Path]) -> Optional[str]:
+        """Get relative path of given file_path."""
+        file_path = Path(file_path).absolute()
+        try:
+            # use os.path.relpath instead of Path.relative_to in case file_path is not a child of self.base_path
+            return os.path.relpath(file_path, self.base_path)
+        except ValueError:
+            # 2 paths are on different drives
+            return None
+
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Checks if given file_path is excluded.
 
@@ -116,14 +126,9 @@ class IgnoreFile(object):
             self._path_spec = self._create_pathspec()
         if not self._path_spec:
             return False
-        file_path = Path(file_path)
-        if file_path.is_absolute():
-            ignore_dirname = self.base_path
-            try:
-                file_path = os.path.relpath(file_path, ignore_dirname)
-            except ValueError:
-                # 2 paths are on different drives
-                return True
+        file_path = self._get_rel_path(file_path)
+        if file_path is None:
+            return True
 
         norm_file = normalize_file(file_path)
         matched = False
