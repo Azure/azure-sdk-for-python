@@ -30,7 +30,14 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     validate_inputs_for_command,
 )
 from azure.ai.ml.entities._job.distribution import DistributionConfiguration
-from azure.ai.ml.entities._job.job_service import JobService
+from azure.ai.ml.entities._job.job_service import (
+    JobServiceBase,
+    JobService,
+    JupyterLabJobService,
+    SshJobService,
+    TensorBoardJobService,
+    VsCodeJobService,
+)
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -101,7 +108,9 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
         identity: Optional[
             Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
         ] = None,
-        services: Optional[Dict[str, JobService]] = None,
+        services: Optional[
+            Dict[str, Union[JobService, JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService]]
+        ] = None,
         **kwargs,
     ):
         kwargs[TYPE] = JobType.COMMAND
@@ -163,7 +172,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             environment_variables=self.environment_variables,
             resources=resources._to_rest_object() if resources else None,
             limits=self.limits._to_rest_object() if self.limits else None,
-            services=JobService._to_rest_job_services(self.services),
+            services=JobServiceBase._to_rest_job_services(self.services),
         )
         result = JobBase(properties=properties)
         result.name = self.name
@@ -186,7 +195,7 @@ class CommandJob(Job, ParameterizedCommand, JobIOMixin):
             properties=rest_command_job.properties,
             command=rest_command_job.command,
             experiment_name=rest_command_job.experiment_name,
-            services=JobService._from_rest_job_services(rest_command_job.services),
+            services=JobServiceBase._from_rest_job_services(rest_command_job.services),
             status=rest_command_job.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
             code=rest_command_job.code_id,
