@@ -114,16 +114,16 @@ if __name__ == "__main__":
         "--outputjson",
     ]
 
+    # get type completeness score from current code
+    install_editable(setup_path)
+    score_from_current = get_type_complete_score(commands, check_pytyped=True)
+
     # get type completeness score from latest release
     latest_version = install_latest_release(package_name)
     if latest_version:
         score_from_released = get_type_complete_score(commands)
     else:
         score_from_released = None
-
-    # get type completeness score from current code
-    install_editable(setup_path)
-    score_from_current = get_type_complete_score(commands, check_pytyped=True)
 
     try:
         subprocess.check_call(commands[:-1])
