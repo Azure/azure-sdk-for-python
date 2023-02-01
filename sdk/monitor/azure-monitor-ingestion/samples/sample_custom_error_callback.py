@@ -1,6 +1,31 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 """
-Usage: python sample_custom_error_callback.py
+FILE: sample_custom_error_callback.py
+
+DESCRIPTION:
+    This sample demonstrates how to use error callbacks to customize how errors are handled during upload.
+
+    Note: This sample requires the azure-identity library.
+
+USAGE:
+    python sample_custom_error_callback.py
+
+    Set the environment variables with your own values before running the sample:
+    1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
+    2) LOGS_DCR_RULE_ID - your data collection rule immutable ID
+    3) LOGS_DCR_STREAM_NAME - your data collection rule stream name
+
+    If using an application service principal for authentication, set the following:
+    1) AZURE_TENANT_ID - your Azure AD tenant (directory) ID
+    2) AZURE_CLIENT_ID - your Azure AD client (application) ID
+    3) AZURE_CLIENT_SECRET - your Azure AD client secret
 """
+
 import os
 
 from azure.core.exceptions import HttpResponseError

@@ -33,7 +33,7 @@ This library allows you to send data from virtually any source to supported buil
 
 To run the samples, you need to install the following dependencies:
 ```bash
-pip install azure-monitor-ingestion pandas
+pip install azure-monitor-ingestion azure-identity pandas
 ```
 
 To run the async samples, you need an asynchronous HTTP framework like `aiohttp`:
@@ -47,9 +47,9 @@ pip install aiohttp
 We use [azure-identity][azure_identity]'s [DefaultAzureCredential][azure_identity_default_azure_credential] to authenticate. Ensure that your service principal or managed identity has the `Monitoring Metrics Publisher` role assigned on the Data Collection Rule resource. If you are using a service principal, set the following environment variables:
 
 ```bash
-AZURE_TENANT_ID="your tenant id"
-AZURE_CLIENT_ID="your client id"
-AZURE_CLIENT_SECRET="your client secret"
+AZURE_TENANT_ID="your Azure AD tenant (directory) ID"
+AZURE_CLIENT_ID="your Azure AD client (application) ID"
+AZURE_CLIENT_SECRET="your Azure AD client secret"
 ```
 
 ### Set up additional environment variables
@@ -58,7 +58,7 @@ Change and set the following environment variables to match your configuration:
 
 ```bash
 DATA_COLLECTION_ENDPOINT="your data collection endpoint"
-LOGS_DCR_RULE_ID="your data collection rule immutable id"
+LOGS_DCR_RULE_ID="your data collection rule immutable ID"
 LOGS_DCR_STREAM_NAME="your data collection rule stream name"
 ```
 

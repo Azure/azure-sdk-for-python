@@ -1,9 +1,33 @@
-"""
-In some cases, a user might have data stored in a pandas dataframe (e.g. from the result of another query)
-and want to upload it to Azure Monitor. This sample demonstrates how to do so.
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
 
-Usage: python sample_upload_pandas_dataframe_async.py
 """
+FILE: sample_upload_pandas_dataframe_async.py
+
+DESCRIPTION:
+    This sample demonstrates how to upload data stored in a pandas dataframe to Azure Monitor. For example,
+    a user might have the result of a query stored in a pandas dataframe and want to upload it to a Log Analytics
+    workspace.
+
+    Note: This sample requires the azure-identity and pandas libraries.
+
+USAGE:
+    python sample_upload_pandas_dataframe_async.py
+
+    Set the environment variables with your own values before running the sample:
+    1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
+    2) LOGS_DCR_RULE_ID - your data collection rule immutable ID
+    3) LOGS_DCR_STREAM_NAME - your data collection rule stream name
+
+    If using an application service principal for authentication, set the following:
+    1) AZURE_TENANT_ID - your Azure AD tenant (directory) ID
+    2) AZURE_CLIENT_ID - your Azure AD client (application) ID
+    3) AZURE_CLIENT_SECRET - your Azure AD client secret
+"""
+
 import asyncio
 from datetime import datetime
 import json
