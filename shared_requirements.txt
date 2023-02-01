@@ -798,3 +798,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-ai-ml pydash<6.0.0
 #override azure-ai-ml pyjwt>=1.7.1,<3.0.0
 #override azure-ai-ml opencensus-ext-azure>=0.3.1,<2.0.0
+#override azure-webpubsub-client isodate<1.0.0,>=0.6.1
+#override azure-webpubsub-client azure-core<2.0.0,>=1.24.0
+#override azure-webpubsub-client typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-webpubsub-client websocket-client>=1.4.2
