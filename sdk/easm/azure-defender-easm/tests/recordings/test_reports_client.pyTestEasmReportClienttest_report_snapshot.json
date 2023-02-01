@@ -1,0 +1,775 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.9 (macOS-12.6.3-arm64-arm-64bit)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 01 Feb 2023 22:46:22 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCwAAAJribNsOAAAA; expires=Fri, 03-Mar-2023 22:46:23 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14601.8 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCwAAAJribNsOAAAA; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.9 (macOS-12.6.3-arm64-arm-64bit)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 01 Feb 2023 22:46:22 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCwAAAJribNsOAAAA; expires=Fri, 03-Mar-2023 22:46:23 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14526.6 - WUS2 ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "d08dd0b2-32e5-44af-b129-f50e0faab9c9",
+        "Connection": "keep-alive",
+        "Content-Length": "299",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCwAAAJribNsOAAAA; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.9 (macOS-12.6.3-arm64-arm-64bit)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "darwin",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.20.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=62863d4e-cd1a-4bd0-9bef-244876975ad5\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=87E8Q~imNjR6hp6lWxryXhQA6msnbCXzDNTigamY\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Feasm.defender.microsoft.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "d08dd0b2-32e5-44af-b129-f50e0faab9c9",
+        "Content-Length": "111",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 01 Feb 2023 22:46:22 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCwAAAJribNsOAAAA; expires=Fri, 03-Mar-2023 22:46:23 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.14601.8 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "refresh_in": 43199,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://fake_endpoint.easm.defender.microsoft.com/subscriptions/fake-sub-id/resourceGroups/fake_resource_group/workspaces/fakename/reports/assets:snapshot?api-version=2022-11-01-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "38",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-defender-easm/1.0.0b1 Python/3.10.9 (macOS-12.6.3-arm64-arm-64bit)"
+      },
+      "RequestBody": {
+        "metric": "savedfilter_metric_40610"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, must-revalidate, no-cache, max-age=0",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json",
+        "Date": "Wed, 01 Feb 2023 22:46:24 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Server": "digitalfootprint-web",
+        "Strict-Transport-Security": "max-age=31536000 ; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "origin",
+          "access-control-request-method",
+          "access-control-request-headers",
+          "accept-encoding"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "x-ms-correlation-request-id": "c8d882db-4e07-4f01-8049-f731f12d88e0",
+        "x-ms-ui-version": "sdk",
+        "X-XSS-Protection": "1; mode=block"
+      },
+      "ResponseBody": {
+        "displayName": "ASI: CVE-2020-9490 - Push Diary Crash on Specifically Crafted HTTP/2 Header",
+        "metric": "savedfilter_metric_40610",
+        "labelName": null,
+        "updatedAt": "2023-02-01T02:39:45.000\u002B00:00",
+        "description": "##### Description \nIn Apache HTTP Server versions 2.4.20 to 2.4.43, a specially crafted value for the \u0027Cache-Digest\u0027 header in a HTTP/2 request would result in a crash when the server actually tries to HTTP/2 PUSH a resource afterwards. This vulnerability has been remedied in Apache HTTP Server 2.4.44. \n\n##### Related Intelligence\nCVE: [CVE-2020-9490](https://nvd.nist.gov/vuln/detail/CVE-2020-9490)\nSecurity Advisory: [Apache Security Advisory](https://httpd.apache.org/security/vulnerabilities_24.html#CVE-2020-9490)\n\n##### Remediation\nThis vulnerability was fixed in Apache HTTP Server version 2.4.44. It is advised that users of unpatched servers upgrade to the latest version as soon as possible. Configuring the HTTP/2 feature via \u0022H2Push off\u0022 will mitigate this vulnerability for unpatched servers.",
+        "assets": {
+          "totalElements": 3,
+          "totalPages": 1,
+          "last": true,
+          "numberOfElements": 3,
+          "first": true,
+          "size": 20,
+          "number": 0,
+          "content": [
+            {
+              "id": "host$$scala.tacobell.com",
+              "name": "scala.tacobell.com",
+              "displayName": "scala.tacobell.com",
+              "kind": "host",
+              "uuid": "ce5e21b2-f3a1-e727-6af2-c7e25d870637",
+              "asset": {
+                "host": "scala.tacobell.com",
+                "domain": "tacobell.com",
+                "ipAddresses": [],
+                "webComponents": [
+                  {
+                    "name": "AlmaLinux",
+                    "type": "Operating System",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Amazon Elastic Load Balancing",
+                    "type": "Service",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Amazon Web Services",
+                    "type": "Hosting Provider",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Apache",
+                    "type": "Server",
+                    "version": "2.4.37",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "OpenSSL",
+                    "type": "Server Module",
+                    "version": "1.1.1k",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  }
+                ],
+                "headers": [],
+                "attributes": [],
+                "cookies": [],
+                "sslCerts": [],
+                "parentHosts": [],
+                "childHosts": [],
+                "services": [],
+                "cnames": [],
+                "sources": [],
+                "firstSeen": "2017-03-10T03:39:10.000\u002B00:00",
+                "lastSeen": "2023-01-30T23:28:14.000\u002B00:00",
+                "resourceUrls": [],
+                "scanMetadata": [],
+                "asns": [],
+                "ipBlocks": [],
+                "responseBodies": [],
+                "domainAsset": {
+                  "domain": "tacobell.com",
+                  "registrarIanaIds": [],
+                  "registrantContacts": [],
+                  "registrantOrgs": [
+                    {
+                      "value": "Yum Brands, Inc.",
+                      "sources": [],
+                      "recent": true
+                    }
+                  ],
+                  "adminContacts": [],
+                  "technicalContacts": [],
+                  "alexaInfos": [],
+                  "nameServers": [],
+                  "mailServers": [],
+                  "whoisServers": [],
+                  "domainStatuses": [],
+                  "registrarCreatedAt": [],
+                  "registrarUpdatedAt": [],
+                  "registrarExpiresAt": [],
+                  "soaRecords": [],
+                  "registrarNames": [
+                    {
+                      "value": "CSC Corporate Domains, Inc.",
+                      "sources": [],
+                      "recent": true
+                    }
+                  ],
+                  "sources": [],
+                  "firstSeen": "2017-03-10T03:39:10.000\u002B00:00",
+                  "lastSeen": "2023-01-30T23:28:14.000\u002B00:00",
+                  "parkedDomain": [],
+                  "registrantNames": [],
+                  "adminNames": [],
+                  "technicalNames": [],
+                  "adminOrgs": [],
+                  "technicalOrgs": [],
+                  "registrantPhones": [],
+                  "adminPhones": [],
+                  "technicalPhones": []
+                },
+                "nsRecord": [],
+                "mxRecord": [],
+                "webserver": [],
+                "location": [],
+                "nxdomain": [],
+                "sslServerConfig": [],
+                "isWildcard": [],
+                "banners": [],
+                "ipv4": [],
+                "ipv6": []
+              },
+              "createdDate": "2017-03-10T03:39:10.000\u002B00:00",
+              "updatedDate": "2023-01-30T23:28:14.000\u002B00:00",
+              "state": null,
+              "externalId": null,
+              "labels": null,
+              "wildcard": false,
+              "discoGroupName": null,
+              "auditTrail": [
+                {
+                  "id": null,
+                  "name": "tacobell.com",
+                  "displayName": null,
+                  "kind": "domain",
+                  "reason": null
+                }
+              ],
+              "reason": null
+            },
+            {
+              "id": "page$$http://scala.tacobell.com/",
+              "name": "http://scala.tacobell.com/",
+              "displayName": "http://scala.tacobell.com/",
+              "kind": "page",
+              "uuid": "353e0018-24b7-3431-aea2-404712ed591f",
+              "asset": {
+                "url": "http://scala.tacobell.com/",
+                "ipAddresses": [],
+                "successful": [],
+                "httpResponseCodes": [],
+                "httpResponseMessages": [],
+                "responseTimes": [],
+                "frames": [],
+                "windows": [],
+                "nonHtmlFrames": [],
+                "undirectedContent": [],
+                "contentTypes": [],
+                "contentLengths": [],
+                "windowNames": [],
+                "charsets": [],
+                "titles": [],
+                "languages": [],
+                "responseHeaders": [],
+                "cookies": [],
+                "webComponents": [
+                  {
+                    "name": "AlmaLinux",
+                    "type": "Operating System",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Amazon Elastic Load Balancing",
+                    "type": "Service",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Amazon Web Services",
+                    "type": "Hosting Provider",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Apache",
+                    "type": "Server",
+                    "version": "2.4.37",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "OpenSSL",
+                    "type": "Server Module",
+                    "version": "1.1.1k",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  }
+                ],
+                "attributes": [],
+                "assetSecurityPolicies": [],
+                "responseBodyMinhashSignatures": [],
+                "fullDomMinhashSignatures": [],
+                "responseBodyHashSignatures": [],
+                "errors": [],
+                "sslCerts": [],
+                "sources": [],
+                "firstSeen": "2018-10-09T11:05:54.365\u002B00:00",
+                "lastSeen": "2023-01-30T23:28:03.714\u002B00:00",
+                "redirectUrls": [],
+                "finalUrls": [],
+                "finalResponseCodes": [],
+                "parkedPage": [],
+                "resourceUrls": [],
+                "guids": [],
+                "finalIpAddresses": [],
+                "asns": [],
+                "ipBlocks": [],
+                "finalAsns": [],
+                "finalIpBlocks": [],
+                "responseBodies": [],
+                "domainAsset": {
+                  "domain": "tacobell.com",
+                  "registrarIanaIds": [],
+                  "registrantContacts": [],
+                  "registrantOrgs": [
+                    {
+                      "value": "Yum Brands, Inc.",
+                      "sources": [],
+                      "recent": true
+                    }
+                  ],
+                  "adminContacts": [],
+                  "technicalContacts": [],
+                  "alexaInfos": [],
+                  "nameServers": [],
+                  "mailServers": [],
+                  "whoisServers": [],
+                  "domainStatuses": [],
+                  "registrarCreatedAt": [],
+                  "registrarUpdatedAt": [],
+                  "registrarExpiresAt": [],
+                  "soaRecords": [],
+                  "registrarNames": [
+                    {
+                      "value": "CSC Corporate Domains, Inc.",
+                      "sources": [],
+                      "recent": true
+                    }
+                  ],
+                  "sources": [],
+                  "firstSeen": "2018-10-09T11:05:54.365\u002B00:00",
+                  "lastSeen": "2023-01-30T23:28:03.714\u002B00:00",
+                  "parkedDomain": [],
+                  "registrantNames": [],
+                  "adminNames": [],
+                  "technicalNames": [],
+                  "adminOrgs": [],
+                  "technicalOrgs": [],
+                  "registrantPhones": [],
+                  "adminPhones": [],
+                  "technicalPhones": []
+                },
+                "location": [],
+                "services": [],
+                "cnames": [],
+                "cdns": [],
+                "domain": "tacobell.com",
+                "sslServerConfig": [],
+                "gdprAssetSecurityPolicies": [],
+                "ipv4": [],
+                "ipv6": []
+              },
+              "createdDate": "2018-10-09T11:05:54.365\u002B00:00",
+              "updatedDate": "2023-01-30T23:28:03.714\u002B00:00",
+              "state": null,
+              "externalId": null,
+              "labels": null,
+              "wildcard": false,
+              "discoGroupName": null,
+              "auditTrail": [
+                {
+                  "id": null,
+                  "name": "tacobell.com",
+                  "displayName": null,
+                  "kind": "domain",
+                  "reason": null
+                },
+                {
+                  "id": null,
+                  "name": "scala.tacobell.com",
+                  "displayName": null,
+                  "kind": "host",
+                  "reason": null
+                },
+                {
+                  "id": null,
+                  "name": "scala.tacobell.com",
+                  "displayName": null,
+                  "kind": "host",
+                  "reason": null
+                }
+              ],
+              "reason": null
+            },
+            {
+              "id": "page$$https://scala.tacobell.com/",
+              "name": "https://scala.tacobell.com/",
+              "displayName": "https://scala.tacobell.com/",
+              "kind": "page",
+              "uuid": "f3c74e39-4ea2-b672-6c14-e658c0394f62",
+              "asset": {
+                "url": "https://scala.tacobell.com/",
+                "ipAddresses": [],
+                "successful": [],
+                "httpResponseCodes": [],
+                "httpResponseMessages": [],
+                "responseTimes": [],
+                "frames": [],
+                "windows": [],
+                "nonHtmlFrames": [],
+                "undirectedContent": [],
+                "contentTypes": [],
+                "contentLengths": [],
+                "windowNames": [],
+                "charsets": [],
+                "titles": [],
+                "languages": [],
+                "responseHeaders": [],
+                "cookies": [],
+                "webComponents": [
+                  {
+                    "name": "AlmaLinux",
+                    "type": "Operating System",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Amazon Elastic Load Balancing",
+                    "type": "Service",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Amazon Web Services",
+                    "type": "Hosting Provider",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "Apache",
+                    "type": "Server",
+                    "version": "2.4.37",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  },
+                  {
+                    "name": "OpenSSL",
+                    "type": "Server Module",
+                    "version": "1.1.1k",
+                    "ruleid": [],
+                    "cve": [],
+                    "ports": [],
+                    "sources": []
+                  }
+                ],
+                "attributes": [],
+                "assetSecurityPolicies": [],
+                "responseBodyMinhashSignatures": [],
+                "fullDomMinhashSignatures": [],
+                "responseBodyHashSignatures": [],
+                "errors": [],
+                "sslCerts": [],
+                "sources": [],
+                "firstSeen": "2018-12-05T07:29:47.491\u002B00:00",
+                "lastSeen": "2023-01-30T17:33:52.013\u002B00:00",
+                "redirectUrls": [],
+                "finalUrls": [],
+                "finalResponseCodes": [],
+                "parkedPage": [],
+                "resourceUrls": [],
+                "guids": [],
+                "finalIpAddresses": [],
+                "asns": [],
+                "ipBlocks": [],
+                "finalAsns": [],
+                "finalIpBlocks": [],
+                "responseBodies": [],
+                "domainAsset": {
+                  "domain": "tacobell.com",
+                  "registrarIanaIds": [],
+                  "registrantContacts": [],
+                  "registrantOrgs": [
+                    {
+                      "value": "Yum Brands, Inc.",
+                      "sources": [],
+                      "recent": true
+                    }
+                  ],
+                  "adminContacts": [],
+                  "technicalContacts": [],
+                  "alexaInfos": [],
+                  "nameServers": [],
+                  "mailServers": [],
+                  "whoisServers": [],
+                  "domainStatuses": [],
+                  "registrarCreatedAt": [],
+                  "registrarUpdatedAt": [],
+                  "registrarExpiresAt": [],
+                  "soaRecords": [],
+                  "registrarNames": [
+                    {
+                      "value": "CSC Corporate Domains, Inc.",
+                      "sources": [],
+                      "recent": true
+                    }
+                  ],
+                  "sources": [],
+                  "firstSeen": "2018-12-05T07:29:47.491\u002B00:00",
+                  "lastSeen": "2023-01-30T17:33:52.013\u002B00:00",
+                  "parkedDomain": [],
+                  "registrantNames": [],
+                  "adminNames": [],
+                  "technicalNames": [],
+                  "adminOrgs": [],
+                  "technicalOrgs": [],
+                  "registrantPhones": [],
+                  "adminPhones": [],
+                  "technicalPhones": []
+                },
+                "location": [],
+                "services": [],
+                "cnames": [],
+                "cdns": [],
+                "domain": "tacobell.com",
+                "sslServerConfig": [],
+                "gdprAssetSecurityPolicies": [],
+                "ipv4": [],
+                "ipv6": []
+              },
+              "createdDate": "2018-12-05T07:29:47.491\u002B00:00",
+              "updatedDate": "2023-01-30T17:33:52.013\u002B00:00",
+              "state": null,
+              "externalId": null,
+              "labels": null,
+              "wildcard": false,
+              "discoGroupName": null,
+              "auditTrail": [
+                {
+                  "id": null,
+                  "name": "tacobell.com",
+                  "displayName": null,
+                  "kind": "domain",
+                  "reason": null
+                },
+                {
+                  "id": null,
+                  "name": "scala.tacobell.com",
+                  "displayName": null,
+                  "kind": "host",
+                  "reason": null
+                },
+                {
+                  "id": null,
+                  "name": "scala.tacobell.com",
+                  "displayName": null,
+                  "kind": "host",
+                  "reason": null
+                }
+              ],
+              "reason": null
+            }
+          ],
+          "mark": null
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

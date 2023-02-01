@@ -5,30 +5,21 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import AzureTestCase, AzureRecordedTestCase, EnvironmentVariableLoader
 from azure.defender.easm import EasmClient
-from azure.identity import InteractiveBrowserCredential
 import datetime
 
-RG='nate-test-rg'
-SUB_ID='59af3bf1-d118-4916-808e-923509b34a94'
-WS='testSdkWorkspace9271133'
-ENDPOINT='eastus.easm.defender.microsoft.com'
 
-class EasmTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(EasmTest, self).__init__(method_name, **kwargs)
-
-    def create_client(self, endpoint):
+class EasmTest(AzureRecordedTestCase):
+    def create_client(self, endpoint, resource_group, subscription_id, workspace):
         credential = self.get_credential(EasmClient)
         return self.create_client_from_credential(
             EasmClient,
-            #credential=InteractiveBrowserCredential(),
             credential=credential,
             endpoint=endpoint,
-            resource_group_name=RG,
-            subscription_id=SUB_ID,
-            workspace_name=WS
+            resource_group_name=resource_group,
+            subscription_id=subscription_id,
+            workspace_name=workspace
         )
 
     def check_timestamp_format(self, time_format, timestamp):
@@ -43,9 +34,11 @@ class EasmTest(AzureTestCase):
         assert all(len(seg) == l for seg, l in zip(parts, lengths)), 'invalid guid'
 
 
-
-EasmPowerShellPreparer = functools.partial(
-    PowerShellPreparer,
-    'easm',
-    easm_endpoint=ENDPOINT
+EasmParameterProvider = functools.partial(
+    EnvironmentVariableLoader,
+    "easm",
+    easm_endpoint="fake_endpoint.easm.defender.microsoft.com",
+    easm_resource_group="fake_resource_group",
+    easm_subscription_id="fake-sub-id",
+    easm_workspace="fakename"
 )

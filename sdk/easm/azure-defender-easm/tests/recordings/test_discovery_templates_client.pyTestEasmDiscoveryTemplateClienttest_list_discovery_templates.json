@@ -1,0 +1,594 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.9 (macOS-12.6.3-arm64-arm-64bit)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 01 Feb 2023 22:46:08 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCAAAAJribNsOAAAA; expires=Fri, 03-Mar-2023 22:46:08 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14601.8 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Cookie": "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCAAAAJribNsOAAAA; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.9 (macOS-12.6.3-arm64-arm-64bit)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 01 Feb 2023 22:46:08 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": [
+          "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCAAAAJribNsOAAAA; expires=Fri, 03-Mar-2023 22:46:09 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14526.6 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "b94a7ce6-5b70-41e0-a868-97f7a9d74aca",
+        "Connection": "keep-alive",
+        "Content-Length": "299",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Cookie": "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCAAAAJribNsOAAAA; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.9 (macOS-12.6.3-arm64-arm-64bit)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "darwin",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.20.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=62863d4e-cd1a-4bd0-9bef-244876975ad5\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=87E8Q~imNjR6hp6lWxryXhQA6msnbCXzDNTigamY\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Feasm.defender.microsoft.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "b94a7ce6-5b70-41e0-a868-97f7a9d74aca",
+        "Content-Length": "111",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 01 Feb 2023 22:46:08 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": [
+          "fpc=AkAkqklNqaJIsJPpuOk4L8KVPh8fCQAAAJribNsOAAAA; expires=Fri, 03-Mar-2023 22:46:09 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+        ],
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.14601.8 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "refresh_in": 43199,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://fake_endpoint.easm.defender.microsoft.com/subscriptions/fake-sub-id/resourceGroups/fake_resource_group/workspaces/fakename/discoTemplates?filter=taco\u0026skip=0\u0026api-version=2022-11-01-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-defender-easm/1.0.0b1 Python/3.10.9 (macOS-12.6.3-arm64-arm-64bit)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, must-revalidate, no-cache, max-age=0",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json",
+        "Date": "Wed, 01 Feb 2023 22:46:10 GMT",
+        "Expires": "0",
+        "Pragma": "no-cache",
+        "Server": "digitalfootprint-web",
+        "Strict-Transport-Security": "max-age=31536000 ; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "origin",
+          "access-control-request-method",
+          "access-control-request-headers",
+          "accept-encoding"
+        ],
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "x-ms-correlation-request-id": "0646a06e-abbb-4768-8259-e05cec15192e",
+        "x-ms-ui-version": "sdk",
+        "X-XSS-Protection": "1; mode=block"
+      },
+      "ResponseBody": {
+        "totalElements": 23,
+        "totalPages": 1,
+        "last": true,
+        "numberOfElements": 23,
+        "first": true,
+        "size": 23,
+        "number": 0,
+        "content": [
+          {
+            "id": "44368",
+            "name": "Datacolor AG",
+            "displayName": "Datacolor AG",
+            "industry": "Electronic Equipment, Instruments and Components",
+            "region": "Europe",
+            "countryCode": "CH",
+            "stateCode": null,
+            "city": "Lucerne",
+            "seeds": [],
+            "names": [
+              "Datacolor AG"
+            ]
+          },
+          {
+            "id": "44763",
+            "name": "Datacom Group Limited",
+            "displayName": "Datacom Group Limited",
+            "industry": "IT Services",
+            "region": "Asia / Pacific",
+            "countryCode": "NZ",
+            "stateCode": null,
+            "city": "Wellington",
+            "seeds": [],
+            "names": [
+              "Datacom Group Limited"
+            ]
+          },
+          {
+            "id": "99287",
+            "name": "Datacom Wireless Corporation",
+            "displayName": "Datacom Wireless Corporation",
+            "industry": "Communications Equipment",
+            "region": "United States and Canada",
+            "countryCode": "CA",
+            "stateCode": "QC",
+            "city": "Laval",
+            "seeds": [],
+            "names": [
+              "Datacom Wireless Corporation"
+            ]
+          },
+          {
+            "id": "118170",
+            "name": "Taco Bell Corp.",
+            "displayName": "Taco Bell Corp.",
+            "industry": "Hotels, Restaurants and Leisure",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "CA",
+            "city": "Irvine",
+            "seeds": [],
+            "names": [
+              "Taco Bell Corp."
+            ]
+          },
+          {
+            "id": "225232",
+            "name": "Multacom",
+            "displayName": "Multacom",
+            "industry": "Diversified Telecommunication Services",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "CA",
+            "city": "City of Industry",
+            "seeds": [],
+            "names": [
+              "Multacom"
+            ]
+          },
+          {
+            "id": "308337",
+            "name": "Datacor, Inc.",
+            "displayName": "Datacor, Inc.",
+            "industry": "Software",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "NJ",
+            "city": "Florham Park",
+            "seeds": [],
+            "names": [
+              "Datacor, Inc."
+            ]
+          },
+          {
+            "id": "310537",
+            "name": "Taco Comfort Solutions, Inc.",
+            "displayName": "Taco Comfort Solutions, Inc.",
+            "industry": "Machinery",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "RI",
+            "city": "Cranston",
+            "seeds": [],
+            "names": [
+              "Taco Comfort Solutions, Inc."
+            ]
+          },
+          {
+            "id": "358636",
+            "name": "NSGDatacom, Inc.",
+            "displayName": "NSGDatacom, Inc.",
+            "industry": "Communications Equipment",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "MD",
+            "city": "Frederick",
+            "seeds": [],
+            "names": [
+              "NSGDatacom, Inc."
+            ]
+          },
+          {
+            "id": "372916",
+            "name": "Zetacom B.V.",
+            "displayName": "Zetacom B.V.",
+            "industry": "IT Services",
+            "region": "Europe",
+            "countryCode": "NL",
+            "stateCode": null,
+            "city": "Zoetermeer",
+            "seeds": [],
+            "names": [
+              "Zetacom B.V."
+            ]
+          },
+          {
+            "id": "396005",
+            "name": "The Port of Tacoma",
+            "displayName": "The Port of Tacoma",
+            "industry": "Marine",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "WA",
+            "city": "Tacoma",
+            "seeds": [],
+            "names": [
+              "The Port of Tacoma"
+            ]
+          },
+          {
+            "id": "497057",
+            "name": "DataCore Software Corporation",
+            "displayName": "DataCore Software Corporation",
+            "industry": "Software",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "FL",
+            "city": "Fort Lauderdale",
+            "seeds": [],
+            "names": [
+              "DataCore Software Corporation"
+            ]
+          },
+          {
+            "id": "514288",
+            "name": "DataComm Networks, Inc.",
+            "displayName": "DataComm Networks, Inc.",
+            "industry": "IT Services",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "FL",
+            "city": "Tampa",
+            "seeds": [],
+            "names": [
+              "DataComm Networks, Inc."
+            ]
+          },
+          {
+            "id": "554369",
+            "name": "Betacom S.A.",
+            "displayName": "Betacom S.A.",
+            "industry": "IT Services",
+            "region": "Europe",
+            "countryCode": "PL",
+            "stateCode": null,
+            "city": "Warsaw",
+            "seeds": [],
+            "names": [
+              "Betacom S.A."
+            ]
+          },
+          {
+            "id": "555171",
+            "name": "Datacore Systems Inc.",
+            "displayName": "Datacore Systems Inc.",
+            "industry": "IT Services",
+            "region": "United States and Canada",
+            "countryCode": "CA",
+            "stateCode": "AB",
+            "city": "Calgary",
+            "seeds": [],
+            "names": [
+              "Datacore Systems Inc."
+            ]
+          },
+          {
+            "id": "556111",
+            "name": "Tacoma, Washington",
+            "displayName": "Tacoma, Washington",
+            "industry": "Commercial Services and Supplies",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "WA",
+            "city": "Tacoma",
+            "seeds": [],
+            "names": [
+              "Tacoma, Washington"
+            ]
+          },
+          {
+            "id": "559661",
+            "name": "Datacomm 360",
+            "displayName": "Datacomm 360",
+            "industry": "IT Services",
+            "region": null,
+            "countryCode": "CH",
+            "stateCode": null,
+            "city": "Geneva",
+            "seeds": [],
+            "names": [
+              "Datacomm 360"
+            ]
+          },
+          {
+            "id": "560952",
+            "name": "Metacom (Pty) Ltd.",
+            "displayName": "Metacom (Pty) Ltd.",
+            "industry": "Communications Equipment",
+            "region": "Africa / Middle East",
+            "countryCode": "ZA",
+            "stateCode": null,
+            "city": "Cape Town",
+            "seeds": [],
+            "names": [
+              "Metacom (Pty) Ltd."
+            ]
+          },
+          {
+            "id": "562380",
+            "name": "Datacom Co., Ltd",
+            "displayName": "Datacom Co., Ltd",
+            "industry": null,
+            "region": "Asia / Pacific",
+            "countryCode": "VN",
+            "stateCode": null,
+            "city": null,
+            "seeds": [],
+            "names": [
+              "Datacom Co., Ltd"
+            ]
+          },
+          {
+            "id": "566787",
+            "name": "Intaconnet Limited",
+            "displayName": "Intaconnet Limited",
+            "industry": null,
+            "region": "Europe",
+            "countryCode": "GB",
+            "stateCode": null,
+            "city": "Cirencester",
+            "seeds": [],
+            "names": [
+              "Intaconnet Limited"
+            ]
+          },
+          {
+            "id": "566831",
+            "name": "Datacoz Limited",
+            "displayName": "Datacoz Limited",
+            "industry": null,
+            "region": "Europe",
+            "countryCode": "GB",
+            "stateCode": null,
+            "city": "Glasgow",
+            "seeds": [],
+            "names": [
+              "Datacoz Limited"
+            ]
+          },
+          {
+            "id": "572189",
+            "name": "Sagar - ComErcio De MAquinas E RepresentaCOes, Lda",
+            "displayName": "Sagar - ComErcio De MAquinas E RepresentaCOes, Lda",
+            "industry": "Trading Companies and Distributors",
+            "region": "Europe",
+            "countryCode": "PT",
+            "stateCode": null,
+            "city": "Lisboa",
+            "seeds": [],
+            "names": [
+              "Sagar - ComErcio De MAquinas E RepresentaCOes, Lda"
+            ]
+          },
+          {
+            "id": "572486",
+            "name": "Stratacore Capital Management, Llc.",
+            "displayName": "Stratacore Capital Management, Llc.",
+            "industry": "Capital Markets",
+            "region": "United States and Canada",
+            "countryCode": "US",
+            "stateCode": "NY",
+            "city": "New York",
+            "seeds": [],
+            "names": [
+              "Stratacore Capital Management, Llc."
+            ]
+          },
+          {
+            "id": "577027",
+            "name": "Pentacomp Systemy Informatyczne S.a.",
+            "displayName": "Pentacomp Systemy Informatyczne S.a.",
+            "industry": null,
+            "region": "Europe",
+            "countryCode": "PL",
+            "stateCode": null,
+            "city": "Warszawa",
+            "seeds": [],
+            "names": [
+              "Pentacomp Systemy Informatyczne S.a."
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

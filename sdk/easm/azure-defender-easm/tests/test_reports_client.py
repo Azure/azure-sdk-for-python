@@ -4,21 +4,24 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from testcase import EasmTest, EasmPowerShellPreparer
+from testcase import EasmTest, EasmParameterProvider
+from devtools_testutils import recorded_by_proxy
 
-class EasmReportsTest(EasmTest):
+class TestEasmReportClient(EasmTest):
     metric = 'savedfilter_metric_40610'
     time_format = '%Y-%m-%dT%H:%M:%S.%f%z'
 
-    @EasmPowerShellPreparer()
-    def test_report_billable(self, easm_endpoint):
-        client = self.create_client(endpoint=easm_endpoint)
+    @EasmParameterProvider()
+    @recorded_by_proxy
+    def test_report_billable(self, easm_endpoint, easm_resource_group, easm_subscription_id, easm_workspace):
+        client = self.create_client(endpoint=easm_endpoint, resource_group=easm_resource_group, subscription_id=easm_subscription_id, workspace=easm_workspace)
         report = client.reports.billable()
         assert report['assetSummaries']
 
-    @EasmPowerShellPreparer()
-    def test_report_snapshot(self, easm_endpoint):
-        client = self.create_client(endpoint=easm_endpoint)
+    @EasmParameterProvider()
+    @recorded_by_proxy
+    def test_report_snapshot(self, easm_endpoint, easm_resource_group, easm_subscription_id, easm_workspace):
+        client = self.create_client(endpoint=easm_endpoint, resource_group=easm_resource_group, subscription_id=easm_subscription_id, workspace=easm_workspace)
         snapshot = client.reports.snapshot(body={'metric': self.metric})
         assert snapshot['displayName']
         assert snapshot['metric'] == self.metric
@@ -26,8 +29,9 @@ class EasmReportsTest(EasmTest):
         assert snapshot['assets']
         self.check_timestamp_format(self.time_format, snapshot['updatedAt'])
 
-    @EasmPowerShellPreparer()
-    def test_report_summarize(self, easm_endpoint):
-        client = self.create_client(endpoint=easm_endpoint)
+    @EasmParameterProvider()
+    @recorded_by_proxy
+    def test_report_summarize(self, easm_endpoint, easm_resource_group, easm_subscription_id, easm_workspace):
+        client = self.create_client(endpoint=easm_endpoint, resource_group=easm_resource_group, subscription_id=easm_subscription_id, workspace=easm_workspace)
         summary = client.reports.summarize(body={'metrics': [self.metric]})
         assert summary['assetSummaries']

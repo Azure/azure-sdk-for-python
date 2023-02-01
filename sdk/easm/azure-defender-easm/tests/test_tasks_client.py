@@ -4,23 +4,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from testcase import EasmTest, EasmPowerShellPreparer
+from testcase import EasmTest, EasmParameterProvider
+from devtools_testutils import recorded_by_proxy
 
-class EasmTasksTest(EasmTest):
-    existing_task_id = 'a23b2f6b-a1ce-4b89-9bfd-97339d39c847'
+class TestEasmTaskClient(EasmTest):
+    existing_task_id = '64649a09-8c9d-482c-9f72-85766b45a244'
     time_format = '%Y-%m-%dT%H:%M:%S.%f%z'
 
-    @EasmPowerShellPreparer()
-    def test_list_tasks(self, easm_endpoint):
-        client = self.create_client(endpoint=easm_endpoint)
+    @EasmParameterProvider()
+    @recorded_by_proxy
+    def test_list_tasks(self, easm_endpoint, easm_resource_group, easm_subscription_id, easm_workspace):
+        client = self.create_client(endpoint=easm_endpoint, resource_group=easm_resource_group, subscription_id=easm_subscription_id, workspace=easm_workspace)
         tasks = client.tasks.list()
         task = tasks.next()
         self.check_guid_format(task['id'])
         self.check_timestamp_format(self.time_format, task['startedAt'])
 
-    @EasmPowerShellPreparer()
-    def test_get_task(self, easm_endpoint):
-        client = self.create_client(endpoint=easm_endpoint)
+    @EasmParameterProvider()
+    @recorded_by_proxy
+    def test_get_task(self, easm_endpoint, easm_resource_group, easm_subscription_id, easm_workspace):
+        client = self.create_client(endpoint=easm_endpoint, resource_group=easm_resource_group, subscription_id=easm_subscription_id, workspace=easm_workspace)
         task = client.tasks.get(self.existing_task_id)
         self.check_guid_format(task['id'])
         self.check_timestamp_format(self.time_format, task['startedAt'])
