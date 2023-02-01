@@ -1344,6 +1344,73 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
+    def test_register_output_yaml(self, client: MLClient, randstr: Callable[[str], str],):
+        # only register pipeline output
+        register_pipeline_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_name_version.yaml"
+        pipeline = load_job(source=register_pipeline_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.outputs.component_out_path
+        assert output.name == 'pipeline_output'
+        assert output.version == '1'
+
+        # only register node output
+        register_node_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_name_version.yaml"
+        pipeline = load_job(source=register_node_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
+        assert output.name == 'node_output'
+        assert output.version == '1'
+
+        # register node output and pipeline output while the node output isn't binding to pipeline output
+        register_both_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_and_node_output.yaml"
+        pipeline = load_job(source=register_both_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        pipeline_output = pipeline_job.outputs.pipeline_out_path
+        assert pipeline_output.name == 'pipeline_output'
+        assert pipeline_output.version == '2'
+        node_output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
+        assert node_output.name == 'node_output'
+        assert node_output.version == '1'
+
+        # register node output and pipeline output while the node output is binding to pipeline output
+        register_both_output_binding_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_and_node_binding_output.yaml"
+        pipeline = load_job(source=register_both_output_binding_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        pipeline_output = pipeline_job.outputs.pipeline_out_path
+        assert pipeline_output.name == 'pipeline_output'
+        assert pipeline_output.version == '2'
+        node_output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
+        assert node_output.name == 'node_output'
+        assert node_output.version == '1'
+
+        # register spark node output
+        register_spark_output_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job_register_output.yml"
+        pipeline = load_job(source=register_spark_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs['count_by_row'].outputs.output
+        assert node_output.name == 'spark_output'
+        assert node_output.version == '12'
+
+        # register sweep node output
+        register_sweep_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_sweep_node_register_output.yml"
+        pipeline = load_job(source=register_sweep_output_path, params_override=[{'name': randstr("job_name")}])
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs['hello_sweep_inline_file_trial'].outputs.trained_model_dir
+        assert node_output.name == 'sweep_output'
+        assert node_output.version == '123_sweep'
+
+        # register parallel node output
+        register_parallel_output_path ="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/pipeline_register_output.yml"
+        pipeline = load_job(source=register_parallel_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs['convert_data_node'].outputs.file_output_data
+        assert node_output.name == 'convert_data_node_output'
+        assert node_output.version == '1'
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
