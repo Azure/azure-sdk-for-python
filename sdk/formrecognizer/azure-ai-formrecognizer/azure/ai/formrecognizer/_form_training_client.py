@@ -457,7 +457,7 @@ class FormTrainingClient(FormRecognizerClientBase):
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client
-        client._client._config = self._client._client._config
+        client._client._config = self._client._config
         return client
 
     def close(self) -> None:

@@ -500,7 +500,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             **kwargs
         )
         # need to share config, but can't pass as a keyword into client
-        client._client._config = self._client._client._config
+        client._client._config = self._client._config
         return client
 
     async def __aenter__(self) -> "DocumentModelAdministrationClient":
