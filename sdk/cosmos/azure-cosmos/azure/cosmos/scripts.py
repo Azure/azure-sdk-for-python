@@ -62,6 +62,10 @@ class ScriptsProxy(object):
         """List all stored procedures in the container.
 
         :param int max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of stored procedures (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -80,6 +84,10 @@ class ScriptsProxy(object):
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of stored procedures (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -99,6 +107,10 @@ class ScriptsProxy(object):
         """Get the stored procedure identified by `id`.
 
         :param sproc: The ID (name) or dict representing stored procedure to retrieve.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the retrieved stored procedure.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -116,6 +128,10 @@ class ScriptsProxy(object):
         To replace an existing sproc, use the :func:`Container.scripts.replace_stored_procedure` method.
 
         :param body: A dict-like object representing the sproc to create.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the new stored procedure.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given stored procedure couldn't be created.
         :rtype: dict[str, Any]
@@ -134,6 +150,10 @@ class ScriptsProxy(object):
 
         :param sproc: The ID (name) or dict representing stored procedure to be replaced.
         :param body: A dict-like object representing the sproc to replace.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the stored procedure after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the stored
             procedure with given id does not exist.
@@ -155,6 +175,10 @@ class ScriptsProxy(object):
         If the stored procedure does not already exist in the container, an exception is raised.
 
         :param sproc: The ID (name) or dict representing stored procedure to be deleted.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The sproc wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The sproc does not exist in the container.
         :rtype: None
@@ -182,6 +206,10 @@ class ScriptsProxy(object):
         :param partition_key: Specifies the partition key to indicate which partition the sproc should execute on.
         :param params: List of parameters to be passed to the stored procedure to be executed.
         :param bool enable_script_logging: Enables or disables script logging for the current request.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: Result of the executed stored procedure for the given parameters.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the stored procedure execution failed
             or if the stored procedure with given id does not exists in the container.
@@ -210,6 +238,10 @@ class ScriptsProxy(object):
         """List all triggers in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of triggers (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -228,6 +260,10 @@ class ScriptsProxy(object):
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of triggers (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -247,6 +283,10 @@ class ScriptsProxy(object):
         """Get a trigger identified by `id`.
 
         :param trigger: The ID (name) or dict representing trigger to retrieve.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the retrieved trigger.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -264,6 +304,10 @@ class ScriptsProxy(object):
         To replace an existing trigger, use the :func:`ContainerProxy.scripts.replace_trigger` method.
 
         :param body: A dict-like object representing the trigger to create.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the new trigger.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given trigger couldn't be created.
         :rtype: dict[str, Any]
@@ -282,6 +326,10 @@ class ScriptsProxy(object):
 
         :param trigger: The ID (name) or dict representing trigger to be replaced.
         :param body: A dict-like object representing the trigger to replace.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the trigger after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the trigger with given
             id does not exist.
@@ -303,6 +351,10 @@ class ScriptsProxy(object):
         If the trigger does not already exist in the container, an exception is raised.
 
         :param trigger: The ID (name) or dict representing trigger to be deleted.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The trigger wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The trigger does not exist in the container.
         :rtype: None
@@ -318,6 +370,10 @@ class ScriptsProxy(object):
         """List all the user-defined functions in the container.
 
         :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of user-defined functions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -336,6 +392,10 @@ class ScriptsProxy(object):
         :param query: The Azure Cosmos DB SQL query to execute.
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of items to be returned in the enumeration operation.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of user-defined functions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -355,6 +415,10 @@ class ScriptsProxy(object):
         """Get a user-defined functions identified by `id`.
 
         :param udf: The ID (name) or dict representing udf to retrieve.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the retrieved user-defined function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be retrieved.
         :rtype: Iterable[dict[str, Any]]
@@ -372,6 +436,10 @@ class ScriptsProxy(object):
         To replace an existing UDF, use the :func:`ContainerProxy.scripts.replace_user_defined_function` method.
 
         :param body: A dict-like object representing the udf to create.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the new user-defined function.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the user-defined function couldn't be created.
         :rtype: dict[str, Any]
@@ -390,6 +458,10 @@ class ScriptsProxy(object):
 
         :param udf: The ID (name) or dict representing udf to be replaced.
         :param body: A dict-like object representing the udf to replace.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the user-defined function after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the user-defined function
             with the given id does not exist.
@@ -411,6 +483,10 @@ class ScriptsProxy(object):
         If the UDF does not already exist in the container, an exception is raised.
 
         :param udf: The ID (name) or dict representing udf to be deleted.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The udf wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The UDF does not exist in the container.
         :rtype: None

@@ -157,6 +157,7 @@ Currently the features below are **not supported**. For alternatives options, ch
 * Change Feed: Read from the beginning
 * Change Feed: Pull model
 * Cross-partition ORDER BY for mixed types
+* Enabling diagnostics for async query-type methods
 
 ### Control Plane Limitations:
 

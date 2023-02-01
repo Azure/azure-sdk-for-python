@@ -73,6 +73,10 @@ class UserProxy(object):
         """Read user properties.
 
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dictionary of the retrieved user properties.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given user couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -94,6 +98,10 @@ class UserProxy(object):
 
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -124,6 +132,10 @@ class UserProxy(object):
         :param parameters: Optional array of parameters to the query. Ignored if no query is provided.
         :param max_item_count: Max number of permissions to be returned in the enumeration operation.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of permissions (dicts).
         :rtype: Iterable[dict[str, Any]]
         """
@@ -152,6 +164,10 @@ class UserProxy(object):
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be retrieved.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the retrieved permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be retrieved.
         :rtype: dict[str, Any]
@@ -183,6 +199,10 @@ class UserProxy(object):
 
         :param body: A dict-like object representing the permission to create.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the new permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission couldn't be created.
         :rtype: dict[str, Any]
@@ -215,6 +235,10 @@ class UserProxy(object):
 
         :param body: A dict-like object representing the permission to update or insert.
         :param Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the upserted permission.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given permission could not be upserted.
         :rtype: dict[str, Any]
@@ -248,6 +272,10 @@ class UserProxy(object):
             instance of the permission to be replaced.
         :param body: A dict-like object representing the permission to replace.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A dict representing the permission after replace went through.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the replace failed or the permission
             with given id does not exist.
@@ -281,6 +309,10 @@ class UserProxy(object):
         :param permission: The ID (name), dict representing the properties or :class:`Permission`
             instance of the permission to be replaced.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The permission wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The permission does not exist for the user.
         :rtype: None

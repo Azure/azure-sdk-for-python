@@ -139,6 +139,7 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :param credential: Can be the account key, or a dictionary of resource tokens.
     :type credential: Union[str, Dict[str, str], ~azure.core.credentials.TokenCredential]
     :param str consistency_level: Consistency level to use for the session. The default value is None (Account level).
+        More on consistency levels and possible values: https://aka.ms/cosmos-consistency-levels
     :keyword int timeout: An absolute timeout in seconds, for the combined HTTP request and response processing.
     :keyword int request_timeout: The HTTP request timeout in milliseconds.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
@@ -159,6 +160,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts. (Default: True)
     :keyword list[str] preferred_locations: The preferred locations for geo-replicated database accounts.
+    :keyword bool enable_diagnostics_logging: Enable diagnostics logging at client level, logging all requests.
+        Must be used along with a logger to work.
+    :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+        request diagnostics.
 
     .. admonition:: Example:
 
@@ -247,6 +252,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A DatabaseProxy instance representing the new database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: Database with the given ID already exists.
@@ -305,6 +314,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: A DatabaseProxy instance representing the database.
         :rtype: ~azure.cosmos.DatabaseProxy
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The database read or creation failed.
@@ -358,6 +371,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
         """
@@ -398,6 +415,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
         :keyword str session_token: Token for use with Session consistency.
         :keyword dict[str,str] initial_headers: Initial headers to be sent as part of the request.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :returns: An Iterable of database properties (dicts).
         :rtype: Iterable[dict[str, str]]
         """
@@ -447,6 +468,10 @@ class CosmosClient(object):  # pylint: disable=client-accepts-api-version-keywor
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
         :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword bool enable_diagnostics_logging: Enable diagnostics logging for this request. Must be used along with
+            a logger to work.
+        :keyword ~logging.Logger logger: Logger to be used with enable_diagnostics_logging flag for collecting
+            request diagnostics.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the database couldn't be deleted.
         :rtype: None
         """
