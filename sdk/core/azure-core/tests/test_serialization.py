@@ -86,11 +86,8 @@ def json_dumps_with_encoder():
 def test_bytes(json_dumps_with_encoder):
     test_bytes = b"mybytes"
     result = json.loads(json_dumps_with_encoder(test_bytes))
-    try:
-        assert base64.b64decode(result) == test_bytes  # Python 3
-    except TypeError:
-        assert result == test_bytes  # Python 2.7
-
+    assert base64.b64decode(result) == test_bytes
+    
 def test_byte_array_ascii(json_dumps_with_encoder):
     test_byte_array = bytearray("mybytes", "ascii")
     result = json.loads(json_dumps_with_encoder(test_byte_array))
@@ -129,7 +126,7 @@ def test_model_basic(json_dumps_with_encoder):
             self.bytes_data = b"data as bytes"
 
     expected = BasicModel()
-    expected_bytes = "data as bytes" if sys.version_info.major == 2 else "ZGF0YSBhcyBieXRlcw=="
+    expected_bytes = "data as bytes" if sys.version_info.major == 2 else "ZGF0YSBhcyBieXRlcw==" # cspell:disable-line
     expected_dict = {
         "string": "myid",
         "number": 42,
@@ -201,7 +198,7 @@ def test_model_key_vault(json_dumps_with_encoder):
             self._tags = None
 
     expected = Properties()
-    expected_bytes = "thumbprint bytes" if sys.version_info.major == 2 else "dGh1bWJwcmludCBieXRlcw=="
+    expected_bytes = "thumbprint bytes" if sys.version_info.major == 2 else "dGh1bWJwcmludCBieXRlcw==" # cspell:disable-line
     expected_dict = {
         "_attributes": {
             "enabled": True,

@@ -20,13 +20,14 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
-from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
+from .._generated.models import SignedIdentifier, TableProperties
 from .._models import TableAccessPolicy, TableItem
 from .._serialize import serialize_iso, _parameter_filter_substitution, _prepare_key
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized
 from .._error import (
-    _process_table_error,
     _decode_error,
+    _process_table_error,
+    _reprocess_error,
     _reraise_error,
     _validate_tablename_error
 )
@@ -42,7 +43,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
+class TableClient(AsyncTablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -70,6 +71,9 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
             :class:`~azure.core.credentials.AzureSasCredential` or
             :class:`~azure.core.credentials.TokenCredential`
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
 
         :returns: None
         """
@@ -224,12 +228,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
             try:
                 _process_table_error(error, table_name=self.table_name)
             except HttpResponseError as table_error:
-                if (table_error.error_code == 'InvalidXmlDocument'  # type: ignore
-                and len(identifiers) > 5):
-                    raise ValueError(
-                        'Too many access policies provided. The server does not support setting '
-                        'more than 5 access policies on a single resource.'
-                    )
+                _reprocess_error(table_error, identifiers=identifiers)
                 raise
 
     @distributed_trace_async
@@ -253,7 +252,11 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         try:
             result = await self._client.table.create(table_properties, **kwargs)
         except HttpResponseError as error:
-            _process_table_error(error, table_name=self.table_name)
+            try:
+                _process_table_error(error, table_name=self.table_name)
+            except HttpResponseError as decoded_error:
+                _reprocess_error(decoded_error)
+                raise
         return TableItem(name=result.table_name)  # type: ignore
 
     @distributed_trace_async
@@ -279,7 +282,11 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         except HttpResponseError as error:
             if error.status_code == 404:
                 return
-            _process_table_error(error, table_name=self.table_name)
+            try:
+                _process_table_error(error, table_name=self.table_name)
+            except HttpResponseError as decoded_error:
+                _reprocess_error(decoded_error)
+                raise
 
     @overload
     async def delete_entity(self, partition_key: str, row_key: str, **kwargs: Any) -> None:
@@ -324,10 +331,10 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
             row_key = entity['RowKey']
         except (TypeError, IndexError):
             partition_key = kwargs.pop('partition_key', None)
-            if not partition_key:
+            if partition_key is None:
                 partition_key = args[0]
             row_key = kwargs.pop("row_key", None)
-            if not row_key:
+            if row_key is None:
                 row_key = args[1]
 
         match_condition = kwargs.pop("match_condition", None)
@@ -591,7 +598,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                query_options=QueryOptions(select=user_select),
+                select=user_select,
                 **kwargs
             )
             properties = _convert_to_entity(entity)

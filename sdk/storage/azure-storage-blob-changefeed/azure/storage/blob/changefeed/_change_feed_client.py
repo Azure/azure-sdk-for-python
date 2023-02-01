@@ -4,20 +4,21 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-lines,no-self-use
-from typing import (  # pylint: disable=unused-import
-    Optional, Any, TYPE_CHECKING, Dict
+from typing import (
+    Any, Dict, Optional, Union,
+    TYPE_CHECKING
 )
 
 from azure.core.paging import ItemPaged
 from azure.storage.blob import BlobServiceClient  # pylint: disable=no-name-in-module
-
 from azure.storage.blob._shared.base_client import parse_connection_str
 from ._models import ChangeFeedPaged
+
 if TYPE_CHECKING:
-    from datetime import datetime
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 
 
-class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
+class ChangeFeedClient(object):
     """A client to interact with a specific account change feed.
 
     :param str account_url:
@@ -25,10 +26,12 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
     :param credential:
         The credentials with which to authenticate. This is optional if the
         account URL already has a SAS token. The value can be a SAS token string,
-        an instance of a AzureSasCredential from azure.core.credentials, an account
-        shared access key, or an instance of a TokenCredentials class from azure.identity.
+        an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+        an account shared access key, or an instance of a TokenCredentials class from azure.identity.
         If the resource URI already contains a SAS token, this will be ignored in favor of an explicit credential
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
+        If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+        should be the storage account key.
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
     :keyword int max_single_get_size:
@@ -50,19 +53,18 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
             :caption: Creating the ChangeFeedClient from a URL to a public blob (no auth needed).
     """
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         self._blob_service_client = BlobServiceClient(account_url, credential, **kwargs)
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            credential=None,  # type: Optional[Any]
-            **kwargs  # type: Any
-        ):  # type: (...) -> ChangeFeedClient
+            cls, conn_str: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> "ChangeFeedClient":
         """Create ChangeFeedClient from a Connection String.
 
         :param str conn_str:
@@ -71,9 +73,11 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
             The credentials with which to authenticate. This is optional if the
             account URL already has a SAS token, or the connection string already has shared
             access key values. The value can be a SAS token string,
-            an instance of a AzureSasCredential from azure.core.credentials, an account shared access
-            key, or an instance of a TokenCredentials class from azure.identity.
+            an instance of a AzureSasCredential or AzureNamedKeyCredential from azure.core.credentials,
+            an account shared access key, or an instance of a TokenCredentials class from azure.identity.
             Credentials provided here will take precedence over those in the connection string.
+            If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
+            should be the storage account key.
         :returns: A change feed client.
         :rtype: ~azure.storage.blob.changefeed.ChangeFeedClient
 
@@ -91,8 +95,7 @@ class ChangeFeedClient(object):  # pylint: disable=too-many-public-methods
             kwargs['secondary_hostname'] = secondary
         return cls(account_url, credential=credential, **kwargs)
 
-    def list_changes(self, **kwargs):
-        # type: (**Any) -> ItemPaged[Dict]
+    def list_changes(self, **kwargs: Any) -> ItemPaged[Dict]:
         """Returns a generator to list the change feed events.
         The generator will lazily follow the continuation tokens returned by
         the service.

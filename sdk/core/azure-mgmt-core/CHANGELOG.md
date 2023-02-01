@@ -6,6 +6,16 @@
 
 - Added AuxiliaryAuthenticationPolicy
 
+### Other Changes
+
+- Rename "DEFAULT_HEADERS_WHITELIST" to "DEFAULT_HEADERS_ALLOWLIST". Added a backward compatible alias.
+
+## 1.3.2 (2022-08-11)
+
+### Other Changes
+
+- Updated mindep about `azure-core` from `1.23.0` to `1.24.0`
+
 ## 1.3.1 (2022-06-14)
 
 ### Other Changes

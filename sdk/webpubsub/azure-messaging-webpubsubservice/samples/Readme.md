@@ -4,7 +4,6 @@ languages:
   - python
 products:
   - azure
-  - azure-messaging-webpubsubservice
 urlFragment: azure-messaging-webpubsubservice-samples
 ---
 

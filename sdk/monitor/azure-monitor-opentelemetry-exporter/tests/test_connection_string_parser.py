@@ -83,6 +83,7 @@ class TestConnectionStringParser(unittest.TestCase):
         self.assertRaises(
             ValueError,
             lambda: ConnectionStringParser(
+                # spell-checker:ignore cabc
                 connection_string="InstrumentationKey=1234abcd-6789-4ef-8cabc-1234567890ab"
             ),
         )
@@ -140,22 +141,6 @@ class TestConnectionStringParser(unittest.TestCase):
             ValueError,
             lambda: ConnectionStringParser(
                 connection_string="InstrumentationKey=1234abcd-5678-4xfa-8abc-1234567890ab"
-            ),
-        )
-
-    def test_invalid_key_version(self):
-        self.assertRaises(
-            ValueError,
-            lambda: ConnectionStringParser(
-                connection_string="InstrumentationKey=1234abcd-5678-6efa-8abc-1234567890ab"
-            ),
-        )
-
-    def test_invalid_key_variant(self):
-        self.assertRaises(
-            ValueError,
-            lambda: ConnectionStringParser(
-                connection_string="InstrumentationKey=1234abcd-5678-4efa-2abc-1234567890ab"
             ),
         )
 

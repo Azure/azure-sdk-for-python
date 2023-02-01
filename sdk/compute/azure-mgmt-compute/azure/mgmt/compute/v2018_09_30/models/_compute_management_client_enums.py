@@ -11,26 +11,27 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessLevel."""
 
     NONE = "None"
     READ = "Read"
     WRITE = "Write"
 
+
 class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This enumerates the possible sources of a disk's creation.
-    """
+    """This enumerates the possible sources of a disk's creation."""
 
     EMPTY = "Empty"
     ATTACH = "Attach"
     FROM_IMAGE = "FromImage"
-    IMPORT_ENUM = "Import"
+    IMPORT = "Import"
     COPY = "Copy"
     RESTORE = "Restore"
     UPLOAD = "Upload"
 
+
 class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the disk.
-    """
+    """The state of the disk."""
 
     UNATTACHED = "Unattached"
     ATTACHED = "Attached"
@@ -39,32 +40,32 @@ class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     READY_TO_UPLOAD = "ReadyToUpload"
     ACTIVE_UPLOAD = "ActiveUpload"
 
+
 class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sku name.
-    """
+    """The sku name."""
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
     STANDARD_SSD_LRS = "StandardSSD_LRS"
     ULTRA_SSD_LRS = "UltraSSD_LRS"
 
+
 class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only."""
 
     V1 = "V1"
     V2 = "V2"
 
+
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Operating System type.
-    """
+    """The Operating System type."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sku name.
-    """
+    """The sku name."""
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"

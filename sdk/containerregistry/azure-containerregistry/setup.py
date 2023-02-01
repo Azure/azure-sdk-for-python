@@ -25,7 +25,7 @@ setup(
     name=PACKAGE_NAME,
     version=version,
     include_package_data=True,
-    description="Microsoft Azure {} Client Library for Python".format(PACKAGE_PPRINT_NAME),
+    description=f"Microsoft Azure {PACKAGE_PPRINT_NAME} Client Library for Python",
     # ensure that these are updated to reflect the package owners' information
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -39,7 +39,6 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
@@ -53,10 +52,10 @@ setup(
             "azure",
         ]
     ),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
     install_requires=[
-        "azure-core>=1.23.0,<2.0.0",
-        "msrest>=0.6.21",
+        "azure-core>=1.24.0,<2.0.0",
+        "msrest>=0.7.1",
     ],
     project_urls={
         "Bug Reports": "https://github.com/Azure/azure-sdk-for-python/issues",

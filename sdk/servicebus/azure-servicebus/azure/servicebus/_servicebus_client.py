@@ -250,6 +250,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         """Get ServiceBusSender for the specific queue.
 
         :param str queue_name: The path of specific Service Bus Queue the client connects to.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.ServiceBusSender
 
         .. admonition:: Example:
@@ -335,6 +338,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:
@@ -406,6 +412,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         """Get ServiceBusSender for the specific topic.
 
         :param str topic_name: The path of specific Service Bus Topic the client connects to.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the sender instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.ServiceBusSender
 
         .. admonition:: Example:
@@ -493,6 +502,9 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
          The default value is 0, meaning messages will be received from the service and processed one at a time.
          In the case of prefetch_count being 0, `ServiceBusReceiver.receive` would try to cache `max_message_count`
          (if provided) within its request to the service.
+        :keyword str client_identifier: A string-based identifier to uniquely identify the receiver instance.
+         Service Bus will associate it with some error messages for easier correlation of errors.
+         If not specified, a unique id will be generated.
         :rtype: ~azure.servicebus.ServiceBusReceiver
 
         .. admonition:: Example:

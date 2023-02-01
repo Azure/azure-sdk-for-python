@@ -24,35 +24,13 @@
 #
 # --------------------------------------------------------------------------
 
-import abc
-from typing import TypeVar, Generic
-
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+from typing import TypeVar, Generic, Dict, Any
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 
-try:
-    from contextlib import (  # pylint: disable=unused-import
-        AbstractContextManager,
-    )
-except ImportError:  # Python <= 3.5
 
-    class AbstractContextManager(object):  # type: ignore
-        def __enter__(self):
-            """Return `self` upon entering the runtime context."""
-            return self
-
-        @abc.abstractmethod
-        def __exit__(self, exc_type, exc_value, traceback):
-            """Raise any exception triggered within the runtime context."""
-            return None
-
-
-class PipelineContext(dict):
+class PipelineContext(Dict[str, Any]):
     """A context object carried by the pipeline request and response containers.
 
     This is transport specific and can contain data persisted between
@@ -63,9 +41,8 @@ class PipelineContext(dict):
     :param transport: The HTTP transport type.
     :param kwargs: Developer-defined keyword arguments.
     """
-    _PICKLE_CONTEXT = {
-        'deserialized_data'
-    }
+
+    _PICKLE_CONTEXT = {"deserialized_data"}
 
     def __init__(self, transport, **kwargs):  # pylint: disable=super-init-not-called
         self.transport = transport
@@ -75,7 +52,7 @@ class PipelineContext(dict):
     def __getstate__(self):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        del state['transport']
+        del state["transport"]
         return state
 
     def __reduce__(self):
@@ -101,7 +78,7 @@ class PipelineContext(dict):
     def __setitem__(self, key, item):
         # If reloaded from pickle, _protected might not be here until restored by pickle
         # this explains the hasattr test
-        if hasattr(self, '_protected') and key in self._protected:
+        if hasattr(self, "_protected") and key in self._protected:
             raise ValueError("Context value {} cannot be overwritten.".format(key))
         return super(PipelineContext, self).__setitem__(key, item)
 
@@ -125,8 +102,7 @@ class PipelineContext(dict):
         raise TypeError("Context objects cannot be updated.")
 
     def pop(self, *args):
-        """Removes specified key and returns the value.
-        """
+        """Removes specified key and returns the value."""
         if args and args[0] in self._protected:
             raise ValueError("Context value {} cannot be popped.".format(args[0]))
         return super(PipelineContext, self).pop(*args)
@@ -144,8 +120,7 @@ class PipelineRequest(Generic[HTTPRequestType]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request, context):
-        # type: (HTTPRequestType, PipelineContext) -> None
+    def __init__(self, http_request: HTTPRequestType, context: PipelineContext) -> None:
         self.http_request = http_request
         self.context = context
 
@@ -168,20 +143,24 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
     :type context: ~azure.core.pipeline.PipelineContext
     """
 
-    def __init__(self, http_request, http_response, context):
-        # type: (HTTPRequestType, HTTPResponseType, PipelineContext) -> None
+    def __init__(
+        self,
+        http_request: HTTPRequestType,
+        http_response: HTTPResponseType,
+        context: PipelineContext,
+    ) -> None:
         self.http_request = http_request
         self.http_response = http_response
         self.context = context
 
 
 from ._base import Pipeline  # pylint: disable=wrong-import-position
+from ._base_async import AsyncPipeline  # pylint: disable=wrong-import-position
 
-__all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext"]
-
-try:
-    from ._base_async import AsyncPipeline  # pylint: disable=unused-import
-
-    __all__.append("AsyncPipeline")
-except (SyntaxError, ImportError):
-    pass  # Asynchronous pipelines not supported.
+__all__ = [
+    "Pipeline",
+    "PipelineRequest",
+    "PipelineResponse",
+    "PipelineContext",
+    "AsyncPipeline",
+]

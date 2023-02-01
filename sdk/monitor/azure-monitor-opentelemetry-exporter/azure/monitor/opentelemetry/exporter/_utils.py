@@ -12,6 +12,7 @@ from opentelemetry.sdk.util import ns_to_iso_str
 
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
+from azure.monitor.opentelemetry.exporter._constants import _INSTRUMENTATIONS_BIT_MAP
 
 
 # Workaround for missing version file
@@ -39,6 +40,26 @@ def ns_to_duration(nanoseconds):
     return "{:d}.{:02d}:{:02d}:{:02d}.{:03d}".format(
         days, hours, minutes, seconds, microseconds
     )
+
+_INSTRUMENTATIONS_BIT_MASK = 0
+_INSTRUMENTATIONS_BIT_MASK_LOCK = threading.Lock()
+
+def get_instrumentations():
+    return _INSTRUMENTATIONS_BIT_MASK
+
+
+def add_instrumentation(instrumentation_name):
+    with _INSTRUMENTATIONS_BIT_MASK_LOCK:
+        global _INSTRUMENTATIONS_BIT_MASK  # pylint: disable=global-statement
+        instrumentation_bits = _INSTRUMENTATIONS_BIT_MAP.get(instrumentation_name, 0)
+        _INSTRUMENTATIONS_BIT_MASK |= instrumentation_bits
+
+
+def remove_instrumentation(instrumentation_name):
+    with _INSTRUMENTATIONS_BIT_MASK_LOCK:
+        global _INSTRUMENTATIONS_BIT_MASK  # pylint: disable=global-statement
+        instrumentation_bits = _INSTRUMENTATIONS_BIT_MAP.get(instrumentation_name, 0)
+        _INSTRUMENTATIONS_BIT_MASK &= ~instrumentation_bits
 
 
 class PeriodicTask(threading.Thread):
@@ -102,3 +123,18 @@ def _populate_part_a_fields(resource):
             tags["ai.cloud.roleInstance"] = platform.node()  # hostname default
         tags["ai.internal.nodeName"] = tags["ai.cloud.roleInstance"]
     return tags
+
+# pylint: disable=W0622
+def _filter_custom_properties(properties, filter=None):
+    truncated_properties = {}
+    for key, val in properties.items():
+        # Apply filter function
+        if filter is not None:
+            if not filter(key, val):
+                continue
+        # Apply truncation rules
+        # Max key length is 150, value is 8192
+        if not key or len(key) > 150 or val is None:
+            continue
+        truncated_properties[key] = str(val)[:8192]
+    return truncated_properties

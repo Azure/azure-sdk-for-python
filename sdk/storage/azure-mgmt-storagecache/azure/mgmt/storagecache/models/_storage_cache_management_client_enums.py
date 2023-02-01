@@ -7,37 +7,36 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class CacheIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity used for the cache
-    """
+class CacheIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity used for the cache."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DomainJoinedType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """True if the HPC Cache is joined to the Active Directory domain.
-    """
+
+class DomainJoinedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """True if the HPC Cache is joined to the Active Directory domain."""
 
     YES = "Yes"
     NO = "No"
     ERROR = "Error"
 
-class FirmwareStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class FirmwareStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """True if there is a firmware update ready to install on this Cache. The firmware will
     automatically be installed after firmwareUpdateDeadline if not triggered earlier via the
     upgrade operation.
@@ -46,9 +45,9 @@ class FirmwareStatusType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     AVAILABLE = "available"
     UNAVAILABLE = "unavailable"
 
-class HealthStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """List of Cache health states.
-    """
+
+class HealthStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """List of Cache health states."""
 
     UNKNOWN = "Unknown"
     HEALTHY = "Healthy"
@@ -59,8 +58,13 @@ class HealthStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     STOPPED = "Stopped"
     UPGRADING = "Upgrading"
     FLUSHING = "Flushing"
+    WAITING_FOR_KEY = "WaitingForKey"
+    START_FAILED = "StartFailed"
+    UPGRADE_FAILED = "UpgradeFailed"
 
-class MetricAggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MetricAggregationType."""
 
     NOT_SPECIFIED = "NotSpecified"
     NONE = "None"
@@ -70,34 +74,44 @@ class MetricAggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     TOTAL = "Total"
     COUNT = "Count"
 
-class NfsAccessRuleAccess(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Access allowed by this rule.
-    """
+
+class NfsAccessRuleAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access allowed by this rule."""
 
     NO = "no"
     RO = "ro"
     RW = "rw"
 
-class NfsAccessRuleScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Scope for this rule. The scope and filter determine which clients match the rule.
-    """
+
+class NfsAccessRuleScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scope for this rule. The scope and filter determine which clients match the rule."""
 
     DEFAULT = "default"
     NETWORK = "network"
     HOST = "host"
 
-class OperationalStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Storage target operational state.
-    """
+
+class OperationalStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage target operational state."""
 
     READY = "Ready"
     BUSY = "Busy"
     SUSPENDED = "Suspended"
     FLUSHING = "Flushing"
 
-class ProvisioningStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class PrimingJobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the priming operation."""
+
+    QUEUED = "Queued"
+    RUNNING = "Running"
+    PAUSED = "Paused"
+    COMPLETE = "Complete"
+
+
+class ProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ARM provisioning state, see
-    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property
+    https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
     """
 
     SUCCEEDED = "Succeeded"
@@ -107,7 +121,8 @@ class ProvisioningStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     UPDATING = "Updating"
 
-class ReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason for the restriction. As of now this can be "QuotaId" or
     "NotAvailableForSubscription". "QuotaId" is set when the SKU has requiredQuotas parameter as
     the subscription does not belong to that quota. "NotAvailableForSubscription" is related to
@@ -117,26 +132,26 @@ class ReasonCode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class StorageTargetType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the Storage Target.
-    """
+
+class StorageTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the Storage Target."""
 
     NFS3 = "nfs3"
     CLFS = "clfs"
     UNKNOWN = "unknown"
     BLOB_NFS = "blobNfs"
 
-class UsernameDownloadedType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether or not the HPC Cache has performed the username download successfully.
-    """
+
+class UsernameDownloadedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether or not the HPC Cache has performed the username download successfully."""
 
     YES = "Yes"
     NO = "No"
     ERROR = "Error"
 
-class UsernameSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """This setting determines how the cache gets username and group names for clients.
-    """
+
+class UsernameSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This setting determines how the cache gets username and group names for clients."""
 
     AD = "AD"
     LDAP = "LDAP"

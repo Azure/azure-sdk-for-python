@@ -1,7 +1,7 @@
 $DefaultPSRepositoryUrl = "https://www.powershellgallery.com/api/v2"
 $global:CurrentUserModulePath = ""
 
-function Update-PSModulePath()
+function Update-PSModulePathForCI()
 {
   # Information on PSModulePath taken from docs
   # https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_psmodulepath
@@ -22,9 +22,9 @@ function Update-PSModulePath()
   $modulePaths = $modulePaths.Where({ !$_.StartsWith($hostedAgentModulePath) })
 
   # Add any "az_" paths from the agent which is the lastest set of azure modules
-  $AzModuleCachPath = (Get-ChildItem "$hostedAgentModulePath/az_*" -Attributes Directory) -join $moduleSeperator
-  if ($AzModuleCachPath -and $env.PSModulePath -notcontains $AzModuleCachPath) {
-    $modulePaths += $AzModuleCachPath
+  $AzModuleCachePath = (Get-ChildItem "$hostedAgentModulePath/az_*" -Attributes Directory) -join $moduleSeperator
+  if ($AzModuleCachePath -and $env:PSModulePath -notcontains $AzModuleCachePath) {
+    $modulePaths += $AzModuleCachePath
   }
 
   $env:PSModulePath = $modulePaths -join $moduleSeperator
@@ -101,4 +101,6 @@ function Install-ModuleIfNotInstalled()
   return $modules[0]
 }
 
-Update-PSModulePath
+if ($null -ne $env:SYSTEM_TEAMPROJECTID) {
+    Update-PSModulePathForCI
+}

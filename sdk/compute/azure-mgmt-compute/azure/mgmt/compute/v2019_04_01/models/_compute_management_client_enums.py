@@ -11,23 +11,22 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ResourceSkuCapacityScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The scale type applicable to the sku.
-    """
+    """The scale type applicable to the sku."""
 
     AUTOMATIC = "Automatic"
     MANUAL = "Manual"
     NONE = "None"
 
+
 class ResourceSkuRestrictionsReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason for restriction.
-    """
+    """The reason for restriction."""
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
+
 class ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of restrictions.
-    """
+    """The type of restrictions."""
 
     LOCATION = "Location"
     ZONE = "Zone"

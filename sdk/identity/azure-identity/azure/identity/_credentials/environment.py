@@ -4,7 +4,8 @@
 # ------------------------------------
 import logging
 import os
-
+from typing import Optional, Union, Any
+from azure.core.credentials import AccessToken
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
@@ -13,22 +14,12 @@ from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .user_password import UsernamePasswordCredential
 
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    from typing import Any, Mapping, Optional, Union
-    from azure.core.credentials import AccessToken
-
-    EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
+EnvironmentCredentialTypes = Union[CertificateCredential, ClientSecretCredential, UsernamePasswordCredential]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EnvironmentCredential(object):
+class EnvironmentCredential:
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
@@ -63,9 +54,8 @@ class EnvironmentCredential(object):
         when no value is given.
     """
 
-    def __init__(self, **kwargs):
-        # type: (Mapping[str, Any]) -> None
-        self._credential = None  # type: Optional[EnvironmentCredentialTypes]
+    def __init__(self, **kwargs: Any) -> None:
+        self._credential: Optional[EnvironmentCredentialTypes] = None
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -116,19 +106,19 @@ class EnvironmentCredential(object):
         if self._credential:
             self._credential.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the credential's transport session."""
         self.__exit__()
 
     @log_get_token("EnvironmentCredential")
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`

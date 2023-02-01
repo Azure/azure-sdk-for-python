@@ -6,49 +6,33 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import CustomLocation
-    from ._models_py3 import CustomLocationListResult
-    from ._models_py3 import CustomLocationOperation
-    from ._models_py3 import CustomLocationOperationsList
-    from ._models_py3 import CustomLocationPropertiesAuthentication
-    from ._models_py3 import EnabledResourceType
-    from ._models_py3 import EnabledResourceTypePropertiesTypesMetadataItem
-    from ._models_py3 import EnabledResourceTypesListResult
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import Identity
-    from ._models_py3 import PatchableCustomLocations
-    from ._models_py3 import ProxyResource
-    from ._models_py3 import Resource
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import CustomLocation  # type: ignore
-    from ._models import CustomLocationListResult  # type: ignore
-    from ._models import CustomLocationOperation  # type: ignore
-    from ._models import CustomLocationOperationsList  # type: ignore
-    from ._models import CustomLocationPropertiesAuthentication  # type: ignore
-    from ._models import EnabledResourceType  # type: ignore
-    from ._models import EnabledResourceTypePropertiesTypesMetadataItem  # type: ignore
-    from ._models import EnabledResourceTypesListResult  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import Identity  # type: ignore
-    from ._models import PatchableCustomLocations  # type: ignore
-    from ._models import ProxyResource  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
+from ._models_py3 import CustomLocation
+from ._models_py3 import CustomLocationListResult
+from ._models_py3 import CustomLocationOperation
+from ._models_py3 import CustomLocationOperationsList
+from ._models_py3 import CustomLocationPropertiesAuthentication
+from ._models_py3 import EnabledResourceType
+from ._models_py3 import EnabledResourceTypePropertiesTypesMetadataItem
+from ._models_py3 import EnabledResourceTypesListResult
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import Identity
+from ._models_py3 import PatchableCustomLocations
+from ._models_py3 import ProxyResource
+from ._models_py3 import Resource
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+
 
 from ._custom_locations_enums import (
     CreatedByType,
     HostType,
     ResourceIdentityType,
 )
-
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     'CustomLocation',
     'CustomLocationListResult',
@@ -71,3 +55,5 @@ __all__ = [
     'HostType',
     'ResourceIdentityType',
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

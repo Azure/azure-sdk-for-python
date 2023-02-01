@@ -4,18 +4,14 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import Optional, Any
 
+from azure.core.credentials import AccessToken
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
-    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -56,23 +52,28 @@ class AzureApplicationCredential(ChainedTokenCredential):
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
-        authority = kwargs.pop("authority", None)
+    def __init__(
+            self,
+            *,
+            authority: Optional[str] = None,
+            managed_identity_client_id: Optional[str] = None,
+            **kwargs: Any
+    ) -> None:
         authority = normalize_authority(authority) if authority else get_default_authority()
-        managed_identity_client_id = kwargs.pop(
-            "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
-        )
+        managed_identity_client_id = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         super().__init__(
             EnvironmentCredential(authority=authority, **kwargs),
             ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs),
         )
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
             `message` attribute listing each authentication attempt and its error message.
         """

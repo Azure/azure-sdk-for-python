@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AssessmentDayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Day of the week to run assessment.
-    """
+class AssessmentDayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Day of the week to run assessment."""
 
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
@@ -23,7 +21,9 @@ class AssessmentDayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
     SUNDAY = "Sunday"
 
-class AutoBackupDaysOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class AutoBackupDaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutoBackupDaysOfWeek."""
 
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
@@ -33,53 +33,61 @@ class AutoBackupDaysOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
     SUNDAY = "Sunday"
 
-class BackupScheduleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Backup schedule type.
-    """
+
+class BackupScheduleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Backup schedule type."""
 
     MANUAL = "Manual"
     AUTOMATED = "Automated"
 
-class ClusterConfiguration(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Cluster type.
-    """
+
+class ClusterConfiguration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster type."""
 
     DOMAINFUL = "Domainful"
 
-class ClusterManagerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ClusterManagerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of cluster manager: Windows Server Failover Cluster (WSFC), implied by the scale type of
     the group and the OS type.
     """
 
     WSFC = "WSFC"
 
-class Commit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Replica commit mode in availability group.
-    """
+
+class ClusterSubnetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster subnet type."""
+
+    SINGLE_SUBNET = "SingleSubnet"
+    MULTI_SUBNET = "MultiSubnet"
+
+
+class Commit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Replica commit mode in availability group."""
 
     SYNCHRONOUS_COMMIT = "SYNCHRONOUS_COMMIT"
     ASYNCHRONOUS_COMMIT = "ASYNCHRONOUS_COMMIT"
 
-class ConnectivityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL Server connectivity option.
-    """
+
+class ConnectivityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL Server connectivity option."""
 
     LOCAL = "LOCAL"
     PRIVATE = "PRIVATE"
     PUBLIC = "PUBLIC"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Day of week to apply the patch on.
-    """
+
+class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Day of week to apply the patch on."""
 
     EVERYDAY = "Everyday"
     MONDAY = "Monday"
@@ -90,22 +98,23 @@ class DayOfWeek(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
     SUNDAY = "Sunday"
 
-class DiskConfigurationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Disk configuration to apply to SQL Server.
-    """
+
+class DiskConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Disk configuration to apply to SQL Server."""
 
     NEW = "NEW"
     EXTEND = "EXTEND"
     ADD = "ADD"
 
-class Failover(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Replica failover mode in availability group.
-    """
+
+class Failover(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Replica failover mode in availability group."""
 
     AUTOMATIC = "AUTOMATIC"
     MANUAL = "MANUAL"
 
-class FullBackupFrequencyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class FullBackupFrequencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Frequency of full backups. In both cases, full backups begin during the next scheduled time
     window.
     """
@@ -113,7 +122,8 @@ class FullBackupFrequencyType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     DAILY = "Daily"
     WEEKLY = "Weekly"
 
-class IdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The identity type. Set this to 'SystemAssigned' in order to automatically create and assign an
     Azure Active Directory principal for the resource.
     """
@@ -121,37 +131,44 @@ class IdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class OperationOrigin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The intended executor of the operation.
-    """
+
+class LeastPrivilegeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL IaaS Agent least privilege mode."""
+
+    ENABLED = "Enabled"
+    NOT_SET = "NotSet"
+
+
+class OperationOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The intended executor of the operation."""
 
     USER = "user"
     SYSTEM = "system"
 
-class ReadableSecondary(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Replica readable secondary mode in availability group.
-    """
+
+class ReadableSecondary(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Replica readable secondary mode in availability group."""
 
     NO = "NO"
     ALL = "ALL"
     READ_ONLY = "READ_ONLY"
 
-class Role(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Replica Role in availability group.
-    """
+
+class Role(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Replica Role in availability group."""
 
     PRIMARY = "PRIMARY"
     SECONDARY = "SECONDARY"
 
-class ScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Scale type.
-    """
+
+class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scale type."""
 
     HA = "HA"
 
-class SqlImageSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL Server edition type.
-    """
+
+class SqlImageSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL Server edition type."""
 
     DEVELOPER = "Developer"
     EXPRESS = "Express"
@@ -159,41 +176,47 @@ class SqlImageSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ENTERPRISE = "Enterprise"
     WEB = "Web"
 
-class SqlManagementMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL Server Management type.
-    """
+
+class SqlManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL Server Management type."""
 
     FULL = "Full"
     LIGHT_WEIGHT = "LightWeight"
     NO_AGENT = "NoAgent"
 
-class SqlServerLicenseType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL Server license type.
-    """
+
+class SqlServerLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL Server license type."""
 
     PAYG = "PAYG"
     AHUB = "AHUB"
     DR = "DR"
 
-class SqlVmGroupImageSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL image sku.
-    """
+
+class SqlVmGroupImageSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL image sku."""
 
     DEVELOPER = "Developer"
     ENTERPRISE = "Enterprise"
 
-class SqlWorkloadType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """SQL Server workload type.
-    """
+
+class SqlWorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL Server workload type."""
 
     GENERAL = "GENERAL"
     OLTP = "OLTP"
     DW = "DW"
 
-class StorageWorkloadType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Storage workload type.
-    """
+
+class StorageWorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Storage workload type."""
 
     GENERAL = "GENERAL"
     OLTP = "OLTP"
     DW = "DW"
+
+
+class TroubleshootingScenario(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SQL VM troubleshooting scenario."""
+
+    UNHEALTHY_REPLICA = "UnhealthyReplica"

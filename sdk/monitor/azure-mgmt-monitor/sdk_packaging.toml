@@ -5,3 +5,5 @@ package_doc_id = "monitoring?view=azure-python-preview"
 is_stable = false
 need_msrestazure = false
 need_azuremgmtcore = true
+sample_link = ""
+title = "MonitorManagementClient"

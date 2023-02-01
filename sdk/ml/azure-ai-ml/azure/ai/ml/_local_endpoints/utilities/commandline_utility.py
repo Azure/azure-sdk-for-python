@@ -7,11 +7,12 @@ import os
 import subprocess
 import sys
 import time
-from azure.ai.ml._ml_exceptions import MlException, ErrorCategory, ErrorTarget
+
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 
 
 def _print_command_results(test_passed, time_taken, output):
-    print("Command {}.".format("successful" if test_passed else "failed"))
+    print("Command {} in {} seconds.".format("successful" if test_passed else "failed", time_taken))
     print("Output: \n{}\n".format(output))
 
 
@@ -43,7 +44,11 @@ def run_cli_command(
         # We also pass the environment variables, because for some tests we modify
         # the environment variables.
 
-        subprocess_args = {"shell": True, "stderr": subprocess.STDOUT, "env": custom_environment}
+        subprocess_args = {
+            "shell": True,
+            "stderr": subprocess.STDOUT,
+            "env": custom_environment,
+        }
 
         if not stderr_to_stdout:
             subprocess_args = {"shell": True, "env": custom_environment}
@@ -95,7 +100,7 @@ def exclude_warnings(cmd_output):
 
     curr_index = 0
     for cmd_line in cmd_output.splitlines():
-        if (curr_index >= start_index) and (curr_index <= end_index):
+        if start_index <= curr_index <= end_index:
             if len(json_output) == 0:
                 json_output = cmd_line
             else:

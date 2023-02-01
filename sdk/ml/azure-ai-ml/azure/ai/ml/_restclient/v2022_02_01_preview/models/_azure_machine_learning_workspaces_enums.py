@@ -762,11 +762,14 @@ class ShortSeriesHandlingConfiguration(with_metaclass(CaseInsensitiveEnumMeta, s
     DROP = "Drop"
 
 class SkuScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """TODO - SKU scale type
+    """Node scaling setting for the compute sku.
     """
 
+    #: Automatically scales node count.
     AUTOMATIC = "Automatic"
+    #: Node count scaled upon user request.
     MANUAL = "Manual"
+    #: Fixed set of nodes.
     NONE = "None"
 
 class SkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):

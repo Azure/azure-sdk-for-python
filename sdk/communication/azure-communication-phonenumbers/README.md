@@ -8,7 +8,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 # Getting started
 ### Prerequisites
-- Python 3.6 or later is required to use this package.
+- Python 3.7 or later is required to use this package.
 - You must have an [Azure subscription](https://azure.microsoft.com/free/)
 - A deployed Communication Services resource. You can use the [Azure Portal](https://docs.microsoft.com/azure/communication-services/quickstarts/create-communication-resource?tabs=windows&pivots=platform-azp) or the [Azure PowerShell](https://docs.microsoft.com/powershell/module/az.communication/new-azcommunicationservice) to set it up.
 ### Install the package
@@ -189,11 +189,11 @@ poller = self.phone_number_client.begin_update_phone_number_capabilities(
 Get the list of currently configured trunks or routes.
 
 ```python
-trunks = sip_routing_client.get_trunks()
+trunks = sip_routing_client.list_trunks()
 for trunk in trunks:
     print(trunk.fqdn)
     print(trunk.sip_signaling_port)
-routes = sip_routing_client.get_routes()
+routes = sip_routing_client.list_routes()
 for route in routes:
     print(route.name)
     print(route.description)

@@ -3,4 +3,6 @@ package_name = "azure-mgmt-scheduler"
 package_pprint_name = "Scheduler Management"
 package_doc_id = "scheduler"
 is_stable = true
-
+sample_link = ""
+title = "SchedulerManagementClient"
+auto_update = false

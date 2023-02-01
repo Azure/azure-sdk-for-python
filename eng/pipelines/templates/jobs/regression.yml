@@ -63,6 +63,8 @@ jobs:
     - template: ../variables/globals.yml
     - name: PROXY_URL
       value: "http://localhost:5000"
+    - name: TEST_PROXY_FOLDER
+      value: $(Build.SourcesDirectory)/../.tmp_code_path/azure-sdk-for-python
 
     # Please use `$(TargetingString)` to refer to the python packages glob string. This was previously `${{ parameters.BuildTargetingString }}`.
     steps:
@@ -80,13 +82,14 @@ jobs:
           artifactName: 'packages'
           targetPath: $(Build.ArtifactStagingDirectory)
 
-      - script: |
+      - pwsh: |
+          mkdir -p $(TEST_PROXY_FOLDER)
           pip install -r eng/regression_tools.txt
         displayName: 'Prep Environment'
 
       - template: /eng/common/testproxy/test-proxy-tool.yml
         parameters:
-          runProxy: false
+          runProxy: true
 
       - template: ../steps/set-dev-build.yml
         parameters:
@@ -108,6 +111,10 @@ jobs:
             --whl-dir="${{ parameters.BuildStagingDirectory }}"
             --mark-arg="not cosmosEmulator"
 
+      - pwsh: |
+          Invoke-RestMethod -Method POST -Uri http://localhost:5000/Admin/Reset
+        displayName: "Reset Proxy Settings"
+
       - task: PythonScript@0
         displayName: 'Test Oldest Released Dependents'
         inputs:
@@ -119,3 +126,13 @@ jobs:
             --whl-dir="${{ parameters.BuildStagingDirectory }}"
             --verify-latest=False
             --mark-arg="not cosmosEmulator"
+
+      - pwsh: |
+          $files = Get-ChildItem -Path $(Build.SourcesDirectory) -Filter _proxy_log_*.log
+          foreach($file in $files){
+              Write-Host "##[group]$file"
+              cat $file
+              Write-Host "##[endgroup]"
+          }
+        displayName: Dump Test-Proxy Logs
+        condition: always()

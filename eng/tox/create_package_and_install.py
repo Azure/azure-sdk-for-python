@@ -9,7 +9,7 @@
 # it should be executed from tox with `{toxenvdir}/python` to ensure that the package
 # can be successfully tested from within a tox environment.
 
-from subprocess import check_call
+from subprocess import check_call, CalledProcessError
 import argparse
 import os
 import logging
@@ -18,13 +18,14 @@ import glob
 import shutil
 from pkg_resources import parse_version
 
-from tox_helper_tasks import find_whl, find_sdist, get_package_details, get_pip_list_output, parse_req
+from tox_helper_tasks import find_whl, find_sdist, get_pip_list_output
+from ci_tools.parsing import ParsedSetup, parse_require
+from ci_tools.build import create_package
+from ci_tools.functions import get_package_from_repo
 
 logging.getLogger().setLevel(logging.INFO)
 
-setup_parser_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", "versioning"))
-sys.path.append(setup_parser_path)
-from setup_parser import get_install_requires
+from ci_tools.parsing import ParsedSetup
 
 
 def cleanup_build_artifacts(build_folder):
@@ -57,16 +58,16 @@ def discover_packages(setuppy_path, args):
 
 def discover_prebuilt_package(dist_directory, setuppy_path, package_type):
     packages = []
-    pkg_name, _, version, _, _ = get_package_details(setuppy_path)
+    pkg = ParsedSetup.from_path(setuppy_path)
     if package_type == "wheel":
-        prebuilt_package = find_whl(dist_directory, pkg_name, version)
+        prebuilt_package = find_whl(dist_directory, pkg.name, pkg.version)
     else:
-        prebuilt_package = find_sdist(dist_directory, pkg_name, version)
+        prebuilt_package = find_sdist(dist_directory, pkg.name, pkg.version)
 
     if prebuilt_package is None:
         logging.error(
             "Package is missing in prebuilt directory {0} for package {1} and version {2}".format(
-                dist_directory, pkg_name, version
+                dist_directory, pkg.name, pkg.version
             )
         )
         exit(1)
@@ -80,29 +81,9 @@ def in_ci():
 
 def build_and_discover_package(setuppy_path, dist_dir, target_setup, package_type):
     if package_type == "wheel":
-        check_call(
-            [
-                sys.executable,
-                setuppy_path,
-                "bdist_wheel",
-                "-d",
-                dist_dir,
-            ],
-            cwd = os.path.dirname(setuppy_path)
-        )
+        create_package(setuppy_path, dist_dir, enable_sdist=False)
     else:
-        check_call(
-            [
-                sys.executable,
-                setuppy_path,
-                "sdist",
-                "--format",
-                "zip",
-                "-d",
-                dist_dir,
-            ],
-            cwd = os.path.dirname(setuppy_path)
-        )
+        create_package(setuppy_path, dist_dir, enable_wheel=False)
 
     prebuilt_packages = [
         f for f in os.listdir(args.distribution_directory) if f.endswith(".whl" if package_type == "wheel" else ".zip")
@@ -190,7 +171,7 @@ if __name__ == "__main__":
         os.mkdir(tmp_dl_folder)
 
     # preview version is enabled when installing dev build so pip will install dev build version from devpos feed
-    if os.getenv("SetDevVersion", 'false') == 'true':
+    if os.getenv("SetDevVersion", "false") == "true":
         commands_options.append("--pre")
 
     if args.cache_dir:
@@ -217,7 +198,9 @@ if __name__ == "__main__":
                 logging.info("Installing {w} from fresh built package.".format(w=built_package))
 
             if not args.pre_download_disabled:
-                requirements = get_install_requires(os.path.join(os.path.abspath(args.target_setup), "setup.py"))
+                requirements = ParsedSetup.from_path(
+                    os.path.join(os.path.abspath(args.target_setup), "setup.py")
+                ).requires
                 azure_requirements = [req.split(";")[0] for req in requirements if req.startswith("azure")]
 
                 if azure_requirements:
@@ -245,28 +228,41 @@ if __name__ == "__main__":
                         installed_pkgs = get_pip_list_output()
 
                         # parse the specifier
-                        req_name, req_specifier = parse_req(req)
+                        req_name, req_specifier = parse_require(req)
 
                         # if we have the package already present...
                         if req_name in installed_pkgs:
+                            # if there is no specifier for the requirement, we can ignore it
+                            if req_specifier is None:
+                                addition_necessary = False
+
                             # ...do we need to install the new version? if the existing specifier matches, we're fine
-                            if installed_pkgs[req_name] in req_specifier:
+                            if req_specifier is not None and installed_pkgs[req_name] in req_specifier:
                                 addition_necessary = False
 
                         if addition_necessary:
+                            # we only want to add an additional rec for download if it actually exists
+                            # in the upstream feed (either dev or pypi)
+                            # if it doesn't, we should just install the relative dep if its an azure package
                             installation_additions.append(req)
 
                     if installation_additions:
-                        download_command.extend(installation_additions)
-                        download_command.extend(commands_options)
+                        non_present_reqs = []
+                        for addition in installation_additions:
+                            try:
+                                check_call(
+                                    download_command + [addition] + commands_options,
+                                    env=dict(os.environ, PIP_EXTRA_INDEX_URL=""),
+                                )
+                            except CalledProcessError as e:
+                                req_name, req_specifier = parse_require(addition)
+                                non_present_reqs.append(req_name)
 
-                        check_call(download_command, env=dict(os.environ, PIP_EXTRA_INDEX_URL=""))
                         additional_downloaded_reqs = [
                             os.path.abspath(os.path.join(tmp_dl_folder, pth)) for pth in os.listdir(tmp_dl_folder)
-                        ]
+                        ] + [get_package_from_repo(relative_req).folder for relative_req in non_present_reqs]
 
             commands = [sys.executable, "-m", "pip", "install", built_pkg_path]
-
             commands.extend(additional_downloaded_reqs)
             commands.extend(commands_options)
 

@@ -4,10 +4,9 @@
 
 
 from typing import Dict, Union
+
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job._input_output_helpers import (
-    build_input_output,
-)
+from azure.ai.ml.entities._job._input_output_helpers import build_input_output
 
 
 class JobIOMixin:
@@ -21,8 +20,8 @@ class JobIOMixin:
         if not value:
             return
 
-        for key, value in value.items():
-            self._inputs[key] = build_input_output(value)
+        for input_name, input_value in value.items():
+            self._inputs[input_name] = build_input_output(input_value)
 
     @property
     def outputs(self) -> Dict[str, Output]:
@@ -34,5 +33,5 @@ class JobIOMixin:
         if not value:
             return
 
-        for key, value in value.items():
-            self._outputs[key] = build_input_output(value, inputs=False)
+        for output_name, output_value in value.items():
+            self._outputs[output_name] = build_input_output(output_value, inputs=False)

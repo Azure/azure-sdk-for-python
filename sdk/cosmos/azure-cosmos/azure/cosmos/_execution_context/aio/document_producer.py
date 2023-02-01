@@ -62,7 +62,7 @@ class _DocumentProducer(object):
 
         self._ex_context = _DefaultQueryExecutionContext(client, self._options, fetch_fn)
 
-    async def __aiter__(self):
+    def __aiter__(self):
         return self
 
     async def __anext__(self):

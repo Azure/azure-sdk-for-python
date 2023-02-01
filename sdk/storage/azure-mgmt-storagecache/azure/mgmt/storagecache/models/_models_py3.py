@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,18 +8,27 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
-from ._storage_cache_management_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class ApiOperation(msrest.serialization.Model):
+class ApiOperation(_serialization.Model):
     """REST API operation description: see https://github.com/Azure/azure-rest-api-specs/blob/master/documentation/openapi-authoring-automated-guidelines.md#r3023-operationsapiimplementation.
 
     :ivar display: The object that represents the operation.
-    :vartype display: ~storage_cache_management_client.models.ApiOperationDisplay
+    :vartype display: ~azure.mgmt.storagecache.models.ApiOperationDisplay
     :ivar origin: Origin of the operation.
     :vartype origin: str
     :ivar is_data_action: The flag that indicates whether the operation applies to data plane.
@@ -27,30 +37,33 @@ class ApiOperation(msrest.serialization.Model):
     :vartype name: str
     :ivar service_specification: Specification of the all the metrics provided for a resource type.
     :vartype service_specification:
-     ~storage_cache_management_client.models.ApiOperationPropertiesServiceSpecification
+     ~azure.mgmt.storagecache.models.ApiOperationPropertiesServiceSpecification
     """
 
     _attribute_map = {
-        'display': {'key': 'display', 'type': 'ApiOperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ApiOperationPropertiesServiceSpecification'},
+        "display": {"key": "display", "type": "ApiOperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "service_specification": {
+            "key": "properties.serviceSpecification",
+            "type": "ApiOperationPropertiesServiceSpecification",
+        },
     }
 
     def __init__(
         self,
         *,
-        display: Optional["ApiOperationDisplay"] = None,
+        display: Optional["_models.ApiOperationDisplay"] = None,
         origin: Optional[str] = None,
         is_data_action: Optional[bool] = None,
         name: Optional[str] = None,
-        service_specification: Optional["ApiOperationPropertiesServiceSpecification"] = None,
+        service_specification: Optional["_models.ApiOperationPropertiesServiceSpecification"] = None,
         **kwargs
     ):
         """
         :keyword display: The object that represents the operation.
-        :paramtype display: ~storage_cache_management_client.models.ApiOperationDisplay
+        :paramtype display: ~azure.mgmt.storagecache.models.ApiOperationDisplay
         :keyword origin: Origin of the operation.
         :paramtype origin: str
         :keyword is_data_action: The flag that indicates whether the operation applies to data plane.
@@ -60,9 +73,9 @@ class ApiOperation(msrest.serialization.Model):
         :keyword service_specification: Specification of the all the metrics provided for a resource
          type.
         :paramtype service_specification:
-         ~storage_cache_management_client.models.ApiOperationPropertiesServiceSpecification
+         ~azure.mgmt.storagecache.models.ApiOperationPropertiesServiceSpecification
         """
-        super(ApiOperation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.display = display
         self.origin = origin
         self.is_data_action = is_data_action
@@ -70,7 +83,7 @@ class ApiOperation(msrest.serialization.Model):
         self.service_specification = service_specification
 
 
-class ApiOperationDisplay(msrest.serialization.Model):
+class ApiOperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     :ivar operation: Operation type: Read, write, delete, etc.
@@ -84,10 +97,10 @@ class ApiOperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'operation': {'key': 'operation', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "operation": {"key": "operation", "type": "str"},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -109,75 +122,76 @@ class ApiOperationDisplay(msrest.serialization.Model):
         :keyword description: The description of the operation.
         :paramtype description: str
         """
-        super(ApiOperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operation = operation
         self.provider = provider
         self.resource = resource
         self.description = description
 
 
-class ApiOperationListResult(msrest.serialization.Model):
+class ApiOperationListResult(_serialization.Model):
     """Result of the request to list Resource Provider operations. It contains a list of operations and a URL link to get the next set of results.
 
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     :ivar value: List of Resource Provider operations supported by the Microsoft.StorageCache
      resource provider.
-    :vartype value: list[~storage_cache_management_client.models.ApiOperation]
+    :vartype value: list[~azure.mgmt.storagecache.models.ApiOperation]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ApiOperation]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ApiOperation]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["ApiOperation"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.ApiOperation"]] = None, **kwargs
     ):
         """
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         :keyword value: List of Resource Provider operations supported by the Microsoft.StorageCache
          resource provider.
-        :paramtype value: list[~storage_cache_management_client.models.ApiOperation]
+        :paramtype value: list[~azure.mgmt.storagecache.models.ApiOperation]
         """
-        super(ApiOperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class ApiOperationPropertiesServiceSpecification(msrest.serialization.Model):
+class ApiOperationPropertiesServiceSpecification(_serialization.Model):
     """Specification of the all the metrics provided for a resource type.
 
     :ivar metric_specifications: Details about operations related to metrics.
-    :vartype metric_specifications:
-     list[~storage_cache_management_client.models.MetricSpecification]
+    :vartype metric_specifications: list[~azure.mgmt.storagecache.models.MetricSpecification]
+    :ivar log_specifications: Details about operations related to logs.
+    :vartype log_specifications: list[~azure.mgmt.storagecache.models.LogSpecification]
     """
 
     _attribute_map = {
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
     }
 
     def __init__(
         self,
         *,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
         **kwargs
     ):
         """
         :keyword metric_specifications: Details about operations related to metrics.
-        :paramtype metric_specifications:
-         list[~storage_cache_management_client.models.MetricSpecification]
+        :paramtype metric_specifications: list[~azure.mgmt.storagecache.models.MetricSpecification]
+        :keyword log_specifications: Details about operations related to logs.
+        :paramtype log_specifications: list[~azure.mgmt.storagecache.models.LogSpecification]
         """
-        super(ApiOperationPropertiesServiceSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric_specifications = metric_specifications
+        self.log_specifications = log_specifications
 
 
-class AscOperation(msrest.serialization.Model):
+class AscOperation(_serialization.Model):
     """The status of operation.
 
     :ivar id: The operation Id.
@@ -191,31 +205,31 @@ class AscOperation(msrest.serialization.Model):
     :ivar status: The status of the operation.
     :vartype status: str
     :ivar error: The error detail of the operation if any.
-    :vartype error: ~storage_cache_management_client.models.ErrorResponse
+    :vartype error: ~azure.mgmt.storagecache.models.ErrorResponse
     :ivar output: Additional operation-specific output.
-    :vartype output: dict[str, any]
+    :vartype output: dict[str, JSON]
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
-        'output': {'key': 'properties.output', 'type': '{object}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorResponse"},
+        "output": {"key": "properties.output", "type": "{object}"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         status: Optional[str] = None,
-        error: Optional["ErrorResponse"] = None,
-        output: Optional[Dict[str, Any]] = None,
+        error: Optional["_models.ErrorResponse"] = None,
+        output: Optional[Dict[str, JSON]] = None,
         **kwargs
     ):
         """
@@ -230,11 +244,11 @@ class AscOperation(msrest.serialization.Model):
         :keyword status: The status of the operation.
         :paramtype status: str
         :keyword error: The error detail of the operation if any.
-        :paramtype error: ~storage_cache_management_client.models.ErrorResponse
+        :paramtype error: ~azure.mgmt.storagecache.models.ErrorResponse
         :keyword output: Additional operation-specific output.
-        :paramtype output: dict[str, any]
+        :paramtype output: dict[str, JSON]
         """
-        super(AscOperation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.start_time = start_time
@@ -244,7 +258,7 @@ class AscOperation(msrest.serialization.Model):
         self.output = output
 
 
-class BlobNfsTarget(msrest.serialization.Model):
+class BlobNfsTarget(_serialization.Model):
     """Properties pertaining to the BlobNfsTarget.
 
     :ivar target: Resource ID of the storage container.
@@ -254,17 +268,11 @@ class BlobNfsTarget(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'target': {'key': 'target', 'type': 'str'},
-        'usage_model': {'key': 'usageModel', 'type': 'str'},
+        "target": {"key": "target", "type": "str"},
+        "usage_model": {"key": "usageModel", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target: Optional[str] = None,
-        usage_model: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, target: Optional[str] = None, usage_model: Optional[str] = None, **kwargs):
         """
         :keyword target: Resource ID of the storage container.
         :paramtype target: str
@@ -272,17 +280,17 @@ class BlobNfsTarget(msrest.serialization.Model):
          target.
         :paramtype usage_model: str
         """
-        super(BlobNfsTarget, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target = target
         self.usage_model = usage_model
 
 
-class Cache(msrest.serialization.Model):
+class Cache(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A Cache instance. Follows Azure Resource Manager standards: https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/resource-api-reference.md.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar id: Resource ID of the Cache.
     :vartype id: str
@@ -293,72 +301,84 @@ class Cache(msrest.serialization.Model):
     :ivar type: Type of the Cache; Microsoft.StorageCache/Cache.
     :vartype type: str
     :ivar identity: The identity of the cache, if configured.
-    :vartype identity: ~storage_cache_management_client.models.CacheIdentity
+    :vartype identity: ~azure.mgmt.storagecache.models.CacheIdentity
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~storage_cache_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
     :ivar sku: SKU for the Cache.
-    :vartype sku: ~storage_cache_management_client.models.CacheSku
+    :vartype sku: ~azure.mgmt.storagecache.models.CacheSku
     :ivar cache_size_gb: The size of this Cache, in GB.
     :vartype cache_size_gb: int
     :ivar health: Health of the Cache.
-    :vartype health: ~storage_cache_management_client.models.CacheHealth
+    :vartype health: ~azure.mgmt.storagecache.models.CacheHealth
     :ivar mount_addresses: Array of IP addresses that can be used by clients mounting this Cache.
     :vartype mount_addresses: list[str]
     :ivar provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
-     Possible values include: "Succeeded", "Failed", "Cancelled", "Creating", "Deleting",
-     "Updating".
-    :vartype provisioning_state: str or
-     ~storage_cache_management_client.models.ProvisioningStateType
+     Known values are: "Succeeded", "Failed", "Cancelled", "Creating", "Deleting", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.storagecache.models.ProvisioningStateType
     :ivar subnet: Subnet used for the Cache.
     :vartype subnet: str
     :ivar upgrade_status: Upgrade status of the Cache.
-    :vartype upgrade_status: ~storage_cache_management_client.models.CacheUpgradeStatus
+    :vartype upgrade_status: ~azure.mgmt.storagecache.models.CacheUpgradeStatus
+    :ivar upgrade_settings: Upgrade settings of the Cache.
+    :vartype upgrade_settings: ~azure.mgmt.storagecache.models.CacheUpgradeSettings
     :ivar network_settings: Specifies network settings of the cache.
-    :vartype network_settings: ~storage_cache_management_client.models.CacheNetworkSettings
+    :vartype network_settings: ~azure.mgmt.storagecache.models.CacheNetworkSettings
     :ivar encryption_settings: Specifies encryption settings of the cache.
-    :vartype encryption_settings: ~storage_cache_management_client.models.CacheEncryptionSettings
+    :vartype encryption_settings: ~azure.mgmt.storagecache.models.CacheEncryptionSettings
     :ivar security_settings: Specifies security settings of the cache.
-    :vartype security_settings: ~storage_cache_management_client.models.CacheSecuritySettings
+    :vartype security_settings: ~azure.mgmt.storagecache.models.CacheSecuritySettings
     :ivar directory_services_settings: Specifies Directory Services settings of the cache.
-    :vartype directory_services_settings:
-     ~storage_cache_management_client.models.CacheDirectorySettings
+    :vartype directory_services_settings: ~azure.mgmt.storagecache.models.CacheDirectorySettings
     :ivar zones: Availability zones for resources. This field should only contain a single element
      in the array.
     :vartype zones: list[str]
+    :ivar priming_jobs: Specifies the priming jobs defined in the cache.
+    :vartype priming_jobs: list[~azure.mgmt.storagecache.models.PrimingJob]
+    :ivar space_allocation: Specifies the space allocation percentage for each storage target in
+     the cache.
+    :vartype space_allocation: list[~azure.mgmt.storagecache.models.StorageTargetSpaceAllocation]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^[-0-9a-zA-Z_]{1,80}$'},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'health': {'readonly': True},
-        'mount_addresses': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'upgrade_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True, "pattern": r"^[-0-9a-zA-Z_]{1,80}$"},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "health": {"readonly": True},
+        "mount_addresses": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "upgrade_status": {"readonly": True},
+        "priming_jobs": {"readonly": True},
+        "space_allocation": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'id': {'key': 'id', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'CacheIdentity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'sku': {'key': 'sku', 'type': 'CacheSku'},
-        'cache_size_gb': {'key': 'properties.cacheSizeGB', 'type': 'int'},
-        'health': {'key': 'properties.health', 'type': 'CacheHealth'},
-        'mount_addresses': {'key': 'properties.mountAddresses', 'type': '[str]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'subnet': {'key': 'properties.subnet', 'type': 'str'},
-        'upgrade_status': {'key': 'properties.upgradeStatus', 'type': 'CacheUpgradeStatus'},
-        'network_settings': {'key': 'properties.networkSettings', 'type': 'CacheNetworkSettings'},
-        'encryption_settings': {'key': 'properties.encryptionSettings', 'type': 'CacheEncryptionSettings'},
-        'security_settings': {'key': 'properties.securitySettings', 'type': 'CacheSecuritySettings'},
-        'directory_services_settings': {'key': 'properties.directoryServicesSettings', 'type': 'CacheDirectorySettings'},
-        'zones': {'key': 'properties.zones', 'type': '[str]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "id": {"key": "id", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "identity": {"key": "identity", "type": "CacheIdentity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "sku": {"key": "sku", "type": "CacheSku"},
+        "cache_size_gb": {"key": "properties.cacheSizeGB", "type": "int"},
+        "health": {"key": "properties.health", "type": "CacheHealth"},
+        "mount_addresses": {"key": "properties.mountAddresses", "type": "[str]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "subnet": {"key": "properties.subnet", "type": "str"},
+        "upgrade_status": {"key": "properties.upgradeStatus", "type": "CacheUpgradeStatus"},
+        "upgrade_settings": {"key": "properties.upgradeSettings", "type": "CacheUpgradeSettings"},
+        "network_settings": {"key": "properties.networkSettings", "type": "CacheNetworkSettings"},
+        "encryption_settings": {"key": "properties.encryptionSettings", "type": "CacheEncryptionSettings"},
+        "security_settings": {"key": "properties.securitySettings", "type": "CacheSecuritySettings"},
+        "directory_services_settings": {
+            "key": "properties.directoryServicesSettings",
+            "type": "CacheDirectorySettings",
+        },
+        "zones": {"key": "properties.zones", "type": "[str]"},
+        "priming_jobs": {"key": "properties.primingJobs", "type": "[PrimingJob]"},
+        "space_allocation": {"key": "properties.spaceAllocation", "type": "[StorageTargetSpaceAllocation]"},
     }
 
     def __init__(
@@ -366,44 +386,46 @@ class Cache(msrest.serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
-        identity: Optional["CacheIdentity"] = None,
-        sku: Optional["CacheSku"] = None,
+        identity: Optional["_models.CacheIdentity"] = None,
+        sku: Optional["_models.CacheSku"] = None,
         cache_size_gb: Optional[int] = None,
         subnet: Optional[str] = None,
-        network_settings: Optional["CacheNetworkSettings"] = None,
-        encryption_settings: Optional["CacheEncryptionSettings"] = None,
-        security_settings: Optional["CacheSecuritySettings"] = None,
-        directory_services_settings: Optional["CacheDirectorySettings"] = None,
+        upgrade_settings: Optional["_models.CacheUpgradeSettings"] = None,
+        network_settings: Optional["_models.CacheNetworkSettings"] = None,
+        encryption_settings: Optional["_models.CacheEncryptionSettings"] = None,
+        security_settings: Optional["_models.CacheSecuritySettings"] = None,
+        directory_services_settings: Optional["_models.CacheDirectorySettings"] = None,
         zones: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: Region name string.
         :paramtype location: str
         :keyword identity: The identity of the cache, if configured.
-        :paramtype identity: ~storage_cache_management_client.models.CacheIdentity
+        :paramtype identity: ~azure.mgmt.storagecache.models.CacheIdentity
         :keyword sku: SKU for the Cache.
-        :paramtype sku: ~storage_cache_management_client.models.CacheSku
+        :paramtype sku: ~azure.mgmt.storagecache.models.CacheSku
         :keyword cache_size_gb: The size of this Cache, in GB.
         :paramtype cache_size_gb: int
         :keyword subnet: Subnet used for the Cache.
         :paramtype subnet: str
+        :keyword upgrade_settings: Upgrade settings of the Cache.
+        :paramtype upgrade_settings: ~azure.mgmt.storagecache.models.CacheUpgradeSettings
         :keyword network_settings: Specifies network settings of the cache.
-        :paramtype network_settings: ~storage_cache_management_client.models.CacheNetworkSettings
+        :paramtype network_settings: ~azure.mgmt.storagecache.models.CacheNetworkSettings
         :keyword encryption_settings: Specifies encryption settings of the cache.
-        :paramtype encryption_settings: ~storage_cache_management_client.models.CacheEncryptionSettings
+        :paramtype encryption_settings: ~azure.mgmt.storagecache.models.CacheEncryptionSettings
         :keyword security_settings: Specifies security settings of the cache.
-        :paramtype security_settings: ~storage_cache_management_client.models.CacheSecuritySettings
+        :paramtype security_settings: ~azure.mgmt.storagecache.models.CacheSecuritySettings
         :keyword directory_services_settings: Specifies Directory Services settings of the cache.
-        :paramtype directory_services_settings:
-         ~storage_cache_management_client.models.CacheDirectorySettings
+        :paramtype directory_services_settings: ~azure.mgmt.storagecache.models.CacheDirectorySettings
         :keyword zones: Availability zones for resources. This field should only contain a single
          element in the array.
         :paramtype zones: list[str]
         """
-        super(Cache, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.id = None
         self.location = location
@@ -418,59 +440,61 @@ class Cache(msrest.serialization.Model):
         self.provisioning_state = None
         self.subnet = subnet
         self.upgrade_status = None
+        self.upgrade_settings = upgrade_settings
         self.network_settings = network_settings
         self.encryption_settings = encryption_settings
         self.security_settings = security_settings
         self.directory_services_settings = directory_services_settings
         self.zones = zones
+        self.priming_jobs = None
+        self.space_allocation = None
 
 
-class CacheActiveDirectorySettings(msrest.serialization.Model):
+class CacheActiveDirectorySettings(_serialization.Model):
     """Active Directory settings used to join a cache to a domain.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar primary_dns_ip_address: Required. Primary DNS IP address used to resolve the Active
-     Directory domain controller's fully qualified domain name.
+    :ivar primary_dns_ip_address: Primary DNS IP address used to resolve the Active Directory
+     domain controller's fully qualified domain name. Required.
     :vartype primary_dns_ip_address: str
     :ivar secondary_dns_ip_address: Secondary DNS IP address used to resolve the Active Directory
      domain controller's fully qualified domain name.
     :vartype secondary_dns_ip_address: str
-    :ivar domain_name: Required. The fully qualified domain name of the Active Directory domain
-     controller.
+    :ivar domain_name: The fully qualified domain name of the Active Directory domain controller.
+     Required.
     :vartype domain_name: str
-    :ivar domain_net_bios_name: Required. The Active Directory domain's NetBIOS name.
+    :ivar domain_net_bios_name: The Active Directory domain's NetBIOS name. Required.
     :vartype domain_net_bios_name: str
-    :ivar cache_net_bios_name: Required. The NetBIOS name to assign to the HPC Cache when it joins
-     the Active Directory domain as a server. Length must 1-15 characters from the class
-     [-0-9a-zA-Z].
+    :ivar cache_net_bios_name: The NetBIOS name to assign to the HPC Cache when it joins the Active
+     Directory domain as a server. Length must 1-15 characters from the class [-0-9a-zA-Z].
+     Required.
     :vartype cache_net_bios_name: str
-    :ivar domain_joined: True if the HPC Cache is joined to the Active Directory domain. Possible
-     values include: "Yes", "No", "Error".
-    :vartype domain_joined: str or ~storage_cache_management_client.models.DomainJoinedType
+    :ivar domain_joined: True if the HPC Cache is joined to the Active Directory domain. Known
+     values are: "Yes", "No", and "Error".
+    :vartype domain_joined: str or ~azure.mgmt.storagecache.models.DomainJoinedType
     :ivar credentials: Active Directory admin credentials used to join the HPC Cache to a domain.
-    :vartype credentials:
-     ~storage_cache_management_client.models.CacheActiveDirectorySettingsCredentials
+    :vartype credentials: ~azure.mgmt.storagecache.models.CacheActiveDirectorySettingsCredentials
     """
 
     _validation = {
-        'primary_dns_ip_address': {'required': True},
-        'domain_name': {'required': True},
-        'domain_net_bios_name': {'required': True},
-        'cache_net_bios_name': {'required': True, 'pattern': r'^[-0-9a-zA-Z]{1,15}$'},
-        'domain_joined': {'readonly': True},
+        "primary_dns_ip_address": {"required": True},
+        "domain_name": {"required": True},
+        "domain_net_bios_name": {"required": True},
+        "cache_net_bios_name": {"required": True, "pattern": r"^[-0-9a-zA-Z]{1,15}$"},
+        "domain_joined": {"readonly": True},
     }
 
     _attribute_map = {
-        'primary_dns_ip_address': {'key': 'primaryDnsIpAddress', 'type': 'str'},
-        'secondary_dns_ip_address': {'key': 'secondaryDnsIpAddress', 'type': 'str'},
-        'domain_name': {'key': 'domainName', 'type': 'str'},
-        'domain_net_bios_name': {'key': 'domainNetBiosName', 'type': 'str'},
-        'cache_net_bios_name': {'key': 'cacheNetBiosName', 'type': 'str'},
-        'domain_joined': {'key': 'domainJoined', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CacheActiveDirectorySettingsCredentials'},
+        "primary_dns_ip_address": {"key": "primaryDnsIpAddress", "type": "str"},
+        "secondary_dns_ip_address": {"key": "secondaryDnsIpAddress", "type": "str"},
+        "domain_name": {"key": "domainName", "type": "str"},
+        "domain_net_bios_name": {"key": "domainNetBiosName", "type": "str"},
+        "cache_net_bios_name": {"key": "cacheNetBiosName", "type": "str"},
+        "domain_joined": {"key": "domainJoined", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CacheActiveDirectorySettingsCredentials"},
     }
 
     def __init__(
@@ -481,31 +505,30 @@ class CacheActiveDirectorySettings(msrest.serialization.Model):
         domain_net_bios_name: str,
         cache_net_bios_name: str,
         secondary_dns_ip_address: Optional[str] = None,
-        credentials: Optional["CacheActiveDirectorySettingsCredentials"] = None,
+        credentials: Optional["_models.CacheActiveDirectorySettingsCredentials"] = None,
         **kwargs
     ):
         """
-        :keyword primary_dns_ip_address: Required. Primary DNS IP address used to resolve the Active
-         Directory domain controller's fully qualified domain name.
+        :keyword primary_dns_ip_address: Primary DNS IP address used to resolve the Active Directory
+         domain controller's fully qualified domain name. Required.
         :paramtype primary_dns_ip_address: str
         :keyword secondary_dns_ip_address: Secondary DNS IP address used to resolve the Active
          Directory domain controller's fully qualified domain name.
         :paramtype secondary_dns_ip_address: str
-        :keyword domain_name: Required. The fully qualified domain name of the Active Directory domain
-         controller.
+        :keyword domain_name: The fully qualified domain name of the Active Directory domain
+         controller. Required.
         :paramtype domain_name: str
-        :keyword domain_net_bios_name: Required. The Active Directory domain's NetBIOS name.
+        :keyword domain_net_bios_name: The Active Directory domain's NetBIOS name. Required.
         :paramtype domain_net_bios_name: str
-        :keyword cache_net_bios_name: Required. The NetBIOS name to assign to the HPC Cache when it
-         joins the Active Directory domain as a server. Length must 1-15 characters from the class
-         [-0-9a-zA-Z].
+        :keyword cache_net_bios_name: The NetBIOS name to assign to the HPC Cache when it joins the
+         Active Directory domain as a server. Length must 1-15 characters from the class [-0-9a-zA-Z].
+         Required.
         :paramtype cache_net_bios_name: str
         :keyword credentials: Active Directory admin credentials used to join the HPC Cache to a
          domain.
-        :paramtype credentials:
-         ~storage_cache_management_client.models.CacheActiveDirectorySettingsCredentials
+        :paramtype credentials: ~azure.mgmt.storagecache.models.CacheActiveDirectorySettingsCredentials
         """
-        super(CacheActiveDirectorySettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.primary_dns_ip_address = primary_dns_ip_address
         self.secondary_dns_ip_address = secondary_dns_ip_address
         self.domain_name = domain_name
@@ -515,167 +538,160 @@ class CacheActiveDirectorySettings(msrest.serialization.Model):
         self.credentials = credentials
 
 
-class CacheActiveDirectorySettingsCredentials(msrest.serialization.Model):
+class CacheActiveDirectorySettingsCredentials(_serialization.Model):
     """Active Directory admin credentials used to join the HPC Cache to a domain.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar username: Required. Username of the Active Directory domain administrator. This value is
-     stored encrypted and not returned on response.
+    :ivar username: Username of the Active Directory domain administrator. This value is stored
+     encrypted and not returned on response. Required.
     :vartype username: str
-    :ivar password: Required. Plain text password of the Active Directory domain administrator.
-     This value is stored encrypted and not returned on response.
+    :ivar password: Plain text password of the Active Directory domain administrator. This value is
+     stored encrypted and not returned on response. Required.
     :vartype password: str
     """
 
     _validation = {
-        'username': {'required': True},
-        'password': {'required': True},
+        "username": {"required": True},
+        "password": {"required": True},
     }
 
     _attribute_map = {
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        username: str,
-        password: str,
-        **kwargs
-    ):
+    def __init__(self, *, username: str, password: str, **kwargs):
         """
-        :keyword username: Required. Username of the Active Directory domain administrator. This value
-         is stored encrypted and not returned on response.
+        :keyword username: Username of the Active Directory domain administrator. This value is stored
+         encrypted and not returned on response. Required.
         :paramtype username: str
-        :keyword password: Required. Plain text password of the Active Directory domain administrator.
-         This value is stored encrypted and not returned on response.
+        :keyword password: Plain text password of the Active Directory domain administrator. This value
+         is stored encrypted and not returned on response. Required.
         :paramtype password: str
         """
-        super(CacheActiveDirectorySettingsCredentials, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.username = username
         self.password = password
 
 
-class CacheDirectorySettings(msrest.serialization.Model):
+class CacheDirectorySettings(_serialization.Model):
     """Cache Directory Services settings.
 
     :ivar active_directory: Specifies settings for joining the HPC Cache to an Active Directory
      domain.
-    :vartype active_directory: ~storage_cache_management_client.models.CacheActiveDirectorySettings
+    :vartype active_directory: ~azure.mgmt.storagecache.models.CacheActiveDirectorySettings
     :ivar username_download: Specifies settings for Extended Groups. Extended Groups allows users
      to be members of more than 16 groups.
-    :vartype username_download:
-     ~storage_cache_management_client.models.CacheUsernameDownloadSettings
+    :vartype username_download: ~azure.mgmt.storagecache.models.CacheUsernameDownloadSettings
     """
 
     _attribute_map = {
-        'active_directory': {'key': 'activeDirectory', 'type': 'CacheActiveDirectorySettings'},
-        'username_download': {'key': 'usernameDownload', 'type': 'CacheUsernameDownloadSettings'},
+        "active_directory": {"key": "activeDirectory", "type": "CacheActiveDirectorySettings"},
+        "username_download": {"key": "usernameDownload", "type": "CacheUsernameDownloadSettings"},
     }
 
     def __init__(
         self,
         *,
-        active_directory: Optional["CacheActiveDirectorySettings"] = None,
-        username_download: Optional["CacheUsernameDownloadSettings"] = None,
+        active_directory: Optional["_models.CacheActiveDirectorySettings"] = None,
+        username_download: Optional["_models.CacheUsernameDownloadSettings"] = None,
         **kwargs
     ):
         """
         :keyword active_directory: Specifies settings for joining the HPC Cache to an Active Directory
          domain.
-        :paramtype active_directory:
-         ~storage_cache_management_client.models.CacheActiveDirectorySettings
+        :paramtype active_directory: ~azure.mgmt.storagecache.models.CacheActiveDirectorySettings
         :keyword username_download: Specifies settings for Extended Groups. Extended Groups allows
          users to be members of more than 16 groups.
-        :paramtype username_download:
-         ~storage_cache_management_client.models.CacheUsernameDownloadSettings
+        :paramtype username_download: ~azure.mgmt.storagecache.models.CacheUsernameDownloadSettings
         """
-        super(CacheDirectorySettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.active_directory = active_directory
         self.username_download = username_download
 
 
-class CacheEncryptionSettings(msrest.serialization.Model):
+class CacheEncryptionSettings(_serialization.Model):
     """Cache encryption settings.
 
     :ivar key_encryption_key: Specifies the location of the key encryption key in Key Vault.
-    :vartype key_encryption_key: ~storage_cache_management_client.models.KeyVaultKeyReference
+    :vartype key_encryption_key: ~azure.mgmt.storagecache.models.KeyVaultKeyReference
     :ivar rotation_to_latest_key_version_enabled: Specifies whether the service will automatically
      rotate to the newest version of the key in the Key Vault.
     :vartype rotation_to_latest_key_version_enabled: bool
     """
 
     _attribute_map = {
-        'key_encryption_key': {'key': 'keyEncryptionKey', 'type': 'KeyVaultKeyReference'},
-        'rotation_to_latest_key_version_enabled': {'key': 'rotationToLatestKeyVersionEnabled', 'type': 'bool'},
+        "key_encryption_key": {"key": "keyEncryptionKey", "type": "KeyVaultKeyReference"},
+        "rotation_to_latest_key_version_enabled": {"key": "rotationToLatestKeyVersionEnabled", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        key_encryption_key: Optional["KeyVaultKeyReference"] = None,
+        key_encryption_key: Optional["_models.KeyVaultKeyReference"] = None,
         rotation_to_latest_key_version_enabled: Optional[bool] = None,
         **kwargs
     ):
         """
         :keyword key_encryption_key: Specifies the location of the key encryption key in Key Vault.
-        :paramtype key_encryption_key: ~storage_cache_management_client.models.KeyVaultKeyReference
+        :paramtype key_encryption_key: ~azure.mgmt.storagecache.models.KeyVaultKeyReference
         :keyword rotation_to_latest_key_version_enabled: Specifies whether the service will
          automatically rotate to the newest version of the key in the Key Vault.
         :paramtype rotation_to_latest_key_version_enabled: bool
         """
-        super(CacheEncryptionSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_encryption_key = key_encryption_key
         self.rotation_to_latest_key_version_enabled = rotation_to_latest_key_version_enabled
 
 
-class CacheHealth(msrest.serialization.Model):
+class CacheHealth(_serialization.Model):
     """An indication of Cache health. Gives more information about health than just that related to provisioning.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar state: List of Cache health states. Possible values include: "Unknown", "Healthy",
-     "Degraded", "Down", "Transitioning", "Stopping", "Stopped", "Upgrading", "Flushing".
-    :vartype state: str or ~storage_cache_management_client.models.HealthStateType
+    :ivar state: List of Cache health states. Known values are: "Unknown", "Healthy", "Degraded",
+     "Down", "Transitioning", "Stopping", "Stopped", "Upgrading", "Flushing", "WaitingForKey",
+     "StartFailed", and "UpgradeFailed".
+    :vartype state: str or ~azure.mgmt.storagecache.models.HealthStateType
     :ivar status_description: Describes explanation of state.
     :vartype status_description: str
     :ivar conditions: Outstanding conditions that need to be investigated and resolved.
-    :vartype conditions: list[~storage_cache_management_client.models.Condition]
+    :vartype conditions: list[~azure.mgmt.storagecache.models.Condition]
     """
 
     _validation = {
-        'conditions': {'readonly': True},
+        "conditions": {"readonly": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'status_description': {'key': 'statusDescription', 'type': 'str'},
-        'conditions': {'key': 'conditions', 'type': '[Condition]'},
+        "state": {"key": "state", "type": "str"},
+        "status_description": {"key": "statusDescription", "type": "str"},
+        "conditions": {"key": "conditions", "type": "[Condition]"},
     }
 
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "HealthStateType"]] = None,
+        state: Optional[Union[str, "_models.HealthStateType"]] = None,
         status_description: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword state: List of Cache health states. Possible values include: "Unknown", "Healthy",
-         "Degraded", "Down", "Transitioning", "Stopping", "Stopped", "Upgrading", "Flushing".
-        :paramtype state: str or ~storage_cache_management_client.models.HealthStateType
+        :keyword state: List of Cache health states. Known values are: "Unknown", "Healthy",
+         "Degraded", "Down", "Transitioning", "Stopping", "Stopped", "Upgrading", "Flushing",
+         "WaitingForKey", "StartFailed", and "UpgradeFailed".
+        :paramtype state: str or ~azure.mgmt.storagecache.models.HealthStateType
         :keyword status_description: Describes explanation of state.
         :paramtype status_description: str
         """
-        super(CacheHealth, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.state = state
         self.status_description = status_description
         self.conditions = None
 
 
-class CacheIdentity(msrest.serialization.Model):
+class CacheIdentity(_serialization.Model):
     """Cache identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -684,51 +700,51 @@ class CacheIdentity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID associated with the cache.
     :vartype tenant_id: str
-    :ivar type: The type of identity used for the cache. Possible values include: "SystemAssigned",
-     "UserAssigned", "SystemAssigned, UserAssigned", "None".
-    :vartype type: str or ~storage_cache_management_client.models.CacheIdentityType
+    :ivar type: The type of identity used for the cache. Known values are: "SystemAssigned",
+     "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+    :vartype type: str or ~azure.mgmt.storagecache.models.CacheIdentityType
     :ivar user_assigned_identities: A dictionary where each key is a user assigned identity
      resource ID, and each key's value is an empty dictionary.
     :vartype user_assigned_identities: dict[str,
-     ~storage_cache_management_client.models.UserAssignedIdentitiesValue]
+     ~azure.mgmt.storagecache.models.UserAssignedIdentitiesValue]
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentitiesValue}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentitiesValue}"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "CacheIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentitiesValue"]] = None,
+        type: Optional[Union[str, "_models.CacheIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesValue"]] = None,
         **kwargs
     ):
         """
-        :keyword type: The type of identity used for the cache. Possible values include:
-         "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
-        :paramtype type: str or ~storage_cache_management_client.models.CacheIdentityType
+        :keyword type: The type of identity used for the cache. Known values are: "SystemAssigned",
+         "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+        :paramtype type: str or ~azure.mgmt.storagecache.models.CacheIdentityType
         :keyword user_assigned_identities: A dictionary where each key is a user assigned identity
          resource ID, and each key's value is an empty dictionary.
         :paramtype user_assigned_identities: dict[str,
-         ~storage_cache_management_client.models.UserAssignedIdentitiesValue]
+         ~azure.mgmt.storagecache.models.UserAssignedIdentitiesValue]
         """
-        super(CacheIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class CacheNetworkSettings(msrest.serialization.Model):
+class CacheNetworkSettings(_serialization.Model):
     """Cache network settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -748,25 +764,25 @@ class CacheNetworkSettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'mtu': {'maximum': 1500, 'minimum': 576},
-        'utility_addresses': {'readonly': True},
+        "mtu": {"maximum": 1500, "minimum": 576},
+        "utility_addresses": {"readonly": True},
     }
 
     _attribute_map = {
-        'mtu': {'key': 'mtu', 'type': 'int'},
-        'utility_addresses': {'key': 'utilityAddresses', 'type': '[str]'},
-        'dns_servers': {'key': 'dnsServers', 'type': '[str]'},
-        'dns_search_domain': {'key': 'dnsSearchDomain', 'type': 'str'},
-        'ntp_server': {'key': 'ntpServer', 'type': 'str'},
+        "mtu": {"key": "mtu", "type": "int"},
+        "utility_addresses": {"key": "utilityAddresses", "type": "[str]"},
+        "dns_servers": {"key": "dnsServers", "type": "[str]"},
+        "dns_search_domain": {"key": "dnsSearchDomain", "type": "str"},
+        "ntp_server": {"key": "ntpServer", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        mtu: Optional[int] = 1500,
+        mtu: int = 1500,
         dns_servers: Optional[List[str]] = None,
         dns_search_domain: Optional[str] = None,
-        ntp_server: Optional[str] = "time.windows.com",
+        ntp_server: str = "time.windows.com",
         **kwargs
     ):
         """
@@ -781,7 +797,7 @@ class CacheNetworkSettings(msrest.serialization.Model):
          time.windows.com.
         :paramtype ntp_server: str
         """
-        super(CacheNetworkSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.mtu = mtu
         self.utility_addresses = None
         self.dns_servers = dns_servers
@@ -789,32 +805,27 @@ class CacheNetworkSettings(msrest.serialization.Model):
         self.ntp_server = ntp_server
 
 
-class CacheSecuritySettings(msrest.serialization.Model):
+class CacheSecuritySettings(_serialization.Model):
     """Cache security settings.
 
     :ivar access_policies: NFS access policies defined for this cache.
-    :vartype access_policies: list[~storage_cache_management_client.models.NfsAccessPolicy]
+    :vartype access_policies: list[~azure.mgmt.storagecache.models.NfsAccessPolicy]
     """
 
     _attribute_map = {
-        'access_policies': {'key': 'accessPolicies', 'type': '[NfsAccessPolicy]'},
+        "access_policies": {"key": "accessPolicies", "type": "[NfsAccessPolicy]"},
     }
 
-    def __init__(
-        self,
-        *,
-        access_policies: Optional[List["NfsAccessPolicy"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, access_policies: Optional[List["_models.NfsAccessPolicy"]] = None, **kwargs):
         """
         :keyword access_policies: NFS access policies defined for this cache.
-        :paramtype access_policies: list[~storage_cache_management_client.models.NfsAccessPolicy]
+        :paramtype access_policies: list[~azure.mgmt.storagecache.models.NfsAccessPolicy]
         """
-        super(CacheSecuritySettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.access_policies = access_policies
 
 
-class CacheSku(msrest.serialization.Model):
+class CacheSku(_serialization.Model):
     """SKU for the Cache.
 
     :ivar name: SKU name for this Cache.
@@ -822,56 +833,85 @@ class CacheSku(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name: SKU name for this Cache.
         :paramtype name: str
         """
-        super(CacheSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class CachesListResult(msrest.serialization.Model):
+class CachesListResult(_serialization.Model):
     """Result of the request to list Caches. It contains a list of Caches and a URL link to get the next set of results.
 
     :ivar next_link: URL to get the next set of Cache list results, if there are any.
     :vartype next_link: str
     :ivar value: List of Caches.
-    :vartype value: list[~storage_cache_management_client.models.Cache]
+    :vartype value: list[~azure.mgmt.storagecache.models.Cache]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Cache]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Cache]"},
+    }
+
+    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["_models.Cache"]] = None, **kwargs):
+        """
+        :keyword next_link: URL to get the next set of Cache list results, if there are any.
+        :paramtype next_link: str
+        :keyword value: List of Caches.
+        :paramtype value: list[~azure.mgmt.storagecache.models.Cache]
+        """
+        super().__init__(**kwargs)
+        self.next_link = next_link
+        self.value = value
+
+
+class CacheUpgradeSettings(_serialization.Model):
+    """Cache Upgrade Settings.
+
+    :ivar upgrade_schedule_enabled: True if the user chooses to select an installation time between
+     now and firmwareUpdateDeadline. Else the firmware will automatically be installed after
+     firmwareUpdateDeadline if not triggered earlier via the upgrade operation.
+    :vartype upgrade_schedule_enabled: bool
+    :ivar scheduled_time: When upgradeScheduleEnabled is true, this field holds the user-chosen
+     upgrade time. At the user-chosen time, the firmware update will automatically be installed on
+     the cache.
+    :vartype scheduled_time: ~datetime.datetime
+    """
+
+    _attribute_map = {
+        "upgrade_schedule_enabled": {"key": "upgradeScheduleEnabled", "type": "bool"},
+        "scheduled_time": {"key": "scheduledTime", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
-        next_link: Optional[str] = None,
-        value: Optional[List["Cache"]] = None,
+        upgrade_schedule_enabled: Optional[bool] = None,
+        scheduled_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
-        :keyword next_link: URL to get the next set of Cache list results, if there are any.
-        :paramtype next_link: str
-        :keyword value: List of Caches.
-        :paramtype value: list[~storage_cache_management_client.models.Cache]
+        :keyword upgrade_schedule_enabled: True if the user chooses to select an installation time
+         between now and firmwareUpdateDeadline. Else the firmware will automatically be installed after
+         firmwareUpdateDeadline if not triggered earlier via the upgrade operation.
+        :paramtype upgrade_schedule_enabled: bool
+        :keyword scheduled_time: When upgradeScheduleEnabled is true, this field holds the user-chosen
+         upgrade time. At the user-chosen time, the firmware update will automatically be installed on
+         the cache.
+        :paramtype scheduled_time: ~datetime.datetime
         """
-        super(CachesListResult, self).__init__(**kwargs)
-        self.next_link = next_link
-        self.value = value
+        super().__init__(**kwargs)
+        self.upgrade_schedule_enabled = upgrade_schedule_enabled
+        self.scheduled_time = scheduled_time
 
 
-class CacheUpgradeStatus(msrest.serialization.Model):
+class CacheUpgradeStatus(_serialization.Model):
     """Properties describing the software upgrade state of the Cache.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -881,10 +921,8 @@ class CacheUpgradeStatus(msrest.serialization.Model):
     :vartype current_firmware_version: str
     :ivar firmware_update_status: True if there is a firmware update ready to install on this
      Cache. The firmware will automatically be installed after firmwareUpdateDeadline if not
-     triggered earlier via the upgrade operation. Possible values include: "available",
-     "unavailable".
-    :vartype firmware_update_status: str or
-     ~storage_cache_management_client.models.FirmwareStatusType
+     triggered earlier via the upgrade operation. Known values are: "available" and "unavailable".
+    :vartype firmware_update_status: str or ~azure.mgmt.storagecache.models.FirmwareStatusType
     :ivar firmware_update_deadline: Time at which the pending firmware update will automatically be
      installed on the Cache.
     :vartype firmware_update_deadline: ~datetime.datetime
@@ -896,28 +934,24 @@ class CacheUpgradeStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'current_firmware_version': {'readonly': True},
-        'firmware_update_status': {'readonly': True},
-        'firmware_update_deadline': {'readonly': True},
-        'last_firmware_update': {'readonly': True},
-        'pending_firmware_version': {'readonly': True},
+        "current_firmware_version": {"readonly": True},
+        "firmware_update_status": {"readonly": True},
+        "firmware_update_deadline": {"readonly": True},
+        "last_firmware_update": {"readonly": True},
+        "pending_firmware_version": {"readonly": True},
     }
 
     _attribute_map = {
-        'current_firmware_version': {'key': 'currentFirmwareVersion', 'type': 'str'},
-        'firmware_update_status': {'key': 'firmwareUpdateStatus', 'type': 'str'},
-        'firmware_update_deadline': {'key': 'firmwareUpdateDeadline', 'type': 'iso-8601'},
-        'last_firmware_update': {'key': 'lastFirmwareUpdate', 'type': 'iso-8601'},
-        'pending_firmware_version': {'key': 'pendingFirmwareVersion', 'type': 'str'},
+        "current_firmware_version": {"key": "currentFirmwareVersion", "type": "str"},
+        "firmware_update_status": {"key": "firmwareUpdateStatus", "type": "str"},
+        "firmware_update_deadline": {"key": "firmwareUpdateDeadline", "type": "iso-8601"},
+        "last_firmware_update": {"key": "lastFirmwareUpdate", "type": "iso-8601"},
+        "pending_firmware_version": {"key": "pendingFirmwareVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CacheUpgradeStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.current_firmware_version = None
         self.firmware_update_status = None
         self.firmware_update_deadline = None
@@ -925,7 +959,7 @@ class CacheUpgradeStatus(msrest.serialization.Model):
         self.pending_firmware_version = None
 
 
-class CacheUsernameDownloadSettings(msrest.serialization.Model):
+class CacheUsernameDownloadSettings(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Settings for Extended Groups username and group download.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -933,8 +967,8 @@ class CacheUsernameDownloadSettings(msrest.serialization.Model):
     :ivar extended_groups: Whether or not Extended Groups is enabled.
     :vartype extended_groups: bool
     :ivar username_source: This setting determines how the cache gets username and group names for
-     clients. Possible values include: "AD", "LDAP", "File", "None". Default value: "None".
-    :vartype username_source: str or ~storage_cache_management_client.models.UsernameSource
+     clients. Known values are: "AD", "LDAP", "File", and "None".
+    :vartype username_source: str or ~azure.mgmt.storagecache.models.UsernameSource
     :ivar group_file_uri: The URI of the file containing group information (in /etc/group file
      format). This field must be populated when 'usernameSource' is set to 'File'.
     :vartype group_file_uri: str
@@ -957,38 +991,36 @@ class CacheUsernameDownloadSettings(msrest.serialization.Model):
      This field must be populated when 'requireValidCertificate' is set to true.
     :vartype ca_certificate_uri: str
     :ivar username_downloaded: Indicates whether or not the HPC Cache has performed the username
-     download successfully. Possible values include: "Yes", "No", "Error".
-    :vartype username_downloaded: str or
-     ~storage_cache_management_client.models.UsernameDownloadedType
+     download successfully. Known values are: "Yes", "No", and "Error".
+    :vartype username_downloaded: str or ~azure.mgmt.storagecache.models.UsernameDownloadedType
     :ivar credentials: When present, these are the credentials for the secure LDAP connection.
-    :vartype credentials:
-     ~storage_cache_management_client.models.CacheUsernameDownloadSettingsCredentials
+    :vartype credentials: ~azure.mgmt.storagecache.models.CacheUsernameDownloadSettingsCredentials
     """
 
     _validation = {
-        'username_downloaded': {'readonly': True},
+        "username_downloaded": {"readonly": True},
     }
 
     _attribute_map = {
-        'extended_groups': {'key': 'extendedGroups', 'type': 'bool'},
-        'username_source': {'key': 'usernameSource', 'type': 'str'},
-        'group_file_uri': {'key': 'groupFileURI', 'type': 'str'},
-        'user_file_uri': {'key': 'userFileURI', 'type': 'str'},
-        'ldap_server': {'key': 'ldapServer', 'type': 'str'},
-        'ldap_base_dn': {'key': 'ldapBaseDN', 'type': 'str'},
-        'encrypt_ldap_connection': {'key': 'encryptLdapConnection', 'type': 'bool'},
-        'require_valid_certificate': {'key': 'requireValidCertificate', 'type': 'bool'},
-        'auto_download_certificate': {'key': 'autoDownloadCertificate', 'type': 'bool'},
-        'ca_certificate_uri': {'key': 'caCertificateURI', 'type': 'str'},
-        'username_downloaded': {'key': 'usernameDownloaded', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CacheUsernameDownloadSettingsCredentials'},
+        "extended_groups": {"key": "extendedGroups", "type": "bool"},
+        "username_source": {"key": "usernameSource", "type": "str"},
+        "group_file_uri": {"key": "groupFileURI", "type": "str"},
+        "user_file_uri": {"key": "userFileURI", "type": "str"},
+        "ldap_server": {"key": "ldapServer", "type": "str"},
+        "ldap_base_dn": {"key": "ldapBaseDN", "type": "str"},
+        "encrypt_ldap_connection": {"key": "encryptLdapConnection", "type": "bool"},
+        "require_valid_certificate": {"key": "requireValidCertificate", "type": "bool"},
+        "auto_download_certificate": {"key": "autoDownloadCertificate", "type": "bool"},
+        "ca_certificate_uri": {"key": "caCertificateURI", "type": "str"},
+        "username_downloaded": {"key": "usernameDownloaded", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CacheUsernameDownloadSettingsCredentials"},
     }
 
     def __init__(
         self,
         *,
         extended_groups: Optional[bool] = None,
-        username_source: Optional[Union[str, "UsernameSource"]] = "None",
+        username_source: Union[str, "_models.UsernameSource"] = "None",
         group_file_uri: Optional[str] = None,
         user_file_uri: Optional[str] = None,
         ldap_server: Optional[str] = None,
@@ -997,15 +1029,15 @@ class CacheUsernameDownloadSettings(msrest.serialization.Model):
         require_valid_certificate: Optional[bool] = None,
         auto_download_certificate: Optional[bool] = None,
         ca_certificate_uri: Optional[str] = None,
-        credentials: Optional["CacheUsernameDownloadSettingsCredentials"] = None,
+        credentials: Optional["_models.CacheUsernameDownloadSettingsCredentials"] = None,
         **kwargs
     ):
         """
         :keyword extended_groups: Whether or not Extended Groups is enabled.
         :paramtype extended_groups: bool
         :keyword username_source: This setting determines how the cache gets username and group names
-         for clients. Possible values include: "AD", "LDAP", "File", "None". Default value: "None".
-        :paramtype username_source: str or ~storage_cache_management_client.models.UsernameSource
+         for clients. Known values are: "AD", "LDAP", "File", and "None".
+        :paramtype username_source: str or ~azure.mgmt.storagecache.models.UsernameSource
         :keyword group_file_uri: The URI of the file containing group information (in /etc/group file
          format). This field must be populated when 'usernameSource' is set to 'File'.
         :paramtype group_file_uri: str
@@ -1029,9 +1061,9 @@ class CacheUsernameDownloadSettings(msrest.serialization.Model):
         :paramtype ca_certificate_uri: str
         :keyword credentials: When present, these are the credentials for the secure LDAP connection.
         :paramtype credentials:
-         ~storage_cache_management_client.models.CacheUsernameDownloadSettingsCredentials
+         ~azure.mgmt.storagecache.models.CacheUsernameDownloadSettingsCredentials
         """
-        super(CacheUsernameDownloadSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.extended_groups = extended_groups
         self.username_source = username_source
         self.group_file_uri = group_file_uri
@@ -1046,7 +1078,7 @@ class CacheUsernameDownloadSettings(msrest.serialization.Model):
         self.credentials = credentials
 
 
-class CacheUsernameDownloadSettingsCredentials(msrest.serialization.Model):
+class CacheUsernameDownloadSettingsCredentials(_serialization.Model):
     """When present, these are the credentials for the secure LDAP connection.
 
     :ivar bind_dn: The Bind Distinguished Name identity to be used in the secure LDAP connection.
@@ -1058,17 +1090,11 @@ class CacheUsernameDownloadSettingsCredentials(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'bind_dn': {'key': 'bindDn', 'type': 'str'},
-        'bind_password': {'key': 'bindPassword', 'type': 'str'},
+        "bind_dn": {"key": "bindDn", "type": "str"},
+        "bind_password": {"key": "bindPassword", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        bind_dn: Optional[str] = None,
-        bind_password: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, bind_dn: Optional[str] = None, bind_password: Optional[str] = None, **kwargs):
         """
         :keyword bind_dn: The Bind Distinguished Name identity to be used in the secure LDAP
          connection. This value is stored encrypted and not returned on response.
@@ -1077,12 +1103,12 @@ class CacheUsernameDownloadSettingsCredentials(msrest.serialization.Model):
          is stored encrypted and not returned on response.
         :paramtype bind_password: str
         """
-        super(CacheUsernameDownloadSettingsCredentials, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.bind_dn = bind_dn
         self.bind_password = bind_password
 
 
-class ClfsTarget(msrest.serialization.Model):
+class ClfsTarget(_serialization.Model):
     """Properties pertaining to the ClfsTarget.
 
     :ivar target: Resource ID of storage container.
@@ -1090,31 +1116,26 @@ class ClfsTarget(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'target': {'key': 'target', 'type': 'str'},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, target: Optional[str] = None, **kwargs):
         """
         :keyword target: Resource ID of storage container.
         :paramtype target: str
         """
-        super(ClfsTarget, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target = target
 
 
-class CloudErrorBody(msrest.serialization.Model):
+class CloudErrorBody(_serialization.Model):
     """An error response.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically.
     :vartype code: str
     :ivar details: A list of additional details about the error.
-    :vartype details: list[~storage_cache_management_client.models.CloudErrorBody]
+    :vartype details: list[~azure.mgmt.storagecache.models.CloudErrorBody]
     :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
     :vartype message: str
@@ -1124,17 +1145,17 @@ class CloudErrorBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         code: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
         **kwargs
@@ -1144,7 +1165,7 @@ class CloudErrorBody(msrest.serialization.Model):
          programmatically.
         :paramtype code: str
         :keyword details: A list of additional details about the error.
-        :paramtype details: list[~storage_cache_management_client.models.CloudErrorBody]
+        :paramtype details: list[~azure.mgmt.storagecache.models.CloudErrorBody]
         :keyword message: A message describing the error, intended to be suitable for display in a user
          interface.
         :paramtype message: str
@@ -1152,14 +1173,14 @@ class CloudErrorBody(msrest.serialization.Model):
          error.
         :paramtype target: str
         """
-        super(CloudErrorBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.details = details
         self.message = message
         self.target = target
 
 
-class Condition(msrest.serialization.Model):
+class Condition(_serialization.Model):
     """Outstanding conditions that will need to be resolved.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1171,27 +1192,23 @@ class Condition(msrest.serialization.Model):
     """
 
     _validation = {
-        'timestamp': {'readonly': True},
-        'message': {'readonly': True},
+        "timestamp": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'message': {'key': 'message', 'type': 'str'},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Condition, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.timestamp = None
         self.message = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar code: Error code.
@@ -1201,69 +1218,56 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class KeyVaultKeyReference(msrest.serialization.Model):
+class KeyVaultKeyReference(_serialization.Model):
     """Describes a reference to Key Vault Key.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_url: Required. The URL referencing a key encryption key in Key Vault.
+    :ivar key_url: The URL referencing a key encryption key in Key Vault. Required.
     :vartype key_url: str
-    :ivar source_vault: Required. Describes a resource Id to source Key Vault.
-    :vartype source_vault: ~storage_cache_management_client.models.KeyVaultKeyReferenceSourceVault
+    :ivar source_vault: Describes a resource Id to source Key Vault. Required.
+    :vartype source_vault: ~azure.mgmt.storagecache.models.KeyVaultKeyReferenceSourceVault
     """
 
     _validation = {
-        'key_url': {'required': True},
-        'source_vault': {'required': True},
+        "key_url": {"required": True},
+        "source_vault": {"required": True},
     }
 
     _attribute_map = {
-        'key_url': {'key': 'keyUrl', 'type': 'str'},
-        'source_vault': {'key': 'sourceVault', 'type': 'KeyVaultKeyReferenceSourceVault'},
+        "key_url": {"key": "keyUrl", "type": "str"},
+        "source_vault": {"key": "sourceVault", "type": "KeyVaultKeyReferenceSourceVault"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_url: str,
-        source_vault: "KeyVaultKeyReferenceSourceVault",
-        **kwargs
-    ):
+    def __init__(self, *, key_url: str, source_vault: "_models.KeyVaultKeyReferenceSourceVault", **kwargs):
         """
-        :keyword key_url: Required. The URL referencing a key encryption key in Key Vault.
+        :keyword key_url: The URL referencing a key encryption key in Key Vault. Required.
         :paramtype key_url: str
-        :keyword source_vault: Required. Describes a resource Id to source Key Vault.
-        :paramtype source_vault:
-         ~storage_cache_management_client.models.KeyVaultKeyReferenceSourceVault
+        :keyword source_vault: Describes a resource Id to source Key Vault. Required.
+        :paramtype source_vault: ~azure.mgmt.storagecache.models.KeyVaultKeyReferenceSourceVault
         """
-        super(KeyVaultKeyReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_url = key_url
         self.source_vault = source_vault
 
 
-class KeyVaultKeyReferenceSourceVault(msrest.serialization.Model):
+class KeyVaultKeyReferenceSourceVault(_serialization.Model):
     """Describes a resource Id to source Key Vault.
 
     :ivar id: Resource Id.
@@ -1271,24 +1275,45 @@ class KeyVaultKeyReferenceSourceVault(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource Id.
         :paramtype id: str
         """
-        super(KeyVaultKeyReferenceSourceVault, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class MetricDimension(msrest.serialization.Model):
+class LogSpecification(_serialization.Model):
+    """Details about operation related to logs.
+
+    :ivar name: The name of the log.
+    :vartype name: str
+    :ivar display_name: Localized display name of the log.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the log.
+        :paramtype name: str
+        :keyword display_name: Localized display name of the log.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+
+
+class MetricDimension(_serialization.Model):
     """Specifications of the Dimension of metrics.
 
     :ivar name: Name of the dimension.
@@ -1302,10 +1327,10 @@ class MetricDimension(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "internal_name": {"key": "internalName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
     def __init__(
@@ -1327,14 +1352,14 @@ class MetricDimension(msrest.serialization.Model):
         :keyword to_be_exported_for_shoebox: To be exported to shoe box.
         :paramtype to_be_exported_for_shoebox: bool
         """
-        super(MetricDimension, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
         self.to_be_exported_for_shoebox = to_be_exported_for_shoebox
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):
     """Details about operation related to metrics.
 
     :ivar name: The name of the metric.
@@ -1349,22 +1374,22 @@ class MetricSpecification(msrest.serialization.Model):
     :vartype aggregation_type: str
     :ivar supported_aggregation_types: Support metric aggregation type.
     :vartype supported_aggregation_types: list[str or
-     ~storage_cache_management_client.models.MetricAggregationType]
+     ~azure.mgmt.storagecache.models.MetricAggregationType]
     :ivar metric_class: Type of metrics.
     :vartype metric_class: str
     :ivar dimensions: Dimensions of the metric.
-    :vartype dimensions: list[~storage_cache_management_client.models.MetricDimension]
+    :vartype dimensions: list[~azure.mgmt.storagecache.models.MetricDimension]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
-        'metric_class': {'key': 'metricClass', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
+        "metric_class": {"key": "metricClass", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[MetricDimension]"},
     }
 
     def __init__(
@@ -1375,9 +1400,9 @@ class MetricSpecification(msrest.serialization.Model):
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
         aggregation_type: Optional[str] = None,
-        supported_aggregation_types: Optional[List[Union[str, "MetricAggregationType"]]] = None,
+        supported_aggregation_types: Optional[List[Union[str, "_models.MetricAggregationType"]]] = None,
         metric_class: Optional[str] = None,
-        dimensions: Optional[List["MetricDimension"]] = None,
+        dimensions: Optional[List["_models.MetricDimension"]] = None,
         **kwargs
     ):
         """
@@ -1393,13 +1418,13 @@ class MetricSpecification(msrest.serialization.Model):
         :paramtype aggregation_type: str
         :keyword supported_aggregation_types: Support metric aggregation type.
         :paramtype supported_aggregation_types: list[str or
-         ~storage_cache_management_client.models.MetricAggregationType]
+         ~azure.mgmt.storagecache.models.MetricAggregationType]
         :keyword metric_class: Type of metrics.
         :paramtype metric_class: str
         :keyword dimensions: Dimensions of the metric.
-        :paramtype dimensions: list[~storage_cache_management_client.models.MetricDimension]
+        :paramtype dimensions: list[~azure.mgmt.storagecache.models.MetricDimension]
         """
-        super(MetricSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
@@ -1410,7 +1435,7 @@ class MetricSpecification(msrest.serialization.Model):
         self.dimensions = dimensions
 
 
-class NamespaceJunction(msrest.serialization.Model):
+class NamespaceJunction(_serialization.Model):
     """A namespace junction.
 
     :ivar namespace_path: Namespace path on a Cache for a Storage Target.
@@ -1424,10 +1449,10 @@ class NamespaceJunction(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'namespace_path': {'key': 'namespacePath', 'type': 'str'},
-        'target_path': {'key': 'targetPath', 'type': 'str'},
-        'nfs_export': {'key': 'nfsExport', 'type': 'str'},
-        'nfs_access_policy': {'key': 'nfsAccessPolicy', 'type': 'str'},
+        "namespace_path": {"key": "namespacePath", "type": "str"},
+        "target_path": {"key": "targetPath", "type": "str"},
+        "nfs_export": {"key": "nfsExport", "type": "str"},
+        "nfs_access_policy": {"key": "nfsAccessPolicy", "type": "str"},
     }
 
     def __init__(
@@ -1436,7 +1461,7 @@ class NamespaceJunction(msrest.serialization.Model):
         namespace_path: Optional[str] = None,
         target_path: Optional[str] = None,
         nfs_export: Optional[str] = None,
-        nfs_access_policy: Optional[str] = "default",
+        nfs_access_policy: str = "default",
         **kwargs
     ):
         """
@@ -1449,14 +1474,14 @@ class NamespaceJunction(msrest.serialization.Model):
         :keyword nfs_access_policy: Name of the access policy applied to this junction.
         :paramtype nfs_access_policy: str
         """
-        super(NamespaceJunction, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.namespace_path = namespace_path
         self.target_path = target_path
         self.nfs_export = nfs_export
         self.nfs_access_policy = nfs_access_policy
 
 
-class Nfs3Target(msrest.serialization.Model):
+class Nfs3Target(_serialization.Model):
     """Properties pertaining to the Nfs3Target.
 
     :ivar target: IP address or host name of an NFSv3 host (e.g., 10.0.44.44).
@@ -1466,21 +1491,15 @@ class Nfs3Target(msrest.serialization.Model):
     """
 
     _validation = {
-        'target': {'pattern': r'^[-.,0-9a-zA-Z]+$'},
+        "target": {"pattern": r"^[-.,0-9a-zA-Z]+$"},
     }
 
     _attribute_map = {
-        'target': {'key': 'target', 'type': 'str'},
-        'usage_model': {'key': 'usageModel', 'type': 'str'},
+        "target": {"key": "target", "type": "str"},
+        "usage_model": {"key": "usageModel", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target: Optional[str] = None,
-        usage_model: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, target: Optional[str] = None, usage_model: Optional[str] = None, **kwargs):
         """
         :keyword target: IP address or host name of an NFSv3 host (e.g., 10.0.44.44).
         :paramtype target: str
@@ -1488,69 +1507,63 @@ class Nfs3Target(msrest.serialization.Model):
          target.
         :paramtype usage_model: str
         """
-        super(Nfs3Target, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.target = target
         self.usage_model = usage_model
 
 
-class NfsAccessPolicy(msrest.serialization.Model):
+class NfsAccessPolicy(_serialization.Model):
     """A set of rules describing access policies applied to NFSv3 clients of the cache.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Name identifying this policy. Access Policy names are not case sensitive.
+    :ivar name: Name identifying this policy. Access Policy names are not case sensitive. Required.
     :vartype name: str
-    :ivar access_rules: Required. The set of rules describing client accesses allowed under this
-     policy.
-    :vartype access_rules: list[~storage_cache_management_client.models.NfsAccessRule]
+    :ivar access_rules: The set of rules describing client accesses allowed under this policy.
+     Required.
+    :vartype access_rules: list[~azure.mgmt.storagecache.models.NfsAccessRule]
     """
 
     _validation = {
-        'name': {'required': True},
-        'access_rules': {'required': True},
+        "name": {"required": True},
+        "access_rules": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'access_rules': {'key': 'accessRules', 'type': '[NfsAccessRule]'},
+        "name": {"key": "name", "type": "str"},
+        "access_rules": {"key": "accessRules", "type": "[NfsAccessRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        access_rules: List["NfsAccessRule"],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, access_rules: List["_models.NfsAccessRule"], **kwargs):
         """
-        :keyword name: Required. Name identifying this policy. Access Policy names are not case
-         sensitive.
+        :keyword name: Name identifying this policy. Access Policy names are not case sensitive.
+         Required.
         :paramtype name: str
-        :keyword access_rules: Required. The set of rules describing client accesses allowed under this
-         policy.
-        :paramtype access_rules: list[~storage_cache_management_client.models.NfsAccessRule]
+        :keyword access_rules: The set of rules describing client accesses allowed under this policy.
+         Required.
+        :paramtype access_rules: list[~azure.mgmt.storagecache.models.NfsAccessRule]
         """
-        super(NfsAccessPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.access_rules = access_rules
 
 
-class NfsAccessRule(msrest.serialization.Model):
+class NfsAccessRule(_serialization.Model):
     """Rule to place restrictions on portions of the cache namespace being presented to clients.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar scope: Required. Scope for this rule. The scope and filter determine which clients match
-     the rule. Possible values include: "default", "network", "host".
-    :vartype scope: str or ~storage_cache_management_client.models.NfsAccessRuleScope
+    :ivar scope: Scope for this rule. The scope and filter determine which clients match the rule.
+     Required. Known values are: "default", "network", and "host".
+    :vartype scope: str or ~azure.mgmt.storagecache.models.NfsAccessRuleScope
     :ivar filter: Filter applied to the scope for this rule. The filter's format depends on its
      scope. 'default' scope matches all clients and has no filter value. 'network' scope takes a
      filter in CIDR format (for example, 10.99.1.0/24). 'host' takes an IP address or fully
      qualified domain name as filter. If a client does not match any filter rule and there is no
      default rule, access is denied.
     :vartype filter: str
-    :ivar access: Required. Access allowed by this rule. Possible values include: "no", "ro", "rw".
-    :vartype access: str or ~storage_cache_management_client.models.NfsAccessRuleAccess
+    :ivar access: Access allowed by this rule. Required. Known values are: "no", "ro", and "rw".
+    :vartype access: str or ~azure.mgmt.storagecache.models.NfsAccessRuleAccess
     :ivar suid: Allow SUID semantics.
     :vartype suid: bool
     :ivar submount_access: For the default policy, allow access to subdirectories under the root
@@ -1568,27 +1581,27 @@ class NfsAccessRule(msrest.serialization.Model):
     """
 
     _validation = {
-        'scope': {'required': True},
-        'access': {'required': True},
+        "scope": {"required": True},
+        "access": {"required": True},
     }
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': 'str'},
-        'filter': {'key': 'filter', 'type': 'str'},
-        'access': {'key': 'access', 'type': 'str'},
-        'suid': {'key': 'suid', 'type': 'bool'},
-        'submount_access': {'key': 'submountAccess', 'type': 'bool'},
-        'root_squash': {'key': 'rootSquash', 'type': 'bool'},
-        'anonymous_uid': {'key': 'anonymousUID', 'type': 'str'},
-        'anonymous_gid': {'key': 'anonymousGID', 'type': 'str'},
+        "scope": {"key": "scope", "type": "str"},
+        "filter": {"key": "filter", "type": "str"},
+        "access": {"key": "access", "type": "str"},
+        "suid": {"key": "suid", "type": "bool"},
+        "submount_access": {"key": "submountAccess", "type": "bool"},
+        "root_squash": {"key": "rootSquash", "type": "bool"},
+        "anonymous_uid": {"key": "anonymousUID", "type": "str"},
+        "anonymous_gid": {"key": "anonymousGID", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        scope: Union[str, "NfsAccessRuleScope"],
-        access: Union[str, "NfsAccessRuleAccess"],
-        filter: Optional[str] = None,
+        scope: Union[str, "_models.NfsAccessRuleScope"],
+        access: Union[str, "_models.NfsAccessRuleAccess"],
+        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
         suid: Optional[bool] = None,
         submount_access: Optional[bool] = None,
         root_squash: Optional[bool] = None,
@@ -1597,18 +1610,17 @@ class NfsAccessRule(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword scope: Required. Scope for this rule. The scope and filter determine which clients
-         match the rule. Possible values include: "default", "network", "host".
-        :paramtype scope: str or ~storage_cache_management_client.models.NfsAccessRuleScope
+        :keyword scope: Scope for this rule. The scope and filter determine which clients match the
+         rule. Required. Known values are: "default", "network", and "host".
+        :paramtype scope: str or ~azure.mgmt.storagecache.models.NfsAccessRuleScope
         :keyword filter: Filter applied to the scope for this rule. The filter's format depends on its
          scope. 'default' scope matches all clients and has no filter value. 'network' scope takes a
          filter in CIDR format (for example, 10.99.1.0/24). 'host' takes an IP address or fully
          qualified domain name as filter. If a client does not match any filter rule and there is no
          default rule, access is denied.
         :paramtype filter: str
-        :keyword access: Required. Access allowed by this rule. Possible values include: "no", "ro",
-         "rw".
-        :paramtype access: str or ~storage_cache_management_client.models.NfsAccessRuleAccess
+        :keyword access: Access allowed by this rule. Required. Known values are: "no", "ro", and "rw".
+        :paramtype access: str or ~azure.mgmt.storagecache.models.NfsAccessRuleAccess
         :keyword suid: Allow SUID semantics.
         :paramtype suid: bool
         :keyword submount_access: For the default policy, allow access to subdirectories under the root
@@ -1624,7 +1636,7 @@ class NfsAccessRule(msrest.serialization.Model):
          value of anonymousUID if not provided.
         :paramtype anonymous_gid: str
         """
-        super(NfsAccessRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.scope = scope
         self.filter = filter
         self.access = access
@@ -1635,7 +1647,98 @@ class NfsAccessRule(msrest.serialization.Model):
         self.anonymous_gid = anonymous_gid
 
 
-class ResourceSku(msrest.serialization.Model):
+class PrimingJob(_serialization.Model):
+    """A priming job instance.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar priming_job_name: The priming job name. Required.
+    :vartype priming_job_name: str
+    :ivar priming_manifest_url: The URL for the priming manifest file to download. This file must
+     be readable from the HPC Cache. When the file is in Azure blob storage the URL should include a
+     Shared Access Signature (SAS) granting read permissions on the blob. Required.
+    :vartype priming_manifest_url: str
+    :ivar priming_job_id: The unique identifier of the priming job.
+    :vartype priming_job_id: str
+    :ivar priming_job_state: The state of the priming operation. Known values are: "Queued",
+     "Running", "Paused", and "Complete".
+    :vartype priming_job_state: str or ~azure.mgmt.storagecache.models.PrimingJobState
+    :ivar priming_job_status: The status code of the priming job.
+    :vartype priming_job_status: str
+    :ivar priming_job_details: The job details or error information if any.
+    :vartype priming_job_details: str
+    :ivar priming_job_percent_complete: The current progress of the priming job, as a percentage.
+    :vartype priming_job_percent_complete: float
+    """
+
+    _validation = {
+        "priming_job_name": {"required": True, "pattern": r"^[-0-9a-zA-Z_]{1,80}$"},
+        "priming_manifest_url": {"required": True},
+        "priming_job_id": {"readonly": True, "pattern": r"^[-0-9a-zA-Z_]{1,80}$"},
+        "priming_job_state": {"readonly": True},
+        "priming_job_status": {"readonly": True},
+        "priming_job_details": {"readonly": True},
+        "priming_job_percent_complete": {"readonly": True, "maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "priming_job_name": {"key": "primingJobName", "type": "str"},
+        "priming_manifest_url": {"key": "primingManifestUrl", "type": "str"},
+        "priming_job_id": {"key": "primingJobId", "type": "str"},
+        "priming_job_state": {"key": "primingJobState", "type": "str"},
+        "priming_job_status": {"key": "primingJobStatus", "type": "str"},
+        "priming_job_details": {"key": "primingJobDetails", "type": "str"},
+        "priming_job_percent_complete": {"key": "primingJobPercentComplete", "type": "float"},
+    }
+
+    def __init__(self, *, priming_job_name: str, priming_manifest_url: str, **kwargs):
+        """
+        :keyword priming_job_name: The priming job name. Required.
+        :paramtype priming_job_name: str
+        :keyword priming_manifest_url: The URL for the priming manifest file to download. This file
+         must be readable from the HPC Cache. When the file is in Azure blob storage the URL should
+         include a Shared Access Signature (SAS) granting read permissions on the blob. Required.
+        :paramtype priming_manifest_url: str
+        """
+        super().__init__(**kwargs)
+        self.priming_job_name = priming_job_name
+        self.priming_manifest_url = priming_manifest_url
+        self.priming_job_id = None
+        self.priming_job_state = None
+        self.priming_job_status = None
+        self.priming_job_details = None
+        self.priming_job_percent_complete = None
+
+
+class PrimingJobIdParameter(_serialization.Model):
+    """Object containing the priming job ID.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar priming_job_id: The unique identifier of the priming job. Required.
+    :vartype priming_job_id: str
+    """
+
+    _validation = {
+        "priming_job_id": {"required": True, "pattern": r"^[-0-9a-zA-Z_]{1,80}$"},
+    }
+
+    _attribute_map = {
+        "priming_job_id": {"key": "primingJobId", "type": "str"},
+    }
+
+    def __init__(self, *, priming_job_id: str, **kwargs):
+        """
+        :keyword priming_job_id: The unique identifier of the priming job. Required.
+        :paramtype priming_job_id: str
+        """
+        super().__init__(**kwargs)
+        self.priming_job_id = priming_job_id
+
+
+class ResourceSku(_serialization.Model):
     """A resource SKU.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1643,54 +1746,54 @@ class ResourceSku(msrest.serialization.Model):
     :ivar resource_type: The type of resource the SKU applies to.
     :vartype resource_type: str
     :ivar capabilities: A list of capabilities of this SKU, such as throughput or ops/sec.
-    :vartype capabilities: list[~storage_cache_management_client.models.ResourceSkuCapabilities]
+    :vartype capabilities: list[~azure.mgmt.storagecache.models.ResourceSkuCapabilities]
     :ivar locations: The set of locations where the SKU is available. This is the supported and
      registered Azure Geo Regions (e.g., West US, East US, Southeast Asia, etc.).
     :vartype locations: list[str]
     :ivar location_info: The set of locations where the SKU is available.
-    :vartype location_info: list[~storage_cache_management_client.models.ResourceSkuLocationInfo]
+    :vartype location_info: list[~azure.mgmt.storagecache.models.ResourceSkuLocationInfo]
     :ivar name: The name of this SKU.
     :vartype name: str
     :ivar restrictions: The restrictions preventing this SKU from being used. This is empty if
      there are no restrictions.
-    :vartype restrictions: list[~storage_cache_management_client.models.Restriction]
+    :vartype restrictions: list[~azure.mgmt.storagecache.models.Restriction]
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'locations': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "locations": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'capabilities': {'key': 'capabilities', 'type': '[ResourceSkuCapabilities]'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'location_info': {'key': 'locationInfo', 'type': '[ResourceSkuLocationInfo]'},
-        'name': {'key': 'name', 'type': 'str'},
-        'restrictions': {'key': 'restrictions', 'type': '[Restriction]'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "capabilities": {"key": "capabilities", "type": "[ResourceSkuCapabilities]"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "location_info": {"key": "locationInfo", "type": "[ResourceSkuLocationInfo]"},
+        "name": {"key": "name", "type": "str"},
+        "restrictions": {"key": "restrictions", "type": "[Restriction]"},
     }
 
     def __init__(
         self,
         *,
-        capabilities: Optional[List["ResourceSkuCapabilities"]] = None,
-        location_info: Optional[List["ResourceSkuLocationInfo"]] = None,
+        capabilities: Optional[List["_models.ResourceSkuCapabilities"]] = None,
+        location_info: Optional[List["_models.ResourceSkuLocationInfo"]] = None,
         name: Optional[str] = None,
-        restrictions: Optional[List["Restriction"]] = None,
+        restrictions: Optional[List["_models.Restriction"]] = None,
         **kwargs
     ):
         """
         :keyword capabilities: A list of capabilities of this SKU, such as throughput or ops/sec.
-        :paramtype capabilities: list[~storage_cache_management_client.models.ResourceSkuCapabilities]
+        :paramtype capabilities: list[~azure.mgmt.storagecache.models.ResourceSkuCapabilities]
         :keyword location_info: The set of locations where the SKU is available.
-        :paramtype location_info: list[~storage_cache_management_client.models.ResourceSkuLocationInfo]
+        :paramtype location_info: list[~azure.mgmt.storagecache.models.ResourceSkuLocationInfo]
         :keyword name: The name of this SKU.
         :paramtype name: str
         :keyword restrictions: The restrictions preventing this SKU from being used. This is empty if
          there are no restrictions.
-        :paramtype restrictions: list[~storage_cache_management_client.models.Restriction]
+        :paramtype restrictions: list[~azure.mgmt.storagecache.models.Restriction]
         """
-        super(ResourceSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_type = None
         self.capabilities = capabilities
         self.locations = None
@@ -1699,7 +1802,7 @@ class ResourceSku(msrest.serialization.Model):
         self.restrictions = restrictions
 
 
-class ResourceSkuCapabilities(msrest.serialization.Model):
+class ResourceSkuCapabilities(_serialization.Model):
     """A resource SKU capability.
 
     :ivar name: Name of a capability, such as ops/sec.
@@ -1709,29 +1812,23 @@ class ResourceSkuCapabilities(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name: Name of a capability, such as ops/sec.
         :paramtype name: str
         :keyword value: Quantity, if the capability is measured by quantity.
         :paramtype value: str
         """
-        super(ResourceSkuCapabilities, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class ResourceSkuLocationInfo(msrest.serialization.Model):
+class ResourceSkuLocationInfo(_serialization.Model):
     """Resource SKU location information.
 
     :ivar location: Location where this SKU is available.
@@ -1741,29 +1838,23 @@ class ResourceSkuLocationInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'zones': {'key': 'zones', 'type': '[str]'},
+        "location": {"key": "location", "type": "str"},
+        "zones": {"key": "zones", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        zones: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, zones: Optional[List[str]] = None, **kwargs):
         """
         :keyword location: Location where this SKU is available.
         :paramtype location: str
         :keyword zones: Zones if any.
         :paramtype zones: list[str]
         """
-        super(ResourceSkuLocationInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.zones = zones
 
 
-class ResourceSkusResult(msrest.serialization.Model):
+class ResourceSkusResult(_serialization.Model):
     """The response from the List Cache SKUs operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1771,34 +1862,29 @@ class ResourceSkusResult(msrest.serialization.Model):
     :ivar next_link: The URI to fetch the next page of Cache SKUs.
     :vartype next_link: str
     :ivar value: The list of SKUs available for the subscription.
-    :vartype value: list[~storage_cache_management_client.models.ResourceSku]
+    :vartype value: list[~azure.mgmt.storagecache.models.ResourceSku]
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ResourceSku]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourceSku]"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: The URI to fetch the next page of Cache SKUs.
         :paramtype next_link: str
         """
-        super(ResourceSkusResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = None
 
 
-class ResourceUsage(msrest.serialization.Model):
+class ResourceUsage(_serialization.Model):
     """The usage and limit (quota) for a resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1810,37 +1896,33 @@ class ResourceUsage(msrest.serialization.Model):
     :ivar current_value: The current usage of this resource.
     :vartype current_value: int
     :ivar name: Naming information for this resource type.
-    :vartype name: ~storage_cache_management_client.models.ResourceUsageName
+    :vartype name: ~azure.mgmt.storagecache.models.ResourceUsageName
     """
 
     _validation = {
-        'limit': {'readonly': True, 'minimum': 0},
-        'unit': {'readonly': True},
-        'current_value': {'readonly': True, 'minimum': 0},
-        'name': {'readonly': True},
+        "limit": {"readonly": True, "minimum": 0},
+        "unit": {"readonly": True},
+        "current_value": {"readonly": True, "minimum": 0},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'limit': {'key': 'limit', 'type': 'int'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'ResourceUsageName'},
+        "limit": {"key": "limit", "type": "int"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "name": {"key": "name", "type": "ResourceUsageName"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceUsage, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.limit = None
         self.unit = None
         self.current_value = None
         self.name = None
 
 
-class ResourceUsageName(msrest.serialization.Model):
+class ResourceUsageName(_serialization.Model):
     """Naming information for this resource type.
 
     :ivar value: Canonical name for this resource type.
@@ -1850,29 +1932,23 @@ class ResourceUsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
         """
         :keyword value: Canonical name for this resource type.
         :paramtype value: str
         :keyword localized_value: Localized name for this resource type.
         :paramtype localized_value: str
         """
-        super(ResourceUsageName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class ResourceUsagesListResult(msrest.serialization.Model):
+class ResourceUsagesListResult(_serialization.Model):
     """Result of the request to list resource usages. It contains a list of resource usages & limits and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1881,31 +1957,27 @@ class ResourceUsagesListResult(msrest.serialization.Model):
     :vartype next_link: str
     :ivar value: List of usages and limits for resources controlled by the Microsoft.StorageCache
      resource provider.
-    :vartype value: list[~storage_cache_management_client.models.ResourceUsage]
+    :vartype value: list[~azure.mgmt.storagecache.models.ResourceUsage]
     """
 
     _validation = {
-        'next_link': {'readonly': True},
-        'value': {'readonly': True},
+        "next_link": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[ResourceUsage]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[ResourceUsage]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceUsagesListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.next_link = None
         self.value = None
 
 
-class Restriction(msrest.serialization.Model):
+class Restriction(_serialization.Model):
     """The restrictions preventing this SKU from being used.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1919,41 +1991,36 @@ class Restriction(msrest.serialization.Model):
     :ivar reason_code: The reason for the restriction. As of now this can be "QuotaId" or
      "NotAvailableForSubscription". "QuotaId" is set when the SKU has requiredQuotas parameter as
      the subscription does not belong to that quota. "NotAvailableForSubscription" is related to
-     capacity at the datacenter. Possible values include: "QuotaId", "NotAvailableForSubscription".
-    :vartype reason_code: str or ~storage_cache_management_client.models.ReasonCode
+     capacity at the datacenter. Known values are: "QuotaId" and "NotAvailableForSubscription".
+    :vartype reason_code: str or ~azure.mgmt.storagecache.models.ReasonCode
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'values': {'readonly': True},
+        "type": {"readonly": True},
+        "values": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'values': {'key': 'values', 'type': '[str]'},
-        'reason_code': {'key': 'reasonCode', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "values": {"key": "values", "type": "[str]"},
+        "reason_code": {"key": "reasonCode", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        reason_code: Optional[Union[str, "ReasonCode"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, reason_code: Optional[Union[str, "_models.ReasonCode"]] = None, **kwargs):
         """
         :keyword reason_code: The reason for the restriction. As of now this can be "QuotaId" or
          "NotAvailableForSubscription". "QuotaId" is set when the SKU has requiredQuotas parameter as
          the subscription does not belong to that quota. "NotAvailableForSubscription" is related to
-         capacity at the datacenter. Possible values include: "QuotaId", "NotAvailableForSubscription".
-        :paramtype reason_code: str or ~storage_cache_management_client.models.ReasonCode
+         capacity at the datacenter. Known values are: "QuotaId" and "NotAvailableForSubscription".
+        :paramtype reason_code: str or ~azure.mgmt.storagecache.models.ReasonCode
         """
-        super(Restriction, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = None
         self.values = None
         self.reason_code = reason_code
 
 
-class StorageTargetResource(msrest.serialization.Model):
+class StorageTargetResource(_serialization.Model):
     """Resource used by a Cache.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1967,32 +2034,28 @@ class StorageTargetResource(msrest.serialization.Model):
     :ivar location: Region name string.
     :vartype location: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~storage_cache_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
     """
 
     _validation = {
-        'name': {'readonly': True, 'pattern': r'^[-0-9a-zA-Z_]{1,80}$'},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
+        "name": {"readonly": True, "pattern": r"^[-0-9a-zA-Z_]{1,80}$"},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(StorageTargetResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.type = None
@@ -2000,7 +2063,7 @@ class StorageTargetResource(msrest.serialization.Model):
         self.system_data = None
 
 
-class StorageTarget(StorageTargetResource):
+class StorageTarget(StorageTargetResource):  # pylint: disable=too-many-instance-attributes
     """Type of the Storage Target.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2014,87 +2077,89 @@ class StorageTarget(StorageTargetResource):
     :ivar location: Region name string.
     :vartype location: str
     :ivar system_data: The system meta data relating to this resource.
-    :vartype system_data: ~storage_cache_management_client.models.SystemData
+    :vartype system_data: ~azure.mgmt.storagecache.models.SystemData
     :ivar junctions: List of Cache namespace junctions to target for namespace associations.
-    :vartype junctions: list[~storage_cache_management_client.models.NamespaceJunction]
-    :ivar target_type: Type of the Storage Target. Possible values include: "nfs3", "clfs",
-     "unknown", "blobNfs".
-    :vartype target_type: str or ~storage_cache_management_client.models.StorageTargetType
+    :vartype junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
+    :ivar target_type: Type of the Storage Target. Known values are: "nfs3", "clfs", "unknown", and
+     "blobNfs".
+    :vartype target_type: str or ~azure.mgmt.storagecache.models.StorageTargetType
     :ivar provisioning_state: ARM provisioning state, see
      https://github.com/Azure/azure-resource-manager-rpc/blob/master/v1.0/Addendum.md#provisioningstate-property.
-     Possible values include: "Succeeded", "Failed", "Cancelled", "Creating", "Deleting",
-     "Updating".
-    :vartype provisioning_state: str or
-     ~storage_cache_management_client.models.ProvisioningStateType
-    :ivar state: Storage target operational state. Possible values include: "Ready", "Busy",
-     "Suspended", "Flushing".
-    :vartype state: str or ~storage_cache_management_client.models.OperationalStateType
+     Known values are: "Succeeded", "Failed", "Cancelled", "Creating", "Deleting", and "Updating".
+    :vartype provisioning_state: str or ~azure.mgmt.storagecache.models.ProvisioningStateType
+    :ivar state: Storage target operational state. Known values are: "Ready", "Busy", "Suspended",
+     and "Flushing".
+    :vartype state: str or ~azure.mgmt.storagecache.models.OperationalStateType
     :ivar nfs3: Properties when targetType is nfs3.
-    :vartype nfs3: ~storage_cache_management_client.models.Nfs3Target
+    :vartype nfs3: ~azure.mgmt.storagecache.models.Nfs3Target
     :ivar clfs: Properties when targetType is clfs.
-    :vartype clfs: ~storage_cache_management_client.models.ClfsTarget
+    :vartype clfs: ~azure.mgmt.storagecache.models.ClfsTarget
     :ivar unknown: Properties when targetType is unknown.
-    :vartype unknown: ~storage_cache_management_client.models.UnknownTarget
+    :vartype unknown: ~azure.mgmt.storagecache.models.UnknownTarget
     :ivar blob_nfs: Properties when targetType is blobNfs.
-    :vartype blob_nfs: ~storage_cache_management_client.models.BlobNfsTarget
+    :vartype blob_nfs: ~azure.mgmt.storagecache.models.BlobNfsTarget
+    :ivar allocation_percentage: The percentage of cache space allocated for this storage target.
+    :vartype allocation_percentage: int
     """
 
     _validation = {
-        'name': {'readonly': True, 'pattern': r'^[-0-9a-zA-Z_]{1,80}$'},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True, "pattern": r"^[-0-9a-zA-Z_]{1,80}$"},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "allocation_percentage": {"readonly": True, "maximum": 100, "minimum": 1},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'junctions': {'key': 'properties.junctions', 'type': '[NamespaceJunction]'},
-        'target_type': {'key': 'properties.targetType', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'nfs3': {'key': 'properties.nfs3', 'type': 'Nfs3Target'},
-        'clfs': {'key': 'properties.clfs', 'type': 'ClfsTarget'},
-        'unknown': {'key': 'properties.unknown', 'type': 'UnknownTarget'},
-        'blob_nfs': {'key': 'properties.blobNfs', 'type': 'BlobNfsTarget'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "junctions": {"key": "properties.junctions", "type": "[NamespaceJunction]"},
+        "target_type": {"key": "properties.targetType", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "nfs3": {"key": "properties.nfs3", "type": "Nfs3Target"},
+        "clfs": {"key": "properties.clfs", "type": "ClfsTarget"},
+        "unknown": {"key": "properties.unknown", "type": "UnknownTarget"},
+        "blob_nfs": {"key": "properties.blobNfs", "type": "BlobNfsTarget"},
+        "allocation_percentage": {"key": "properties.allocationPercentage", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        junctions: Optional[List["NamespaceJunction"]] = None,
-        target_type: Optional[Union[str, "StorageTargetType"]] = None,
-        state: Optional[Union[str, "OperationalStateType"]] = None,
-        nfs3: Optional["Nfs3Target"] = None,
-        clfs: Optional["ClfsTarget"] = None,
-        unknown: Optional["UnknownTarget"] = None,
-        blob_nfs: Optional["BlobNfsTarget"] = None,
+        junctions: Optional[List["_models.NamespaceJunction"]] = None,
+        target_type: Optional[Union[str, "_models.StorageTargetType"]] = None,
+        state: Optional[Union[str, "_models.OperationalStateType"]] = None,
+        nfs3: Optional["_models.Nfs3Target"] = None,
+        clfs: Optional["_models.ClfsTarget"] = None,
+        unknown: Optional["_models.UnknownTarget"] = None,
+        blob_nfs: Optional["_models.BlobNfsTarget"] = None,
         **kwargs
     ):
         """
         :keyword junctions: List of Cache namespace junctions to target for namespace associations.
-        :paramtype junctions: list[~storage_cache_management_client.models.NamespaceJunction]
-        :keyword target_type: Type of the Storage Target. Possible values include: "nfs3", "clfs",
-         "unknown", "blobNfs".
-        :paramtype target_type: str or ~storage_cache_management_client.models.StorageTargetType
-        :keyword state: Storage target operational state. Possible values include: "Ready", "Busy",
-         "Suspended", "Flushing".
-        :paramtype state: str or ~storage_cache_management_client.models.OperationalStateType
+        :paramtype junctions: list[~azure.mgmt.storagecache.models.NamespaceJunction]
+        :keyword target_type: Type of the Storage Target. Known values are: "nfs3", "clfs", "unknown",
+         and "blobNfs".
+        :paramtype target_type: str or ~azure.mgmt.storagecache.models.StorageTargetType
+        :keyword state: Storage target operational state. Known values are: "Ready", "Busy",
+         "Suspended", and "Flushing".
+        :paramtype state: str or ~azure.mgmt.storagecache.models.OperationalStateType
         :keyword nfs3: Properties when targetType is nfs3.
-        :paramtype nfs3: ~storage_cache_management_client.models.Nfs3Target
+        :paramtype nfs3: ~azure.mgmt.storagecache.models.Nfs3Target
         :keyword clfs: Properties when targetType is clfs.
-        :paramtype clfs: ~storage_cache_management_client.models.ClfsTarget
+        :paramtype clfs: ~azure.mgmt.storagecache.models.ClfsTarget
         :keyword unknown: Properties when targetType is unknown.
-        :paramtype unknown: ~storage_cache_management_client.models.UnknownTarget
+        :paramtype unknown: ~azure.mgmt.storagecache.models.UnknownTarget
         :keyword blob_nfs: Properties when targetType is blobNfs.
-        :paramtype blob_nfs: ~storage_cache_management_client.models.BlobNfsTarget
+        :paramtype blob_nfs: ~azure.mgmt.storagecache.models.BlobNfsTarget
         """
-        super(StorageTarget, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.junctions = junctions
         self.target_type = target_type
         self.provisioning_state = None
@@ -2103,96 +2168,125 @@ class StorageTarget(StorageTargetResource):
         self.clfs = clfs
         self.unknown = unknown
         self.blob_nfs = blob_nfs
+        self.allocation_percentage = None
 
 
-class StorageTargetsResult(msrest.serialization.Model):
+class StorageTargetSpaceAllocation(_serialization.Model):
+    """Storage Target space allocation properties.
+
+    :ivar name: Name of the storage target.
+    :vartype name: str
+    :ivar allocation_percentage: The percentage of cache space allocated for this storage target.
+    :vartype allocation_percentage: int
+    """
+
+    _validation = {
+        "name": {"pattern": r"^[-0-9a-zA-Z_]{1,80}$"},
+        "allocation_percentage": {"maximum": 100, "minimum": 1},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "allocation_percentage": {"key": "allocationPercentage", "type": "int"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, allocation_percentage: Optional[int] = None, **kwargs):
+        """
+        :keyword name: Name of the storage target.
+        :paramtype name: str
+        :keyword allocation_percentage: The percentage of cache space allocated for this storage
+         target.
+        :paramtype allocation_percentage: int
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.allocation_percentage = allocation_percentage
+
+
+class StorageTargetsResult(_serialization.Model):
     """A list of Storage Targets.
 
     :ivar next_link: The URI to fetch the next page of Storage Targets.
     :vartype next_link: str
     :ivar value: The list of Storage Targets defined for the Cache.
-    :vartype value: list[~storage_cache_management_client.models.StorageTarget]
+    :vartype value: list[~azure.mgmt.storagecache.models.StorageTarget]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[StorageTarget]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[StorageTarget]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["StorageTarget"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.StorageTarget"]] = None, **kwargs
     ):
         """
         :keyword next_link: The URI to fetch the next page of Storage Targets.
         :paramtype next_link: str
         :keyword value: The list of Storage Targets defined for the Cache.
-        :paramtype value: list[~storage_cache_management_client.models.StorageTarget]
+        :paramtype value: list[~azure.mgmt.storagecache.models.StorageTarget]
         """
-        super(StorageTargetsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
-    :vartype created_by_type: str or ~storage_cache_management_client.models.CreatedByType
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.storagecache.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :vartype last_modified_by_type: str or ~storage_cache_management_client.models.CreatedByType
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.storagecache.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype created_by_type: str or ~storage_cache_management_client.models.CreatedByType
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.storagecache.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
-        :paramtype last_modified_by_type: str or ~storage_cache_management_client.models.CreatedByType
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.storagecache.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -2201,7 +2295,7 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UnknownTarget(msrest.serialization.Model):
+class UnknownTarget(_serialization.Model):
     """Properties pertaining to the UnknownTarget.
 
     :ivar attributes: Dictionary of string->string pairs containing information about the Storage
@@ -2210,29 +2304,24 @@ class UnknownTarget(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'attributes': {'key': 'attributes', 'type': '{str}'},
+        "attributes": {"key": "attributes", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        attributes: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, attributes: Optional[Dict[str, str]] = None, **kwargs):
         """
         :keyword attributes: Dictionary of string->string pairs containing information about the
          Storage Target.
         :paramtype attributes: dict[str, str]
         """
-        super(UnknownTarget, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.attributes = attributes
 
 
-class UsageModel(msrest.serialization.Model):
+class UsageModel(_serialization.Model):
     """A usage model.
 
     :ivar display: Localized information describing this usage model.
-    :vartype display: ~storage_cache_management_client.models.UsageModelDisplay
+    :vartype display: ~azure.mgmt.storagecache.models.UsageModelDisplay
     :ivar model_name: Non-localized keyword name for this usage model.
     :vartype model_name: str
     :ivar target_type: The type of Storage Target to which this model is applicable (only nfs3 as
@@ -2241,35 +2330,35 @@ class UsageModel(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'display': {'key': 'display', 'type': 'UsageModelDisplay'},
-        'model_name': {'key': 'modelName', 'type': 'str'},
-        'target_type': {'key': 'targetType', 'type': 'str'},
+        "display": {"key": "display", "type": "UsageModelDisplay"},
+        "model_name": {"key": "modelName", "type": "str"},
+        "target_type": {"key": "targetType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        display: Optional["UsageModelDisplay"] = None,
+        display: Optional["_models.UsageModelDisplay"] = None,
         model_name: Optional[str] = None,
         target_type: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword display: Localized information describing this usage model.
-        :paramtype display: ~storage_cache_management_client.models.UsageModelDisplay
+        :paramtype display: ~azure.mgmt.storagecache.models.UsageModelDisplay
         :keyword model_name: Non-localized keyword name for this usage model.
         :paramtype model_name: str
         :keyword target_type: The type of Storage Target to which this model is applicable (only nfs3
          as of this version).
         :paramtype target_type: str
         """
-        super(UsageModel, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.display = display
         self.model_name = model_name
         self.target_type = target_type
 
 
-class UsageModelDisplay(msrest.serialization.Model):
+class UsageModelDisplay(_serialization.Model):
     """Localized information describing this usage model.
 
     :ivar description: String to display for this usage model.
@@ -2277,56 +2366,47 @@ class UsageModelDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, description: Optional[str] = None, **kwargs):
         """
         :keyword description: String to display for this usage model.
         :paramtype description: str
         """
-        super(UsageModelDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.description = description
 
 
-class UsageModelsResult(msrest.serialization.Model):
+class UsageModelsResult(_serialization.Model):
     """A list of Cache usage models.
 
     :ivar next_link: The URI to fetch the next page of Cache usage models.
     :vartype next_link: str
     :ivar value: The list of usage models available for the subscription.
-    :vartype value: list[~storage_cache_management_client.models.UsageModel]
+    :vartype value: list[~azure.mgmt.storagecache.models.UsageModel]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[UsageModel]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[UsageModel]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["UsageModel"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.UsageModel"]] = None, **kwargs
     ):
         """
         :keyword next_link: The URI to fetch the next page of Cache usage models.
         :paramtype next_link: str
         :keyword value: The list of usage models available for the subscription.
-        :paramtype value: list[~storage_cache_management_client.models.UsageModel]
+        :paramtype value: list[~azure.mgmt.storagecache.models.UsageModel]
         """
-        super(UsageModelsResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class UserAssignedIdentitiesValue(msrest.serialization.Model):
+class UserAssignedIdentitiesValue(_serialization.Model):
     """UserAssignedIdentitiesValue.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2338,21 +2418,17 @@ class UserAssignedIdentitiesValue(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedIdentitiesValue, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None

@@ -10,7 +10,7 @@ from azure.identity import ClientSecretCredential, DefaultAzureCredential
 import config
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account

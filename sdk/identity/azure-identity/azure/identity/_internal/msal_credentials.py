@@ -3,39 +3,44 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
+from typing import Any, List, Union, Dict, Optional
 
 import msal
 
 from .msal_client import MsalClient
+from .utils import get_default_authority, normalize_authority, resolve_tenant, validate_tenant_id
 from .._constants import EnvironmentVariables
-from .._internal import get_default_authority, normalize_authority, resolve_tenant, validate_tenant_id
 from .._persistent_cache import _load_persistent_cache
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
 
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any, Dict, Optional, Union
-
-
-class MsalCredential(object):
+class MsalCredential:   # pylint: disable=too-many-instance-attributes
     """Base class for credentials wrapping MSAL applications"""
 
-    def __init__(self, client_id, client_credential=None, **kwargs):
-        # type: (str, Optional[Union[str, Dict]], **Any) -> None
-        authority = kwargs.pop("authority", None)
-        self._validate_authority = kwargs.pop("validate_authority", True)
+    def __init__(
+            self,
+            client_id: str,
+            client_credential: Optional[Union[str, Dict]] = None,
+            *,
+            additionally_allowed_tenants: Optional[List[str]] = None,
+            allow_broker: Optional[bool] = None,
+            authority: Optional[str] = None,
+            instance_discovery: Optional[bool] = None,
+            tenant_id: Optional[str] = None,
+            **kwargs
+    ) -> None:
+        self._instance_discovery = instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
-        self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
+        if self._regional_authority and self._regional_authority.lower() in ["tryautodetect", "true"]:
+            self._regional_authority = msal.ConfidentialClientApplication.ATTEMPT_REGION_DISCOVERY
+        self._tenant_id = tenant_id or "organizations"
         validate_tenant_id(self._tenant_id)
         self._client = MsalClient(**kwargs)
-        self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
+        self._client_applications: Dict[str, msal.ClientApplication] = {}
         self._client_credential = client_credential
         self._client_id = client_id
+        self._allow_broker = allow_broker
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)
         if not self._cache:
@@ -54,13 +59,16 @@ class MsalCredential(object):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self.__exit__()
 
     def _get_app(self, **kwargs):
         # type: (**Any) -> msal.ClientApplication
-        tenant_id = resolve_tenant(self._tenant_id, **kwargs)
+        tenant_id = resolve_tenant(
+            self._tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
         if tenant_id not in self._client_applications:
             # CP1 = can handle claims challenges (CAE)
             capabilities = None if "AZURE_IDENTITY_DISABLE_CP1" in os.environ else ["CP1"]
@@ -73,7 +81,8 @@ class MsalCredential(object):
                 azure_region=self._regional_authority,
                 token_cache=self._cache,
                 http_client=self._client,
-                validate_authority=self._validate_authority
+                instance_discovery=self._instance_discovery,
+                allow_broker=self._allow_broker
             )
 
         return self._client_applications[tenant_id]

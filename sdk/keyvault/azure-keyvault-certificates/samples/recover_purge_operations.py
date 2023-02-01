@@ -6,16 +6,15 @@ import os
 import time
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-certificates and azure-identity packages (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic recover and purge operations on a vault(certificate) resource for Azure Key Vault
@@ -31,9 +30,7 @@ from azure.core.exceptions import HttpResponseError
 
 
 # Instantiate a certificate client that will be used to call the service.
-# Notice that the client is using default Azure credentials.
-# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
@@ -54,8 +51,8 @@ storage_certificate_poller = client.begin_create_certificate(
 
 bank_certificate = bank_certificate_poller.result()
 storage_certificate = storage_certificate_poller.result()
-print("Certificate with name '{0}' was created.".format(bank_certificate.name))
-print("Certificate with name '{0}' was created.".format(storage_certificate.name))
+print(f"Certificate with name '{bank_certificate.name}' was created.")
+print(f"Certificate with name '{storage_certificate.name}' was created.")
 
 # The storage account was closed, need to delete its credentials from the Key Vault.
 print("\n.. Delete a Certificate")
@@ -65,9 +62,8 @@ deleted_bank_certificate = deleted_bank_poller.result()
 deleted_bank_poller.wait()
 
 print(
-    "Certificate with name '{0}' was deleted on date {1}.".format(
-        deleted_bank_certificate.name, deleted_bank_certificate.deleted_on
-    )
+    f"Certificate with name '{deleted_bank_certificate.name}' was deleted on date "
+    f"{deleted_bank_certificate.deleted_on}."
 )
 
 # We accidentally deleted the bank account certificate. Let's recover it.
@@ -77,7 +73,7 @@ recovered_bank_poller = client.begin_recover_deleted_certificate(deleted_bank_ce
 recovered_bank_certificate = recovered_bank_poller.result()
 # To ensure certificate is recovered on the server side.
 recovered_bank_poller.wait()
-print("Recovered Certificate with name '{0}'.".format(recovered_bank_certificate.name))
+print(f"Recovered Certificate with name '{recovered_bank_certificate.name}'.")
 
 # Let's delete the storage certificate now.
 # If the keyvault is soft-delete enabled, then for permanent deletion deleted certificate needs to be purged.

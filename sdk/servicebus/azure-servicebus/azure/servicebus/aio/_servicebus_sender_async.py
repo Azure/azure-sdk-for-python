@@ -86,22 +86,27 @@ class ServiceBusSender(BaseHandler, SenderMixin):
      keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
      Additionally the following keys may also be present: `'username', 'password'`.
     :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
+    :keyword str client_identifier: A string-based identifier to uniquely identify the client instance.
+     Service Bus will associate it with some error messages for easier correlation of errors.
+     If not specified, a unique id will be generated.
     """
 
     def __init__(
         self,
         fully_qualified_namespace: str,
-        credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
+        credential: Union[
+            "AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential
+        ],
         *,
         queue_name: Optional[str] = None,
         topic_name: Optional[str] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
-                **kwargs
+                **kwargs,
             )
         else:
             if queue_name and topic_name:
@@ -119,11 +124,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 entity_name=str(entity_name),
                 queue_name=queue_name,
                 topic_name=topic_name,
-                **kwargs
+                **kwargs,
             )
 
         self._max_message_size_on_link = 0
-        self._create_attribute()
+        self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
 
     @classmethod
@@ -209,7 +214,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         schedule_time_utc: datetime.datetime,
         *,
         timeout: Optional[float] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> List[int]:
         """Send Message or multiple Messages to be enqueued at a specific time by the service.
         Returns a list of the sequence numbers of the enqueued messages.
@@ -261,7 +266,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             )
 
     async def cancel_scheduled_messages(
-        self, sequence_numbers: Union[int, List[int]], *, timeout: Optional[float] = None, **kwargs: Any
+        self,
+        sequence_numbers: Union[int, List[int]],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> None:
         """
         Cancel one or more messages that have previously been scheduled and are still pending.
@@ -303,7 +312,11 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         )
 
     async def send_messages(
-        self, message: Union[MessageTypes, ServiceBusMessageBatch], *, timeout: Optional[float] = None, **kwargs: Any
+        self,
+        message: Union[MessageTypes, ServiceBusMessageBatch],
+        *,
+        timeout: Optional[float] = None,
+        **kwargs: Any,
     ) -> None:
         """Sends message and blocks until acknowledgement is received or operation times out.
 
@@ -406,3 +419,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         return ServiceBusMessageBatch(
             max_size_in_bytes=(max_size_in_bytes or self._max_message_size_on_link)
         )
+
+    @property
+    def client_identifier(self) -> str:
+        """
+        Get the ServiceBusSender client identifier associated with the sender instance.
+
+        :rtype: str
+        """
+        return self._name
+
+    def __str__(self) -> str:
+        return f"Sender client id: {self.client_identifier}, entity: {self.entity_name}"

@@ -2,29 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=protected-access,no-member
+
 from pathlib import Path
-from typing import Dict, Union
+from typing import Dict, Optional, Union
+
+from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
+from azure.ai.ml._restclient.v2022_10_01.models import AzureBlobDatastore as RestAzureBlobDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore
+from azure.ai.ml._restclient.v2022_10_01.models import AzureFileDatastore as RestAzureFileDatastore
+from azure.ai.ml._restclient.v2022_10_01.models import Datastore as DatastoreData, DatastoreType
+from azure.ai.ml._schema._datastore import AzureBlobSchema, AzureDataLakeGen2Schema, AzureFileSchema
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.entities._credentials import (
+    AccountKeyConfiguration,
+    CertificateConfiguration,
+    SasTokenConfiguration,
+    ServicePrincipalConfiguration,
+)
 from azure.ai.ml.entities._datastore.datastore import Datastore
-
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    AzureBlobDatastore as RestAzureBlobDatastore,
-    AzureFileDatastore as RestAzureFileDatastore,
-    AzureDataLakeGen2Datastore as RestAzureDataLakeGen2Datastore,
-    DatastoreData,
-    DatastoreType,
-)
-from azure.ai.ml._schema._datastore import AzureFileSchema, AzureBlobSchema, AzureDataLakeGen2Schema
-from azure.ai.ml.entities._datastore.credentials import (
-    AccountKeyCredentials,
-    SasTokenCredentials,
-    ServicePrincipalCredentials,
-    CertificateCredentials,
-)
 from azure.ai.ml.entities._datastore.utils import from_rest_datastore_credentials
-
-from ._constants import DEFAULT_ENDPOINT, HTTPS
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._util import load_from_dict
+
+from ._constants import HTTPS
 
 
 class AzureFileDatastore(Datastore):
@@ -58,12 +58,12 @@ class AzureFileDatastore(Datastore):
         name: str,
         account_name: str,
         file_share_name: str,
-        description: str = None,
-        tags: Dict = None,
-        endpoint: str = DEFAULT_ENDPOINT,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
-        properties: Dict = None,
-        credentials: Union[AccountKeyCredentials, SasTokenCredentials],
+        properties: Optional[Dict] = None,
+        credentials: Union[AccountKeyConfiguration, SasTokenConfiguration],
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.AZURE_FILE
@@ -79,7 +79,7 @@ class AzureFileDatastore(Datastore):
         file_ds = RestAzureFileDatastore(
             account_name=self.account_name,
             file_share_name=self.file_share_name,
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_datastore_rest_object(),
             endpoint=self.endpoint,
             protocol=self.protocol,
             description=self.description,
@@ -154,12 +154,12 @@ class AzureBlobDatastore(Datastore):
         name: str,
         account_name: str,
         container_name: str,
-        description: str = None,
-        tags: Dict = None,
-        endpoint: str = DEFAULT_ENDPOINT,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        endpoint: Optional[str] = None,
         protocol: str = HTTPS,
-        properties: Dict = None,
-        credentials: Union[AccountKeyCredentials, SasTokenCredentials] = None,
+        properties: Optional[Dict] = None,
+        credentials: Optional[Union[AccountKeyConfiguration, SasTokenConfiguration]] = None,
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.AZURE_BLOB
@@ -169,14 +169,14 @@ class AzureBlobDatastore(Datastore):
 
         self.container_name = container_name
         self.account_name = account_name
-        self.endpoint = endpoint
+        self.endpoint = endpoint if endpoint else _get_storage_endpoint_from_metadata()
         self.protocol = protocol
 
     def _to_rest_object(self) -> DatastoreData:
         blob_ds = RestAzureBlobDatastore(
             account_name=self.account_name,
             container_name=self.container_name,
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_datastore_rest_object(),
             endpoint=self.endpoint,
             protocol=self.protocol,
             tags=self.tags,
@@ -238,7 +238,7 @@ class AzureDataLakeGen2Datastore(Datastore):
     :param protocol: Protocol to use to connect with the Azure storage account
     :type protocol: str
     :param credentials: Credentials to use for Azure ML workspace to connect to the storage.
-    :type credentials: Union[ServicePrincipalSection, CertificateSection]
+    :type credentials: Union[ServicePrincipalConfiguration, CertificateConfiguration]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters.
@@ -251,12 +251,12 @@ class AzureDataLakeGen2Datastore(Datastore):
         name: str,
         account_name: str,
         filesystem: str,
-        description: str = None,
-        tags: Dict = None,
-        endpoint: str = DEFAULT_ENDPOINT,
+        description: Optional[str] = None,
+        tags: Optional[Dict] = None,
+        endpoint: str = _get_storage_endpoint_from_metadata(),
         protocol: str = HTTPS,
-        properties: Dict = None,
-        credentials: Union[ServicePrincipalCredentials, CertificateCredentials] = None,
+        properties: Optional[Dict] = None,
+        credentials: Optional[Union[ServicePrincipalConfiguration, CertificateConfiguration]] = None,
         **kwargs
     ):
         kwargs[TYPE] = DatastoreType.AZURE_DATA_LAKE_GEN2
@@ -273,7 +273,7 @@ class AzureDataLakeGen2Datastore(Datastore):
         gen2_ds = RestAzureDataLakeGen2Datastore(
             account_name=self.account_name,
             filesystem=self.filesystem,
-            credentials=self.credentials._to_rest_object(),
+            credentials=self.credentials._to_datastore_rest_object(),
             endpoint=self.endpoint,
             protocol=self.protocol,
             description=self.description,

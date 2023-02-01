@@ -7,21 +7,30 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
-from . import models
+from . import models as _models
 from ._configuration import SubscriptionClientConfiguration
-from .operations import AliasOperations, BillingAccountOperations, Operations, SubscriptionOperations, SubscriptionPolicyOperations, SubscriptionsOperations, TenantsOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    AliasOperations,
+    BillingAccountOperations,
+    Operations,
+    SubscriptionOperations,
+    SubscriptionPolicyOperations,
+    SubscriptionsOperations,
+    TenantsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class SubscriptionClient:
+
+class SubscriptionClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """The subscription client.
 
     :ivar subscriptions: SubscriptionsOperations operations
@@ -38,24 +47,21 @@ class SubscriptionClient:
     :vartype subscription_policy: azure.mgmt.subscription.operations.SubscriptionPolicyOperations
     :ivar billing_account: BillingAccountOperations operations
     :vartype billing_account: azure.mgmt.subscription.operations.BillingAccountOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self,
-        credential: "TokenCredential",
-        base_url: str = "https://management.azure.com",
-        **kwargs: Any
+        self, credential: "TokenCredential", base_url: str = "https://management.azure.com", **kwargs: Any
     ) -> None:
         self._config = SubscriptionClientConfiguration(credential=credential, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -64,15 +70,12 @@ class SubscriptionClient:
         self.subscription = SubscriptionOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.alias = AliasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.subscription_policy = SubscriptionPolicyOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.subscription_policy = SubscriptionPolicyOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.billing_account = BillingAccountOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -81,7 +84,7 @@ class SubscriptionClient:
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -94,15 +97,12 @@ class SubscriptionClient:
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> SubscriptionClient
+    def __enter__(self) -> "SubscriptionClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

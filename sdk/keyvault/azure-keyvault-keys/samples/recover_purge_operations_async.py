@@ -15,9 +15,8 @@ from azure.keyvault.keys.aio import KeyClient
 #
 # 3. Set environment variable VAULT_URL with the URL of your key vault
 #
-# 4. Set up your environment to use azure-identity's DefaultAzureCredential. To authenticate a service principal with
-#    environment variables, set AZURE_CLIENT_ID, AZURE_CLIENT_SECRET, and AZURE_TENANT_ID
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # 5. Key create, delete, recover, and purge permissions for your service principal in your vault
 #
@@ -40,20 +39,20 @@ async def run_sample():
     client = KeyClient(vault_url=VAULT_URL, credential=credential)
 
     print("\n.. Create keys")
-    rsa_key = await client.create_rsa_key("rsaKeyName")
-    ec_key = await client.create_ec_key("ecKeyName")
-    print("Created key '{0}' of type '{1}'.".format(rsa_key.name, rsa_key.key_type))
-    print("Created key '{0}' of type '{1}'.".format(ec_key.name, ec_key.key_type))
+    rsa_key = await client.create_rsa_key("rsaKeyNameAsync")
+    ec_key = await client.create_ec_key("ecKeyNameAsync")
+    print(f"Created key '{rsa_key.name}' of type '{rsa_key.key_type}'.")
+    print(f"Created key '{ec_key.name}' of type '{ec_key.key_type}'.")
 
     print("\n.. Delete the keys")
     for key_name in (ec_key.name, rsa_key.name):
         deleted_key = await client.delete_key(key_name)
-        print("Deleted key '{0}'".format(deleted_key.name))
+        print(f"Deleted key '{deleted_key.name}'")
 
     # A deleted key can only be recovered if the Key Vault is soft-delete enabled.
     print("\n.. Recover a deleted key")
     recovered_key = await client.recover_deleted_key(rsa_key.name)
-    print("Recovered key '{0}'".format(recovered_key.name))
+    print(f"Recovered key '{recovered_key.name}'")
 
     # To permanently delete the key, the deleted key needs to be purged.
     await client.delete_key(recovered_key.name)
@@ -63,7 +62,7 @@ async def run_sample():
     print("\n.. Purge keys")
     for key_name in (ec_key.name, rsa_key.name):
         await client.purge_deleted_key(key_name)
-        print("Purged '{}'".format(key_name))
+        print(f"Purged '{key_name}'")
 
     print("\nrun_sample done")
     await credential.close()
@@ -71,6 +70,4 @@ async def run_sample():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_sample())
-    loop.close()
+    asyncio.run(run_sample())

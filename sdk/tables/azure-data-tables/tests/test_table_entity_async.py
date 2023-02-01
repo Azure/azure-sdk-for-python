@@ -18,6 +18,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core import MatchConditions
 from azure.core.credentials import AzureSasCredential
 from azure.core.exceptions import (
+    ClientAuthenticationError,
     HttpResponseError,
     ResourceNotFoundError,
     ResourceExistsError,
@@ -35,6 +36,7 @@ from azure.data.tables import (
 )
 from azure.data.tables.aio import TableServiceClient
 from azure.data.tables._common_conversion import TZ_UTC
+from azure.identity.aio import DefaultAzureCredential
 
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import tables_decorator_async
@@ -486,6 +488,22 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
             with pytest.raises(ResourceNotFoundError):
                 await self.table.get_entity(entity["PartitionKey"], entity["RowKey"])
 
+        finally:
+            await self._tear_down()
+
+    @tables_decorator_async
+    @recorded_by_proxy_async
+    async def test_delete_entity_with_empty_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+        await self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = await self._insert_random_entity(rk="")
+            await self.table.delete_entity(entity)
+            entity, _ = await self._insert_random_entity(pk="", rk="")
+            await self.table.delete_entity(partition_key="", row_key="")
+            count = 0
+            async for entity in self.table.list_entities():
+                count += 1
+            assert count == 0
         finally:
             await self._tear_down()
 
@@ -2230,3 +2248,21 @@ class TestTableEntityAsync(AzureRecordedTestCase, AsyncTableTestCase):
                 await self.table.upsert_entity(entity2)
         finally:
             await self._tear_down()
+
+    @tables_decorator_async
+    async def test_list_tables_with_invalid_credential(self, tables_storage_account_name, tables_primary_storage_account_key):
+        account_url = self.account_url(tables_storage_account_name, "table")
+        credential = DefaultAzureCredential(
+            exclude_environment_credential=True,
+            exclude_managed_identity_credential=False,
+            exclude_shared_token_cache_credential=True,
+            exclude_visual_studio_code_credential=True,
+            exclude_cli_credential=True,
+            exclude_interactive_browser_credential=True,
+            exclude_powershell_credential=True,
+        )
+        async with credential:
+            client = TableServiceClient(credential=credential, endpoint=account_url, api_version="2020-12-06")
+            with pytest.raises(ClientAuthenticationError):
+                async for _ in client.list_tables():
+                    pass

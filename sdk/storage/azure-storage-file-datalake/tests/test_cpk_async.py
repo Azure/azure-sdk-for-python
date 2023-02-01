@@ -1,17 +1,17 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import asyncio
-import unittest
 
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.filedatalake import CustomerProvidedEncryptionKey
 from azure.storage.filedatalake.aio import DataLakeServiceClient
-from devtools_testutils.storage import StorageTestCase
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(
 # ------------------------------------------------------------------------------
 
 
-class DatalakeCpkTest(StorageTestCase):
+class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key)
@@ -36,12 +36,11 @@ class DatalakeCpkTest(StorageTestCase):
             except ResourceExistsError:
                 pass
 
-    def teardown(self):
+    async def teardown(self):
         if self.is_live:
             try:
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(self.dsc.delete_file_system(self.file_system_name))
-                loop.run_until_complete(self.dsc.__aexit__())
+                await self.dsc.delete_file_system(self.file_system_name)
+                await self.dsc.close()
             except ResourceNotFoundError:
                 pass
 
@@ -77,7 +76,11 @@ class DatalakeCpkTest(StorageTestCase):
     # ---------------------------------------------------------------------------
 
     @DataLakePreparer()
-    async def test_create_directory_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_create_directory_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
 
@@ -86,12 +89,16 @@ class DatalakeCpkTest(StorageTestCase):
         response = await directory_client.create_directory(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
-        self.assertIsNotNone(response)
-        self.assertTrue(response['request_server_encrypted'])
-        self.assertEqual(TEST_ENCRYPTION_KEY.key_hash, response['encryption_key_sha256'])
+        assert response is not None
+        assert response['request_server_encrypted']
+        assert TEST_ENCRYPTION_KEY.key_hash == response['encryption_key_sha256']
 
     @DataLakePreparer()
-    async def test_create_sub_directory_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_create_sub_directory_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_client = await self._create_directory(cpk=TEST_ENCRYPTION_KEY)
@@ -101,10 +108,14 @@ class DatalakeCpkTest(StorageTestCase):
         props = await sub_directory_client.get_directory_properties(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
-        self.assertIsNotNone(props)
+        assert props is not None
 
     @DataLakePreparer()
-    async def test_create_file_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_create_file_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_client = await self._create_directory(cpk=TEST_ENCRYPTION_KEY)
@@ -114,12 +125,16 @@ class DatalakeCpkTest(StorageTestCase):
         response = await file_client.create_file(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
-        self.assertIsNotNone(response)
-        self.assertTrue(response['request_server_encrypted'])
-        self.assertEqual(TEST_ENCRYPTION_KEY.key_hash, response['encryption_key_sha256'])
+        assert response is not None
+        assert response['request_server_encrypted']
+        assert TEST_ENCRYPTION_KEY.key_hash == response['encryption_key_sha256']
 
     @DataLakePreparer()
-    async def test_get_directory_properties_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_get_directory_properties_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_client = await self._create_directory(cpk=TEST_ENCRYPTION_KEY)
@@ -128,10 +143,14 @@ class DatalakeCpkTest(StorageTestCase):
         props = await directory_client.get_directory_properties(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
-        self.assertIsNotNone(props)
+        assert props is not None
 
     @DataLakePreparer()
-    async def test_get_file_properties_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_get_file_properties_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
@@ -141,10 +160,14 @@ class DatalakeCpkTest(StorageTestCase):
         props = await file_client.get_file_properties(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
-        self.assertIsNotNone(props)
+        assert props is not None
 
     @DataLakePreparer()
-    async def test_directory_exists_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_directory_exists_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_client = await self._create_directory(cpk=TEST_ENCRYPTION_KEY)
@@ -153,10 +176,14 @@ class DatalakeCpkTest(StorageTestCase):
         exists = await directory_client.exists()
 
         # Assert
-        self.assertTrue(exists)
+        assert exists
 
     @DataLakePreparer()
-    async def test_file_exists_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_file_exists_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
@@ -166,10 +193,14 @@ class DatalakeCpkTest(StorageTestCase):
         exists = await file_client.exists()
 
         # Assert
-        self.assertIsNotNone(exists)
+        assert exists is not None
 
     @DataLakePreparer()
-    async def test_file_upload_data_file_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_file_upload_data_file_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
@@ -180,12 +211,16 @@ class DatalakeCpkTest(StorageTestCase):
         response = await file_client.upload_data(data, overwrite=True, cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
-        self.assertIsNotNone(response)
-        self.assertTrue(response['request_server_encrypted'])
-        self.assertEqual(TEST_ENCRYPTION_KEY.key_hash, response['encryption_key_sha256'])
+        assert response is not None
+        assert response['request_server_encrypted']
+        assert TEST_ENCRYPTION_KEY.key_hash == response['encryption_key_sha256']
 
     @DataLakePreparer()
-    async def test_file_append_flush_data_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_file_append_flush_data_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
@@ -197,12 +232,16 @@ class DatalakeCpkTest(StorageTestCase):
         response = await file_client.flush_data(offset=0, cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
-        self.assertIsNotNone(response)
-        self.assertTrue(response['request_server_encrypted'])
-        self.assertEqual(TEST_ENCRYPTION_KEY.key_hash, response['encryption_key_sha256'])
+        assert response is not None
+        assert response['request_server_encrypted']
+        assert TEST_ENCRYPTION_KEY.key_hash == response['encryption_key_sha256']
 
     @DataLakePreparer()
-    async def test_file_download_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_file_download_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_client = await self._create_directory(cpk=TEST_ENCRYPTION_KEY)
@@ -217,11 +256,15 @@ class DatalakeCpkTest(StorageTestCase):
         file = await download.readall()
 
         # Assert
-        self.assertIsNotNone(file)
-        self.assertEqual(data, file)
+        assert file is not None
+        assert data == file
 
     @DataLakePreparer()
-    async def test_set_metadata_cpk(self, datalake_storage_account_name, datalake_storage_account_key):
+    @recorded_by_proxy_async
+    async def test_set_metadata_cpk(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
         # Arrange
         await self._setup(datalake_storage_account_name, datalake_storage_account_key)
         directory_name = self._get_directory_reference()
@@ -233,10 +276,5 @@ class DatalakeCpkTest(StorageTestCase):
         props = await file_client.get_file_properties(cpk=TEST_ENCRYPTION_KEY)
 
         # Assert
-        self.assertIsNotNone(props)
-        self.assertEqual(metadata, props.metadata)
-
-
-if __name__ == '__main__':
-    unittest.main()
-
+        assert props is not None
+        assert metadata == props.metadata

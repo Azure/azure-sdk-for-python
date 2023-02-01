@@ -1,0 +1,52 @@
+{
+  "description": "Allows to download files from SearchGold to cosmos and get their revision information. 'FileList' input is a file with source depot paths, one per line.",
+  "tags": {
+    "category": "Component Tutorial",
+    "contact": "amldesigner@microsoft.com"
+  },
+  "version": "0.0.1",
+  "$schema": "https://componentsdk.azureedge.net/jsonschema/StarliteComponent.json",
+  "display_name": "Starlite SearchGold Get Files",
+  "is_deterministic": true,
+  "inputs": {
+    "FileList": {
+      "type": "AnyFile",
+      "optional": false
+    },
+    "UploadToCosmos": {
+      "type": "enum",
+      "default": "false",
+      "enum": [
+        "true",
+        "false"
+      ],
+      "optional": false
+    },
+    "RunId": {
+      "type": "string",
+      "optional": true,
+      "description": "a parameter value"
+    },
+    "FileListFileName": {
+      "type": "string",
+      "default": "\\\\output.tsv",
+      "optional": false
+    }
+  },
+  "outputs": {
+    "Files": {
+      "type": "AnyDirectory"
+    },
+    "CosmosPath": {
+      "type": "AnyFile"
+    },
+    "ResultInfo": {
+      "type": "AnyFile"
+    }
+  },
+  "type": "StarliteComponent",
+  "command": "Starlite.Cloud.SourceDepotGet.exe /UploadToCosmos:{inputs.UploadToCosmos} /FileList:{inputs.FileList}{inputs.FileListFileName} /Files:{outputs.Files} /CosmosPath:{outputs.CosmosPath} /ResultInfo:{outputs.ResultInfo} \"\"",
+  "starlite": {
+    "ref_id": "bd140f4d-7775-4246-a75c-1c86df9536fb"
+  }
+}

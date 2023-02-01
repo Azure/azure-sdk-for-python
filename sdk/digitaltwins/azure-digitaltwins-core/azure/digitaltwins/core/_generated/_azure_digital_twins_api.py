@@ -6,24 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from copy import deepcopy
 from typing import TYPE_CHECKING
 
-from azure.core import PipelineClient
 from msrest import Deserializer, Serializer
+
+from azure.core import PipelineClient
+
+from . import models
+from ._configuration import AzureDigitalTwinsAPIConfiguration
+from .operations import DigitalTwinModelsOperations, DigitalTwinsOperations, EventRoutesOperations, QueryOperations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+    from typing import Any
 
     from azure.core.credentials import TokenCredential
-
-from ._configuration import AzureDigitalTwinsAPIConfiguration
-from .operations import DigitalTwinModelsOperations
-from .operations import QueryOperations
-from .operations import DigitalTwinsOperations
-from .operations import EventRoutesOperations
-from . import models
-
+    from azure.core.rest import HttpRequest, HttpResponse
 
 class AzureDigitalTwinsAPI(object):
     """A service for managing and querying digital twins and digital twin models.
@@ -38,34 +37,59 @@ class AzureDigitalTwinsAPI(object):
     :vartype event_routes: azure.digitaltwins.core.operations.EventRoutesOperations
     :param credential: Credential needed for the client to connect to Azure.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param str base_url: Service URL
+    :param base_url: Service URL. Default value is "https://digitaltwins-hostname".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-05-31". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
         credential,  # type: "TokenCredential"
-        base_url=None,  # type: Optional[str]
+        base_url="https://digitaltwins-hostname",  # type: str
         **kwargs  # type: Any
     ):
         # type: (...) -> None
-        if not base_url:
-            base_url = 'https://digitaltwins-name.digitaltwins.azure.net'
-        self._config = AzureDigitalTwinsAPIConfiguration(credential, **kwargs)
+        self._config = AzureDigitalTwinsAPIConfiguration(credential=credential, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.digital_twin_models = DigitalTwinModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.query = QueryOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.digital_twins = DigitalTwinsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.event_routes = EventRoutesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.digital_twin_models = DigitalTwinModelsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.query = QueryOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.digital_twins = DigitalTwinsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.event_routes = EventRoutesOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+
+    def _send_request(
+        self,
+        request,  # type: HttpRequest
+        **kwargs  # type: Any
+    ):
+        # type: (...) -> HttpResponse
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     def close(self):
         # type: () -> None

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,80 +8,110 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._service_fabric_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ApplicationDeltaHealthPolicy(msrest.serialization.Model):
+class ApplicationDeltaHealthPolicy(_serialization.Model):
     """Defines a delta health policy used to evaluate the health of an application or one of its child entities when upgrading the cluster.
 
-    :param default_service_type_delta_health_policy: The delta health policy used by default to
+    :ivar default_service_type_delta_health_policy: The delta health policy used by default to
      evaluate the health of a service type when upgrading the cluster.
-    :type default_service_type_delta_health_policy:
+    :vartype default_service_type_delta_health_policy:
      ~azure.mgmt.servicefabric.models.ServiceTypeDeltaHealthPolicy
-    :param service_type_delta_health_policies: The map with service type delta health policy per
+    :ivar service_type_delta_health_policies: The map with service type delta health policy per
      service type name. The map is empty by default.
-    :type service_type_delta_health_policies: dict[str,
+    :vartype service_type_delta_health_policies: dict[str,
      ~azure.mgmt.servicefabric.models.ServiceTypeDeltaHealthPolicy]
     """
 
     _attribute_map = {
-        'default_service_type_delta_health_policy': {'key': 'defaultServiceTypeDeltaHealthPolicy', 'type': 'ServiceTypeDeltaHealthPolicy'},
-        'service_type_delta_health_policies': {'key': 'serviceTypeDeltaHealthPolicies', 'type': '{ServiceTypeDeltaHealthPolicy}'},
+        "default_service_type_delta_health_policy": {
+            "key": "defaultServiceTypeDeltaHealthPolicy",
+            "type": "ServiceTypeDeltaHealthPolicy",
+        },
+        "service_type_delta_health_policies": {
+            "key": "serviceTypeDeltaHealthPolicies",
+            "type": "{ServiceTypeDeltaHealthPolicy}",
+        },
     }
 
     def __init__(
         self,
         *,
-        default_service_type_delta_health_policy: Optional["ServiceTypeDeltaHealthPolicy"] = None,
-        service_type_delta_health_policies: Optional[Dict[str, "ServiceTypeDeltaHealthPolicy"]] = None,
+        default_service_type_delta_health_policy: Optional["_models.ServiceTypeDeltaHealthPolicy"] = None,
+        service_type_delta_health_policies: Optional[Dict[str, "_models.ServiceTypeDeltaHealthPolicy"]] = None,
         **kwargs
     ):
-        super(ApplicationDeltaHealthPolicy, self).__init__(**kwargs)
+        """
+        :keyword default_service_type_delta_health_policy: The delta health policy used by default to
+         evaluate the health of a service type when upgrading the cluster.
+        :paramtype default_service_type_delta_health_policy:
+         ~azure.mgmt.servicefabric.models.ServiceTypeDeltaHealthPolicy
+        :keyword service_type_delta_health_policies: The map with service type delta health policy per
+         service type name. The map is empty by default.
+        :paramtype service_type_delta_health_policies: dict[str,
+         ~azure.mgmt.servicefabric.models.ServiceTypeDeltaHealthPolicy]
+        """
+        super().__init__(**kwargs)
         self.default_service_type_delta_health_policy = default_service_type_delta_health_policy
         self.service_type_delta_health_policies = service_type_delta_health_policies
 
 
-class ApplicationHealthPolicy(msrest.serialization.Model):
+class ApplicationHealthPolicy(_serialization.Model):
     """Defines a health policy used to evaluate the health of an application or one of its children entities.
 
-    :param default_service_type_health_policy: The health policy used by default to evaluate the
+    :ivar default_service_type_health_policy: The health policy used by default to evaluate the
      health of a service type.
-    :type default_service_type_health_policy:
+    :vartype default_service_type_health_policy:
      ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy
-    :param service_type_health_policies: The map with service type health policy per service type
+    :ivar service_type_health_policies: The map with service type health policy per service type
      name. The map is empty by default.
-    :type service_type_health_policies: dict[str,
+    :vartype service_type_health_policies: dict[str,
      ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy]
     """
 
     _attribute_map = {
-        'default_service_type_health_policy': {'key': 'defaultServiceTypeHealthPolicy', 'type': 'ServiceTypeHealthPolicy'},
-        'service_type_health_policies': {'key': 'serviceTypeHealthPolicies', 'type': '{ServiceTypeHealthPolicy}'},
+        "default_service_type_health_policy": {
+            "key": "defaultServiceTypeHealthPolicy",
+            "type": "ServiceTypeHealthPolicy",
+        },
+        "service_type_health_policies": {"key": "serviceTypeHealthPolicies", "type": "{ServiceTypeHealthPolicy}"},
     }
 
     def __init__(
         self,
         *,
-        default_service_type_health_policy: Optional["ServiceTypeHealthPolicy"] = None,
-        service_type_health_policies: Optional[Dict[str, "ServiceTypeHealthPolicy"]] = None,
+        default_service_type_health_policy: Optional["_models.ServiceTypeHealthPolicy"] = None,
+        service_type_health_policies: Optional[Dict[str, "_models.ServiceTypeHealthPolicy"]] = None,
         **kwargs
     ):
-        super(ApplicationHealthPolicy, self).__init__(**kwargs)
+        """
+        :keyword default_service_type_health_policy: The health policy used by default to evaluate the
+         health of a service type.
+        :paramtype default_service_type_health_policy:
+         ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy
+        :keyword service_type_health_policies: The map with service type health policy per service type
+         name. The map is empty by default.
+        :paramtype service_type_health_policies: dict[str,
+         ~azure.mgmt.servicefabric.models.ServiceTypeHealthPolicy]
+        """
+        super().__init__(**kwargs)
         self.default_service_type_health_policy = default_service_type_health_policy
         self.service_type_health_policies = service_type_health_policies
 
 
-class ApplicationMetricDescription(msrest.serialization.Model):
+class ApplicationMetricDescription(_serialization.Model):
     """Describes capacity information for a custom resource balancing metric. This can be used to limit the total consumption of this metric by the services of this application.
 
-    :param name: The name of the metric.
-    :type name: str
-    :param maximum_capacity: The maximum node capacity for Service Fabric application.
+    :ivar name: The name of the metric.
+    :vartype name: str
+    :ivar maximum_capacity: The maximum node capacity for Service Fabric application.
      This is the maximum Load for an instance of this application on a single node. Even if the
      capacity of node is greater than this value, Service Fabric will limit the total load of
      services within the application on each node to this value.
@@ -89,8 +120,8 @@ class ApplicationMetricDescription(msrest.serialization.Model):
      and this value must always be smaller than or equal to TotalApplicationCapacity.
      When updating existing application with application capacity, the product of MaximumNodes and
      this value must always be smaller than or equal to TotalApplicationCapacity.
-    :type maximum_capacity: long
-    :param reservation_capacity: The node reservation capacity for Service Fabric application.
+    :vartype maximum_capacity: int
+    :ivar reservation_capacity: The node reservation capacity for Service Fabric application.
      This is the amount of load which is reserved on nodes which have instances of this
      application.
      If MinimumNodes is specified, then the product of these values will be the capacity reserved
@@ -98,20 +129,20 @@ class ApplicationMetricDescription(msrest.serialization.Model):
      If set to zero, no capacity is reserved for this metric.
      When setting application capacity or when updating application capacity; this value must be
      smaller than or equal to MaximumCapacity for each metric.
-    :type reservation_capacity: long
-    :param total_application_capacity: The total metric capacity for Service Fabric application.
+    :vartype reservation_capacity: int
+    :ivar total_application_capacity: The total metric capacity for Service Fabric application.
      This is the total metric capacity for this application in the cluster. Service Fabric will try
      to limit the sum of loads of services within the application to this value.
      When creating a new application with application capacity defined, the product of MaximumNodes
      and MaximumCapacity must always be smaller than or equal to this value.
-    :type total_application_capacity: long
+    :vartype total_application_capacity: int
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'maximum_capacity': {'key': 'maximumCapacity', 'type': 'long'},
-        'reservation_capacity': {'key': 'reservationCapacity', 'type': 'long'},
-        'total_application_capacity': {'key': 'totalApplicationCapacity', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "maximum_capacity": {"key": "maximumCapacity", "type": "int"},
+        "reservation_capacity": {"key": "reservationCapacity", "type": "int"},
+        "total_application_capacity": {"key": "totalApplicationCapacity", "type": "int"},
     }
 
     def __init__(
@@ -123,14 +154,43 @@ class ApplicationMetricDescription(msrest.serialization.Model):
         total_application_capacity: Optional[int] = None,
         **kwargs
     ):
-        super(ApplicationMetricDescription, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the metric.
+        :paramtype name: str
+        :keyword maximum_capacity: The maximum node capacity for Service Fabric application.
+         This is the maximum Load for an instance of this application on a single node. Even if the
+         capacity of node is greater than this value, Service Fabric will limit the total load of
+         services within the application on each node to this value.
+         If set to zero, capacity for this metric is unlimited on each node.
+         When creating a new application with application capacity defined, the product of MaximumNodes
+         and this value must always be smaller than or equal to TotalApplicationCapacity.
+         When updating existing application with application capacity, the product of MaximumNodes and
+         this value must always be smaller than or equal to TotalApplicationCapacity.
+        :paramtype maximum_capacity: int
+        :keyword reservation_capacity: The node reservation capacity for Service Fabric application.
+         This is the amount of load which is reserved on nodes which have instances of this
+         application.
+         If MinimumNodes is specified, then the product of these values will be the capacity reserved
+         in the cluster for the application.
+         If set to zero, no capacity is reserved for this metric.
+         When setting application capacity or when updating application capacity; this value must be
+         smaller than or equal to MaximumCapacity for each metric.
+        :paramtype reservation_capacity: int
+        :keyword total_application_capacity: The total metric capacity for Service Fabric application.
+         This is the total metric capacity for this application in the cluster. Service Fabric will try
+         to limit the sum of loads of services within the application to this value.
+         When creating a new application with application capacity defined, the product of MaximumNodes
+         and MaximumCapacity must always be smaller than or equal to this value.
+        :paramtype total_application_capacity: int
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.maximum_capacity = maximum_capacity
         self.reservation_capacity = reservation_capacity
         self.total_application_capacity = total_application_capacity
 
 
-class ProxyResource(msrest.serialization.Model):
+class ProxyResource(_serialization.Model):
     """The resource model definition for proxy-only resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -141,11 +201,11 @@ class ProxyResource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: It will be deprecated in New API, resource location depends on the parent
+    :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -153,31 +213,32 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: It will be deprecated in New API, resource location depends on the parent
+         resource.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -187,7 +248,7 @@ class ProxyResource(msrest.serialization.Model):
         self.system_data = None
 
 
-class ApplicationResource(ProxyResource):
+class ApplicationResource(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The application resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -198,80 +259,79 @@ class ApplicationResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: It will be deprecated in New API, resource location depends on the parent
+    :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :param identity: Describes the managed identities for an Azure resource.
-    :type identity: ~azure.mgmt.servicefabric.models.ManagedIdentity
-    :param type_version: The version of the application type as defined in the application
-     manifest.
-    :type type_version: str
-    :param parameters: List of application parameters with overridden values from their default
+    :ivar identity: Describes the managed identities for an Azure resource.
+    :vartype identity: ~azure.mgmt.servicefabric.models.ManagedIdentity
+    :ivar type_version: The version of the application type as defined in the application manifest.
+    :vartype type_version: str
+    :ivar parameters: List of application parameters with overridden values from their default
      values specified in the application manifest.
-    :type parameters: dict[str, str]
-    :param upgrade_policy: Describes the policy for a monitored application upgrade.
-    :type upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
-    :param minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity
-     for this application. Note that this does not mean that the services of this application will
-     be placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
+    :vartype parameters: dict[str, str]
+    :ivar upgrade_policy: Describes the policy for a monitored application upgrade.
+    :vartype upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
+    :ivar minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity for
+     this application. Note that this does not mean that the services of this application will be
+     placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
      The value of this property cannot be more than the value of the MaximumNodes property.
-    :type minimum_nodes: long
-    :param maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity
-     for this application. Note that this does not mean that the services of this application will
-     be placed on all of those nodes. By default, the value of this property is zero and it means
-     that the services can be placed on any node.
-    :type maximum_nodes: long
-    :param remove_application_capacity: Remove the current application capacity settings.
-    :type remove_application_capacity: bool
-    :param metrics: List of application capacity metric description.
-    :type metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
-    :param managed_identities: List of user assigned identities for the application, each mapped to
+    :vartype minimum_nodes: int
+    :ivar maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity for
+     this application. Note that this does not mean that the services of this application will be
+     placed on all of those nodes. By default, the value of this property is zero and it means that
+     the services can be placed on any node.
+    :vartype maximum_nodes: int
+    :ivar remove_application_capacity: Remove the current application capacity settings.
+    :vartype remove_application_capacity: bool
+    :ivar metrics: List of application capacity metric description.
+    :vartype metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+    :ivar managed_identities: List of user assigned identities for the application, each mapped to
      a friendly name.
-    :type managed_identities:
+    :vartype managed_identities:
      list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param type_name: The application type name as defined in the application manifest.
-    :type type_name: str
+    :ivar type_name: The application type name as defined in the application manifest.
+    :vartype type_name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'minimum_nodes': {'minimum': 0},
-        'maximum_nodes': {'minimum': 0},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "minimum_nodes": {"minimum": 0},
+        "maximum_nodes": {"minimum": 0},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'identity': {'key': 'identity', 'type': 'ManagedIdentity'},
-        'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
-        'minimum_nodes': {'key': 'properties.minimumNodes', 'type': 'long'},
-        'maximum_nodes': {'key': 'properties.maximumNodes', 'type': 'long'},
-        'remove_application_capacity': {'key': 'properties.removeApplicationCapacity', 'type': 'bool'},
-        'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
-        'managed_identities': {'key': 'properties.managedIdentities', 'type': '[ApplicationUserAssignedIdentity]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'type_name': {'key': 'properties.typeName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "identity": {"key": "identity", "type": "ManagedIdentity"},
+        "type_version": {"key": "properties.typeVersion", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "upgrade_policy": {"key": "properties.upgradePolicy", "type": "ApplicationUpgradePolicy"},
+        "minimum_nodes": {"key": "properties.minimumNodes", "type": "int"},
+        "maximum_nodes": {"key": "properties.maximumNodes", "type": "int"},
+        "remove_application_capacity": {"key": "properties.removeApplicationCapacity", "type": "bool"},
+        "metrics": {"key": "properties.metrics", "type": "[ApplicationMetricDescription]"},
+        "managed_identities": {"key": "properties.managedIdentities", "type": "[ApplicationUserAssignedIdentity]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "type_name": {"key": "properties.typeName", "type": "str"},
     }
 
     def __init__(
@@ -279,19 +339,56 @@ class ApplicationResource(ProxyResource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["ManagedIdentity"] = None,
+        identity: Optional["_models.ManagedIdentity"] = None,
         type_version: Optional[str] = None,
         parameters: Optional[Dict[str, str]] = None,
-        upgrade_policy: Optional["ApplicationUpgradePolicy"] = None,
+        upgrade_policy: Optional["_models.ApplicationUpgradePolicy"] = None,
         minimum_nodes: Optional[int] = None,
-        maximum_nodes: Optional[int] = 0,
+        maximum_nodes: int = 0,
         remove_application_capacity: Optional[bool] = None,
-        metrics: Optional[List["ApplicationMetricDescription"]] = None,
-        managed_identities: Optional[List["ApplicationUserAssignedIdentity"]] = None,
+        metrics: Optional[List["_models.ApplicationMetricDescription"]] = None,
+        managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
         type_name: Optional[str] = None,
         **kwargs
     ):
-        super(ApplicationResource, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: It will be deprecated in New API, resource location depends on the parent
+         resource.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: Describes the managed identities for an Azure resource.
+        :paramtype identity: ~azure.mgmt.servicefabric.models.ManagedIdentity
+        :keyword type_version: The version of the application type as defined in the application
+         manifest.
+        :paramtype type_version: str
+        :keyword parameters: List of application parameters with overridden values from their default
+         values specified in the application manifest.
+        :paramtype parameters: dict[str, str]
+        :keyword upgrade_policy: Describes the policy for a monitored application upgrade.
+        :paramtype upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
+        :keyword minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity
+         for this application. Note that this does not mean that the services of this application will
+         be placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
+         The value of this property cannot be more than the value of the MaximumNodes property.
+        :paramtype minimum_nodes: int
+        :keyword maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity
+         for this application. Note that this does not mean that the services of this application will
+         be placed on all of those nodes. By default, the value of this property is zero and it means
+         that the services can be placed on any node.
+        :paramtype maximum_nodes: int
+        :keyword remove_application_capacity: Remove the current application capacity settings.
+        :paramtype remove_application_capacity: bool
+        :keyword metrics: List of application capacity metric description.
+        :paramtype metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+        :keyword managed_identities: List of user assigned identities for the application, each mapped
+         to a friendly name.
+        :paramtype managed_identities:
+         list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
+        :keyword type_name: The application type name as defined in the application manifest.
+        :paramtype type_name: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.type_version = type_version
         self.parameters = parameters
@@ -305,82 +402,80 @@ class ApplicationResource(ProxyResource):
         self.type_name = type_name
 
 
-class ApplicationResourceList(msrest.serialization.Model):
+class ApplicationResourceList(_serialization.Model):
     """The list of application resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.servicefabric.models.ApplicationResource]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.servicefabric.models.ApplicationResource]
     :ivar next_link: URL to get the next set of application list results if there are any.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ApplicationResource"]] = None,
-        **kwargs
-    ):
-        super(ApplicationResourceList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ApplicationResource"]] = None, **kwargs):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.servicefabric.models.ApplicationResource]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ApplicationResourceUpdateProperties(msrest.serialization.Model):
+class ApplicationResourceUpdateProperties(_serialization.Model):
     """The application resource properties for patch operations.
 
-    :param type_version: The version of the application type as defined in the application
-     manifest.
-    :type type_version: str
-    :param parameters: List of application parameters with overridden values from their default
+    :ivar type_version: The version of the application type as defined in the application manifest.
+    :vartype type_version: str
+    :ivar parameters: List of application parameters with overridden values from their default
      values specified in the application manifest.
-    :type parameters: dict[str, str]
-    :param upgrade_policy: Describes the policy for a monitored application upgrade.
-    :type upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
-    :param minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity
-     for this application. Note that this does not mean that the services of this application will
-     be placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
+    :vartype parameters: dict[str, str]
+    :ivar upgrade_policy: Describes the policy for a monitored application upgrade.
+    :vartype upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
+    :ivar minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity for
+     this application. Note that this does not mean that the services of this application will be
+     placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
      The value of this property cannot be more than the value of the MaximumNodes property.
-    :type minimum_nodes: long
-    :param maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity
-     for this application. Note that this does not mean that the services of this application will
-     be placed on all of those nodes. By default, the value of this property is zero and it means
-     that the services can be placed on any node.
-    :type maximum_nodes: long
-    :param remove_application_capacity: Remove the current application capacity settings.
-    :type remove_application_capacity: bool
-    :param metrics: List of application capacity metric description.
-    :type metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
-    :param managed_identities: List of user assigned identities for the application, each mapped to
+    :vartype minimum_nodes: int
+    :ivar maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity for
+     this application. Note that this does not mean that the services of this application will be
+     placed on all of those nodes. By default, the value of this property is zero and it means that
+     the services can be placed on any node.
+    :vartype maximum_nodes: int
+    :ivar remove_application_capacity: Remove the current application capacity settings.
+    :vartype remove_application_capacity: bool
+    :ivar metrics: List of application capacity metric description.
+    :vartype metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+    :ivar managed_identities: List of user assigned identities for the application, each mapped to
      a friendly name.
-    :type managed_identities:
+    :vartype managed_identities:
      list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
     """
 
     _validation = {
-        'minimum_nodes': {'minimum': 0},
-        'maximum_nodes': {'minimum': 0},
+        "minimum_nodes": {"minimum": 0},
+        "maximum_nodes": {"minimum": 0},
     }
 
     _attribute_map = {
-        'type_version': {'key': 'typeVersion', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '{str}'},
-        'upgrade_policy': {'key': 'upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
-        'minimum_nodes': {'key': 'minimumNodes', 'type': 'long'},
-        'maximum_nodes': {'key': 'maximumNodes', 'type': 'long'},
-        'remove_application_capacity': {'key': 'removeApplicationCapacity', 'type': 'bool'},
-        'metrics': {'key': 'metrics', 'type': '[ApplicationMetricDescription]'},
-        'managed_identities': {'key': 'managedIdentities', 'type': '[ApplicationUserAssignedIdentity]'},
+        "type_version": {"key": "typeVersion", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{str}"},
+        "upgrade_policy": {"key": "upgradePolicy", "type": "ApplicationUpgradePolicy"},
+        "minimum_nodes": {"key": "minimumNodes", "type": "int"},
+        "maximum_nodes": {"key": "maximumNodes", "type": "int"},
+        "remove_application_capacity": {"key": "removeApplicationCapacity", "type": "bool"},
+        "metrics": {"key": "metrics", "type": "[ApplicationMetricDescription]"},
+        "managed_identities": {"key": "managedIdentities", "type": "[ApplicationUserAssignedIdentity]"},
     }
 
     def __init__(
@@ -388,15 +483,43 @@ class ApplicationResourceUpdateProperties(msrest.serialization.Model):
         *,
         type_version: Optional[str] = None,
         parameters: Optional[Dict[str, str]] = None,
-        upgrade_policy: Optional["ApplicationUpgradePolicy"] = None,
+        upgrade_policy: Optional["_models.ApplicationUpgradePolicy"] = None,
         minimum_nodes: Optional[int] = None,
-        maximum_nodes: Optional[int] = 0,
+        maximum_nodes: int = 0,
         remove_application_capacity: Optional[bool] = None,
-        metrics: Optional[List["ApplicationMetricDescription"]] = None,
-        managed_identities: Optional[List["ApplicationUserAssignedIdentity"]] = None,
+        metrics: Optional[List["_models.ApplicationMetricDescription"]] = None,
+        managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
         **kwargs
     ):
-        super(ApplicationResourceUpdateProperties, self).__init__(**kwargs)
+        """
+        :keyword type_version: The version of the application type as defined in the application
+         manifest.
+        :paramtype type_version: str
+        :keyword parameters: List of application parameters with overridden values from their default
+         values specified in the application manifest.
+        :paramtype parameters: dict[str, str]
+        :keyword upgrade_policy: Describes the policy for a monitored application upgrade.
+        :paramtype upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
+        :keyword minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity
+         for this application. Note that this does not mean that the services of this application will
+         be placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
+         The value of this property cannot be more than the value of the MaximumNodes property.
+        :paramtype minimum_nodes: int
+        :keyword maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity
+         for this application. Note that this does not mean that the services of this application will
+         be placed on all of those nodes. By default, the value of this property is zero and it means
+         that the services can be placed on any node.
+        :paramtype maximum_nodes: int
+        :keyword remove_application_capacity: Remove the current application capacity settings.
+        :paramtype remove_application_capacity: bool
+        :keyword metrics: List of application capacity metric description.
+        :paramtype metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+        :keyword managed_identities: List of user assigned identities for the application, each mapped
+         to a friendly name.
+        :paramtype managed_identities:
+         list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
         self.type_version = type_version
         self.parameters = parameters
         self.upgrade_policy = upgrade_policy
@@ -412,56 +535,55 @@ class ApplicationResourceProperties(ApplicationResourceUpdateProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type_version: The version of the application type as defined in the application
-     manifest.
-    :type type_version: str
-    :param parameters: List of application parameters with overridden values from their default
+    :ivar type_version: The version of the application type as defined in the application manifest.
+    :vartype type_version: str
+    :ivar parameters: List of application parameters with overridden values from their default
      values specified in the application manifest.
-    :type parameters: dict[str, str]
-    :param upgrade_policy: Describes the policy for a monitored application upgrade.
-    :type upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
-    :param minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity
-     for this application. Note that this does not mean that the services of this application will
-     be placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
+    :vartype parameters: dict[str, str]
+    :ivar upgrade_policy: Describes the policy for a monitored application upgrade.
+    :vartype upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
+    :ivar minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity for
+     this application. Note that this does not mean that the services of this application will be
+     placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
      The value of this property cannot be more than the value of the MaximumNodes property.
-    :type minimum_nodes: long
-    :param maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity
-     for this application. Note that this does not mean that the services of this application will
-     be placed on all of those nodes. By default, the value of this property is zero and it means
-     that the services can be placed on any node.
-    :type maximum_nodes: long
-    :param remove_application_capacity: Remove the current application capacity settings.
-    :type remove_application_capacity: bool
-    :param metrics: List of application capacity metric description.
-    :type metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
-    :param managed_identities: List of user assigned identities for the application, each mapped to
+    :vartype minimum_nodes: int
+    :ivar maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity for
+     this application. Note that this does not mean that the services of this application will be
+     placed on all of those nodes. By default, the value of this property is zero and it means that
+     the services can be placed on any node.
+    :vartype maximum_nodes: int
+    :ivar remove_application_capacity: Remove the current application capacity settings.
+    :vartype remove_application_capacity: bool
+    :ivar metrics: List of application capacity metric description.
+    :vartype metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+    :ivar managed_identities: List of user assigned identities for the application, each mapped to
      a friendly name.
-    :type managed_identities:
+    :vartype managed_identities:
      list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param type_name: The application type name as defined in the application manifest.
-    :type type_name: str
+    :ivar type_name: The application type name as defined in the application manifest.
+    :vartype type_name: str
     """
 
     _validation = {
-        'minimum_nodes': {'minimum': 0},
-        'maximum_nodes': {'minimum': 0},
-        'provisioning_state': {'readonly': True},
+        "minimum_nodes": {"minimum": 0},
+        "maximum_nodes": {"minimum": 0},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'type_version': {'key': 'typeVersion', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '{str}'},
-        'upgrade_policy': {'key': 'upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
-        'minimum_nodes': {'key': 'minimumNodes', 'type': 'long'},
-        'maximum_nodes': {'key': 'maximumNodes', 'type': 'long'},
-        'remove_application_capacity': {'key': 'removeApplicationCapacity', 'type': 'bool'},
-        'metrics': {'key': 'metrics', 'type': '[ApplicationMetricDescription]'},
-        'managed_identities': {'key': 'managedIdentities', 'type': '[ApplicationUserAssignedIdentity]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'type_name': {'key': 'typeName', 'type': 'str'},
+        "type_version": {"key": "typeVersion", "type": "str"},
+        "parameters": {"key": "parameters", "type": "{str}"},
+        "upgrade_policy": {"key": "upgradePolicy", "type": "ApplicationUpgradePolicy"},
+        "minimum_nodes": {"key": "minimumNodes", "type": "int"},
+        "maximum_nodes": {"key": "maximumNodes", "type": "int"},
+        "remove_application_capacity": {"key": "removeApplicationCapacity", "type": "bool"},
+        "metrics": {"key": "metrics", "type": "[ApplicationMetricDescription]"},
+        "managed_identities": {"key": "managedIdentities", "type": "[ApplicationUserAssignedIdentity]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "type_name": {"key": "typeName", "type": "str"},
     }
 
     def __init__(
@@ -469,21 +591,61 @@ class ApplicationResourceProperties(ApplicationResourceUpdateProperties):
         *,
         type_version: Optional[str] = None,
         parameters: Optional[Dict[str, str]] = None,
-        upgrade_policy: Optional["ApplicationUpgradePolicy"] = None,
+        upgrade_policy: Optional["_models.ApplicationUpgradePolicy"] = None,
         minimum_nodes: Optional[int] = None,
-        maximum_nodes: Optional[int] = 0,
+        maximum_nodes: int = 0,
         remove_application_capacity: Optional[bool] = None,
-        metrics: Optional[List["ApplicationMetricDescription"]] = None,
-        managed_identities: Optional[List["ApplicationUserAssignedIdentity"]] = None,
+        metrics: Optional[List["_models.ApplicationMetricDescription"]] = None,
+        managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
         type_name: Optional[str] = None,
         **kwargs
     ):
-        super(ApplicationResourceProperties, self).__init__(type_version=type_version, parameters=parameters, upgrade_policy=upgrade_policy, minimum_nodes=minimum_nodes, maximum_nodes=maximum_nodes, remove_application_capacity=remove_application_capacity, metrics=metrics, managed_identities=managed_identities, **kwargs)
+        """
+        :keyword type_version: The version of the application type as defined in the application
+         manifest.
+        :paramtype type_version: str
+        :keyword parameters: List of application parameters with overridden values from their default
+         values specified in the application manifest.
+        :paramtype parameters: dict[str, str]
+        :keyword upgrade_policy: Describes the policy for a monitored application upgrade.
+        :paramtype upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
+        :keyword minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity
+         for this application. Note that this does not mean that the services of this application will
+         be placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
+         The value of this property cannot be more than the value of the MaximumNodes property.
+        :paramtype minimum_nodes: int
+        :keyword maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity
+         for this application. Note that this does not mean that the services of this application will
+         be placed on all of those nodes. By default, the value of this property is zero and it means
+         that the services can be placed on any node.
+        :paramtype maximum_nodes: int
+        :keyword remove_application_capacity: Remove the current application capacity settings.
+        :paramtype remove_application_capacity: bool
+        :keyword metrics: List of application capacity metric description.
+        :paramtype metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+        :keyword managed_identities: List of user assigned identities for the application, each mapped
+         to a friendly name.
+        :paramtype managed_identities:
+         list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
+        :keyword type_name: The application type name as defined in the application manifest.
+        :paramtype type_name: str
+        """
+        super().__init__(
+            type_version=type_version,
+            parameters=parameters,
+            upgrade_policy=upgrade_policy,
+            minimum_nodes=minimum_nodes,
+            maximum_nodes=maximum_nodes,
+            remove_application_capacity=remove_application_capacity,
+            metrics=metrics,
+            managed_identities=managed_identities,
+            **kwargs
+        )
         self.provisioning_state = None
         self.type_name = type_name
 
 
-class ApplicationResourceUpdate(ProxyResource):
+class ApplicationResourceUpdate(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The application resource for patch operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -494,69 +656,68 @@ class ApplicationResourceUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: It will be deprecated in New API, resource location depends on the parent
+    :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :param type_version: The version of the application type as defined in the application
-     manifest.
-    :type type_version: str
-    :param parameters: List of application parameters with overridden values from their default
+    :ivar type_version: The version of the application type as defined in the application manifest.
+    :vartype type_version: str
+    :ivar parameters: List of application parameters with overridden values from their default
      values specified in the application manifest.
-    :type parameters: dict[str, str]
-    :param upgrade_policy: Describes the policy for a monitored application upgrade.
-    :type upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
-    :param minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity
-     for this application. Note that this does not mean that the services of this application will
-     be placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
+    :vartype parameters: dict[str, str]
+    :ivar upgrade_policy: Describes the policy for a monitored application upgrade.
+    :vartype upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
+    :ivar minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity for
+     this application. Note that this does not mean that the services of this application will be
+     placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
      The value of this property cannot be more than the value of the MaximumNodes property.
-    :type minimum_nodes: long
-    :param maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity
-     for this application. Note that this does not mean that the services of this application will
-     be placed on all of those nodes. By default, the value of this property is zero and it means
-     that the services can be placed on any node.
-    :type maximum_nodes: long
-    :param remove_application_capacity: Remove the current application capacity settings.
-    :type remove_application_capacity: bool
-    :param metrics: List of application capacity metric description.
-    :type metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
-    :param managed_identities: List of user assigned identities for the application, each mapped to
+    :vartype minimum_nodes: int
+    :ivar maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity for
+     this application. Note that this does not mean that the services of this application will be
+     placed on all of those nodes. By default, the value of this property is zero and it means that
+     the services can be placed on any node.
+    :vartype maximum_nodes: int
+    :ivar remove_application_capacity: Remove the current application capacity settings.
+    :vartype remove_application_capacity: bool
+    :ivar metrics: List of application capacity metric description.
+    :vartype metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+    :ivar managed_identities: List of user assigned identities for the application, each mapped to
      a friendly name.
-    :type managed_identities:
+    :vartype managed_identities:
      list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'minimum_nodes': {'minimum': 0},
-        'maximum_nodes': {'minimum': 0},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "minimum_nodes": {"minimum": 0},
+        "maximum_nodes": {"minimum": 0},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'type_version': {'key': 'properties.typeVersion', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'upgrade_policy': {'key': 'properties.upgradePolicy', 'type': 'ApplicationUpgradePolicy'},
-        'minimum_nodes': {'key': 'properties.minimumNodes', 'type': 'long'},
-        'maximum_nodes': {'key': 'properties.maximumNodes', 'type': 'long'},
-        'remove_application_capacity': {'key': 'properties.removeApplicationCapacity', 'type': 'bool'},
-        'metrics': {'key': 'properties.metrics', 'type': '[ApplicationMetricDescription]'},
-        'managed_identities': {'key': 'properties.managedIdentities', 'type': '[ApplicationUserAssignedIdentity]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "type_version": {"key": "properties.typeVersion", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "upgrade_policy": {"key": "properties.upgradePolicy", "type": "ApplicationUpgradePolicy"},
+        "minimum_nodes": {"key": "properties.minimumNodes", "type": "int"},
+        "maximum_nodes": {"key": "properties.maximumNodes", "type": "int"},
+        "remove_application_capacity": {"key": "properties.removeApplicationCapacity", "type": "bool"},
+        "metrics": {"key": "properties.metrics", "type": "[ApplicationMetricDescription]"},
+        "managed_identities": {"key": "properties.managedIdentities", "type": "[ApplicationUserAssignedIdentity]"},
     }
 
     def __init__(
@@ -566,15 +727,48 @@ class ApplicationResourceUpdate(ProxyResource):
         tags: Optional[Dict[str, str]] = None,
         type_version: Optional[str] = None,
         parameters: Optional[Dict[str, str]] = None,
-        upgrade_policy: Optional["ApplicationUpgradePolicy"] = None,
+        upgrade_policy: Optional["_models.ApplicationUpgradePolicy"] = None,
         minimum_nodes: Optional[int] = None,
-        maximum_nodes: Optional[int] = 0,
+        maximum_nodes: int = 0,
         remove_application_capacity: Optional[bool] = None,
-        metrics: Optional[List["ApplicationMetricDescription"]] = None,
-        managed_identities: Optional[List["ApplicationUserAssignedIdentity"]] = None,
+        metrics: Optional[List["_models.ApplicationMetricDescription"]] = None,
+        managed_identities: Optional[List["_models.ApplicationUserAssignedIdentity"]] = None,
         **kwargs
     ):
-        super(ApplicationResourceUpdate, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: It will be deprecated in New API, resource location depends on the parent
+         resource.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword type_version: The version of the application type as defined in the application
+         manifest.
+        :paramtype type_version: str
+        :keyword parameters: List of application parameters with overridden values from their default
+         values specified in the application manifest.
+        :paramtype parameters: dict[str, str]
+        :keyword upgrade_policy: Describes the policy for a monitored application upgrade.
+        :paramtype upgrade_policy: ~azure.mgmt.servicefabric.models.ApplicationUpgradePolicy
+        :keyword minimum_nodes: The minimum number of nodes where Service Fabric will reserve capacity
+         for this application. Note that this does not mean that the services of this application will
+         be placed on all of those nodes. If this property is set to zero, no capacity will be reserved.
+         The value of this property cannot be more than the value of the MaximumNodes property.
+        :paramtype minimum_nodes: int
+        :keyword maximum_nodes: The maximum number of nodes where Service Fabric will reserve capacity
+         for this application. Note that this does not mean that the services of this application will
+         be placed on all of those nodes. By default, the value of this property is zero and it means
+         that the services can be placed on any node.
+        :paramtype maximum_nodes: int
+        :keyword remove_application_capacity: Remove the current application capacity settings.
+        :paramtype remove_application_capacity: bool
+        :keyword metrics: List of application capacity metric description.
+        :paramtype metrics: list[~azure.mgmt.servicefabric.models.ApplicationMetricDescription]
+        :keyword managed_identities: List of user assigned identities for the application, each mapped
+         to a friendly name.
+        :paramtype managed_identities:
+         list[~azure.mgmt.servicefabric.models.ApplicationUserAssignedIdentity]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.type_version = type_version
         self.parameters = parameters
         self.upgrade_policy = upgrade_policy
@@ -596,11 +790,11 @@ class ApplicationTypeResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: It will be deprecated in New API, resource location depends on the parent
+    :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -611,63 +805,63 @@ class ApplicationTypeResource(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ApplicationTypeResource, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: It will be deprecated in New API, resource location depends on the parent
+         resource.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
 
 
-class ApplicationTypeResourceList(msrest.serialization.Model):
+class ApplicationTypeResourceList(_serialization.Model):
     """The list of application type names.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.servicefabric.models.ApplicationTypeResource]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.servicefabric.models.ApplicationTypeResource]
     :ivar next_link: URL to get the next set of application type list results if there are any.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationTypeResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationTypeResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ApplicationTypeResource"]] = None,
-        **kwargs
-    ):
-        super(ApplicationTypeResourceList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ApplicationTypeResource"]] = None, **kwargs):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.servicefabric.models.ApplicationTypeResource]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -683,11 +877,11 @@ class ApplicationTypeVersionResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: It will be deprecated in New API, resource location depends on the parent
+    :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -695,34 +889,34 @@ class ApplicationTypeVersionResource(ProxyResource):
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param app_package_url: The URL to the application package.
-    :type app_package_url: str
+    :ivar app_package_url: The URL to the application package.
+    :vartype app_package_url: str
     :ivar default_parameter_list: List of application type parameters that can be overridden when
      creating or updating the application.
     :vartype default_parameter_list: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'default_parameter_list': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "default_parameter_list": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'app_package_url': {'key': 'properties.appPackageUrl', 'type': 'str'},
-        'default_parameter_list': {'key': 'properties.defaultParameterList', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "app_package_url": {"key": "properties.appPackageUrl", "type": "str"},
+        "default_parameter_list": {"key": "properties.defaultParameterList", "type": "{str}"},
     }
 
     def __init__(
@@ -733,122 +927,160 @@ class ApplicationTypeVersionResource(ProxyResource):
         app_package_url: Optional[str] = None,
         **kwargs
     ):
-        super(ApplicationTypeVersionResource, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: It will be deprecated in New API, resource location depends on the parent
+         resource.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword app_package_url: The URL to the application package.
+        :paramtype app_package_url: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.app_package_url = app_package_url
         self.default_parameter_list = None
 
 
-class ApplicationTypeVersionResourceList(msrest.serialization.Model):
+class ApplicationTypeVersionResourceList(_serialization.Model):
     """The list of application type version resources for the specified application type name resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]
     :ivar next_link: URL to get the next set of application type version list results if there are
      any.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ApplicationTypeVersionResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ApplicationTypeVersionResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ApplicationTypeVersionResource"]] = None,
-        **kwargs
-    ):
-        super(ApplicationTypeVersionResourceList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ApplicationTypeVersionResource"]] = None, **kwargs):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.servicefabric.models.ApplicationTypeVersionResource]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ApplicationTypeVersionsCleanupPolicy(msrest.serialization.Model):
+class ApplicationTypeVersionsCleanupPolicy(_serialization.Model):
     """ApplicationTypeVersionsCleanupPolicy.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param max_unused_versions_to_keep: Required. Number of unused versions per application type to
-     keep.
-    :type max_unused_versions_to_keep: long
+    :ivar max_unused_versions_to_keep: Number of unused versions per application type to keep.
+     Required.
+    :vartype max_unused_versions_to_keep: int
     """
 
     _validation = {
-        'max_unused_versions_to_keep': {'required': True, 'minimum': 0},
+        "max_unused_versions_to_keep": {"required": True, "minimum": 0},
     }
 
     _attribute_map = {
-        'max_unused_versions_to_keep': {'key': 'maxUnusedVersionsToKeep', 'type': 'long'},
+        "max_unused_versions_to_keep": {"key": "maxUnusedVersionsToKeep", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        max_unused_versions_to_keep: int,
-        **kwargs
-    ):
-        super(ApplicationTypeVersionsCleanupPolicy, self).__init__(**kwargs)
+    def __init__(self, *, max_unused_versions_to_keep: int, **kwargs):
+        """
+        :keyword max_unused_versions_to_keep: Number of unused versions per application type to keep.
+         Required.
+        :paramtype max_unused_versions_to_keep: int
+        """
+        super().__init__(**kwargs)
         self.max_unused_versions_to_keep = max_unused_versions_to_keep
 
 
-class ApplicationUpgradePolicy(msrest.serialization.Model):
+class ApplicationUpgradePolicy(_serialization.Model):
     """Describes the policy for a monitored application upgrade.
 
-    :param upgrade_replica_set_check_timeout: The maximum amount of time to block processing of an
+    :ivar upgrade_replica_set_check_timeout: The maximum amount of time to block processing of an
      upgrade domain and prevent loss of availability when there are unexpected issues. When this
      timeout expires, processing of the upgrade domain will proceed regardless of availability loss
      issues. The timeout is reset at the start of each upgrade domain. Valid values are between 0
      and 42949672925 inclusive. (unsigned 32-bit integer).
-    :type upgrade_replica_set_check_timeout: str
-    :param force_restart: If true, then processes are forcefully restarted during upgrade even when
+    :vartype upgrade_replica_set_check_timeout: str
+    :ivar force_restart: If true, then processes are forcefully restarted during upgrade even when
      the code version has not changed (the upgrade only changes configuration or data).
-    :type force_restart: bool
-    :param rolling_upgrade_monitoring_policy: The policy used for monitoring the application
+    :vartype force_restart: bool
+    :ivar rolling_upgrade_monitoring_policy: The policy used for monitoring the application
      upgrade.
-    :type rolling_upgrade_monitoring_policy:
+    :vartype rolling_upgrade_monitoring_policy:
      ~azure.mgmt.servicefabric.models.ArmRollingUpgradeMonitoringPolicy
-    :param application_health_policy: Defines a health policy used to evaluate the health of an
+    :ivar application_health_policy: Defines a health policy used to evaluate the health of an
      application or one of its children entities.
-    :type application_health_policy: ~azure.mgmt.servicefabric.models.ArmApplicationHealthPolicy
-    :param upgrade_mode: The mode used to monitor health during a rolling upgrade. The values are
-     UnmonitoredAuto, UnmonitoredManual, and Monitored. Possible values include: "Invalid",
-     "UnmonitoredAuto", "UnmonitoredManual", "Monitored". Default value: "Monitored".
-    :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.RollingUpgradeMode
-    :param recreate_application: Determines whether the application should be recreated on update.
+    :vartype application_health_policy: ~azure.mgmt.servicefabric.models.ArmApplicationHealthPolicy
+    :ivar upgrade_mode: The mode used to monitor health during a rolling upgrade. The values are
+     UnmonitoredAuto, UnmonitoredManual, and Monitored. Known values are: "Invalid",
+     "UnmonitoredAuto", "UnmonitoredManual", and "Monitored".
+    :vartype upgrade_mode: str or ~azure.mgmt.servicefabric.models.RollingUpgradeMode
+    :ivar recreate_application: Determines whether the application should be recreated on update.
      If value=true, the rest of the upgrade policy parameters are not allowed and it will result in
      availability loss.
-    :type recreate_application: bool
+    :vartype recreate_application: bool
     """
 
     _attribute_map = {
-        'upgrade_replica_set_check_timeout': {'key': 'upgradeReplicaSetCheckTimeout', 'type': 'str'},
-        'force_restart': {'key': 'forceRestart', 'type': 'bool'},
-        'rolling_upgrade_monitoring_policy': {'key': 'rollingUpgradeMonitoringPolicy', 'type': 'ArmRollingUpgradeMonitoringPolicy'},
-        'application_health_policy': {'key': 'applicationHealthPolicy', 'type': 'ArmApplicationHealthPolicy'},
-        'upgrade_mode': {'key': 'upgradeMode', 'type': 'str'},
-        'recreate_application': {'key': 'recreateApplication', 'type': 'bool'},
+        "upgrade_replica_set_check_timeout": {"key": "upgradeReplicaSetCheckTimeout", "type": "str"},
+        "force_restart": {"key": "forceRestart", "type": "bool"},
+        "rolling_upgrade_monitoring_policy": {
+            "key": "rollingUpgradeMonitoringPolicy",
+            "type": "ArmRollingUpgradeMonitoringPolicy",
+        },
+        "application_health_policy": {"key": "applicationHealthPolicy", "type": "ArmApplicationHealthPolicy"},
+        "upgrade_mode": {"key": "upgradeMode", "type": "str"},
+        "recreate_application": {"key": "recreateApplication", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         upgrade_replica_set_check_timeout: Optional[str] = None,
-        force_restart: Optional[bool] = False,
-        rolling_upgrade_monitoring_policy: Optional["ArmRollingUpgradeMonitoringPolicy"] = None,
-        application_health_policy: Optional["ArmApplicationHealthPolicy"] = None,
-        upgrade_mode: Optional[Union[str, "RollingUpgradeMode"]] = "Monitored",
+        force_restart: bool = False,
+        rolling_upgrade_monitoring_policy: Optional["_models.ArmRollingUpgradeMonitoringPolicy"] = None,
+        application_health_policy: Optional["_models.ArmApplicationHealthPolicy"] = None,
+        upgrade_mode: Union[str, "_models.RollingUpgradeMode"] = "Monitored",
         recreate_application: Optional[bool] = None,
         **kwargs
     ):
-        super(ApplicationUpgradePolicy, self).__init__(**kwargs)
+        """
+        :keyword upgrade_replica_set_check_timeout: The maximum amount of time to block processing of
+         an upgrade domain and prevent loss of availability when there are unexpected issues. When this
+         timeout expires, processing of the upgrade domain will proceed regardless of availability loss
+         issues. The timeout is reset at the start of each upgrade domain. Valid values are between 0
+         and 42949672925 inclusive. (unsigned 32-bit integer).
+        :paramtype upgrade_replica_set_check_timeout: str
+        :keyword force_restart: If true, then processes are forcefully restarted during upgrade even
+         when the code version has not changed (the upgrade only changes configuration or data).
+        :paramtype force_restart: bool
+        :keyword rolling_upgrade_monitoring_policy: The policy used for monitoring the application
+         upgrade.
+        :paramtype rolling_upgrade_monitoring_policy:
+         ~azure.mgmt.servicefabric.models.ArmRollingUpgradeMonitoringPolicy
+        :keyword application_health_policy: Defines a health policy used to evaluate the health of an
+         application or one of its children entities.
+        :paramtype application_health_policy:
+         ~azure.mgmt.servicefabric.models.ArmApplicationHealthPolicy
+        :keyword upgrade_mode: The mode used to monitor health during a rolling upgrade. The values are
+         UnmonitoredAuto, UnmonitoredManual, and Monitored. Known values are: "Invalid",
+         "UnmonitoredAuto", "UnmonitoredManual", and "Monitored".
+        :paramtype upgrade_mode: str or ~azure.mgmt.servicefabric.models.RollingUpgradeMode
+        :keyword recreate_application: Determines whether the application should be recreated on
+         update. If value=true, the rest of the upgrade policy parameters are not allowed and it will
+         result in availability loss.
+        :paramtype recreate_application: bool
+        """
+        super().__init__(**kwargs)
         self.upgrade_replica_set_check_timeout = upgrade_replica_set_check_timeout
         self.force_restart = force_restart
         self.rolling_upgrade_monitoring_policy = rolling_upgrade_monitoring_policy
@@ -857,46 +1089,46 @@ class ApplicationUpgradePolicy(msrest.serialization.Model):
         self.recreate_application = recreate_application
 
 
-class ApplicationUserAssignedIdentity(msrest.serialization.Model):
+class ApplicationUserAssignedIdentity(_serialization.Model):
     """ApplicationUserAssignedIdentity.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The friendly name of user assigned identity.
-    :type name: str
-    :param principal_id: Required. The principal id of user assigned identity.
-    :type principal_id: str
+    :ivar name: The friendly name of user assigned identity. Required.
+    :vartype name: str
+    :ivar principal_id: The principal id of user assigned identity. Required.
+    :vartype principal_id: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'principal_id': {'required': True},
+        "name": {"required": True},
+        "principal_id": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        principal_id: str,
-        **kwargs
-    ):
-        super(ApplicationUserAssignedIdentity, self).__init__(**kwargs)
+    def __init__(self, *, name: str, principal_id: str, **kwargs):
+        """
+        :keyword name: The friendly name of user assigned identity. Required.
+        :paramtype name: str
+        :keyword principal_id: The principal id of user assigned identity. Required.
+        :paramtype principal_id: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.principal_id = principal_id
 
 
-class ArmApplicationHealthPolicy(msrest.serialization.Model):
+class ArmApplicationHealthPolicy(_serialization.Model):
     """Defines a health policy used to evaluate the health of an application or one of its children entities.
 
-    :param consider_warning_as_error: Indicates whether warnings are treated with the same severity
+    :ivar consider_warning_as_error: Indicates whether warnings are treated with the same severity
      as errors.
-    :type consider_warning_as_error: bool
-    :param max_percent_unhealthy_deployed_applications: The maximum allowed percentage of unhealthy
+    :vartype consider_warning_as_error: bool
+    :ivar max_percent_unhealthy_deployed_applications: The maximum allowed percentage of unhealthy
      deployed applications. Allowed values are Byte values from zero to 100.
      The percentage represents the maximum tolerated percentage of deployed applications that can
      be unhealthy before the application is considered in error.
@@ -904,94 +1136,152 @@ class ArmApplicationHealthPolicy(msrest.serialization.Model):
      of nodes where the application is currently deployed on in the cluster.
      The computation rounds up to tolerate one failure on small numbers of nodes. Default
      percentage is zero.
-    :type max_percent_unhealthy_deployed_applications: int
-    :param default_service_type_health_policy: The health policy used by default to evaluate the
+    :vartype max_percent_unhealthy_deployed_applications: int
+    :ivar default_service_type_health_policy: The health policy used by default to evaluate the
      health of a service type.
-    :type default_service_type_health_policy:
+    :vartype default_service_type_health_policy:
      ~azure.mgmt.servicefabric.models.ArmServiceTypeHealthPolicy
-    :param service_type_health_policy_map: The map with service type health policy per service type
+    :ivar service_type_health_policy_map: The map with service type health policy per service type
      name. The map is empty by default.
-    :type service_type_health_policy_map: dict[str,
+    :vartype service_type_health_policy_map: dict[str,
      ~azure.mgmt.servicefabric.models.ArmServiceTypeHealthPolicy]
     """
 
     _attribute_map = {
-        'consider_warning_as_error': {'key': 'considerWarningAsError', 'type': 'bool'},
-        'max_percent_unhealthy_deployed_applications': {'key': 'maxPercentUnhealthyDeployedApplications', 'type': 'int'},
-        'default_service_type_health_policy': {'key': 'defaultServiceTypeHealthPolicy', 'type': 'ArmServiceTypeHealthPolicy'},
-        'service_type_health_policy_map': {'key': 'serviceTypeHealthPolicyMap', 'type': '{ArmServiceTypeHealthPolicy}'},
+        "consider_warning_as_error": {"key": "considerWarningAsError", "type": "bool"},
+        "max_percent_unhealthy_deployed_applications": {
+            "key": "maxPercentUnhealthyDeployedApplications",
+            "type": "int",
+        },
+        "default_service_type_health_policy": {
+            "key": "defaultServiceTypeHealthPolicy",
+            "type": "ArmServiceTypeHealthPolicy",
+        },
+        "service_type_health_policy_map": {"key": "serviceTypeHealthPolicyMap", "type": "{ArmServiceTypeHealthPolicy}"},
     }
 
     def __init__(
         self,
         *,
-        consider_warning_as_error: Optional[bool] = False,
-        max_percent_unhealthy_deployed_applications: Optional[int] = 0,
-        default_service_type_health_policy: Optional["ArmServiceTypeHealthPolicy"] = None,
-        service_type_health_policy_map: Optional[Dict[str, "ArmServiceTypeHealthPolicy"]] = None,
+        consider_warning_as_error: bool = False,
+        max_percent_unhealthy_deployed_applications: int = 0,
+        default_service_type_health_policy: Optional["_models.ArmServiceTypeHealthPolicy"] = None,
+        service_type_health_policy_map: Optional[Dict[str, "_models.ArmServiceTypeHealthPolicy"]] = None,
         **kwargs
     ):
-        super(ArmApplicationHealthPolicy, self).__init__(**kwargs)
+        """
+        :keyword consider_warning_as_error: Indicates whether warnings are treated with the same
+         severity as errors.
+        :paramtype consider_warning_as_error: bool
+        :keyword max_percent_unhealthy_deployed_applications: The maximum allowed percentage of
+         unhealthy deployed applications. Allowed values are Byte values from zero to 100.
+         The percentage represents the maximum tolerated percentage of deployed applications that can
+         be unhealthy before the application is considered in error.
+         This is calculated by dividing the number of unhealthy deployed applications over the number
+         of nodes where the application is currently deployed on in the cluster.
+         The computation rounds up to tolerate one failure on small numbers of nodes. Default
+         percentage is zero.
+        :paramtype max_percent_unhealthy_deployed_applications: int
+        :keyword default_service_type_health_policy: The health policy used by default to evaluate the
+         health of a service type.
+        :paramtype default_service_type_health_policy:
+         ~azure.mgmt.servicefabric.models.ArmServiceTypeHealthPolicy
+        :keyword service_type_health_policy_map: The map with service type health policy per service
+         type name. The map is empty by default.
+        :paramtype service_type_health_policy_map: dict[str,
+         ~azure.mgmt.servicefabric.models.ArmServiceTypeHealthPolicy]
+        """
+        super().__init__(**kwargs)
         self.consider_warning_as_error = consider_warning_as_error
         self.max_percent_unhealthy_deployed_applications = max_percent_unhealthy_deployed_applications
         self.default_service_type_health_policy = default_service_type_health_policy
         self.service_type_health_policy_map = service_type_health_policy_map
 
 
-class ArmRollingUpgradeMonitoringPolicy(msrest.serialization.Model):
+class ArmRollingUpgradeMonitoringPolicy(_serialization.Model):
     """The policy used for monitoring the application upgrade.
 
-    :param failure_action: The activation Mode of the service package. Possible values include:
-     "Rollback", "Manual".
-    :type failure_action: str or ~azure.mgmt.servicefabric.models.ArmUpgradeFailureAction
-    :param health_check_wait_duration: The amount of time to wait after completing an upgrade
-     domain before applying health policies. It is first interpreted as a string representing an ISO
-     8601 duration. If that fails, then it is interpreted as a number representing the total number
-     of milliseconds.
-    :type health_check_wait_duration: str
-    :param health_check_stable_duration: The amount of time that the application or cluster must
+    :ivar failure_action: The activation Mode of the service package. Known values are: "Rollback"
+     and "Manual".
+    :vartype failure_action: str or ~azure.mgmt.servicefabric.models.ArmUpgradeFailureAction
+    :ivar health_check_wait_duration: The amount of time to wait after completing an upgrade domain
+     before applying health policies. It is first interpreted as a string representing an ISO 8601
+     duration. If that fails, then it is interpreted as a number representing the total number of
+     milliseconds.
+    :vartype health_check_wait_duration: str
+    :ivar health_check_stable_duration: The amount of time that the application or cluster must
      remain healthy before the upgrade proceeds to the next upgrade domain. It is first interpreted
      as a string representing an ISO 8601 duration. If that fails, then it is interpreted as a
      number representing the total number of milliseconds.
-    :type health_check_stable_duration: str
-    :param health_check_retry_timeout: The amount of time to retry health evaluation when the
+    :vartype health_check_stable_duration: str
+    :ivar health_check_retry_timeout: The amount of time to retry health evaluation when the
      application or cluster is unhealthy before FailureAction is executed. It is first interpreted
      as a string representing an ISO 8601 duration. If that fails, then it is interpreted as a
      number representing the total number of milliseconds.
-    :type health_check_retry_timeout: str
-    :param upgrade_timeout: The amount of time the overall upgrade has to complete before
+    :vartype health_check_retry_timeout: str
+    :ivar upgrade_timeout: The amount of time the overall upgrade has to complete before
      FailureAction is executed. It is first interpreted as a string representing an ISO 8601
      duration. If that fails, then it is interpreted as a number representing the total number of
      milliseconds.
-    :type upgrade_timeout: str
-    :param upgrade_domain_timeout: The amount of time each upgrade domain has to complete before
+    :vartype upgrade_timeout: str
+    :ivar upgrade_domain_timeout: The amount of time each upgrade domain has to complete before
      FailureAction is executed. It is first interpreted as a string representing an ISO 8601
      duration. If that fails, then it is interpreted as a number representing the total number of
      milliseconds.
-    :type upgrade_domain_timeout: str
+    :vartype upgrade_domain_timeout: str
     """
 
     _attribute_map = {
-        'failure_action': {'key': 'failureAction', 'type': 'str'},
-        'health_check_wait_duration': {'key': 'healthCheckWaitDuration', 'type': 'str'},
-        'health_check_stable_duration': {'key': 'healthCheckStableDuration', 'type': 'str'},
-        'health_check_retry_timeout': {'key': 'healthCheckRetryTimeout', 'type': 'str'},
-        'upgrade_timeout': {'key': 'upgradeTimeout', 'type': 'str'},
-        'upgrade_domain_timeout': {'key': 'upgradeDomainTimeout', 'type': 'str'},
+        "failure_action": {"key": "failureAction", "type": "str"},
+        "health_check_wait_duration": {"key": "healthCheckWaitDuration", "type": "str"},
+        "health_check_stable_duration": {"key": "healthCheckStableDuration", "type": "str"},
+        "health_check_retry_timeout": {"key": "healthCheckRetryTimeout", "type": "str"},
+        "upgrade_timeout": {"key": "upgradeTimeout", "type": "str"},
+        "upgrade_domain_timeout": {"key": "upgradeDomainTimeout", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        failure_action: Optional[Union[str, "ArmUpgradeFailureAction"]] = None,
-        health_check_wait_duration: Optional[str] = "0",
-        health_check_stable_duration: Optional[str] = "PT0H2M0S",
-        health_check_retry_timeout: Optional[str] = "PT0H10M0S",
-        upgrade_timeout: Optional[str] = "P10675199DT02H48M05.4775807S",
-        upgrade_domain_timeout: Optional[str] = "P10675199DT02H48M05.4775807S",
+        failure_action: Optional[Union[str, "_models.ArmUpgradeFailureAction"]] = None,
+        health_check_wait_duration: str = "0",
+        health_check_stable_duration: str = "PT0H2M0S",
+        health_check_retry_timeout: str = "PT0H10M0S",
+        upgrade_timeout: str = "P10675199DT02H48M05.4775807S",
+        upgrade_domain_timeout: str = "P10675199DT02H48M05.4775807S",
         **kwargs
     ):
-        super(ArmRollingUpgradeMonitoringPolicy, self).__init__(**kwargs)
+        """
+        :keyword failure_action: The activation Mode of the service package. Known values are:
+         "Rollback" and "Manual".
+        :paramtype failure_action: str or ~azure.mgmt.servicefabric.models.ArmUpgradeFailureAction
+        :keyword health_check_wait_duration: The amount of time to wait after completing an upgrade
+         domain before applying health policies. It is first interpreted as a string representing an ISO
+         8601 duration. If that fails, then it is interpreted as a number representing the total number
+         of milliseconds.
+        :paramtype health_check_wait_duration: str
+        :keyword health_check_stable_duration: The amount of time that the application or cluster must
+         remain healthy before the upgrade proceeds to the next upgrade domain. It is first interpreted
+         as a string representing an ISO 8601 duration. If that fails, then it is interpreted as a
+         number representing the total number of milliseconds.
+        :paramtype health_check_stable_duration: str
+        :keyword health_check_retry_timeout: The amount of time to retry health evaluation when the
+         application or cluster is unhealthy before FailureAction is executed. It is first interpreted
+         as a string representing an ISO 8601 duration. If that fails, then it is interpreted as a
+         number representing the total number of milliseconds.
+        :paramtype health_check_retry_timeout: str
+        :keyword upgrade_timeout: The amount of time the overall upgrade has to complete before
+         FailureAction is executed. It is first interpreted as a string representing an ISO 8601
+         duration. If that fails, then it is interpreted as a number representing the total number of
+         milliseconds.
+        :paramtype upgrade_timeout: str
+        :keyword upgrade_domain_timeout: The amount of time each upgrade domain has to complete before
+         FailureAction is executed. It is first interpreted as a string representing an ISO 8601
+         duration. If that fails, then it is interpreted as a number representing the total number of
+         milliseconds.
+        :paramtype upgrade_domain_timeout: str
+        """
+        super().__init__(**kwargs)
         self.failure_action = failure_action
         self.health_check_wait_duration = health_check_wait_duration
         self.health_check_stable_duration = health_check_stable_duration
@@ -1000,64 +1290,81 @@ class ArmRollingUpgradeMonitoringPolicy(msrest.serialization.Model):
         self.upgrade_domain_timeout = upgrade_domain_timeout
 
 
-class ArmServiceTypeHealthPolicy(msrest.serialization.Model):
+class ArmServiceTypeHealthPolicy(_serialization.Model):
     """Represents the health policy used to evaluate the health of services belonging to a service type.
 
-    :param max_percent_unhealthy_services: The maximum percentage of services allowed to be
+    :ivar max_percent_unhealthy_services: The maximum percentage of services allowed to be
      unhealthy before your application is considered in error.
-    :type max_percent_unhealthy_services: int
-    :param max_percent_unhealthy_partitions_per_service: The maximum percentage of partitions per
+    :vartype max_percent_unhealthy_services: int
+    :ivar max_percent_unhealthy_partitions_per_service: The maximum percentage of partitions per
      service allowed to be unhealthy before your application is considered in error.
-    :type max_percent_unhealthy_partitions_per_service: int
-    :param max_percent_unhealthy_replicas_per_partition: The maximum percentage of replicas per
+    :vartype max_percent_unhealthy_partitions_per_service: int
+    :ivar max_percent_unhealthy_replicas_per_partition: The maximum percentage of replicas per
      partition allowed to be unhealthy before your application is considered in error.
-    :type max_percent_unhealthy_replicas_per_partition: int
+    :vartype max_percent_unhealthy_replicas_per_partition: int
     """
 
     _validation = {
-        'max_percent_unhealthy_services': {'maximum': 100, 'minimum': 0},
-        'max_percent_unhealthy_partitions_per_service': {'maximum': 100, 'minimum': 0},
-        'max_percent_unhealthy_replicas_per_partition': {'maximum': 100, 'minimum': 0},
+        "max_percent_unhealthy_services": {"maximum": 100, "minimum": 0},
+        "max_percent_unhealthy_partitions_per_service": {"maximum": 100, "minimum": 0},
+        "max_percent_unhealthy_replicas_per_partition": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'max_percent_unhealthy_services': {'key': 'maxPercentUnhealthyServices', 'type': 'int'},
-        'max_percent_unhealthy_partitions_per_service': {'key': 'maxPercentUnhealthyPartitionsPerService', 'type': 'int'},
-        'max_percent_unhealthy_replicas_per_partition': {'key': 'maxPercentUnhealthyReplicasPerPartition', 'type': 'int'},
+        "max_percent_unhealthy_services": {"key": "maxPercentUnhealthyServices", "type": "int"},
+        "max_percent_unhealthy_partitions_per_service": {
+            "key": "maxPercentUnhealthyPartitionsPerService",
+            "type": "int",
+        },
+        "max_percent_unhealthy_replicas_per_partition": {
+            "key": "maxPercentUnhealthyReplicasPerPartition",
+            "type": "int",
+        },
     }
 
     def __init__(
         self,
         *,
-        max_percent_unhealthy_services: Optional[int] = 0,
-        max_percent_unhealthy_partitions_per_service: Optional[int] = 0,
-        max_percent_unhealthy_replicas_per_partition: Optional[int] = 0,
+        max_percent_unhealthy_services: int = 0,
+        max_percent_unhealthy_partitions_per_service: int = 0,
+        max_percent_unhealthy_replicas_per_partition: int = 0,
         **kwargs
     ):
-        super(ArmServiceTypeHealthPolicy, self).__init__(**kwargs)
+        """
+        :keyword max_percent_unhealthy_services: The maximum percentage of services allowed to be
+         unhealthy before your application is considered in error.
+        :paramtype max_percent_unhealthy_services: int
+        :keyword max_percent_unhealthy_partitions_per_service: The maximum percentage of partitions per
+         service allowed to be unhealthy before your application is considered in error.
+        :paramtype max_percent_unhealthy_partitions_per_service: int
+        :keyword max_percent_unhealthy_replicas_per_partition: The maximum percentage of replicas per
+         partition allowed to be unhealthy before your application is considered in error.
+        :paramtype max_percent_unhealthy_replicas_per_partition: int
+        """
+        super().__init__(**kwargs)
         self.max_percent_unhealthy_services = max_percent_unhealthy_services
         self.max_percent_unhealthy_partitions_per_service = max_percent_unhealthy_partitions_per_service
         self.max_percent_unhealthy_replicas_per_partition = max_percent_unhealthy_replicas_per_partition
 
 
-class AvailableOperationDisplay(msrest.serialization.Model):
+class AvailableOperationDisplay(_serialization.Model):
     """Operation supported by the Service Fabric resource provider.
 
-    :param provider: The name of the provider.
-    :type provider: str
-    :param resource: The resource on which the operation is performed.
-    :type resource: str
-    :param operation: The operation that can be performed.
-    :type operation: str
-    :param description: Operation description.
-    :type description: str
+    :ivar provider: The name of the provider.
+    :vartype provider: str
+    :ivar resource: The resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: The operation that can be performed.
+    :vartype operation: str
+    :ivar description: Operation description.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -1069,28 +1376,38 @@ class AvailableOperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(AvailableOperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: The name of the provider.
+        :paramtype provider: str
+        :keyword resource: The resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: The operation that can be performed.
+        :paramtype operation: str
+        :keyword description: Operation description.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class AzureActiveDirectory(msrest.serialization.Model):
+class AzureActiveDirectory(_serialization.Model):
     """The settings to enable AAD authentication on the cluster.
 
-    :param tenant_id: Azure active directory tenant id.
-    :type tenant_id: str
-    :param cluster_application: Azure active directory cluster application id.
-    :type cluster_application: str
-    :param client_application: Azure active directory client application id.
-    :type client_application: str
+    :ivar tenant_id: Azure active directory tenant id.
+    :vartype tenant_id: str
+    :ivar cluster_application: Azure active directory cluster application id.
+    :vartype cluster_application: str
+    :ivar client_application: Azure active directory client application id.
+    :vartype client_application: str
     """
 
     _attribute_map = {
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'cluster_application': {'key': 'clusterApplication', 'type': 'str'},
-        'client_application': {'key': 'clientApplication', 'type': 'str'},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "cluster_application": {"key": "clusterApplication", "type": "str"},
+        "client_application": {"key": "clientApplication", "type": "str"},
     }
 
     def __init__(
@@ -1101,35 +1418,43 @@ class AzureActiveDirectory(msrest.serialization.Model):
         client_application: Optional[str] = None,
         **kwargs
     ):
-        super(AzureActiveDirectory, self).__init__(**kwargs)
+        """
+        :keyword tenant_id: Azure active directory tenant id.
+        :paramtype tenant_id: str
+        :keyword cluster_application: Azure active directory cluster application id.
+        :paramtype cluster_application: str
+        :keyword client_application: Azure active directory client application id.
+        :paramtype client_application: str
+        """
+        super().__init__(**kwargs)
         self.tenant_id = tenant_id
         self.cluster_application = cluster_application
         self.client_application = client_application
 
 
-class CertificateDescription(msrest.serialization.Model):
+class CertificateDescription(_serialization.Model):
     """Describes the certificate details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param thumbprint: Required. Thumbprint of the primary certificate.
-    :type thumbprint: str
-    :param thumbprint_secondary: Thumbprint of the secondary certificate.
-    :type thumbprint_secondary: str
-    :param x509_store_name: The local certificate store location. Possible values include:
-     "AddressBook", "AuthRoot", "CertificateAuthority", "Disallowed", "My", "Root", "TrustedPeople",
+    :ivar thumbprint: Thumbprint of the primary certificate. Required.
+    :vartype thumbprint: str
+    :ivar thumbprint_secondary: Thumbprint of the secondary certificate.
+    :vartype thumbprint_secondary: str
+    :ivar x509_store_name: The local certificate store location. Known values are: "AddressBook",
+     "AuthRoot", "CertificateAuthority", "Disallowed", "My", "Root", "TrustedPeople", and
      "TrustedPublisher".
-    :type x509_store_name: str or ~azure.mgmt.servicefabric.models.StoreName
+    :vartype x509_store_name: str or ~azure.mgmt.servicefabric.models.StoreName
     """
 
     _validation = {
-        'thumbprint': {'required': True},
+        "thumbprint": {"required": True},
     }
 
     _attribute_map = {
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'thumbprint_secondary': {'key': 'thumbprintSecondary', 'type': 'str'},
-        'x509_store_name': {'key': 'x509StoreName', 'type': 'str'},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "thumbprint_secondary": {"key": "thumbprintSecondary", "type": "str"},
+        "x509_store_name": {"key": "x509StoreName", "type": "str"},
     }
 
     def __init__(
@@ -1137,91 +1462,104 @@ class CertificateDescription(msrest.serialization.Model):
         *,
         thumbprint: str,
         thumbprint_secondary: Optional[str] = None,
-        x509_store_name: Optional[Union[str, "StoreName"]] = None,
+        x509_store_name: Optional[Union[str, "_models.StoreName"]] = None,
         **kwargs
     ):
-        super(CertificateDescription, self).__init__(**kwargs)
+        """
+        :keyword thumbprint: Thumbprint of the primary certificate. Required.
+        :paramtype thumbprint: str
+        :keyword thumbprint_secondary: Thumbprint of the secondary certificate.
+        :paramtype thumbprint_secondary: str
+        :keyword x509_store_name: The local certificate store location. Known values are:
+         "AddressBook", "AuthRoot", "CertificateAuthority", "Disallowed", "My", "Root", "TrustedPeople",
+         and "TrustedPublisher".
+        :paramtype x509_store_name: str or ~azure.mgmt.servicefabric.models.StoreName
+        """
+        super().__init__(**kwargs)
         self.thumbprint = thumbprint
         self.thumbprint_secondary = thumbprint_secondary
         self.x509_store_name = x509_store_name
 
 
-class ClientCertificateCommonName(msrest.serialization.Model):
+class ClientCertificateCommonName(_serialization.Model):
     """Describes the client certificate details using common name.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param is_admin: Required. Indicates if the client certificate has admin access to the cluster.
-     Non admin clients can perform only read only operations on the cluster.
-    :type is_admin: bool
-    :param certificate_common_name: Required. The common name of the client certificate.
-    :type certificate_common_name: str
-    :param certificate_issuer_thumbprint: Required. The issuer thumbprint of the client
-     certificate.
-    :type certificate_issuer_thumbprint: str
+    :ivar is_admin: Indicates if the client certificate has admin access to the cluster. Non admin
+     clients can perform only read only operations on the cluster. Required.
+    :vartype is_admin: bool
+    :ivar certificate_common_name: The common name of the client certificate. Required.
+    :vartype certificate_common_name: str
+    :ivar certificate_issuer_thumbprint: The issuer thumbprint of the client certificate. Required.
+    :vartype certificate_issuer_thumbprint: str
     """
 
     _validation = {
-        'is_admin': {'required': True},
-        'certificate_common_name': {'required': True},
-        'certificate_issuer_thumbprint': {'required': True},
+        "is_admin": {"required": True},
+        "certificate_common_name": {"required": True},
+        "certificate_issuer_thumbprint": {"required": True},
     }
 
     _attribute_map = {
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'certificate_common_name': {'key': 'certificateCommonName', 'type': 'str'},
-        'certificate_issuer_thumbprint': {'key': 'certificateIssuerThumbprint', 'type': 'str'},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "certificate_common_name": {"key": "certificateCommonName", "type": "str"},
+        "certificate_issuer_thumbprint": {"key": "certificateIssuerThumbprint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_admin: bool,
-        certificate_common_name: str,
-        certificate_issuer_thumbprint: str,
-        **kwargs
-    ):
-        super(ClientCertificateCommonName, self).__init__(**kwargs)
+    def __init__(self, *, is_admin: bool, certificate_common_name: str, certificate_issuer_thumbprint: str, **kwargs):
+        """
+        :keyword is_admin: Indicates if the client certificate has admin access to the cluster. Non
+         admin clients can perform only read only operations on the cluster. Required.
+        :paramtype is_admin: bool
+        :keyword certificate_common_name: The common name of the client certificate. Required.
+        :paramtype certificate_common_name: str
+        :keyword certificate_issuer_thumbprint: The issuer thumbprint of the client certificate.
+         Required.
+        :paramtype certificate_issuer_thumbprint: str
+        """
+        super().__init__(**kwargs)
         self.is_admin = is_admin
         self.certificate_common_name = certificate_common_name
         self.certificate_issuer_thumbprint = certificate_issuer_thumbprint
 
 
-class ClientCertificateThumbprint(msrest.serialization.Model):
+class ClientCertificateThumbprint(_serialization.Model):
     """Describes the client certificate details using thumbprint.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param is_admin: Required. Indicates if the client certificate has admin access to the cluster.
-     Non admin clients can perform only read only operations on the cluster.
-    :type is_admin: bool
-    :param certificate_thumbprint: Required. The thumbprint of the client certificate.
-    :type certificate_thumbprint: str
+    :ivar is_admin: Indicates if the client certificate has admin access to the cluster. Non admin
+     clients can perform only read only operations on the cluster. Required.
+    :vartype is_admin: bool
+    :ivar certificate_thumbprint: The thumbprint of the client certificate. Required.
+    :vartype certificate_thumbprint: str
     """
 
     _validation = {
-        'is_admin': {'required': True},
-        'certificate_thumbprint': {'required': True},
+        "is_admin": {"required": True},
+        "certificate_thumbprint": {"required": True},
     }
 
     _attribute_map = {
-        'is_admin': {'key': 'isAdmin', 'type': 'bool'},
-        'certificate_thumbprint': {'key': 'certificateThumbprint', 'type': 'str'},
+        "is_admin": {"key": "isAdmin", "type": "bool"},
+        "certificate_thumbprint": {"key": "certificateThumbprint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_admin: bool,
-        certificate_thumbprint: str,
-        **kwargs
-    ):
-        super(ClientCertificateThumbprint, self).__init__(**kwargs)
+    def __init__(self, *, is_admin: bool, certificate_thumbprint: str, **kwargs):
+        """
+        :keyword is_admin: Indicates if the client certificate has admin access to the cluster. Non
+         admin clients can perform only read only operations on the cluster. Required.
+        :paramtype is_admin: bool
+        :keyword certificate_thumbprint: The thumbprint of the client certificate. Required.
+        :paramtype certificate_thumbprint: str
+        """
+        super().__init__(**kwargs)
         self.is_admin = is_admin
         self.certificate_thumbprint = certificate_thumbprint
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The resource model definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1234,10 +1572,10 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Azure resource location.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Azure resource location. Required.
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -1245,32 +1583,32 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: Azure resource location. Required.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1280,7 +1618,7 @@ class Resource(msrest.serialization.Model):
         self.system_data = None
 
 
-class Cluster(Resource):
+class Cluster(Resource):  # pylint: disable=too-many-instance-attributes
     """The cluster resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1293,50 +1631,51 @@ class Cluster(Resource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: Required. Azure resource location.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :ivar location: Azure resource location. Required.
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :param add_on_features: The list of add-on features to enable in the cluster.
-    :type add_on_features: list[str or ~azure.mgmt.servicefabric.models.AddOnFeatures]
+    :ivar add_on_features: The list of add-on features to enable in the cluster.
+    :vartype add_on_features: list[str or ~azure.mgmt.servicefabric.models.AddOnFeatures]
     :ivar available_cluster_versions: The Service Fabric runtime versions available for this
      cluster.
     :vartype available_cluster_versions:
      list[~azure.mgmt.servicefabric.models.ClusterVersionDetails]
-    :param azure_active_directory: The AAD authentication settings of the cluster.
-    :type azure_active_directory: ~azure.mgmt.servicefabric.models.AzureActiveDirectory
-    :param certificate: The certificate to use for securing the cluster. The certificate provided
+    :ivar azure_active_directory: The AAD authentication settings of the cluster.
+    :vartype azure_active_directory: ~azure.mgmt.servicefabric.models.AzureActiveDirectory
+    :ivar certificate: The certificate to use for securing the cluster. The certificate provided
      will be used for node to node security within the cluster, SSL certificate for cluster
      management endpoint and default admin client.
-    :type certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
-    :param certificate_common_names: Describes a list of server certificates referenced by common
+    :vartype certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+    :ivar certificate_common_names: Describes a list of server certificates referenced by common
      name that are used to secure the cluster.
-    :type certificate_common_names: ~azure.mgmt.servicefabric.models.ServerCertificateCommonNames
-    :param client_certificate_common_names: The list of client certificates referenced by common
+    :vartype certificate_common_names:
+     ~azure.mgmt.servicefabric.models.ServerCertificateCommonNames
+    :ivar client_certificate_common_names: The list of client certificates referenced by common
      name that are allowed to manage the cluster.
-    :type client_certificate_common_names:
+    :vartype client_certificate_common_names:
      list[~azure.mgmt.servicefabric.models.ClientCertificateCommonName]
-    :param client_certificate_thumbprints: The list of client certificates referenced by thumbprint
+    :ivar client_certificate_thumbprints: The list of client certificates referenced by thumbprint
      that are allowed to manage the cluster.
-    :type client_certificate_thumbprints:
+    :vartype client_certificate_thumbprints:
      list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
-    :param cluster_code_version: The Service Fabric runtime version of the cluster. This property
+    :ivar cluster_code_version: The Service Fabric runtime version of the cluster. This property
      can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
      Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
      get the list of available version for existing clusters use **availableClusterVersions**.
-    :type cluster_code_version: str
+    :vartype cluster_code_version: str
     :ivar cluster_endpoint: The Azure Resource Provider endpoint. A system service in the cluster
      connects to this  endpoint.
     :vartype cluster_endpoint: str
     :ivar cluster_id: A service generated unique identifier for the cluster resource.
     :vartype cluster_id: str
     :ivar cluster_state: The current state of the cluster.
-    
-    
+
+
      * WaitingForNodes - Indicates that the cluster resource is created and the resource provider
      is waiting for Service Fabric VM extension to boot up and report to it.
      * Deploying - Indicates that the Service Fabric runtime is being installed on the VMs. Cluster
@@ -1356,174 +1695,294 @@ class Cluster(Resource):
      polling the Resource Provider. Clusters in this state cannot be managed by the Resource
      Provider.
      * AutoScale - Indicates that the ReliabilityLevel of the cluster is being adjusted.
-     * Ready - Indicates that the cluster is in a stable state. Possible values include:
+     * Ready - Indicates that the cluster is in a stable state. Known values are:
      "WaitingForNodes", "Deploying", "BaselineUpgrade", "UpdatingUserConfiguration",
      "UpdatingUserCertificate", "UpdatingInfrastructure", "EnforcingClusterVersion",
-     "UpgradeServiceUnreachable", "AutoScale", "Ready".
+     "UpgradeServiceUnreachable", "AutoScale", and "Ready".
     :vartype cluster_state: str or ~azure.mgmt.servicefabric.models.ClusterState
-    :param diagnostics_storage_account_config: The storage account information for storing Service
+    :ivar diagnostics_storage_account_config: The storage account information for storing Service
      Fabric diagnostic logs.
-    :type diagnostics_storage_account_config:
+    :vartype diagnostics_storage_account_config:
      ~azure.mgmt.servicefabric.models.DiagnosticsStorageAccountConfig
-    :param event_store_service_enabled: Indicates if the event store service is enabled.
-    :type event_store_service_enabled: bool
-    :param fabric_settings: The list of custom fabric settings to configure the cluster.
-    :type fabric_settings: list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
-    :param management_endpoint: The http management endpoint of the cluster.
-    :type management_endpoint: str
-    :param node_types: The list of node types in the cluster.
-    :type node_types: list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
-    :ivar provisioning_state: The provisioning state of the cluster resource. Possible values
-     include: "Updating", "Succeeded", "Failed", "Canceled".
+    :ivar event_store_service_enabled: Indicates if the event store service is enabled.
+    :vartype event_store_service_enabled: bool
+    :ivar fabric_settings: The list of custom fabric settings to configure the cluster.
+    :vartype fabric_settings: list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
+    :ivar management_endpoint: The http management endpoint of the cluster.
+    :vartype management_endpoint: str
+    :ivar node_types: The list of node types in the cluster.
+    :vartype node_types: list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
+    :ivar provisioning_state: The provisioning state of the cluster resource. Known values are:
+     "Updating", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.servicefabric.models.ProvisioningState
-    :param reliability_level: The reliability level sets the replica set size of system services.
+    :ivar reliability_level: The reliability level sets the replica set size of system services.
      Learn about `ReliabilityLevel
      <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
-    
-    
+
+
      * None - Run the System services with a target replica set count of 1. This should only be
      used for test clusters.
      * Bronze - Run the System services with a target replica set count of 3. This should only be
      used for test clusters.
      * Silver - Run the System services with a target replica set count of 5.
      * Gold - Run the System services with a target replica set count of 7.
-     * Platinum - Run the System services with a target replica set count of 9. Possible values
-     include: "None", "Bronze", "Silver", "Gold", "Platinum".
-    :type reliability_level: str or ~azure.mgmt.servicefabric.models.ReliabilityLevel
-    :param reverse_proxy_certificate: The server certificate used by reverse proxy.
-    :type reverse_proxy_certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
-    :param reverse_proxy_certificate_common_names: Describes a list of server certificates
+     * Platinum - Run the System services with a target replica set count of 9. Known values are:
+     "None", "Bronze", "Silver", "Gold", and "Platinum".
+    :vartype reliability_level: str or ~azure.mgmt.servicefabric.models.ReliabilityLevel
+    :ivar reverse_proxy_certificate: The server certificate used by reverse proxy.
+    :vartype reverse_proxy_certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+    :ivar reverse_proxy_certificate_common_names: Describes a list of server certificates
      referenced by common name that are used to secure the cluster.
-    :type reverse_proxy_certificate_common_names:
+    :vartype reverse_proxy_certificate_common_names:
      ~azure.mgmt.servicefabric.models.ServerCertificateCommonNames
-    :param upgrade_description: The policy to use when upgrading the cluster.
-    :type upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
-    :param upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version is
-     available. Possible values include: "Automatic", "Manual". Default value: "Automatic".
-    :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
-    :param application_type_versions_cleanup_policy: The policy used to clean up unused versions.
-    :type application_type_versions_cleanup_policy:
+    :ivar upgrade_description: The policy to use when upgrading the cluster.
+    :vartype upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+    :ivar upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version is
+     available. Known values are: "Automatic" and "Manual".
+    :vartype upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
+    :ivar application_type_versions_cleanup_policy: The policy used to clean up unused versions.
+    :vartype application_type_versions_cleanup_policy:
      ~azure.mgmt.servicefabric.models.ApplicationTypeVersionsCleanupPolicy
-    :param vm_image: The VM image VMSS has been configured with. Generic names such as Windows or
+    :ivar vm_image: The VM image VMSS has been configured with. Generic names such as Windows or
      Linux can be used.
-    :type vm_image: str
-    :param sf_zonal_upgrade_mode: This property controls the logical grouping of VMs in upgrade
+    :vartype vm_image: str
+    :ivar sf_zonal_upgrade_mode: This property controls the logical grouping of VMs in upgrade
      domains (UDs). This property can't be modified if a node type with multiple Availability Zones
-     is already present in the cluster. Possible values include: "Parallel", "Hierarchical".
-    :type sf_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.SfZonalUpgradeMode
-    :param vmss_zonal_upgrade_mode: This property defines the upgrade mode for the virtual machine
-     scale set, it is mandatory if a node type with multiple Availability Zones is added. Possible
-     values include: "Parallel", "Hierarchical".
-    :type vmss_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.VmssZonalUpgradeMode
-    :param infrastructure_service_manager: Indicates if infrastructure service manager is enabled.
-    :type infrastructure_service_manager: bool
-    :param upgrade_wave: Indicates when new cluster runtime version upgrades will be applied after
+     is already present in the cluster. Known values are: "Parallel" and "Hierarchical".
+    :vartype sf_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.SfZonalUpgradeMode
+    :ivar vmss_zonal_upgrade_mode: This property defines the upgrade mode for the virtual machine
+     scale set, it is mandatory if a node type with multiple Availability Zones is added. Known
+     values are: "Parallel" and "Hierarchical".
+    :vartype vmss_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.VmssZonalUpgradeMode
+    :ivar infrastructure_service_manager: Indicates if infrastructure service manager is enabled.
+    :vartype infrastructure_service_manager: bool
+    :ivar upgrade_wave: Indicates when new cluster runtime version upgrades will be applied after
      they are released. By default is Wave0. Only applies when **upgradeMode** is set to
-     'Automatic'. Possible values include: "Wave0", "Wave1", "Wave2".
-    :type upgrade_wave: str or ~azure.mgmt.servicefabric.models.ClusterUpgradeCadence
-    :param upgrade_pause_start_timestamp_utc: Indicates the start date and time to pause automatic
+     'Automatic'. Known values are: "Wave0", "Wave1", and "Wave2".
+    :vartype upgrade_wave: str or ~azure.mgmt.servicefabric.models.ClusterUpgradeCadence
+    :ivar upgrade_pause_start_timestamp_utc: Indicates the start date and time to pause automatic
      runtime version upgrades on the cluster for an specific period of time on the cluster (UTC).
-    :type upgrade_pause_start_timestamp_utc: ~datetime.datetime
-    :param upgrade_pause_end_timestamp_utc: Indicates the end date and time to pause automatic
+    :vartype upgrade_pause_start_timestamp_utc: ~datetime.datetime
+    :ivar upgrade_pause_end_timestamp_utc: Indicates the end date and time to pause automatic
      runtime version upgrades on the cluster for an specific period of time on the cluster (UTC).
-    :type upgrade_pause_end_timestamp_utc: ~datetime.datetime
-    :param wave_upgrade_paused: Boolean to pause automatic runtime version upgrades to the cluster.
-    :type wave_upgrade_paused: bool
-    :param notifications: Indicates a list of notification channels for cluster events.
-    :type notifications: list[~azure.mgmt.servicefabric.models.Notification]
+    :vartype upgrade_pause_end_timestamp_utc: ~datetime.datetime
+    :ivar wave_upgrade_paused: Boolean to pause automatic runtime version upgrades to the cluster.
+    :vartype wave_upgrade_paused: bool
+    :ivar notifications: Indicates a list of notification channels for cluster events.
+    :vartype notifications: list[~azure.mgmt.servicefabric.models.Notification]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'available_cluster_versions': {'readonly': True},
-        'cluster_endpoint': {'readonly': True},
-        'cluster_id': {'readonly': True},
-        'cluster_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "available_cluster_versions": {"readonly": True},
+        "cluster_endpoint": {"readonly": True},
+        "cluster_id": {"readonly": True},
+        "cluster_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'add_on_features': {'key': 'properties.addOnFeatures', 'type': '[str]'},
-        'available_cluster_versions': {'key': 'properties.availableClusterVersions', 'type': '[ClusterVersionDetails]'},
-        'azure_active_directory': {'key': 'properties.azureActiveDirectory', 'type': 'AzureActiveDirectory'},
-        'certificate': {'key': 'properties.certificate', 'type': 'CertificateDescription'},
-        'certificate_common_names': {'key': 'properties.certificateCommonNames', 'type': 'ServerCertificateCommonNames'},
-        'client_certificate_common_names': {'key': 'properties.clientCertificateCommonNames', 'type': '[ClientCertificateCommonName]'},
-        'client_certificate_thumbprints': {'key': 'properties.clientCertificateThumbprints', 'type': '[ClientCertificateThumbprint]'},
-        'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
-        'cluster_endpoint': {'key': 'properties.clusterEndpoint', 'type': 'str'},
-        'cluster_id': {'key': 'properties.clusterId', 'type': 'str'},
-        'cluster_state': {'key': 'properties.clusterState', 'type': 'str'},
-        'diagnostics_storage_account_config': {'key': 'properties.diagnosticsStorageAccountConfig', 'type': 'DiagnosticsStorageAccountConfig'},
-        'event_store_service_enabled': {'key': 'properties.eventStoreServiceEnabled', 'type': 'bool'},
-        'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
-        'management_endpoint': {'key': 'properties.managementEndpoint', 'type': 'str'},
-        'node_types': {'key': 'properties.nodeTypes', 'type': '[NodeTypeDescription]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'reliability_level': {'key': 'properties.reliabilityLevel', 'type': 'str'},
-        'reverse_proxy_certificate': {'key': 'properties.reverseProxyCertificate', 'type': 'CertificateDescription'},
-        'reverse_proxy_certificate_common_names': {'key': 'properties.reverseProxyCertificateCommonNames', 'type': 'ServerCertificateCommonNames'},
-        'upgrade_description': {'key': 'properties.upgradeDescription', 'type': 'ClusterUpgradePolicy'},
-        'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'str'},
-        'application_type_versions_cleanup_policy': {'key': 'properties.applicationTypeVersionsCleanupPolicy', 'type': 'ApplicationTypeVersionsCleanupPolicy'},
-        'vm_image': {'key': 'properties.vmImage', 'type': 'str'},
-        'sf_zonal_upgrade_mode': {'key': 'properties.sfZonalUpgradeMode', 'type': 'str'},
-        'vmss_zonal_upgrade_mode': {'key': 'properties.vmssZonalUpgradeMode', 'type': 'str'},
-        'infrastructure_service_manager': {'key': 'properties.infrastructureServiceManager', 'type': 'bool'},
-        'upgrade_wave': {'key': 'properties.upgradeWave', 'type': 'str'},
-        'upgrade_pause_start_timestamp_utc': {'key': 'properties.upgradePauseStartTimestampUtc', 'type': 'iso-8601'},
-        'upgrade_pause_end_timestamp_utc': {'key': 'properties.upgradePauseEndTimestampUtc', 'type': 'iso-8601'},
-        'wave_upgrade_paused': {'key': 'properties.waveUpgradePaused', 'type': 'bool'},
-        'notifications': {'key': 'properties.notifications', 'type': '[Notification]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "add_on_features": {"key": "properties.addOnFeatures", "type": "[str]"},
+        "available_cluster_versions": {"key": "properties.availableClusterVersions", "type": "[ClusterVersionDetails]"},
+        "azure_active_directory": {"key": "properties.azureActiveDirectory", "type": "AzureActiveDirectory"},
+        "certificate": {"key": "properties.certificate", "type": "CertificateDescription"},
+        "certificate_common_names": {
+            "key": "properties.certificateCommonNames",
+            "type": "ServerCertificateCommonNames",
+        },
+        "client_certificate_common_names": {
+            "key": "properties.clientCertificateCommonNames",
+            "type": "[ClientCertificateCommonName]",
+        },
+        "client_certificate_thumbprints": {
+            "key": "properties.clientCertificateThumbprints",
+            "type": "[ClientCertificateThumbprint]",
+        },
+        "cluster_code_version": {"key": "properties.clusterCodeVersion", "type": "str"},
+        "cluster_endpoint": {"key": "properties.clusterEndpoint", "type": "str"},
+        "cluster_id": {"key": "properties.clusterId", "type": "str"},
+        "cluster_state": {"key": "properties.clusterState", "type": "str"},
+        "diagnostics_storage_account_config": {
+            "key": "properties.diagnosticsStorageAccountConfig",
+            "type": "DiagnosticsStorageAccountConfig",
+        },
+        "event_store_service_enabled": {"key": "properties.eventStoreServiceEnabled", "type": "bool"},
+        "fabric_settings": {"key": "properties.fabricSettings", "type": "[SettingsSectionDescription]"},
+        "management_endpoint": {"key": "properties.managementEndpoint", "type": "str"},
+        "node_types": {"key": "properties.nodeTypes", "type": "[NodeTypeDescription]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "reliability_level": {"key": "properties.reliabilityLevel", "type": "str"},
+        "reverse_proxy_certificate": {"key": "properties.reverseProxyCertificate", "type": "CertificateDescription"},
+        "reverse_proxy_certificate_common_names": {
+            "key": "properties.reverseProxyCertificateCommonNames",
+            "type": "ServerCertificateCommonNames",
+        },
+        "upgrade_description": {"key": "properties.upgradeDescription", "type": "ClusterUpgradePolicy"},
+        "upgrade_mode": {"key": "properties.upgradeMode", "type": "str"},
+        "application_type_versions_cleanup_policy": {
+            "key": "properties.applicationTypeVersionsCleanupPolicy",
+            "type": "ApplicationTypeVersionsCleanupPolicy",
+        },
+        "vm_image": {"key": "properties.vmImage", "type": "str"},
+        "sf_zonal_upgrade_mode": {"key": "properties.sfZonalUpgradeMode", "type": "str"},
+        "vmss_zonal_upgrade_mode": {"key": "properties.vmssZonalUpgradeMode", "type": "str"},
+        "infrastructure_service_manager": {"key": "properties.infrastructureServiceManager", "type": "bool"},
+        "upgrade_wave": {"key": "properties.upgradeWave", "type": "str"},
+        "upgrade_pause_start_timestamp_utc": {"key": "properties.upgradePauseStartTimestampUtc", "type": "iso-8601"},
+        "upgrade_pause_end_timestamp_utc": {"key": "properties.upgradePauseEndTimestampUtc", "type": "iso-8601"},
+        "wave_upgrade_paused": {"key": "properties.waveUpgradePaused", "type": "bool"},
+        "notifications": {"key": "properties.notifications", "type": "[Notification]"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        add_on_features: Optional[List[Union[str, "AddOnFeatures"]]] = None,
-        azure_active_directory: Optional["AzureActiveDirectory"] = None,
-        certificate: Optional["CertificateDescription"] = None,
-        certificate_common_names: Optional["ServerCertificateCommonNames"] = None,
-        client_certificate_common_names: Optional[List["ClientCertificateCommonName"]] = None,
-        client_certificate_thumbprints: Optional[List["ClientCertificateThumbprint"]] = None,
+        add_on_features: Optional[List[Union[str, "_models.AddOnFeatures"]]] = None,
+        azure_active_directory: Optional["_models.AzureActiveDirectory"] = None,
+        certificate: Optional["_models.CertificateDescription"] = None,
+        certificate_common_names: Optional["_models.ServerCertificateCommonNames"] = None,
+        client_certificate_common_names: Optional[List["_models.ClientCertificateCommonName"]] = None,
+        client_certificate_thumbprints: Optional[List["_models.ClientCertificateThumbprint"]] = None,
         cluster_code_version: Optional[str] = None,
-        diagnostics_storage_account_config: Optional["DiagnosticsStorageAccountConfig"] = None,
+        diagnostics_storage_account_config: Optional["_models.DiagnosticsStorageAccountConfig"] = None,
         event_store_service_enabled: Optional[bool] = None,
-        fabric_settings: Optional[List["SettingsSectionDescription"]] = None,
+        fabric_settings: Optional[List["_models.SettingsSectionDescription"]] = None,
         management_endpoint: Optional[str] = None,
-        node_types: Optional[List["NodeTypeDescription"]] = None,
-        reliability_level: Optional[Union[str, "ReliabilityLevel"]] = None,
-        reverse_proxy_certificate: Optional["CertificateDescription"] = None,
-        reverse_proxy_certificate_common_names: Optional["ServerCertificateCommonNames"] = None,
-        upgrade_description: Optional["ClusterUpgradePolicy"] = None,
-        upgrade_mode: Optional[Union[str, "UpgradeMode"]] = "Automatic",
-        application_type_versions_cleanup_policy: Optional["ApplicationTypeVersionsCleanupPolicy"] = None,
+        node_types: Optional[List["_models.NodeTypeDescription"]] = None,
+        reliability_level: Optional[Union[str, "_models.ReliabilityLevel"]] = None,
+        reverse_proxy_certificate: Optional["_models.CertificateDescription"] = None,
+        reverse_proxy_certificate_common_names: Optional["_models.ServerCertificateCommonNames"] = None,
+        upgrade_description: Optional["_models.ClusterUpgradePolicy"] = None,
+        upgrade_mode: Union[str, "_models.UpgradeMode"] = "Automatic",
+        application_type_versions_cleanup_policy: Optional["_models.ApplicationTypeVersionsCleanupPolicy"] = None,
         vm_image: Optional[str] = None,
-        sf_zonal_upgrade_mode: Optional[Union[str, "SfZonalUpgradeMode"]] = None,
-        vmss_zonal_upgrade_mode: Optional[Union[str, "VmssZonalUpgradeMode"]] = None,
+        sf_zonal_upgrade_mode: Optional[Union[str, "_models.SfZonalUpgradeMode"]] = None,
+        vmss_zonal_upgrade_mode: Optional[Union[str, "_models.VmssZonalUpgradeMode"]] = None,
         infrastructure_service_manager: Optional[bool] = None,
-        upgrade_wave: Optional[Union[str, "ClusterUpgradeCadence"]] = None,
+        upgrade_wave: Optional[Union[str, "_models.ClusterUpgradeCadence"]] = None,
         upgrade_pause_start_timestamp_utc: Optional[datetime.datetime] = None,
         upgrade_pause_end_timestamp_utc: Optional[datetime.datetime] = None,
         wave_upgrade_paused: Optional[bool] = None,
-        notifications: Optional[List["Notification"]] = None,
+        notifications: Optional[List["_models.Notification"]] = None,
         **kwargs
     ):
-        super(Cluster, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: Azure resource location. Required.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword add_on_features: The list of add-on features to enable in the cluster.
+        :paramtype add_on_features: list[str or ~azure.mgmt.servicefabric.models.AddOnFeatures]
+        :keyword azure_active_directory: The AAD authentication settings of the cluster.
+        :paramtype azure_active_directory: ~azure.mgmt.servicefabric.models.AzureActiveDirectory
+        :keyword certificate: The certificate to use for securing the cluster. The certificate provided
+         will be used for node to node security within the cluster, SSL certificate for cluster
+         management endpoint and default admin client.
+        :paramtype certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+        :keyword certificate_common_names: Describes a list of server certificates referenced by common
+         name that are used to secure the cluster.
+        :paramtype certificate_common_names:
+         ~azure.mgmt.servicefabric.models.ServerCertificateCommonNames
+        :keyword client_certificate_common_names: The list of client certificates referenced by common
+         name that are allowed to manage the cluster.
+        :paramtype client_certificate_common_names:
+         list[~azure.mgmt.servicefabric.models.ClientCertificateCommonName]
+        :keyword client_certificate_thumbprints: The list of client certificates referenced by
+         thumbprint that are allowed to manage the cluster.
+        :paramtype client_certificate_thumbprints:
+         list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
+        :keyword cluster_code_version: The Service Fabric runtime version of the cluster. This property
+         can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
+         Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
+         get the list of available version for existing clusters use **availableClusterVersions**.
+        :paramtype cluster_code_version: str
+        :keyword diagnostics_storage_account_config: The storage account information for storing
+         Service Fabric diagnostic logs.
+        :paramtype diagnostics_storage_account_config:
+         ~azure.mgmt.servicefabric.models.DiagnosticsStorageAccountConfig
+        :keyword event_store_service_enabled: Indicates if the event store service is enabled.
+        :paramtype event_store_service_enabled: bool
+        :keyword fabric_settings: The list of custom fabric settings to configure the cluster.
+        :paramtype fabric_settings: list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
+        :keyword management_endpoint: The http management endpoint of the cluster.
+        :paramtype management_endpoint: str
+        :keyword node_types: The list of node types in the cluster.
+        :paramtype node_types: list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
+        :keyword reliability_level: The reliability level sets the replica set size of system services.
+         Learn about `ReliabilityLevel
+         <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
+
+
+         * None - Run the System services with a target replica set count of 1. This should only be
+         used for test clusters.
+         * Bronze - Run the System services with a target replica set count of 3. This should only be
+         used for test clusters.
+         * Silver - Run the System services with a target replica set count of 5.
+         * Gold - Run the System services with a target replica set count of 7.
+         * Platinum - Run the System services with a target replica set count of 9. Known values are:
+         "None", "Bronze", "Silver", "Gold", and "Platinum".
+        :paramtype reliability_level: str or ~azure.mgmt.servicefabric.models.ReliabilityLevel
+        :keyword reverse_proxy_certificate: The server certificate used by reverse proxy.
+        :paramtype reverse_proxy_certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+        :keyword reverse_proxy_certificate_common_names: Describes a list of server certificates
+         referenced by common name that are used to secure the cluster.
+        :paramtype reverse_proxy_certificate_common_names:
+         ~azure.mgmt.servicefabric.models.ServerCertificateCommonNames
+        :keyword upgrade_description: The policy to use when upgrading the cluster.
+        :paramtype upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+        :keyword upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version
+         is available. Known values are: "Automatic" and "Manual".
+        :paramtype upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
+        :keyword application_type_versions_cleanup_policy: The policy used to clean up unused versions.
+        :paramtype application_type_versions_cleanup_policy:
+         ~azure.mgmt.servicefabric.models.ApplicationTypeVersionsCleanupPolicy
+        :keyword vm_image: The VM image VMSS has been configured with. Generic names such as Windows or
+         Linux can be used.
+        :paramtype vm_image: str
+        :keyword sf_zonal_upgrade_mode: This property controls the logical grouping of VMs in upgrade
+         domains (UDs). This property can't be modified if a node type with multiple Availability Zones
+         is already present in the cluster. Known values are: "Parallel" and "Hierarchical".
+        :paramtype sf_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.SfZonalUpgradeMode
+        :keyword vmss_zonal_upgrade_mode: This property defines the upgrade mode for the virtual
+         machine scale set, it is mandatory if a node type with multiple Availability Zones is added.
+         Known values are: "Parallel" and "Hierarchical".
+        :paramtype vmss_zonal_upgrade_mode: str or
+         ~azure.mgmt.servicefabric.models.VmssZonalUpgradeMode
+        :keyword infrastructure_service_manager: Indicates if infrastructure service manager is
+         enabled.
+        :paramtype infrastructure_service_manager: bool
+        :keyword upgrade_wave: Indicates when new cluster runtime version upgrades will be applied
+         after they are released. By default is Wave0. Only applies when **upgradeMode** is set to
+         'Automatic'. Known values are: "Wave0", "Wave1", and "Wave2".
+        :paramtype upgrade_wave: str or ~azure.mgmt.servicefabric.models.ClusterUpgradeCadence
+        :keyword upgrade_pause_start_timestamp_utc: Indicates the start date and time to pause
+         automatic runtime version upgrades on the cluster for an specific period of time on the cluster
+         (UTC).
+        :paramtype upgrade_pause_start_timestamp_utc: ~datetime.datetime
+        :keyword upgrade_pause_end_timestamp_utc: Indicates the end date and time to pause automatic
+         runtime version upgrades on the cluster for an specific period of time on the cluster (UTC).
+        :paramtype upgrade_pause_end_timestamp_utc: ~datetime.datetime
+        :keyword wave_upgrade_paused: Boolean to pause automatic runtime version upgrades to the
+         cluster.
+        :paramtype wave_upgrade_paused: bool
+        :keyword notifications: Indicates a list of notification channels for cluster events.
+        :paramtype notifications: list[~azure.mgmt.servicefabric.models.Notification]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.add_on_features = add_on_features
         self.available_cluster_versions = None
         self.azure_active_directory = azure_active_directory
@@ -1558,71 +2017,92 @@ class Cluster(Resource):
         self.notifications = notifications
 
 
-class ClusterCodeVersionsListResult(msrest.serialization.Model):
+class ClusterCodeVersionsListResult(_serialization.Model):
     """The list results of the Service Fabric runtime versions.
 
-    :param value:
-    :type value: list[~azure.mgmt.servicefabric.models.ClusterCodeVersionsResult]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.servicefabric.models.ClusterCodeVersionsResult]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ClusterCodeVersionsResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ClusterCodeVersionsResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ClusterCodeVersionsResult"]] = None,
+        value: Optional[List["_models.ClusterCodeVersionsResult"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(ClusterCodeVersionsListResult, self).__init__(**kwargs)
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.servicefabric.models.ClusterCodeVersionsResult]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ClusterCodeVersionsResult(msrest.serialization.Model):
+class ClusterCodeVersionsResult(_serialization.Model):
     """The result of the Service Fabric runtime versions.
 
-    :param id: The identification of the result.
-    :type id: str
-    :param name: The name of the result.
-    :type name: str
-    :param type: The result resource type.
-    :type type: str
-    :param code_version: The Service Fabric runtime version of the cluster.
-    :type code_version: str
-    :param support_expiry_utc: The date of expiry of support of the version.
-    :type support_expiry_utc: str
-    :param environment: Indicates if this version is for Windows or Linux operating system.
-     Possible values include: "Windows", "Linux".
-    :type environment: str or ~azure.mgmt.servicefabric.models.ClusterEnvironment
+    :ivar id: The identification of the result.
+    :vartype id: str
+    :ivar name: The name of the result.
+    :vartype name: str
+    :ivar type: The result resource type.
+    :vartype type: str
+    :ivar code_version: The Service Fabric runtime version of the cluster.
+    :vartype code_version: str
+    :ivar support_expiry_utc: The date of expiry of support of the version.
+    :vartype support_expiry_utc: str
+    :ivar environment: Indicates if this version is for Windows or Linux operating system. Known
+     values are: "Windows" and "Linux".
+    :vartype environment: str or ~azure.mgmt.servicefabric.models.ClusterEnvironment
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'code_version': {'key': 'properties.codeVersion', 'type': 'str'},
-        'support_expiry_utc': {'key': 'properties.supportExpiryUtc', 'type': 'str'},
-        'environment': {'key': 'properties.environment', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "code_version": {"key": "properties.codeVersion", "type": "str"},
+        "support_expiry_utc": {"key": "properties.supportExpiryUtc", "type": "str"},
+        "environment": {"key": "properties.environment", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
         code_version: Optional[str] = None,
         support_expiry_utc: Optional[str] = None,
-        environment: Optional[Union[str, "ClusterEnvironment"]] = None,
+        environment: Optional[Union[str, "_models.ClusterEnvironment"]] = None,
         **kwargs
     ):
-        super(ClusterCodeVersionsResult, self).__init__(**kwargs)
+        """
+        :keyword id: The identification of the result.
+        :paramtype id: str
+        :keyword name: The name of the result.
+        :paramtype name: str
+        :keyword type: The result resource type.
+        :paramtype type: str
+        :keyword code_version: The Service Fabric runtime version of the cluster.
+        :paramtype code_version: str
+        :keyword support_expiry_utc: The date of expiry of support of the version.
+        :paramtype support_expiry_utc: str
+        :keyword environment: Indicates if this version is for Windows or Linux operating system. Known
+         values are: "Windows" and "Linux".
+        :paramtype environment: str or ~azure.mgmt.servicefabric.models.ClusterEnvironment
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.type = type
@@ -1631,12 +2111,12 @@ class ClusterCodeVersionsResult(msrest.serialization.Model):
         self.environment = environment
 
 
-class ClusterHealthPolicy(msrest.serialization.Model):
+class ClusterHealthPolicy(_serialization.Model):
     """Defines a health policy used to evaluate the health of the cluster or of a cluster node.
 
-    :param max_percent_unhealthy_nodes: The maximum allowed percentage of unhealthy nodes before
+    :ivar max_percent_unhealthy_nodes: The maximum allowed percentage of unhealthy nodes before
      reporting an error. For example, to allow 10% of nodes to be unhealthy, this value would be 10.
-    
+
      The percentage represents the maximum tolerated percentage of nodes that can be unhealthy
      before the cluster is considered in error.
      If the percentage is respected but there is at least one unhealthy node, the health is
@@ -1645,14 +2125,14 @@ class ClusterHealthPolicy(msrest.serialization.Model):
      of nodes in the cluster.
      The computation rounds up to tolerate one failure on small numbers of nodes. Default
      percentage is zero.
-    
+
      In large clusters, some nodes will always be down or out for repairs, so this percentage
      should be configured to tolerate that.
-    :type max_percent_unhealthy_nodes: int
-    :param max_percent_unhealthy_applications: The maximum allowed percentage of unhealthy
+    :vartype max_percent_unhealthy_nodes: int
+    :ivar max_percent_unhealthy_applications: The maximum allowed percentage of unhealthy
      applications before reporting an error. For example, to allow 10% of applications to be
      unhealthy, this value would be 10.
-    
+
      The percentage represents the maximum tolerated percentage of applications that can be
      unhealthy before the cluster is considered in error.
      If the percentage is respected but there is at least one unhealthy application, the health is
@@ -1662,204 +2142,337 @@ class ClusterHealthPolicy(msrest.serialization.Model):
      included in the ApplicationTypeHealthPolicyMap.
      The computation rounds up to tolerate one failure on small numbers of applications. Default
      percentage is zero.
-    :type max_percent_unhealthy_applications: int
-    :param application_health_policies: Defines the application health policy map used to evaluate
+    :vartype max_percent_unhealthy_applications: int
+    :ivar application_health_policies: Defines the application health policy map used to evaluate
      the health of an application or one of its children entities.
-    :type application_health_policies: dict[str,
+    :vartype application_health_policies: dict[str,
      ~azure.mgmt.servicefabric.models.ApplicationHealthPolicy]
     """
 
     _validation = {
-        'max_percent_unhealthy_nodes': {'maximum': 100, 'minimum': 0},
-        'max_percent_unhealthy_applications': {'maximum': 100, 'minimum': 0},
+        "max_percent_unhealthy_nodes": {"maximum": 100, "minimum": 0},
+        "max_percent_unhealthy_applications": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'max_percent_unhealthy_nodes': {'key': 'maxPercentUnhealthyNodes', 'type': 'int'},
-        'max_percent_unhealthy_applications': {'key': 'maxPercentUnhealthyApplications', 'type': 'int'},
-        'application_health_policies': {'key': 'applicationHealthPolicies', 'type': '{ApplicationHealthPolicy}'},
+        "max_percent_unhealthy_nodes": {"key": "maxPercentUnhealthyNodes", "type": "int"},
+        "max_percent_unhealthy_applications": {"key": "maxPercentUnhealthyApplications", "type": "int"},
+        "application_health_policies": {"key": "applicationHealthPolicies", "type": "{ApplicationHealthPolicy}"},
     }
 
     def __init__(
         self,
         *,
-        max_percent_unhealthy_nodes: Optional[int] = 0,
-        max_percent_unhealthy_applications: Optional[int] = 0,
-        application_health_policies: Optional[Dict[str, "ApplicationHealthPolicy"]] = None,
+        max_percent_unhealthy_nodes: int = 0,
+        max_percent_unhealthy_applications: int = 0,
+        application_health_policies: Optional[Dict[str, "_models.ApplicationHealthPolicy"]] = None,
         **kwargs
     ):
-        super(ClusterHealthPolicy, self).__init__(**kwargs)
+        """
+        :keyword max_percent_unhealthy_nodes: The maximum allowed percentage of unhealthy nodes before
+         reporting an error. For example, to allow 10% of nodes to be unhealthy, this value would be 10.
+
+         The percentage represents the maximum tolerated percentage of nodes that can be unhealthy
+         before the cluster is considered in error.
+         If the percentage is respected but there is at least one unhealthy node, the health is
+         evaluated as Warning.
+         The percentage is calculated by dividing the number of unhealthy nodes over the total number
+         of nodes in the cluster.
+         The computation rounds up to tolerate one failure on small numbers of nodes. Default
+         percentage is zero.
+
+         In large clusters, some nodes will always be down or out for repairs, so this percentage
+         should be configured to tolerate that.
+        :paramtype max_percent_unhealthy_nodes: int
+        :keyword max_percent_unhealthy_applications: The maximum allowed percentage of unhealthy
+         applications before reporting an error. For example, to allow 10% of applications to be
+         unhealthy, this value would be 10.
+
+         The percentage represents the maximum tolerated percentage of applications that can be
+         unhealthy before the cluster is considered in error.
+         If the percentage is respected but there is at least one unhealthy application, the health is
+         evaluated as Warning.
+         This is calculated by dividing the number of unhealthy applications over the total number of
+         application instances in the cluster, excluding applications of application types that are
+         included in the ApplicationTypeHealthPolicyMap.
+         The computation rounds up to tolerate one failure on small numbers of applications. Default
+         percentage is zero.
+        :paramtype max_percent_unhealthy_applications: int
+        :keyword application_health_policies: Defines the application health policy map used to
+         evaluate the health of an application or one of its children entities.
+        :paramtype application_health_policies: dict[str,
+         ~azure.mgmt.servicefabric.models.ApplicationHealthPolicy]
+        """
+        super().__init__(**kwargs)
         self.max_percent_unhealthy_nodes = max_percent_unhealthy_nodes
         self.max_percent_unhealthy_applications = max_percent_unhealthy_applications
         self.application_health_policies = application_health_policies
 
 
-class ClusterListResult(msrest.serialization.Model):
+class ClusterListResult(_serialization.Model):
     """Cluster list results.
 
-    :param value:
-    :type value: list[~azure.mgmt.servicefabric.models.Cluster]
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar value:
+    :vartype value: list[~azure.mgmt.servicefabric.models.Cluster]
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Cluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Cluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Cluster"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(ClusterListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Cluster"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.servicefabric.models.Cluster]
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ClusterUpdateParameters(msrest.serialization.Model):
+class ClusterUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Cluster update request.
 
-    :param tags: A set of tags. Cluster update parameters.
-    :type tags: dict[str, str]
-    :param add_on_features: The list of add-on features to enable in the cluster.
-    :type add_on_features: list[str or ~azure.mgmt.servicefabric.models.AddOnFeatures]
-    :param certificate: The certificate to use for securing the cluster. The certificate provided
+    :ivar tags: Cluster update parameters.
+    :vartype tags: dict[str, str]
+    :ivar add_on_features: The list of add-on features to enable in the cluster.
+    :vartype add_on_features: list[str or ~azure.mgmt.servicefabric.models.AddOnFeatures]
+    :ivar certificate: The certificate to use for securing the cluster. The certificate provided
      will be used for  node to node security within the cluster, SSL certificate for cluster
      management endpoint and default  admin client.
-    :type certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
-    :param certificate_common_names: Describes a list of server certificates referenced by common
+    :vartype certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+    :ivar certificate_common_names: Describes a list of server certificates referenced by common
      name that are used to secure the cluster.
-    :type certificate_common_names: ~azure.mgmt.servicefabric.models.ServerCertificateCommonNames
-    :param client_certificate_common_names: The list of client certificates referenced by common
+    :vartype certificate_common_names:
+     ~azure.mgmt.servicefabric.models.ServerCertificateCommonNames
+    :ivar client_certificate_common_names: The list of client certificates referenced by common
      name that are allowed to manage the cluster. This will overwrite the existing list.
-    :type client_certificate_common_names:
+    :vartype client_certificate_common_names:
      list[~azure.mgmt.servicefabric.models.ClientCertificateCommonName]
-    :param client_certificate_thumbprints: The list of client certificates referenced by thumbprint
+    :ivar client_certificate_thumbprints: The list of client certificates referenced by thumbprint
      that are allowed to manage the cluster. This will overwrite the existing list.
-    :type client_certificate_thumbprints:
+    :vartype client_certificate_thumbprints:
      list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
-    :param cluster_code_version: The Service Fabric runtime version of the cluster. This property
+    :ivar cluster_code_version: The Service Fabric runtime version of the cluster. This property
      can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
      Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
      get the list of available version for existing clusters use **availableClusterVersions**.
-    :type cluster_code_version: str
-    :param event_store_service_enabled: Indicates if the event store service is enabled.
-    :type event_store_service_enabled: bool
-    :param fabric_settings: The list of custom fabric settings to configure the cluster. This will
+    :vartype cluster_code_version: str
+    :ivar event_store_service_enabled: Indicates if the event store service is enabled.
+    :vartype event_store_service_enabled: bool
+    :ivar fabric_settings: The list of custom fabric settings to configure the cluster. This will
      overwrite the existing list.
-    :type fabric_settings: list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
-    :param node_types: The list of node types in the cluster. This will overwrite the existing
-     list.
-    :type node_types: list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
-    :param reliability_level: The reliability level sets the replica set size of system services.
+    :vartype fabric_settings: list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
+    :ivar node_types: The list of node types in the cluster. This will overwrite the existing list.
+    :vartype node_types: list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
+    :ivar reliability_level: The reliability level sets the replica set size of system services.
      Learn about `ReliabilityLevel
      <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
-    
-    
+
+
      * None - Run the System services with a target replica set count of 1. This should only be
      used for test clusters.
      * Bronze - Run the System services with a target replica set count of 3. This should only be
      used for test clusters.
      * Silver - Run the System services with a target replica set count of 5.
      * Gold - Run the System services with a target replica set count of 7.
-     * Platinum - Run the System services with a target replica set count of 9. Possible values
-     include: "None", "Bronze", "Silver", "Gold", "Platinum".
-    :type reliability_level: str or ~azure.mgmt.servicefabric.models.ReliabilityLevel
-    :param reverse_proxy_certificate: The server certificate used by reverse proxy.
-    :type reverse_proxy_certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
-    :param upgrade_description: The policy to use when upgrading the cluster.
-    :type upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
-    :param application_type_versions_cleanup_policy: The policy used to clean up unused versions.
-    :type application_type_versions_cleanup_policy:
+     * Platinum - Run the System services with a target replica set count of 9. Known values are:
+     "None", "Bronze", "Silver", "Gold", and "Platinum".
+    :vartype reliability_level: str or ~azure.mgmt.servicefabric.models.ReliabilityLevel
+    :ivar reverse_proxy_certificate: The server certificate used by reverse proxy.
+    :vartype reverse_proxy_certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+    :ivar upgrade_description: The policy to use when upgrading the cluster.
+    :vartype upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+    :ivar application_type_versions_cleanup_policy: The policy used to clean up unused versions.
+    :vartype application_type_versions_cleanup_policy:
      ~azure.mgmt.servicefabric.models.ApplicationTypeVersionsCleanupPolicy
-    :param upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version is
-     available. Possible values include: "Automatic", "Manual". Default value: "Automatic".
-    :type upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
-    :param sf_zonal_upgrade_mode: This property controls the logical grouping of VMs in upgrade
+    :ivar upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version is
+     available. Known values are: "Automatic" and "Manual".
+    :vartype upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
+    :ivar sf_zonal_upgrade_mode: This property controls the logical grouping of VMs in upgrade
      domains (UDs). This property can't be modified if a node type with multiple Availability Zones
-     is already present in the cluster. Possible values include: "Parallel", "Hierarchical".
-    :type sf_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.SfZonalUpgradeMode
-    :param vmss_zonal_upgrade_mode: This property defines the upgrade mode for the virtual machine
-     scale set, it is mandatory if a node type with multiple Availability Zones is added. Possible
-     values include: "Parallel", "Hierarchical".
-    :type vmss_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.VmssZonalUpgradeMode
-    :param infrastructure_service_manager: Indicates if infrastructure service manager is enabled.
-    :type infrastructure_service_manager: bool
-    :param upgrade_wave: Indicates when new cluster runtime version upgrades will be applied after
+     is already present in the cluster. Known values are: "Parallel" and "Hierarchical".
+    :vartype sf_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.SfZonalUpgradeMode
+    :ivar vmss_zonal_upgrade_mode: This property defines the upgrade mode for the virtual machine
+     scale set, it is mandatory if a node type with multiple Availability Zones is added. Known
+     values are: "Parallel" and "Hierarchical".
+    :vartype vmss_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.VmssZonalUpgradeMode
+    :ivar infrastructure_service_manager: Indicates if infrastructure service manager is enabled.
+    :vartype infrastructure_service_manager: bool
+    :ivar upgrade_wave: Indicates when new cluster runtime version upgrades will be applied after
      they are released. By default is Wave0. Only applies when **upgradeMode** is set to
-     'Automatic'. Possible values include: "Wave0", "Wave1", "Wave2".
-    :type upgrade_wave: str or ~azure.mgmt.servicefabric.models.ClusterUpgradeCadence
-    :param upgrade_pause_start_timestamp_utc: The start timestamp to pause runtime version upgrades
+     'Automatic'. Known values are: "Wave0", "Wave1", and "Wave2".
+    :vartype upgrade_wave: str or ~azure.mgmt.servicefabric.models.ClusterUpgradeCadence
+    :ivar upgrade_pause_start_timestamp_utc: The start timestamp to pause runtime version upgrades
      on the cluster (UTC).
-    :type upgrade_pause_start_timestamp_utc: ~datetime.datetime
-    :param upgrade_pause_end_timestamp_utc: The end timestamp of pause runtime version upgrades on
+    :vartype upgrade_pause_start_timestamp_utc: ~datetime.datetime
+    :ivar upgrade_pause_end_timestamp_utc: The end timestamp of pause runtime version upgrades on
      the cluster (UTC).
-    :type upgrade_pause_end_timestamp_utc: ~datetime.datetime
-    :param wave_upgrade_paused: Boolean to pause automatic runtime version upgrades to the cluster.
-    :type wave_upgrade_paused: bool
-    :param notifications: Indicates a list of notification channels for cluster events.
-    :type notifications: list[~azure.mgmt.servicefabric.models.Notification]
+    :vartype upgrade_pause_end_timestamp_utc: ~datetime.datetime
+    :ivar wave_upgrade_paused: Boolean to pause automatic runtime version upgrades to the cluster.
+    :vartype wave_upgrade_paused: bool
+    :ivar notifications: Indicates a list of notification channels for cluster events.
+    :vartype notifications: list[~azure.mgmt.servicefabric.models.Notification]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'add_on_features': {'key': 'properties.addOnFeatures', 'type': '[str]'},
-        'certificate': {'key': 'properties.certificate', 'type': 'CertificateDescription'},
-        'certificate_common_names': {'key': 'properties.certificateCommonNames', 'type': 'ServerCertificateCommonNames'},
-        'client_certificate_common_names': {'key': 'properties.clientCertificateCommonNames', 'type': '[ClientCertificateCommonName]'},
-        'client_certificate_thumbprints': {'key': 'properties.clientCertificateThumbprints', 'type': '[ClientCertificateThumbprint]'},
-        'cluster_code_version': {'key': 'properties.clusterCodeVersion', 'type': 'str'},
-        'event_store_service_enabled': {'key': 'properties.eventStoreServiceEnabled', 'type': 'bool'},
-        'fabric_settings': {'key': 'properties.fabricSettings', 'type': '[SettingsSectionDescription]'},
-        'node_types': {'key': 'properties.nodeTypes', 'type': '[NodeTypeDescription]'},
-        'reliability_level': {'key': 'properties.reliabilityLevel', 'type': 'str'},
-        'reverse_proxy_certificate': {'key': 'properties.reverseProxyCertificate', 'type': 'CertificateDescription'},
-        'upgrade_description': {'key': 'properties.upgradeDescription', 'type': 'ClusterUpgradePolicy'},
-        'application_type_versions_cleanup_policy': {'key': 'properties.applicationTypeVersionsCleanupPolicy', 'type': 'ApplicationTypeVersionsCleanupPolicy'},
-        'upgrade_mode': {'key': 'properties.upgradeMode', 'type': 'str'},
-        'sf_zonal_upgrade_mode': {'key': 'properties.sfZonalUpgradeMode', 'type': 'str'},
-        'vmss_zonal_upgrade_mode': {'key': 'properties.vmssZonalUpgradeMode', 'type': 'str'},
-        'infrastructure_service_manager': {'key': 'properties.infrastructureServiceManager', 'type': 'bool'},
-        'upgrade_wave': {'key': 'properties.upgradeWave', 'type': 'str'},
-        'upgrade_pause_start_timestamp_utc': {'key': 'properties.upgradePauseStartTimestampUtc', 'type': 'iso-8601'},
-        'upgrade_pause_end_timestamp_utc': {'key': 'properties.upgradePauseEndTimestampUtc', 'type': 'iso-8601'},
-        'wave_upgrade_paused': {'key': 'properties.waveUpgradePaused', 'type': 'bool'},
-        'notifications': {'key': 'properties.notifications', 'type': '[Notification]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "add_on_features": {"key": "properties.addOnFeatures", "type": "[str]"},
+        "certificate": {"key": "properties.certificate", "type": "CertificateDescription"},
+        "certificate_common_names": {
+            "key": "properties.certificateCommonNames",
+            "type": "ServerCertificateCommonNames",
+        },
+        "client_certificate_common_names": {
+            "key": "properties.clientCertificateCommonNames",
+            "type": "[ClientCertificateCommonName]",
+        },
+        "client_certificate_thumbprints": {
+            "key": "properties.clientCertificateThumbprints",
+            "type": "[ClientCertificateThumbprint]",
+        },
+        "cluster_code_version": {"key": "properties.clusterCodeVersion", "type": "str"},
+        "event_store_service_enabled": {"key": "properties.eventStoreServiceEnabled", "type": "bool"},
+        "fabric_settings": {"key": "properties.fabricSettings", "type": "[SettingsSectionDescription]"},
+        "node_types": {"key": "properties.nodeTypes", "type": "[NodeTypeDescription]"},
+        "reliability_level": {"key": "properties.reliabilityLevel", "type": "str"},
+        "reverse_proxy_certificate": {"key": "properties.reverseProxyCertificate", "type": "CertificateDescription"},
+        "upgrade_description": {"key": "properties.upgradeDescription", "type": "ClusterUpgradePolicy"},
+        "application_type_versions_cleanup_policy": {
+            "key": "properties.applicationTypeVersionsCleanupPolicy",
+            "type": "ApplicationTypeVersionsCleanupPolicy",
+        },
+        "upgrade_mode": {"key": "properties.upgradeMode", "type": "str"},
+        "sf_zonal_upgrade_mode": {"key": "properties.sfZonalUpgradeMode", "type": "str"},
+        "vmss_zonal_upgrade_mode": {"key": "properties.vmssZonalUpgradeMode", "type": "str"},
+        "infrastructure_service_manager": {"key": "properties.infrastructureServiceManager", "type": "bool"},
+        "upgrade_wave": {"key": "properties.upgradeWave", "type": "str"},
+        "upgrade_pause_start_timestamp_utc": {"key": "properties.upgradePauseStartTimestampUtc", "type": "iso-8601"},
+        "upgrade_pause_end_timestamp_utc": {"key": "properties.upgradePauseEndTimestampUtc", "type": "iso-8601"},
+        "wave_upgrade_paused": {"key": "properties.waveUpgradePaused", "type": "bool"},
+        "notifications": {"key": "properties.notifications", "type": "[Notification]"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        add_on_features: Optional[List[Union[str, "AddOnFeatures"]]] = None,
-        certificate: Optional["CertificateDescription"] = None,
-        certificate_common_names: Optional["ServerCertificateCommonNames"] = None,
-        client_certificate_common_names: Optional[List["ClientCertificateCommonName"]] = None,
-        client_certificate_thumbprints: Optional[List["ClientCertificateThumbprint"]] = None,
+        add_on_features: Optional[List[Union[str, "_models.AddOnFeatures"]]] = None,
+        certificate: Optional["_models.CertificateDescription"] = None,
+        certificate_common_names: Optional["_models.ServerCertificateCommonNames"] = None,
+        client_certificate_common_names: Optional[List["_models.ClientCertificateCommonName"]] = None,
+        client_certificate_thumbprints: Optional[List["_models.ClientCertificateThumbprint"]] = None,
         cluster_code_version: Optional[str] = None,
         event_store_service_enabled: Optional[bool] = None,
-        fabric_settings: Optional[List["SettingsSectionDescription"]] = None,
-        node_types: Optional[List["NodeTypeDescription"]] = None,
-        reliability_level: Optional[Union[str, "ReliabilityLevel"]] = None,
-        reverse_proxy_certificate: Optional["CertificateDescription"] = None,
-        upgrade_description: Optional["ClusterUpgradePolicy"] = None,
-        application_type_versions_cleanup_policy: Optional["ApplicationTypeVersionsCleanupPolicy"] = None,
-        upgrade_mode: Optional[Union[str, "UpgradeMode"]] = "Automatic",
-        sf_zonal_upgrade_mode: Optional[Union[str, "SfZonalUpgradeMode"]] = None,
-        vmss_zonal_upgrade_mode: Optional[Union[str, "VmssZonalUpgradeMode"]] = None,
+        fabric_settings: Optional[List["_models.SettingsSectionDescription"]] = None,
+        node_types: Optional[List["_models.NodeTypeDescription"]] = None,
+        reliability_level: Optional[Union[str, "_models.ReliabilityLevel"]] = None,
+        reverse_proxy_certificate: Optional["_models.CertificateDescription"] = None,
+        upgrade_description: Optional["_models.ClusterUpgradePolicy"] = None,
+        application_type_versions_cleanup_policy: Optional["_models.ApplicationTypeVersionsCleanupPolicy"] = None,
+        upgrade_mode: Union[str, "_models.UpgradeMode"] = "Automatic",
+        sf_zonal_upgrade_mode: Optional[Union[str, "_models.SfZonalUpgradeMode"]] = None,
+        vmss_zonal_upgrade_mode: Optional[Union[str, "_models.VmssZonalUpgradeMode"]] = None,
         infrastructure_service_manager: Optional[bool] = None,
-        upgrade_wave: Optional[Union[str, "ClusterUpgradeCadence"]] = None,
+        upgrade_wave: Optional[Union[str, "_models.ClusterUpgradeCadence"]] = None,
         upgrade_pause_start_timestamp_utc: Optional[datetime.datetime] = None,
         upgrade_pause_end_timestamp_utc: Optional[datetime.datetime] = None,
         wave_upgrade_paused: Optional[bool] = None,
-        notifications: Optional[List["Notification"]] = None,
+        notifications: Optional[List["_models.Notification"]] = None,
         **kwargs
     ):
-        super(ClusterUpdateParameters, self).__init__(**kwargs)
+        """
+        :keyword tags: Cluster update parameters.
+        :paramtype tags: dict[str, str]
+        :keyword add_on_features: The list of add-on features to enable in the cluster.
+        :paramtype add_on_features: list[str or ~azure.mgmt.servicefabric.models.AddOnFeatures]
+        :keyword certificate: The certificate to use for securing the cluster. The certificate provided
+         will be used for  node to node security within the cluster, SSL certificate for cluster
+         management endpoint and default  admin client.
+        :paramtype certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+        :keyword certificate_common_names: Describes a list of server certificates referenced by common
+         name that are used to secure the cluster.
+        :paramtype certificate_common_names:
+         ~azure.mgmt.servicefabric.models.ServerCertificateCommonNames
+        :keyword client_certificate_common_names: The list of client certificates referenced by common
+         name that are allowed to manage the cluster. This will overwrite the existing list.
+        :paramtype client_certificate_common_names:
+         list[~azure.mgmt.servicefabric.models.ClientCertificateCommonName]
+        :keyword client_certificate_thumbprints: The list of client certificates referenced by
+         thumbprint that are allowed to manage the cluster. This will overwrite the existing list.
+        :paramtype client_certificate_thumbprints:
+         list[~azure.mgmt.servicefabric.models.ClientCertificateThumbprint]
+        :keyword cluster_code_version: The Service Fabric runtime version of the cluster. This property
+         can only by set the user when **upgradeMode** is set to 'Manual'. To get list of available
+         Service Fabric versions for new clusters use `ClusterVersion API <./ClusterVersion.md>`_. To
+         get the list of available version for existing clusters use **availableClusterVersions**.
+        :paramtype cluster_code_version: str
+        :keyword event_store_service_enabled: Indicates if the event store service is enabled.
+        :paramtype event_store_service_enabled: bool
+        :keyword fabric_settings: The list of custom fabric settings to configure the cluster. This
+         will overwrite the existing list.
+        :paramtype fabric_settings: list[~azure.mgmt.servicefabric.models.SettingsSectionDescription]
+        :keyword node_types: The list of node types in the cluster. This will overwrite the existing
+         list.
+        :paramtype node_types: list[~azure.mgmt.servicefabric.models.NodeTypeDescription]
+        :keyword reliability_level: The reliability level sets the replica set size of system services.
+         Learn about `ReliabilityLevel
+         <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
+
+
+         * None - Run the System services with a target replica set count of 1. This should only be
+         used for test clusters.
+         * Bronze - Run the System services with a target replica set count of 3. This should only be
+         used for test clusters.
+         * Silver - Run the System services with a target replica set count of 5.
+         * Gold - Run the System services with a target replica set count of 7.
+         * Platinum - Run the System services with a target replica set count of 9. Known values are:
+         "None", "Bronze", "Silver", "Gold", and "Platinum".
+        :paramtype reliability_level: str or ~azure.mgmt.servicefabric.models.ReliabilityLevel
+        :keyword reverse_proxy_certificate: The server certificate used by reverse proxy.
+        :paramtype reverse_proxy_certificate: ~azure.mgmt.servicefabric.models.CertificateDescription
+        :keyword upgrade_description: The policy to use when upgrading the cluster.
+        :paramtype upgrade_description: ~azure.mgmt.servicefabric.models.ClusterUpgradePolicy
+        :keyword application_type_versions_cleanup_policy: The policy used to clean up unused versions.
+        :paramtype application_type_versions_cleanup_policy:
+         ~azure.mgmt.servicefabric.models.ApplicationTypeVersionsCleanupPolicy
+        :keyword upgrade_mode: The upgrade mode of the cluster when new Service Fabric runtime version
+         is available. Known values are: "Automatic" and "Manual".
+        :paramtype upgrade_mode: str or ~azure.mgmt.servicefabric.models.UpgradeMode
+        :keyword sf_zonal_upgrade_mode: This property controls the logical grouping of VMs in upgrade
+         domains (UDs). This property can't be modified if a node type with multiple Availability Zones
+         is already present in the cluster. Known values are: "Parallel" and "Hierarchical".
+        :paramtype sf_zonal_upgrade_mode: str or ~azure.mgmt.servicefabric.models.SfZonalUpgradeMode
+        :keyword vmss_zonal_upgrade_mode: This property defines the upgrade mode for the virtual
+         machine scale set, it is mandatory if a node type with multiple Availability Zones is added.
+         Known values are: "Parallel" and "Hierarchical".
+        :paramtype vmss_zonal_upgrade_mode: str or
+         ~azure.mgmt.servicefabric.models.VmssZonalUpgradeMode
+        :keyword infrastructure_service_manager: Indicates if infrastructure service manager is
+         enabled.
+        :paramtype infrastructure_service_manager: bool
+        :keyword upgrade_wave: Indicates when new cluster runtime version upgrades will be applied
+         after they are released. By default is Wave0. Only applies when **upgradeMode** is set to
+         'Automatic'. Known values are: "Wave0", "Wave1", and "Wave2".
+        :paramtype upgrade_wave: str or ~azure.mgmt.servicefabric.models.ClusterUpgradeCadence
+        :keyword upgrade_pause_start_timestamp_utc: The start timestamp to pause runtime version
+         upgrades on the cluster (UTC).
+        :paramtype upgrade_pause_start_timestamp_utc: ~datetime.datetime
+        :keyword upgrade_pause_end_timestamp_utc: The end timestamp of pause runtime version upgrades
+         on the cluster (UTC).
+        :paramtype upgrade_pause_end_timestamp_utc: ~datetime.datetime
+        :keyword wave_upgrade_paused: Boolean to pause automatic runtime version upgrades to the
+         cluster.
+        :paramtype wave_upgrade_paused: bool
+        :keyword notifications: Indicates a list of notification channels for cluster events.
+        :paramtype notifications: list[~azure.mgmt.servicefabric.models.Notification]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.add_on_features = add_on_features
         self.certificate = certificate
@@ -1885,50 +2498,57 @@ class ClusterUpdateParameters(msrest.serialization.Model):
         self.notifications = notifications
 
 
-class ClusterUpgradeDeltaHealthPolicy(msrest.serialization.Model):
+class ClusterUpgradeDeltaHealthPolicy(_serialization.Model):
     """Describes the delta health policies for the cluster upgrade.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param max_percent_delta_unhealthy_nodes: Required. The maximum allowed percentage of nodes
-     health degradation allowed during cluster upgrades.
+    :ivar max_percent_delta_unhealthy_nodes: The maximum allowed percentage of nodes health
+     degradation allowed during cluster upgrades.
      The delta is measured between the state of the nodes at the beginning of upgrade and the state
      of the nodes at the time of the health evaluation.
      The check is performed after every upgrade domain upgrade completion to make sure the global
-     state of the cluster is within tolerated limits.
-    :type max_percent_delta_unhealthy_nodes: int
-    :param max_percent_upgrade_domain_delta_unhealthy_nodes: Required. The maximum allowed
-     percentage of upgrade domain nodes health degradation allowed during cluster upgrades.
+     state of the cluster is within tolerated limits. Required.
+    :vartype max_percent_delta_unhealthy_nodes: int
+    :ivar max_percent_upgrade_domain_delta_unhealthy_nodes: The maximum allowed percentage of
+     upgrade domain nodes health degradation allowed during cluster upgrades.
      The delta is measured between the state of the upgrade domain nodes at the beginning of
      upgrade and the state of the upgrade domain nodes at the time of the health evaluation.
      The check is performed after every upgrade domain upgrade completion for all completed upgrade
-     domains to make sure the state of the upgrade domains is within tolerated limits.
-    :type max_percent_upgrade_domain_delta_unhealthy_nodes: int
-    :param max_percent_delta_unhealthy_applications: Required. The maximum allowed percentage of
-     applications health degradation allowed during cluster upgrades.
+     domains to make sure the state of the upgrade domains is within tolerated limits. Required.
+    :vartype max_percent_upgrade_domain_delta_unhealthy_nodes: int
+    :ivar max_percent_delta_unhealthy_applications: The maximum allowed percentage of applications
+     health degradation allowed during cluster upgrades.
      The delta is measured between the state of the applications at the beginning of upgrade and
      the state of the applications at the time of the health evaluation.
      The check is performed after every upgrade domain upgrade completion to make sure the global
      state of the cluster is within tolerated limits. System services are not included in this.
-    :type max_percent_delta_unhealthy_applications: int
-    :param application_delta_health_policies: Defines the application delta health policy map used
+     Required.
+    :vartype max_percent_delta_unhealthy_applications: int
+    :ivar application_delta_health_policies: Defines the application delta health policy map used
      to evaluate the health of an application or one of its child entities when upgrading the
      cluster.
-    :type application_delta_health_policies: dict[str,
+    :vartype application_delta_health_policies: dict[str,
      ~azure.mgmt.servicefabric.models.ApplicationDeltaHealthPolicy]
     """
 
     _validation = {
-        'max_percent_delta_unhealthy_nodes': {'required': True, 'maximum': 100, 'minimum': 0},
-        'max_percent_upgrade_domain_delta_unhealthy_nodes': {'required': True, 'maximum': 100, 'minimum': 0},
-        'max_percent_delta_unhealthy_applications': {'required': True, 'maximum': 100, 'minimum': 0},
+        "max_percent_delta_unhealthy_nodes": {"required": True, "maximum": 100, "minimum": 0},
+        "max_percent_upgrade_domain_delta_unhealthy_nodes": {"required": True, "maximum": 100, "minimum": 0},
+        "max_percent_delta_unhealthy_applications": {"required": True, "maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'max_percent_delta_unhealthy_nodes': {'key': 'maxPercentDeltaUnhealthyNodes', 'type': 'int'},
-        'max_percent_upgrade_domain_delta_unhealthy_nodes': {'key': 'maxPercentUpgradeDomainDeltaUnhealthyNodes', 'type': 'int'},
-        'max_percent_delta_unhealthy_applications': {'key': 'maxPercentDeltaUnhealthyApplications', 'type': 'int'},
-        'application_delta_health_policies': {'key': 'applicationDeltaHealthPolicies', 'type': '{ApplicationDeltaHealthPolicy}'},
+        "max_percent_delta_unhealthy_nodes": {"key": "maxPercentDeltaUnhealthyNodes", "type": "int"},
+        "max_percent_upgrade_domain_delta_unhealthy_nodes": {
+            "key": "maxPercentUpgradeDomainDeltaUnhealthyNodes",
+            "type": "int",
+        },
+        "max_percent_delta_unhealthy_applications": {"key": "maxPercentDeltaUnhealthyApplications", "type": "int"},
+        "application_delta_health_policies": {
+            "key": "applicationDeltaHealthPolicies",
+            "type": "{ApplicationDeltaHealthPolicy}",
+        },
     }
 
     def __init__(
@@ -1937,75 +2557,103 @@ class ClusterUpgradeDeltaHealthPolicy(msrest.serialization.Model):
         max_percent_delta_unhealthy_nodes: int,
         max_percent_upgrade_domain_delta_unhealthy_nodes: int,
         max_percent_delta_unhealthy_applications: int,
-        application_delta_health_policies: Optional[Dict[str, "ApplicationDeltaHealthPolicy"]] = None,
+        application_delta_health_policies: Optional[Dict[str, "_models.ApplicationDeltaHealthPolicy"]] = None,
         **kwargs
     ):
-        super(ClusterUpgradeDeltaHealthPolicy, self).__init__(**kwargs)
+        """
+        :keyword max_percent_delta_unhealthy_nodes: The maximum allowed percentage of nodes health
+         degradation allowed during cluster upgrades.
+         The delta is measured between the state of the nodes at the beginning of upgrade and the state
+         of the nodes at the time of the health evaluation.
+         The check is performed after every upgrade domain upgrade completion to make sure the global
+         state of the cluster is within tolerated limits. Required.
+        :paramtype max_percent_delta_unhealthy_nodes: int
+        :keyword max_percent_upgrade_domain_delta_unhealthy_nodes: The maximum allowed percentage of
+         upgrade domain nodes health degradation allowed during cluster upgrades.
+         The delta is measured between the state of the upgrade domain nodes at the beginning of
+         upgrade and the state of the upgrade domain nodes at the time of the health evaluation.
+         The check is performed after every upgrade domain upgrade completion for all completed upgrade
+         domains to make sure the state of the upgrade domains is within tolerated limits. Required.
+        :paramtype max_percent_upgrade_domain_delta_unhealthy_nodes: int
+        :keyword max_percent_delta_unhealthy_applications: The maximum allowed percentage of
+         applications health degradation allowed during cluster upgrades.
+         The delta is measured between the state of the applications at the beginning of upgrade and
+         the state of the applications at the time of the health evaluation.
+         The check is performed after every upgrade domain upgrade completion to make sure the global
+         state of the cluster is within tolerated limits. System services are not included in this.
+         Required.
+        :paramtype max_percent_delta_unhealthy_applications: int
+        :keyword application_delta_health_policies: Defines the application delta health policy map
+         used to evaluate the health of an application or one of its child entities when upgrading the
+         cluster.
+        :paramtype application_delta_health_policies: dict[str,
+         ~azure.mgmt.servicefabric.models.ApplicationDeltaHealthPolicy]
+        """
+        super().__init__(**kwargs)
         self.max_percent_delta_unhealthy_nodes = max_percent_delta_unhealthy_nodes
         self.max_percent_upgrade_domain_delta_unhealthy_nodes = max_percent_upgrade_domain_delta_unhealthy_nodes
         self.max_percent_delta_unhealthy_applications = max_percent_delta_unhealthy_applications
         self.application_delta_health_policies = application_delta_health_policies
 
 
-class ClusterUpgradePolicy(msrest.serialization.Model):
+class ClusterUpgradePolicy(_serialization.Model):
     """Describes the policy used when upgrading the cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param force_restart: If true, then processes are forcefully restarted during upgrade even when
+    :ivar force_restart: If true, then processes are forcefully restarted during upgrade even when
      the code version has not changed (the upgrade only changes configuration or data).
-    :type force_restart: bool
-    :param upgrade_replica_set_check_timeout: Required. The maximum amount of time to block
-     processing of an upgrade domain and prevent loss of availability when there are unexpected
-     issues. When this timeout expires, processing of the upgrade domain will proceed regardless of
-     availability loss issues. The timeout is reset at the start of each upgrade domain. The timeout
-     can be in either hh:mm:ss or in d.hh:mm:ss.ms format.
-    :type upgrade_replica_set_check_timeout: str
-    :param health_check_wait_duration: Required. The length of time to wait after completing an
-     upgrade domain before performing health checks. The duration can be in either hh:mm:ss or in
-     d.hh:mm:ss.ms format.
-    :type health_check_wait_duration: str
-    :param health_check_stable_duration: Required. The amount of time that the application or
-     cluster must remain healthy before the upgrade proceeds to the next upgrade domain. The
-     duration can be in either hh:mm:ss or in d.hh:mm:ss.ms format.
-    :type health_check_stable_duration: str
-    :param health_check_retry_timeout: Required. The amount of time to retry health evaluation when
-     the application or cluster is unhealthy before the upgrade rolls back. The timeout can be in
-     either hh:mm:ss or in d.hh:mm:ss.ms format.
-    :type health_check_retry_timeout: str
-    :param upgrade_timeout: Required. The amount of time the overall upgrade has to complete before
-     the upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format.
-    :type upgrade_timeout: str
-    :param upgrade_domain_timeout: Required. The amount of time each upgrade domain has to complete
-     before the upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms
-     format.
-    :type upgrade_domain_timeout: str
-    :param health_policy: Required. The cluster health policy used when upgrading the cluster.
-    :type health_policy: ~azure.mgmt.servicefabric.models.ClusterHealthPolicy
-    :param delta_health_policy: The cluster delta health policy used when upgrading the cluster.
-    :type delta_health_policy: ~azure.mgmt.servicefabric.models.ClusterUpgradeDeltaHealthPolicy
+    :vartype force_restart: bool
+    :ivar upgrade_replica_set_check_timeout: The maximum amount of time to block processing of an
+     upgrade domain and prevent loss of availability when there are unexpected issues. When this
+     timeout expires, processing of the upgrade domain will proceed regardless of availability loss
+     issues. The timeout is reset at the start of each upgrade domain. The timeout can be in either
+     hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype upgrade_replica_set_check_timeout: str
+    :ivar health_check_wait_duration: The length of time to wait after completing an upgrade domain
+     before performing health checks. The duration can be in either hh:mm:ss or in d.hh:mm:ss.ms
+     format. Required.
+    :vartype health_check_wait_duration: str
+    :ivar health_check_stable_duration: The amount of time that the application or cluster must
+     remain healthy before the upgrade proceeds to the next upgrade domain. The duration can be in
+     either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype health_check_stable_duration: str
+    :ivar health_check_retry_timeout: The amount of time to retry health evaluation when the
+     application or cluster is unhealthy before the upgrade rolls back. The timeout can be in either
+     hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype health_check_retry_timeout: str
+    :ivar upgrade_timeout: The amount of time the overall upgrade has to complete before the
+     upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype upgrade_timeout: str
+    :ivar upgrade_domain_timeout: The amount of time each upgrade domain has to complete before the
+     upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+    :vartype upgrade_domain_timeout: str
+    :ivar health_policy: The cluster health policy used when upgrading the cluster. Required.
+    :vartype health_policy: ~azure.mgmt.servicefabric.models.ClusterHealthPolicy
+    :ivar delta_health_policy: The cluster delta health policy used when upgrading the cluster.
+    :vartype delta_health_policy: ~azure.mgmt.servicefabric.models.ClusterUpgradeDeltaHealthPolicy
     """
 
     _validation = {
-        'upgrade_replica_set_check_timeout': {'required': True},
-        'health_check_wait_duration': {'required': True},
-        'health_check_stable_duration': {'required': True},
-        'health_check_retry_timeout': {'required': True},
-        'upgrade_timeout': {'required': True},
-        'upgrade_domain_timeout': {'required': True},
-        'health_policy': {'required': True},
+        "upgrade_replica_set_check_timeout": {"required": True},
+        "health_check_wait_duration": {"required": True},
+        "health_check_stable_duration": {"required": True},
+        "health_check_retry_timeout": {"required": True},
+        "upgrade_timeout": {"required": True},
+        "upgrade_domain_timeout": {"required": True},
+        "health_policy": {"required": True},
     }
 
     _attribute_map = {
-        'force_restart': {'key': 'forceRestart', 'type': 'bool'},
-        'upgrade_replica_set_check_timeout': {'key': 'upgradeReplicaSetCheckTimeout', 'type': 'str'},
-        'health_check_wait_duration': {'key': 'healthCheckWaitDuration', 'type': 'str'},
-        'health_check_stable_duration': {'key': 'healthCheckStableDuration', 'type': 'str'},
-        'health_check_retry_timeout': {'key': 'healthCheckRetryTimeout', 'type': 'str'},
-        'upgrade_timeout': {'key': 'upgradeTimeout', 'type': 'str'},
-        'upgrade_domain_timeout': {'key': 'upgradeDomainTimeout', 'type': 'str'},
-        'health_policy': {'key': 'healthPolicy', 'type': 'ClusterHealthPolicy'},
-        'delta_health_policy': {'key': 'deltaHealthPolicy', 'type': 'ClusterUpgradeDeltaHealthPolicy'},
+        "force_restart": {"key": "forceRestart", "type": "bool"},
+        "upgrade_replica_set_check_timeout": {"key": "upgradeReplicaSetCheckTimeout", "type": "str"},
+        "health_check_wait_duration": {"key": "healthCheckWaitDuration", "type": "str"},
+        "health_check_stable_duration": {"key": "healthCheckStableDuration", "type": "str"},
+        "health_check_retry_timeout": {"key": "healthCheckRetryTimeout", "type": "str"},
+        "upgrade_timeout": {"key": "upgradeTimeout", "type": "str"},
+        "upgrade_domain_timeout": {"key": "upgradeDomainTimeout", "type": "str"},
+        "health_policy": {"key": "healthPolicy", "type": "ClusterHealthPolicy"},
+        "delta_health_policy": {"key": "deltaHealthPolicy", "type": "ClusterUpgradeDeltaHealthPolicy"},
     }
 
     def __init__(
@@ -2017,12 +2665,47 @@ class ClusterUpgradePolicy(msrest.serialization.Model):
         health_check_retry_timeout: str,
         upgrade_timeout: str,
         upgrade_domain_timeout: str,
-        health_policy: "ClusterHealthPolicy",
+        health_policy: "_models.ClusterHealthPolicy",
         force_restart: Optional[bool] = None,
-        delta_health_policy: Optional["ClusterUpgradeDeltaHealthPolicy"] = None,
+        delta_health_policy: Optional["_models.ClusterUpgradeDeltaHealthPolicy"] = None,
         **kwargs
     ):
-        super(ClusterUpgradePolicy, self).__init__(**kwargs)
+        """
+        :keyword force_restart: If true, then processes are forcefully restarted during upgrade even
+         when the code version has not changed (the upgrade only changes configuration or data).
+        :paramtype force_restart: bool
+        :keyword upgrade_replica_set_check_timeout: The maximum amount of time to block processing of
+         an upgrade domain and prevent loss of availability when there are unexpected issues. When this
+         timeout expires, processing of the upgrade domain will proceed regardless of availability loss
+         issues. The timeout is reset at the start of each upgrade domain. The timeout can be in either
+         hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+        :paramtype upgrade_replica_set_check_timeout: str
+        :keyword health_check_wait_duration: The length of time to wait after completing an upgrade
+         domain before performing health checks. The duration can be in either hh:mm:ss or in
+         d.hh:mm:ss.ms format. Required.
+        :paramtype health_check_wait_duration: str
+        :keyword health_check_stable_duration: The amount of time that the application or cluster must
+         remain healthy before the upgrade proceeds to the next upgrade domain. The duration can be in
+         either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+        :paramtype health_check_stable_duration: str
+        :keyword health_check_retry_timeout: The amount of time to retry health evaluation when the
+         application or cluster is unhealthy before the upgrade rolls back. The timeout can be in either
+         hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+        :paramtype health_check_retry_timeout: str
+        :keyword upgrade_timeout: The amount of time the overall upgrade has to complete before the
+         upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format. Required.
+        :paramtype upgrade_timeout: str
+        :keyword upgrade_domain_timeout: The amount of time each upgrade domain has to complete before
+         the upgrade rolls back. The timeout can be in either hh:mm:ss or in d.hh:mm:ss.ms format.
+         Required.
+        :paramtype upgrade_domain_timeout: str
+        :keyword health_policy: The cluster health policy used when upgrading the cluster. Required.
+        :paramtype health_policy: ~azure.mgmt.servicefabric.models.ClusterHealthPolicy
+        :keyword delta_health_policy: The cluster delta health policy used when upgrading the cluster.
+        :paramtype delta_health_policy:
+         ~azure.mgmt.servicefabric.models.ClusterUpgradeDeltaHealthPolicy
+        """
+        super().__init__(**kwargs)
         self.force_restart = force_restart
         self.upgrade_replica_set_check_timeout = upgrade_replica_set_check_timeout
         self.health_check_wait_duration = health_check_wait_duration
@@ -2034,22 +2717,22 @@ class ClusterUpgradePolicy(msrest.serialization.Model):
         self.delta_health_policy = delta_health_policy
 
 
-class ClusterVersionDetails(msrest.serialization.Model):
+class ClusterVersionDetails(_serialization.Model):
     """The detail of the Service Fabric runtime version result.
 
-    :param code_version: The Service Fabric runtime version of the cluster.
-    :type code_version: str
-    :param support_expiry_utc: The date of expiry of support of the version.
-    :type support_expiry_utc: str
-    :param environment: Indicates if this version is for Windows or Linux operating system.
-     Possible values include: "Windows", "Linux".
-    :type environment: str or ~azure.mgmt.servicefabric.models.ClusterEnvironment
+    :ivar code_version: The Service Fabric runtime version of the cluster.
+    :vartype code_version: str
+    :ivar support_expiry_utc: The date of expiry of support of the version.
+    :vartype support_expiry_utc: str
+    :ivar environment: Indicates if this version is for Windows or Linux operating system. Known
+     values are: "Windows" and "Linux".
+    :vartype environment: str or ~azure.mgmt.servicefabric.models.ClusterEnvironment
     """
 
     _attribute_map = {
-        'code_version': {'key': 'codeVersion', 'type': 'str'},
-        'support_expiry_utc': {'key': 'supportExpiryUtc', 'type': 'str'},
-        'environment': {'key': 'environment', 'type': 'str'},
+        "code_version": {"key": "codeVersion", "type": "str"},
+        "support_expiry_utc": {"key": "supportExpiryUtc", "type": "str"},
+        "environment": {"key": "environment", "type": "str"},
     }
 
     def __init__(
@@ -2057,50 +2740,59 @@ class ClusterVersionDetails(msrest.serialization.Model):
         *,
         code_version: Optional[str] = None,
         support_expiry_utc: Optional[str] = None,
-        environment: Optional[Union[str, "ClusterEnvironment"]] = None,
+        environment: Optional[Union[str, "_models.ClusterEnvironment"]] = None,
         **kwargs
     ):
-        super(ClusterVersionDetails, self).__init__(**kwargs)
+        """
+        :keyword code_version: The Service Fabric runtime version of the cluster.
+        :paramtype code_version: str
+        :keyword support_expiry_utc: The date of expiry of support of the version.
+        :paramtype support_expiry_utc: str
+        :keyword environment: Indicates if this version is for Windows or Linux operating system. Known
+         values are: "Windows" and "Linux".
+        :paramtype environment: str or ~azure.mgmt.servicefabric.models.ClusterEnvironment
+        """
+        super().__init__(**kwargs)
         self.code_version = code_version
         self.support_expiry_utc = support_expiry_utc
         self.environment = environment
 
 
-class DiagnosticsStorageAccountConfig(msrest.serialization.Model):
+class DiagnosticsStorageAccountConfig(_serialization.Model):
     """The storage account information for storing Service Fabric diagnostic logs.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param storage_account_name: Required. The Azure storage account name.
-    :type storage_account_name: str
-    :param protected_account_key_name: Required. The protected diagnostics storage key name.
-    :type protected_account_key_name: str
-    :param protected_account_key_name2: The secondary protected diagnostics storage key name. If
-     one of the storage account keys is rotated the cluster will fallback to using the other.
-    :type protected_account_key_name2: str
-    :param blob_endpoint: Required. The blob endpoint of the azure storage account.
-    :type blob_endpoint: str
-    :param queue_endpoint: Required. The queue endpoint of the azure storage account.
-    :type queue_endpoint: str
-    :param table_endpoint: Required. The table endpoint of the azure storage account.
-    :type table_endpoint: str
+    :ivar storage_account_name: The Azure storage account name. Required.
+    :vartype storage_account_name: str
+    :ivar protected_account_key_name: The protected diagnostics storage key name. Required.
+    :vartype protected_account_key_name: str
+    :ivar protected_account_key_name2: The secondary protected diagnostics storage key name. If one
+     of the storage account keys is rotated the cluster will fallback to using the other.
+    :vartype protected_account_key_name2: str
+    :ivar blob_endpoint: The blob endpoint of the azure storage account. Required.
+    :vartype blob_endpoint: str
+    :ivar queue_endpoint: The queue endpoint of the azure storage account. Required.
+    :vartype queue_endpoint: str
+    :ivar table_endpoint: The table endpoint of the azure storage account. Required.
+    :vartype table_endpoint: str
     """
 
     _validation = {
-        'storage_account_name': {'required': True},
-        'protected_account_key_name': {'required': True},
-        'blob_endpoint': {'required': True},
-        'queue_endpoint': {'required': True},
-        'table_endpoint': {'required': True},
+        "storage_account_name": {"required": True},
+        "protected_account_key_name": {"required": True},
+        "blob_endpoint": {"required": True},
+        "queue_endpoint": {"required": True},
+        "table_endpoint": {"required": True},
     }
 
     _attribute_map = {
-        'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
-        'protected_account_key_name': {'key': 'protectedAccountKeyName', 'type': 'str'},
-        'protected_account_key_name2': {'key': 'protectedAccountKeyName2', 'type': 'str'},
-        'blob_endpoint': {'key': 'blobEndpoint', 'type': 'str'},
-        'queue_endpoint': {'key': 'queueEndpoint', 'type': 'str'},
-        'table_endpoint': {'key': 'tableEndpoint', 'type': 'str'},
+        "storage_account_name": {"key": "storageAccountName", "type": "str"},
+        "protected_account_key_name": {"key": "protectedAccountKeyName", "type": "str"},
+        "protected_account_key_name2": {"key": "protectedAccountKeyName2", "type": "str"},
+        "blob_endpoint": {"key": "blobEndpoint", "type": "str"},
+        "queue_endpoint": {"key": "queueEndpoint", "type": "str"},
+        "table_endpoint": {"key": "tableEndpoint", "type": "str"},
     }
 
     def __init__(
@@ -2114,7 +2806,22 @@ class DiagnosticsStorageAccountConfig(msrest.serialization.Model):
         protected_account_key_name2: Optional[str] = None,
         **kwargs
     ):
-        super(DiagnosticsStorageAccountConfig, self).__init__(**kwargs)
+        """
+        :keyword storage_account_name: The Azure storage account name. Required.
+        :paramtype storage_account_name: str
+        :keyword protected_account_key_name: The protected diagnostics storage key name. Required.
+        :paramtype protected_account_key_name: str
+        :keyword protected_account_key_name2: The secondary protected diagnostics storage key name. If
+         one of the storage account keys is rotated the cluster will fallback to using the other.
+        :paramtype protected_account_key_name2: str
+        :keyword blob_endpoint: The blob endpoint of the azure storage account. Required.
+        :paramtype blob_endpoint: str
+        :keyword queue_endpoint: The queue endpoint of the azure storage account. Required.
+        :paramtype queue_endpoint: str
+        :keyword table_endpoint: The table endpoint of the azure storage account. Required.
+        :paramtype table_endpoint: str
+        """
+        super().__init__(**kwargs)
         self.storage_account_name = storage_account_name
         self.protected_account_key_name = protected_account_key_name
         self.protected_account_key_name2 = protected_account_key_name2
@@ -2123,87 +2830,86 @@ class DiagnosticsStorageAccountConfig(msrest.serialization.Model):
         self.table_endpoint = table_endpoint
 
 
-class EndpointRangeDescription(msrest.serialization.Model):
+class EndpointRangeDescription(_serialization.Model):
     """Port range details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_port: Required. Starting port of a range of ports.
-    :type start_port: int
-    :param end_port: Required. End port of a range of ports.
-    :type end_port: int
+    :ivar start_port: Starting port of a range of ports. Required.
+    :vartype start_port: int
+    :ivar end_port: End port of a range of ports. Required.
+    :vartype end_port: int
     """
 
     _validation = {
-        'start_port': {'required': True},
-        'end_port': {'required': True},
+        "start_port": {"required": True},
+        "end_port": {"required": True},
     }
 
     _attribute_map = {
-        'start_port': {'key': 'startPort', 'type': 'int'},
-        'end_port': {'key': 'endPort', 'type': 'int'},
+        "start_port": {"key": "startPort", "type": "int"},
+        "end_port": {"key": "endPort", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        start_port: int,
-        end_port: int,
-        **kwargs
-    ):
-        super(EndpointRangeDescription, self).__init__(**kwargs)
+    def __init__(self, *, start_port: int, end_port: int, **kwargs):
+        """
+        :keyword start_port: Starting port of a range of ports. Required.
+        :paramtype start_port: int
+        :keyword end_port: End port of a range of ports. Required.
+        :paramtype end_port: int
+        """
+        super().__init__(**kwargs)
         self.start_port = start_port
         self.end_port = end_port
 
 
-class ErrorModel(msrest.serialization.Model):
+class ErrorModel(_serialization.Model):
     """The structure of the error.
 
-    :param error: The error details.
-    :type error: ~azure.mgmt.servicefabric.models.ErrorModelError
+    :ivar error: The error details.
+    :vartype error: ~azure.mgmt.servicefabric.models.ErrorModelError
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorModelError'},
+        "error": {"key": "error", "type": "ErrorModelError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorModelError"] = None,
-        **kwargs
-    ):
-        super(ErrorModel, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorModelError"] = None, **kwargs):
+        """
+        :keyword error: The error details.
+        :paramtype error: ~azure.mgmt.servicefabric.models.ErrorModelError
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorModelError(msrest.serialization.Model):
+class ErrorModelError(_serialization.Model):
     """The error details.
 
-    :param code: The error code.
-    :type code: str
-    :param message: The error message.
-    :type message: str
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ErrorModelError, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: The error code.
+        :paramtype code: str
+        :keyword message: The error message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ManagedIdentity(msrest.serialization.Model):
+class ManagedIdentity(_serialization.Model):
     """Describes the managed identities for an Azure resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2214,72 +2920,85 @@ class ManagedIdentity(msrest.serialization.Model):
     :ivar tenant_id: The tenant id of the managed identity. This property will only be provided for
      a system assigned identity.
     :vartype tenant_id: str
-    :param type: The type of managed identity for the resource. Possible values include:
-     "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
-    :type type: str or ~azure.mgmt.servicefabric.models.ManagedIdentityType
-    :param user_assigned_identities: The list of user identities associated with the resource. The
+    :ivar type: The type of managed identity for the resource. Known values are: "SystemAssigned",
+     "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+    :vartype type: str or ~azure.mgmt.servicefabric.models.ManagedIdentityType
+    :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :type user_assigned_identities: dict[str,
+    :vartype user_assigned_identities: dict[str,
      ~azure.mgmt.servicefabric.models.UserAssignedIdentity]
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ManagedIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedIdentity"]] = None,
+        type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs
     ):
-        super(ManagedIdentity, self).__init__(**kwargs)
+        """
+        :keyword type: The type of managed identity for the resource. Known values are:
+         "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
+        :paramtype type: str or ~azure.mgmt.servicefabric.models.ManagedIdentityType
+        :keyword user_assigned_identities: The list of user identities associated with the resource.
+         The user identity dictionary key references will be ARM resource ids in the form:
+        '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.servicefabric.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class PartitionSchemeDescription(msrest.serialization.Model):
+class PartitionSchemeDescription(_serialization.Model):
     """Describes how the service is partitioned.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: NamedPartitionSchemeDescription, SingletonPartitionSchemeDescription, UniformInt64RangePartitionSchemeDescription.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    NamedPartitionSchemeDescription, SingletonPartitionSchemeDescription,
+    UniformInt64RangePartitionSchemeDescription
 
     All required parameters must be populated in order to send to Azure.
 
-    :param partition_scheme: Required. Specifies how the service is partitioned.Constant filled by
-     server.  Possible values include: "Invalid", "Singleton", "UniformInt64Range", "Named".
-    :type partition_scheme: str or ~azure.mgmt.servicefabric.models.PartitionScheme
+    :ivar partition_scheme: Specifies how the service is partitioned. Required. Known values are:
+     "Invalid", "Singleton", "UniformInt64Range", and "Named".
+    :vartype partition_scheme: str or ~azure.mgmt.servicefabric.models.PartitionScheme
     """
 
     _validation = {
-        'partition_scheme': {'required': True},
+        "partition_scheme": {"required": True},
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
+        "partition_scheme": {"key": "partitionScheme", "type": "str"},
     }
 
     _subtype_map = {
-        'partition_scheme': {'Named': 'NamedPartitionSchemeDescription', 'Singleton': 'SingletonPartitionSchemeDescription', 'UniformInt64Range': 'UniformInt64RangePartitionSchemeDescription'}
+        "partition_scheme": {
+            "Named": "NamedPartitionSchemeDescription",
+            "Singleton": "SingletonPartitionSchemeDescription",
+            "UniformInt64Range": "UniformInt64RangePartitionSchemeDescription",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PartitionSchemeDescription, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.partition_scheme = None  # type: Optional[str]
 
 
@@ -2288,115 +3007,116 @@ class NamedPartitionSchemeDescription(PartitionSchemeDescription):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param partition_scheme: Required. Specifies how the service is partitioned.Constant filled by
-     server.  Possible values include: "Invalid", "Singleton", "UniformInt64Range", "Named".
-    :type partition_scheme: str or ~azure.mgmt.servicefabric.models.PartitionScheme
-    :param count: Required. The number of partitions.
-    :type count: int
-    :param names: Required. Array of size specified by the ‘count’ parameter, for the names of the
-     partitions.
-    :type names: list[str]
+    :ivar partition_scheme: Specifies how the service is partitioned. Required. Known values are:
+     "Invalid", "Singleton", "UniformInt64Range", and "Named".
+    :vartype partition_scheme: str or ~azure.mgmt.servicefabric.models.PartitionScheme
+    :ivar count: The number of partitions. Required.
+    :vartype count: int
+    :ivar names: Array of size specified by the ‘count’ parameter, for the names of the partitions.
+     Required.
+    :vartype names: list[str]
     """
 
     _validation = {
-        'partition_scheme': {'required': True},
-        'count': {'required': True},
-        'names': {'required': True},
+        "partition_scheme": {"required": True},
+        "count": {"required": True},
+        "names": {"required": True},
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'names': {'key': 'names', 'type': '[str]'},
+        "partition_scheme": {"key": "partitionScheme", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "names": {"key": "names", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: int,
-        names: List[str],
-        **kwargs
-    ):
-        super(NamedPartitionSchemeDescription, self).__init__(**kwargs)
-        self.partition_scheme = 'Named'  # type: str
+    def __init__(self, *, count: int, names: List[str], **kwargs):
+        """
+        :keyword count: The number of partitions. Required.
+        :paramtype count: int
+        :keyword names: Array of size specified by the ‘count’ parameter, for the names of the
+         partitions. Required.
+        :paramtype names: list[str]
+        """
+        super().__init__(**kwargs)
+        self.partition_scheme = "Named"  # type: str
         self.count = count
         self.names = names
 
 
-class NodeTypeDescription(msrest.serialization.Model):
+class NodeTypeDescription(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Describes a node type in the cluster, each node type represents sub set of nodes in the cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the node type.
-    :type name: str
-    :param placement_properties: The placement tags applied to nodes in the node type, which can be
+    :ivar name: The name of the node type. Required.
+    :vartype name: str
+    :ivar placement_properties: The placement tags applied to nodes in the node type, which can be
      used to indicate where certain services (workload) should run.
-    :type placement_properties: dict[str, str]
-    :param capacities: The capacity tags applied to the nodes in the node type, the cluster
-     resource manager uses these tags to understand how much resource a node has.
-    :type capacities: dict[str, str]
-    :param client_connection_endpoint_port: Required. The TCP cluster management endpoint port.
-    :type client_connection_endpoint_port: int
-    :param http_gateway_endpoint_port: Required. The HTTP cluster management endpoint port.
-    :type http_gateway_endpoint_port: int
-    :param durability_level: The durability level of the node type. Learn about `DurabilityLevel
+    :vartype placement_properties: dict[str, str]
+    :ivar capacities: The capacity tags applied to the nodes in the node type, the cluster resource
+     manager uses these tags to understand how much resource a node has.
+    :vartype capacities: dict[str, str]
+    :ivar client_connection_endpoint_port: The TCP cluster management endpoint port. Required.
+    :vartype client_connection_endpoint_port: int
+    :ivar http_gateway_endpoint_port: The HTTP cluster management endpoint port. Required.
+    :vartype http_gateway_endpoint_port: int
+    :ivar durability_level: The durability level of the node type. Learn about `DurabilityLevel
      <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
-    
-    
+
+
      * Bronze - No privileges. This is the default.
      * Silver - The infrastructure jobs can be paused for a duration of 10 minutes per UD.
      * Gold - The infrastructure jobs can be paused for a duration of 2 hours per UD. Gold
-     durability can be enabled only on full node VM skus like D15_V2, G5 etc. Possible values
-     include: "Bronze", "Silver", "Gold".
-    :type durability_level: str or ~azure.mgmt.servicefabric.models.DurabilityLevel
-    :param application_ports: The range of ports from which cluster assigned port to Service Fabric
+     durability can be enabled only on full node VM skus like D15_V2, G5 etc. Known values are:
+     "Bronze", "Silver", and "Gold".
+    :vartype durability_level: str or ~azure.mgmt.servicefabric.models.DurabilityLevel
+    :ivar application_ports: The range of ports from which cluster assigned port to Service Fabric
      applications.
-    :type application_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
-    :param ephemeral_ports: The range of ephemeral ports that nodes in this node type should be
+    :vartype application_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
+    :ivar ephemeral_ports: The range of ephemeral ports that nodes in this node type should be
      configured with.
-    :type ephemeral_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
-    :param is_primary: Required. The node type on which system services will run. Only one node
-     type should be marked as primary. Primary node type cannot be deleted or changed for existing
-     clusters.
-    :type is_primary: bool
-    :param vm_instance_count: Required. VMInstanceCount should be 1 to n, where n indicates the
-     number of VM instances corresponding to this nodeType. VMInstanceCount = 0 can be done only in
-     these scenarios: NodeType is a secondary nodeType. Durability = Bronze or Durability >= Bronze
-     and InfrastructureServiceManager = true. If VMInstanceCount = 0, implies the VMs for this
-     nodeType will not be used for the initial cluster size computation.
-    :type vm_instance_count: int
-    :param reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
-    :type reverse_proxy_endpoint_port: int
-    :param is_stateless: Indicates if the node type can only host Stateless workloads.
-    :type is_stateless: bool
-    :param multiple_availability_zones: Indicates if the node type is enabled to support multiple
+    :vartype ephemeral_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
+    :ivar is_primary: The node type on which system services will run. Only one node type should be
+     marked as primary. Primary node type cannot be deleted or changed for existing clusters.
+     Required.
+    :vartype is_primary: bool
+    :ivar vm_instance_count: VMInstanceCount should be 1 to n, where n indicates the number of VM
+     instances corresponding to this nodeType. VMInstanceCount = 0 can be done only in these
+     scenarios: NodeType is a secondary nodeType. Durability = Bronze or Durability >= Bronze and
+     InfrastructureServiceManager = true. If VMInstanceCount = 0, implies the VMs for this nodeType
+     will not be used for the initial cluster size computation. Required.
+    :vartype vm_instance_count: int
+    :ivar reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
+    :vartype reverse_proxy_endpoint_port: int
+    :ivar is_stateless: Indicates if the node type can only host Stateless workloads.
+    :vartype is_stateless: bool
+    :ivar multiple_availability_zones: Indicates if the node type is enabled to support multiple
      zones.
-    :type multiple_availability_zones: bool
+    :vartype multiple_availability_zones: bool
     """
 
     _validation = {
-        'name': {'required': True},
-        'client_connection_endpoint_port': {'required': True},
-        'http_gateway_endpoint_port': {'required': True},
-        'is_primary': {'required': True},
-        'vm_instance_count': {'required': True, 'maximum': 2147483647, 'minimum': 0},
+        "name": {"required": True},
+        "client_connection_endpoint_port": {"required": True},
+        "http_gateway_endpoint_port": {"required": True},
+        "is_primary": {"required": True},
+        "vm_instance_count": {"required": True, "maximum": 2147483647, "minimum": 0},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'placement_properties': {'key': 'placementProperties', 'type': '{str}'},
-        'capacities': {'key': 'capacities', 'type': '{str}'},
-        'client_connection_endpoint_port': {'key': 'clientConnectionEndpointPort', 'type': 'int'},
-        'http_gateway_endpoint_port': {'key': 'httpGatewayEndpointPort', 'type': 'int'},
-        'durability_level': {'key': 'durabilityLevel', 'type': 'str'},
-        'application_ports': {'key': 'applicationPorts', 'type': 'EndpointRangeDescription'},
-        'ephemeral_ports': {'key': 'ephemeralPorts', 'type': 'EndpointRangeDescription'},
-        'is_primary': {'key': 'isPrimary', 'type': 'bool'},
-        'vm_instance_count': {'key': 'vmInstanceCount', 'type': 'int'},
-        'reverse_proxy_endpoint_port': {'key': 'reverseProxyEndpointPort', 'type': 'int'},
-        'is_stateless': {'key': 'isStateless', 'type': 'bool'},
-        'multiple_availability_zones': {'key': 'multipleAvailabilityZones', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "placement_properties": {"key": "placementProperties", "type": "{str}"},
+        "capacities": {"key": "capacities", "type": "{str}"},
+        "client_connection_endpoint_port": {"key": "clientConnectionEndpointPort", "type": "int"},
+        "http_gateway_endpoint_port": {"key": "httpGatewayEndpointPort", "type": "int"},
+        "durability_level": {"key": "durabilityLevel", "type": "str"},
+        "application_ports": {"key": "applicationPorts", "type": "EndpointRangeDescription"},
+        "ephemeral_ports": {"key": "ephemeralPorts", "type": "EndpointRangeDescription"},
+        "is_primary": {"key": "isPrimary", "type": "bool"},
+        "vm_instance_count": {"key": "vmInstanceCount", "type": "int"},
+        "reverse_proxy_endpoint_port": {"key": "reverseProxyEndpointPort", "type": "int"},
+        "is_stateless": {"key": "isStateless", "type": "bool"},
+        "multiple_availability_zones": {"key": "multipleAvailabilityZones", "type": "bool"},
     }
 
     def __init__(
@@ -2409,15 +3129,62 @@ class NodeTypeDescription(msrest.serialization.Model):
         vm_instance_count: int,
         placement_properties: Optional[Dict[str, str]] = None,
         capacities: Optional[Dict[str, str]] = None,
-        durability_level: Optional[Union[str, "DurabilityLevel"]] = None,
-        application_ports: Optional["EndpointRangeDescription"] = None,
-        ephemeral_ports: Optional["EndpointRangeDescription"] = None,
+        durability_level: Optional[Union[str, "_models.DurabilityLevel"]] = None,
+        application_ports: Optional["_models.EndpointRangeDescription"] = None,
+        ephemeral_ports: Optional["_models.EndpointRangeDescription"] = None,
         reverse_proxy_endpoint_port: Optional[int] = None,
         is_stateless: Optional[bool] = None,
         multiple_availability_zones: Optional[bool] = None,
         **kwargs
     ):
-        super(NodeTypeDescription, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the node type. Required.
+        :paramtype name: str
+        :keyword placement_properties: The placement tags applied to nodes in the node type, which can
+         be used to indicate where certain services (workload) should run.
+        :paramtype placement_properties: dict[str, str]
+        :keyword capacities: The capacity tags applied to the nodes in the node type, the cluster
+         resource manager uses these tags to understand how much resource a node has.
+        :paramtype capacities: dict[str, str]
+        :keyword client_connection_endpoint_port: The TCP cluster management endpoint port. Required.
+        :paramtype client_connection_endpoint_port: int
+        :keyword http_gateway_endpoint_port: The HTTP cluster management endpoint port. Required.
+        :paramtype http_gateway_endpoint_port: int
+        :keyword durability_level: The durability level of the node type. Learn about `DurabilityLevel
+         <https://docs.microsoft.com/azure/service-fabric/service-fabric-cluster-capacity>`_.
+
+
+         * Bronze - No privileges. This is the default.
+         * Silver - The infrastructure jobs can be paused for a duration of 10 minutes per UD.
+         * Gold - The infrastructure jobs can be paused for a duration of 2 hours per UD. Gold
+         durability can be enabled only on full node VM skus like D15_V2, G5 etc. Known values are:
+         "Bronze", "Silver", and "Gold".
+        :paramtype durability_level: str or ~azure.mgmt.servicefabric.models.DurabilityLevel
+        :keyword application_ports: The range of ports from which cluster assigned port to Service
+         Fabric applications.
+        :paramtype application_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
+        :keyword ephemeral_ports: The range of ephemeral ports that nodes in this node type should be
+         configured with.
+        :paramtype ephemeral_ports: ~azure.mgmt.servicefabric.models.EndpointRangeDescription
+        :keyword is_primary: The node type on which system services will run. Only one node type should
+         be marked as primary. Primary node type cannot be deleted or changed for existing clusters.
+         Required.
+        :paramtype is_primary: bool
+        :keyword vm_instance_count: VMInstanceCount should be 1 to n, where n indicates the number of
+         VM instances corresponding to this nodeType. VMInstanceCount = 0 can be done only in these
+         scenarios: NodeType is a secondary nodeType. Durability = Bronze or Durability >= Bronze and
+         InfrastructureServiceManager = true. If VMInstanceCount = 0, implies the VMs for this nodeType
+         will not be used for the initial cluster size computation. Required.
+        :paramtype vm_instance_count: int
+        :keyword reverse_proxy_endpoint_port: The endpoint used by reverse proxy.
+        :paramtype reverse_proxy_endpoint_port: int
+        :keyword is_stateless: Indicates if the node type can only host Stateless workloads.
+        :paramtype is_stateless: bool
+        :keyword multiple_availability_zones: Indicates if the node type is enabled to support multiple
+         zones.
+        :paramtype multiple_availability_zones: bool
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.placement_properties = placement_properties
         self.capacities = capacities
@@ -2433,140 +3200,153 @@ class NodeTypeDescription(msrest.serialization.Model):
         self.multiple_availability_zones = multiple_availability_zones
 
 
-class Notification(msrest.serialization.Model):
+class Notification(_serialization.Model):
     """Describes the notification channel for cluster events.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param is_enabled: Required. Indicates if the notification is enabled.
-    :type is_enabled: bool
-    :param notification_category: Required. The category of notification. Possible values include:
-     "WaveProgress".
-    :type notification_category: str or ~azure.mgmt.servicefabric.models.NotificationCategory
-    :param notification_level: Required. The level of notification. Possible values include:
-     "Critical", "All".
-    :type notification_level: str or ~azure.mgmt.servicefabric.models.NotificationLevel
-    :param notification_targets: Required. List of targets that subscribe to the notification.
-    :type notification_targets: list[~azure.mgmt.servicefabric.models.NotificationTarget]
+    :ivar is_enabled: Indicates if the notification is enabled. Required.
+    :vartype is_enabled: bool
+    :ivar notification_category: The category of notification. Required. "WaveProgress"
+    :vartype notification_category: str or ~azure.mgmt.servicefabric.models.NotificationCategory
+    :ivar notification_level: The level of notification. Required. Known values are: "Critical" and
+     "All".
+    :vartype notification_level: str or ~azure.mgmt.servicefabric.models.NotificationLevel
+    :ivar notification_targets: List of targets that subscribe to the notification. Required.
+    :vartype notification_targets: list[~azure.mgmt.servicefabric.models.NotificationTarget]
     """
 
     _validation = {
-        'is_enabled': {'required': True},
-        'notification_category': {'required': True},
-        'notification_level': {'required': True},
-        'notification_targets': {'required': True},
+        "is_enabled": {"required": True},
+        "notification_category": {"required": True},
+        "notification_level": {"required": True},
+        "notification_targets": {"required": True},
     }
 
     _attribute_map = {
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'notification_category': {'key': 'notificationCategory', 'type': 'str'},
-        'notification_level': {'key': 'notificationLevel', 'type': 'str'},
-        'notification_targets': {'key': 'notificationTargets', 'type': '[NotificationTarget]'},
+        "is_enabled": {"key": "isEnabled", "type": "bool"},
+        "notification_category": {"key": "notificationCategory", "type": "str"},
+        "notification_level": {"key": "notificationLevel", "type": "str"},
+        "notification_targets": {"key": "notificationTargets", "type": "[NotificationTarget]"},
     }
 
     def __init__(
         self,
         *,
         is_enabled: bool,
-        notification_category: Union[str, "NotificationCategory"],
-        notification_level: Union[str, "NotificationLevel"],
-        notification_targets: List["NotificationTarget"],
+        notification_category: Union[str, "_models.NotificationCategory"],
+        notification_level: Union[str, "_models.NotificationLevel"],
+        notification_targets: List["_models.NotificationTarget"],
         **kwargs
     ):
-        super(Notification, self).__init__(**kwargs)
+        """
+        :keyword is_enabled: Indicates if the notification is enabled. Required.
+        :paramtype is_enabled: bool
+        :keyword notification_category: The category of notification. Required. "WaveProgress"
+        :paramtype notification_category: str or ~azure.mgmt.servicefabric.models.NotificationCategory
+        :keyword notification_level: The level of notification. Required. Known values are: "Critical"
+         and "All".
+        :paramtype notification_level: str or ~azure.mgmt.servicefabric.models.NotificationLevel
+        :keyword notification_targets: List of targets that subscribe to the notification. Required.
+        :paramtype notification_targets: list[~azure.mgmt.servicefabric.models.NotificationTarget]
+        """
+        super().__init__(**kwargs)
         self.is_enabled = is_enabled
         self.notification_category = notification_category
         self.notification_level = notification_level
         self.notification_targets = notification_targets
 
 
-class NotificationTarget(msrest.serialization.Model):
+class NotificationTarget(_serialization.Model):
     """Describes the notification target properties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param notification_channel: Required. The notification channel indicates the type of receivers
-     subscribed to the notification, either user or subscription. Possible values include:
-     "EmailUser", "EmailSubscription".
-    :type notification_channel: str or ~azure.mgmt.servicefabric.models.NotificationChannel
-    :param receivers: Required. List of targets that subscribe to the notification.
-    :type receivers: list[str]
+    :ivar notification_channel: The notification channel indicates the type of receivers subscribed
+     to the notification, either user or subscription. Required. Known values are: "EmailUser" and
+     "EmailSubscription".
+    :vartype notification_channel: str or ~azure.mgmt.servicefabric.models.NotificationChannel
+    :ivar receivers: List of targets that subscribe to the notification. Required.
+    :vartype receivers: list[str]
     """
 
     _validation = {
-        'notification_channel': {'required': True},
-        'receivers': {'required': True},
+        "notification_channel": {"required": True},
+        "receivers": {"required": True},
     }
 
     _attribute_map = {
-        'notification_channel': {'key': 'notificationChannel', 'type': 'str'},
-        'receivers': {'key': 'receivers', 'type': '[str]'},
+        "notification_channel": {"key": "notificationChannel", "type": "str"},
+        "receivers": {"key": "receivers", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        notification_channel: Union[str, "NotificationChannel"],
-        receivers: List[str],
-        **kwargs
+        self, *, notification_channel: Union[str, "_models.NotificationChannel"], receivers: List[str], **kwargs
     ):
-        super(NotificationTarget, self).__init__(**kwargs)
+        """
+        :keyword notification_channel: The notification channel indicates the type of receivers
+         subscribed to the notification, either user or subscription. Required. Known values are:
+         "EmailUser" and "EmailSubscription".
+        :paramtype notification_channel: str or ~azure.mgmt.servicefabric.models.NotificationChannel
+        :keyword receivers: List of targets that subscribe to the notification. Required.
+        :paramtype receivers: list[str]
+        """
+        super().__init__(**kwargs)
         self.notification_channel = notification_channel
         self.receivers = receivers
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Describes the result of the request to list Service Fabric resource provider operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of operations supported by the Service Fabric resource provider.
-    :type value: list[~azure.mgmt.servicefabric.models.OperationResult]
+    :ivar value: List of operations supported by the Service Fabric resource provider.
+    :vartype value: list[~azure.mgmt.servicefabric.models.OperationResult]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationResult]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationResult]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["OperationResult"]] = None,
-        **kwargs
-    ):
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.OperationResult"]] = None, **kwargs):
+        """
+        :keyword value: List of operations supported by the Service Fabric resource provider.
+        :paramtype value: list[~azure.mgmt.servicefabric.models.OperationResult]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class OperationResult(msrest.serialization.Model):
+class OperationResult(_serialization.Model):
     """Available operation list result.
 
-    :param name: The name of the operation.
-    :type name: str
-    :param is_data_action: Indicates whether the operation is a data action.
-    :type is_data_action: bool
-    :param display: The object that represents the operation.
-    :type display: ~azure.mgmt.servicefabric.models.AvailableOperationDisplay
-    :param origin: Origin result.
-    :type origin: str
-    :param next_link: The URL to use for getting the next set of results.
-    :type next_link: str
+    :ivar name: The name of the operation.
+    :vartype name: str
+    :ivar is_data_action: Indicates whether the operation is a data action.
+    :vartype is_data_action: bool
+    :ivar display: The object that represents the operation.
+    :vartype display: ~azure.mgmt.servicefabric.models.AvailableOperationDisplay
+    :ivar origin: Origin result.
+    :vartype origin: str
+    :ivar next_link: The URL to use for getting the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'AvailableOperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "AvailableOperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -2574,12 +3354,24 @@ class OperationResult(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         is_data_action: Optional[bool] = None,
-        display: Optional["AvailableOperationDisplay"] = None,
+        display: Optional["_models.AvailableOperationDisplay"] = None,
         origin: Optional[str] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(OperationResult, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the operation.
+        :paramtype name: str
+        :keyword is_data_action: Indicates whether the operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword display: The object that represents the operation.
+        :paramtype display: ~azure.mgmt.servicefabric.models.AvailableOperationDisplay
+        :keyword origin: Origin result.
+        :paramtype origin: str
+        :keyword next_link: The URL to use for getting the next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.is_data_action = is_data_action
         self.display = display
@@ -2587,151 +3379,181 @@ class OperationResult(msrest.serialization.Model):
         self.next_link = next_link
 
 
-class ServerCertificateCommonName(msrest.serialization.Model):
+class ServerCertificateCommonName(_serialization.Model):
     """Describes the server certificate details using common name.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param certificate_common_name: Required. The common name of the server certificate.
-    :type certificate_common_name: str
-    :param certificate_issuer_thumbprint: Required. The issuer thumbprint of the server
-     certificate.
-    :type certificate_issuer_thumbprint: str
+    :ivar certificate_common_name: The common name of the server certificate. Required.
+    :vartype certificate_common_name: str
+    :ivar certificate_issuer_thumbprint: The issuer thumbprint of the server certificate. Required.
+    :vartype certificate_issuer_thumbprint: str
     """
 
     _validation = {
-        'certificate_common_name': {'required': True},
-        'certificate_issuer_thumbprint': {'required': True},
+        "certificate_common_name": {"required": True},
+        "certificate_issuer_thumbprint": {"required": True},
     }
 
     _attribute_map = {
-        'certificate_common_name': {'key': 'certificateCommonName', 'type': 'str'},
-        'certificate_issuer_thumbprint': {'key': 'certificateIssuerThumbprint', 'type': 'str'},
+        "certificate_common_name": {"key": "certificateCommonName", "type": "str"},
+        "certificate_issuer_thumbprint": {"key": "certificateIssuerThumbprint", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificate_common_name: str,
-        certificate_issuer_thumbprint: str,
-        **kwargs
-    ):
-        super(ServerCertificateCommonName, self).__init__(**kwargs)
+    def __init__(self, *, certificate_common_name: str, certificate_issuer_thumbprint: str, **kwargs):
+        """
+        :keyword certificate_common_name: The common name of the server certificate. Required.
+        :paramtype certificate_common_name: str
+        :keyword certificate_issuer_thumbprint: The issuer thumbprint of the server certificate.
+         Required.
+        :paramtype certificate_issuer_thumbprint: str
+        """
+        super().__init__(**kwargs)
         self.certificate_common_name = certificate_common_name
         self.certificate_issuer_thumbprint = certificate_issuer_thumbprint
 
 
-class ServerCertificateCommonNames(msrest.serialization.Model):
+class ServerCertificateCommonNames(_serialization.Model):
     """Describes a list of server certificates referenced by common name that are used to secure the cluster.
 
-    :param common_names: The list of server certificates referenced by common name that are used to
+    :ivar common_names: The list of server certificates referenced by common name that are used to
      secure the cluster.
-    :type common_names: list[~azure.mgmt.servicefabric.models.ServerCertificateCommonName]
-    :param x509_store_name: The local certificate store location. Possible values include:
-     "AddressBook", "AuthRoot", "CertificateAuthority", "Disallowed", "My", "Root", "TrustedPeople",
+    :vartype common_names: list[~azure.mgmt.servicefabric.models.ServerCertificateCommonName]
+    :ivar x509_store_name: The local certificate store location. Known values are: "AddressBook",
+     "AuthRoot", "CertificateAuthority", "Disallowed", "My", "Root", "TrustedPeople", and
      "TrustedPublisher".
-    :type x509_store_name: str or ~azure.mgmt.servicefabric.models.StoreName
+    :vartype x509_store_name: str or ~azure.mgmt.servicefabric.models.StoreName
     """
 
     _attribute_map = {
-        'common_names': {'key': 'commonNames', 'type': '[ServerCertificateCommonName]'},
-        'x509_store_name': {'key': 'x509StoreName', 'type': 'str'},
+        "common_names": {"key": "commonNames", "type": "[ServerCertificateCommonName]"},
+        "x509_store_name": {"key": "x509StoreName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        common_names: Optional[List["ServerCertificateCommonName"]] = None,
-        x509_store_name: Optional[Union[str, "StoreName"]] = None,
+        common_names: Optional[List["_models.ServerCertificateCommonName"]] = None,
+        x509_store_name: Optional[Union[str, "_models.StoreName"]] = None,
         **kwargs
     ):
-        super(ServerCertificateCommonNames, self).__init__(**kwargs)
+        """
+        :keyword common_names: The list of server certificates referenced by common name that are used
+         to secure the cluster.
+        :paramtype common_names: list[~azure.mgmt.servicefabric.models.ServerCertificateCommonName]
+        :keyword x509_store_name: The local certificate store location. Known values are:
+         "AddressBook", "AuthRoot", "CertificateAuthority", "Disallowed", "My", "Root", "TrustedPeople",
+         and "TrustedPublisher".
+        :paramtype x509_store_name: str or ~azure.mgmt.servicefabric.models.StoreName
+        """
+        super().__init__(**kwargs)
         self.common_names = common_names
         self.x509_store_name = x509_store_name
 
 
-class ServiceCorrelationDescription(msrest.serialization.Model):
+class ServiceCorrelationDescription(_serialization.Model):
     """Creates a particular correlation between services.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param scheme: Required. The ServiceCorrelationScheme which describes the relationship between
-     this service and the service specified via ServiceName. Possible values include: "Invalid",
-     "Affinity", "AlignedAffinity", "NonAlignedAffinity".
-    :type scheme: str or ~azure.mgmt.servicefabric.models.ServiceCorrelationScheme
-    :param service_name: Required. The name of the service that the correlation relationship is
-     established with.
-    :type service_name: str
+    :ivar scheme: The ServiceCorrelationScheme which describes the relationship between this
+     service and the service specified via ServiceName. Required. Known values are: "Invalid",
+     "Affinity", "AlignedAffinity", and "NonAlignedAffinity".
+    :vartype scheme: str or ~azure.mgmt.servicefabric.models.ServiceCorrelationScheme
+    :ivar service_name: The name of the service that the correlation relationship is established
+     with. Required.
+    :vartype service_name: str
     """
 
     _validation = {
-        'scheme': {'required': True},
-        'service_name': {'required': True},
+        "scheme": {"required": True},
+        "service_name": {"required": True},
     }
 
     _attribute_map = {
-        'scheme': {'key': 'scheme', 'type': 'str'},
-        'service_name': {'key': 'serviceName', 'type': 'str'},
+        "scheme": {"key": "scheme", "type": "str"},
+        "service_name": {"key": "serviceName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        scheme: Union[str, "ServiceCorrelationScheme"],
-        service_name: str,
-        **kwargs
-    ):
-        super(ServiceCorrelationDescription, self).__init__(**kwargs)
+    def __init__(self, *, scheme: Union[str, "_models.ServiceCorrelationScheme"], service_name: str, **kwargs):
+        """
+        :keyword scheme: The ServiceCorrelationScheme which describes the relationship between this
+         service and the service specified via ServiceName. Required. Known values are: "Invalid",
+         "Affinity", "AlignedAffinity", and "NonAlignedAffinity".
+        :paramtype scheme: str or ~azure.mgmt.servicefabric.models.ServiceCorrelationScheme
+        :keyword service_name: The name of the service that the correlation relationship is established
+         with. Required.
+        :paramtype service_name: str
+        """
+        super().__init__(**kwargs)
         self.scheme = scheme
         self.service_name = service_name
 
 
-class ServiceLoadMetricDescription(msrest.serialization.Model):
+class ServiceLoadMetricDescription(_serialization.Model):
     """Specifies a metric to load balance a service during runtime.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The name of the metric. If the service chooses to report load during
-     runtime, the load metric name should match the name that is specified in Name exactly. Note
-     that metric names are case sensitive.
-    :type name: str
-    :param weight: The service load metric relative weight, compared to other metrics configured
-     for this service, as a number. Possible values include: "Zero", "Low", "Medium", "High".
-    :type weight: str or ~azure.mgmt.servicefabric.models.ServiceLoadMetricWeight
-    :param primary_default_load: Used only for Stateful services. The default amount of load, as a
+    :ivar name: The name of the metric. If the service chooses to report load during runtime, the
+     load metric name should match the name that is specified in Name exactly. Note that metric
+     names are case sensitive. Required.
+    :vartype name: str
+    :ivar weight: The service load metric relative weight, compared to other metrics configured for
+     this service, as a number. Known values are: "Zero", "Low", "Medium", and "High".
+    :vartype weight: str or ~azure.mgmt.servicefabric.models.ServiceLoadMetricWeight
+    :ivar primary_default_load: Used only for Stateful services. The default amount of load, as a
      number, that this service creates for this metric when it is a Primary replica.
-    :type primary_default_load: int
-    :param secondary_default_load: Used only for Stateful services. The default amount of load, as
-     a number, that this service creates for this metric when it is a Secondary replica.
-    :type secondary_default_load: int
-    :param default_load: Used only for Stateless services. The default amount of load, as a number,
+    :vartype primary_default_load: int
+    :ivar secondary_default_load: Used only for Stateful services. The default amount of load, as a
+     number, that this service creates for this metric when it is a Secondary replica.
+    :vartype secondary_default_load: int
+    :ivar default_load: Used only for Stateless services. The default amount of load, as a number,
      that this service creates for this metric.
-    :type default_load: int
+    :vartype default_load: int
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'weight': {'key': 'weight', 'type': 'str'},
-        'primary_default_load': {'key': 'primaryDefaultLoad', 'type': 'int'},
-        'secondary_default_load': {'key': 'secondaryDefaultLoad', 'type': 'int'},
-        'default_load': {'key': 'defaultLoad', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "weight": {"key": "weight", "type": "str"},
+        "primary_default_load": {"key": "primaryDefaultLoad", "type": "int"},
+        "secondary_default_load": {"key": "secondaryDefaultLoad", "type": "int"},
+        "default_load": {"key": "defaultLoad", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        weight: Optional[Union[str, "ServiceLoadMetricWeight"]] = None,
+        weight: Optional[Union[str, "_models.ServiceLoadMetricWeight"]] = None,
         primary_default_load: Optional[int] = None,
         secondary_default_load: Optional[int] = None,
         default_load: Optional[int] = None,
         **kwargs
     ):
-        super(ServiceLoadMetricDescription, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the metric. If the service chooses to report load during runtime,
+         the load metric name should match the name that is specified in Name exactly. Note that metric
+         names are case sensitive. Required.
+        :paramtype name: str
+        :keyword weight: The service load metric relative weight, compared to other metrics configured
+         for this service, as a number. Known values are: "Zero", "Low", "Medium", and "High".
+        :paramtype weight: str or ~azure.mgmt.servicefabric.models.ServiceLoadMetricWeight
+        :keyword primary_default_load: Used only for Stateful services. The default amount of load, as
+         a number, that this service creates for this metric when it is a Primary replica.
+        :paramtype primary_default_load: int
+        :keyword secondary_default_load: Used only for Stateful services. The default amount of load,
+         as a number, that this service creates for this metric when it is a Secondary replica.
+        :paramtype secondary_default_load: int
+        :keyword default_load: Used only for Stateless services. The default amount of load, as a
+         number, that this service creates for this metric.
+        :paramtype default_load: int
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.weight = weight
         self.primary_default_load = primary_default_load
@@ -2739,42 +3561,32 @@ class ServiceLoadMetricDescription(msrest.serialization.Model):
         self.default_load = default_load
 
 
-class ServicePlacementPolicyDescription(msrest.serialization.Model):
+class ServicePlacementPolicyDescription(_serialization.Model):
     """Describes the policy to be used for placement of a Service Fabric service.
-
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: .
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of placement policy for a service fabric service. Following are
-     the possible values.Constant filled by server.  Possible values include: "Invalid",
-     "InvalidDomain", "RequiredDomain", "PreferredPrimaryDomain", "RequiredDomainDistribution",
-     "NonPartiallyPlaceService".
-    :type type: str or ~azure.mgmt.servicefabric.models.ServicePlacementPolicyType
+    :ivar type: The type of placement policy for a service fabric service. Following are the
+     possible values. Required. Known values are: "Invalid", "InvalidDomain", "RequiredDomain",
+     "PreferredPrimaryDomain", "RequiredDomainDistribution", and "NonPartiallyPlaceService".
+    :vartype type: str or ~azure.mgmt.servicefabric.models.ServicePlacementPolicyType
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {}
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServicePlacementPolicyDescription, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
 
-class ServiceResource(ProxyResource):
+class ServiceResource(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The service resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2785,80 +3597,85 @@ class ServiceResource(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: It will be deprecated in New API, resource location depends on the parent
+    :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param service_kind: The kind of service (Stateless or Stateful).Constant filled by server.
-     Possible values include: "Invalid", "Stateless", "Stateful".
-    :type service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
-    :param service_type_name: The name of the service type.
-    :type service_type_name: str
-    :param partition_description: Describes how the service is partitioned.
-    :type partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
-    :param service_package_activation_mode: The activation Mode of the service package. Possible
-     values include: "SharedProcess", "ExclusiveProcess".
-    :type service_package_activation_mode: str or
+    :ivar service_kind: The kind of service (Stateless or Stateful). Known values are: "Invalid",
+     "Stateless", and "Stateful".
+    :vartype service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
+    :ivar service_type_name: The name of the service type.
+    :vartype service_type_name: str
+    :ivar partition_description: Describes how the service is partitioned.
+    :vartype partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+    :ivar service_package_activation_mode: The activation Mode of the service package. Known values
+     are: "SharedProcess" and "ExclusiveProcess".
+    :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-    :param service_dns_name: Dns name used for the service. If this is specified, then the service
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the service
      can be accessed via its DNS name instead of service name.
-    :type service_dns_name: str
+    :vartype service_dns_name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'properties.serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'properties.servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'properties.defaultMoveCost', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'service_kind': {'key': 'properties.serviceKind', 'type': 'str'},
-        'service_type_name': {'key': 'properties.serviceTypeName', 'type': 'str'},
-        'partition_description': {'key': 'properties.partitionDescription', 'type': 'PartitionSchemeDescription'},
-        'service_package_activation_mode': {'key': 'properties.servicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'properties.serviceDnsName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "placement_constraints": {"key": "properties.placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "properties.correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "properties.serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "properties.servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "properties.defaultMoveCost", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "service_kind": {"key": "properties.serviceKind", "type": "str"},
+        "service_type_name": {"key": "properties.serviceTypeName", "type": "str"},
+        "partition_description": {"key": "properties.partitionDescription", "type": "PartitionSchemeDescription"},
+        "service_package_activation_mode": {"key": "properties.servicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "properties.serviceDnsName", "type": "str"},
     }
 
     def __init__(
@@ -2867,17 +3684,55 @@ class ServiceResource(ProxyResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         service_type_name: Optional[str] = None,
-        partition_description: Optional["PartitionSchemeDescription"] = None,
-        service_package_activation_mode: Optional[Union[str, "ArmServicePackageActivationMode"]] = None,
+        partition_description: Optional["_models.PartitionSchemeDescription"] = None,
+        service_package_activation_mode: Optional[Union[str, "_models.ArmServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
         **kwargs
     ):
-        super(ServiceResource, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: It will be deprecated in New API, resource location depends on the parent
+         resource.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        :keyword service_type_name: The name of the service type.
+        :paramtype service_type_name: str
+        :keyword partition_description: Describes how the service is partitioned.
+        :paramtype partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+        :keyword service_package_activation_mode: The activation Mode of the service package. Known
+         values are: "SharedProcess" and "ExclusiveProcess".
+        :paramtype service_package_activation_mode: str or
+         ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the
+         service can be accessed via its DNS name instead of service name.
+        :paramtype service_dns_name: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.placement_constraints = placement_constraints
         self.correlation_scheme = correlation_scheme
         self.service_load_metrics = service_load_metrics
@@ -2891,79 +3746,105 @@ class ServiceResource(ProxyResource):
         self.service_dns_name = service_dns_name
 
 
-class ServiceResourceList(msrest.serialization.Model):
+class ServiceResourceList(_serialization.Model):
     """The list of service resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value:
-    :type value: list[~azure.mgmt.servicefabric.models.ServiceResource]
+    :ivar value:
+    :vartype value: list[~azure.mgmt.servicefabric.models.ServiceResource]
     :ivar next_link: URL to get the next set of service list results if there are any.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServiceResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ServiceResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ServiceResource"]] = None,
-        **kwargs
-    ):
-        super(ServiceResourceList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ServiceResource"]] = None, **kwargs):
+        """
+        :keyword value:
+        :paramtype value: list[~azure.mgmt.servicefabric.models.ServiceResource]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class ServiceResourcePropertiesBase(msrest.serialization.Model):
+class ServiceResourcePropertiesBase(_serialization.Model):
     """The common service resource properties.
 
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
     """
 
     _attribute_map = {
-        'placement_constraints': {'key': 'placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'defaultMoveCost', 'type': 'str'},
+        "placement_constraints": {"key": "placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "defaultMoveCost", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         **kwargs
     ):
-        super(ServiceResourcePropertiesBase, self).__init__(**kwargs)
+        """
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        """
+        super().__init__(**kwargs)
         self.placement_constraints = placement_constraints
         self.correlation_scheme = correlation_scheme
         self.service_load_metrics = service_load_metrics
@@ -2971,100 +3852,145 @@ class ServiceResourcePropertiesBase(msrest.serialization.Model):
         self.default_move_cost = default_move_cost
 
 
-class ServiceResourceProperties(ServiceResourcePropertiesBase):
+class ServiceResourceProperties(ServiceResourcePropertiesBase):  # pylint: disable=too-many-instance-attributes
     """The service resource properties.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: StatefulServiceProperties, StatelessServiceProperties.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    StatefulServiceProperties, StatelessServiceProperties
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param service_kind: Required. The kind of service (Stateless or Stateful).Constant filled by
-     server.  Possible values include: "Invalid", "Stateless", "Stateful".
-    :type service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
-    :param service_type_name: The name of the service type.
-    :type service_type_name: str
-    :param partition_description: Describes how the service is partitioned.
-    :type partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
-    :param service_package_activation_mode: The activation Mode of the service package. Possible
-     values include: "SharedProcess", "ExclusiveProcess".
-    :type service_package_activation_mode: str or
+    :ivar service_kind: The kind of service (Stateless or Stateful). Required. Known values are:
+     "Invalid", "Stateless", and "Stateful".
+    :vartype service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
+    :ivar service_type_name: The name of the service type.
+    :vartype service_type_name: str
+    :ivar partition_description: Describes how the service is partitioned.
+    :vartype partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+    :ivar service_package_activation_mode: The activation Mode of the service package. Known values
+     are: "SharedProcess" and "ExclusiveProcess".
+    :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-    :param service_dns_name: Dns name used for the service. If this is specified, then the service
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the service
      can be accessed via its DNS name instead of service name.
-    :type service_dns_name: str
+    :vartype service_dns_name: str
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'service_kind': {'required': True},
+        "provisioning_state": {"readonly": True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'placement_constraints': {'key': 'placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'defaultMoveCost', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'service_kind': {'key': 'serviceKind', 'type': 'str'},
-        'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
-        'partition_description': {'key': 'partitionDescription', 'type': 'PartitionSchemeDescription'},
-        'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
+        "placement_constraints": {"key": "placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "defaultMoveCost", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "service_kind": {"key": "serviceKind", "type": "str"},
+        "service_type_name": {"key": "serviceTypeName", "type": "str"},
+        "partition_description": {"key": "partitionDescription", "type": "PartitionSchemeDescription"},
+        "service_package_activation_mode": {"key": "servicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "serviceDnsName", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServiceProperties', 'Stateless': 'StatelessServiceProperties'}
+        "service_kind": {"Stateful": "StatefulServiceProperties", "Stateless": "StatelessServiceProperties"}
     }
 
     def __init__(
         self,
         *,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         service_type_name: Optional[str] = None,
-        partition_description: Optional["PartitionSchemeDescription"] = None,
-        service_package_activation_mode: Optional[Union[str, "ArmServicePackageActivationMode"]] = None,
+        partition_description: Optional["_models.PartitionSchemeDescription"] = None,
+        service_package_activation_mode: Optional[Union[str, "_models.ArmServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
         **kwargs
     ):
-        super(ServiceResourceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, **kwargs)
+        """
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        :keyword service_type_name: The name of the service type.
+        :paramtype service_type_name: str
+        :keyword partition_description: Describes how the service is partitioned.
+        :paramtype partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+        :keyword service_package_activation_mode: The activation Mode of the service package. Known
+         values are: "SharedProcess" and "ExclusiveProcess".
+        :paramtype service_package_activation_mode: str or
+         ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the
+         service can be accessed via its DNS name instead of service name.
+        :paramtype service_dns_name: str
+        """
+        super().__init__(
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            service_load_metrics=service_load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            **kwargs
+        )
         self.provisioning_state = None
-        self.service_kind = 'ServiceResourceProperties'  # type: str
+        self.service_kind = None  # type: Optional[str]
         self.service_type_name = service_type_name
         self.partition_description = partition_description
         self.service_package_activation_mode = service_package_activation_mode
         self.service_dns_name = service_dns_name
 
 
-class ServiceResourceUpdate(ProxyResource):
+class ServiceResourceUpdate(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """The service resource for patch operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3075,60 +4001,65 @@ class ServiceResourceUpdate(ProxyResource):
     :vartype name: str
     :ivar type: Azure resource type.
     :vartype type: str
-    :param location: It will be deprecated in New API, resource location depends on the parent
+    :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
-    :type location: str
-    :param tags: A set of tags. Azure resource tags.
-    :type tags: dict[str, str]
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
-    :param service_kind: The kind of service (Stateless or Stateful).Constant filled by server.
-     Possible values include: "Invalid", "Stateless", "Stateful".
-    :type service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar service_kind: The kind of service (Stateless or Stateful). Known values are: "Invalid",
+     "Stateless", and "Stateful".
+    :vartype service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'etag': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'placement_constraints': {'key': 'properties.placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'properties.correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'properties.serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'properties.servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'properties.defaultMoveCost', 'type': 'str'},
-        'service_kind': {'key': 'properties.serviceKind', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "placement_constraints": {"key": "properties.placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "properties.correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "properties.serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "properties.servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "properties.defaultMoveCost", "type": "str"},
+        "service_kind": {"key": "properties.serviceKind", "type": "str"},
     }
 
     def __init__(
@@ -3137,13 +4068,40 @@ class ServiceResourceUpdate(ProxyResource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         **kwargs
     ):
-        super(ServiceResourceUpdate, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: It will be deprecated in New API, resource location depends on the parent
+         resource.
+        :paramtype location: str
+        :keyword tags: Azure resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.placement_constraints = placement_constraints
         self.correlation_scheme = correlation_scheme
         self.service_load_metrics = service_load_metrics
@@ -3155,183 +4113,221 @@ class ServiceResourceUpdate(ProxyResource):
 class ServiceResourceUpdateProperties(ServiceResourcePropertiesBase):
     """The service resource properties for patch operations.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: StatefulServiceUpdateProperties, StatelessServiceUpdateProperties.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    StatefulServiceUpdateProperties, StatelessServiceUpdateProperties
 
     All required parameters must be populated in order to send to Azure.
 
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
-    :param service_kind: Required. The kind of service (Stateless or Stateful).Constant filled by
-     server.  Possible values include: "Invalid", "Stateless", "Stateful".
-    :type service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar service_kind: The kind of service (Stateless or Stateful). Required. Known values are:
+     "Invalid", "Stateless", and "Stateful".
+    :vartype service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
     """
 
     _validation = {
-        'service_kind': {'required': True},
+        "service_kind": {"required": True},
     }
 
     _attribute_map = {
-        'placement_constraints': {'key': 'placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'defaultMoveCost', 'type': 'str'},
-        'service_kind': {'key': 'serviceKind', 'type': 'str'},
+        "placement_constraints": {"key": "placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "defaultMoveCost", "type": "str"},
+        "service_kind": {"key": "serviceKind", "type": "str"},
     }
 
     _subtype_map = {
-        'service_kind': {'Stateful': 'StatefulServiceUpdateProperties', 'Stateless': 'StatelessServiceUpdateProperties'}
+        "service_kind": {"Stateful": "StatefulServiceUpdateProperties", "Stateless": "StatelessServiceUpdateProperties"}
     }
 
     def __init__(
         self,
         *,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         **kwargs
     ):
-        super(ServiceResourceUpdateProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, **kwargs)
-        self.service_kind = 'ServiceResourceUpdateProperties'  # type: str
+        """
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        """
+        super().__init__(
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            service_load_metrics=service_load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            **kwargs
+        )
+        self.service_kind = None  # type: Optional[str]
 
 
-class ServiceTypeDeltaHealthPolicy(msrest.serialization.Model):
+class ServiceTypeDeltaHealthPolicy(_serialization.Model):
     """Represents the delta health policy used to evaluate the health of services belonging to a service type when upgrading the cluster.
 
-    :param max_percent_delta_unhealthy_services: The maximum allowed percentage of services health
+    :ivar max_percent_delta_unhealthy_services: The maximum allowed percentage of services health
      degradation allowed during cluster upgrades.
      The delta is measured between the state of the services at the beginning of upgrade and the
      state of the services at the time of the health evaluation.
      The check is performed after every upgrade domain upgrade completion to make sure the global
      state of the cluster is within tolerated limits.
-    :type max_percent_delta_unhealthy_services: int
+    :vartype max_percent_delta_unhealthy_services: int
     """
 
     _validation = {
-        'max_percent_delta_unhealthy_services': {'maximum': 100, 'minimum': 0},
+        "max_percent_delta_unhealthy_services": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'max_percent_delta_unhealthy_services': {'key': 'maxPercentDeltaUnhealthyServices', 'type': 'int'},
+        "max_percent_delta_unhealthy_services": {"key": "maxPercentDeltaUnhealthyServices", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        max_percent_delta_unhealthy_services: Optional[int] = 0,
-        **kwargs
-    ):
-        super(ServiceTypeDeltaHealthPolicy, self).__init__(**kwargs)
+    def __init__(self, *, max_percent_delta_unhealthy_services: int = 0, **kwargs):
+        """
+        :keyword max_percent_delta_unhealthy_services: The maximum allowed percentage of services
+         health degradation allowed during cluster upgrades.
+         The delta is measured between the state of the services at the beginning of upgrade and the
+         state of the services at the time of the health evaluation.
+         The check is performed after every upgrade domain upgrade completion to make sure the global
+         state of the cluster is within tolerated limits.
+        :paramtype max_percent_delta_unhealthy_services: int
+        """
+        super().__init__(**kwargs)
         self.max_percent_delta_unhealthy_services = max_percent_delta_unhealthy_services
 
 
-class ServiceTypeHealthPolicy(msrest.serialization.Model):
+class ServiceTypeHealthPolicy(_serialization.Model):
     """Represents the health policy used to evaluate the health of services belonging to a service type.
 
-    :param max_percent_unhealthy_services: The maximum percentage of services allowed to be
+    :ivar max_percent_unhealthy_services: The maximum percentage of services allowed to be
      unhealthy before your application is considered in error.
-    :type max_percent_unhealthy_services: int
+    :vartype max_percent_unhealthy_services: int
     """
 
     _validation = {
-        'max_percent_unhealthy_services': {'maximum': 100, 'minimum': 0},
+        "max_percent_unhealthy_services": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'max_percent_unhealthy_services': {'key': 'maxPercentUnhealthyServices', 'type': 'int'},
+        "max_percent_unhealthy_services": {"key": "maxPercentUnhealthyServices", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        max_percent_unhealthy_services: Optional[int] = 0,
-        **kwargs
-    ):
-        super(ServiceTypeHealthPolicy, self).__init__(**kwargs)
+    def __init__(self, *, max_percent_unhealthy_services: int = 0, **kwargs):
+        """
+        :keyword max_percent_unhealthy_services: The maximum percentage of services allowed to be
+         unhealthy before your application is considered in error.
+        :paramtype max_percent_unhealthy_services: int
+        """
+        super().__init__(**kwargs)
         self.max_percent_unhealthy_services = max_percent_unhealthy_services
 
 
-class SettingsParameterDescription(msrest.serialization.Model):
+class SettingsParameterDescription(_serialization.Model):
     """Describes a parameter in fabric settings of the cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The parameter name of fabric setting.
-    :type name: str
-    :param value: Required. The parameter value of fabric setting.
-    :type value: str
+    :ivar name: The parameter name of fabric setting. Required.
+    :vartype name: str
+    :ivar value: The parameter value of fabric setting. Required.
+    :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: str,
-        **kwargs
-    ):
-        super(SettingsParameterDescription, self).__init__(**kwargs)
+    def __init__(self, *, name: str, value: str, **kwargs):
+        """
+        :keyword name: The parameter name of fabric setting. Required.
+        :paramtype name: str
+        :keyword value: The parameter value of fabric setting. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class SettingsSectionDescription(msrest.serialization.Model):
+class SettingsSectionDescription(_serialization.Model):
     """Describes a section in the fabric settings of the cluster.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The section name of the fabric settings.
-    :type name: str
-    :param parameters: Required. The collection of parameters in the section.
-    :type parameters: list[~azure.mgmt.servicefabric.models.SettingsParameterDescription]
+    :ivar name: The section name of the fabric settings. Required.
+    :vartype name: str
+    :ivar parameters: The collection of parameters in the section. Required.
+    :vartype parameters: list[~azure.mgmt.servicefabric.models.SettingsParameterDescription]
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[SettingsParameterDescription]'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[SettingsParameterDescription]"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        parameters: List["SettingsParameterDescription"],
-        **kwargs
-    ):
-        super(SettingsSectionDescription, self).__init__(**kwargs)
+    def __init__(self, *, name: str, parameters: List["_models.SettingsParameterDescription"], **kwargs):
+        """
+        :keyword name: The section name of the fabric settings. Required.
+        :paramtype name: str
+        :keyword parameters: The collection of parameters in the section. Required.
+        :paramtype parameters: list[~azure.mgmt.servicefabric.models.SettingsParameterDescription]
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.parameters = parameters
 
@@ -3341,125 +4337,128 @@ class SingletonPartitionSchemeDescription(PartitionSchemeDescription):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param partition_scheme: Required. Specifies how the service is partitioned.Constant filled by
-     server.  Possible values include: "Invalid", "Singleton", "UniformInt64Range", "Named".
-    :type partition_scheme: str or ~azure.mgmt.servicefabric.models.PartitionScheme
+    :ivar partition_scheme: Specifies how the service is partitioned. Required. Known values are:
+     "Invalid", "Singleton", "UniformInt64Range", and "Named".
+    :vartype partition_scheme: str or ~azure.mgmt.servicefabric.models.PartitionScheme
     """
 
     _validation = {
-        'partition_scheme': {'required': True},
+        "partition_scheme": {"required": True},
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
+        "partition_scheme": {"key": "partitionScheme", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SingletonPartitionSchemeDescription, self).__init__(**kwargs)
-        self.partition_scheme = 'Singleton'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.partition_scheme = "Singleton"  # type: str
 
 
-class StatefulServiceProperties(ServiceResourceProperties):
+class StatefulServiceProperties(ServiceResourceProperties):  # pylint: disable=too-many-instance-attributes
     """The properties of a stateful service resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param service_kind: Required. The kind of service (Stateless or Stateful).Constant filled by
-     server.  Possible values include: "Invalid", "Stateless", "Stateful".
-    :type service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
-    :param service_type_name: The name of the service type.
-    :type service_type_name: str
-    :param partition_description: Describes how the service is partitioned.
-    :type partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
-    :param service_package_activation_mode: The activation Mode of the service package. Possible
-     values include: "SharedProcess", "ExclusiveProcess".
-    :type service_package_activation_mode: str or
+    :ivar service_kind: The kind of service (Stateless or Stateful). Required. Known values are:
+     "Invalid", "Stateless", and "Stateful".
+    :vartype service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
+    :ivar service_type_name: The name of the service type.
+    :vartype service_type_name: str
+    :ivar partition_description: Describes how the service is partitioned.
+    :vartype partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+    :ivar service_package_activation_mode: The activation Mode of the service package. Known values
+     are: "SharedProcess" and "ExclusiveProcess".
+    :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-    :param service_dns_name: Dns name used for the service. If this is specified, then the service
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the service
      can be accessed via its DNS name instead of service name.
-    :type service_dns_name: str
-    :param has_persisted_state: A flag indicating whether this is a persistent service which stores
+    :vartype service_dns_name: str
+    :ivar has_persisted_state: A flag indicating whether this is a persistent service which stores
      states on the local disk. If it is then the value of this property is true, if not it is false.
-    :type has_persisted_state: bool
-    :param target_replica_set_size: The target replica set size as a number.
-    :type target_replica_set_size: int
-    :param min_replica_set_size: The minimum replica set size as a number.
-    :type min_replica_set_size: int
-    :param replica_restart_wait_duration: The duration between when a replica goes down and when a
+    :vartype has_persisted_state: bool
+    :ivar target_replica_set_size: The target replica set size as a number.
+    :vartype target_replica_set_size: int
+    :ivar min_replica_set_size: The minimum replica set size as a number.
+    :vartype min_replica_set_size: int
+    :ivar replica_restart_wait_duration: The duration between when a replica goes down and when a
      new replica is created, represented in ISO 8601 format (hh:mm:ss.s).
-    :type replica_restart_wait_duration: ~datetime.datetime
-    :param quorum_loss_wait_duration: The maximum duration for which a partition is allowed to be
-     in a state of quorum loss, represented in ISO 8601 format (hh:mm:ss.s).
-    :type quorum_loss_wait_duration: ~datetime.datetime
-    :param stand_by_replica_keep_duration: The definition on how long StandBy replicas should be
+    :vartype replica_restart_wait_duration: ~datetime.datetime
+    :ivar quorum_loss_wait_duration: The maximum duration for which a partition is allowed to be in
+     a state of quorum loss, represented in ISO 8601 format (hh:mm:ss.s).
+    :vartype quorum_loss_wait_duration: ~datetime.datetime
+    :ivar stand_by_replica_keep_duration: The definition on how long StandBy replicas should be
      maintained before being removed, represented in ISO 8601 format (hh:mm:ss.s).
-    :type stand_by_replica_keep_duration: ~datetime.datetime
+    :vartype stand_by_replica_keep_duration: ~datetime.datetime
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'service_kind': {'required': True},
-        'target_replica_set_size': {'minimum': 1},
-        'min_replica_set_size': {'minimum': 1},
+        "provisioning_state": {"readonly": True},
+        "service_kind": {"required": True},
+        "target_replica_set_size": {"minimum": 1},
+        "min_replica_set_size": {"minimum": 1},
     }
 
     _attribute_map = {
-        'placement_constraints': {'key': 'placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'defaultMoveCost', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'service_kind': {'key': 'serviceKind', 'type': 'str'},
-        'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
-        'partition_description': {'key': 'partitionDescription', 'type': 'PartitionSchemeDescription'},
-        'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
-        'has_persisted_state': {'key': 'hasPersistedState', 'type': 'bool'},
-        'target_replica_set_size': {'key': 'targetReplicaSetSize', 'type': 'int'},
-        'min_replica_set_size': {'key': 'minReplicaSetSize', 'type': 'int'},
-        'replica_restart_wait_duration': {'key': 'replicaRestartWaitDuration', 'type': 'iso-8601'},
-        'quorum_loss_wait_duration': {'key': 'quorumLossWaitDuration', 'type': 'iso-8601'},
-        'stand_by_replica_keep_duration': {'key': 'standByReplicaKeepDuration', 'type': 'iso-8601'},
+        "placement_constraints": {"key": "placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "defaultMoveCost", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "service_kind": {"key": "serviceKind", "type": "str"},
+        "service_type_name": {"key": "serviceTypeName", "type": "str"},
+        "partition_description": {"key": "partitionDescription", "type": "PartitionSchemeDescription"},
+        "service_package_activation_mode": {"key": "servicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "serviceDnsName", "type": "str"},
+        "has_persisted_state": {"key": "hasPersistedState", "type": "bool"},
+        "target_replica_set_size": {"key": "targetReplicaSetSize", "type": "int"},
+        "min_replica_set_size": {"key": "minReplicaSetSize", "type": "int"},
+        "replica_restart_wait_duration": {"key": "replicaRestartWaitDuration", "type": "iso-8601"},
+        "quorum_loss_wait_duration": {"key": "quorumLossWaitDuration", "type": "iso-8601"},
+        "stand_by_replica_keep_duration": {"key": "standByReplicaKeepDuration", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         service_type_name: Optional[str] = None,
-        partition_description: Optional["PartitionSchemeDescription"] = None,
-        service_package_activation_mode: Optional[Union[str, "ArmServicePackageActivationMode"]] = None,
+        partition_description: Optional["_models.PartitionSchemeDescription"] = None,
+        service_package_activation_mode: Optional[Union[str, "_models.ArmServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
         has_persisted_state: Optional[bool] = None,
         target_replica_set_size: Optional[int] = None,
@@ -3469,8 +4468,69 @@ class StatefulServiceProperties(ServiceResourceProperties):
         stand_by_replica_keep_duration: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(StatefulServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, service_type_name=service_type_name, partition_description=partition_description, service_package_activation_mode=service_package_activation_mode, service_dns_name=service_dns_name, **kwargs)
-        self.service_kind = 'Stateful'  # type: str
+        """
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        :keyword service_type_name: The name of the service type.
+        :paramtype service_type_name: str
+        :keyword partition_description: Describes how the service is partitioned.
+        :paramtype partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+        :keyword service_package_activation_mode: The activation Mode of the service package. Known
+         values are: "SharedProcess" and "ExclusiveProcess".
+        :paramtype service_package_activation_mode: str or
+         ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the
+         service can be accessed via its DNS name instead of service name.
+        :paramtype service_dns_name: str
+        :keyword has_persisted_state: A flag indicating whether this is a persistent service which
+         stores states on the local disk. If it is then the value of this property is true, if not it is
+         false.
+        :paramtype has_persisted_state: bool
+        :keyword target_replica_set_size: The target replica set size as a number.
+        :paramtype target_replica_set_size: int
+        :keyword min_replica_set_size: The minimum replica set size as a number.
+        :paramtype min_replica_set_size: int
+        :keyword replica_restart_wait_duration: The duration between when a replica goes down and when
+         a new replica is created, represented in ISO 8601 format (hh:mm:ss.s).
+        :paramtype replica_restart_wait_duration: ~datetime.datetime
+        :keyword quorum_loss_wait_duration: The maximum duration for which a partition is allowed to be
+         in a state of quorum loss, represented in ISO 8601 format (hh:mm:ss.s).
+        :paramtype quorum_loss_wait_duration: ~datetime.datetime
+        :keyword stand_by_replica_keep_duration: The definition on how long StandBy replicas should be
+         maintained before being removed, represented in ISO 8601 format (hh:mm:ss.s).
+        :paramtype stand_by_replica_keep_duration: ~datetime.datetime
+        """
+        super().__init__(
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            service_load_metrics=service_load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            service_type_name=service_type_name,
+            partition_description=partition_description,
+            service_package_activation_mode=service_package_activation_mode,
+            service_dns_name=service_dns_name,
+            **kwargs
+        )
+        self.service_kind = "Stateful"  # type: str
         self.has_persisted_state = has_persisted_state
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
@@ -3479,75 +4539,80 @@ class StatefulServiceProperties(ServiceResourceProperties):
         self.stand_by_replica_keep_duration = stand_by_replica_keep_duration
 
 
-class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):
+class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):  # pylint: disable=too-many-instance-attributes
     """The properties of a stateful service resource for patch operations.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
-    :param service_kind: Required. The kind of service (Stateless or Stateful).Constant filled by
-     server.  Possible values include: "Invalid", "Stateless", "Stateful".
-    :type service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
-    :param target_replica_set_size: The target replica set size as a number.
-    :type target_replica_set_size: int
-    :param min_replica_set_size: The minimum replica set size as a number.
-    :type min_replica_set_size: int
-    :param replica_restart_wait_duration: The duration between when a replica goes down and when a
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar service_kind: The kind of service (Stateless or Stateful). Required. Known values are:
+     "Invalid", "Stateless", and "Stateful".
+    :vartype service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
+    :ivar target_replica_set_size: The target replica set size as a number.
+    :vartype target_replica_set_size: int
+    :ivar min_replica_set_size: The minimum replica set size as a number.
+    :vartype min_replica_set_size: int
+    :ivar replica_restart_wait_duration: The duration between when a replica goes down and when a
      new replica is created, represented in ISO 8601 format (hh:mm:ss.s).
-    :type replica_restart_wait_duration: ~datetime.datetime
-    :param quorum_loss_wait_duration: The maximum duration for which a partition is allowed to be
-     in a state of quorum loss, represented in ISO 8601 format (hh:mm:ss.s).
-    :type quorum_loss_wait_duration: ~datetime.datetime
-    :param stand_by_replica_keep_duration: The definition on how long StandBy replicas should be
+    :vartype replica_restart_wait_duration: ~datetime.datetime
+    :ivar quorum_loss_wait_duration: The maximum duration for which a partition is allowed to be in
+     a state of quorum loss, represented in ISO 8601 format (hh:mm:ss.s).
+    :vartype quorum_loss_wait_duration: ~datetime.datetime
+    :ivar stand_by_replica_keep_duration: The definition on how long StandBy replicas should be
      maintained before being removed, represented in ISO 8601 format (hh:mm:ss.s).
-    :type stand_by_replica_keep_duration: ~datetime.datetime
+    :vartype stand_by_replica_keep_duration: ~datetime.datetime
     """
 
     _validation = {
-        'service_kind': {'required': True},
-        'target_replica_set_size': {'minimum': 1},
-        'min_replica_set_size': {'minimum': 1},
+        "service_kind": {"required": True},
+        "target_replica_set_size": {"minimum": 1},
+        "min_replica_set_size": {"minimum": 1},
     }
 
     _attribute_map = {
-        'placement_constraints': {'key': 'placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'defaultMoveCost', 'type': 'str'},
-        'service_kind': {'key': 'serviceKind', 'type': 'str'},
-        'target_replica_set_size': {'key': 'targetReplicaSetSize', 'type': 'int'},
-        'min_replica_set_size': {'key': 'minReplicaSetSize', 'type': 'int'},
-        'replica_restart_wait_duration': {'key': 'replicaRestartWaitDuration', 'type': 'iso-8601'},
-        'quorum_loss_wait_duration': {'key': 'quorumLossWaitDuration', 'type': 'iso-8601'},
-        'stand_by_replica_keep_duration': {'key': 'standByReplicaKeepDuration', 'type': 'iso-8601'},
+        "placement_constraints": {"key": "placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "defaultMoveCost", "type": "str"},
+        "service_kind": {"key": "serviceKind", "type": "str"},
+        "target_replica_set_size": {"key": "targetReplicaSetSize", "type": "int"},
+        "min_replica_set_size": {"key": "minReplicaSetSize", "type": "int"},
+        "replica_restart_wait_duration": {"key": "replicaRestartWaitDuration", "type": "iso-8601"},
+        "quorum_loss_wait_duration": {"key": "quorumLossWaitDuration", "type": "iso-8601"},
+        "stand_by_replica_keep_duration": {"key": "standByReplicaKeepDuration", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         target_replica_set_size: Optional[int] = None,
         min_replica_set_size: Optional[int] = None,
         replica_restart_wait_duration: Optional[datetime.datetime] = None,
@@ -3555,8 +4620,50 @@ class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):
         stand_by_replica_keep_duration: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(StatefulServiceUpdateProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, **kwargs)
-        self.service_kind = 'Stateful'  # type: str
+        """
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        :keyword target_replica_set_size: The target replica set size as a number.
+        :paramtype target_replica_set_size: int
+        :keyword min_replica_set_size: The minimum replica set size as a number.
+        :paramtype min_replica_set_size: int
+        :keyword replica_restart_wait_duration: The duration between when a replica goes down and when
+         a new replica is created, represented in ISO 8601 format (hh:mm:ss.s).
+        :paramtype replica_restart_wait_duration: ~datetime.datetime
+        :keyword quorum_loss_wait_duration: The maximum duration for which a partition is allowed to be
+         in a state of quorum loss, represented in ISO 8601 format (hh:mm:ss.s).
+        :paramtype quorum_loss_wait_duration: ~datetime.datetime
+        :keyword stand_by_replica_keep_duration: The definition on how long StandBy replicas should be
+         maintained before being removed, represented in ISO 8601 format (hh:mm:ss.s).
+        :paramtype stand_by_replica_keep_duration: ~datetime.datetime
+        """
+        super().__init__(
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            service_load_metrics=service_load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            **kwargs
+        )
+        self.service_kind = "Stateful"  # type: str
         self.target_replica_set_size = target_replica_set_size
         self.min_replica_set_size = min_replica_set_size
         self.replica_restart_wait_duration = replica_restart_wait_duration
@@ -3564,100 +4671,157 @@ class StatefulServiceUpdateProperties(ServiceResourceUpdateProperties):
         self.stand_by_replica_keep_duration = stand_by_replica_keep_duration
 
 
-class StatelessServiceProperties(ServiceResourceProperties):
+class StatelessServiceProperties(ServiceResourceProperties):  # pylint: disable=too-many-instance-attributes
     """The properties of a stateless service resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
     :ivar provisioning_state: The current deployment or provisioning state, which only appears in
      the response.
     :vartype provisioning_state: str
-    :param service_kind: Required. The kind of service (Stateless or Stateful).Constant filled by
-     server.  Possible values include: "Invalid", "Stateless", "Stateful".
-    :type service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
-    :param service_type_name: The name of the service type.
-    :type service_type_name: str
-    :param partition_description: Describes how the service is partitioned.
-    :type partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
-    :param service_package_activation_mode: The activation Mode of the service package. Possible
-     values include: "SharedProcess", "ExclusiveProcess".
-    :type service_package_activation_mode: str or
+    :ivar service_kind: The kind of service (Stateless or Stateful). Required. Known values are:
+     "Invalid", "Stateless", and "Stateful".
+    :vartype service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
+    :ivar service_type_name: The name of the service type.
+    :vartype service_type_name: str
+    :ivar partition_description: Describes how the service is partitioned.
+    :vartype partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+    :ivar service_package_activation_mode: The activation Mode of the service package. Known values
+     are: "SharedProcess" and "ExclusiveProcess".
+    :vartype service_package_activation_mode: str or
      ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
-    :param service_dns_name: Dns name used for the service. If this is specified, then the service
+    :ivar service_dns_name: Dns name used for the service. If this is specified, then the service
      can be accessed via its DNS name instead of service name.
-    :type service_dns_name: str
-    :param instance_count: The instance count.
-    :type instance_count: int
-    :param instance_close_delay_duration: Delay duration for RequestDrain feature to ensures that
+    :vartype service_dns_name: str
+    :ivar instance_count: The instance count.
+    :vartype instance_count: int
+    :ivar instance_close_delay_duration: Delay duration for RequestDrain feature to ensures that
      the endpoint advertised by the stateless instance is removed before the delay starts prior to
      closing the instance. This delay enables existing requests to drain gracefully before the
      instance actually goes down
      (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
-     It is first interpreted as a string representing an ISO 8601 duration. If that fails, then it
-     is interpreted as a number representing the total number of milliseconds.
-    :type instance_close_delay_duration: str
+     It is represented in ISO 8601 format (hh:mm:ss.s).
+    :vartype instance_close_delay_duration: str
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'service_kind': {'required': True},
-        'instance_count': {'minimum': -1},
+        "provisioning_state": {"readonly": True},
+        "service_kind": {"required": True},
+        "instance_count": {"minimum": -1},
     }
 
     _attribute_map = {
-        'placement_constraints': {'key': 'placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'defaultMoveCost', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'service_kind': {'key': 'serviceKind', 'type': 'str'},
-        'service_type_name': {'key': 'serviceTypeName', 'type': 'str'},
-        'partition_description': {'key': 'partitionDescription', 'type': 'PartitionSchemeDescription'},
-        'service_package_activation_mode': {'key': 'servicePackageActivationMode', 'type': 'str'},
-        'service_dns_name': {'key': 'serviceDnsName', 'type': 'str'},
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'instance_close_delay_duration': {'key': 'instanceCloseDelayDuration', 'type': 'str'},
+        "placement_constraints": {"key": "placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "defaultMoveCost", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "service_kind": {"key": "serviceKind", "type": "str"},
+        "service_type_name": {"key": "serviceTypeName", "type": "str"},
+        "partition_description": {"key": "partitionDescription", "type": "PartitionSchemeDescription"},
+        "service_package_activation_mode": {"key": "servicePackageActivationMode", "type": "str"},
+        "service_dns_name": {"key": "serviceDnsName", "type": "str"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+        "instance_close_delay_duration": {"key": "instanceCloseDelayDuration", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         service_type_name: Optional[str] = None,
-        partition_description: Optional["PartitionSchemeDescription"] = None,
-        service_package_activation_mode: Optional[Union[str, "ArmServicePackageActivationMode"]] = None,
+        partition_description: Optional["_models.PartitionSchemeDescription"] = None,
+        service_package_activation_mode: Optional[Union[str, "_models.ArmServicePackageActivationMode"]] = None,
         service_dns_name: Optional[str] = None,
         instance_count: Optional[int] = None,
         instance_close_delay_duration: Optional[str] = None,
         **kwargs
     ):
-        super(StatelessServiceProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, service_type_name=service_type_name, partition_description=partition_description, service_package_activation_mode=service_package_activation_mode, service_dns_name=service_dns_name, **kwargs)
-        self.service_kind = 'Stateless'  # type: str
+        """
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        :keyword service_type_name: The name of the service type.
+        :paramtype service_type_name: str
+        :keyword partition_description: Describes how the service is partitioned.
+        :paramtype partition_description: ~azure.mgmt.servicefabric.models.PartitionSchemeDescription
+        :keyword service_package_activation_mode: The activation Mode of the service package. Known
+         values are: "SharedProcess" and "ExclusiveProcess".
+        :paramtype service_package_activation_mode: str or
+         ~azure.mgmt.servicefabric.models.ArmServicePackageActivationMode
+        :keyword service_dns_name: Dns name used for the service. If this is specified, then the
+         service can be accessed via its DNS name instead of service name.
+        :paramtype service_dns_name: str
+        :keyword instance_count: The instance count.
+        :paramtype instance_count: int
+        :keyword instance_close_delay_duration: Delay duration for RequestDrain feature to ensures that
+         the endpoint advertised by the stateless instance is removed before the delay starts prior to
+         closing the instance. This delay enables existing requests to drain gracefully before the
+         instance actually goes down
+         (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
+         It is represented in ISO 8601 format (hh:mm:ss.s).
+        :paramtype instance_close_delay_duration: str
+        """
+        super().__init__(
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            service_load_metrics=service_load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            service_type_name=service_type_name,
+            partition_description=partition_description,
+            service_package_activation_mode=service_package_activation_mode,
+            service_dns_name=service_dns_name,
+            **kwargs
+        )
+        self.service_kind = "Stateless"  # type: str
         self.instance_count = instance_count
         self.instance_close_delay_duration = instance_close_delay_duration
 
@@ -3667,97 +4831,141 @@ class StatelessServiceUpdateProperties(ServiceResourceUpdateProperties):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param placement_constraints: The placement constraints as a string. Placement constraints are
+    :ivar placement_constraints: The placement constraints as a string. Placement constraints are
      boolean expressions on node properties and allow for restricting a service to particular nodes
      based on the service requirements. For example, to place a service on nodes where NodeType is
      blue specify the following: "NodeColor == blue)".
-    :type placement_constraints: str
-    :param correlation_scheme: A list that describes the correlation of the service with other
+    :vartype placement_constraints: str
+    :ivar correlation_scheme: A list that describes the correlation of the service with other
      services.
-    :type correlation_scheme: list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
-    :param service_load_metrics: The service load metrics is given as an array of
+    :vartype correlation_scheme:
+     list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+    :ivar service_load_metrics: The service load metrics is given as an array of
      ServiceLoadMetricDescription objects.
-    :type service_load_metrics: list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
-    :param service_placement_policies: A list that describes the correlation of the service with
+    :vartype service_load_metrics:
+     list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+    :ivar service_placement_policies: A list that describes the correlation of the service with
      other services.
-    :type service_placement_policies:
+    :vartype service_placement_policies:
      list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
-    :param default_move_cost: Specifies the move cost for the service. Possible values include:
-     "Zero", "Low", "Medium", "High".
-    :type default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
-    :param service_kind: Required. The kind of service (Stateless or Stateful).Constant filled by
-     server.  Possible values include: "Invalid", "Stateless", "Stateful".
-    :type service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
-    :param instance_count: The instance count.
-    :type instance_count: int
-    :param instance_close_delay_duration: Delay duration for RequestDrain feature to ensures that
+    :ivar default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+     "Low", "Medium", and "High".
+    :vartype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+    :ivar service_kind: The kind of service (Stateless or Stateful). Required. Known values are:
+     "Invalid", "Stateless", and "Stateful".
+    :vartype service_kind: str or ~azure.mgmt.servicefabric.models.ServiceKind
+    :ivar instance_count: The instance count.
+    :vartype instance_count: int
+    :ivar instance_close_delay_duration: Delay duration for RequestDrain feature to ensures that
      the endpoint advertised by the stateless instance is removed before the delay starts prior to
      closing the instance. This delay enables existing requests to drain gracefully before the
      instance actually goes down
      (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
-     It is first interpreted as a string representing an ISO 8601 duration. If that fails, then it
-     is interpreted as a number representing the total number of milliseconds.
-    :type instance_close_delay_duration: str
+     It is first interpreted as a string representing an ISO 8601 duration. It is represented in ISO
+     8601 format (hh:mm:ss.s).
+    :vartype instance_close_delay_duration: str
     """
 
     _validation = {
-        'service_kind': {'required': True},
-        'instance_count': {'minimum': -1},
+        "service_kind": {"required": True},
+        "instance_count": {"minimum": -1},
     }
 
     _attribute_map = {
-        'placement_constraints': {'key': 'placementConstraints', 'type': 'str'},
-        'correlation_scheme': {'key': 'correlationScheme', 'type': '[ServiceCorrelationDescription]'},
-        'service_load_metrics': {'key': 'serviceLoadMetrics', 'type': '[ServiceLoadMetricDescription]'},
-        'service_placement_policies': {'key': 'servicePlacementPolicies', 'type': '[ServicePlacementPolicyDescription]'},
-        'default_move_cost': {'key': 'defaultMoveCost', 'type': 'str'},
-        'service_kind': {'key': 'serviceKind', 'type': 'str'},
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-        'instance_close_delay_duration': {'key': 'instanceCloseDelayDuration', 'type': 'str'},
+        "placement_constraints": {"key": "placementConstraints", "type": "str"},
+        "correlation_scheme": {"key": "correlationScheme", "type": "[ServiceCorrelationDescription]"},
+        "service_load_metrics": {"key": "serviceLoadMetrics", "type": "[ServiceLoadMetricDescription]"},
+        "service_placement_policies": {
+            "key": "servicePlacementPolicies",
+            "type": "[ServicePlacementPolicyDescription]",
+        },
+        "default_move_cost": {"key": "defaultMoveCost", "type": "str"},
+        "service_kind": {"key": "serviceKind", "type": "str"},
+        "instance_count": {"key": "instanceCount", "type": "int"},
+        "instance_close_delay_duration": {"key": "instanceCloseDelayDuration", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         placement_constraints: Optional[str] = None,
-        correlation_scheme: Optional[List["ServiceCorrelationDescription"]] = None,
-        service_load_metrics: Optional[List["ServiceLoadMetricDescription"]] = None,
-        service_placement_policies: Optional[List["ServicePlacementPolicyDescription"]] = None,
-        default_move_cost: Optional[Union[str, "MoveCost"]] = None,
+        correlation_scheme: Optional[List["_models.ServiceCorrelationDescription"]] = None,
+        service_load_metrics: Optional[List["_models.ServiceLoadMetricDescription"]] = None,
+        service_placement_policies: Optional[List["_models.ServicePlacementPolicyDescription"]] = None,
+        default_move_cost: Optional[Union[str, "_models.MoveCost"]] = None,
         instance_count: Optional[int] = None,
         instance_close_delay_duration: Optional[str] = None,
         **kwargs
     ):
-        super(StatelessServiceUpdateProperties, self).__init__(placement_constraints=placement_constraints, correlation_scheme=correlation_scheme, service_load_metrics=service_load_metrics, service_placement_policies=service_placement_policies, default_move_cost=default_move_cost, **kwargs)
-        self.service_kind = 'Stateless'  # type: str
+        """
+        :keyword placement_constraints: The placement constraints as a string. Placement constraints
+         are boolean expressions on node properties and allow for restricting a service to particular
+         nodes based on the service requirements. For example, to place a service on nodes where
+         NodeType is blue specify the following: "NodeColor == blue)".
+        :paramtype placement_constraints: str
+        :keyword correlation_scheme: A list that describes the correlation of the service with other
+         services.
+        :paramtype correlation_scheme:
+         list[~azure.mgmt.servicefabric.models.ServiceCorrelationDescription]
+        :keyword service_load_metrics: The service load metrics is given as an array of
+         ServiceLoadMetricDescription objects.
+        :paramtype service_load_metrics:
+         list[~azure.mgmt.servicefabric.models.ServiceLoadMetricDescription]
+        :keyword service_placement_policies: A list that describes the correlation of the service with
+         other services.
+        :paramtype service_placement_policies:
+         list[~azure.mgmt.servicefabric.models.ServicePlacementPolicyDescription]
+        :keyword default_move_cost: Specifies the move cost for the service. Known values are: "Zero",
+         "Low", "Medium", and "High".
+        :paramtype default_move_cost: str or ~azure.mgmt.servicefabric.models.MoveCost
+        :keyword instance_count: The instance count.
+        :paramtype instance_count: int
+        :keyword instance_close_delay_duration: Delay duration for RequestDrain feature to ensures that
+         the endpoint advertised by the stateless instance is removed before the delay starts prior to
+         closing the instance. This delay enables existing requests to drain gracefully before the
+         instance actually goes down
+         (https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-application-upgrade-advanced#avoid-connection-drops-during-stateless-service-planned-downtime-preview).
+         It is first interpreted as a string representing an ISO 8601 duration. It is represented in ISO
+         8601 format (hh:mm:ss.s).
+        :paramtype instance_close_delay_duration: str
+        """
+        super().__init__(
+            placement_constraints=placement_constraints,
+            correlation_scheme=correlation_scheme,
+            service_load_metrics=service_load_metrics,
+            service_placement_policies=service_placement_policies,
+            default_move_cost=default_move_cost,
+            **kwargs
+        )
+        self.service_kind = "Stateless"  # type: str
         self.instance_count = instance_count
         self.instance_close_delay_duration = instance_close_delay_duration
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource.
-    :type created_by_type: str
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource.
-    :type last_modified_by_type: str
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource.
+    :vartype created_by_type: str
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource.
+    :vartype last_modified_by_type: str
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3771,7 +4979,21 @@ class SystemData(msrest.serialization.Model):
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource.
+        :paramtype created_by_type: str
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource.
+        :paramtype last_modified_by_type: str
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3785,97 +5007,98 @@ class UniformInt64RangePartitionSchemeDescription(PartitionSchemeDescription):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param partition_scheme: Required. Specifies how the service is partitioned.Constant filled by
-     server.  Possible values include: "Invalid", "Singleton", "UniformInt64Range", "Named".
-    :type partition_scheme: str or ~azure.mgmt.servicefabric.models.PartitionScheme
-    :param count: Required. The number of partitions.
-    :type count: int
-    :param low_key: Required. String indicating the lower bound of the partition key range that
-     should be split between the partition ‘count’.
-    :type low_key: str
-    :param high_key: Required. String indicating the upper bound of the partition key range that
-     should be split between the partition ‘count’.
-    :type high_key: str
+    :ivar partition_scheme: Specifies how the service is partitioned. Required. Known values are:
+     "Invalid", "Singleton", "UniformInt64Range", and "Named".
+    :vartype partition_scheme: str or ~azure.mgmt.servicefabric.models.PartitionScheme
+    :ivar count: The number of partitions. Required.
+    :vartype count: int
+    :ivar low_key: String indicating the lower bound of the partition key range that
+     should be split between the partition ‘count’. Required.
+    :vartype low_key: str
+    :ivar high_key: String indicating the upper bound of the partition key range that
+     should be split between the partition ‘count’. Required.
+    :vartype high_key: str
     """
 
     _validation = {
-        'partition_scheme': {'required': True},
-        'count': {'required': True},
-        'low_key': {'required': True},
-        'high_key': {'required': True},
+        "partition_scheme": {"required": True},
+        "count": {"required": True},
+        "low_key": {"required": True},
+        "high_key": {"required": True},
     }
 
     _attribute_map = {
-        'partition_scheme': {'key': 'partitionScheme', 'type': 'str'},
-        'count': {'key': 'count', 'type': 'int'},
-        'low_key': {'key': 'lowKey', 'type': 'str'},
-        'high_key': {'key': 'highKey', 'type': 'str'},
+        "partition_scheme": {"key": "partitionScheme", "type": "str"},
+        "count": {"key": "count", "type": "int"},
+        "low_key": {"key": "lowKey", "type": "str"},
+        "high_key": {"key": "highKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: int,
-        low_key: str,
-        high_key: str,
-        **kwargs
-    ):
-        super(UniformInt64RangePartitionSchemeDescription, self).__init__(**kwargs)
-        self.partition_scheme = 'UniformInt64Range'  # type: str
+    def __init__(self, *, count: int, low_key: str, high_key: str, **kwargs):
+        """
+        :keyword count: The number of partitions. Required.
+        :paramtype count: int
+        :keyword low_key: String indicating the lower bound of the partition key range that
+         should be split between the partition ‘count’. Required.
+        :paramtype low_key: str
+        :keyword high_key: String indicating the upper bound of the partition key range that
+         should be split between the partition ‘count’. Required.
+        :paramtype high_key: str
+        """
+        super().__init__(**kwargs)
+        self.partition_scheme = "UniformInt64Range"  # type: str
         self.count = count
         self.low_key = low_key
         self.high_key = high_key
 
 
-class UpgradableVersionPathResult(msrest.serialization.Model):
+class UpgradableVersionPathResult(_serialization.Model):
     """The list of intermediate cluster code versions for an upgrade or downgrade. Or minimum and maximum upgradable version if no target was given.
 
-    :param supported_path:
-    :type supported_path: list[str]
+    :ivar supported_path:
+    :vartype supported_path: list[str]
     """
 
     _attribute_map = {
-        'supported_path': {'key': 'supportedPath', 'type': '[str]'},
+        "supported_path": {"key": "supportedPath", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        supported_path: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(UpgradableVersionPathResult, self).__init__(**kwargs)
+    def __init__(self, *, supported_path: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword supported_path:
+        :paramtype supported_path: list[str]
+        """
+        super().__init__(**kwargs)
         self.supported_path = supported_path
 
 
-class UpgradableVersionsDescription(msrest.serialization.Model):
+class UpgradableVersionsDescription(_serialization.Model):
     """UpgradableVersionsDescription.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param target_version: Required. The target code version.
-    :type target_version: str
+    :ivar target_version: The target code version. Required.
+    :vartype target_version: str
     """
 
     _validation = {
-        'target_version': {'required': True},
+        "target_version": {"required": True},
     }
 
     _attribute_map = {
-        'target_version': {'key': 'targetVersion', 'type': 'str'},
+        "target_version": {"key": "targetVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        target_version: str,
-        **kwargs
-    ):
-        super(UpgradableVersionsDescription, self).__init__(**kwargs)
+    def __init__(self, *, target_version: str, **kwargs):
+        """
+        :keyword target_version: The target code version. Required.
+        :paramtype target_version: str
+        """
+        super().__init__(**kwargs)
         self.target_version = target_version
 
 
-class UserAssignedIdentity(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
     """UserAssignedIdentity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3887,19 +5110,17 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UserAssignedIdentity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None

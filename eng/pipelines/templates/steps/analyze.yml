@@ -38,9 +38,8 @@ steps:
     condition: succeededOrFailed()
 
   - script: |
-      cd eng/versioning
-      pip install -r requirements.txt
-      python find_invalid_versions.py --always-succeed --service=${{parameters.ServiceDirectory}}
+      pip install "./tools/azure-sdk-tools[build]" -q -I
+      sdk_find_invalid_versions --always-succeed --service=${{parameters.ServiceDirectory}}
     displayName: Find Invalid Versions
     condition: succeededOrFailed()
 
@@ -94,6 +93,11 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
+  - template: run_pyright.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -116,13 +120,18 @@ steps:
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
+  - template: /eng/pipelines/templates/steps/update_snippet.yml
+    parameters:
+      ScanPath: $(Build.SourcesDirectory)/sdk/${{ parameters.ServiceDirectory }}
+      AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
+
   - template: ../steps/run_breaking_changes.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
       AdditionalTestArgs: ${{parameters.AdditionalTestArgs}}
 
-  - template: /eng/common/pipelines/templates/steps/create-apireview.yml
+  - template: /eng/pipelines/templates/steps/create-apireview.yml
     parameters:
       Artifacts: ${{ parameters.Artifacts }}
 

@@ -1,19 +1,13 @@
 import pytest
-import yaml
+from marshmallow.exceptions import ValidationError
+from marshmallow.schema import Schema
+
+from azure.ai.ml._schema import NestedField, UnionField
 from azure.ai.ml._schema._deployment.online.scale_settings_schema import (
     DefaultScaleSettingsSchema,
     TargetUtilizationScaleSettingsSchema,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml.constants import (
-    AZUREML_RESOURCE_PROVIDER,
-    BASE_PATH_CONTEXT_KEY,
-    NAMED_RESOURCE_ID_FORMAT,
-    RESOURCE_ID_FORMAT,
-)
-from marshmallow.exceptions import ValidationError
-from azure.ai.ml._schema import UnionField, NestedField
-from marshmallow.schema import Schema
 
 
 class DummySchema(Schema):
@@ -23,6 +17,7 @@ class DummySchema(Schema):
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestScaleSettingsSchema:
     def test_default_scale_settings(self, mock_workspace_scope: OperationScope) -> None:
         schema = DummySchema()
@@ -70,4 +65,4 @@ class TestScaleSettingsSchema:
             }
         }
         data = schema.load(input_data)
-        assert data["scale_settings"].scale_type == "target_utilization"
+        assert data["scale_settings"].type == "target_utilization"

@@ -90,5 +90,4 @@ async def main():
     await sample.upload_a_file_to_share_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

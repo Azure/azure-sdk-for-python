@@ -25,6 +25,7 @@ from ._helpers import (
     _validate_digest,
     OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
+    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
 )
 from ._models import (
     RepositoryProperties,
@@ -43,8 +44,12 @@ def _return_response(pipeline_response, deserialized, response_headers):
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint, credential=None, **kwargs):
-        # type: (str, Optional[TokenCredential], **Any) -> None
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Optional["TokenCredential"] = None,
+        **kwargs: Any
+    ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.
@@ -54,13 +59,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
          may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de"
-         or "https://management.usgovcloudapi.net".
+         "https://management.azure.com", "https://management.chinacloudapi.cn" or
+         "https://management.usgovcloudapi.net". The default value is "https://management.azure.com".
         :paramtype audience: str
         :returns: None
         :rtype: None
-        :raises ValueError: If the provided api_version keyword-only argument isn't supported or
-         audience keyword-only argument isn't provided.
+        :raises ValueError: If the provided api_version keyword-only argument isn't supported.
 
         .. admonition:: Example:
 
@@ -75,13 +79,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if api_version and api_version not in SUPPORTED_API_VERSIONS:
             supported_versions = "\n".join(SUPPORTED_API_VERSIONS)
             raise ValueError(
-                "Unsupported API version '{}'. Please select from:\n{}".format(
-                    api_version, supported_versions
-                )
+                f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}"
             )
         audience = kwargs.pop("audience", None)
         if not audience:
-            raise ValueError("The argument audience must be set to initialize ContainerRegistryClient.")
+            audience = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
         defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
@@ -759,7 +761,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def upload_manifest(
-        self, repository: str, manifest: "Union['OCIManifest', 'IO']", *, tag: "Optional[str]" = None, **kwargs: "Any"
+        self, repository: str, manifest: Union["OCIManifest", "IO"], *, tag: Optional[str] = None, **kwargs: Any
     ) -> str:
         """Upload a manifest for an OCI artifact.
 

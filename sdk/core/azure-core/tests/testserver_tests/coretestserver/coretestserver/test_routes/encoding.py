@@ -39,7 +39,7 @@ def latin_1_no_charset():
 @encoding_api.route('/iso-8859-1', methods=['GET'])
 def iso_8859_1():
     r = Response(
-        u"Accented: Österreich".encode("iso-8859-1"), status=200
+        u"Accented: Österreich".encode("iso-8859-1"), status=200 # cspell:disable-line
     )
     r.headers["Content-Type"] = "text/plain"
     return r
@@ -98,4 +98,13 @@ def gzip_content_encoding():
     )
     r.headers["Content-Type"] = "text/plain"
     r.headers['Content-Encoding'] = "gzip"
+    return r
+
+@encoding_api.route('/deflate', methods=['GET'])
+def deflate_content_encoding():
+    r = Response(
+        b'\xcb\xc8T(\xc9H-J\x05\x00', status=200
+    )
+    r.headers["Content-Type"] = "text/plain"
+    r.headers['Content-Encoding'] = "deflate"
     return r

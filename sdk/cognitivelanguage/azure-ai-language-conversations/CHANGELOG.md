@@ -1,20 +1,41 @@
 # Release History
 
+## 1.1.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0b3 (2022-11-10)
+
+### Features Added
+- Added support for the "ConversationalSentimentTask" kind with `begin_conversation_analysis`.
+- Added support for "chapterTitle" and "narrative" `summaryAspects` options for ConversationalSummarizationTasks.
+- Added methods to the `ConversationAuthoringClient` to manage deployment resources:
+  - `begin_assign_deployment_resources`
+  - `get_assign_deployment_resources_status`
+  - `begin_unassign_deployment_resources`
+  - `get_unassign_deployment_resources_status`
+  - `begin_delete_deployment_from_resources`
+  - `get_deployment_delete_from_resources_status`
+  - `begin_load_snapshot`
+  - `get_load_snapshot_status`
+  - `list_assigned_resource_deployments`
+  - `list_deployment_resources`
+- Added optional `trained_model_label` keyword argument to `begin_export_project`.
+
+### Other Changes
+* This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
 ## 1.1.0b2 (2022-07-01)
 
 ### Features Added
 * Added Azure Active Directory (AAD) authentication support
 * Added support for authoring operations with `ConversationAuthoringClient` under the `azure.ai.language.conversations.authoring` namespace.
-
-## 1.1.0b1 (2022-05-26)
-
-### Features Added
-* Conversation summarization task (Long-running operation)
-* Conversation PII extraction task (Long-running operation)
-
-### Breaking Changes
-* Client now uses python dictionaries for method parameters and results instead of classes.
-* Many input and result parameter name changes in `analyze_conversation()` method
 
 ## 1.0.0 (2022-06-27)
 
@@ -25,6 +46,16 @@
 
 ### Breaking Changes
 * Client now uses python dictionaries for method parameters and results instead of classes.
+
+## 1.1.0b1 (2022-05-26)
+
+### Features Added
+* Conversation summarization task (Long-running operation)
+* Conversation PII extraction task (Long-running operation)
+
+### Breaking Changes
+* Client now uses python dictionaries for method parameters and results instead of classes.
+* Many input and result parameter name changes in `analyze_conversation()` method
 
 ## 1.0.0b3 (2022-04-19)
 

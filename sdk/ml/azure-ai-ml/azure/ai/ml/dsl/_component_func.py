@@ -1,11 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
+# pylint: disable=protected-access
+
 from typing import Callable, Mapping
 
+from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities._builders import Command
-from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 
 
 def get_dynamic_input_parameter(inputs: Mapping):
@@ -13,9 +16,9 @@ def get_dynamic_input_parameter(inputs: Mapping):
     return [
         KwParameter(
             name=name,
-            annotation=input.get_python_builtin_type_str(),
+            annotation=input._get_python_builtin_type_str(),
             default=None,
-            _type=input.get_python_builtin_type_str(),
+            _type=input._get_python_builtin_type_str(),
         )
         for name, input in inputs.items()
     ]
@@ -30,19 +33,32 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
 
     all_params = get_dynamic_input_parameter(entity.inputs)
 
+    flattened_group_keys = []
+    # Flatten all group parameters, for function parameter validation.
+    from azure.ai.ml.entities._inputs_outputs import GroupInput
+    for name, item in entity.inputs.items():
+        if isinstance(item, GroupInput):
+            flattened_group_keys.extend(list(item.flatten(group_parameter_name=name).keys()))
+
     doc_string = entity.description
     # Try add yaml to doc string
     try:
         yaml_str = entity._yaml_str if entity._yaml_str else entity._to_yaml()
         doc_string = "{0}\n\nComponent yaml:\n```yaml\n{1}\n```".format(doc_string, yaml_str)
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         pass
+
+    params_assignment_str = ", ".join([f"{param.name}=xxx" for param in all_params])
+    example = f"component_func({params_assignment_str})"
 
     dynamic_func = create_kw_function_from_parameters(
         component_creation_func,
         documentation=doc_string,
         parameters=all_params,
         func_name=func_name,
+        flattened_group_keys=flattened_group_keys,
     )
 
+    dynamic_func._func_calling_example = example
+    dynamic_func._has_parameters = bool(all_params)
     return dynamic_func

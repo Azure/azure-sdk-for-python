@@ -2,7 +2,7 @@ type: pipeline
 description: "E2E dummy train-score-eval pipeline with components defined inline in pipeline job"
 
 inputs:
-  pipeline_job_training_input: 
+  pipeline_job_training_input:
     path: ./data
   pipeline_job_test_input:
     path: ./data
@@ -10,13 +10,13 @@ inputs:
   pipeline_job_training_learning_rate: 1.8
   pipeline_job_learning_rate_schedule: 'time-based'
 
-outputs: 
+outputs:
   pipeline_job_trained_model:
-    mode: rw_mount
+
   pipeline_job_scored_data:
-    mode: rw_mount
+
   pipeline_job_evaluation_report:
-    mode: rw_mount
+
 
 #settings:
 #  datastore: azureml:workspaceblobstore
@@ -26,28 +26,28 @@ compute: azureml:cpu-cluster
 jobs:
   train_job:
     type: command
-    component: 
+    component:
       name: Train
       version: 10
       type: command
       inputs:
-        training_data: 
+        training_data:
           type: uri_folder
         max_epocs:
           type: integer
-        learning_rate: 
+        learning_rate:
           type: number
           default: 0.01
-        learning_rate_schedule: 
+        learning_rate_schedule:
           type: string
-          default: time-based 
+          default: time-based
       outputs:
         model_output:
           type: uri_folder
       code: ./train_src
       environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
       command: >-
-        python train.py 
+        python train.py
         --training_data ${{inputs.training_data}}
         --max_epocs ${{inputs.max_epocs}}
         --learning_rate ${{inputs.learning_rate}}
@@ -61,10 +61,10 @@ jobs:
       learning_rate_schedule: ${{parent.inputs.pipeline_job_learning_rate_schedule}}
     outputs:
       model_output: ${{parent.outputs.pipeline_job_trained_model}}
-  
+
   score_job:
     type: command
-    component: 
+    component:
       name: Score
       version: 10
       type: command
@@ -79,7 +79,7 @@ jobs:
       environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
       code: ./score_src
       command: >-
-        python score.py 
+        python score.py
         --model_input ${{inputs.model_input}}
         --test_data ${{inputs.test_data}}
         --score_output ${{outputs.score_output}}
@@ -92,7 +92,7 @@ jobs:
 
   evaluate_job:
     type: command
-    component: 
+    component:
       name: Eval
       version: 10
       type: command
@@ -105,7 +105,7 @@ jobs:
       environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5
       code: ./eval_src
       command: >-
-        python eval.py 
+        python eval.py
         --scoring_result ${{inputs.scoring_result}}
         --eval_output ${{outputs.eval_output}}
 

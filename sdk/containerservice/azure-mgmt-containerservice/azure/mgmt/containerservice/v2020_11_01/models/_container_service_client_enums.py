@@ -7,41 +7,40 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AgentPoolMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """AgentPoolMode represents mode of an agent pool.
-    """
+class AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AgentPoolMode represents mode of an agent pool."""
 
     SYSTEM = "System"
     USER = "User"
 
-class AgentPoolType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """AgentPoolType represents types of an agent pool.
-    """
+
+class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AgentPoolType represents types of an agent pool."""
 
     VIRTUAL_MACHINE_SCALE_SETS = "VirtualMachineScaleSets"
     AVAILABILITY_SET = "AvailabilitySet"
 
-class Code(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Tells whether the cluster is Running or Stopped
-    """
+
+class Code(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tells whether the cluster is Running or Stopped."""
 
     RUNNING = "Running"
     STOPPED = "Stopped"
 
-class ConnectionStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The private link service connection status.
-    """
+
+class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private link service connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class ContainerServiceStorageProfileTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ContainerServiceStorageProfileTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Storage profile specifies what kind of storage used. Choose from StorageAccount and
     ManagedDisks. Leave it empty, we will choose for you based on the orchestrator choice.
     """
@@ -49,9 +48,9 @@ class ContainerServiceStorageProfileTypes(with_metaclass(CaseInsensitiveEnumMeta
     STORAGE_ACCOUNT = "StorageAccount"
     MANAGED_DISKS = "ManagedDisks"
 
-class ContainerServiceVMSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Size of agent VMs.
-    """
+
+class ContainerServiceVMSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Size of agent VMs."""
 
     STANDARD_A1 = "Standard_A1"
     STANDARD_A10 = "Standard_A10"
@@ -228,7 +227,8 @@ class ContainerServiceVMSizeTypes(with_metaclass(CaseInsensitiveEnumMeta, str, E
     STANDARD_NV24 = "Standard_NV24"
     STANDARD_NV6 = "Standard_NV6"
 
-class Count(with_metaclass(CaseInsensitiveEnumMeta, int, Enum)):
+
+class Count(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Number of masters (VMs) in the container service cluster. Allowed values are 1, 3, and 5. The
     default value is 1.
     """
@@ -237,13 +237,16 @@ class Count(with_metaclass(CaseInsensitiveEnumMeta, int, Enum)):
     THREE = 3
     FIVE = 5
 
-class Expander(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Expander(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Expander."""
 
     LEAST_WASTE = "least-waste"
     MOST_PODS = "most-pods"
     RANDOM = "random"
 
-class LicenseType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The licenseType to use for Windows VMs. Windows_Server is used to enable Azure Hybrid User
     Benefits for Windows VMs.
     """
@@ -251,87 +254,88 @@ class LicenseType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     NONE = "None"
     WINDOWS_SERVER = "Windows_Server"
 
-class LoadBalancerSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The load balancer sku for the managed cluster.
-    """
+
+class LoadBalancerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The load balancer sku for the managed cluster."""
 
     STANDARD = "standard"
     BASIC = "basic"
 
-class ManagedClusterPodIdentityProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state of the pod identity.
-    """
+
+class ManagedClusterPodIdentityProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of the pod identity."""
 
     ASSIGNED = "Assigned"
     UPDATING = "Updating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class ManagedClusterSKUName(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Name of a managed cluster SKU.
-    """
+
+class ManagedClusterSKUName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of a managed cluster SKU."""
 
     BASIC = "Basic"
 
-class ManagedClusterSKUTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Tier of a managed cluster SKU.
-    """
+
+class ManagedClusterSKUTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tier of a managed cluster SKU."""
 
     PAID = "Paid"
     FREE = "Free"
 
-class NetworkMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Network mode used for building Kubernetes network.
-    """
+
+class NetworkMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network mode used for building Kubernetes network."""
 
     TRANSPARENT = "transparent"
     BRIDGE = "bridge"
 
-class NetworkPlugin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Network plugin used for building Kubernetes network.
-    """
+
+class NetworkPlugin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network plugin used for building Kubernetes network."""
 
     AZURE = "azure"
     KUBENET = "kubenet"
 
-class NetworkPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Network policy used for building Kubernetes network.
-    """
+
+class NetworkPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Network policy used for building Kubernetes network."""
 
     CALICO = "calico"
     AZURE = "azure"
 
-class OSDiskType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """OSDiskType represents the type of an OS disk on an agent pool.
-    """
+
+class OSDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OSDiskType represents the type of an OS disk on an agent pool."""
 
     MANAGED = "Managed"
     EPHEMERAL = "Ephemeral"
 
-class OSType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux.
-    """
+
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OsType to be used to specify os type. Choose from Linux and Windows. Default to Linux."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
-class OutboundType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The outbound (egress) routing method.
-    """
+
+class OutboundType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The outbound (egress) routing method."""
 
     LOAD_BALANCER = "loadBalancer"
     USER_DEFINED_ROUTING = "userDefinedRouting"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The current provisioning state.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the managed cluster. Type 'SystemAssigned' will use an implicitly
     created identity in master components and an auto-created user assigned identity in MC_
     resource group in agent nodes. Type 'None' will not use MSI for the managed cluster, service
@@ -342,7 +346,8 @@ class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     USER_ASSIGNED = "UserAssigned"
     NONE = "None"
 
-class ScaleSetEvictionPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ScaleSetEvictionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ScaleSetEvictionPolicy to be used to specify eviction policy for Spot virtual machine scale
     set. Default to Delete.
     """
@@ -350,16 +355,16 @@ class ScaleSetEvictionPolicy(with_metaclass(CaseInsensitiveEnumMeta, str, Enum))
     DELETE = "Delete"
     DEALLOCATE = "Deallocate"
 
-class ScaleSetPriority(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """ScaleSetPriority to be used to specify virtual machine scale set priority. Default to regular.
-    """
+
+class ScaleSetPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ScaleSetPriority to be used to specify virtual machine scale set priority. Default to regular."""
 
     SPOT = "Spot"
     REGULAR = "Regular"
 
-class UpgradeChannel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """upgrade channel for auto upgrade.
-    """
+
+class UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """upgrade channel for auto upgrade."""
 
     RAPID = "rapid"
     STABLE = "stable"

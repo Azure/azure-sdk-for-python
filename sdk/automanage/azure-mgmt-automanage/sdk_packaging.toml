@@ -5,3 +5,5 @@ package_pprint_name = "Auto Manage Management"
 package_doc_id = ""
 is_stable = false
 is_arm = true
+sample_link = ""
+title = "AutomanageClient"

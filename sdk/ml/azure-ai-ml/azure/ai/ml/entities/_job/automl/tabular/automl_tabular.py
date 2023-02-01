@@ -2,32 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from abc import ABC
-from typing import Dict, List, Union
+# pylint: disable=too-many-instance-attributes
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    LogVerbosity,
-    StackEnsembleSettings,
-    TableVerticalDataSettings,
-    TableVerticalValidationDataSettings,
-    TestDataSettings,
-    TrainingDataSettings,
-    CustomNCrossValidations,
+from abc import ABC
+from typing import Dict, List, Optional, Union
+
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AutoNCrossValidations,
+    BlockedTransformers,
+    CustomNCrossValidations,
+    LogVerbosity,
 )
+from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
+from azure.ai.ml.entities._job.automl.stack_ensemble_settings import StackEnsembleSettings
 from azure.ai.ml.entities._job.automl.tabular.featurization_settings import (
     ColumnTransformer,
     TabularFeaturizationSettings,
 )
 from azure.ai.ml.entities._job.automl.tabular.limit_settings import TabularLimitSettings
-from azure.ai.ml.entities._job.automl.training_settings import (
-    TrainingSettings,
-)
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
-from azure.ai.ml._ml_exceptions import ValidationException, ErrorCategory, ErrorTarget
+from azure.ai.ml.entities._job.automl.training_settings import TrainingSettings
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class AutoMLTabular(AutoMLVertical, ABC):
@@ -35,16 +32,28 @@ class AutoMLTabular(AutoMLVertical, ABC):
         self,
         *,
         task_type: str,
-        data: TableVerticalDataSettings = None,
-        featurization: TabularFeaturizationSettings = None,
-        limits: TabularLimitSettings = None,
-        training: TrainingSettings = None,
+        featurization: Optional[TabularFeaturizationSettings] = None,
+        limits: Optional[TabularLimitSettings] = None,
+        training: Optional[TrainingSettings] = None,
         **kwargs,
     ) -> None:
         self.log_verbosity = kwargs.pop("log_verbosity", LogVerbosity.INFO)
-        super().__init__(task_type, **kwargs)
 
-        self._data = data
+        self.target_column_name = kwargs.pop("target_column_name", None)
+        self.weight_column_name = kwargs.pop("weight_column_name", None)
+        self.validation_data_size = kwargs.pop("validation_data_size", None)
+        self.cv_split_column_names = kwargs.pop("cv_split_column_names", None)
+        self.n_cross_validations = kwargs.pop("n_cross_validations", None)
+        self.test_data_size = kwargs.pop("test_data_size", None)
+
+        super().__init__(
+            task_type=task_type,
+            training_data=kwargs.pop("training_data", None),
+            validation_data=kwargs.pop("validation_data", None),
+            test_data=kwargs.pop("test_data", None),
+            **kwargs,
+        )
+
         self._featurization = featurization
         self._limits = limits
         self._training = training
@@ -117,13 +126,13 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_limits(
         self,
         *,
-        enable_early_termination: bool = None,
-        exit_score: float = None,
-        max_concurrent_trials: int = None,
-        max_cores_per_trial: int = None,
-        max_trials: int = None,
-        timeout_minutes: int = None,
-        trial_timeout_minutes: int = None,
+        enable_early_termination: Optional[bool] = None,
+        exit_score: Optional[float] = None,
+        max_concurrent_trials: Optional[int] = None,
+        max_cores_per_trial: Optional[int] = None,
+        max_trials: Optional[int] = None,
+        timeout_minutes: Optional[int] = None,
+        trial_timeout_minutes: Optional[int] = None,
     ) -> None:
         """Set limits for the job.
 
@@ -150,8 +159,8 @@ class AutoMLTabular(AutoMLVertical, ABC):
         on the primary metric. For for more information on exit criteria, see this `article
         <https://docs.microsoft.com/azure/machine-learning/how-to-configure-auto-train#exit-criteria>`_.
         :type exit_score: float, optional
-        :param max_concurrent_trials: Represents the maximum number of iterations that would be executed in parallel. The default value
-        is 1.
+        :param max_concurrent_trials: Represents the maximum number of iterations that would be executed in parallel.
+        The default value is 1.
 
         * AmlCompute clusters support one interation running per node.
           For multiple AutoML experiment parent runs executed in parallel on a single AmlCompute cluster, the
@@ -210,15 +219,15 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_training(
         self,
         *,
-        enable_onnx_compatible_models: bool = None,
-        enable_dnn_training: bool = None,
-        enable_model_explainability: bool = None,
-        enable_stack_ensemble: bool = None,
-        enable_vote_ensemble: bool = None,
-        stack_ensemble_settings: StackEnsembleSettings = None,
-        ensemble_model_download_timeout: int = None,
-        allowed_training_algorithms: List[str] = None,
-        blocked_training_algorithms: List[str] = None,
+        enable_onnx_compatible_models: Optional[bool] = None,
+        enable_dnn_training: Optional[bool] = None,
+        enable_model_explainability: Optional[bool] = None,
+        enable_stack_ensemble: Optional[bool] = None,
+        enable_vote_ensemble: Optional[bool] = None,
+        stack_ensemble_settings: Optional[StackEnsembleSettings] = None,
+        ensemble_model_download_timeout: Optional[int] = None,
+        allowed_training_algorithms: Optional[List[str]] = None,
+        blocked_training_algorithms: Optional[List[str]] = None,
     ) -> None:
         """Method to configure training related settings.
 
@@ -230,7 +239,7 @@ class AutoMLTabular(AutoMLVertical, ABC):
         However, the default is True for DNN NLP tasks, and it's False for all other AutoML tasks.
         :type enable_dnn_training: bool, optional
         :param enable_model_explainability: Whether to enable explaining the best AutoML model at the end of all
-        AutoML training iterations. The default is True. For more information, see
+        AutoML training iterations. The default is None. For more information, see
         `Interpretability: model explanations in automated machine learning
         <https://docs.microsoft.com/azure/machine-learning/how-to-machine-learning-interpretability-automl>`__.
         :type enable_model_explainability: bool, optional
@@ -251,8 +260,9 @@ class AutoMLTabular(AutoMLVertical, ABC):
         multiple fitted models from the previous child runs are downloaded. Configure this parameter with a
         higher value than 300 secs, if more time is needed.
         :type ensemble_model_download_timeout: int, optional
-        :param allowed_training_algorithms: A list of model names to search for an experiment. If not specified, then all models
-        supported for the task are used minus any specified in ``blocked_training_algorithms`` or deprecated TensorFlow models.
+        :param allowed_training_algorithms: A list of model names to search for an experiment. If not specified,
+        then all models supported for the task are used minus any specified in ``blocked_training_algorithms``
+        or deprecated TensorFlow models.
         :type allowed_training_algorithms: List[str], optional
         :param blocked_training_algorithms: A list of algorithms to ignore for an experiment.
         :type blocked_training_algorithms:List(str)
@@ -297,17 +307,17 @@ class AutoMLTabular(AutoMLVertical, ABC):
     def set_featurization(
         self,
         *,
-        blocked_transformers: List[str] = None,
-        column_name_and_types: Dict[str, str] = None,
-        dataset_language: str = None,
-        transformer_params: Dict[str, List[ColumnTransformer]] = None,
-        mode: str = None,
-        enable_dnn_featurization: bool = None,
+        blocked_transformers: Optional[List[Union[BlockedTransformers, str]]] = None,
+        column_name_and_types: Optional[Dict[str, str]] = None,
+        dataset_language: Optional[str] = None,
+        transformer_params: Optional[Dict[str, List[ColumnTransformer]]] = None,
+        mode: Optional[str] = None,
+        enable_dnn_featurization: Optional[bool] = None,
     ) -> None:
         """Define feature engineering configuration.
 
         :param blocked_transformers: A list of transformer names to be blocked during featurization
-        :type blocked_transformers: List[str], optional
+        :type blocked_transformers: List[Union[BlockedTransformers, str]], optional
         :param column_name_and_types: A dictionary of column names and feature types used to update column purpose
         :type column_name_and_types: Dict[str, str], optional
         :param dataset_language: three character ISO 639-3 code for the language(s) contained in the dataset.
@@ -347,81 +357,65 @@ class AutoMLTabular(AutoMLVertical, ABC):
         *,
         training_data: Input,
         target_column_name: str,
-        weight_column_name: str = None,
-        validation_data: Input = None,
-        validation_data_size: float = None,
-        n_cross_validations: Union[str, int] = None,
-        cv_split_column_names: List[str] = None,
-        test_data: Input = None,
-        test_data_size: float = None,
+        weight_column_name: Optional[str] = None,
+        validation_data: Optional[Input] = None,
+        validation_data_size: Optional[float] = None,
+        n_cross_validations: Optional[Union[str, int]] = None,
+        cv_split_column_names: Optional[List[str]] = None,
+        test_data: Optional[Input] = None,
+        test_data_size: Optional[float] = None,
     ) -> None:
-        self._data = TableVerticalDataSettings(
-            target_column_name=target_column_name,
-            training_data=TrainingDataSettings(data=training_data),
+        self.target_column_name = target_column_name if target_column_name is not None else self.target_column_name
+        self.weight_column_name = weight_column_name if weight_column_name is not None else self.weight_column_name
+        self.training_data = training_data if training_data is not None else self.training_data
+        self.validation_data = validation_data if validation_data is not None else self.validation_data
+        self.validation_data_size = (
+            validation_data_size if validation_data_size is not None else self.validation_data_size
         )
+        self.cv_split_column_names = (
+            cv_split_column_names if cv_split_column_names is not None else self.cv_split_column_names
+        )
+        self.n_cross_validations = n_cross_validations if n_cross_validations is not None else self.n_cross_validations
+        self.test_data = test_data if test_data is not None else self.test_data
+        self.test_data_size = test_data_size if test_data_size is not None else self.test_data_size
 
-        self._data.weight_column_name = (
-            weight_column_name if weight_column_name is not None else self._data.weight_column_name
-        )
-
-        self._data.validation_data = self._data.validation_data or TableVerticalValidationDataSettings()
-        self._data.validation_data.data = validation_data or self._data.validation_data.data
-        self._data.validation_data.validation_data_size = (
-            validation_data_size
-            if validation_data_size is not None
-            else self._data.validation_data.validation_data_size
-        )
-        self._data.validation_data.n_cross_validations = (
-            n_cross_validations if n_cross_validations is not None else self._data.validation_data.n_cross_validations
-        )
-        self._data.validation_data.cv_split_column_names = (
-            cv_split_column_names
-            if cv_split_column_names is not None
-            else self._data.validation_data.cv_split_column_names
-        )
-
-        self._data.test_data = self._data.test_data or TestDataSettings()
-        self._data.test_data.data = test_data if test_data is not None else self._data.test_data.data
-        self._data.test_data.test_data_size = (
-            test_data_size if test_data_size is not None else self._data.test_data.test_data_size
-        )
-
-    def _training_settings_from_rest(self, allowed_training_algorithms, blocked_training_algorithms):
-        if not self._training:
-            return
-        self._training.allowed_training_algorithms = allowed_training_algorithms
-        self._training.blocked_training_algorithms = blocked_training_algorithms
-
-    def _validation_data_to_rest(self):
-        """validation data serialization"""
-        validation_data = self._data.validation_data
-        if validation_data and validation_data.n_cross_validations:
-            n_cross_val = self._data.validation_data.n_cross_validations
+    # pylint: disable=no-self-use
+    def _validation_data_to_rest(self, rest_obj):
+        """validation data serialization."""
+        if rest_obj.n_cross_validations:
+            n_cross_val = rest_obj.n_cross_validations
             # Convert n_cross_validations int value to CustomNCrossValidations
             if isinstance(n_cross_val, int) and n_cross_val > 1:
-                self._data.validation_data.n_cross_validations = CustomNCrossValidations(value=n_cross_val)
+                rest_obj.n_cross_validations = CustomNCrossValidations(value=n_cross_val)
             # Convert n_cross_validations str value to AutoNCrossValidations
             elif isinstance(n_cross_val, str):
-                self._data.validation_data.n_cross_validations = AutoNCrossValidations()
+                rest_obj.n_cross_validations = AutoNCrossValidations()
 
     def _validation_data_from_rest(self):
-        """validation data deserialization"""
-        validation_data = self._data.validation_data
-        if validation_data and validation_data.n_cross_validations:
-            n_cross_val = self._data.validation_data.n_cross_validations
+        """validation data deserialization."""
+        if self.n_cross_validations:
+            n_cross_val = self.n_cross_validations
             # Convert n_cross_validations CustomNCrossValidations back into int value
             if isinstance(n_cross_val, CustomNCrossValidations):
-                self._data.validation_data.n_cross_validations = n_cross_val.value
+                self.n_cross_validations = n_cross_val.value
             # Convert n_cross_validations AutoNCrossValidations to str value
             elif isinstance(n_cross_val, AutoNCrossValidations):
-                self._data.validation_data.n_cross_validations = AutoMLConstants.AUTO
+                self.n_cross_validations = AutoMLConstants.AUTO
 
     def __eq__(self, other):
         if not isinstance(other, AutoMLTabular):
             return NotImplemented
 
         return (
-            self._data == other._data
+            self.target_column_name == other.target_column_name
+            and self.weight_column_name == other.weight_column_name
+            and self.training_data == other.training_data
+            and self.validation_data == other.validation_data
+            and self.validation_data_size == other.validation_data_size
+            and self.cv_split_column_names == other.cv_split_column_names
+            and self.n_cross_validations == other.n_cross_validations
+            and self.test_data == other.test_data
+            and self.test_data_size == other.test_data_size
             and self._featurization == other._featurization
             and self._limits == other._limits
             and self._training == other._training

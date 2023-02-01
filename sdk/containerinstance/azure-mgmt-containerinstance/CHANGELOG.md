@@ -1,5 +1,29 @@
 # Release History
 
+## 10.1.0b1 (2022-12-26)
+
+### Features Added
+
+  - Model ContainerGroup has a new parameter confidential_compute_properties
+  - Model ContainerGroup has a new parameter extensions
+  - Model ContainerGroup has a new parameter priority
+  - Model ContainerGroupProperties has a new parameter confidential_compute_properties
+  - Model ContainerGroupProperties has a new parameter extensions
+  - Model ContainerGroupProperties has a new parameter priority
+  - Model EncryptionProperties has a new parameter identity
+
+## 10.0.0 (2022-08-29)
+
+### Features Added
+
+  - Added operation group SubnetServiceAssociationLinkOperations
+  - Model IpAddress has a new parameter auto_generated_domain_name_label_scope
+  - Model Usage has a new parameter id
+
+### Breaking Changes
+
+  - Model IpAddress no longer has parameter dns_name_label_reuse_policy
+
 ## 9.2.0 (2022-04-15)
 
 **Features**

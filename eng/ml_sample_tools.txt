@@ -1,0 +1,2 @@
+# required to invoke scripts/devops_tasks/generate_ml_sample_update.py
+azure-storage-blob==12.13.0

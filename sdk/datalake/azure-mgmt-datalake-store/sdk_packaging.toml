@@ -3,3 +3,5 @@ package_name = "azure-mgmt-datalake-store"
 package_pprint_name = "Data Lake Store Management"
 package_doc_id = "data-lake-store"
 is_stable = false
+sample_link = ""
+title = "DataLakeStoreAccountManagementClient"

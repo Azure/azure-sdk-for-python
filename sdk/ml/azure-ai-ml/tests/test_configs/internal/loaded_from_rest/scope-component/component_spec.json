@@ -1,0 +1,38 @@
+{
+  "description": "Convert adls test data to SS format",
+  "tags": {
+    "org": "bing",
+    "project": "relevance"
+  },
+  "version": "0.0.1",
+  "$schema": "https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json",
+  "display_name": "Convert Text to StructureStream",
+  "is_deterministic": true,
+  "inputs": {
+    "TextData": {
+      "type": [
+        "AnyFile",
+        "AnyDirectory"
+      ],
+      "description": "text file on ADLS storage",
+      "is_resource": false,
+      "optional": false
+    },
+    "ExtractionClause": {
+      "type": "string",
+      "description": "the extraction clause, something like \"column1:string, column2:int\"",
+      "optional": false
+    }
+  },
+  "outputs": {
+    "SSPath": {
+      "type": "CosmosStructuredStream",
+      "description": "the converted structured stream"
+    }
+  },
+  "type": "ScopeComponent",
+  "scope": {
+    "args": "Input_TextData {inputs.TextData} Output_SSPath {outputs.SSPath} ExtractionClause {inputs.ExtractionClause}",
+    "script": "convert2ss.script"
+  }
+}

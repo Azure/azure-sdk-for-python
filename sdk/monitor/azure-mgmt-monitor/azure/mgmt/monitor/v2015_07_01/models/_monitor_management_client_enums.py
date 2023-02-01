@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Describes how metric values are aggregated
-    """
+class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes how metric values are aggregated."""
 
     NONE = "None"
     AVERAGE = "Average"
@@ -22,18 +20,18 @@ class AggregationType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
-class ConditionOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Operators allowed in the rule condition.
-    """
+
+class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operators allowed in the rule condition."""
 
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
-class TimeAggregationOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Aggregation operators allowed in a rule.
-    """
+
+class TimeAggregationOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Aggregation operators allowed in a rule."""
 
     AVERAGE = "Average"
     MINIMUM = "Minimum"
@@ -41,9 +39,9 @@ class TimeAggregationOperator(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     TOTAL = "Total"
     LAST = "Last"
 
-class Unit(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """the unit of the metric.
-    """
+
+class Unit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the unit of the metric."""
 
     COUNT = "Count"
     BYTES = "Bytes"

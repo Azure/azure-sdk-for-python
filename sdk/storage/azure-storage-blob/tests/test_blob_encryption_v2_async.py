@@ -6,15 +6,16 @@
 
 import base64
 import os
+from io import BytesIO
 from json import dumps, loads
+from math import ceil
+from unittest import mock
 
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import BlobType
-from azure.storage.blob.aio import (
-    BlobServiceClient
-)
+from azure.storage.blob.aio import BlobServiceClient
 from azure.storage.blob._encryption import (
     _dict_to_encryption_data,
     _validate_and_unwrap_cek,
@@ -23,12 +24,9 @@ from azure.storage.blob._encryption import (
 )
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from devtools_testutils.storage.aio import AsyncStorageTestCase
-from encryption_test_helper import (
-    KeyWrapper,
-    KeyResolver,
-    RSAKeyWrapper,
-)
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
 
 TEST_CONTAINER_PREFIX = 'encryptionv2_container'
@@ -36,7 +34,7 @@ TEST_BLOB_PREFIX = 'encryptionv2_blob'
 MiB = 1024 * 1024
 
 
-class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
+class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     async def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(
@@ -64,19 +62,27 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
     # --------------------------------------------------------------------------
 
     @BlobPreparer()
-    async def test_v2_blocked_for_page_blob_upload(self, storage_account_name, storage_account_key):
-        await self._setup(storage_account_name, storage_account_key)
+    async def test_v2_blocked_for_page_blob_upload(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
 
+        self.container_name = self.get_resource_name('utcontainer')
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
 
         # Act
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             await blob.upload_blob(b'Test', blob_type=BlobType.PAGEBLOB)
 
     @BlobPreparer()
-    async def test_validate_encryption(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_validate_encryption(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -85,7 +91,8 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         content = b'Hello World Encrypted!'
 
         # Act
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
 
         blob.require_encryption = False
         blob.key_encryption_key = None
@@ -95,12 +102,12 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         encryption_data = _dict_to_encryption_data(loads(metadata['encryptiondata']))
 
         encryption_agent = encryption_data.encryption_agent
-        self.assertEqual('2.0', encryption_agent.protocol)
-        self.assertEqual('AES_GCM_256', encryption_agent.encryption_algorithm)
+        assert '2.0' == encryption_agent.protocol
+        assert 'AES_GCM_256' == encryption_agent.encryption_algorithm
 
         encrypted_region_info = encryption_data.encrypted_region_info
-        self.assertEqual(_GCM_NONCE_LENGTH, encrypted_region_info.nonce_length)
-        self.assertEqual(_GCM_TAG_LENGTH, encrypted_region_info.tag_length)
+        assert _GCM_NONCE_LENGTH == encrypted_region_info.nonce_length
+        assert _GCM_TAG_LENGTH == encrypted_region_info.tag_length
 
         content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
 
@@ -114,58 +121,68 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
 
         # Assert
-        self.assertEqual(content, decrypted_data)
+        assert content == decrypted_data
 
     @BlobPreparer()
-    async def test_validate_encryption_chunked_upload(self, storage_account_name, storage_account_key):
-        await self._setup(storage_account_name, storage_account_key)
-        kek = KeyWrapper('key1')
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key,
-            max_single_put_size=1024,
-            max_block_size=1024,
-            require_encryption=True,
-            encryption_version='2.0',
-            key_encryption_key=kek)
+    @recorded_by_proxy_async
+    async def test_validate_encryption_chunked_upload(self, **kwargs):
+        with mock.patch('os.urandom', mock_urandom):
+            storage_account_name = kwargs.pop("storage_account_name")
+            storage_account_key = kwargs.pop("storage_account_key")
 
-        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        content = b'a' * 5 * 1024
+            await self._setup(storage_account_name, storage_account_key)
+            kek = KeyWrapper('key1')
+            bsc = BlobServiceClient(
+                self.account_url(storage_account_name, "blob"),
+                credential=storage_account_key,
+                max_single_put_size=1024,
+                max_block_size=1024,
+                require_encryption=True,
+                encryption_version='2.0',
+                key_encryption_key=kek)
 
-        # Act
-        await blob.upload_blob(content, overwrite=True)
+            blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+            content = b'a' * 5 * 1024
 
-        blob.require_encryption = False
-        blob.key_encryption_key = None
-        metadata = (await blob.get_blob_properties()).metadata
-        encrypted_data = await (await blob.download_blob()).readall()
+            # Act
+            with mock.patch('os.urandom', mock_urandom):
+                await blob.upload_blob(content, overwrite=True)
 
-        encryption_data = _dict_to_encryption_data(loads(metadata['encryptiondata']))
+            blob.require_encryption = False
+            blob.key_encryption_key = None
+            metadata = (await blob.get_blob_properties()).metadata
+            encrypted_data = await (await blob.download_blob()).readall()
 
-        encryption_agent = encryption_data.encryption_agent
-        self.assertEqual('2.0', encryption_agent.protocol)
-        self.assertEqual('AES_GCM_256', encryption_agent.encryption_algorithm)
+            encryption_data = _dict_to_encryption_data(loads(metadata['encryptiondata']))
 
-        encrypted_region_info = encryption_data.encrypted_region_info
-        self.assertEqual(_GCM_NONCE_LENGTH, encrypted_region_info.nonce_length)
-        self.assertEqual(_GCM_TAG_LENGTH, encrypted_region_info.tag_length)
+            encryption_agent = encryption_data.encryption_agent
+            assert '2.0' == encryption_agent.protocol
+            assert 'AES_GCM_256' == encryption_agent.encryption_algorithm
 
-        content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
+            encrypted_region_info = encryption_data.encrypted_region_info
+            assert _GCM_NONCE_LENGTH == encrypted_region_info.nonce_length
+            assert _GCM_TAG_LENGTH == encrypted_region_info.tag_length
 
-        nonce_length = encrypted_region_info.nonce_length
+            content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
 
-        # First bytes are the nonce
-        nonce = encrypted_data[:nonce_length]
-        ciphertext_with_tag = encrypted_data[nonce_length:]
+            nonce_length = encrypted_region_info.nonce_length
 
-        aesgcm = AESGCM(content_encryption_key)
-        decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
+            # First bytes are the nonce
+            nonce = encrypted_data[:nonce_length]
+            ciphertext_with_tag = encrypted_data[nonce_length:]
 
-        # Assert
-        self.assertEqual(content, decrypted_data)
+            aesgcm = AESGCM(content_encryption_key)
+            decrypted_data = aesgcm.decrypt(nonce, ciphertext_with_tag, None)
+
+            # Assert
+            assert content == decrypted_data
 
     @BlobPreparer()
-    async def test_encryption_kek(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_encryption_kek(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -174,15 +191,19 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         content = b'Hello World Encrypted!'
 
         # Act
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_encryption_kek_rsa(self, storage_account_name, storage_account_key):
+    async def test_encryption_kek_rsa(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
         await self._setup(storage_account_name, storage_account_key)
@@ -197,10 +218,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @BlobPreparer()
-    async def test_encryption_kek_resolver(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_encryption_kek_resolver(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -213,14 +238,19 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
 
         # Act
         self.bsc.key_encryption_key = None
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @BlobPreparer()
-    async def test_encryption_with_blob_lease(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_encryption_with_blob_lease(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -228,21 +258,27 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b'Hello World Encrypted!'
 
-        await blob.upload_blob(b'', overwrite=True)
-        lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(b'', overwrite=True)
+            lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
-        # Act
-        await blob.upload_blob(content, overwrite=True, lease=lease)
-        with self.assertRaises(HttpResponseError):
+            # Act
+            await blob.upload_blob(content, overwrite=True, lease=lease)
+
+        with pytest.raises(HttpResponseError):
             await blob.download_blob(lease='00000000-1111-2222-3333-444444444445')
 
         data = await (await blob.download_blob(lease=lease)).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @BlobPreparer()
-    async def test_encryption_with_if_match(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_encryption_with_if_match(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -250,23 +286,28 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b'Hello World Encrypted!'
 
-        resp = await blob.upload_blob(b'', overwrite=True)
-        etag = resp['etag']
+        with mock.patch('os.urandom', mock_urandom):
+            resp = await blob.upload_blob(b'', overwrite=True)
+            etag = resp['etag']
 
-        # Act
-        resp = await blob.upload_blob(content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified)
-        etag = resp['etag']
+            # Act
+            resp = await blob.upload_blob(content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified)
+            etag = resp['etag']
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             await blob.download_blob(etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
 
         data = await (await blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified)).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @BlobPreparer()
-    async def test_decryption_on_non_encrypted_blob(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_decryption_on_non_encrypted_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b'Hello World Not Encrypted!'
@@ -277,17 +318,21 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         blob.key_encryption_key = KeyWrapper('key1')
         blob.require_encryption = True
 
-        with self.assertRaises(HttpResponseError):
+        with pytest.raises(HttpResponseError):
             await blob.download_blob()
 
         blob.require_encryption = False
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @BlobPreparer()
-    async def test_encryption_v2_v1_downgrade(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_encryption_v2_v1_downgrade(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -296,26 +341,31 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         content = b'Hello World Encrypted!'
 
         # Upload blob with encryption V2
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
 
-        # Modify metadata to look like V1
-        metadata = (await blob.get_blob_properties()).metadata
-        encryption_data = loads(metadata['encryptiondata'])
-        encryption_data['EncryptionAgent']['Protocol'] = '1.0'
-        encryption_data['EncryptionAgent']['EncryptionAlgorithm'] = 'AES_CBC_256'
-        iv = base64.b64encode(os.urandom(16))
-        encryption_data['ContentEncryptionIV'] = iv.decode('utf-8')
-        metadata = {'encryptiondata': dumps(encryption_data)}
+            # Modify metadata to look like V1
+            metadata = (await blob.get_blob_properties()).metadata
+            encryption_data = loads(metadata['encryptiondata'])
+            encryption_data['EncryptionAgent']['Protocol'] = '1.0'
+            encryption_data['EncryptionAgent']['EncryptionAlgorithm'] = 'AES_CBC_256'
+            iv = base64.b64encode(os.urandom(16))
+            encryption_data['ContentEncryptionIV'] = iv.decode('utf-8')
+            metadata = {'encryptiondata': dumps(encryption_data)}
 
         # Act / Assert
         await blob.set_blob_metadata(metadata)
-        with self.assertRaises(HttpResponseError) as e:
+        with pytest.raises(HttpResponseError) as e:
             await blob.download_blob()
 
-        assert 'Decryption failed.' in str(e.exception)
+        assert 'Decryption failed.' in str(e.value)
 
     @BlobPreparer()
-    async def test_encryption_modify_cek(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_encryption_modify_cek(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -323,7 +373,8 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b'Hello World Encrypted!'
 
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
 
         # Modify cek to not include the version
         metadata = (await blob.get_blob_properties()).metadata
@@ -337,13 +388,17 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
 
         # Act / Assert
         await blob.set_blob_metadata(metadata)
-        with self.assertRaises(HttpResponseError) as e:
+        with pytest.raises(HttpResponseError) as e:
             await blob.download_blob()
 
-        assert 'Decryption failed.' in str(e.exception)
+        assert 'Decryption failed.' in str(e.value)
 
     @BlobPreparer()
-    async def test_put_blob_empty(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_put_blob_empty(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -352,14 +407,19 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         content = b''
 
         # Act
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @BlobPreparer()
-    async def test_put_blob_single_region_chunked(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy_async
+    async def test_put_blob_single_region_chunked(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -375,15 +435,19 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         content = b'abcde' * 1024
 
         # Act
-        await blob.upload_blob(content, overwrite=True)
+        with mock.patch('os.urandom', mock_urandom):
+            await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_put_blob_multi_region_chunked_size_equal_region(self, storage_account_name, storage_account_key):
+    async def test_put_blob_multi_region_chunked_size_equal_region(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -403,11 +467,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_put_blob_multi_region_chunked_size_equal_region_concurrent(self, storage_account_name, storage_account_key):
+    async def test_put_blob_multi_region_chunked_size_equal_region_concurrent(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -427,11 +494,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_put_blob_multi_region_chunked_size_less_region(self, storage_account_name, storage_account_key):
+    async def test_put_blob_multi_region_chunked_size_less_region(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -451,11 +521,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_put_blob_multi_region_chunked_size_greater_region(self, storage_account_name, storage_account_key):
+    async def test_put_blob_multi_region_chunked_size_greater_region(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -475,11 +548,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_single_region(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_single_region(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -492,11 +568,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=0, length=4 * MiB)).readall()
 
         # Assert
-        self.assertEqual(content[:4 * MiB], data)
+        assert content[:4 * MiB] == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_multiple_region(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_multiple_region(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -509,11 +588,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=0, length=8 * MiB)).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_single_region_beginning_to_middle(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_single_region_beginning_to_middle(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -526,11 +608,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=0, length=100000)).readall()
 
         # Assert
-        self.assertEqual(content[:100000], data)
+        assert content[:100000] == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_single_region_middle_to_middle(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_single_region_middle_to_middle(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -543,11 +628,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=100000, length=2000000)).readall()
 
         # Assert
-        self.assertEqual(content[100000:2100000], data)
+        assert content[100000:2100000] == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_single_region_middle_to_end(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_single_region_middle_to_end(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -561,11 +649,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=length - 1000000, length=1000000)).readall()
 
         # Assert
-        self.assertEqual(content[length - 1000000:], data)
+        assert content[length - 1000000:] == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_cross_region(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_cross_region(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -578,11 +669,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=3*1024*1024, length=2*1024*1024)).readall()
 
         # Assert
-        self.assertEqual(content[3*1024*1024:5*1024*1024], data)
+        assert content[3*1024*1024:5*1024*1024] == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_inside_second_region(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_inside_second_region(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -595,11 +689,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=5 * MiB, length=MiB)).readall()
 
         # Assert
-        self.assertEqual(content[5 * MiB:6 * MiB], data)
+        assert content[5 * MiB:6 * MiB] == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_oversize_length(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_oversize_length(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -612,11 +709,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=1 * MiB, length=7 * MiB)).readall()
 
         # Assert
-        self.assertEqual(content[1 * MiB:], data)
+        assert content[1 * MiB:] == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_range_boundary(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_boundary(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -629,11 +729,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(offset=4 * MiB - 1, length=4 * MiB + 2)).readall()
 
         # Assert
-        self.assertEqual(content[4 * MiB - 1:], data)
+        assert content[4 * MiB - 1:] == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_chunked_size_equal_region_size(self, storage_account_name, storage_account_key):
+    async def test_get_blob_chunked_size_equal_region_size(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -653,11 +756,42 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_chunked_size_equal_region_size_concurrent(self, storage_account_name, storage_account_key):
+    async def test_get_blob_range_chunked(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        content = b'abcde' * 3 * MiB  # 15 MiB
+        await blob.upload_blob(content, overwrite=True)
+
+        # Act
+        offset, length = 1 * MiB, 5 * MiB
+        data = await (await blob.download_blob(offset=offset, length=length)).readall()
+
+        # Assert
+        assert content[offset:offset + length] == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_chunked_size_equal_region_size_concurrent(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -677,11 +811,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(max_concurrency=3)).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_chunked_size_less_than_region_size(self, storage_account_name, storage_account_key):
+    async def test_get_blob_chunked_size_less_than_region_size(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -701,11 +838,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_chunked_size_greater_than_region_size(self, storage_account_name, storage_account_key):
+    async def test_get_blob_chunked_size_greater_than_region_size(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -725,11 +865,14 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob()).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_using_chunks_iter(self, storage_account_name, storage_account_key):
+    async def test_get_blob_using_chunks_iter(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         bsc = BlobServiceClient(
@@ -750,16 +893,106 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
 
         total = 0
         async for chunk in chunks_iter:
-            self.assertEqual(content[total:total+len(chunk)], chunk)
+            assert content[total:total+len(chunk)] == chunk
             total += len(chunk)
 
         # Assert
-        self.assertEqual(len(content), total)
+        assert len(content) == total
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_using_read(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = b'abcde' * 4 * MiB  # 20 MiB
+        await blob.upload_blob(data, overwrite=True)
+
+        # Act
+        stream = await blob.download_blob(max_concurrency=2)
+
+        result = bytearray()
+        read_size = 5 * MiB
+        num_chunks = int(ceil(len(data) / read_size))
+        for i in range(num_chunks):
+            content = await stream.read(read_size)
+            start = i * read_size
+            end = start + read_size
+            assert data[start:end] == content
+            result.extend(content)
+
+        # Assert
+        assert result == data
+
+    @pytest.mark.live_test_only
+    @BlobPreparer()
+    async def test_get_blob_read_with_other_read_operations_ranged(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        kek = KeyWrapper('key1')
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key,
+            max_single_get_size=4 * MiB,
+            max_chunk_get_size=4 * MiB,
+            require_encryption=True,
+            encryption_version='2.0',
+            key_encryption_key=kek)
+
+        blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        data = b'abcde' * 4 * MiB  # 20 MiB
+        await blob.upload_blob(data, overwrite=True)
+
+        offset, length = 1 * MiB, 5 * MiB
+
+        # Act / Assert
+        read_size = 150000
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(read_size)  # Read in first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+
+        read_size = 4 * MiB + 100000
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(read_size)  # Read past first chunk
+        second = await stream.readall()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+
+        stream = await blob.download_blob(offset=offset, length=length)
+        first = await stream.read(read_size)  # Read past first chunk
+        second_stream = BytesIO()
+        read_length = await stream.readinto(second_stream)
+        second = second_stream.getvalue()
+
+        assert first == data[offset:offset + read_size]
+        assert second == data[offset + read_size:offset + length]
+        assert read_length == len(second)
 
     @pytest.mark.skip(reason="Intended for manual testing due to blob size.")
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_get_blob_large_blob(self, storage_account_name, storage_account_key):
+    async def test_get_blob_large_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         await self._setup(storage_account_name, storage_account_key)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
@@ -772,4 +1005,4 @@ class StorageBlobEncryptionV2TestAsync(AsyncStorageTestCase):
         data = await (await blob.download_blob(max_concurrency=5)).readall()
 
         # Assert
-        self.assertEqual(content, data)
+        assert content == data

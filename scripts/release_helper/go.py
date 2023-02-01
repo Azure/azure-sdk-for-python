@@ -1,6 +1,5 @@
 from common import IssueProcess, Common
 from typing import Any, List
-import os
 
 # assignee dict which will be assigned to handle issues
 _GO_OWNER = {'ArcturusZhang', 'azure-sdk'}

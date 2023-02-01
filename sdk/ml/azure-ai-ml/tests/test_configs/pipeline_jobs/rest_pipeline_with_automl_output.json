@@ -43,12 +43,12 @@
       "classification_train_data": {
         "mode": "ReadOnlyMount",
         "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/3421f176a64fab3cb7e9e32b7e587316/training-mltable-folder",
-        "job_input_type": "MLTable"
+        "job_input_type": "mltable"
       },
       "classification_validation_data": {
         "mode": "ReadOnlyMount",
         "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/ab4439bc9830f7f9b56d14019492989c/validation-mltable-folder",
-        "job_input_type": "MLTable"
+        "job_input_type": "mltable"
       }
     },
     "jobs": {
@@ -106,7 +106,7 @@
     "outputs": {
       "pipeline_job_out_best_model": {
         "mode": "ReadWriteMount",
-        "job_output_type": "UriFolder"
+        "job_output_type": "uri_folder"
       }
     },
     "settings": {

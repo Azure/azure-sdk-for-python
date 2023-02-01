@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._device_update_operations import DeviceUpdateOperationsMixin
+from ._device_update_mgmt_client_operations import DeviceUpdateMgmtClientOperationsMixin
 from ._accounts_operations import AccountsOperations
 from ._instances_operations import InstancesOperations
 from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations
@@ -14,12 +14,18 @@ from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._private_endpoint_connection_proxies_operations import PrivateEndpointConnectionProxiesOperations
 from ._operations import Operations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'DeviceUpdateOperationsMixin',
-    'AccountsOperations',
-    'InstancesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'PrivateEndpointConnectionProxiesOperations',
-    'Operations',
+    "DeviceUpdateMgmtClientOperationsMixin",
+    "AccountsOperations",
+    "InstancesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "PrivateEndpointConnectionProxiesOperations",
+    "Operations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

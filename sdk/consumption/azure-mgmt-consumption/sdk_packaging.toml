@@ -5,3 +5,5 @@ package_pprint_name = "Consumption"
 package_doc_id = "consumption"
 is_stable = false
 is_arm = true
+sample_link = ""
+title = "ConsumptionManagementClient"

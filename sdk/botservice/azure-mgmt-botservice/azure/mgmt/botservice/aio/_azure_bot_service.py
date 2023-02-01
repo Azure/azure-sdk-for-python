@@ -7,21 +7,34 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
-from .. import models
+from .. import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import AzureBotServiceConfiguration
-from .operations import BotConnectionOperations, BotsOperations, ChannelsOperations, DirectLineOperations, HostSettingsOperations, OperationResultsOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations
+from .operations import (
+    BotConnectionOperations,
+    BotsOperations,
+    ChannelsOperations,
+    DirectLineOperations,
+    EmailOperations,
+    HostSettingsOperations,
+    OperationResultsOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    QnAMakerEndpointKeysOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class AzureBotService:
+
+class AzureBotService:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Bot Service is a platform for creating smart conversational agents.
 
     :ivar bots: BotsOperations operations
@@ -30,10 +43,15 @@ class AzureBotService:
     :vartype channels: azure.mgmt.botservice.aio.operations.ChannelsOperations
     :ivar direct_line: DirectLineOperations operations
     :vartype direct_line: azure.mgmt.botservice.aio.operations.DirectLineOperations
+    :ivar email: EmailOperations operations
+    :vartype email: azure.mgmt.botservice.aio.operations.EmailOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.botservice.aio.operations.Operations
     :ivar bot_connection: BotConnectionOperations operations
     :vartype bot_connection: azure.mgmt.botservice.aio.operations.BotConnectionOperations
+    :ivar qn_amaker_endpoint_keys: QnAMakerEndpointKeysOperations operations
+    :vartype qn_amaker_endpoint_keys:
+     azure.mgmt.botservice.aio.operations.QnAMakerEndpointKeysOperations
     :ivar host_settings: HostSettingsOperations operations
     :vartype host_settings: azure.mgmt.botservice.aio.operations.HostSettingsOperations
     :ivar operation_results: OperationResultsOperations operations
@@ -44,12 +62,15 @@ class AzureBotService:
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.botservice.aio.operations.PrivateLinkResourcesOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Azure Subscription ID.
+    :param subscription_id: Azure Subscription ID. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-09-15". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -64,26 +85,31 @@ class AzureBotService:
         self._config = AzureBotServiceConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.bots = BotsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.channels = ChannelsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.direct_line = DirectLineOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.email = EmailOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.bot_connection = BotConnectionOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.qn_amaker_endpoint_keys = QnAMakerEndpointKeysOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.host_settings = HostSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operation_results = OperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -92,7 +118,7 @@ class AzureBotService:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

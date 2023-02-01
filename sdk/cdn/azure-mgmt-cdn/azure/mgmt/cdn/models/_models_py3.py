@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._cdn_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ActivatedResourceReference(msrest.serialization.Model):
+class ActivatedResourceReference(_serialization.Model):
     """Reference to another resource along with its state.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -27,30 +29,25 @@ class ActivatedResourceReference(msrest.serialization.Model):
     """
 
     _validation = {
-        'is_active': {'readonly': True},
+        "is_active": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'is_active': {'key': 'isActive', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "is_active": {"key": "isActive", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
         """
-        super(ActivatedResourceReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.is_active = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -66,26 +63,22 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -108,29 +101,25 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class AFDDomain(ProxyResource):
+class AFDDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -154,16 +143,16 @@ class AFDDomain(ProxyResource):
     :ivar pre_validated_custom_domain_resource_id: Resource reference to the Azure resource where
      custom domain ownership was prevalidated.
     :vartype pre_validated_custom_domain_resource_id: ~azure.mgmt.cdn.models.ResourceReference
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar domain_validation_state: Provisioning substate shows the progress of custom HTTPS
-     enabling/disabling process step by step. DCV stands for DomainControlValidation. Possible
-     values include: "Unknown", "Submitting", "Pending", "Rejected", "TimedOut",
-     "PendingRevalidation", "Approved", "RefreshingValidationToken", "InternalError".
+     enabling/disabling process step by step. DCV stands for DomainControlValidation. Known values
+     are: "Unknown", "Submitting", "Pending", "Rejected", "TimedOut", "PendingRevalidation",
+     "Approved", "RefreshingValidationToken", and "InternalError".
     :vartype domain_validation_state: str or ~azure.mgmt.cdn.models.DomainValidationState
     :ivar host_name: The host name of the domain. Must be a domain name.
     :vartype host_name: str
@@ -172,39 +161,42 @@ class AFDDomain(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'profile_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'domain_validation_state': {'readonly': True},
-        'validation_properties': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "profile_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "domain_validation_state": {"readonly": True},
+        "validation_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
-        'tls_settings': {'key': 'properties.tlsSettings', 'type': 'AFDDomainHttpsParameters'},
-        'azure_dns_zone': {'key': 'properties.azureDnsZone', 'type': 'ResourceReference'},
-        'pre_validated_custom_domain_resource_id': {'key': 'properties.preValidatedCustomDomainResourceId', 'type': 'ResourceReference'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
-        'domain_validation_state': {'key': 'properties.domainValidationState', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'validation_properties': {'key': 'properties.validationProperties', 'type': 'DomainValidationProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
+        "tls_settings": {"key": "properties.tlsSettings", "type": "AFDDomainHttpsParameters"},
+        "azure_dns_zone": {"key": "properties.azureDnsZone", "type": "ResourceReference"},
+        "pre_validated_custom_domain_resource_id": {
+            "key": "properties.preValidatedCustomDomainResourceId",
+            "type": "ResourceReference",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
+        "domain_validation_state": {"key": "properties.domainValidationState", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "validation_properties": {"key": "properties.validationProperties", "type": "DomainValidationProperties"},
     }
 
     def __init__(
         self,
         *,
-        tls_settings: Optional["AFDDomainHttpsParameters"] = None,
-        azure_dns_zone: Optional["ResourceReference"] = None,
-        pre_validated_custom_domain_resource_id: Optional["ResourceReference"] = None,
+        tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
+        azure_dns_zone: Optional["_models.ResourceReference"] = None,
+        pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
         **kwargs
     ):
@@ -221,7 +213,7 @@ class AFDDomain(ProxyResource):
         :keyword host_name: The host name of the domain. Must be a domain name.
         :paramtype host_name: str
         """
-        super(AFDDomain, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.tls_settings = tls_settings
         self.azure_dns_zone = azure_dns_zone
@@ -233,56 +225,56 @@ class AFDDomain(ProxyResource):
         self.validation_properties = None
 
 
-class AFDDomainHttpsParameters(msrest.serialization.Model):
+class AFDDomainHttpsParameters(_serialization.Model):
     """The JSON object that contains the properties to secure a domain.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar certificate_type: Required. Defines the source of the SSL certificate. Possible values
-     include: "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+    :ivar certificate_type: Defines the source of the SSL certificate. Required. Known values are:
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype certificate_type: str or ~azure.mgmt.cdn.models.AfdCertificateType
-    :ivar minimum_tls_version: TLS protocol version that will be used for Https. Possible values
-     include: "TLS10", "TLS12".
+    :ivar minimum_tls_version: TLS protocol version that will be used for Https. Known values are:
+     "TLS10" and "TLS12".
     :vartype minimum_tls_version: str or ~azure.mgmt.cdn.models.AfdMinimumTlsVersion
     :ivar secret: Resource reference to the secret. ie. subs/rg/profile/secret.
     :vartype secret: ~azure.mgmt.cdn.models.ResourceReference
     """
 
     _validation = {
-        'certificate_type': {'required': True},
+        "certificate_type": {"required": True},
     }
 
     _attribute_map = {
-        'certificate_type': {'key': 'certificateType', 'type': 'str'},
-        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
-        'secret': {'key': 'secret', 'type': 'ResourceReference'},
+        "certificate_type": {"key": "certificateType", "type": "str"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "secret": {"key": "secret", "type": "ResourceReference"},
     }
 
     def __init__(
         self,
         *,
-        certificate_type: Union[str, "AfdCertificateType"],
-        minimum_tls_version: Optional[Union[str, "AfdMinimumTlsVersion"]] = None,
-        secret: Optional["ResourceReference"] = None,
+        certificate_type: Union[str, "_models.AfdCertificateType"],
+        minimum_tls_version: Optional[Union[str, "_models.AfdMinimumTlsVersion"]] = None,
+        secret: Optional["_models.ResourceReference"] = None,
         **kwargs
     ):
         """
-        :keyword certificate_type: Required. Defines the source of the SSL certificate. Possible values
-         include: "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+        :keyword certificate_type: Defines the source of the SSL certificate. Required. Known values
+         are: "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
         :paramtype certificate_type: str or ~azure.mgmt.cdn.models.AfdCertificateType
-        :keyword minimum_tls_version: TLS protocol version that will be used for Https. Possible values
-         include: "TLS10", "TLS12".
+        :keyword minimum_tls_version: TLS protocol version that will be used for Https. Known values
+         are: "TLS10" and "TLS12".
         :paramtype minimum_tls_version: str or ~azure.mgmt.cdn.models.AfdMinimumTlsVersion
         :keyword secret: Resource reference to the secret. ie. subs/rg/profile/secret.
         :paramtype secret: ~azure.mgmt.cdn.models.ResourceReference
         """
-        super(AFDDomainHttpsParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.certificate_type = certificate_type
         self.minimum_tls_version = minimum_tls_version
         self.secret = secret
 
 
-class AFDDomainListResult(msrest.serialization.Model):
+class AFDDomainListResult(_serialization.Model):
     """Result of the request to list domains. It contains a list of domain objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -294,64 +286,55 @@ class AFDDomainListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AFDDomain]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AFDDomain]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of domain objects if there are any.
         :paramtype next_link: str
         """
-        super(AFDDomainListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class AFDStateProperties(msrest.serialization.Model):
+class AFDStateProperties(_serialization.Model):
     """The tracking states for afd resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AFDStateProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.deployment_status = None
 
 
-class AFDDomainUpdatePropertiesParameters(msrest.serialization.Model):
+class AFDDomainUpdatePropertiesParameters(_serialization.Model):
     """The JSON object that contains the properties of the domain to create.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -370,22 +353,25 @@ class AFDDomainUpdatePropertiesParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'profile_name': {'readonly': True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'profile_name': {'key': 'profileName', 'type': 'str'},
-        'tls_settings': {'key': 'tlsSettings', 'type': 'AFDDomainHttpsParameters'},
-        'azure_dns_zone': {'key': 'azureDnsZone', 'type': 'ResourceReference'},
-        'pre_validated_custom_domain_resource_id': {'key': 'preValidatedCustomDomainResourceId', 'type': 'ResourceReference'},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "tls_settings": {"key": "tlsSettings", "type": "AFDDomainHttpsParameters"},
+        "azure_dns_zone": {"key": "azureDnsZone", "type": "ResourceReference"},
+        "pre_validated_custom_domain_resource_id": {
+            "key": "preValidatedCustomDomainResourceId",
+            "type": "ResourceReference",
+        },
     }
 
     def __init__(
         self,
         *,
-        tls_settings: Optional["AFDDomainHttpsParameters"] = None,
-        azure_dns_zone: Optional["ResourceReference"] = None,
-        pre_validated_custom_domain_resource_id: Optional["ResourceReference"] = None,
+        tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
+        azure_dns_zone: Optional["_models.ResourceReference"] = None,
+        pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
         **kwargs
     ):
         """
@@ -399,7 +385,7 @@ class AFDDomainUpdatePropertiesParameters(msrest.serialization.Model):
          where custom domain ownership was prevalidated.
         :paramtype pre_validated_custom_domain_resource_id: ~azure.mgmt.cdn.models.ResourceReference
         """
-        super(AFDDomainUpdatePropertiesParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.tls_settings = tls_settings
         self.azure_dns_zone = azure_dns_zone
@@ -413,10 +399,10 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar profile_name: The name of the profile which holds the domain.
@@ -431,44 +417,47 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
      custom domain ownership was prevalidated.
     :vartype pre_validated_custom_domain_resource_id: ~azure.mgmt.cdn.models.ResourceReference
     :ivar domain_validation_state: Provisioning substate shows the progress of custom HTTPS
-     enabling/disabling process step by step. DCV stands for DomainControlValidation. Possible
-     values include: "Unknown", "Submitting", "Pending", "Rejected", "TimedOut",
-     "PendingRevalidation", "Approved", "RefreshingValidationToken", "InternalError".
+     enabling/disabling process step by step. DCV stands for DomainControlValidation. Known values
+     are: "Unknown", "Submitting", "Pending", "Rejected", "TimedOut", "PendingRevalidation",
+     "Approved", "RefreshingValidationToken", and "InternalError".
     :vartype domain_validation_state: str or ~azure.mgmt.cdn.models.DomainValidationState
-    :ivar host_name: Required. The host name of the domain. Must be a domain name.
+    :ivar host_name: The host name of the domain. Must be a domain name. Required.
     :vartype host_name: str
     :ivar validation_properties: Values the customer needs to validate domain ownership.
     :vartype validation_properties: ~azure.mgmt.cdn.models.DomainValidationProperties
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'profile_name': {'readonly': True},
-        'domain_validation_state': {'readonly': True},
-        'host_name': {'required': True},
-        'validation_properties': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
+        "domain_validation_state": {"readonly": True},
+        "host_name": {"required": True},
+        "validation_properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'profile_name': {'key': 'profileName', 'type': 'str'},
-        'tls_settings': {'key': 'tlsSettings', 'type': 'AFDDomainHttpsParameters'},
-        'azure_dns_zone': {'key': 'azureDnsZone', 'type': 'ResourceReference'},
-        'pre_validated_custom_domain_resource_id': {'key': 'preValidatedCustomDomainResourceId', 'type': 'ResourceReference'},
-        'domain_validation_state': {'key': 'domainValidationState', 'type': 'str'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'validation_properties': {'key': 'validationProperties', 'type': 'DomainValidationProperties'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "tls_settings": {"key": "tlsSettings", "type": "AFDDomainHttpsParameters"},
+        "azure_dns_zone": {"key": "azureDnsZone", "type": "ResourceReference"},
+        "pre_validated_custom_domain_resource_id": {
+            "key": "preValidatedCustomDomainResourceId",
+            "type": "ResourceReference",
+        },
+        "domain_validation_state": {"key": "domainValidationState", "type": "str"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "validation_properties": {"key": "validationProperties", "type": "DomainValidationProperties"},
     }
 
     def __init__(
         self,
         *,
         host_name: str,
-        tls_settings: Optional["AFDDomainHttpsParameters"] = None,
-        azure_dns_zone: Optional["ResourceReference"] = None,
-        pre_validated_custom_domain_resource_id: Optional["ResourceReference"] = None,
+        tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
+        azure_dns_zone: Optional["_models.ResourceReference"] = None,
+        pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
         **kwargs
     ):
         """
@@ -481,10 +470,15 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
         :keyword pre_validated_custom_domain_resource_id: Resource reference to the Azure resource
          where custom domain ownership was prevalidated.
         :paramtype pre_validated_custom_domain_resource_id: ~azure.mgmt.cdn.models.ResourceReference
-        :keyword host_name: Required. The host name of the domain. Must be a domain name.
+        :keyword host_name: The host name of the domain. Must be a domain name. Required.
         :paramtype host_name: str
         """
-        super(AFDDomainProperties, self).__init__(tls_settings=tls_settings, azure_dns_zone=azure_dns_zone, pre_validated_custom_domain_resource_id=pre_validated_custom_domain_resource_id, **kwargs)
+        super().__init__(
+            tls_settings=tls_settings,
+            azure_dns_zone=azure_dns_zone,
+            pre_validated_custom_domain_resource_id=pre_validated_custom_domain_resource_id,
+            **kwargs
+        )
         self.provisioning_state = None
         self.deployment_status = None
         self.domain_validation_state = None
@@ -494,12 +488,9 @@ class AFDDomainProperties(AFDDomainUpdatePropertiesParameters, AFDStatePropertie
         self.tls_settings = tls_settings
         self.azure_dns_zone = azure_dns_zone
         self.pre_validated_custom_domain_resource_id = pre_validated_custom_domain_resource_id
-        self.domain_validation_state = None
-        self.host_name = host_name
-        self.validation_properties = None
 
 
-class AFDDomainUpdateParameters(msrest.serialization.Model):
+class AFDDomainUpdateParameters(_serialization.Model):
     """The domain JSON object required for domain creation or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -518,22 +509,25 @@ class AFDDomainUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'profile_name': {'readonly': True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
-        'tls_settings': {'key': 'properties.tlsSettings', 'type': 'AFDDomainHttpsParameters'},
-        'azure_dns_zone': {'key': 'properties.azureDnsZone', 'type': 'ResourceReference'},
-        'pre_validated_custom_domain_resource_id': {'key': 'properties.preValidatedCustomDomainResourceId', 'type': 'ResourceReference'},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
+        "tls_settings": {"key": "properties.tlsSettings", "type": "AFDDomainHttpsParameters"},
+        "azure_dns_zone": {"key": "properties.azureDnsZone", "type": "ResourceReference"},
+        "pre_validated_custom_domain_resource_id": {
+            "key": "properties.preValidatedCustomDomainResourceId",
+            "type": "ResourceReference",
+        },
     }
 
     def __init__(
         self,
         *,
-        tls_settings: Optional["AFDDomainHttpsParameters"] = None,
-        azure_dns_zone: Optional["ResourceReference"] = None,
-        pre_validated_custom_domain_resource_id: Optional["ResourceReference"] = None,
+        tls_settings: Optional["_models.AFDDomainHttpsParameters"] = None,
+        azure_dns_zone: Optional["_models.ResourceReference"] = None,
+        pre_validated_custom_domain_resource_id: Optional["_models.ResourceReference"] = None,
         **kwargs
     ):
         """
@@ -547,7 +541,7 @@ class AFDDomainUpdateParameters(msrest.serialization.Model):
          where custom domain ownership was prevalidated.
         :paramtype pre_validated_custom_domain_resource_id: ~azure.mgmt.cdn.models.ResourceReference
         """
-        super(AFDDomainUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.tls_settings = tls_settings
         self.azure_dns_zone = azure_dns_zone
@@ -569,48 +563,42 @@ class TrackedResource(Resource):
     :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
 
 
-class AFDEndpoint(TrackedResource):
+class AFDEndpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """CDN endpoint is the entity within a CDN profile containing configuration information such as origin, protocol, content caching and delivery behavior. The AzureFrontDoor endpoint uses the URL format :code:`<endpointname>`.azureedge.net.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -625,56 +613,59 @@ class AFDEndpoint(TrackedResource):
     :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar profile_name: The name of the profile which holds the endpoint.
     :vartype profile_name: str
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar host_name: The host name of the endpoint structured as {endpointName}.{DNSZone}, e.g.
      contoso.azureedge.net.
     :vartype host_name: str
     :ivar auto_generated_domain_name_label_scope: Indicates the endpoint name reuse scope. The
-     default value is TenantReuse. Possible values include: "TenantReuse", "SubscriptionReuse",
-     "ResourceGroupReuse", "NoReuse".
+     default value is TenantReuse. Known values are: "TenantReuse", "SubscriptionReuse",
+     "ResourceGroupReuse", and "NoReuse".
     :vartype auto_generated_domain_name_label_scope: str or
      ~azure.mgmt.cdn.models.AutoGeneratedDomainNameLabelScope
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'profile_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'host_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "profile_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "host_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
-        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'auto_generated_domain_name_label_scope': {'key': 'properties.autoGeneratedDomainNameLabelScope', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
+        "enabled_state": {"key": "properties.enabledState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "auto_generated_domain_name_label_scope": {
+            "key": "properties.autoGeneratedDomainNameLabelScope",
+            "type": "str",
+        },
     }
 
     def __init__(
@@ -682,25 +673,27 @@ class AFDEndpoint(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
-        auto_generated_domain_name_label_scope: Optional[Union[str, "AutoGeneratedDomainNameLabelScope"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        auto_generated_domain_name_label_scope: Optional[
+            Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
+        ] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         :keyword auto_generated_domain_name_label_scope: Indicates the endpoint name reuse scope. The
-         default value is TenantReuse. Possible values include: "TenantReuse", "SubscriptionReuse",
-         "ResourceGroupReuse", "NoReuse".
+         default value is TenantReuse. Known values are: "TenantReuse", "SubscriptionReuse",
+         "ResourceGroupReuse", and "NoReuse".
         :paramtype auto_generated_domain_name_label_scope: str or
          ~azure.mgmt.cdn.models.AutoGeneratedDomainNameLabelScope
         """
-        super(AFDEndpoint, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.profile_name = None
         self.enabled_state = enabled_state
         self.provisioning_state = None
@@ -709,7 +702,7 @@ class AFDEndpoint(TrackedResource):
         self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
 
 
-class AFDEndpointListResult(msrest.serialization.Model):
+class AFDEndpointListResult(_serialization.Model):
     """Result of the request to list endpoints. It contains a list of endpoint objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -721,30 +714,25 @@ class AFDEndpointListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AFDEndpoint]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AFDEndpoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of endpoint objects if there is any.
         :paramtype next_link: str
         """
-        super(AFDEndpointListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class AFDEndpointPropertiesUpdateParameters(msrest.serialization.Model):
+class AFDEndpointPropertiesUpdateParameters(_serialization.Model):
     """The JSON object containing endpoint update parameters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -752,150 +740,145 @@ class AFDEndpointPropertiesUpdateParameters(msrest.serialization.Model):
     :ivar profile_name: The name of the profile which holds the endpoint.
     :vartype profile_name: str
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     """
 
     _validation = {
-        'profile_name': {'readonly': True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'profile_name': {'key': 'profileName', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "enabled_state": {"key": "enabledState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, enabled_state: Optional[Union[str, "_models.EnabledState"]] = None, **kwargs):
         """
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(AFDEndpointPropertiesUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.enabled_state = enabled_state
 
 
-class AFDEndpointProperties(AFDStateProperties, AFDEndpointPropertiesUpdateParameters):
+class AFDEndpointProperties(AFDEndpointPropertiesUpdateParameters, AFDStateProperties):
     """The JSON object that contains the properties required to create an endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar profile_name: The name of the profile which holds the endpoint.
     :vartype profile_name: str
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
-    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
-     "Failed".
-    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar host_name: The host name of the endpoint structured as {endpointName}.{DNSZone}, e.g.
      contoso.azureedge.net.
     :vartype host_name: str
     :ivar auto_generated_domain_name_label_scope: Indicates the endpoint name reuse scope. The
-     default value is TenantReuse. Possible values include: "TenantReuse", "SubscriptionReuse",
-     "ResourceGroupReuse", "NoReuse".
+     default value is TenantReuse. Known values are: "TenantReuse", "SubscriptionReuse",
+     "ResourceGroupReuse", and "NoReuse".
     :vartype auto_generated_domain_name_label_scope: str or
      ~azure.mgmt.cdn.models.AutoGeneratedDomainNameLabelScope
     """
 
     _validation = {
-        'profile_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'host_name': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
+        "host_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'profile_name': {'key': 'profileName', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'auto_generated_domain_name_label_scope': {'key': 'autoGeneratedDomainNameLabelScope', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "enabled_state": {"key": "enabledState", "type": "str"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "auto_generated_domain_name_label_scope": {"key": "autoGeneratedDomainNameLabelScope", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
-        auto_generated_domain_name_label_scope: Optional[Union[str, "AutoGeneratedDomainNameLabelScope"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        auto_generated_domain_name_label_scope: Optional[
+            Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
+        ] = None,
         **kwargs
     ):
         """
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         :keyword auto_generated_domain_name_label_scope: Indicates the endpoint name reuse scope. The
-         default value is TenantReuse. Possible values include: "TenantReuse", "SubscriptionReuse",
-         "ResourceGroupReuse", "NoReuse".
+         default value is TenantReuse. Known values are: "TenantReuse", "SubscriptionReuse",
+         "ResourceGroupReuse", and "NoReuse".
         :paramtype auto_generated_domain_name_label_scope: str or
          ~azure.mgmt.cdn.models.AutoGeneratedDomainNameLabelScope
         """
-        super(AFDEndpointProperties, self).__init__(enabled_state=enabled_state, **kwargs)
-        self.profile_name = None
-        self.enabled_state = enabled_state
-        self.host_name = None
-        self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
+        super().__init__(enabled_state=enabled_state, **kwargs)
         self.provisioning_state = None
         self.deployment_status = None
         self.host_name = None
         self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
+        self.profile_name = None
+        self.enabled_state = enabled_state
 
 
-class AFDEndpointUpdateParameters(msrest.serialization.Model):
+class AFDEndpointUpdateParameters(_serialization.Model):
     """Properties required to create or update an endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar tags: A set of tags. Endpoint tags.
+    :ivar tags: Endpoint tags.
     :vartype tags: dict[str, str]
     :ivar profile_name: The name of the profile which holds the endpoint.
     :vartype profile_name: str
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     """
 
     _validation = {
-        'profile_name': {'readonly': True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
-        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
+        "enabled_state": {"key": "properties.enabledState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Endpoint tags.
+        :keyword tags: Endpoint tags.
         :paramtype tags: dict[str, str]
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(AFDEndpointUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.profile_name = None
         self.enabled_state = enabled_state
 
 
-class AfdErrorResponse(msrest.serialization.Model):
+class AfdErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
@@ -903,24 +886,19 @@ class AfdErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.cdn.models.ErrorDetail
         """
-        super(AfdErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class AFDOrigin(ProxyResource):
+class AFDOrigin(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -962,65 +940,68 @@ class AFDOrigin(ProxyResource):
      ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
     :ivar enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
-     enabled backend pool. Possible values include: "Enabled", "Disabled".
+     enabled backend pool. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     :ivar enforce_certificate_name_check: Whether to enable certificate name check at origin level.
     :vartype enforce_certificate_name_check: bool
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'origin_group_name': {'readonly': True},
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "origin_group_name": {"readonly": True},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'origin_group_name': {'key': 'properties.originGroupName', 'type': 'str'},
-        'azure_origin': {'key': 'properties.azureOrigin', 'type': 'ResourceReference'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
-        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'shared_private_link_resource': {'key': 'properties.sharedPrivateLinkResource', 'type': 'SharedPrivateLinkResourceProperties'},
-        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
-        'enforce_certificate_name_check': {'key': 'properties.enforceCertificateNameCheck', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "origin_group_name": {"key": "properties.originGroupName", "type": "str"},
+        "azure_origin": {"key": "properties.azureOrigin", "type": "ResourceReference"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "http_port": {"key": "properties.httpPort", "type": "int"},
+        "https_port": {"key": "properties.httpsPort", "type": "int"},
+        "origin_host_header": {"key": "properties.originHostHeader", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "weight": {"key": "properties.weight", "type": "int"},
+        "shared_private_link_resource": {
+            "key": "properties.sharedPrivateLinkResource",
+            "type": "SharedPrivateLinkResourceProperties",
+        },
+        "enabled_state": {"key": "properties.enabledState", "type": "str"},
+        "enforce_certificate_name_check": {"key": "properties.enforceCertificateNameCheck", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        azure_origin: Optional["ResourceReference"] = None,
+        azure_origin: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
         http_port: Optional[int] = None,
         https_port: Optional[int] = None,
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
-        shared_private_link_resource: Optional["SharedPrivateLinkResourceProperties"] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
-        enforce_certificate_name_check: Optional[bool] = True,
+        shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        enforce_certificate_name_check: bool = True,
         **kwargs
     ):
         """
@@ -1051,13 +1032,13 @@ class AFDOrigin(ProxyResource):
          ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
         :keyword enabled_state: Whether to enable health probes to be made against backends defined
          under backendPools. Health probes can only be disabled if there is a single enabled backend in
-         single enabled backend pool. Possible values include: "Enabled", "Disabled".
+         single enabled backend pool. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         :keyword enforce_certificate_name_check: Whether to enable certificate name check at origin
          level.
         :paramtype enforce_certificate_name_check: bool
         """
-        super(AFDOrigin, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.origin_group_name = None
         self.azure_origin = azure_origin
         self.host_name = host_name
@@ -1073,7 +1054,7 @@ class AFDOrigin(ProxyResource):
         self.deployment_status = None
 
 
-class AFDOriginGroup(ProxyResource):
+class AFDOriginGroup(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """AFDOrigin group comprising of origins is used for load balancing to origins when the content cannot be served from CDN.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1098,48 +1079,54 @@ class AFDOriginGroup(ProxyResource):
      endpoint is added. Default is 10 mins. This property is currently not supported.
     :vartype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
     :ivar session_affinity_state: Whether to allow session affinity on this host. Valid options are
-     'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Enabled' or 'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'profile_name': {'readonly': True},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "profile_name": {"readonly": True},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
-        'load_balancing_settings': {'key': 'properties.loadBalancingSettings', 'type': 'LoadBalancingSettingsParameters'},
-        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'session_affinity_state': {'key': 'properties.sessionAffinityState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
+        "load_balancing_settings": {
+            "key": "properties.loadBalancingSettings",
+            "type": "LoadBalancingSettingsParameters",
+        },
+        "health_probe_settings": {"key": "properties.healthProbeSettings", "type": "HealthProbeParameters"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "session_affinity_state": {"key": "properties.sessionAffinityState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        load_balancing_settings: Optional["LoadBalancingSettingsParameters"] = None,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
+        load_balancing_settings: Optional["_models.LoadBalancingSettingsParameters"] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        session_affinity_state: Optional[Union[str, "EnabledState"]] = None,
+        session_affinity_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
@@ -1153,20 +1140,22 @@ class AFDOriginGroup(ProxyResource):
          endpoint is added. Default is 10 mins. This property is currently not supported.
         :paramtype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
         :keyword session_affinity_state: Whether to allow session affinity on this host. Valid options
-         are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         are 'Enabled' or 'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(AFDOriginGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.load_balancing_settings = load_balancing_settings
         self.health_probe_settings = health_probe_settings
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = (
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        )
         self.session_affinity_state = session_affinity_state
         self.provisioning_state = None
         self.deployment_status = None
 
 
-class AFDOriginGroupListResult(msrest.serialization.Model):
+class AFDOriginGroupListResult(_serialization.Model):
     """Result of the request to list origin groups. It contains a list of origin groups objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1178,30 +1167,25 @@ class AFDOriginGroupListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AFDOriginGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AFDOriginGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of origin objects if there are any.
         :paramtype next_link: str
         """
-        super(AFDOriginGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class AFDOriginGroupUpdatePropertiesParameters(msrest.serialization.Model):
+class AFDOriginGroupUpdatePropertiesParameters(_serialization.Model):
     """The JSON object that contains the properties of the origin group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1218,30 +1202,33 @@ class AFDOriginGroupUpdatePropertiesParameters(msrest.serialization.Model):
      endpoint is added. Default is 10 mins. This property is currently not supported.
     :vartype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
     :ivar session_affinity_state: Whether to allow session affinity on this host. Valid options are
-     'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Enabled' or 'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
     """
 
     _validation = {
-        'profile_name': {'readonly': True},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+        "profile_name": {"readonly": True},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
     }
 
     _attribute_map = {
-        'profile_name': {'key': 'profileName', 'type': 'str'},
-        'load_balancing_settings': {'key': 'loadBalancingSettings', 'type': 'LoadBalancingSettingsParameters'},
-        'health_probe_settings': {'key': 'healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'session_affinity_state': {'key': 'sessionAffinityState', 'type': 'str'},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "load_balancing_settings": {"key": "loadBalancingSettings", "type": "LoadBalancingSettingsParameters"},
+        "health_probe_settings": {"key": "healthProbeSettings", "type": "HealthProbeParameters"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "session_affinity_state": {"key": "sessionAffinityState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        load_balancing_settings: Optional["LoadBalancingSettingsParameters"] = None,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
+        load_balancing_settings: Optional["_models.LoadBalancingSettingsParameters"] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        session_affinity_state: Optional[Union[str, "EnabledState"]] = None,
+        session_affinity_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
@@ -1255,68 +1242,73 @@ class AFDOriginGroupUpdatePropertiesParameters(msrest.serialization.Model):
          endpoint is added. Default is 10 mins. This property is currently not supported.
         :paramtype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
         :keyword session_affinity_state: Whether to allow session affinity on this host. Valid options
-         are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         are 'Enabled' or 'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(AFDOriginGroupUpdatePropertiesParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.load_balancing_settings = load_balancing_settings
         self.health_probe_settings = health_probe_settings
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = (
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        )
         self.session_affinity_state = session_affinity_state
 
 
-class AFDOriginGroupProperties(AFDStateProperties, AFDOriginGroupUpdatePropertiesParameters):
+class AFDOriginGroupProperties(AFDOriginGroupUpdatePropertiesParameters, AFDStateProperties):
     """The JSON object that contains the properties of the origin group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar profile_name: The name of the profile which holds the origin group.
-    :vartype profile_name: str
-    :ivar load_balancing_settings: Load balancing settings for a backend pool.
-    :vartype load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
-    :ivar health_probe_settings: Health probe settings to the origin that is used to determine the
-     health of the origin.
-    :vartype health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
-    :ivar traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Time in minutes to shift
-     the traffic to the endpoint gradually when an unhealthy endpoint comes healthy or a new
-     endpoint is added. Default is 10 mins. This property is currently not supported.
-    :vartype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
-    :ivar session_affinity_state: Whether to allow session affinity on this host. Valid options are
-     'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
-    :vartype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :ivar profile_name: The name of the profile which holds the origin group.
+    :vartype profile_name: str
+    :ivar load_balancing_settings: Load balancing settings for a backend pool.
+    :vartype load_balancing_settings: ~azure.mgmt.cdn.models.LoadBalancingSettingsParameters
+    :ivar health_probe_settings: Health probe settings to the origin that is used to determine the
+     health of the origin.
+    :vartype health_probe_settings: ~azure.mgmt.cdn.models.HealthProbeParameters
+    :ivar traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Time in minutes to shift
+     the traffic to the endpoint gradually when an unhealthy endpoint comes healthy or a new
+     endpoint is added. Default is 10 mins. This property is currently not supported.
+    :vartype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
+    :ivar session_affinity_state: Whether to allow session affinity on this host. Valid options are
+     'Enabled' or 'Disabled'. Known values are: "Enabled" and "Disabled".
+    :vartype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
     """
 
     _validation = {
-        'profile_name': {'readonly': True},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
     }
 
     _attribute_map = {
-        'profile_name': {'key': 'profileName', 'type': 'str'},
-        'load_balancing_settings': {'key': 'loadBalancingSettings', 'type': 'LoadBalancingSettingsParameters'},
-        'health_probe_settings': {'key': 'healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'session_affinity_state': {'key': 'sessionAffinityState', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "load_balancing_settings": {"key": "loadBalancingSettings", "type": "LoadBalancingSettingsParameters"},
+        "health_probe_settings": {"key": "healthProbeSettings", "type": "HealthProbeParameters"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "session_affinity_state": {"key": "sessionAffinityState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        load_balancing_settings: Optional["LoadBalancingSettingsParameters"] = None,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
+        load_balancing_settings: Optional["_models.LoadBalancingSettingsParameters"] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        session_affinity_state: Optional[Union[str, "EnabledState"]] = None,
+        session_affinity_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
@@ -1330,20 +1322,28 @@ class AFDOriginGroupProperties(AFDStateProperties, AFDOriginGroupUpdatePropertie
          endpoint is added. Default is 10 mins. This property is currently not supported.
         :paramtype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
         :keyword session_affinity_state: Whether to allow session affinity on this host. Valid options
-         are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         are 'Enabled' or 'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(AFDOriginGroupProperties, self).__init__(load_balancing_settings=load_balancing_settings, health_probe_settings=health_probe_settings, traffic_restoration_time_to_healed_or_new_endpoints_in_minutes=traffic_restoration_time_to_healed_or_new_endpoints_in_minutes, session_affinity_state=session_affinity_state, **kwargs)
+        super().__init__(
+            load_balancing_settings=load_balancing_settings,
+            health_probe_settings=health_probe_settings,
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes=traffic_restoration_time_to_healed_or_new_endpoints_in_minutes,
+            session_affinity_state=session_affinity_state,
+            **kwargs
+        )
+        self.provisioning_state = None
+        self.deployment_status = None
         self.profile_name = None
         self.load_balancing_settings = load_balancing_settings
         self.health_probe_settings = health_probe_settings
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = (
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        )
         self.session_affinity_state = session_affinity_state
-        self.provisioning_state = None
-        self.deployment_status = None
 
 
-class AFDOriginGroupUpdateParameters(msrest.serialization.Model):
+class AFDOriginGroupUpdateParameters(_serialization.Model):
     """AFDOrigin group properties needed for origin group creation or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1360,30 +1360,36 @@ class AFDOriginGroupUpdateParameters(msrest.serialization.Model):
      endpoint is added. Default is 10 mins. This property is currently not supported.
     :vartype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
     :ivar session_affinity_state: Whether to allow session affinity on this host. Valid options are
-     'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Enabled' or 'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
     """
 
     _validation = {
-        'profile_name': {'readonly': True},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+        "profile_name": {"readonly": True},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
     }
 
     _attribute_map = {
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
-        'load_balancing_settings': {'key': 'properties.loadBalancingSettings', 'type': 'LoadBalancingSettingsParameters'},
-        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'session_affinity_state': {'key': 'properties.sessionAffinityState', 'type': 'str'},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
+        "load_balancing_settings": {
+            "key": "properties.loadBalancingSettings",
+            "type": "LoadBalancingSettingsParameters",
+        },
+        "health_probe_settings": {"key": "properties.healthProbeSettings", "type": "HealthProbeParameters"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "session_affinity_state": {"key": "properties.sessionAffinityState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        load_balancing_settings: Optional["LoadBalancingSettingsParameters"] = None,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
+        load_balancing_settings: Optional["_models.LoadBalancingSettingsParameters"] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        session_affinity_state: Optional[Union[str, "EnabledState"]] = None,
+        session_affinity_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
@@ -1397,18 +1403,20 @@ class AFDOriginGroupUpdateParameters(msrest.serialization.Model):
          endpoint is added. Default is 10 mins. This property is currently not supported.
         :paramtype traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: int
         :keyword session_affinity_state: Whether to allow session affinity on this host. Valid options
-         are 'Enabled' or 'Disabled'. Possible values include: "Enabled", "Disabled".
+         are 'Enabled' or 'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype session_affinity_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(AFDOriginGroupUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.load_balancing_settings = load_balancing_settings
         self.health_probe_settings = health_probe_settings
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = (
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        )
         self.session_affinity_state = session_affinity_state
 
 
-class AFDOriginListResult(msrest.serialization.Model):
+class AFDOriginListResult(_serialization.Model):
     """Result of the request to list origins. It contains a list of origin objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1420,30 +1428,25 @@ class AFDOriginListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AFDOrigin]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AFDOrigin]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of origin objects if there are any.
         :paramtype next_link: str
         """
-        super(AFDOriginListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class AFDOriginUpdatePropertiesParameters(msrest.serialization.Model):
+class AFDOriginUpdatePropertiesParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The JSON object that contains the properties of the origin.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1477,47 +1480,50 @@ class AFDOriginUpdatePropertiesParameters(msrest.serialization.Model):
      ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
     :ivar enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
-     enabled backend pool. Possible values include: "Enabled", "Disabled".
+     enabled backend pool. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     :ivar enforce_certificate_name_check: Whether to enable certificate name check at origin level.
     :vartype enforce_certificate_name_check: bool
     """
 
     _validation = {
-        'origin_group_name': {'readonly': True},
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
+        "origin_group_name": {"readonly": True},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'origin_group_name': {'key': 'originGroupName', 'type': 'str'},
-        'azure_origin': {'key': 'azureOrigin', 'type': 'ResourceReference'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'http_port': {'key': 'httpPort', 'type': 'int'},
-        'https_port': {'key': 'httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'originHostHeader', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'shared_private_link_resource': {'key': 'sharedPrivateLinkResource', 'type': 'SharedPrivateLinkResourceProperties'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'enforce_certificate_name_check': {'key': 'enforceCertificateNameCheck', 'type': 'bool'},
+        "origin_group_name": {"key": "originGroupName", "type": "str"},
+        "azure_origin": {"key": "azureOrigin", "type": "ResourceReference"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "http_port": {"key": "httpPort", "type": "int"},
+        "https_port": {"key": "httpsPort", "type": "int"},
+        "origin_host_header": {"key": "originHostHeader", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "weight": {"key": "weight", "type": "int"},
+        "shared_private_link_resource": {
+            "key": "sharedPrivateLinkResource",
+            "type": "SharedPrivateLinkResourceProperties",
+        },
+        "enabled_state": {"key": "enabledState", "type": "str"},
+        "enforce_certificate_name_check": {"key": "enforceCertificateNameCheck", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        azure_origin: Optional["ResourceReference"] = None,
+        azure_origin: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
         http_port: Optional[int] = None,
         https_port: Optional[int] = None,
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
-        shared_private_link_resource: Optional["SharedPrivateLinkResourceProperties"] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
-        enforce_certificate_name_check: Optional[bool] = True,
+        shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        enforce_certificate_name_check: bool = True,
         **kwargs
     ):
         """
@@ -1548,13 +1554,13 @@ class AFDOriginUpdatePropertiesParameters(msrest.serialization.Model):
          ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
         :keyword enabled_state: Whether to enable health probes to be made against backends defined
          under backendPools. Health probes can only be disabled if there is a single enabled backend in
-         single enabled backend pool. Possible values include: "Enabled", "Disabled".
+         single enabled backend pool. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         :keyword enforce_certificate_name_check: Whether to enable certificate name check at origin
          level.
         :paramtype enforce_certificate_name_check: bool
         """
-        super(AFDOriginUpdatePropertiesParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.origin_group_name = None
         self.azure_origin = azure_origin
         self.host_name = host_name
@@ -1568,91 +1574,96 @@ class AFDOriginUpdatePropertiesParameters(msrest.serialization.Model):
         self.enforce_certificate_name_check = enforce_certificate_name_check
 
 
-class AFDOriginProperties(AFDStateProperties, AFDOriginUpdatePropertiesParameters):
+class AFDOriginProperties(
+    AFDOriginUpdatePropertiesParameters, AFDStateProperties
+):  # pylint: disable=too-many-instance-attributes
     """The JSON object that contains the properties of the origin.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar origin_group_name: The name of the origin group which contains this origin.
-    :vartype origin_group_name: str
-    :ivar azure_origin: Resource reference to the Azure origin resource.
-    :vartype azure_origin: ~azure.mgmt.cdn.models.ResourceReference
-    :ivar host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
-     are supported.This should be unique across all origins in an endpoint.
-    :vartype host_name: str
-    :ivar http_port: The value of the HTTP port. Must be between 1 and 65535.
-    :vartype http_port: int
-    :ivar https_port: The value of the HTTPS port. Must be between 1 and 65535.
-    :vartype https_port: int
-    :ivar origin_host_header: The host header value sent to the origin with each request. If you
-     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
-     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
-     hostname by default. This overrides the host header defined at Endpoint.
-    :vartype origin_host_header: str
-    :ivar priority: Priority of origin in given origin group for load balancing. Higher priorities
-     will not be used for load balancing if any lower priority origin is healthy.Must be between 1
-     and 5.
-    :vartype priority: int
-    :ivar weight: Weight of the origin in given origin group for load balancing. Must be between 1
-     and 1000.
-    :vartype weight: int
-    :ivar shared_private_link_resource: The properties of the private link resource for private
-     origin.
-    :vartype shared_private_link_resource:
-     ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
-    :ivar enabled_state: Whether to enable health probes to be made against backends defined under
-     backendPools. Health probes can only be disabled if there is a single enabled backend in single
-     enabled backend pool. Possible values include: "Enabled", "Disabled".
-    :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
-    :ivar enforce_certificate_name_check: Whether to enable certificate name check at origin level.
-    :vartype enforce_certificate_name_check: bool
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
+    :ivar origin_group_name: The name of the origin group which contains this origin.
+    :vartype origin_group_name: str
+    :ivar azure_origin: Resource reference to the Azure origin resource.
+    :vartype azure_origin: ~azure.mgmt.cdn.models.ResourceReference
+    :ivar host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
+     are supported.This should be unique across all origins in an endpoint.
+    :vartype host_name: str
+    :ivar http_port: The value of the HTTP port. Must be between 1 and 65535.
+    :vartype http_port: int
+    :ivar https_port: The value of the HTTPS port. Must be between 1 and 65535.
+    :vartype https_port: int
+    :ivar origin_host_header: The host header value sent to the origin with each request. If you
+     leave this blank, the request hostname determines this value. Azure CDN origins, such as Web
+     Apps, Blob Storage, and Cloud Services require this host header value to match the origin
+     hostname by default. This overrides the host header defined at Endpoint.
+    :vartype origin_host_header: str
+    :ivar priority: Priority of origin in given origin group for load balancing. Higher priorities
+     will not be used for load balancing if any lower priority origin is healthy.Must be between 1
+     and 5.
+    :vartype priority: int
+    :ivar weight: Weight of the origin in given origin group for load balancing. Must be between 1
+     and 1000.
+    :vartype weight: int
+    :ivar shared_private_link_resource: The properties of the private link resource for private
+     origin.
+    :vartype shared_private_link_resource:
+     ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
+    :ivar enabled_state: Whether to enable health probes to be made against backends defined under
+     backendPools. Health probes can only be disabled if there is a single enabled backend in single
+     enabled backend pool. Known values are: "Enabled" and "Disabled".
+    :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
+    :ivar enforce_certificate_name_check: Whether to enable certificate name check at origin level.
+    :vartype enforce_certificate_name_check: bool
     """
 
     _validation = {
-        'origin_group_name': {'readonly': True},
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "origin_group_name": {"readonly": True},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'origin_group_name': {'key': 'originGroupName', 'type': 'str'},
-        'azure_origin': {'key': 'azureOrigin', 'type': 'ResourceReference'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'http_port': {'key': 'httpPort', 'type': 'int'},
-        'https_port': {'key': 'httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'originHostHeader', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'shared_private_link_resource': {'key': 'sharedPrivateLinkResource', 'type': 'SharedPrivateLinkResourceProperties'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'enforce_certificate_name_check': {'key': 'enforceCertificateNameCheck', 'type': 'bool'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "origin_group_name": {"key": "originGroupName", "type": "str"},
+        "azure_origin": {"key": "azureOrigin", "type": "ResourceReference"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "http_port": {"key": "httpPort", "type": "int"},
+        "https_port": {"key": "httpsPort", "type": "int"},
+        "origin_host_header": {"key": "originHostHeader", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "weight": {"key": "weight", "type": "int"},
+        "shared_private_link_resource": {
+            "key": "sharedPrivateLinkResource",
+            "type": "SharedPrivateLinkResourceProperties",
+        },
+        "enabled_state": {"key": "enabledState", "type": "str"},
+        "enforce_certificate_name_check": {"key": "enforceCertificateNameCheck", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        azure_origin: Optional["ResourceReference"] = None,
+        azure_origin: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
         http_port: Optional[int] = None,
         https_port: Optional[int] = None,
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
-        shared_private_link_resource: Optional["SharedPrivateLinkResourceProperties"] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
-        enforce_certificate_name_check: Optional[bool] = True,
+        shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        enforce_certificate_name_check: bool = True,
         **kwargs
     ):
         """
@@ -1683,13 +1694,27 @@ class AFDOriginProperties(AFDStateProperties, AFDOriginUpdatePropertiesParameter
          ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
         :keyword enabled_state: Whether to enable health probes to be made against backends defined
          under backendPools. Health probes can only be disabled if there is a single enabled backend in
-         single enabled backend pool. Possible values include: "Enabled", "Disabled".
+         single enabled backend pool. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         :keyword enforce_certificate_name_check: Whether to enable certificate name check at origin
          level.
         :paramtype enforce_certificate_name_check: bool
         """
-        super(AFDOriginProperties, self).__init__(azure_origin=azure_origin, host_name=host_name, http_port=http_port, https_port=https_port, origin_host_header=origin_host_header, priority=priority, weight=weight, shared_private_link_resource=shared_private_link_resource, enabled_state=enabled_state, enforce_certificate_name_check=enforce_certificate_name_check, **kwargs)
+        super().__init__(
+            azure_origin=azure_origin,
+            host_name=host_name,
+            http_port=http_port,
+            https_port=https_port,
+            origin_host_header=origin_host_header,
+            priority=priority,
+            weight=weight,
+            shared_private_link_resource=shared_private_link_resource,
+            enabled_state=enabled_state,
+            enforce_certificate_name_check=enforce_certificate_name_check,
+            **kwargs
+        )
+        self.provisioning_state = None
+        self.deployment_status = None
         self.origin_group_name = None
         self.azure_origin = azure_origin
         self.host_name = host_name
@@ -1701,11 +1726,9 @@ class AFDOriginProperties(AFDStateProperties, AFDOriginUpdatePropertiesParameter
         self.shared_private_link_resource = shared_private_link_resource
         self.enabled_state = enabled_state
         self.enforce_certificate_name_check = enforce_certificate_name_check
-        self.provisioning_state = None
-        self.deployment_status = None
 
 
-class AFDOriginUpdateParameters(msrest.serialization.Model):
+class AFDOriginUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """AFDOrigin properties needed for origin update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1739,47 +1762,50 @@ class AFDOriginUpdateParameters(msrest.serialization.Model):
      ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
     :ivar enabled_state: Whether to enable health probes to be made against backends defined under
      backendPools. Health probes can only be disabled if there is a single enabled backend in single
-     enabled backend pool. Possible values include: "Enabled", "Disabled".
+     enabled backend pool. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     :ivar enforce_certificate_name_check: Whether to enable certificate name check at origin level.
     :vartype enforce_certificate_name_check: bool
     """
 
     _validation = {
-        'origin_group_name': {'readonly': True},
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
+        "origin_group_name": {"readonly": True},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'origin_group_name': {'key': 'properties.originGroupName', 'type': 'str'},
-        'azure_origin': {'key': 'properties.azureOrigin', 'type': 'ResourceReference'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
-        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'shared_private_link_resource': {'key': 'properties.sharedPrivateLinkResource', 'type': 'SharedPrivateLinkResourceProperties'},
-        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
-        'enforce_certificate_name_check': {'key': 'properties.enforceCertificateNameCheck', 'type': 'bool'},
+        "origin_group_name": {"key": "properties.originGroupName", "type": "str"},
+        "azure_origin": {"key": "properties.azureOrigin", "type": "ResourceReference"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "http_port": {"key": "properties.httpPort", "type": "int"},
+        "https_port": {"key": "properties.httpsPort", "type": "int"},
+        "origin_host_header": {"key": "properties.originHostHeader", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "weight": {"key": "properties.weight", "type": "int"},
+        "shared_private_link_resource": {
+            "key": "properties.sharedPrivateLinkResource",
+            "type": "SharedPrivateLinkResourceProperties",
+        },
+        "enabled_state": {"key": "properties.enabledState", "type": "str"},
+        "enforce_certificate_name_check": {"key": "properties.enforceCertificateNameCheck", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        azure_origin: Optional["ResourceReference"] = None,
+        azure_origin: Optional["_models.ResourceReference"] = None,
         host_name: Optional[str] = None,
         http_port: Optional[int] = None,
         https_port: Optional[int] = None,
         origin_host_header: Optional[str] = None,
         priority: Optional[int] = None,
         weight: Optional[int] = None,
-        shared_private_link_resource: Optional["SharedPrivateLinkResourceProperties"] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
-        enforce_certificate_name_check: Optional[bool] = True,
+        shared_private_link_resource: Optional["_models.SharedPrivateLinkResourceProperties"] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
+        enforce_certificate_name_check: bool = True,
         **kwargs
     ):
         """
@@ -1810,13 +1836,13 @@ class AFDOriginUpdateParameters(msrest.serialization.Model):
          ~azure.mgmt.cdn.models.SharedPrivateLinkResourceProperties
         :keyword enabled_state: Whether to enable health probes to be made against backends defined
          under backendPools. Health probes can only be disabled if there is a single enabled backend in
-         single enabled backend pool. Possible values include: "Enabled", "Disabled".
+         single enabled backend pool. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         :keyword enforce_certificate_name_check: Whether to enable certificate name check at origin
          level.
         :paramtype enforce_certificate_name_check: bool
         """
-        super(AFDOriginUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.origin_group_name = None
         self.azure_origin = azure_origin
         self.host_name = host_name
@@ -1830,53 +1856,47 @@ class AFDOriginUpdateParameters(msrest.serialization.Model):
         self.enforce_certificate_name_check = enforce_certificate_name_check
 
 
-class AfdPurgeParameters(msrest.serialization.Model):
+class AfdPurgeParameters(_serialization.Model):
     """Parameters required for content purge.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar content_paths: Required. The path to the content to be purged. Can describe a file path
-     or a wild card directory.
+    :ivar content_paths: The path to the content to be purged. Can describe a file path or a wild
+     card directory. Required.
     :vartype content_paths: list[str]
     :ivar domains: List of domains.
     :vartype domains: list[str]
     """
 
     _validation = {
-        'content_paths': {'required': True},
+        "content_paths": {"required": True},
     }
 
     _attribute_map = {
-        'content_paths': {'key': 'contentPaths', 'type': '[str]'},
-        'domains': {'key': 'domains', 'type': '[str]'},
+        "content_paths": {"key": "contentPaths", "type": "[str]"},
+        "domains": {"key": "domains", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        content_paths: List[str],
-        domains: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, content_paths: List[str], domains: Optional[List[str]] = None, **kwargs):
         """
-        :keyword content_paths: Required. The path to the content to be purged. Can describe a file
-         path or a wild card directory.
+        :keyword content_paths: The path to the content to be purged. Can describe a file path or a
+         wild card directory. Required.
         :paramtype content_paths: list[str]
         :keyword domains: List of domains.
         :paramtype domains: list[str]
         """
-        super(AfdPurgeParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_paths = content_paths
         self.domains = domains
 
 
-class AfdRouteCacheConfiguration(msrest.serialization.Model):
+class AfdRouteCacheConfiguration(_serialization.Model):
     """Caching settings for a caching-type route. To disable caching, do not provide a cacheConfiguration object.
 
     :ivar query_string_caching_behavior: Defines how Frontdoor caches requests that include query
      strings. You can ignore any query strings when caching, ignore specific query strings, cache
-     every request with a unique URL, or cache specific query strings. Possible values include:
-     "IgnoreQueryString", "UseQueryString", "IgnoreSpecifiedQueryStrings",
+     every request with a unique URL, or cache specific query strings. Known values are:
+     "IgnoreQueryString", "UseQueryString", "IgnoreSpecifiedQueryStrings", and
      "IncludeSpecifiedQueryStrings".
     :vartype query_string_caching_behavior: str or
      ~azure.mgmt.cdn.models.AfdQueryStringCachingBehavior
@@ -1887,24 +1907,24 @@ class AfdRouteCacheConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'query_string_caching_behavior': {'key': 'queryStringCachingBehavior', 'type': 'str'},
-        'query_parameters': {'key': 'queryParameters', 'type': 'str'},
-        'compression_settings': {'key': 'compressionSettings', 'type': 'CompressionSettings'},
+        "query_string_caching_behavior": {"key": "queryStringCachingBehavior", "type": "str"},
+        "query_parameters": {"key": "queryParameters", "type": "str"},
+        "compression_settings": {"key": "compressionSettings", "type": "CompressionSettings"},
     }
 
     def __init__(
         self,
         *,
-        query_string_caching_behavior: Optional[Union[str, "AfdQueryStringCachingBehavior"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "_models.AfdQueryStringCachingBehavior"]] = None,
         query_parameters: Optional[str] = None,
-        compression_settings: Optional["CompressionSettings"] = None,
+        compression_settings: Optional["_models.CompressionSettings"] = None,
         **kwargs
     ):
         """
         :keyword query_string_caching_behavior: Defines how Frontdoor caches requests that include
          query strings. You can ignore any query strings when caching, ignore specific query strings,
-         cache every request with a unique URL, or cache specific query strings. Possible values
-         include: "IgnoreQueryString", "UseQueryString", "IgnoreSpecifiedQueryStrings",
+         cache every request with a unique URL, or cache specific query strings. Known values are:
+         "IgnoreQueryString", "UseQueryString", "IgnoreSpecifiedQueryStrings", and
          "IncludeSpecifiedQueryStrings".
         :paramtype query_string_caching_behavior: str or
          ~azure.mgmt.cdn.models.AfdQueryStringCachingBehavior
@@ -1913,19 +1933,19 @@ class AfdRouteCacheConfiguration(msrest.serialization.Model):
         :keyword compression_settings: compression settings.
         :paramtype compression_settings: ~azure.mgmt.cdn.models.CompressionSettings
         """
-        super(AfdRouteCacheConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.query_string_caching_behavior = query_string_caching_behavior
         self.query_parameters = query_parameters
         self.compression_settings = compression_settings
 
 
-class Certificate(msrest.serialization.Model):
+class Certificate(_serialization.Model):
     """Certificate used for https.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of the secret resource. Possible values include: "UrlSigningKey",
-     "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar subject: Subject name in the certificate.
     :vartype subject: str
@@ -1934,28 +1954,23 @@ class Certificate(msrest.serialization.Model):
     """
 
     _validation = {
-        'subject': {'readonly': True},
-        'expiration_date': {'readonly': True},
+        "subject": {"readonly": True},
+        "expiration_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "SecretType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs):
         """
-        :keyword type: The type of the secret resource. Possible values include: "UrlSigningKey",
-         "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+        :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
+         "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
         :paramtype type: str or ~azure.mgmt.cdn.models.SecretType
         """
-        super(Certificate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.subject = None
         self.expiration_date = None
@@ -1966,8 +1981,8 @@ class AzureFirstPartyManagedCertificate(Certificate):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of the secret resource. Possible values include: "UrlSigningKey",
-     "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar subject: Subject name in the certificate.
     :vartype subject: str
@@ -1976,63 +1991,59 @@ class AzureFirstPartyManagedCertificate(Certificate):
     """
 
     _validation = {
-        'subject': {'readonly': True},
-        'expiration_date': {'readonly': True},
+        "subject": {"readonly": True},
+        "expiration_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "SecretType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs):
         """
-        :keyword type: The type of the secret resource. Possible values include: "UrlSigningKey",
-         "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+        :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
+         "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
         :paramtype type: str or ~azure.mgmt.cdn.models.SecretType
         """
-        super(AzureFirstPartyManagedCertificate, self).__init__(type=type, **kwargs)
+        super().__init__(type=type, **kwargs)
 
 
-class SecretParameters(msrest.serialization.Model):
+class SecretParameters(_serialization.Model):
     """The json object containing secret parameters.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AzureFirstPartyManagedCertificateParameters, CustomerCertificateParameters, ManagedCertificateParameters, UrlSigningKeyParameters.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AzureFirstPartyManagedCertificateParameters, CustomerCertificateParameters,
+    ManagedCertificateParameters, UrlSigningKeyParameters
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the secret resource.Constant filled by server. Possible
-     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate",
-     "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'AzureFirstPartyManagedCertificate': 'AzureFirstPartyManagedCertificateParameters', 'CustomerCertificate': 'CustomerCertificateParameters', 'ManagedCertificate': 'ManagedCertificateParameters', 'UrlSigningKey': 'UrlSigningKeyParameters'}
+        "type": {
+            "AzureFirstPartyManagedCertificate": "AzureFirstPartyManagedCertificateParameters",
+            "CustomerCertificate": "CustomerCertificateParameters",
+            "ManagedCertificate": "ManagedCertificateParameters",
+            "UrlSigningKey": "UrlSigningKeyParameters",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SecretParameters, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
 
@@ -2041,37 +2052,32 @@ class AzureFirstPartyManagedCertificateParameters(SecretParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the secret resource.Constant filled by server. Possible
-     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate",
-     "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AzureFirstPartyManagedCertificateParameters, self).__init__(**kwargs)
-        self.type = 'AzureFirstPartyManagedCertificate'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type = "AzureFirstPartyManagedCertificate"  # type: str
 
 
-class CacheConfiguration(msrest.serialization.Model):
+class CacheConfiguration(_serialization.Model):
     """Caching settings for a caching-type route. To disable caching, do not provide a cacheConfiguration object.
 
     :ivar query_string_caching_behavior: Defines how Frontdoor caches requests that include query
      strings. You can ignore any query strings when caching, ignore specific query strings, cache
-     every request with a unique URL, or cache specific query strings. Possible values include:
-     "IgnoreQueryString", "UseQueryString", "IgnoreSpecifiedQueryStrings",
+     every request with a unique URL, or cache specific query strings. Known values are:
+     "IgnoreQueryString", "UseQueryString", "IgnoreSpecifiedQueryStrings", and
      "IncludeSpecifiedQueryStrings".
     :vartype query_string_caching_behavior: str or
      ~azure.mgmt.cdn.models.RuleQueryStringCachingBehavior
@@ -2080,10 +2086,10 @@ class CacheConfiguration(msrest.serialization.Model):
     :ivar is_compression_enabled: Indicates whether content compression is enabled. If compression
      is enabled, content will be served as compressed if user requests for a compressed version.
      Content won't be compressed on AzureFrontDoor when requested content is smaller than 1 byte or
-     larger than 1 MB. Possible values include: "Enabled", "Disabled".
+     larger than 1 MB. Known values are: "Enabled" and "Disabled".
     :vartype is_compression_enabled: str or ~azure.mgmt.cdn.models.RuleIsCompressionEnabled
-    :ivar cache_behavior: Caching behavior for the requests. Possible values include:
-     "HonorOrigin", "OverrideAlways", "OverrideIfOriginMissing".
+    :ivar cache_behavior: Caching behavior for the requests. Known values are: "HonorOrigin",
+     "OverrideAlways", and "OverrideIfOriginMissing".
     :vartype cache_behavior: str or ~azure.mgmt.cdn.models.RuleCacheBehavior
     :ivar cache_duration: The duration for which the content needs to be cached. Allowed format is
      [d.]hh:mm:ss.
@@ -2091,28 +2097,28 @@ class CacheConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'query_string_caching_behavior': {'key': 'queryStringCachingBehavior', 'type': 'str'},
-        'query_parameters': {'key': 'queryParameters', 'type': 'str'},
-        'is_compression_enabled': {'key': 'isCompressionEnabled', 'type': 'str'},
-        'cache_behavior': {'key': 'cacheBehavior', 'type': 'str'},
-        'cache_duration': {'key': 'cacheDuration', 'type': 'str'},
+        "query_string_caching_behavior": {"key": "queryStringCachingBehavior", "type": "str"},
+        "query_parameters": {"key": "queryParameters", "type": "str"},
+        "is_compression_enabled": {"key": "isCompressionEnabled", "type": "str"},
+        "cache_behavior": {"key": "cacheBehavior", "type": "str"},
+        "cache_duration": {"key": "cacheDuration", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        query_string_caching_behavior: Optional[Union[str, "RuleQueryStringCachingBehavior"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "_models.RuleQueryStringCachingBehavior"]] = None,
         query_parameters: Optional[str] = None,
-        is_compression_enabled: Optional[Union[str, "RuleIsCompressionEnabled"]] = None,
-        cache_behavior: Optional[Union[str, "RuleCacheBehavior"]] = None,
+        is_compression_enabled: Optional[Union[str, "_models.RuleIsCompressionEnabled"]] = None,
+        cache_behavior: Optional[Union[str, "_models.RuleCacheBehavior"]] = None,
         cache_duration: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword query_string_caching_behavior: Defines how Frontdoor caches requests that include
          query strings. You can ignore any query strings when caching, ignore specific query strings,
-         cache every request with a unique URL, or cache specific query strings. Possible values
-         include: "IgnoreQueryString", "UseQueryString", "IgnoreSpecifiedQueryStrings",
+         cache every request with a unique URL, or cache specific query strings. Known values are:
+         "IgnoreQueryString", "UseQueryString", "IgnoreSpecifiedQueryStrings", and
          "IncludeSpecifiedQueryStrings".
         :paramtype query_string_caching_behavior: str or
          ~azure.mgmt.cdn.models.RuleQueryStringCachingBehavior
@@ -2121,16 +2127,16 @@ class CacheConfiguration(msrest.serialization.Model):
         :keyword is_compression_enabled: Indicates whether content compression is enabled. If
          compression is enabled, content will be served as compressed if user requests for a compressed
          version. Content won't be compressed on AzureFrontDoor when requested content is smaller than 1
-         byte or larger than 1 MB. Possible values include: "Enabled", "Disabled".
+         byte or larger than 1 MB. Known values are: "Enabled" and "Disabled".
         :paramtype is_compression_enabled: str or ~azure.mgmt.cdn.models.RuleIsCompressionEnabled
-        :keyword cache_behavior: Caching behavior for the requests. Possible values include:
-         "HonorOrigin", "OverrideAlways", "OverrideIfOriginMissing".
+        :keyword cache_behavior: Caching behavior for the requests. Known values are: "HonorOrigin",
+         "OverrideAlways", and "OverrideIfOriginMissing".
         :paramtype cache_behavior: str or ~azure.mgmt.cdn.models.RuleCacheBehavior
         :keyword cache_duration: The duration for which the content needs to be cached. Allowed format
          is [d.]hh:mm:ss.
         :paramtype cache_duration: str
         """
-        super(CacheConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.query_string_caching_behavior = query_string_caching_behavior
         self.query_parameters = query_parameters
         self.is_compression_enabled = is_compression_enabled
@@ -2138,20 +2144,17 @@ class CacheConfiguration(msrest.serialization.Model):
         self.cache_duration = cache_duration
 
 
-class CacheExpirationActionParameters(msrest.serialization.Model):
+class CacheExpirationActionParameters(_serialization.Model):
     """Defines the parameters for the cache expiration action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleCacheExpirationActionParameters".
-    :vartype type_name: str
-    :ivar cache_behavior: Required. Caching behavior for the requests. Possible values include:
-     "BypassCache", "Override", "SetIfMissing".
+    :ivar type_name: Required. "DeliveryRuleCacheExpirationActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.CacheExpirationActionParametersTypeName
+    :ivar cache_behavior: Caching behavior for the requests. Required. Known values are:
+     "BypassCache", "Override", and "SetIfMissing".
     :vartype cache_behavior: str or ~azure.mgmt.cdn.models.CacheBehavior
-    :ivar cache_type: Required. The level at which the content needs to be cached. Possible values
-     include: "All".
+    :ivar cache_type: The level at which the content needs to be cached. Required. "All"
     :vartype cache_type: str or ~azure.mgmt.cdn.models.CacheType
     :ivar cache_duration: The duration for which the content needs to be cached. Allowed format is
      [d.]hh:mm:ss.
@@ -2159,136 +2162,136 @@ class CacheExpirationActionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'cache_behavior': {'required': True},
-        'cache_type': {'required': True},
+        "type_name": {"required": True},
+        "cache_behavior": {"required": True},
+        "cache_type": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'cache_behavior': {'key': 'cacheBehavior', 'type': 'str'},
-        'cache_type': {'key': 'cacheType', 'type': 'str'},
-        'cache_duration': {'key': 'cacheDuration', 'type': 'str'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "cache_behavior": {"key": "cacheBehavior", "type": "str"},
+        "cache_type": {"key": "cacheType", "type": "str"},
+        "cache_duration": {"key": "cacheDuration", "type": "str"},
     }
-
-    type_name = "DeliveryRuleCacheExpirationActionParameters"
 
     def __init__(
         self,
         *,
-        cache_behavior: Union[str, "CacheBehavior"],
-        cache_type: Union[str, "CacheType"],
+        type_name: Union[str, "_models.CacheExpirationActionParametersTypeName"],
+        cache_behavior: Union[str, "_models.CacheBehavior"],
+        cache_type: Union[str, "_models.CacheType"],
         cache_duration: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword cache_behavior: Required. Caching behavior for the requests. Possible values include:
-         "BypassCache", "Override", "SetIfMissing".
+        :keyword type_name: Required. "DeliveryRuleCacheExpirationActionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.CacheExpirationActionParametersTypeName
+        :keyword cache_behavior: Caching behavior for the requests. Required. Known values are:
+         "BypassCache", "Override", and "SetIfMissing".
         :paramtype cache_behavior: str or ~azure.mgmt.cdn.models.CacheBehavior
-        :keyword cache_type: Required. The level at which the content needs to be cached. Possible
-         values include: "All".
+        :keyword cache_type: The level at which the content needs to be cached. Required. "All"
         :paramtype cache_type: str or ~azure.mgmt.cdn.models.CacheType
         :keyword cache_duration: The duration for which the content needs to be cached. Allowed format
          is [d.]hh:mm:ss.
         :paramtype cache_duration: str
         """
-        super(CacheExpirationActionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.cache_behavior = cache_behavior
         self.cache_type = cache_type
         self.cache_duration = cache_duration
 
 
-class CacheKeyQueryStringActionParameters(msrest.serialization.Model):
+class CacheKeyQueryStringActionParameters(_serialization.Model):
     """Defines the parameters for the cache-key query string action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value:
-     "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters".
-    :vartype type_name: str
-    :ivar query_string_behavior: Required. Caching behavior for the requests. Possible values
-     include: "Include", "IncludeAll", "Exclude", "ExcludeAll".
+    :ivar type_name: Required. "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.CacheKeyQueryStringActionParametersTypeName
+    :ivar query_string_behavior: Caching behavior for the requests. Required. Known values are:
+     "Include", "IncludeAll", "Exclude", and "ExcludeAll".
     :vartype query_string_behavior: str or ~azure.mgmt.cdn.models.QueryStringBehavior
     :ivar query_parameters: query parameters to include or exclude (comma separated).
     :vartype query_parameters: str
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'query_string_behavior': {'required': True},
+        "type_name": {"required": True},
+        "query_string_behavior": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'query_string_behavior': {'key': 'queryStringBehavior', 'type': 'str'},
-        'query_parameters': {'key': 'queryParameters', 'type': 'str'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "query_string_behavior": {"key": "queryStringBehavior", "type": "str"},
+        "query_parameters": {"key": "queryParameters", "type": "str"},
     }
-
-    type_name = "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters"
 
     def __init__(
         self,
         *,
-        query_string_behavior: Union[str, "QueryStringBehavior"],
+        type_name: Union[str, "_models.CacheKeyQueryStringActionParametersTypeName"],
+        query_string_behavior: Union[str, "_models.QueryStringBehavior"],
         query_parameters: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword query_string_behavior: Required. Caching behavior for the requests. Possible values
-         include: "Include", "IncludeAll", "Exclude", "ExcludeAll".
+        :keyword type_name: Required. "DeliveryRuleCacheKeyQueryStringBehaviorActionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.CacheKeyQueryStringActionParametersTypeName
+        :keyword query_string_behavior: Caching behavior for the requests. Required. Known values are:
+         "Include", "IncludeAll", "Exclude", and "ExcludeAll".
         :paramtype query_string_behavior: str or ~azure.mgmt.cdn.models.QueryStringBehavior
         :keyword query_parameters: query parameters to include or exclude (comma separated).
         :paramtype query_parameters: str
         """
-        super(CacheKeyQueryStringActionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.query_string_behavior = query_string_behavior
         self.query_parameters = query_parameters
 
 
-class CdnCertificateSourceParameters(msrest.serialization.Model):
+class CdnCertificateSourceParameters(_serialization.Model):
     """Defines the parameters for using CDN managed certificate for securing custom domain.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "CdnCertificateSourceParameters".
-    :vartype type_name: str
-    :ivar certificate_type: Required. Type of certificate used. Possible values include: "Shared",
+    :ivar type_name: Required. "CdnCertificateSourceParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.CdnCertificateSourceParametersTypeName
+    :ivar certificate_type: Type of certificate used. Required. Known values are: "Shared" and
      "Dedicated".
     :vartype certificate_type: str or ~azure.mgmt.cdn.models.CertificateType
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'certificate_type': {'required': True},
+        "type_name": {"required": True},
+        "certificate_type": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'certificate_type': {'key': 'certificateType', 'type': 'str'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "certificate_type": {"key": "certificateType", "type": "str"},
     }
-
-    type_name = "CdnCertificateSourceParameters"
 
     def __init__(
         self,
         *,
-        certificate_type: Union[str, "CertificateType"],
+        type_name: Union[str, "_models.CdnCertificateSourceParametersTypeName"],
+        certificate_type: Union[str, "_models.CertificateType"],
         **kwargs
     ):
         """
-        :keyword certificate_type: Required. Type of certificate used. Possible values include:
-         "Shared", "Dedicated".
+        :keyword type_name: Required. "CdnCertificateSourceParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.CdnCertificateSourceParametersTypeName
+        :keyword certificate_type: Type of certificate used. Required. Known values are: "Shared" and
+         "Dedicated".
         :paramtype certificate_type: str or ~azure.mgmt.cdn.models.CertificateType
         """
-        super(CdnCertificateSourceParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.certificate_type = certificate_type
 
 
-class CdnEndpoint(msrest.serialization.Model):
+class CdnEndpoint(_serialization.Model):
     """Defines the ARM Resource ID for the linked endpoints.
 
     :ivar id: ARM Resource ID string.
@@ -2296,73 +2299,68 @@ class CdnEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: ARM Resource ID string.
         :paramtype id: str
         """
-        super(CdnEndpoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class CustomDomainHttpsParameters(msrest.serialization.Model):
+class CustomDomainHttpsParameters(_serialization.Model):
     """The JSON object that contains the properties to secure a custom domain.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UserManagedHttpsParameters, CdnManagedHttpsParameters.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    UserManagedHttpsParameters, CdnManagedHttpsParameters
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar certificate_source: Required. Defines the source of the SSL certificate.Constant filled
-     by server. Possible values include: "AzureKeyVault", "Cdn".
+    :ivar certificate_source: Defines the source of the SSL certificate. Required. Known values
+     are: "AzureKeyVault" and "Cdn".
     :vartype certificate_source: str or ~azure.mgmt.cdn.models.CertificateSource
-    :ivar protocol_type: Required. Defines the TLS extension protocol that is used for secure
-     delivery. Possible values include: "ServerNameIndication", "IPBased".
+    :ivar protocol_type: Defines the TLS extension protocol that is used for secure delivery.
+     Required. Known values are: "ServerNameIndication" and "IPBased".
     :vartype protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
-    :ivar minimum_tls_version: TLS protocol version that will be used for Https. Possible values
-     include: "None", "TLS10", "TLS12".
+    :ivar minimum_tls_version: TLS protocol version that will be used for Https. Known values are:
+     "None", "TLS10", and "TLS12".
     :vartype minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
     """
 
     _validation = {
-        'certificate_source': {'required': True},
-        'protocol_type': {'required': True},
+        "certificate_source": {"required": True},
+        "protocol_type": {"required": True},
     }
 
     _attribute_map = {
-        'certificate_source': {'key': 'certificateSource', 'type': 'str'},
-        'protocol_type': {'key': 'protocolType', 'type': 'str'},
-        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
+        "certificate_source": {"key": "certificateSource", "type": "str"},
+        "protocol_type": {"key": "protocolType", "type": "str"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
     }
 
     _subtype_map = {
-        'certificate_source': {'AzureKeyVault': 'UserManagedHttpsParameters', 'Cdn': 'CdnManagedHttpsParameters'}
+        "certificate_source": {"AzureKeyVault": "UserManagedHttpsParameters", "Cdn": "CdnManagedHttpsParameters"}
     }
 
     def __init__(
         self,
         *,
-        protocol_type: Union[str, "ProtocolType"],
-        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        protocol_type: Union[str, "_models.ProtocolType"],
+        minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         **kwargs
     ):
         """
-        :keyword protocol_type: Required. Defines the TLS extension protocol that is used for secure
-         delivery. Possible values include: "ServerNameIndication", "IPBased".
+        :keyword protocol_type: Defines the TLS extension protocol that is used for secure delivery.
+         Required. Known values are: "ServerNameIndication" and "IPBased".
         :paramtype protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
-        :keyword minimum_tls_version: TLS protocol version that will be used for Https. Possible values
-         include: "None", "TLS10", "TLS12".
+        :keyword minimum_tls_version: TLS protocol version that will be used for Https. Known values
+         are: "None", "TLS10", and "TLS12".
         :paramtype minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
         """
-        super(CustomDomainHttpsParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.certificate_source = None  # type: Optional[str]
         self.protocol_type = protocol_type
         self.minimum_tls_version = minimum_tls_version
@@ -2373,58 +2371,61 @@ class CdnManagedHttpsParameters(CustomDomainHttpsParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar certificate_source: Required. Defines the source of the SSL certificate.Constant filled
-     by server. Possible values include: "AzureKeyVault", "Cdn".
+    :ivar certificate_source: Defines the source of the SSL certificate. Required. Known values
+     are: "AzureKeyVault" and "Cdn".
     :vartype certificate_source: str or ~azure.mgmt.cdn.models.CertificateSource
-    :ivar protocol_type: Required. Defines the TLS extension protocol that is used for secure
-     delivery. Possible values include: "ServerNameIndication", "IPBased".
+    :ivar protocol_type: Defines the TLS extension protocol that is used for secure delivery.
+     Required. Known values are: "ServerNameIndication" and "IPBased".
     :vartype protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
-    :ivar minimum_tls_version: TLS protocol version that will be used for Https. Possible values
-     include: "None", "TLS10", "TLS12".
+    :ivar minimum_tls_version: TLS protocol version that will be used for Https. Known values are:
+     "None", "TLS10", and "TLS12".
     :vartype minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
-    :ivar certificate_source_parameters: Required. Defines the certificate source parameters using
-     CDN managed certificate for enabling SSL.
+    :ivar certificate_source_parameters: Defines the certificate source parameters using CDN
+     managed certificate for enabling SSL. Required.
     :vartype certificate_source_parameters: ~azure.mgmt.cdn.models.CdnCertificateSourceParameters
     """
 
     _validation = {
-        'certificate_source': {'required': True},
-        'protocol_type': {'required': True},
-        'certificate_source_parameters': {'required': True},
+        "certificate_source": {"required": True},
+        "protocol_type": {"required": True},
+        "certificate_source_parameters": {"required": True},
     }
 
     _attribute_map = {
-        'certificate_source': {'key': 'certificateSource', 'type': 'str'},
-        'protocol_type': {'key': 'protocolType', 'type': 'str'},
-        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
-        'certificate_source_parameters': {'key': 'certificateSourceParameters', 'type': 'CdnCertificateSourceParameters'},
+        "certificate_source": {"key": "certificateSource", "type": "str"},
+        "protocol_type": {"key": "protocolType", "type": "str"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "certificate_source_parameters": {
+            "key": "certificateSourceParameters",
+            "type": "CdnCertificateSourceParameters",
+        },
     }
 
     def __init__(
         self,
         *,
-        protocol_type: Union[str, "ProtocolType"],
-        certificate_source_parameters: "CdnCertificateSourceParameters",
-        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        protocol_type: Union[str, "_models.ProtocolType"],
+        certificate_source_parameters: "_models.CdnCertificateSourceParameters",
+        minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         **kwargs
     ):
         """
-        :keyword protocol_type: Required. Defines the TLS extension protocol that is used for secure
-         delivery. Possible values include: "ServerNameIndication", "IPBased".
+        :keyword protocol_type: Defines the TLS extension protocol that is used for secure delivery.
+         Required. Known values are: "ServerNameIndication" and "IPBased".
         :paramtype protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
-        :keyword minimum_tls_version: TLS protocol version that will be used for Https. Possible values
-         include: "None", "TLS10", "TLS12".
+        :keyword minimum_tls_version: TLS protocol version that will be used for Https. Known values
+         are: "None", "TLS10", and "TLS12".
         :paramtype minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
-        :keyword certificate_source_parameters: Required. Defines the certificate source parameters
-         using CDN managed certificate for enabling SSL.
+        :keyword certificate_source_parameters: Defines the certificate source parameters using CDN
+         managed certificate for enabling SSL. Required.
         :paramtype certificate_source_parameters: ~azure.mgmt.cdn.models.CdnCertificateSourceParameters
         """
-        super(CdnManagedHttpsParameters, self).__init__(protocol_type=protocol_type, minimum_tls_version=minimum_tls_version, **kwargs)
-        self.certificate_source = 'Cdn'  # type: str
+        super().__init__(protocol_type=protocol_type, minimum_tls_version=minimum_tls_version, **kwargs)
+        self.certificate_source = "Cdn"  # type: str
         self.certificate_source_parameters = certificate_source_parameters
 
 
-class CdnWebApplicationFirewallPolicy(TrackedResource):
+class CdnWebApplicationFirewallPolicy(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Defines web application firewall policy for Azure CDN.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2439,14 +2440,14 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
     :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: Gets a unique read-only string that changes whenever the resource is updated.
     :vartype etag: str
-    :ivar sku: Required. The pricing tier (defines a CDN provider, feature list and rate) of the
-     CdnWebApplicationFirewallPolicy.
+    :ivar sku: The pricing tier (defines a CDN provider, feature list and rate) of the
+     CdnWebApplicationFirewallPolicy. Required.
     :vartype sku: ~azure.mgmt.cdn.models.Sku
     :ivar policy_settings: Describes  policySettings for policy.
     :vartype policy_settings: ~azure.mgmt.cdn.models.PolicySettings
@@ -2459,66 +2460,66 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
     :ivar endpoint_links: Describes Azure CDN endpoints associated with this Web Application
      Firewall policy.
     :vartype endpoint_links: list[~azure.mgmt.cdn.models.CdnEndpoint]
-    :ivar provisioning_state: Provisioning state of the WebApplicationFirewallPolicy. Possible
-     values include: "Creating", "Succeeded", "Failed".
+    :ivar provisioning_state: Provisioning state of the WebApplicationFirewallPolicy. Known values
+     are: "Creating", "Succeeded", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.ProvisioningState
-    :ivar resource_state: Resource status of the policy. Possible values include: "Creating",
-     "Enabling", "Enabled", "Disabling", "Disabled", "Deleting".
+    :ivar resource_state: Resource status of the policy. Known values are: "Creating", "Enabling",
+     "Enabled", "Disabling", "Disabled", and "Deleting".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.PolicyResourceState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'sku': {'required': True},
-        'endpoint_links': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'resource_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "sku": {"required": True},
+        "endpoint_links": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "resource_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'policy_settings': {'key': 'properties.policySettings', 'type': 'PolicySettings'},
-        'rate_limit_rules': {'key': 'properties.rateLimitRules', 'type': 'RateLimitRuleList'},
-        'custom_rules': {'key': 'properties.customRules', 'type': 'CustomRuleList'},
-        'managed_rules': {'key': 'properties.managedRules', 'type': 'ManagedRuleSetList'},
-        'endpoint_links': {'key': 'properties.endpointLinks', 'type': '[CdnEndpoint]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "policy_settings": {"key": "properties.policySettings", "type": "PolicySettings"},
+        "rate_limit_rules": {"key": "properties.rateLimitRules", "type": "RateLimitRuleList"},
+        "custom_rules": {"key": "properties.customRules", "type": "CustomRuleList"},
+        "managed_rules": {"key": "properties.managedRules", "type": "ManagedRuleSetList"},
+        "endpoint_links": {"key": "properties.endpointLinks", "type": "[CdnEndpoint]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        sku: "Sku",
+        sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
-        policy_settings: Optional["PolicySettings"] = None,
-        rate_limit_rules: Optional["RateLimitRuleList"] = None,
-        custom_rules: Optional["CustomRuleList"] = None,
-        managed_rules: Optional["ManagedRuleSetList"] = None,
+        policy_settings: Optional["_models.PolicySettings"] = None,
+        rate_limit_rules: Optional["_models.RateLimitRuleList"] = None,
+        custom_rules: Optional["_models.CustomRuleList"] = None,
+        managed_rules: Optional["_models.ManagedRuleSetList"] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: Gets a unique read-only string that changes whenever the resource is updated.
         :paramtype etag: str
-        :keyword sku: Required. The pricing tier (defines a CDN provider, feature list and rate) of the
-         CdnWebApplicationFirewallPolicy.
+        :keyword sku: The pricing tier (defines a CDN provider, feature list and rate) of the
+         CdnWebApplicationFirewallPolicy. Required.
         :paramtype sku: ~azure.mgmt.cdn.models.Sku
         :keyword policy_settings: Describes  policySettings for policy.
         :paramtype policy_settings: ~azure.mgmt.cdn.models.PolicySettings
@@ -2529,7 +2530,7 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
         :keyword managed_rules: Describes managed rules inside the policy.
         :paramtype managed_rules: ~azure.mgmt.cdn.models.ManagedRuleSetList
         """
-        super(CdnWebApplicationFirewallPolicy, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.etag = etag
         self.sku = sku
         self.policy_settings = policy_settings
@@ -2541,7 +2542,7 @@ class CdnWebApplicationFirewallPolicy(TrackedResource):
         self.resource_state = None
 
 
-class CdnWebApplicationFirewallPolicyList(msrest.serialization.Model):
+class CdnWebApplicationFirewallPolicyList(_serialization.Model):
     """Defines a list of WebApplicationFirewallPolicies for Azure CDN. It contains a list of WebApplicationFirewallPolicy objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2554,110 +2555,102 @@ class CdnWebApplicationFirewallPolicyList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CdnWebApplicationFirewallPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CdnWebApplicationFirewallPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of WebApplicationFirewallPolicy objects if there
          are any.
         :paramtype next_link: str
         """
-        super(CdnWebApplicationFirewallPolicyList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class CdnWebApplicationFirewallPolicyPatchParameters(msrest.serialization.Model):
+class CdnWebApplicationFirewallPolicyPatchParameters(_serialization.Model):
     """Properties required to update a CdnWebApplicationFirewallPolicy.
 
-    :ivar tags: A set of tags. CdnWebApplicationFirewallPolicy tags.
+    :ivar tags: CdnWebApplicationFirewallPolicy tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. CdnWebApplicationFirewallPolicy tags.
+        :keyword tags: CdnWebApplicationFirewallPolicy tags.
         :paramtype tags: dict[str, str]
         """
-        super(CdnWebApplicationFirewallPolicyPatchParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class CheckEndpointNameAvailabilityInput(msrest.serialization.Model):
+class CheckEndpointNameAvailabilityInput(_serialization.Model):
     """Input of CheckNameAvailability API.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The resource name to validate.
+    :ivar name: The resource name to validate. Required.
     :vartype name: str
-    :ivar type: Required. The type of the resource whose name is to be validated. Possible values
-     include: "Microsoft.Cdn/Profiles/Endpoints", "Microsoft.Cdn/Profiles/AfdEndpoints".
+    :ivar type: The type of the resource whose name is to be validated. Required. Known values are:
+     "Microsoft.Cdn/Profiles/Endpoints" and "Microsoft.Cdn/Profiles/AfdEndpoints".
     :vartype type: str or ~azure.mgmt.cdn.models.ResourceType
     :ivar auto_generated_domain_name_label_scope: Indicates the endpoint name reuse scope. The
-     default value is TenantReuse. Possible values include: "TenantReuse", "SubscriptionReuse",
-     "ResourceGroupReuse", "NoReuse".
+     default value is TenantReuse. Known values are: "TenantReuse", "SubscriptionReuse",
+     "ResourceGroupReuse", and "NoReuse".
     :vartype auto_generated_domain_name_label_scope: str or
      ~azure.mgmt.cdn.models.AutoGeneratedDomainNameLabelScope
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'auto_generated_domain_name_label_scope': {'key': 'autoGeneratedDomainNameLabelScope', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "auto_generated_domain_name_label_scope": {"key": "autoGeneratedDomainNameLabelScope", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        type: Union[str, "ResourceType"],
-        auto_generated_domain_name_label_scope: Optional[Union[str, "AutoGeneratedDomainNameLabelScope"]] = None,
+        type: Union[str, "_models.ResourceType"],
+        auto_generated_domain_name_label_scope: Optional[
+            Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
+        ] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The resource name to validate.
+        :keyword name: The resource name to validate. Required.
         :paramtype name: str
-        :keyword type: Required. The type of the resource whose name is to be validated. Possible
-         values include: "Microsoft.Cdn/Profiles/Endpoints", "Microsoft.Cdn/Profiles/AfdEndpoints".
+        :keyword type: The type of the resource whose name is to be validated. Required. Known values
+         are: "Microsoft.Cdn/Profiles/Endpoints" and "Microsoft.Cdn/Profiles/AfdEndpoints".
         :paramtype type: str or ~azure.mgmt.cdn.models.ResourceType
         :keyword auto_generated_domain_name_label_scope: Indicates the endpoint name reuse scope. The
-         default value is TenantReuse. Possible values include: "TenantReuse", "SubscriptionReuse",
-         "ResourceGroupReuse", "NoReuse".
+         default value is TenantReuse. Known values are: "TenantReuse", "SubscriptionReuse",
+         "ResourceGroupReuse", and "NoReuse".
         :paramtype auto_generated_domain_name_label_scope: str or
          ~azure.mgmt.cdn.models.AutoGeneratedDomainNameLabelScope
         """
-        super(CheckEndpointNameAvailabilityInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
         self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
 
 
-class CheckEndpointNameAvailabilityOutput(msrest.serialization.Model):
+class CheckEndpointNameAvailabilityOutput(_serialization.Model):
     """Output of check name availability API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2675,105 +2668,90 @@ class CheckEndpointNameAvailabilityOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'name_available': {'readonly': True},
-        'available_hostname': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        "name_available": {"readonly": True},
+        "available_hostname": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'available_hostname': {'key': 'availableHostname', 'type': 'str'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "available_hostname": {"key": "availableHostname", "type": "str"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CheckEndpointNameAvailabilityOutput, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name_available = None
         self.available_hostname = None
         self.reason = None
         self.message = None
 
 
-class CheckHostNameAvailabilityInput(msrest.serialization.Model):
+class CheckHostNameAvailabilityInput(_serialization.Model):
     """Input of CheckHostNameAvailability API.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar host_name: Required. The host name to validate.
+    :ivar host_name: The host name to validate. Required.
     :vartype host_name: str
     """
 
     _validation = {
-        'host_name': {'required': True},
+        "host_name": {"required": True},
     }
 
     _attribute_map = {
-        'host_name': {'key': 'hostName', 'type': 'str'},
+        "host_name": {"key": "hostName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        host_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, host_name: str, **kwargs):
         """
-        :keyword host_name: Required. The host name to validate.
+        :keyword host_name: The host name to validate. Required.
         :paramtype host_name: str
         """
-        super(CheckHostNameAvailabilityInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.host_name = host_name
 
 
-class CheckNameAvailabilityInput(msrest.serialization.Model):
+class CheckNameAvailabilityInput(_serialization.Model):
     """Input of CheckNameAvailability API.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The resource name to validate.
+    :ivar name: The resource name to validate. Required.
     :vartype name: str
-    :ivar type: Required. The type of the resource whose name is to be validated. Possible values
-     include: "Microsoft.Cdn/Profiles/Endpoints", "Microsoft.Cdn/Profiles/AfdEndpoints".
+    :ivar type: The type of the resource whose name is to be validated. Required. Known values are:
+     "Microsoft.Cdn/Profiles/Endpoints" and "Microsoft.Cdn/Profiles/AfdEndpoints".
     :vartype type: str or ~azure.mgmt.cdn.models.ResourceType
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        type: Union[str, "ResourceType"],
-        **kwargs
-    ):
+    def __init__(self, *, name: str, type: Union[str, "_models.ResourceType"], **kwargs):
         """
-        :keyword name: Required. The resource name to validate.
+        :keyword name: The resource name to validate. Required.
         :paramtype name: str
-        :keyword type: Required. The type of the resource whose name is to be validated. Possible
-         values include: "Microsoft.Cdn/Profiles/Endpoints", "Microsoft.Cdn/Profiles/AfdEndpoints".
+        :keyword type: The type of the resource whose name is to be validated. Required. Known values
+         are: "Microsoft.Cdn/Profiles/Endpoints" and "Microsoft.Cdn/Profiles/AfdEndpoints".
         :paramtype type: str or ~azure.mgmt.cdn.models.ResourceType
         """
-        super(CheckNameAvailabilityInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class CheckNameAvailabilityOutput(msrest.serialization.Model):
+class CheckNameAvailabilityOutput(_serialization.Model):
     """Output of check name availability API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2787,30 +2765,26 @@ class CheckNameAvailabilityOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'name_available': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        "name_available": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CheckNameAvailabilityOutput, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name_available = None
         self.reason = None
         self.message = None
 
 
-class CidrIpAddress(msrest.serialization.Model):
+class CidrIpAddress(_serialization.Model):
     """CIDR Ip address.
 
     :ivar base_ip_address: Ip address itself.
@@ -2820,40 +2794,32 @@ class CidrIpAddress(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'base_ip_address': {'key': 'baseIpAddress', 'type': 'str'},
-        'prefix_length': {'key': 'prefixLength', 'type': 'int'},
+        "base_ip_address": {"key": "baseIpAddress", "type": "str"},
+        "prefix_length": {"key": "prefixLength", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        base_ip_address: Optional[str] = None,
-        prefix_length: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, base_ip_address: Optional[str] = None, prefix_length: Optional[int] = None, **kwargs):
         """
         :keyword base_ip_address: Ip address itself.
         :paramtype base_ip_address: str
         :keyword prefix_length: The length of the prefix of the ip address.
         :paramtype prefix_length: int
         """
-        super(CidrIpAddress, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.base_ip_address = base_ip_address
         self.prefix_length = prefix_length
 
 
-class ClientPortMatchConditionParameters(msrest.serialization.Model):
+class ClientPortMatchConditionParameters(_serialization.Model):
     """Defines the parameters for ClientPort match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleClientPortConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleClientPortConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.ClientPortMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.ClientPortOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -2864,33 +2830,34 @@ class ClientPortMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleClientPortConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "ClientPortOperator"],
+        type_name: Union[str, "_models.ClientPortMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.ClientPortOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleClientPortConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.ClientPortMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.ClientPortOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -2899,14 +2866,15 @@ class ClientPortMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(ClientPortMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems(msrest.serialization.Model):
+class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems(_serialization.Model):
     """Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems.
 
     :ivar date_time:
@@ -2916,29 +2884,23 @@ class Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesD
     """
 
     _attribute_map = {
-        'date_time': {'key': 'dateTime', 'type': 'iso-8601'},
-        'value': {'key': 'value', 'type': 'float'},
+        "date_time": {"key": "dateTime", "type": "iso-8601"},
+        "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        date_time: Optional[datetime.datetime] = None,
-        value: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, date_time: Optional[datetime.datetime] = None, value: Optional[float] = None, **kwargs):
         """
         :keyword date_time:
         :paramtype date_time: ~datetime.datetime
         :keyword value:
         :paramtype value: float
         """
-        super(Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.date_time = date_time
         self.value = value
 
 
-class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems(msrest.serialization.Model):
+class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems(_serialization.Model):
     """Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems.
 
     :ivar date_time:
@@ -2948,68 +2910,57 @@ class Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesData
     """
 
     _attribute_map = {
-        'date_time': {'key': 'dateTime', 'type': 'iso-8601'},
-        'value': {'key': 'value', 'type': 'float'},
+        "date_time": {"key": "dateTime", "type": "iso-8601"},
+        "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        date_time: Optional[datetime.datetime] = None,
-        value: Optional[float] = None,
-        **kwargs
-    ):
+    def __init__(self, *, date_time: Optional[datetime.datetime] = None, value: Optional[float] = None, **kwargs):
         """
         :keyword date_time:
         :paramtype date_time: ~datetime.datetime
         :keyword value:
         :paramtype value: float
         """
-        super(Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.date_time = date_time
         self.value = value
 
 
-class ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems(msrest.serialization.Model):
+class ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems(_serialization.Model):
     """ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems.
 
     :ivar metric:
     :vartype metric: str
     :ivar value:
-    :vartype value: long
+    :vartype value: int
     :ivar percentage:
     :vartype percentage: float
     """
 
     _attribute_map = {
-        'metric': {'key': 'metric', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'long'},
-        'percentage': {'key': 'percentage', 'type': 'float'},
+        "metric": {"key": "metric", "type": "str"},
+        "value": {"key": "value", "type": "int"},
+        "percentage": {"key": "percentage", "type": "float"},
     }
 
     def __init__(
-        self,
-        *,
-        metric: Optional[str] = None,
-        value: Optional[int] = None,
-        percentage: Optional[float] = None,
-        **kwargs
+        self, *, metric: Optional[str] = None, value: Optional[int] = None, percentage: Optional[float] = None, **kwargs
     ):
         """
         :keyword metric:
         :paramtype metric: str
         :keyword value:
-        :paramtype value: long
+        :paramtype value: int
         :keyword percentage:
         :paramtype percentage: float
         """
-        super(ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric = metric
         self.value = value
         self.percentage = percentage
 
 
-class CompressionSettings(msrest.serialization.Model):
+class CompressionSettings(_serialization.Model):
     """settings for compression.
 
     :ivar content_types_to_compress: List of content types on which compression applies. The value
@@ -3023,8 +2974,8 @@ class CompressionSettings(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'content_types_to_compress': {'key': 'contentTypesToCompress', 'type': '[str]'},
-        'is_compression_enabled': {'key': 'isCompressionEnabled', 'type': 'bool'},
+        "content_types_to_compress": {"key": "contentTypesToCompress", "type": "[str]"},
+        "is_compression_enabled": {"key": "isCompressionEnabled", "type": "bool"},
     }
 
     def __init__(
@@ -3044,12 +2995,12 @@ class CompressionSettings(msrest.serialization.Model):
          AzureFrontDoor when requested content is smaller than 1 byte or larger than 1 MB.
         :paramtype is_compression_enabled: bool
         """
-        super(CompressionSettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_types_to_compress = content_types_to_compress
         self.is_compression_enabled = is_compression_enabled
 
 
-class ContinentsResponse(msrest.serialization.Model):
+class ContinentsResponse(_serialization.Model):
     """Continents Response.
 
     :ivar continents:
@@ -3060,15 +3011,15 @@ class ContinentsResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'continents': {'key': 'continents', 'type': '[ContinentsResponseContinentsItem]'},
-        'country_or_regions': {'key': 'countryOrRegions', 'type': '[ContinentsResponseCountryOrRegionsItem]'},
+        "continents": {"key": "continents", "type": "[ContinentsResponseContinentsItem]"},
+        "country_or_regions": {"key": "countryOrRegions", "type": "[ContinentsResponseCountryOrRegionsItem]"},
     }
 
     def __init__(
         self,
         *,
-        continents: Optional[List["ContinentsResponseContinentsItem"]] = None,
-        country_or_regions: Optional[List["ContinentsResponseCountryOrRegionsItem"]] = None,
+        continents: Optional[List["_models.ContinentsResponseContinentsItem"]] = None,
+        country_or_regions: Optional[List["_models.ContinentsResponseCountryOrRegionsItem"]] = None,
         **kwargs
     ):
         """
@@ -3078,12 +3029,12 @@ class ContinentsResponse(msrest.serialization.Model):
         :paramtype country_or_regions:
          list[~azure.mgmt.cdn.models.ContinentsResponseCountryOrRegionsItem]
         """
-        super(ContinentsResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.continents = continents
         self.country_or_regions = country_or_regions
 
 
-class ContinentsResponseContinentsItem(msrest.serialization.Model):
+class ContinentsResponseContinentsItem(_serialization.Model):
     """ContinentsResponseContinentsItem.
 
     :ivar id:
@@ -3091,24 +3042,19 @@ class ContinentsResponseContinentsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id:
         :paramtype id: str
         """
-        super(ContinentsResponseContinentsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class ContinentsResponseCountryOrRegionsItem(msrest.serialization.Model):
+class ContinentsResponseCountryOrRegionsItem(_serialization.Model):
     """ContinentsResponseCountryOrRegionsItem.
 
     :ivar id:
@@ -3118,14 +3064,14 @@ class ContinentsResponseCountryOrRegionsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'continent_id': {'key': 'continentId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "continent_id": {"key": "continentId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         continent_id: Optional[str] = None,
         **kwargs
     ):
@@ -3135,25 +3081,23 @@ class ContinentsResponseCountryOrRegionsItem(msrest.serialization.Model):
         :keyword continent_id:
         :paramtype continent_id: str
         """
-        super(ContinentsResponseCountryOrRegionsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.continent_id = continent_id
 
 
-class CookiesMatchConditionParameters(msrest.serialization.Model):
+class CookiesMatchConditionParameters(_serialization.Model):
     """Defines the parameters for Cookies match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleCookiesConditionParameters".
-    :vartype type_name: str
+    :ivar type_name: Required. "DeliveryRuleCookiesConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.CookiesMatchConditionParametersTypeName
     :ivar selector: Name of Cookies to be matched.
     :vartype selector: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.CookiesOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -3164,37 +3108,38 @@ class CookiesMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "selector": {"key": "selector", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleCookiesConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "CookiesOperator"],
+        type_name: Union[str, "_models.CookiesMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.CookiesOperator"],
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
+        :keyword type_name: Required. "DeliveryRuleCookiesConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.CookiesMatchConditionParametersTypeName
         :keyword selector: Name of Cookies to be matched.
         :paramtype selector: str
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.CookiesOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -3203,7 +3148,8 @@ class CookiesMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(CookiesMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.selector = selector
         self.operator = operator
         self.negate_condition = negate_condition
@@ -3211,7 +3157,7 @@ class CookiesMatchConditionParameters(msrest.serialization.Model):
         self.transforms = transforms
 
 
-class CustomDomain(ProxyResource):
+class CustomDomain(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Friendly domain name mapping to the endpoint hostname that the customer provides for branding purposes, e.g. www.contoso.com.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3226,19 +3172,19 @@ class CustomDomain(ProxyResource):
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
     :ivar host_name: The host name of the custom domain. Must be a domain name.
     :vartype host_name: str
-    :ivar resource_state: Resource status of the custom domain. Possible values include:
-     "Creating", "Active", "Deleting".
+    :ivar resource_state: Resource status of the custom domain. Known values are: "Creating",
+     "Active", and "Deleting".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.CustomDomainResourceState
-    :ivar custom_https_provisioning_state: Provisioning status of Custom Https of the custom
-     domain. Possible values include: "Enabling", "Enabled", "Disabling", "Disabled", "Failed".
+    :ivar custom_https_provisioning_state: Provisioning status of the custom domain. Known values
+     are: "Enabling", "Enabled", "Disabling", "Disabled", and "Failed".
     :vartype custom_https_provisioning_state: str or
      ~azure.mgmt.cdn.models.CustomHttpsProvisioningState
     :ivar custom_https_provisioning_substate: Provisioning substate shows the progress of custom
-     HTTPS enabling/disabling process step by step. Possible values include:
+     HTTPS enabling/disabling process step by step. Known values are:
      "SubmittingDomainControlValidationRequest", "PendingDomainControlValidationREquestApproval",
      "DomainControlValidationRequestApproved", "DomainControlValidationRequestRejected",
      "DomainControlValidationRequestTimedOut", "IssuingCertificate", "DeployingCertificate",
-     "CertificateDeployed", "DeletingCertificate", "CertificateDeleted".
+     "CertificateDeployed", "DeletingCertificate", and "CertificateDeleted".
     :vartype custom_https_provisioning_substate: str or
      ~azure.mgmt.cdn.models.CustomHttpsProvisioningSubstate
     :ivar custom_https_parameters: Certificate parameters for securing custom HTTPS.
@@ -3247,40 +3193,41 @@ class CustomDomain(ProxyResource):
      regions due to local compliance reasons. E.g. ICP license number of a custom domain is required
      to deliver content in China.
     :vartype validation_data: str
-    :ivar provisioning_state: Provisioning status of the custom domain.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning status of Custom Https of the custom domain. Known
+     values are: "Enabling", "Enabled", "Disabling", "Disabled", and "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.CustomHttpsProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'custom_https_provisioning_state': {'readonly': True},
-        'custom_https_provisioning_substate': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "custom_https_provisioning_state": {"readonly": True},
+        "custom_https_provisioning_substate": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'custom_https_provisioning_state': {'key': 'properties.customHttpsProvisioningState', 'type': 'str'},
-        'custom_https_provisioning_substate': {'key': 'properties.customHttpsProvisioningSubstate', 'type': 'str'},
-        'custom_https_parameters': {'key': 'properties.customHttpsParameters', 'type': 'CustomDomainHttpsParameters'},
-        'validation_data': {'key': 'properties.validationData', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
+        "custom_https_provisioning_state": {"key": "properties.customHttpsProvisioningState", "type": "str"},
+        "custom_https_provisioning_substate": {"key": "properties.customHttpsProvisioningSubstate", "type": "str"},
+        "custom_https_parameters": {"key": "properties.customHttpsParameters", "type": "CustomDomainHttpsParameters"},
+        "validation_data": {"key": "properties.validationData", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         host_name: Optional[str] = None,
-        custom_https_parameters: Optional["CustomDomainHttpsParameters"] = None,
+        custom_https_parameters: Optional["_models.CustomDomainHttpsParameters"] = None,
         validation_data: Optional[str] = None,
         **kwargs
     ):
@@ -3294,7 +3241,7 @@ class CustomDomain(ProxyResource):
          required to deliver content in China.
         :paramtype validation_data: str
         """
-        super(CustomDomain, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.host_name = host_name
         self.resource_state = None
         self.custom_https_provisioning_state = None
@@ -3304,7 +3251,7 @@ class CustomDomain(ProxyResource):
         self.provisioning_state = None
 
 
-class CustomDomainListResult(msrest.serialization.Model):
+class CustomDomainListResult(_serialization.Model):
     """Result of the request to list custom domains. It contains a list of custom domain objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3316,30 +3263,25 @@ class CustomDomainListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CustomDomain]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CustomDomain]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of custom domain objects if there are any.
         :paramtype next_link: str
         """
-        super(CustomDomainListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class CustomDomainParameters(msrest.serialization.Model):
+class CustomDomainParameters(_serialization.Model):
     """The customDomain JSON object required for custom domain creation or update.
 
     :ivar host_name: The host name of the custom domain. Must be a domain name.
@@ -3347,20 +3289,15 @@ class CustomDomainParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
+        "host_name": {"key": "properties.hostName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        host_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, host_name: Optional[str] = None, **kwargs):
         """
         :keyword host_name: The host name of the custom domain. Must be a domain name.
         :paramtype host_name: str
         """
-        super(CustomDomainParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.host_name = host_name
 
 
@@ -3369,8 +3306,8 @@ class CustomerCertificate(Certificate):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of the secret resource. Possible values include: "UrlSigningKey",
-     "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar subject: Subject name in the certificate.
     :vartype subject: str
@@ -3393,37 +3330,37 @@ class CustomerCertificate(Certificate):
     """
 
     _validation = {
-        'subject': {'readonly': True},
-        'expiration_date': {'readonly': True},
-        'certificate_authority': {'readonly': True},
-        'thumbprint': {'readonly': True},
+        "subject": {"readonly": True},
+        "expiration_date": {"readonly": True},
+        "certificate_authority": {"readonly": True},
+        "thumbprint": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
-        'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
-        'secret_version': {'key': 'secretVersion', 'type': 'str'},
-        'certificate_authority': {'key': 'certificateAuthority', 'type': 'str'},
-        'use_latest_version': {'key': 'useLatestVersion', 'type': 'bool'},
-        'subject_alternative_names': {'key': 'subjectAlternativeNames', 'type': '[str]'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "str"},
+        "secret_source": {"key": "secretSource", "type": "ResourceReference"},
+        "secret_version": {"key": "secretVersion", "type": "str"},
+        "certificate_authority": {"key": "certificateAuthority", "type": "str"},
+        "use_latest_version": {"key": "useLatestVersion", "type": "bool"},
+        "subject_alternative_names": {"key": "subjectAlternativeNames", "type": "[str]"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "SecretType"]] = None,
-        secret_source: Optional["ResourceReference"] = None,
+        type: Optional[Union[str, "_models.SecretType"]] = None,
+        secret_source: Optional["_models.ResourceReference"] = None,
         secret_version: Optional[str] = None,
         use_latest_version: Optional[bool] = None,
         subject_alternative_names: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword type: The type of the secret resource. Possible values include: "UrlSigningKey",
-         "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+        :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
+         "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
         :paramtype type: str or ~azure.mgmt.cdn.models.SecretType
         :keyword secret_source: Resource reference to the Azure Key Vault certificate. Expected to be
          in format of
@@ -3436,7 +3373,7 @@ class CustomerCertificate(Certificate):
         :keyword subject_alternative_names: The list of SANs.
         :paramtype subject_alternative_names: list[str]
         """
-        super(CustomerCertificate, self).__init__(type=type, **kwargs)
+        super().__init__(type=type, **kwargs)
         self.secret_source = secret_source
         self.secret_version = secret_version
         self.certificate_authority = None
@@ -3452,13 +3389,13 @@ class CustomerCertificateParameters(SecretParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the secret resource.Constant filled by server. Possible
-     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate",
-     "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
-    :ivar secret_source: Required. Resource reference to the Azure Key Vault certificate. Expected
-     to be in format of
+    :ivar secret_source: Resource reference to the Azure Key Vault certificate. Expected to be in
+     format of
      /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+     Required.
     :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :ivar secret_version: Version of the secret to be used.
     :vartype secret_version: str
@@ -3477,39 +3414,40 @@ class CustomerCertificateParameters(SecretParameters):
     """
 
     _validation = {
-        'type': {'required': True},
-        'secret_source': {'required': True},
-        'subject': {'readonly': True},
-        'expiration_date': {'readonly': True},
-        'certificate_authority': {'readonly': True},
-        'thumbprint': {'readonly': True},
+        "type": {"required": True},
+        "secret_source": {"required": True},
+        "subject": {"readonly": True},
+        "expiration_date": {"readonly": True},
+        "certificate_authority": {"readonly": True},
+        "thumbprint": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
-        'secret_version': {'key': 'secretVersion', 'type': 'str'},
-        'use_latest_version': {'key': 'useLatestVersion', 'type': 'bool'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
-        'certificate_authority': {'key': 'certificateAuthority', 'type': 'str'},
-        'subject_alternative_names': {'key': 'subjectAlternativeNames', 'type': '[str]'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "secret_source": {"key": "secretSource", "type": "ResourceReference"},
+        "secret_version": {"key": "secretVersion", "type": "str"},
+        "use_latest_version": {"key": "useLatestVersion", "type": "bool"},
+        "subject": {"key": "subject", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "str"},
+        "certificate_authority": {"key": "certificateAuthority", "type": "str"},
+        "subject_alternative_names": {"key": "subjectAlternativeNames", "type": "[str]"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        secret_source: "ResourceReference",
+        secret_source: "_models.ResourceReference",
         secret_version: Optional[str] = None,
         use_latest_version: Optional[bool] = None,
         subject_alternative_names: Optional[List[str]] = None,
         **kwargs
     ):
         """
-        :keyword secret_source: Required. Resource reference to the Azure Key Vault certificate.
-         Expected to be in format of
+        :keyword secret_source: Resource reference to the Azure Key Vault certificate. Expected to be
+         in format of
          /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{certificateName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+         Required.
         :paramtype secret_source: ~azure.mgmt.cdn.models.ResourceReference
         :keyword secret_version: Version of the secret to be used.
         :paramtype secret_version: str
@@ -3518,8 +3456,8 @@ class CustomerCertificateParameters(SecretParameters):
         :keyword subject_alternative_names: The list of SANs.
         :paramtype subject_alternative_names: list[str]
         """
-        super(CustomerCertificateParameters, self).__init__(**kwargs)
-        self.type = 'CustomerCertificate'  # type: str
+        super().__init__(**kwargs)
+        self.type = "CustomerCertificate"  # type: str
         self.secret_source = secret_source
         self.secret_version = secret_version
         self.use_latest_version = use_latest_version
@@ -3530,39 +3468,39 @@ class CustomerCertificateParameters(SecretParameters):
         self.thumbprint = None
 
 
-class CustomRule(msrest.serialization.Model):
+class CustomRule(_serialization.Model):
     """Defines the common attributes for a custom rule that can be included in a waf policy.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Defines the name of the custom rule.
+    :ivar name: Defines the name of the custom rule. Required.
     :vartype name: str
     :ivar enabled_state: Describes if the custom rule is in enabled or disabled state. Defaults to
-     Enabled if not specified. Possible values include: "Disabled", "Enabled".
+     Enabled if not specified. Known values are: "Disabled" and "Enabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.CustomRuleEnabledState
-    :ivar priority: Required. Defines in what order this rule be evaluated in the overall list of
-     custom rules.
+    :ivar priority: Defines in what order this rule be evaluated in the overall list of custom
+     rules. Required.
     :vartype priority: int
-    :ivar match_conditions: Required. List of match conditions.
+    :ivar match_conditions: List of match conditions. Required.
     :vartype match_conditions: list[~azure.mgmt.cdn.models.MatchCondition]
-    :ivar action: Required. Describes what action to be applied when rule matches. Possible values
-     include: "Allow", "Block", "Log", "Redirect".
+    :ivar action: Describes what action to be applied when rule matches. Required. Known values
+     are: "Allow", "Block", "Log", and "Redirect".
     :vartype action: str or ~azure.mgmt.cdn.models.ActionType
     """
 
     _validation = {
-        'name': {'required': True},
-        'priority': {'required': True, 'maximum': 1000, 'minimum': 0},
-        'match_conditions': {'required': True},
-        'action': {'required': True},
+        "name": {"required": True},
+        "priority": {"required": True, "maximum": 1000, "minimum": 0},
+        "match_conditions": {"required": True},
+        "action": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition]'},
-        'action': {'key': 'action', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "enabled_state": {"key": "enabledState", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "match_conditions": {"key": "matchConditions", "type": "[MatchCondition]"},
+        "action": {"key": "action", "type": "str"},
     }
 
     def __init__(
@@ -3570,27 +3508,27 @@ class CustomRule(msrest.serialization.Model):
         *,
         name: str,
         priority: int,
-        match_conditions: List["MatchCondition"],
-        action: Union[str, "ActionType"],
-        enabled_state: Optional[Union[str, "CustomRuleEnabledState"]] = None,
+        match_conditions: List["_models.MatchCondition"],
+        action: Union[str, "_models.ActionType"],
+        enabled_state: Optional[Union[str, "_models.CustomRuleEnabledState"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. Defines the name of the custom rule.
+        :keyword name: Defines the name of the custom rule. Required.
         :paramtype name: str
         :keyword enabled_state: Describes if the custom rule is in enabled or disabled state. Defaults
-         to Enabled if not specified. Possible values include: "Disabled", "Enabled".
+         to Enabled if not specified. Known values are: "Disabled" and "Enabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.CustomRuleEnabledState
-        :keyword priority: Required. Defines in what order this rule be evaluated in the overall list
-         of custom rules.
+        :keyword priority: Defines in what order this rule be evaluated in the overall list of custom
+         rules. Required.
         :paramtype priority: int
-        :keyword match_conditions: Required. List of match conditions.
+        :keyword match_conditions: List of match conditions. Required.
         :paramtype match_conditions: list[~azure.mgmt.cdn.models.MatchCondition]
-        :keyword action: Required. Describes what action to be applied when rule matches. Possible
-         values include: "Allow", "Block", "Log", "Redirect".
+        :keyword action: Describes what action to be applied when rule matches. Required. Known values
+         are: "Allow", "Block", "Log", and "Redirect".
         :paramtype action: str or ~azure.mgmt.cdn.models.ActionType
         """
-        super(CustomRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.enabled_state = enabled_state
         self.priority = priority
@@ -3598,7 +3536,7 @@ class CustomRule(msrest.serialization.Model):
         self.action = action
 
 
-class CustomRuleList(msrest.serialization.Model):
+class CustomRuleList(_serialization.Model):
     """Defines contents of custom rules.
 
     :ivar rules: List of rules.
@@ -3606,31 +3544,68 @@ class CustomRuleList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'rules': {'key': 'rules', 'type': '[CustomRule]'},
+        "rules": {"key": "rules", "type": "[CustomRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        rules: Optional[List["CustomRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rules: Optional[List["_models.CustomRule"]] = None, **kwargs):
         """
         :keyword rules: List of rules.
         :paramtype rules: list[~azure.mgmt.cdn.models.CustomRule]
         """
-        super(CustomRuleList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rules = rules
 
 
-class DeepCreatedOrigin(msrest.serialization.Model):
+class DeepCreatedCustomDomain(_serialization.Model):
+    """Custom domains created on the CDN endpoint.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Custom domain name. Required.
+    :vartype name: str
+    :ivar host_name: The host name of the custom domain. Must be a domain name.
+    :vartype host_name: str
+    :ivar validation_data: Special validation or data may be required when delivering CDN to some
+     regions due to local compliance reasons. E.g. ICP license number of a custom domain is required
+     to deliver content in China.
+    :vartype validation_data: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "validation_data": {"key": "properties.validationData", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, host_name: Optional[str] = None, validation_data: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Custom domain name. Required.
+        :paramtype name: str
+        :keyword host_name: The host name of the custom domain. Must be a domain name.
+        :paramtype host_name: str
+        :keyword validation_data: Special validation or data may be required when delivering CDN to
+         some regions due to local compliance reasons. E.g. ICP license number of a custom domain is
+         required to deliver content in China.
+        :paramtype validation_data: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.host_name = host_name
+        self.validation_data = validation_data
+
+
+class DeepCreatedOrigin(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The main origin of CDN content which is added when creating a CDN endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Origin name which must be unique within the endpoint.
+    :ivar name: Origin name which must be unique within the endpoint. Required.
     :vartype name: str
     :ivar host_name: The address of the origin. It can be a domain name, IPv4 address, or IPv6
      address. This should be unique across all origins in an endpoint.
@@ -3667,33 +3642,33 @@ class DeepCreatedOrigin(msrest.serialization.Model):
      connect to the Private Link.
     :vartype private_link_approval_message: str
     :ivar private_endpoint_status: The approval status for the connection to the Private Link.
-     Possible values include: "Pending", "Approved", "Rejected", "Disconnected", "Timeout".
+     Known values are: "Pending", "Approved", "Rejected", "Disconnected", and "Timeout".
     :vartype private_endpoint_status: str or ~azure.mgmt.cdn.models.PrivateEndpointStatus
     """
 
     _validation = {
-        'name': {'required': True},
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
-        'private_endpoint_status': {'readonly': True},
+        "name": {"required": True},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
+        "private_endpoint_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
-        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'private_link_alias': {'key': 'properties.privateLinkAlias', 'type': 'str'},
-        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
-        'private_link_location': {'key': 'properties.privateLinkLocation', 'type': 'str'},
-        'private_link_approval_message': {'key': 'properties.privateLinkApprovalMessage', 'type': 'str'},
-        'private_endpoint_status': {'key': 'properties.privateEndpointStatus', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "http_port": {"key": "properties.httpPort", "type": "int"},
+        "https_port": {"key": "properties.httpsPort", "type": "int"},
+        "origin_host_header": {"key": "properties.originHostHeader", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "weight": {"key": "properties.weight", "type": "int"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "private_link_alias": {"key": "properties.privateLinkAlias", "type": "str"},
+        "private_link_resource_id": {"key": "properties.privateLinkResourceId", "type": "str"},
+        "private_link_location": {"key": "properties.privateLinkLocation", "type": "str"},
+        "private_link_approval_message": {"key": "properties.privateLinkApprovalMessage", "type": "str"},
+        "private_endpoint_status": {"key": "properties.privateEndpointStatus", "type": "str"},
     }
 
     def __init__(
@@ -3714,7 +3689,7 @@ class DeepCreatedOrigin(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Origin name which must be unique within the endpoint.
+        :keyword name: Origin name which must be unique within the endpoint. Required.
         :paramtype name: str
         :keyword host_name: The address of the origin. It can be a domain name, IPv4 address, or IPv6
          address. This should be unique across all origins in an endpoint.
@@ -3751,7 +3726,7 @@ class DeepCreatedOrigin(msrest.serialization.Model):
          to connect to the Private Link.
         :paramtype private_link_approval_message: str
         """
-        super(DeepCreatedOrigin, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.host_name = host_name
         self.http_port = http_port
@@ -3767,12 +3742,12 @@ class DeepCreatedOrigin(msrest.serialization.Model):
         self.private_endpoint_status = None
 
 
-class DeepCreatedOriginGroup(msrest.serialization.Model):
+class DeepCreatedOriginGroup(_serialization.Model):
     """The origin group for CDN content which is added when creating a CDN endpoint. Traffic is sent to the origins within the origin group based on origin health.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Origin group name which must be unique within the endpoint.
+    :ivar name: Origin group name which must be unique within the endpoint. Required.
     :vartype name: str
     :ivar health_probe_settings: Health probe settings to the origin that is used to determine the
      health of the origin.
@@ -3791,30 +3766,38 @@ class DeepCreatedOriginGroup(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+        "name": {"required": True},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'origins': {'key': 'properties.origins', 'type': '[ResourceReference]'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'response_based_origin_error_detection_settings': {'key': 'properties.responseBasedOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "health_probe_settings": {"key": "properties.healthProbeSettings", "type": "HealthProbeParameters"},
+        "origins": {"key": "properties.origins", "type": "[ResourceReference]"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "response_based_origin_error_detection_settings": {
+            "key": "properties.responseBasedOriginErrorDetectionSettings",
+            "type": "ResponseBasedOriginErrorDetectionParameters",
+        },
     }
 
     def __init__(
         self,
         *,
         name: str,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
-        origins: Optional[List["ResourceReference"]] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
+        origins: Optional[List["_models.ResourceReference"]] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        response_based_origin_error_detection_settings: Optional["ResponseBasedOriginErrorDetectionParameters"] = None,
+        response_based_origin_error_detection_settings: Optional[
+            "_models.ResponseBasedOriginErrorDetectionParameters"
+        ] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. Origin group name which must be unique within the endpoint.
+        :keyword name: Origin group name which must be unique within the endpoint. Required.
         :paramtype name: str
         :keyword health_probe_settings: Health probe settings to the origin that is used to determine
          the health of the origin.
@@ -3831,109 +3814,120 @@ class DeepCreatedOriginGroup(msrest.serialization.Model):
         :paramtype response_based_origin_error_detection_settings:
          ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
         """
-        super(DeepCreatedOriginGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.health_probe_settings = health_probe_settings
         self.origins = origins
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = (
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        )
         self.response_based_origin_error_detection_settings = response_based_origin_error_detection_settings
 
 
-class DeliveryRule(msrest.serialization.Model):
+class DeliveryRule(_serialization.Model):
     """A rule that specifies a set of actions and conditions.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar name: Name of the rule.
     :vartype name: str
-    :ivar order: Required. The order in which the rules are applied for the endpoint. Possible
-     values {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater
-     order. Rule with order 0 is a special rule. It does not require any condition and actions
-     listed in it will always be applied.
+    :ivar order: The order in which the rules are applied for the endpoint. Possible values
+     {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
+     Rule with order 0 is a special rule. It does not require any condition and actions listed in it
+     will always be applied. Required.
     :vartype order: int
     :ivar conditions: A list of conditions that must be matched for the actions to be executed.
     :vartype conditions: list[~azure.mgmt.cdn.models.DeliveryRuleCondition]
-    :ivar actions: Required. A list of actions that are executed when all the conditions of a rule
-     are satisfied.
+    :ivar actions: A list of actions that are executed when all the conditions of a rule are
+     satisfied. Required.
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     """
 
     _validation = {
-        'order': {'required': True},
-        'actions': {'required': True},
+        "order": {"required": True},
+        "actions": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'order': {'key': 'order', 'type': 'int'},
-        'conditions': {'key': 'conditions', 'type': '[DeliveryRuleCondition]'},
-        'actions': {'key': 'actions', 'type': '[DeliveryRuleAction]'},
+        "name": {"key": "name", "type": "str"},
+        "order": {"key": "order", "type": "int"},
+        "conditions": {"key": "conditions", "type": "[DeliveryRuleCondition]"},
+        "actions": {"key": "actions", "type": "[DeliveryRuleAction]"},
     }
 
     def __init__(
         self,
         *,
         order: int,
-        actions: List["DeliveryRuleAction"],
+        actions: List["_models.DeliveryRuleAction"],
         name: Optional[str] = None,
-        conditions: Optional[List["DeliveryRuleCondition"]] = None,
+        conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
         **kwargs
     ):
         """
         :keyword name: Name of the rule.
         :paramtype name: str
-        :keyword order: Required. The order in which the rules are applied for the endpoint. Possible
-         values {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater
-         order. Rule with order 0 is a special rule. It does not require any condition and actions
-         listed in it will always be applied.
+        :keyword order: The order in which the rules are applied for the endpoint. Possible values
+         {0,1,2,3,………}. A rule with a lesser order will be applied before a rule with a greater order.
+         Rule with order 0 is a special rule. It does not require any condition and actions listed in it
+         will always be applied. Required.
         :paramtype order: int
         :keyword conditions: A list of conditions that must be matched for the actions to be executed.
         :paramtype conditions: list[~azure.mgmt.cdn.models.DeliveryRuleCondition]
-        :keyword actions: Required. A list of actions that are executed when all the conditions of a
-         rule are satisfied.
+        :keyword actions: A list of actions that are executed when all the conditions of a rule are
+         satisfied. Required.
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         """
-        super(DeliveryRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.order = order
         self.conditions = conditions
         self.actions = actions
 
 
-class DeliveryRuleAction(msrest.serialization.Model):
+class DeliveryRuleAction(_serialization.Model):
     """An action for the delivery rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction, DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction, OriginGroupOverrideAction, DeliveryRuleRouteConfigurationOverrideAction, UrlRedirectAction, UrlRewriteAction, UrlSigningAction.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DeliveryRuleCacheExpirationAction, DeliveryRuleCacheKeyQueryStringAction,
+    DeliveryRuleRequestHeaderAction, DeliveryRuleResponseHeaderAction, OriginGroupOverrideAction,
+    DeliveryRuleRouteConfigurationOverrideAction, UrlRedirectAction, UrlRewriteAction,
+    UrlSigningAction
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
     _subtype_map = {
-        'name': {'CacheExpiration': 'DeliveryRuleCacheExpirationAction', 'CacheKeyQueryString': 'DeliveryRuleCacheKeyQueryStringAction', 'ModifyRequestHeader': 'DeliveryRuleRequestHeaderAction', 'ModifyResponseHeader': 'DeliveryRuleResponseHeaderAction', 'OriginGroupOverride': 'OriginGroupOverrideAction', 'RouteConfigurationOverride': 'DeliveryRuleRouteConfigurationOverrideAction', 'UrlRedirect': 'UrlRedirectAction', 'UrlRewrite': 'UrlRewriteAction', 'UrlSigning': 'UrlSigningAction'}
+        "name": {
+            "CacheExpiration": "DeliveryRuleCacheExpirationAction",
+            "CacheKeyQueryString": "DeliveryRuleCacheKeyQueryStringAction",
+            "ModifyRequestHeader": "DeliveryRuleRequestHeaderAction",
+            "ModifyResponseHeader": "DeliveryRuleResponseHeaderAction",
+            "OriginGroupOverride": "OriginGroupOverrideAction",
+            "RouteConfigurationOverride": "DeliveryRuleRouteConfigurationOverrideAction",
+            "UrlRedirect": "UrlRedirectAction",
+            "UrlRewrite": "UrlRewriteAction",
+            "UrlSigning": "UrlSigningAction",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DeliveryRuleAction, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None  # type: Optional[str]
 
 
@@ -3942,37 +3936,32 @@ class DeliveryRuleCacheExpirationAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.CacheExpirationActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'CacheExpirationActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "CacheExpirationActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "CacheExpirationActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.CacheExpirationActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.CacheExpirationActionParameters
         """
-        super(DeliveryRuleCacheExpirationAction, self).__init__(**kwargs)
-        self.name = 'CacheExpiration'  # type: str
+        super().__init__(**kwargs)
+        self.name = "CacheExpiration"  # type: str
         self.parameters = parameters
 
 
@@ -3981,75 +3970,93 @@ class DeliveryRuleCacheKeyQueryStringAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.CacheKeyQueryStringActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'CacheKeyQueryStringActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "CacheKeyQueryStringActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "CacheKeyQueryStringActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.CacheKeyQueryStringActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.CacheKeyQueryStringActionParameters
         """
-        super(DeliveryRuleCacheKeyQueryStringAction, self).__init__(**kwargs)
-        self.name = 'CacheKeyQueryString'  # type: str
+        super().__init__(**kwargs)
+        self.name = "CacheKeyQueryString"  # type: str
         self.parameters = parameters
 
 
-class DeliveryRuleCondition(msrest.serialization.Model):
+class DeliveryRuleCondition(_serialization.Model):
     """A condition for the delivery rule.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DeliveryRuleClientPortCondition, DeliveryRuleCookiesCondition, DeliveryRuleHostNameCondition, DeliveryRuleHttpVersionCondition, DeliveryRuleIsDeviceCondition, DeliveryRulePostArgsCondition, DeliveryRuleQueryStringCondition, DeliveryRuleRemoteAddressCondition, DeliveryRuleRequestBodyCondition, DeliveryRuleRequestHeaderCondition, DeliveryRuleRequestMethodCondition, DeliveryRuleRequestSchemeCondition, DeliveryRuleRequestUriCondition, DeliveryRuleServerPortCondition, DeliveryRuleSocketAddrCondition, DeliveryRuleSslProtocolCondition, DeliveryRuleUrlFileExtensionCondition, DeliveryRuleUrlFileNameCondition, DeliveryRuleUrlPathCondition.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DeliveryRuleClientPortCondition, DeliveryRuleCookiesCondition, DeliveryRuleHostNameCondition,
+    DeliveryRuleHttpVersionCondition, DeliveryRuleIsDeviceCondition, DeliveryRulePostArgsCondition,
+    DeliveryRuleQueryStringCondition, DeliveryRuleRemoteAddressCondition,
+    DeliveryRuleRequestBodyCondition, DeliveryRuleRequestHeaderCondition,
+    DeliveryRuleRequestMethodCondition, DeliveryRuleRequestSchemeCondition,
+    DeliveryRuleRequestUriCondition, DeliveryRuleServerPortCondition,
+    DeliveryRuleSocketAddrCondition, DeliveryRuleSslProtocolCondition,
+    DeliveryRuleUrlFileExtensionCondition, DeliveryRuleUrlFileNameCondition,
+    DeliveryRuleUrlPathCondition
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
     _subtype_map = {
-        'name': {'ClientPort': 'DeliveryRuleClientPortCondition', 'Cookies': 'DeliveryRuleCookiesCondition', 'HostName': 'DeliveryRuleHostNameCondition', 'HttpVersion': 'DeliveryRuleHttpVersionCondition', 'IsDevice': 'DeliveryRuleIsDeviceCondition', 'PostArgs': 'DeliveryRulePostArgsCondition', 'QueryString': 'DeliveryRuleQueryStringCondition', 'RemoteAddress': 'DeliveryRuleRemoteAddressCondition', 'RequestBody': 'DeliveryRuleRequestBodyCondition', 'RequestHeader': 'DeliveryRuleRequestHeaderCondition', 'RequestMethod': 'DeliveryRuleRequestMethodCondition', 'RequestScheme': 'DeliveryRuleRequestSchemeCondition', 'RequestUri': 'DeliveryRuleRequestUriCondition', 'ServerPort': 'DeliveryRuleServerPortCondition', 'SocketAddr': 'DeliveryRuleSocketAddrCondition', 'SslProtocol': 'DeliveryRuleSslProtocolCondition', 'UrlFileExtension': 'DeliveryRuleUrlFileExtensionCondition', 'UrlFileName': 'DeliveryRuleUrlFileNameCondition', 'UrlPath': 'DeliveryRuleUrlPathCondition'}
+        "name": {
+            "ClientPort": "DeliveryRuleClientPortCondition",
+            "Cookies": "DeliveryRuleCookiesCondition",
+            "HostName": "DeliveryRuleHostNameCondition",
+            "HttpVersion": "DeliveryRuleHttpVersionCondition",
+            "IsDevice": "DeliveryRuleIsDeviceCondition",
+            "PostArgs": "DeliveryRulePostArgsCondition",
+            "QueryString": "DeliveryRuleQueryStringCondition",
+            "RemoteAddress": "DeliveryRuleRemoteAddressCondition",
+            "RequestBody": "DeliveryRuleRequestBodyCondition",
+            "RequestHeader": "DeliveryRuleRequestHeaderCondition",
+            "RequestMethod": "DeliveryRuleRequestMethodCondition",
+            "RequestScheme": "DeliveryRuleRequestSchemeCondition",
+            "RequestUri": "DeliveryRuleRequestUriCondition",
+            "ServerPort": "DeliveryRuleServerPortCondition",
+            "SocketAddr": "DeliveryRuleSocketAddrCondition",
+            "SslProtocol": "DeliveryRuleSslProtocolCondition",
+            "UrlFileExtension": "DeliveryRuleUrlFileExtensionCondition",
+            "UrlFileName": "DeliveryRuleUrlFileNameCondition",
+            "UrlPath": "DeliveryRuleUrlPathCondition",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DeliveryRuleCondition, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None  # type: Optional[str]
 
 
@@ -4058,38 +4065,32 @@ class DeliveryRuleClientPortCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.ClientPortMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'ClientPortMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "ClientPortMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "ClientPortMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.ClientPortMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.ClientPortMatchConditionParameters
         """
-        super(DeliveryRuleClientPortCondition, self).__init__(**kwargs)
-        self.name = 'ClientPort'  # type: str
+        super().__init__(**kwargs)
+        self.name = "ClientPort"  # type: str
         self.parameters = parameters
 
 
@@ -4098,38 +4099,32 @@ class DeliveryRuleCookiesCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.CookiesMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'CookiesMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "CookiesMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "CookiesMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.CookiesMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.CookiesMatchConditionParameters
         """
-        super(DeliveryRuleCookiesCondition, self).__init__(**kwargs)
-        self.name = 'Cookies'  # type: str
+        super().__init__(**kwargs)
+        self.name = "Cookies"  # type: str
         self.parameters = parameters
 
 
@@ -4138,38 +4133,32 @@ class DeliveryRuleHostNameCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.HostNameMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'HostNameMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "HostNameMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "HostNameMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.HostNameMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.HostNameMatchConditionParameters
         """
-        super(DeliveryRuleHostNameCondition, self).__init__(**kwargs)
-        self.name = 'HostName'  # type: str
+        super().__init__(**kwargs)
+        self.name = "HostName"  # type: str
         self.parameters = parameters
 
 
@@ -4178,38 +4167,32 @@ class DeliveryRuleHttpVersionCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.HttpVersionMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'HttpVersionMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "HttpVersionMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "HttpVersionMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.HttpVersionMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.HttpVersionMatchConditionParameters
         """
-        super(DeliveryRuleHttpVersionCondition, self).__init__(**kwargs)
-        self.name = 'HttpVersion'  # type: str
+        super().__init__(**kwargs)
+        self.name = "HttpVersion"  # type: str
         self.parameters = parameters
 
 
@@ -4218,38 +4201,32 @@ class DeliveryRuleIsDeviceCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.IsDeviceMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'IsDeviceMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "IsDeviceMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "IsDeviceMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.IsDeviceMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.IsDeviceMatchConditionParameters
         """
-        super(DeliveryRuleIsDeviceCondition, self).__init__(**kwargs)
-        self.name = 'IsDevice'  # type: str
+        super().__init__(**kwargs)
+        self.name = "IsDevice"  # type: str
         self.parameters = parameters
 
 
@@ -4258,38 +4235,32 @@ class DeliveryRulePostArgsCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.PostArgsMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'PostArgsMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "PostArgsMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "PostArgsMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.PostArgsMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.PostArgsMatchConditionParameters
         """
-        super(DeliveryRulePostArgsCondition, self).__init__(**kwargs)
-        self.name = 'PostArgs'  # type: str
+        super().__init__(**kwargs)
+        self.name = "PostArgs"  # type: str
         self.parameters = parameters
 
 
@@ -4298,38 +4269,32 @@ class DeliveryRuleQueryStringCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.QueryStringMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'QueryStringMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "QueryStringMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "QueryStringMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.QueryStringMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.QueryStringMatchConditionParameters
         """
-        super(DeliveryRuleQueryStringCondition, self).__init__(**kwargs)
-        self.name = 'QueryString'  # type: str
+        super().__init__(**kwargs)
+        self.name = "QueryString"  # type: str
         self.parameters = parameters
 
 
@@ -4338,38 +4303,32 @@ class DeliveryRuleRemoteAddressCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.RemoteAddressMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'RemoteAddressMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "RemoteAddressMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "RemoteAddressMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.RemoteAddressMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RemoteAddressMatchConditionParameters
         """
-        super(DeliveryRuleRemoteAddressCondition, self).__init__(**kwargs)
-        self.name = 'RemoteAddress'  # type: str
+        super().__init__(**kwargs)
+        self.name = "RemoteAddress"  # type: str
         self.parameters = parameters
 
 
@@ -4378,38 +4337,32 @@ class DeliveryRuleRequestBodyCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.RequestBodyMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'RequestBodyMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "RequestBodyMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "RequestBodyMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.RequestBodyMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestBodyMatchConditionParameters
         """
-        super(DeliveryRuleRequestBodyCondition, self).__init__(**kwargs)
-        self.name = 'RequestBody'  # type: str
+        super().__init__(**kwargs)
+        self.name = "RequestBody"  # type: str
         self.parameters = parameters
 
 
@@ -4418,37 +4371,32 @@ class DeliveryRuleRequestHeaderAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.HeaderActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'HeaderActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "HeaderActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "HeaderActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.HeaderActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.HeaderActionParameters
         """
-        super(DeliveryRuleRequestHeaderAction, self).__init__(**kwargs)
-        self.name = 'ModifyRequestHeader'  # type: str
+        super().__init__(**kwargs)
+        self.name = "ModifyRequestHeader"  # type: str
         self.parameters = parameters
 
 
@@ -4457,38 +4405,32 @@ class DeliveryRuleRequestHeaderCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.RequestHeaderMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'RequestHeaderMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "RequestHeaderMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "RequestHeaderMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.RequestHeaderMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestHeaderMatchConditionParameters
         """
-        super(DeliveryRuleRequestHeaderCondition, self).__init__(**kwargs)
-        self.name = 'RequestHeader'  # type: str
+        super().__init__(**kwargs)
+        self.name = "RequestHeader"  # type: str
         self.parameters = parameters
 
 
@@ -4497,38 +4439,32 @@ class DeliveryRuleRequestMethodCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.RequestMethodMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'RequestMethodMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "RequestMethodMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "RequestMethodMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.RequestMethodMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestMethodMatchConditionParameters
         """
-        super(DeliveryRuleRequestMethodCondition, self).__init__(**kwargs)
-        self.name = 'RequestMethod'  # type: str
+        super().__init__(**kwargs)
+        self.name = "RequestMethod"  # type: str
         self.parameters = parameters
 
 
@@ -4537,38 +4473,32 @@ class DeliveryRuleRequestSchemeCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'RequestSchemeMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "RequestSchemeMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "RequestSchemeMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.RequestSchemeMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParameters
         """
-        super(DeliveryRuleRequestSchemeCondition, self).__init__(**kwargs)
-        self.name = 'RequestScheme'  # type: str
+        super().__init__(**kwargs)
+        self.name = "RequestScheme"  # type: str
         self.parameters = parameters
 
 
@@ -4577,38 +4507,32 @@ class DeliveryRuleRequestUriCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.RequestUriMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'RequestUriMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "RequestUriMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "RequestUriMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.RequestUriMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RequestUriMatchConditionParameters
         """
-        super(DeliveryRuleRequestUriCondition, self).__init__(**kwargs)
-        self.name = 'RequestUri'  # type: str
+        super().__init__(**kwargs)
+        self.name = "RequestUri"  # type: str
         self.parameters = parameters
 
 
@@ -4617,37 +4541,32 @@ class DeliveryRuleResponseHeaderAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.HeaderActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'HeaderActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "HeaderActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "HeaderActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.HeaderActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.HeaderActionParameters
         """
-        super(DeliveryRuleResponseHeaderAction, self).__init__(**kwargs)
-        self.name = 'ModifyResponseHeader'  # type: str
+        super().__init__(**kwargs)
+        self.name = "ModifyResponseHeader"  # type: str
         self.parameters = parameters
 
 
@@ -4656,37 +4575,32 @@ class DeliveryRuleRouteConfigurationOverrideAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.RouteConfigurationOverrideActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'RouteConfigurationOverrideActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "RouteConfigurationOverrideActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "RouteConfigurationOverrideActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.RouteConfigurationOverrideActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.RouteConfigurationOverrideActionParameters
         """
-        super(DeliveryRuleRouteConfigurationOverrideAction, self).__init__(**kwargs)
-        self.name = 'RouteConfigurationOverride'  # type: str
+        super().__init__(**kwargs)
+        self.name = "RouteConfigurationOverride"  # type: str
         self.parameters = parameters
 
 
@@ -4695,38 +4609,32 @@ class DeliveryRuleServerPortCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.ServerPortMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'ServerPortMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "ServerPortMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "ServerPortMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.ServerPortMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.ServerPortMatchConditionParameters
         """
-        super(DeliveryRuleServerPortCondition, self).__init__(**kwargs)
-        self.name = 'ServerPort'  # type: str
+        super().__init__(**kwargs)
+        self.name = "ServerPort"  # type: str
         self.parameters = parameters
 
 
@@ -4735,38 +4643,32 @@ class DeliveryRuleSocketAddrCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.SocketAddrMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'SocketAddrMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "SocketAddrMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "SocketAddrMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.SocketAddrMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.SocketAddrMatchConditionParameters
         """
-        super(DeliveryRuleSocketAddrCondition, self).__init__(**kwargs)
-        self.name = 'SocketAddr'  # type: str
+        super().__init__(**kwargs)
+        self.name = "SocketAddr"  # type: str
         self.parameters = parameters
 
 
@@ -4775,38 +4677,32 @@ class DeliveryRuleSslProtocolCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.SslProtocolMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'SslProtocolMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "SslProtocolMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "SslProtocolMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.SslProtocolMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.SslProtocolMatchConditionParameters
         """
-        super(DeliveryRuleSslProtocolCondition, self).__init__(**kwargs)
-        self.name = 'SslProtocol'  # type: str
+        super().__init__(**kwargs)
+        self.name = "SslProtocol"  # type: str
         self.parameters = parameters
 
 
@@ -4815,38 +4711,32 @@ class DeliveryRuleUrlFileExtensionCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.UrlFileExtensionMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'UrlFileExtensionMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "UrlFileExtensionMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "UrlFileExtensionMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.UrlFileExtensionMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlFileExtensionMatchConditionParameters
         """
-        super(DeliveryRuleUrlFileExtensionCondition, self).__init__(**kwargs)
-        self.name = 'UrlFileExtension'  # type: str
+        super().__init__(**kwargs)
+        self.name = "UrlFileExtension"  # type: str
         self.parameters = parameters
 
 
@@ -4855,38 +4745,32 @@ class DeliveryRuleUrlFileNameCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.UrlFileNameMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'UrlFileNameMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "UrlFileNameMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "UrlFileNameMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.UrlFileNameMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlFileNameMatchConditionParameters
         """
-        super(DeliveryRuleUrlFileNameCondition, self).__init__(**kwargs)
-        self.name = 'UrlFileName'  # type: str
+        super().__init__(**kwargs)
+        self.name = "UrlFileName"  # type: str
         self.parameters = parameters
 
 
@@ -4895,42 +4779,36 @@ class DeliveryRuleUrlPathCondition(DeliveryRuleCondition):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the condition for the delivery rule.Constant filled by
-     server. Possible values include: "RemoteAddress", "RequestMethod", "QueryString", "PostArgs",
-     "RequestUri", "RequestHeader", "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension",
-     "UrlFileName", "HttpVersion", "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort",
-     "HostName", "SslProtocol".
+    :ivar name: The name of the condition for the delivery rule. Required. Known values are:
+     "RemoteAddress", "RequestMethod", "QueryString", "PostArgs", "RequestUri", "RequestHeader",
+     "RequestBody", "RequestScheme", "UrlPath", "UrlFileExtension", "UrlFileName", "HttpVersion",
+     "Cookies", "IsDevice", "SocketAddr", "ClientPort", "ServerPort", "HostName", and "SslProtocol".
     :vartype name: str or ~azure.mgmt.cdn.models.MatchVariable
-    :ivar parameters: Required. Defines the parameters for the condition.
+    :ivar parameters: Defines the parameters for the condition. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.UrlPathMatchConditionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'UrlPathMatchConditionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "UrlPathMatchConditionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "UrlPathMatchConditionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.UrlPathMatchConditionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the condition.
+        :keyword parameters: Defines the parameters for the condition. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlPathMatchConditionParameters
         """
-        super(DeliveryRuleUrlPathCondition, self).__init__(**kwargs)
-        self.name = 'UrlPath'  # type: str
+        super().__init__(**kwargs)
+        self.name = "UrlPath"  # type: str
         self.parameters = parameters
 
 
-class DimensionProperties(msrest.serialization.Model):
+class DimensionProperties(_serialization.Model):
     """Type of operation: get, read, delete, etc.
 
     :ivar name: Name of dimension.
@@ -4942,9 +4820,9 @@ class DimensionProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'internal_name': {'key': 'internalName', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "internal_name": {"key": "internalName", "type": "str"},
     }
 
     def __init__(
@@ -4963,13 +4841,13 @@ class DimensionProperties(msrest.serialization.Model):
         :keyword internal_name: Internal name of dimension.
         :paramtype internal_name: str
         """
-        super(DimensionProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.internal_name = internal_name
 
 
-class DomainValidationProperties(msrest.serialization.Model):
+class DomainValidationProperties(_serialization.Model):
     """The JSON object that contains the properties to validate a domain.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4981,22 +4859,18 @@ class DomainValidationProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'validation_token': {'readonly': True},
-        'expiration_date': {'readonly': True},
+        "validation_token": {"readonly": True},
+        "expiration_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'validation_token': {'key': 'validationToken', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        "validation_token": {"key": "validationToken", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(DomainValidationProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.validation_token = None
         self.expiration_date = None
 
@@ -5019,35 +4893,30 @@ class EdgeNode(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'ip_address_groups': {'key': 'properties.ipAddressGroups', 'type': '[IpAddressGroup]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "ip_address_groups": {"key": "properties.ipAddressGroups", "type": "[IpAddressGroup]"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip_address_groups: Optional[List["IpAddressGroup"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip_address_groups: Optional[List["_models.IpAddressGroup"]] = None, **kwargs):
         """
         :keyword ip_address_groups: List of ip address groups.
         :paramtype ip_address_groups: list[~azure.mgmt.cdn.models.IpAddressGroup]
         """
-        super(EdgeNode, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ip_address_groups = ip_address_groups
 
 
-class EdgenodeResult(msrest.serialization.Model):
+class EdgenodeResult(_serialization.Model):
     """Result of the request to list CDN edgenodes. It contains a list of ip address group and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5059,30 +4928,25 @@ class EdgenodeResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EdgeNode]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EdgeNode]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of edgenode list results if there are any.
         :paramtype next_link: str
         """
-        super(EdgenodeResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class Endpoint(TrackedResource):
+class Endpoint(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """CDN endpoint is the entity within a CDN profile containing configuration information such as origin, protocol, content caching and delivery behavior. The CDN endpoint uses the URL format :code:`<endpointname>`.azureedge.net.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5097,9 +4961,9 @@ class Endpoint(TrackedResource):
     :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar origin_path: A directory path on the origin that CDN can use to retrieve content from,
      e.g. contoso.cloudapp.net/originpath.
@@ -5126,14 +4990,14 @@ class Endpoint(TrackedResource):
     :vartype is_https_allowed: bool
     :ivar query_string_caching_behavior: Defines how CDN caches requests that include query
      strings. You can ignore any query strings when caching, bypass caching to prevent requests that
-     contain query strings from being cached, or cache every request with a unique URL. Possible
-     values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+     contain query strings from being cached, or cache every request with a unique URL. Known values
+     are: "IgnoreQueryString", "BypassCaching", "UseQueryString", and "NotSet".
     :vartype query_string_caching_behavior: str or
      ~azure.mgmt.cdn.models.QueryStringCachingBehavior
     :ivar optimization_type: Specifies what scenario the customer wants this CDN endpoint to
      optimize for, e.g. Download, Media services. With this information, CDN can apply scenario
-     driven optimization. Possible values include: "GeneralWebDelivery", "GeneralMediaStreaming",
-     "VideoOnDemandMediaStreaming", "LargeFileDownload", "DynamicSiteAcceleration".
+     driven optimization. Known values are: "GeneralWebDelivery", "GeneralMediaStreaming",
+     "VideoOnDemandMediaStreaming", "LargeFileDownload", and "DynamicSiteAcceleration".
     :vartype optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
     :ivar probe_path: Path to a file hosted on the origin which helps accelerate delivery of the
      dynamic content and calculate the most optimal routes for the CDN. This is relative to the
@@ -5163,56 +5027,63 @@ class Endpoint(TrackedResource):
      the traffic based on availability.
     :vartype origin_groups: list[~azure.mgmt.cdn.models.DeepCreatedOriginGroup]
     :ivar custom_domains: The custom domains under the endpoint.
-    :vartype custom_domains: list[~azure.mgmt.cdn.models.CustomDomain]
-    :ivar resource_state: Resource status of the endpoint. Possible values include: "Creating",
-     "Deleting", "Running", "Starting", "Stopped", "Stopping".
+    :vartype custom_domains: list[~azure.mgmt.cdn.models.DeepCreatedCustomDomain]
+    :ivar resource_state: Resource status of the endpoint. Known values are: "Creating",
+     "Deleting", "Running", "Starting", "Stopped", and "Stopping".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.EndpointResourceState
-    :ivar provisioning_state: Provisioning status of the endpoint.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning status of the endpoint. Known values are: "Succeeded",
+     "Failed", "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.EndpointProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'host_name': {'readonly': True},
-        'custom_domains': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "host_name": {"readonly": True},
+        "custom_domains": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'origin_path': {'key': 'properties.originPath', 'type': 'str'},
-        'content_types_to_compress': {'key': 'properties.contentTypesToCompress', 'type': '[str]'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'is_compression_enabled': {'key': 'properties.isCompressionEnabled', 'type': 'bool'},
-        'is_http_allowed': {'key': 'properties.isHttpAllowed', 'type': 'bool'},
-        'is_https_allowed': {'key': 'properties.isHttpsAllowed', 'type': 'bool'},
-        'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'str'},
-        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
-        'probe_path': {'key': 'properties.probePath', 'type': 'str'},
-        'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
-        'default_origin_group': {'key': 'properties.defaultOriginGroup', 'type': 'ResourceReference'},
-        'url_signing_keys': {'key': 'properties.urlSigningKeys', 'type': '[UrlSigningKey]'},
-        'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
-        'web_application_firewall_policy_link': {'key': 'properties.webApplicationFirewallPolicyLink', 'type': 'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'origins': {'key': 'properties.origins', 'type': '[DeepCreatedOrigin]'},
-        'origin_groups': {'key': 'properties.originGroups', 'type': '[DeepCreatedOriginGroup]'},
-        'custom_domains': {'key': 'properties.customDomains', 'type': '[CustomDomain]'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "origin_path": {"key": "properties.originPath", "type": "str"},
+        "content_types_to_compress": {"key": "properties.contentTypesToCompress", "type": "[str]"},
+        "origin_host_header": {"key": "properties.originHostHeader", "type": "str"},
+        "is_compression_enabled": {"key": "properties.isCompressionEnabled", "type": "bool"},
+        "is_http_allowed": {"key": "properties.isHttpAllowed", "type": "bool"},
+        "is_https_allowed": {"key": "properties.isHttpsAllowed", "type": "bool"},
+        "query_string_caching_behavior": {"key": "properties.queryStringCachingBehavior", "type": "str"},
+        "optimization_type": {"key": "properties.optimizationType", "type": "str"},
+        "probe_path": {"key": "properties.probePath", "type": "str"},
+        "geo_filters": {"key": "properties.geoFilters", "type": "[GeoFilter]"},
+        "default_origin_group": {"key": "properties.defaultOriginGroup", "type": "ResourceReference"},
+        "url_signing_keys": {"key": "properties.urlSigningKeys", "type": "[UrlSigningKey]"},
+        "delivery_policy": {
+            "key": "properties.deliveryPolicy",
+            "type": "EndpointPropertiesUpdateParametersDeliveryPolicy",
+        },
+        "web_application_firewall_policy_link": {
+            "key": "properties.webApplicationFirewallPolicyLink",
+            "type": "EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink",
+        },
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "origins": {"key": "properties.origins", "type": "[DeepCreatedOrigin]"},
+        "origin_groups": {"key": "properties.originGroups", "type": "[DeepCreatedOriginGroup]"},
+        "custom_domains": {"key": "properties.customDomains", "type": "[DeepCreatedCustomDomain]"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: str,
@@ -5223,22 +5094,24 @@ class Endpoint(TrackedResource):
         is_compression_enabled: Optional[bool] = None,
         is_http_allowed: Optional[bool] = None,
         is_https_allowed: Optional[bool] = None,
-        query_string_caching_behavior: Optional[Union[str, "QueryStringCachingBehavior"]] = None,
-        optimization_type: Optional[Union[str, "OptimizationType"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "_models.QueryStringCachingBehavior"]] = None,
+        optimization_type: Optional[Union[str, "_models.OptimizationType"]] = None,
         probe_path: Optional[str] = None,
-        geo_filters: Optional[List["GeoFilter"]] = None,
-        default_origin_group: Optional["ResourceReference"] = None,
-        url_signing_keys: Optional[List["UrlSigningKey"]] = None,
-        delivery_policy: Optional["EndpointPropertiesUpdateParametersDeliveryPolicy"] = None,
-        web_application_firewall_policy_link: Optional["EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"] = None,
-        origins: Optional[List["DeepCreatedOrigin"]] = None,
-        origin_groups: Optional[List["DeepCreatedOriginGroup"]] = None,
+        geo_filters: Optional[List["_models.GeoFilter"]] = None,
+        default_origin_group: Optional["_models.ResourceReference"] = None,
+        url_signing_keys: Optional[List["_models.UrlSigningKey"]] = None,
+        delivery_policy: Optional["_models.EndpointPropertiesUpdateParametersDeliveryPolicy"] = None,
+        web_application_firewall_policy_link: Optional[
+            "_models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"
+        ] = None,
+        origins: Optional[List["_models.DeepCreatedOrigin"]] = None,
+        origin_groups: Optional[List["_models.DeepCreatedOriginGroup"]] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword origin_path: A directory path on the origin that CDN can use to retrieve content from,
          e.g. contoso.cloudapp.net/originpath.
@@ -5265,14 +5138,14 @@ class Endpoint(TrackedResource):
         :paramtype is_https_allowed: bool
         :keyword query_string_caching_behavior: Defines how CDN caches requests that include query
          strings. You can ignore any query strings when caching, bypass caching to prevent requests that
-         contain query strings from being cached, or cache every request with a unique URL. Possible
-         values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+         contain query strings from being cached, or cache every request with a unique URL. Known values
+         are: "IgnoreQueryString", "BypassCaching", "UseQueryString", and "NotSet".
         :paramtype query_string_caching_behavior: str or
          ~azure.mgmt.cdn.models.QueryStringCachingBehavior
         :keyword optimization_type: Specifies what scenario the customer wants this CDN endpoint to
          optimize for, e.g. Download, Media services. With this information, CDN can apply scenario
-         driven optimization. Possible values include: "GeneralWebDelivery", "GeneralMediaStreaming",
-         "VideoOnDemandMediaStreaming", "LargeFileDownload", "DynamicSiteAcceleration".
+         driven optimization. Known values are: "GeneralWebDelivery", "GeneralMediaStreaming",
+         "VideoOnDemandMediaStreaming", "LargeFileDownload", and "DynamicSiteAcceleration".
         :paramtype optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
         :keyword probe_path: Path to a file hosted on the origin which helps accelerate delivery of the
          dynamic content and calculate the most optimal routes for the CDN. This is relative to the
@@ -5300,7 +5173,7 @@ class Endpoint(TrackedResource):
          balancing the traffic based on availability.
         :paramtype origin_groups: list[~azure.mgmt.cdn.models.DeepCreatedOriginGroup]
         """
-        super(Endpoint, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.origin_path = origin_path
         self.content_types_to_compress = content_types_to_compress
         self.origin_host_header = origin_host_header
@@ -5323,7 +5196,7 @@ class Endpoint(TrackedResource):
         self.provisioning_state = None
 
 
-class EndpointListResult(msrest.serialization.Model):
+class EndpointListResult(_serialization.Model):
     """Result of the request to list endpoints. It contains a list of endpoint objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5335,30 +5208,25 @@ class EndpointListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Endpoint]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Endpoint]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of endpoint objects if there is any.
         :paramtype next_link: str
         """
-        super(EndpointListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class EndpointPropertiesUpdateParameters(msrest.serialization.Model):
+class EndpointPropertiesUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The JSON object containing endpoint update parameters.
 
     :ivar origin_path: A directory path on the origin that CDN can use to retrieve content from,
@@ -5386,14 +5254,14 @@ class EndpointPropertiesUpdateParameters(msrest.serialization.Model):
     :vartype is_https_allowed: bool
     :ivar query_string_caching_behavior: Defines how CDN caches requests that include query
      strings. You can ignore any query strings when caching, bypass caching to prevent requests that
-     contain query strings from being cached, or cache every request with a unique URL. Possible
-     values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+     contain query strings from being cached, or cache every request with a unique URL. Known values
+     are: "IgnoreQueryString", "BypassCaching", "UseQueryString", and "NotSet".
     :vartype query_string_caching_behavior: str or
      ~azure.mgmt.cdn.models.QueryStringCachingBehavior
     :ivar optimization_type: Specifies what scenario the customer wants this CDN endpoint to
      optimize for, e.g. Download, Media services. With this information, CDN can apply scenario
-     driven optimization. Possible values include: "GeneralWebDelivery", "GeneralMediaStreaming",
-     "VideoOnDemandMediaStreaming", "LargeFileDownload", "DynamicSiteAcceleration".
+     driven optimization. Known values are: "GeneralWebDelivery", "GeneralMediaStreaming",
+     "VideoOnDemandMediaStreaming", "LargeFileDownload", and "DynamicSiteAcceleration".
     :vartype optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
     :ivar probe_path: Path to a file hosted on the origin which helps accelerate delivery of the
      dynamic content and calculate the most optimal routes for the CDN. This is relative to the
@@ -5417,20 +5285,23 @@ class EndpointPropertiesUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'origin_path': {'key': 'originPath', 'type': 'str'},
-        'content_types_to_compress': {'key': 'contentTypesToCompress', 'type': '[str]'},
-        'origin_host_header': {'key': 'originHostHeader', 'type': 'str'},
-        'is_compression_enabled': {'key': 'isCompressionEnabled', 'type': 'bool'},
-        'is_http_allowed': {'key': 'isHttpAllowed', 'type': 'bool'},
-        'is_https_allowed': {'key': 'isHttpsAllowed', 'type': 'bool'},
-        'query_string_caching_behavior': {'key': 'queryStringCachingBehavior', 'type': 'str'},
-        'optimization_type': {'key': 'optimizationType', 'type': 'str'},
-        'probe_path': {'key': 'probePath', 'type': 'str'},
-        'geo_filters': {'key': 'geoFilters', 'type': '[GeoFilter]'},
-        'default_origin_group': {'key': 'defaultOriginGroup', 'type': 'ResourceReference'},
-        'url_signing_keys': {'key': 'urlSigningKeys', 'type': '[UrlSigningKey]'},
-        'delivery_policy': {'key': 'deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
-        'web_application_firewall_policy_link': {'key': 'webApplicationFirewallPolicyLink', 'type': 'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink'},
+        "origin_path": {"key": "originPath", "type": "str"},
+        "content_types_to_compress": {"key": "contentTypesToCompress", "type": "[str]"},
+        "origin_host_header": {"key": "originHostHeader", "type": "str"},
+        "is_compression_enabled": {"key": "isCompressionEnabled", "type": "bool"},
+        "is_http_allowed": {"key": "isHttpAllowed", "type": "bool"},
+        "is_https_allowed": {"key": "isHttpsAllowed", "type": "bool"},
+        "query_string_caching_behavior": {"key": "queryStringCachingBehavior", "type": "str"},
+        "optimization_type": {"key": "optimizationType", "type": "str"},
+        "probe_path": {"key": "probePath", "type": "str"},
+        "geo_filters": {"key": "geoFilters", "type": "[GeoFilter]"},
+        "default_origin_group": {"key": "defaultOriginGroup", "type": "ResourceReference"},
+        "url_signing_keys": {"key": "urlSigningKeys", "type": "[UrlSigningKey]"},
+        "delivery_policy": {"key": "deliveryPolicy", "type": "EndpointPropertiesUpdateParametersDeliveryPolicy"},
+        "web_application_firewall_policy_link": {
+            "key": "webApplicationFirewallPolicyLink",
+            "type": "EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink",
+        },
     }
 
     def __init__(
@@ -5442,14 +5313,16 @@ class EndpointPropertiesUpdateParameters(msrest.serialization.Model):
         is_compression_enabled: Optional[bool] = None,
         is_http_allowed: Optional[bool] = None,
         is_https_allowed: Optional[bool] = None,
-        query_string_caching_behavior: Optional[Union[str, "QueryStringCachingBehavior"]] = None,
-        optimization_type: Optional[Union[str, "OptimizationType"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "_models.QueryStringCachingBehavior"]] = None,
+        optimization_type: Optional[Union[str, "_models.OptimizationType"]] = None,
         probe_path: Optional[str] = None,
-        geo_filters: Optional[List["GeoFilter"]] = None,
-        default_origin_group: Optional["ResourceReference"] = None,
-        url_signing_keys: Optional[List["UrlSigningKey"]] = None,
-        delivery_policy: Optional["EndpointPropertiesUpdateParametersDeliveryPolicy"] = None,
-        web_application_firewall_policy_link: Optional["EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"] = None,
+        geo_filters: Optional[List["_models.GeoFilter"]] = None,
+        default_origin_group: Optional["_models.ResourceReference"] = None,
+        url_signing_keys: Optional[List["_models.UrlSigningKey"]] = None,
+        delivery_policy: Optional["_models.EndpointPropertiesUpdateParametersDeliveryPolicy"] = None,
+        web_application_firewall_policy_link: Optional[
+            "_models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"
+        ] = None,
         **kwargs
     ):
         """
@@ -5478,14 +5351,14 @@ class EndpointPropertiesUpdateParameters(msrest.serialization.Model):
         :paramtype is_https_allowed: bool
         :keyword query_string_caching_behavior: Defines how CDN caches requests that include query
          strings. You can ignore any query strings when caching, bypass caching to prevent requests that
-         contain query strings from being cached, or cache every request with a unique URL. Possible
-         values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+         contain query strings from being cached, or cache every request with a unique URL. Known values
+         are: "IgnoreQueryString", "BypassCaching", "UseQueryString", and "NotSet".
         :paramtype query_string_caching_behavior: str or
          ~azure.mgmt.cdn.models.QueryStringCachingBehavior
         :keyword optimization_type: Specifies what scenario the customer wants this CDN endpoint to
          optimize for, e.g. Download, Media services. With this information, CDN can apply scenario
-         driven optimization. Possible values include: "GeneralWebDelivery", "GeneralMediaStreaming",
-         "VideoOnDemandMediaStreaming", "LargeFileDownload", "DynamicSiteAcceleration".
+         driven optimization. Known values are: "GeneralWebDelivery", "GeneralMediaStreaming",
+         "VideoOnDemandMediaStreaming", "LargeFileDownload", and "DynamicSiteAcceleration".
         :paramtype optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
         :keyword probe_path: Path to a file hosted on the origin which helps accelerate delivery of the
          dynamic content and calculate the most optimal routes for the CDN. This is relative to the
@@ -5508,7 +5381,7 @@ class EndpointPropertiesUpdateParameters(msrest.serialization.Model):
         :paramtype web_application_firewall_policy_link:
          ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
         """
-        super(EndpointPropertiesUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.origin_path = origin_path
         self.content_types_to_compress = content_types_to_compress
         self.origin_host_header = origin_host_header
@@ -5525,7 +5398,7 @@ class EndpointPropertiesUpdateParameters(msrest.serialization.Model):
         self.web_application_firewall_policy_link = web_application_firewall_policy_link
 
 
-class EndpointProperties(EndpointPropertiesUpdateParameters):
+class EndpointProperties(EndpointPropertiesUpdateParameters):  # pylint: disable=too-many-instance-attributes
     """The JSON object that contains the properties required to create an endpoint.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5557,14 +5430,14 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):
     :vartype is_https_allowed: bool
     :ivar query_string_caching_behavior: Defines how CDN caches requests that include query
      strings. You can ignore any query strings when caching, bypass caching to prevent requests that
-     contain query strings from being cached, or cache every request with a unique URL. Possible
-     values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+     contain query strings from being cached, or cache every request with a unique URL. Known values
+     are: "IgnoreQueryString", "BypassCaching", "UseQueryString", and "NotSet".
     :vartype query_string_caching_behavior: str or
      ~azure.mgmt.cdn.models.QueryStringCachingBehavior
     :ivar optimization_type: Specifies what scenario the customer wants this CDN endpoint to
      optimize for, e.g. Download, Media services. With this information, CDN can apply scenario
-     driven optimization. Possible values include: "GeneralWebDelivery", "GeneralMediaStreaming",
-     "VideoOnDemandMediaStreaming", "LargeFileDownload", "DynamicSiteAcceleration".
+     driven optimization. Known values are: "GeneralWebDelivery", "GeneralMediaStreaming",
+     "VideoOnDemandMediaStreaming", "LargeFileDownload", and "DynamicSiteAcceleration".
     :vartype optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
     :ivar probe_path: Path to a file hosted on the origin which helps accelerate delivery of the
      dynamic content and calculate the most optimal routes for the CDN. This is relative to the
@@ -5588,70 +5461,76 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):
     :ivar host_name: The host name of the endpoint structured as {endpointName}.{DNSZone}, e.g.
      contoso.azureedge.net.
     :vartype host_name: str
-    :ivar origins: Required. The source of the content being delivered via CDN.
+    :ivar origins: The source of the content being delivered via CDN. Required.
     :vartype origins: list[~azure.mgmt.cdn.models.DeepCreatedOrigin]
     :ivar origin_groups: The origin groups comprising of origins that are used for load balancing
      the traffic based on availability.
     :vartype origin_groups: list[~azure.mgmt.cdn.models.DeepCreatedOriginGroup]
     :ivar custom_domains: The custom domains under the endpoint.
-    :vartype custom_domains: list[~azure.mgmt.cdn.models.CustomDomain]
-    :ivar resource_state: Resource status of the endpoint. Possible values include: "Creating",
-     "Deleting", "Running", "Starting", "Stopped", "Stopping".
+    :vartype custom_domains: list[~azure.mgmt.cdn.models.DeepCreatedCustomDomain]
+    :ivar resource_state: Resource status of the endpoint. Known values are: "Creating",
+     "Deleting", "Running", "Starting", "Stopped", and "Stopping".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.EndpointResourceState
-    :ivar provisioning_state: Provisioning status of the endpoint.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning status of the endpoint. Known values are: "Succeeded",
+     "Failed", "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.EndpointProvisioningState
     """
 
     _validation = {
-        'host_name': {'readonly': True},
-        'origins': {'required': True},
-        'custom_domains': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "host_name": {"readonly": True},
+        "origins": {"required": True},
+        "custom_domains": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'origin_path': {'key': 'originPath', 'type': 'str'},
-        'content_types_to_compress': {'key': 'contentTypesToCompress', 'type': '[str]'},
-        'origin_host_header': {'key': 'originHostHeader', 'type': 'str'},
-        'is_compression_enabled': {'key': 'isCompressionEnabled', 'type': 'bool'},
-        'is_http_allowed': {'key': 'isHttpAllowed', 'type': 'bool'},
-        'is_https_allowed': {'key': 'isHttpsAllowed', 'type': 'bool'},
-        'query_string_caching_behavior': {'key': 'queryStringCachingBehavior', 'type': 'str'},
-        'optimization_type': {'key': 'optimizationType', 'type': 'str'},
-        'probe_path': {'key': 'probePath', 'type': 'str'},
-        'geo_filters': {'key': 'geoFilters', 'type': '[GeoFilter]'},
-        'default_origin_group': {'key': 'defaultOriginGroup', 'type': 'ResourceReference'},
-        'url_signing_keys': {'key': 'urlSigningKeys', 'type': '[UrlSigningKey]'},
-        'delivery_policy': {'key': 'deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
-        'web_application_firewall_policy_link': {'key': 'webApplicationFirewallPolicyLink', 'type': 'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'origins': {'key': 'origins', 'type': '[DeepCreatedOrigin]'},
-        'origin_groups': {'key': 'originGroups', 'type': '[DeepCreatedOriginGroup]'},
-        'custom_domains': {'key': 'customDomains', 'type': '[CustomDomain]'},
-        'resource_state': {'key': 'resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "origin_path": {"key": "originPath", "type": "str"},
+        "content_types_to_compress": {"key": "contentTypesToCompress", "type": "[str]"},
+        "origin_host_header": {"key": "originHostHeader", "type": "str"},
+        "is_compression_enabled": {"key": "isCompressionEnabled", "type": "bool"},
+        "is_http_allowed": {"key": "isHttpAllowed", "type": "bool"},
+        "is_https_allowed": {"key": "isHttpsAllowed", "type": "bool"},
+        "query_string_caching_behavior": {"key": "queryStringCachingBehavior", "type": "str"},
+        "optimization_type": {"key": "optimizationType", "type": "str"},
+        "probe_path": {"key": "probePath", "type": "str"},
+        "geo_filters": {"key": "geoFilters", "type": "[GeoFilter]"},
+        "default_origin_group": {"key": "defaultOriginGroup", "type": "ResourceReference"},
+        "url_signing_keys": {"key": "urlSigningKeys", "type": "[UrlSigningKey]"},
+        "delivery_policy": {"key": "deliveryPolicy", "type": "EndpointPropertiesUpdateParametersDeliveryPolicy"},
+        "web_application_firewall_policy_link": {
+            "key": "webApplicationFirewallPolicyLink",
+            "type": "EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink",
+        },
+        "host_name": {"key": "hostName", "type": "str"},
+        "origins": {"key": "origins", "type": "[DeepCreatedOrigin]"},
+        "origin_groups": {"key": "originGroups", "type": "[DeepCreatedOriginGroup]"},
+        "custom_domains": {"key": "customDomains", "type": "[DeepCreatedCustomDomain]"},
+        "resource_state": {"key": "resourceState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        origins: List["DeepCreatedOrigin"],
+        origins: List["_models.DeepCreatedOrigin"],
         origin_path: Optional[str] = None,
         content_types_to_compress: Optional[List[str]] = None,
         origin_host_header: Optional[str] = None,
         is_compression_enabled: Optional[bool] = None,
         is_http_allowed: Optional[bool] = None,
         is_https_allowed: Optional[bool] = None,
-        query_string_caching_behavior: Optional[Union[str, "QueryStringCachingBehavior"]] = None,
-        optimization_type: Optional[Union[str, "OptimizationType"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "_models.QueryStringCachingBehavior"]] = None,
+        optimization_type: Optional[Union[str, "_models.OptimizationType"]] = None,
         probe_path: Optional[str] = None,
-        geo_filters: Optional[List["GeoFilter"]] = None,
-        default_origin_group: Optional["ResourceReference"] = None,
-        url_signing_keys: Optional[List["UrlSigningKey"]] = None,
-        delivery_policy: Optional["EndpointPropertiesUpdateParametersDeliveryPolicy"] = None,
-        web_application_firewall_policy_link: Optional["EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"] = None,
-        origin_groups: Optional[List["DeepCreatedOriginGroup"]] = None,
+        geo_filters: Optional[List["_models.GeoFilter"]] = None,
+        default_origin_group: Optional["_models.ResourceReference"] = None,
+        url_signing_keys: Optional[List["_models.UrlSigningKey"]] = None,
+        delivery_policy: Optional["_models.EndpointPropertiesUpdateParametersDeliveryPolicy"] = None,
+        web_application_firewall_policy_link: Optional[
+            "_models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"
+        ] = None,
+        origin_groups: Optional[List["_models.DeepCreatedOriginGroup"]] = None,
         **kwargs
     ):
         """
@@ -5680,14 +5559,14 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):
         :paramtype is_https_allowed: bool
         :keyword query_string_caching_behavior: Defines how CDN caches requests that include query
          strings. You can ignore any query strings when caching, bypass caching to prevent requests that
-         contain query strings from being cached, or cache every request with a unique URL. Possible
-         values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+         contain query strings from being cached, or cache every request with a unique URL. Known values
+         are: "IgnoreQueryString", "BypassCaching", "UseQueryString", and "NotSet".
         :paramtype query_string_caching_behavior: str or
          ~azure.mgmt.cdn.models.QueryStringCachingBehavior
         :keyword optimization_type: Specifies what scenario the customer wants this CDN endpoint to
          optimize for, e.g. Download, Media services. With this information, CDN can apply scenario
-         driven optimization. Possible values include: "GeneralWebDelivery", "GeneralMediaStreaming",
-         "VideoOnDemandMediaStreaming", "LargeFileDownload", "DynamicSiteAcceleration".
+         driven optimization. Known values are: "GeneralWebDelivery", "GeneralMediaStreaming",
+         "VideoOnDemandMediaStreaming", "LargeFileDownload", and "DynamicSiteAcceleration".
         :paramtype optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
         :keyword probe_path: Path to a file hosted on the origin which helps accelerate delivery of the
          dynamic content and calculate the most optimal routes for the CDN. This is relative to the
@@ -5709,13 +5588,29 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):
          the endpoint (if applicable).
         :paramtype web_application_firewall_policy_link:
          ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
-        :keyword origins: Required. The source of the content being delivered via CDN.
+        :keyword origins: The source of the content being delivered via CDN. Required.
         :paramtype origins: list[~azure.mgmt.cdn.models.DeepCreatedOrigin]
         :keyword origin_groups: The origin groups comprising of origins that are used for load
          balancing the traffic based on availability.
         :paramtype origin_groups: list[~azure.mgmt.cdn.models.DeepCreatedOriginGroup]
         """
-        super(EndpointProperties, self).__init__(origin_path=origin_path, content_types_to_compress=content_types_to_compress, origin_host_header=origin_host_header, is_compression_enabled=is_compression_enabled, is_http_allowed=is_http_allowed, is_https_allowed=is_https_allowed, query_string_caching_behavior=query_string_caching_behavior, optimization_type=optimization_type, probe_path=probe_path, geo_filters=geo_filters, default_origin_group=default_origin_group, url_signing_keys=url_signing_keys, delivery_policy=delivery_policy, web_application_firewall_policy_link=web_application_firewall_policy_link, **kwargs)
+        super().__init__(
+            origin_path=origin_path,
+            content_types_to_compress=content_types_to_compress,
+            origin_host_header=origin_host_header,
+            is_compression_enabled=is_compression_enabled,
+            is_http_allowed=is_http_allowed,
+            is_https_allowed=is_https_allowed,
+            query_string_caching_behavior=query_string_caching_behavior,
+            optimization_type=optimization_type,
+            probe_path=probe_path,
+            geo_filters=geo_filters,
+            default_origin_group=default_origin_group,
+            url_signing_keys=url_signing_keys,
+            delivery_policy=delivery_policy,
+            web_application_firewall_policy_link=web_application_firewall_policy_link,
+            **kwargs
+        )
         self.host_name = None
         self.origins = origins
         self.origin_groups = origin_groups
@@ -5724,45 +5619,39 @@ class EndpointProperties(EndpointPropertiesUpdateParameters):
         self.provisioning_state = None
 
 
-class EndpointPropertiesUpdateParametersDeliveryPolicy(msrest.serialization.Model):
+class EndpointPropertiesUpdateParametersDeliveryPolicy(_serialization.Model):
     """A policy that specifies the delivery rules to be used for an endpoint.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar description: User-friendly description of the policy.
     :vartype description: str
-    :ivar rules: Required. A list of the delivery rules.
+    :ivar rules: A list of the delivery rules. Required.
     :vartype rules: list[~azure.mgmt.cdn.models.DeliveryRule]
     """
 
     _validation = {
-        'rules': {'required': True},
+        "rules": {"required": True},
     }
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[DeliveryRule]'},
+        "description": {"key": "description", "type": "str"},
+        "rules": {"key": "rules", "type": "[DeliveryRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        rules: List["DeliveryRule"],
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rules: List["_models.DeliveryRule"], description: Optional[str] = None, **kwargs):
         """
         :keyword description: User-friendly description of the policy.
         :paramtype description: str
-        :keyword rules: Required. A list of the delivery rules.
+        :keyword rules: A list of the delivery rules. Required.
         :paramtype rules: list[~azure.mgmt.cdn.models.DeliveryRule]
         """
-        super(EndpointPropertiesUpdateParametersDeliveryPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.description = description
         self.rules = rules
 
 
-class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(msrest.serialization.Model):
+class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(_serialization.Model):
     """Defines the Web Application Firewall policy for the endpoint (if applicable).
 
     :ivar id: Resource ID.
@@ -5770,27 +5659,22 @@ class EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink(msrest.
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
         """
-        super(EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class EndpointUpdateParameters(msrest.serialization.Model):
+class EndpointUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties required to create or update an endpoint.
 
-    :ivar tags: A set of tags. Endpoint tags.
+    :ivar tags: Endpoint tags.
     :vartype tags: dict[str, str]
     :ivar origin_path: A directory path on the origin that CDN can use to retrieve content from,
      e.g. contoso.cloudapp.net/originpath.
@@ -5817,14 +5701,14 @@ class EndpointUpdateParameters(msrest.serialization.Model):
     :vartype is_https_allowed: bool
     :ivar query_string_caching_behavior: Defines how CDN caches requests that include query
      strings. You can ignore any query strings when caching, bypass caching to prevent requests that
-     contain query strings from being cached, or cache every request with a unique URL. Possible
-     values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+     contain query strings from being cached, or cache every request with a unique URL. Known values
+     are: "IgnoreQueryString", "BypassCaching", "UseQueryString", and "NotSet".
     :vartype query_string_caching_behavior: str or
      ~azure.mgmt.cdn.models.QueryStringCachingBehavior
     :ivar optimization_type: Specifies what scenario the customer wants this CDN endpoint to
      optimize for, e.g. Download, Media services. With this information, CDN can apply scenario
-     driven optimization. Possible values include: "GeneralWebDelivery", "GeneralMediaStreaming",
-     "VideoOnDemandMediaStreaming", "LargeFileDownload", "DynamicSiteAcceleration".
+     driven optimization. Known values are: "GeneralWebDelivery", "GeneralMediaStreaming",
+     "VideoOnDemandMediaStreaming", "LargeFileDownload", and "DynamicSiteAcceleration".
     :vartype optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
     :ivar probe_path: Path to a file hosted on the origin which helps accelerate delivery of the
      dynamic content and calculate the most optimal routes for the CDN. This is relative to the
@@ -5848,21 +5732,27 @@ class EndpointUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'origin_path': {'key': 'properties.originPath', 'type': 'str'},
-        'content_types_to_compress': {'key': 'properties.contentTypesToCompress', 'type': '[str]'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'is_compression_enabled': {'key': 'properties.isCompressionEnabled', 'type': 'bool'},
-        'is_http_allowed': {'key': 'properties.isHttpAllowed', 'type': 'bool'},
-        'is_https_allowed': {'key': 'properties.isHttpsAllowed', 'type': 'bool'},
-        'query_string_caching_behavior': {'key': 'properties.queryStringCachingBehavior', 'type': 'str'},
-        'optimization_type': {'key': 'properties.optimizationType', 'type': 'str'},
-        'probe_path': {'key': 'properties.probePath', 'type': 'str'},
-        'geo_filters': {'key': 'properties.geoFilters', 'type': '[GeoFilter]'},
-        'default_origin_group': {'key': 'properties.defaultOriginGroup', 'type': 'ResourceReference'},
-        'url_signing_keys': {'key': 'properties.urlSigningKeys', 'type': '[UrlSigningKey]'},
-        'delivery_policy': {'key': 'properties.deliveryPolicy', 'type': 'EndpointPropertiesUpdateParametersDeliveryPolicy'},
-        'web_application_firewall_policy_link': {'key': 'properties.webApplicationFirewallPolicyLink', 'type': 'EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "origin_path": {"key": "properties.originPath", "type": "str"},
+        "content_types_to_compress": {"key": "properties.contentTypesToCompress", "type": "[str]"},
+        "origin_host_header": {"key": "properties.originHostHeader", "type": "str"},
+        "is_compression_enabled": {"key": "properties.isCompressionEnabled", "type": "bool"},
+        "is_http_allowed": {"key": "properties.isHttpAllowed", "type": "bool"},
+        "is_https_allowed": {"key": "properties.isHttpsAllowed", "type": "bool"},
+        "query_string_caching_behavior": {"key": "properties.queryStringCachingBehavior", "type": "str"},
+        "optimization_type": {"key": "properties.optimizationType", "type": "str"},
+        "probe_path": {"key": "properties.probePath", "type": "str"},
+        "geo_filters": {"key": "properties.geoFilters", "type": "[GeoFilter]"},
+        "default_origin_group": {"key": "properties.defaultOriginGroup", "type": "ResourceReference"},
+        "url_signing_keys": {"key": "properties.urlSigningKeys", "type": "[UrlSigningKey]"},
+        "delivery_policy": {
+            "key": "properties.deliveryPolicy",
+            "type": "EndpointPropertiesUpdateParametersDeliveryPolicy",
+        },
+        "web_application_firewall_policy_link": {
+            "key": "properties.webApplicationFirewallPolicyLink",
+            "type": "EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink",
+        },
     }
 
     def __init__(
@@ -5875,18 +5765,20 @@ class EndpointUpdateParameters(msrest.serialization.Model):
         is_compression_enabled: Optional[bool] = None,
         is_http_allowed: Optional[bool] = None,
         is_https_allowed: Optional[bool] = None,
-        query_string_caching_behavior: Optional[Union[str, "QueryStringCachingBehavior"]] = None,
-        optimization_type: Optional[Union[str, "OptimizationType"]] = None,
+        query_string_caching_behavior: Optional[Union[str, "_models.QueryStringCachingBehavior"]] = None,
+        optimization_type: Optional[Union[str, "_models.OptimizationType"]] = None,
         probe_path: Optional[str] = None,
-        geo_filters: Optional[List["GeoFilter"]] = None,
-        default_origin_group: Optional["ResourceReference"] = None,
-        url_signing_keys: Optional[List["UrlSigningKey"]] = None,
-        delivery_policy: Optional["EndpointPropertiesUpdateParametersDeliveryPolicy"] = None,
-        web_application_firewall_policy_link: Optional["EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"] = None,
+        geo_filters: Optional[List["_models.GeoFilter"]] = None,
+        default_origin_group: Optional["_models.ResourceReference"] = None,
+        url_signing_keys: Optional[List["_models.UrlSigningKey"]] = None,
+        delivery_policy: Optional["_models.EndpointPropertiesUpdateParametersDeliveryPolicy"] = None,
+        web_application_firewall_policy_link: Optional[
+            "_models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink"
+        ] = None,
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Endpoint tags.
+        :keyword tags: Endpoint tags.
         :paramtype tags: dict[str, str]
         :keyword origin_path: A directory path on the origin that CDN can use to retrieve content from,
          e.g. contoso.cloudapp.net/originpath.
@@ -5913,14 +5805,14 @@ class EndpointUpdateParameters(msrest.serialization.Model):
         :paramtype is_https_allowed: bool
         :keyword query_string_caching_behavior: Defines how CDN caches requests that include query
          strings. You can ignore any query strings when caching, bypass caching to prevent requests that
-         contain query strings from being cached, or cache every request with a unique URL. Possible
-         values include: "IgnoreQueryString", "BypassCaching", "UseQueryString", "NotSet".
+         contain query strings from being cached, or cache every request with a unique URL. Known values
+         are: "IgnoreQueryString", "BypassCaching", "UseQueryString", and "NotSet".
         :paramtype query_string_caching_behavior: str or
          ~azure.mgmt.cdn.models.QueryStringCachingBehavior
         :keyword optimization_type: Specifies what scenario the customer wants this CDN endpoint to
          optimize for, e.g. Download, Media services. With this information, CDN can apply scenario
-         driven optimization. Possible values include: "GeneralWebDelivery", "GeneralMediaStreaming",
-         "VideoOnDemandMediaStreaming", "LargeFileDownload", "DynamicSiteAcceleration".
+         driven optimization. Known values are: "GeneralWebDelivery", "GeneralMediaStreaming",
+         "VideoOnDemandMediaStreaming", "LargeFileDownload", and "DynamicSiteAcceleration".
         :paramtype optimization_type: str or ~azure.mgmt.cdn.models.OptimizationType
         :keyword probe_path: Path to a file hosted on the origin which helps accelerate delivery of the
          dynamic content and calculate the most optimal routes for the CDN. This is relative to the
@@ -5943,7 +5835,7 @@ class EndpointUpdateParameters(msrest.serialization.Model):
         :paramtype web_application_firewall_policy_link:
          ~azure.mgmt.cdn.models.EndpointPropertiesUpdateParametersWebApplicationFirewallPolicyLink
         """
-        super(EndpointUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.origin_path = origin_path
         self.content_types_to_compress = content_types_to_compress
@@ -5961,7 +5853,7 @@ class EndpointUpdateParameters(msrest.serialization.Model):
         self.web_application_firewall_policy_link = web_application_firewall_policy_link
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5969,31 +5861,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6011,28 +5899,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -6040,7 +5924,7 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response indicates Azure Front Door Standard or Azure Front Door Premium or CDN service is not able to process the incoming request. The reason is provided in the error message.
 
     :ivar error: The error object.
@@ -6048,165 +5932,155 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.cdn.models.ErrorDetail
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class GeoFilter(msrest.serialization.Model):
+class GeoFilter(_serialization.Model):
     """Rules defining user's geo access within a CDN endpoint.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar relative_path: Required. Relative path applicable to geo filter. (e.g. '/mypictures',
-     '/mypicture/kitty.jpg', and etc.).
+    :ivar relative_path: Relative path applicable to geo filter. (e.g. '/mypictures',
+     '/mypicture/kitty.jpg', and etc.). Required.
     :vartype relative_path: str
-    :ivar action: Required. Action of the geo filter, i.e. allow or block access. Possible values
-     include: "Block", "Allow".
+    :ivar action: Action of the geo filter, i.e. allow or block access. Required. Known values are:
+     "Block" and "Allow".
     :vartype action: str or ~azure.mgmt.cdn.models.GeoFilterActions
-    :ivar country_codes: Required. Two letter country or region codes defining user country or
-     region access in a geo filter, e.g. AU, MX, US.
+    :ivar country_codes: Two letter country or region codes defining user country or region access
+     in a geo filter, e.g. AU, MX, US. Required.
     :vartype country_codes: list[str]
     """
 
     _validation = {
-        'relative_path': {'required': True},
-        'action': {'required': True},
-        'country_codes': {'required': True},
+        "relative_path": {"required": True},
+        "action": {"required": True},
+        "country_codes": {"required": True},
     }
 
     _attribute_map = {
-        'relative_path': {'key': 'relativePath', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
-        'country_codes': {'key': 'countryCodes', 'type': '[str]'},
+        "relative_path": {"key": "relativePath", "type": "str"},
+        "action": {"key": "action", "type": "str"},
+        "country_codes": {"key": "countryCodes", "type": "[str]"},
     }
 
     def __init__(
-        self,
-        *,
-        relative_path: str,
-        action: Union[str, "GeoFilterActions"],
-        country_codes: List[str],
-        **kwargs
+        self, *, relative_path: str, action: Union[str, "_models.GeoFilterActions"], country_codes: List[str], **kwargs
     ):
         """
-        :keyword relative_path: Required. Relative path applicable to geo filter. (e.g. '/mypictures',
-         '/mypicture/kitty.jpg', and etc.).
+        :keyword relative_path: Relative path applicable to geo filter. (e.g. '/mypictures',
+         '/mypicture/kitty.jpg', and etc.). Required.
         :paramtype relative_path: str
-        :keyword action: Required. Action of the geo filter, i.e. allow or block access. Possible
-         values include: "Block", "Allow".
+        :keyword action: Action of the geo filter, i.e. allow or block access. Required. Known values
+         are: "Block" and "Allow".
         :paramtype action: str or ~azure.mgmt.cdn.models.GeoFilterActions
-        :keyword country_codes: Required. Two letter country or region codes defining user country or
-         region access in a geo filter, e.g. AU, MX, US.
+        :keyword country_codes: Two letter country or region codes defining user country or region
+         access in a geo filter, e.g. AU, MX, US. Required.
         :paramtype country_codes: list[str]
         """
-        super(GeoFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.relative_path = relative_path
         self.action = action
         self.country_codes = country_codes
 
 
-class HeaderActionParameters(msrest.serialization.Model):
+class HeaderActionParameters(_serialization.Model):
     """Defines the parameters for the request header action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleHeaderActionParameters".
-    :vartype type_name: str
-    :ivar header_action: Required. Action to perform. Possible values include: "Append",
-     "Overwrite", "Delete".
+    :ivar type_name: Required. "DeliveryRuleHeaderActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.HeaderActionParametersTypeName
+    :ivar header_action: Action to perform. Required. Known values are: "Append", "Overwrite", and
+     "Delete".
     :vartype header_action: str or ~azure.mgmt.cdn.models.HeaderAction
-    :ivar header_name: Required. Name of the header to modify.
+    :ivar header_name: Name of the header to modify. Required.
     :vartype header_name: str
     :ivar value: Value for the specified action.
     :vartype value: str
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'header_action': {'required': True},
-        'header_name': {'required': True},
+        "type_name": {"required": True},
+        "header_action": {"required": True},
+        "header_name": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'header_action': {'key': 'headerAction', 'type': 'str'},
-        'header_name': {'key': 'headerName', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "header_action": {"key": "headerAction", "type": "str"},
+        "header_name": {"key": "headerName", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
-
-    type_name = "DeliveryRuleHeaderActionParameters"
 
     def __init__(
         self,
         *,
-        header_action: Union[str, "HeaderAction"],
+        type_name: Union[str, "_models.HeaderActionParametersTypeName"],
+        header_action: Union[str, "_models.HeaderAction"],
         header_name: str,
         value: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword header_action: Required. Action to perform. Possible values include: "Append",
-         "Overwrite", "Delete".
+        :keyword type_name: Required. "DeliveryRuleHeaderActionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.HeaderActionParametersTypeName
+        :keyword header_action: Action to perform. Required. Known values are: "Append", "Overwrite",
+         and "Delete".
         :paramtype header_action: str or ~azure.mgmt.cdn.models.HeaderAction
-        :keyword header_name: Required. Name of the header to modify.
+        :keyword header_name: Name of the header to modify. Required.
         :paramtype header_name: str
         :keyword value: Value for the specified action.
         :paramtype value: str
         """
-        super(HeaderActionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.header_action = header_action
         self.header_name = header_name
         self.value = value
 
 
-class HealthProbeParameters(msrest.serialization.Model):
+class HealthProbeParameters(_serialization.Model):
     """The JSON object that contains the properties to send health probes to origin.
 
     :ivar probe_path: The path relative to the origin that is used to determine the health of the
      origin.
     :vartype probe_path: str
-    :ivar probe_request_type: The type of health probe request that is made. Possible values
-     include: "NotSet", "GET", "HEAD".
+    :ivar probe_request_type: The type of health probe request that is made. Known values are:
+     "NotSet", "GET", and "HEAD".
     :vartype probe_request_type: str or ~azure.mgmt.cdn.models.HealthProbeRequestType
-    :ivar probe_protocol: Protocol to use for health probe. Possible values include: "NotSet",
-     "Http", "Https".
+    :ivar probe_protocol: Protocol to use for health probe. Known values are: "NotSet", "Http", and
+     "Https".
     :vartype probe_protocol: str or ~azure.mgmt.cdn.models.ProbeProtocol
     :ivar probe_interval_in_seconds: The number of seconds between health probes.Default is 240sec.
     :vartype probe_interval_in_seconds: int
     """
 
     _validation = {
-        'probe_interval_in_seconds': {'maximum': 255, 'minimum': 1},
+        "probe_interval_in_seconds": {"maximum": 255, "minimum": 1},
     }
 
     _attribute_map = {
-        'probe_path': {'key': 'probePath', 'type': 'str'},
-        'probe_request_type': {'key': 'probeRequestType', 'type': 'str'},
-        'probe_protocol': {'key': 'probeProtocol', 'type': 'str'},
-        'probe_interval_in_seconds': {'key': 'probeIntervalInSeconds', 'type': 'int'},
+        "probe_path": {"key": "probePath", "type": "str"},
+        "probe_request_type": {"key": "probeRequestType", "type": "str"},
+        "probe_protocol": {"key": "probeProtocol", "type": "str"},
+        "probe_interval_in_seconds": {"key": "probeIntervalInSeconds", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         probe_path: Optional[str] = None,
-        probe_request_type: Optional[Union[str, "HealthProbeRequestType"]] = None,
-        probe_protocol: Optional[Union[str, "ProbeProtocol"]] = None,
+        probe_request_type: Optional[Union[str, "_models.HealthProbeRequestType"]] = None,
+        probe_protocol: Optional[Union[str, "_models.ProbeProtocol"]] = None,
         probe_interval_in_seconds: Optional[int] = None,
         **kwargs
     ):
@@ -6214,35 +6088,33 @@ class HealthProbeParameters(msrest.serialization.Model):
         :keyword probe_path: The path relative to the origin that is used to determine the health of
          the origin.
         :paramtype probe_path: str
-        :keyword probe_request_type: The type of health probe request that is made. Possible values
-         include: "NotSet", "GET", "HEAD".
+        :keyword probe_request_type: The type of health probe request that is made. Known values are:
+         "NotSet", "GET", and "HEAD".
         :paramtype probe_request_type: str or ~azure.mgmt.cdn.models.HealthProbeRequestType
-        :keyword probe_protocol: Protocol to use for health probe. Possible values include: "NotSet",
-         "Http", "Https".
+        :keyword probe_protocol: Protocol to use for health probe. Known values are: "NotSet", "Http",
+         and "Https".
         :paramtype probe_protocol: str or ~azure.mgmt.cdn.models.ProbeProtocol
         :keyword probe_interval_in_seconds: The number of seconds between health probes.Default is
          240sec.
         :paramtype probe_interval_in_seconds: int
         """
-        super(HealthProbeParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.probe_path = probe_path
         self.probe_request_type = probe_request_type
         self.probe_protocol = probe_protocol
         self.probe_interval_in_seconds = probe_interval_in_seconds
 
 
-class HostNameMatchConditionParameters(msrest.serialization.Model):
+class HostNameMatchConditionParameters(_serialization.Model):
     """Defines the parameters for HostName match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleHostNameConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleHostNameConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.HostNameMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.HostNameOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -6253,33 +6125,34 @@ class HostNameMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleHostNameConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "HostNameOperator"],
+        type_name: Union[str, "_models.HostNameMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.HostNameOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleHostNameConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.HostNameMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.HostNameOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -6288,14 +6161,15 @@ class HostNameMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(HostNameMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class HttpErrorRangeParameters(msrest.serialization.Model):
+class HttpErrorRangeParameters(_serialization.Model):
     """The JSON object that represents the range for http status codes.
 
     :ivar begin: The inclusive start of the http status code range.
@@ -6305,43 +6179,35 @@ class HttpErrorRangeParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'begin': {'maximum': 999, 'minimum': 100},
-        'end': {'maximum': 999, 'minimum': 100},
+        "begin": {"maximum": 999, "minimum": 100},
+        "end": {"maximum": 999, "minimum": 100},
     }
 
     _attribute_map = {
-        'begin': {'key': 'begin', 'type': 'int'},
-        'end': {'key': 'end', 'type': 'int'},
+        "begin": {"key": "begin", "type": "int"},
+        "end": {"key": "end", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        begin: Optional[int] = None,
-        end: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, begin: Optional[int] = None, end: Optional[int] = None, **kwargs):
         """
         :keyword begin: The inclusive start of the http status code range.
         :paramtype begin: int
         :keyword end: The inclusive end of the http status code range.
         :paramtype end: int
         """
-        super(HttpErrorRangeParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.begin = begin
         self.end = end
 
 
-class HttpVersionMatchConditionParameters(msrest.serialization.Model):
+class HttpVersionMatchConditionParameters(_serialization.Model):
     """Defines the parameters for HttpVersion match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleHttpVersionConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Equal".
+    :ivar type_name: Required. "DeliveryRuleHttpVersionConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.HttpVersionMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. "Equal"
     :vartype operator: str or ~azure.mgmt.cdn.models.HttpVersionOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -6352,32 +6218,32 @@ class HttpVersionMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleHttpVersionConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "HttpVersionOperator"],
+        type_name: Union[str, "_models.HttpVersionMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.HttpVersionOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include:
-         "Equal".
+        :keyword type_name: Required. "DeliveryRuleHttpVersionConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.HttpVersionMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. "Equal"
         :paramtype operator: str or ~azure.mgmt.cdn.models.HttpVersionOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -6386,14 +6252,15 @@ class HttpVersionMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(HttpVersionMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class IpAddressGroup(msrest.serialization.Model):
+class IpAddressGroup(_serialization.Model):
     """CDN Ip address group.
 
     :ivar delivery_region: The delivery region of the ip address group.
@@ -6405,17 +6272,17 @@ class IpAddressGroup(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'delivery_region': {'key': 'deliveryRegion', 'type': 'str'},
-        'ipv4_addresses': {'key': 'ipv4Addresses', 'type': '[CidrIpAddress]'},
-        'ipv6_addresses': {'key': 'ipv6Addresses', 'type': '[CidrIpAddress]'},
+        "delivery_region": {"key": "deliveryRegion", "type": "str"},
+        "ipv4_addresses": {"key": "ipv4Addresses", "type": "[CidrIpAddress]"},
+        "ipv6_addresses": {"key": "ipv6Addresses", "type": "[CidrIpAddress]"},
     }
 
     def __init__(
         self,
         *,
         delivery_region: Optional[str] = None,
-        ipv4_addresses: Optional[List["CidrIpAddress"]] = None,
-        ipv6_addresses: Optional[List["CidrIpAddress"]] = None,
+        ipv4_addresses: Optional[List["_models.CidrIpAddress"]] = None,
+        ipv6_addresses: Optional[List["_models.CidrIpAddress"]] = None,
         **kwargs
     ):
         """
@@ -6426,22 +6293,20 @@ class IpAddressGroup(msrest.serialization.Model):
         :keyword ipv6_addresses: The list of ip v6 addresses.
         :paramtype ipv6_addresses: list[~azure.mgmt.cdn.models.CidrIpAddress]
         """
-        super(IpAddressGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.delivery_region = delivery_region
         self.ipv4_addresses = ipv4_addresses
         self.ipv6_addresses = ipv6_addresses
 
 
-class IsDeviceMatchConditionParameters(msrest.serialization.Model):
+class IsDeviceMatchConditionParameters(_serialization.Model):
     """Defines the parameters for IsDevice match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleIsDeviceConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Equal".
+    :ivar type_name: Required. "DeliveryRuleIsDeviceConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.IsDeviceMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. "Equal"
     :vartype operator: str or ~azure.mgmt.cdn.models.IsDeviceOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -6453,32 +6318,32 @@ class IsDeviceMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleIsDeviceConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "IsDeviceOperator"],
+        type_name: Union[str, "_models.IsDeviceMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.IsDeviceOperator"],
         negate_condition: Optional[bool] = None,
-        match_values: Optional[List[Union[str, "IsDeviceMatchConditionParametersMatchValuesItem"]]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        match_values: Optional[List[Union[str, "_models.IsDeviceMatchConditionParametersMatchValuesItem"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include:
-         "Equal".
+        :keyword type_name: Required. "DeliveryRuleIsDeviceConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.IsDeviceMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. "Equal"
         :paramtype operator: str or ~azure.mgmt.cdn.models.IsDeviceOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -6488,100 +6353,101 @@ class IsDeviceMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(IsDeviceMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class KeyVaultCertificateSourceParameters(msrest.serialization.Model):
+class KeyVaultCertificateSourceParameters(_serialization.Model):
     """Describes the parameters for using a user's KeyVault certificate for securing custom domain.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "KeyVaultCertificateSourceParameters".
-    :vartype type_name: str
-    :ivar subscription_id: Required. Subscription Id of the user's Key Vault containing the SSL
-     certificate.
+    :ivar type_name: Required. "KeyVaultCertificateSourceParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.KeyVaultCertificateSourceParametersTypeName
+    :ivar subscription_id: Subscription Id of the user's Key Vault containing the SSL certificate.
+     Required.
     :vartype subscription_id: str
-    :ivar resource_group_name: Required. Resource group of the user's Key Vault containing the SSL
-     certificate.
+    :ivar resource_group_name: Resource group of the user's Key Vault containing the SSL
+     certificate. Required.
     :vartype resource_group_name: str
-    :ivar vault_name: Required. The name of the user's Key Vault containing the SSL certificate.
+    :ivar vault_name: The name of the user's Key Vault containing the SSL certificate. Required.
     :vartype vault_name: str
-    :ivar secret_name: Required. The name of Key Vault Secret (representing the full certificate
-     PFX) in Key Vault.
+    :ivar secret_name: The name of Key Vault Secret (representing the full certificate PFX) in Key
+     Vault. Required.
     :vartype secret_name: str
     :ivar secret_version: The version(GUID) of Key Vault Secret in Key Vault.
     :vartype secret_version: str
-    :ivar update_rule: Required. Describes the action that shall be taken when the certificate is
-     updated in Key Vault. Possible values include: "NoAction".
+    :ivar update_rule: Describes the action that shall be taken when the certificate is updated in
+     Key Vault. Required. "NoAction"
     :vartype update_rule: str or ~azure.mgmt.cdn.models.UpdateRule
-    :ivar delete_rule: Required. Describes the action that shall be taken when the certificate is
-     removed from Key Vault. Possible values include: "NoAction".
+    :ivar delete_rule: Describes the action that shall be taken when the certificate is removed
+     from Key Vault. Required. "NoAction"
     :vartype delete_rule: str or ~azure.mgmt.cdn.models.DeleteRule
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'subscription_id': {'required': True},
-        'resource_group_name': {'required': True},
-        'vault_name': {'required': True},
-        'secret_name': {'required': True},
-        'update_rule': {'required': True},
-        'delete_rule': {'required': True},
+        "type_name": {"required": True},
+        "subscription_id": {"required": True},
+        "resource_group_name": {"required": True},
+        "vault_name": {"required": True},
+        "secret_name": {"required": True},
+        "update_rule": {"required": True},
+        "delete_rule": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
-        'vault_name': {'key': 'vaultName', 'type': 'str'},
-        'secret_name': {'key': 'secretName', 'type': 'str'},
-        'secret_version': {'key': 'secretVersion', 'type': 'str'},
-        'update_rule': {'key': 'updateRule', 'type': 'str'},
-        'delete_rule': {'key': 'deleteRule', 'type': 'str'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "vault_name": {"key": "vaultName", "type": "str"},
+        "secret_name": {"key": "secretName", "type": "str"},
+        "secret_version": {"key": "secretVersion", "type": "str"},
+        "update_rule": {"key": "updateRule", "type": "str"},
+        "delete_rule": {"key": "deleteRule", "type": "str"},
     }
-
-    type_name = "KeyVaultCertificateSourceParameters"
 
     def __init__(
         self,
         *,
+        type_name: Union[str, "_models.KeyVaultCertificateSourceParametersTypeName"],
         subscription_id: str,
         resource_group_name: str,
         vault_name: str,
         secret_name: str,
-        update_rule: Union[str, "UpdateRule"],
-        delete_rule: Union[str, "DeleteRule"],
+        update_rule: Union[str, "_models.UpdateRule"],
+        delete_rule: Union[str, "_models.DeleteRule"],
         secret_version: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword subscription_id: Required. Subscription Id of the user's Key Vault containing the SSL
-         certificate.
+        :keyword type_name: Required. "KeyVaultCertificateSourceParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.KeyVaultCertificateSourceParametersTypeName
+        :keyword subscription_id: Subscription Id of the user's Key Vault containing the SSL
+         certificate. Required.
         :paramtype subscription_id: str
-        :keyword resource_group_name: Required. Resource group of the user's Key Vault containing the
-         SSL certificate.
+        :keyword resource_group_name: Resource group of the user's Key Vault containing the SSL
+         certificate. Required.
         :paramtype resource_group_name: str
-        :keyword vault_name: Required. The name of the user's Key Vault containing the SSL certificate.
+        :keyword vault_name: The name of the user's Key Vault containing the SSL certificate. Required.
         :paramtype vault_name: str
-        :keyword secret_name: Required. The name of Key Vault Secret (representing the full certificate
-         PFX) in Key Vault.
+        :keyword secret_name: The name of Key Vault Secret (representing the full certificate PFX) in
+         Key Vault. Required.
         :paramtype secret_name: str
         :keyword secret_version: The version(GUID) of Key Vault Secret in Key Vault.
         :paramtype secret_version: str
-        :keyword update_rule: Required. Describes the action that shall be taken when the certificate
-         is updated in Key Vault. Possible values include: "NoAction".
+        :keyword update_rule: Describes the action that shall be taken when the certificate is updated
+         in Key Vault. Required. "NoAction"
         :paramtype update_rule: str or ~azure.mgmt.cdn.models.UpdateRule
-        :keyword delete_rule: Required. Describes the action that shall be taken when the certificate
-         is removed from Key Vault. Possible values include: "NoAction".
+        :keyword delete_rule: Describes the action that shall be taken when the certificate is removed
+         from Key Vault. Required. "NoAction"
         :paramtype delete_rule: str or ~azure.mgmt.cdn.models.DeleteRule
         """
-        super(KeyVaultCertificateSourceParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.vault_name = vault_name
@@ -6591,51 +6457,48 @@ class KeyVaultCertificateSourceParameters(msrest.serialization.Model):
         self.delete_rule = delete_rule
 
 
-class KeyVaultSigningKeyParameters(msrest.serialization.Model):
+class KeyVaultSigningKeyParameters(_serialization.Model):
     """Describes the parameters for using a user's KeyVault for URL Signing Key.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "KeyVaultSigningKeyParameters".
-    :vartype type_name: str
-    :ivar subscription_id: Required. Subscription Id of the user's Key Vault containing the secret.
+    :ivar type_name: Required. "KeyVaultSigningKeyParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.KeyVaultSigningKeyParametersTypeName
+    :ivar subscription_id: Subscription Id of the user's Key Vault containing the secret. Required.
     :vartype subscription_id: str
-    :ivar resource_group_name: Required. Resource group of the user's Key Vault containing the
-     secret.
+    :ivar resource_group_name: Resource group of the user's Key Vault containing the secret.
+     Required.
     :vartype resource_group_name: str
-    :ivar vault_name: Required. The name of the user's Key Vault containing the secret.
+    :ivar vault_name: The name of the user's Key Vault containing the secret. Required.
     :vartype vault_name: str
-    :ivar secret_name: Required. The name of secret in Key Vault.
+    :ivar secret_name: The name of secret in Key Vault. Required.
     :vartype secret_name: str
-    :ivar secret_version: Required. The version(GUID) of secret in Key Vault.
+    :ivar secret_version: The version(GUID) of secret in Key Vault. Required.
     :vartype secret_version: str
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'subscription_id': {'required': True},
-        'resource_group_name': {'required': True},
-        'vault_name': {'required': True},
-        'secret_name': {'required': True},
-        'secret_version': {'required': True},
+        "type_name": {"required": True},
+        "subscription_id": {"required": True},
+        "resource_group_name": {"required": True},
+        "vault_name": {"required": True},
+        "secret_name": {"required": True},
+        "secret_version": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
-        'vault_name': {'key': 'vaultName', 'type': 'str'},
-        'secret_name': {'key': 'secretName', 'type': 'str'},
-        'secret_version': {'key': 'secretVersion', 'type': 'str'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "vault_name": {"key": "vaultName", "type": "str"},
+        "secret_name": {"key": "secretName", "type": "str"},
+        "secret_version": {"key": "secretVersion", "type": "str"},
     }
-
-    type_name = "KeyVaultSigningKeyParameters"
 
     def __init__(
         self,
         *,
+        type_name: Union[str, "_models.KeyVaultSigningKeyParametersTypeName"],
         subscription_id: str,
         resource_group_name: str,
         vault_name: str,
@@ -6644,20 +6507,23 @@ class KeyVaultSigningKeyParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword subscription_id: Required. Subscription Id of the user's Key Vault containing the
-         secret.
+        :keyword type_name: Required. "KeyVaultSigningKeyParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.KeyVaultSigningKeyParametersTypeName
+        :keyword subscription_id: Subscription Id of the user's Key Vault containing the secret.
+         Required.
         :paramtype subscription_id: str
-        :keyword resource_group_name: Required. Resource group of the user's Key Vault containing the
-         secret.
+        :keyword resource_group_name: Resource group of the user's Key Vault containing the secret.
+         Required.
         :paramtype resource_group_name: str
-        :keyword vault_name: Required. The name of the user's Key Vault containing the secret.
+        :keyword vault_name: The name of the user's Key Vault containing the secret. Required.
         :paramtype vault_name: str
-        :keyword secret_name: Required. The name of secret in Key Vault.
+        :keyword secret_name: The name of secret in Key Vault. Required.
         :paramtype secret_name: str
-        :keyword secret_version: Required. The version(GUID) of secret in Key Vault.
+        :keyword secret_version: The version(GUID) of secret in Key Vault. Required.
         :paramtype secret_version: str
         """
-        super(KeyVaultSigningKeyParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.vault_name = vault_name
@@ -6665,7 +6531,7 @@ class KeyVaultSigningKeyParameters(msrest.serialization.Model):
         self.secret_version = secret_version
 
 
-class LoadBalancingSettingsParameters(msrest.serialization.Model):
+class LoadBalancingSettingsParameters(_serialization.Model):
     """Round-Robin load balancing settings for a backend pool.
 
     :ivar sample_size: The number of samples to consider for load balancing decisions.
@@ -6679,9 +6545,9 @@ class LoadBalancingSettingsParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sample_size': {'key': 'sampleSize', 'type': 'int'},
-        'successful_samples_required': {'key': 'successfulSamplesRequired', 'type': 'int'},
-        'additional_latency_in_milliseconds': {'key': 'additionalLatencyInMilliseconds', 'type': 'int'},
+        "sample_size": {"key": "sampleSize", "type": "int"},
+        "successful_samples_required": {"key": "successfulSamplesRequired", "type": "int"},
+        "additional_latency_in_milliseconds": {"key": "additionalLatencyInMilliseconds", "type": "int"},
     }
 
     def __init__(
@@ -6702,46 +6568,41 @@ class LoadBalancingSettingsParameters(msrest.serialization.Model):
          to fall into the lowest latency bucket.
         :paramtype additional_latency_in_milliseconds: int
         """
-        super(LoadBalancingSettingsParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sample_size = sample_size
         self.successful_samples_required = successful_samples_required
         self.additional_latency_in_milliseconds = additional_latency_in_milliseconds
 
 
-class LoadParameters(msrest.serialization.Model):
+class LoadParameters(_serialization.Model):
     """Parameters required for content load.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar content_paths: Required. The path to the content to be loaded. Path should be a relative
-     file URL of the origin.
+    :ivar content_paths: The path to the content to be loaded. Path should be a relative file URL
+     of the origin. Required.
     :vartype content_paths: list[str]
     """
 
     _validation = {
-        'content_paths': {'required': True},
+        "content_paths": {"required": True},
     }
 
     _attribute_map = {
-        'content_paths': {'key': 'contentPaths', 'type': '[str]'},
+        "content_paths": {"key": "contentPaths", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        content_paths: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, content_paths: List[str], **kwargs):
         """
-        :keyword content_paths: Required. The path to the content to be loaded. Path should be a
-         relative file URL of the origin.
+        :keyword content_paths: The path to the content to be loaded. Path should be a relative file
+         URL of the origin. Required.
         :paramtype content_paths: list[str]
         """
-        super(LoadParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_paths = content_paths
 
 
-class LogSpecification(msrest.serialization.Model):
+class LogSpecification(_serialization.Model):
     """Log specification of operation.
 
     :ivar name: Name of log specification.
@@ -6755,10 +6616,10 @@ class LogSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
-        'log_filter_pattern': {'key': 'logFilterPattern', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
+        "log_filter_pattern": {"key": "logFilterPattern", "type": "str"},
     }
 
     def __init__(
@@ -6780,7 +6641,7 @@ class LogSpecification(msrest.serialization.Model):
         :keyword log_filter_pattern: Pattern to filter based on name.
         :paramtype log_filter_pattern: str
         """
-        super(LogSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.blob_duration = blob_duration
@@ -6792,8 +6653,8 @@ class ManagedCertificate(Certificate):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar type: The type of the secret resource. Possible values include: "UrlSigningKey",
-     "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar subject: Subject name in the certificate.
     :vartype subject: str
@@ -6802,28 +6663,23 @@ class ManagedCertificate(Certificate):
     """
 
     _validation = {
-        'subject': {'readonly': True},
-        'expiration_date': {'readonly': True},
+        "subject": {"readonly": True},
+        "expiration_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "SecretType"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: Optional[Union[str, "_models.SecretType"]] = None, **kwargs):
         """
-        :keyword type: The type of the secret resource. Possible values include: "UrlSigningKey",
-         "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+        :keyword type: The type of the secret resource. Known values are: "UrlSigningKey",
+         "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
         :paramtype type: str or ~azure.mgmt.cdn.models.SecretType
         """
-        super(ManagedCertificate, self).__init__(type=type, **kwargs)
+        super().__init__(type=type, **kwargs)
 
 
 class ManagedCertificateParameters(SecretParameters):
@@ -6833,9 +6689,8 @@ class ManagedCertificateParameters(SecretParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the secret resource.Constant filled by server. Possible
-     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate",
-     "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
     :ivar subject: Subject name in the certificate.
     :vartype subject: str
@@ -6844,30 +6699,26 @@ class ManagedCertificateParameters(SecretParameters):
     """
 
     _validation = {
-        'type': {'required': True},
-        'subject': {'readonly': True},
-        'expiration_date': {'readonly': True},
+        "type": {"required": True},
+        "subject": {"readonly": True},
+        "expiration_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ManagedCertificateParameters, self).__init__(**kwargs)
-        self.type = 'ManagedCertificate'  # type: str
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type = "ManagedCertificate"  # type: str
         self.subject = None
         self.expiration_date = None
 
 
-class ManagedRuleDefinition(msrest.serialization.Model):
+class ManagedRuleDefinition(_serialization.Model):
     """Describes a managed rule definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6879,27 +6730,23 @@ class ManagedRuleDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_id': {'readonly': True},
-        'description': {'readonly': True},
+        "rule_id": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'rule_id': {'key': 'ruleId', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "rule_id": {"key": "ruleId", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ManagedRuleDefinition, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.rule_id = None
         self.description = None
 
 
-class ManagedRuleGroupDefinition(msrest.serialization.Model):
+class ManagedRuleGroupDefinition(_serialization.Model):
     """Describes a managed rule group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6913,128 +6760,118 @@ class ManagedRuleGroupDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_group_name': {'readonly': True},
-        'description': {'readonly': True},
-        'rules': {'readonly': True},
+        "rule_group_name": {"readonly": True},
+        "description": {"readonly": True},
+        "rules": {"readonly": True},
     }
 
     _attribute_map = {
-        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[ManagedRuleDefinition]'},
+        "rule_group_name": {"key": "ruleGroupName", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "rules": {"key": "rules", "type": "[ManagedRuleDefinition]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ManagedRuleGroupDefinition, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.rule_group_name = None
         self.description = None
         self.rules = None
 
 
-class ManagedRuleGroupOverride(msrest.serialization.Model):
+class ManagedRuleGroupOverride(_serialization.Model):
     """Defines a managed rule group override setting.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar rule_group_name: Required. Describes the managed rule group within the rule set to
-     override.
+    :ivar rule_group_name: Describes the managed rule group within the rule set to override.
+     Required.
     :vartype rule_group_name: str
-    :ivar rules: List of rules that will be disabled. If none specified, all rules in the group
-     will be disabled.
+    :ivar rules: List of rules that will be enabled. If none specified, all rules in the group will
+     be disabled.
     :vartype rules: list[~azure.mgmt.cdn.models.ManagedRuleOverride]
     """
 
     _validation = {
-        'rule_group_name': {'required': True},
+        "rule_group_name": {"required": True},
     }
 
     _attribute_map = {
-        'rule_group_name': {'key': 'ruleGroupName', 'type': 'str'},
-        'rules': {'key': 'rules', 'type': '[ManagedRuleOverride]'},
+        "rule_group_name": {"key": "ruleGroupName", "type": "str"},
+        "rules": {"key": "rules", "type": "[ManagedRuleOverride]"},
     }
 
-    def __init__(
-        self,
-        *,
-        rule_group_name: str,
-        rules: Optional[List["ManagedRuleOverride"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rule_group_name: str, rules: Optional[List["_models.ManagedRuleOverride"]] = None, **kwargs):
         """
-        :keyword rule_group_name: Required. Describes the managed rule group within the rule set to
-         override.
+        :keyword rule_group_name: Describes the managed rule group within the rule set to override.
+         Required.
         :paramtype rule_group_name: str
-        :keyword rules: List of rules that will be disabled. If none specified, all rules in the group
+        :keyword rules: List of rules that will be enabled. If none specified, all rules in the group
          will be disabled.
         :paramtype rules: list[~azure.mgmt.cdn.models.ManagedRuleOverride]
         """
-        super(ManagedRuleGroupOverride, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rule_group_name = rule_group_name
         self.rules = rules
 
 
-class ManagedRuleOverride(msrest.serialization.Model):
+class ManagedRuleOverride(_serialization.Model):
     """Defines a managed rule group override setting.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar rule_id: Required. Identifier for the managed rule.
+    :ivar rule_id: Identifier for the managed rule. Required.
     :vartype rule_id: str
     :ivar enabled_state: Describes if the managed rule is in enabled or disabled state. Defaults to
-     Disabled if not specified. Possible values include: "Disabled", "Enabled".
+     Disabled if not specified. Known values are: "Disabled" and "Enabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.ManagedRuleEnabledState
-    :ivar action: Describes the override action to be applied when rule matches. Possible values
-     include: "Allow", "Block", "Log", "Redirect".
+    :ivar action: Describes the override action to be applied when rule matches. Known values are:
+     "Allow", "Block", "Log", and "Redirect".
     :vartype action: str or ~azure.mgmt.cdn.models.ActionType
     """
 
     _validation = {
-        'rule_id': {'required': True},
+        "rule_id": {"required": True},
     }
 
     _attribute_map = {
-        'rule_id': {'key': 'ruleId', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
+        "rule_id": {"key": "ruleId", "type": "str"},
+        "enabled_state": {"key": "enabledState", "type": "str"},
+        "action": {"key": "action", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         rule_id: str,
-        enabled_state: Optional[Union[str, "ManagedRuleEnabledState"]] = None,
-        action: Optional[Union[str, "ActionType"]] = None,
+        enabled_state: Optional[Union[str, "_models.ManagedRuleEnabledState"]] = None,
+        action: Optional[Union[str, "_models.ActionType"]] = None,
         **kwargs
     ):
         """
-        :keyword rule_id: Required. Identifier for the managed rule.
+        :keyword rule_id: Identifier for the managed rule. Required.
         :paramtype rule_id: str
         :keyword enabled_state: Describes if the managed rule is in enabled or disabled state. Defaults
-         to Disabled if not specified. Possible values include: "Disabled", "Enabled".
+         to Disabled if not specified. Known values are: "Disabled" and "Enabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.ManagedRuleEnabledState
-        :keyword action: Describes the override action to be applied when rule matches. Possible values
-         include: "Allow", "Block", "Log", "Redirect".
+        :keyword action: Describes the override action to be applied when rule matches. Known values
+         are: "Allow", "Block", "Log", and "Redirect".
         :paramtype action: str or ~azure.mgmt.cdn.models.ActionType
         """
-        super(ManagedRuleOverride, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rule_id = rule_id
         self.enabled_state = enabled_state
         self.action = action
 
 
-class ManagedRuleSet(msrest.serialization.Model):
+class ManagedRuleSet(_serialization.Model):
     """Defines a managed rule set.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar rule_set_type: Required. Defines the rule set type to use.
+    :ivar rule_set_type: Defines the rule set type to use. Required.
     :vartype rule_set_type: str
-    :ivar rule_set_version: Required. Defines the version of the rule set to use.
+    :ivar rule_set_version: Defines the version of the rule set to use. Required.
     :vartype rule_set_version: str
     :ivar anomaly_score: Verizon only : If the rule set supports anomaly detection mode, this
      describes the threshold for blocking requests.
@@ -7044,16 +6881,16 @@ class ManagedRuleSet(msrest.serialization.Model):
     """
 
     _validation = {
-        'rule_set_type': {'required': True},
-        'rule_set_version': {'required': True},
-        'anomaly_score': {'maximum': 20, 'minimum': 0},
+        "rule_set_type": {"required": True},
+        "rule_set_version": {"required": True},
+        "anomaly_score": {"maximum": 20, "minimum": 0},
     }
 
     _attribute_map = {
-        'rule_set_type': {'key': 'ruleSetType', 'type': 'str'},
-        'rule_set_version': {'key': 'ruleSetVersion', 'type': 'str'},
-        'anomaly_score': {'key': 'anomalyScore', 'type': 'int'},
-        'rule_group_overrides': {'key': 'ruleGroupOverrides', 'type': '[ManagedRuleGroupOverride]'},
+        "rule_set_type": {"key": "ruleSetType", "type": "str"},
+        "rule_set_version": {"key": "ruleSetVersion", "type": "str"},
+        "anomaly_score": {"key": "anomalyScore", "type": "int"},
+        "rule_group_overrides": {"key": "ruleGroupOverrides", "type": "[ManagedRuleGroupOverride]"},
     }
 
     def __init__(
@@ -7062,13 +6899,13 @@ class ManagedRuleSet(msrest.serialization.Model):
         rule_set_type: str,
         rule_set_version: str,
         anomaly_score: Optional[int] = None,
-        rule_group_overrides: Optional[List["ManagedRuleGroupOverride"]] = None,
+        rule_group_overrides: Optional[List["_models.ManagedRuleGroupOverride"]] = None,
         **kwargs
     ):
         """
-        :keyword rule_set_type: Required. Defines the rule set type to use.
+        :keyword rule_set_type: Defines the rule set type to use. Required.
         :paramtype rule_set_type: str
-        :keyword rule_set_version: Required. Defines the version of the rule set to use.
+        :keyword rule_set_version: Defines the version of the rule set to use. Required.
         :paramtype rule_set_version: str
         :keyword anomaly_score: Verizon only : If the rule set supports anomaly detection mode, this
          describes the threshold for blocking requests.
@@ -7076,7 +6913,7 @@ class ManagedRuleSet(msrest.serialization.Model):
         :keyword rule_group_overrides: Defines the rule overrides to apply to the rule set.
         :paramtype rule_group_overrides: list[~azure.mgmt.cdn.models.ManagedRuleGroupOverride]
         """
-        super(ManagedRuleSet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rule_set_type = rule_set_type
         self.rule_set_version = rule_set_version
         self.anomaly_score = anomaly_score
@@ -7110,40 +6947,35 @@ class ManagedRuleSetDefinition(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'rule_set_type': {'readonly': True},
-        'rule_set_version': {'readonly': True},
-        'rule_groups': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "rule_set_type": {"readonly": True},
+        "rule_set_version": {"readonly": True},
+        "rule_groups": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'rule_set_type': {'key': 'properties.ruleSetType', 'type': 'str'},
-        'rule_set_version': {'key': 'properties.ruleSetVersion', 'type': 'str'},
-        'rule_groups': {'key': 'properties.ruleGroups', 'type': '[ManagedRuleGroupDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "rule_set_type": {"key": "properties.ruleSetType", "type": "str"},
+        "rule_set_version": {"key": "properties.ruleSetVersion", "type": "str"},
+        "rule_groups": {"key": "properties.ruleGroups", "type": "[ManagedRuleGroupDefinition]"},
     }
 
-    def __init__(
-        self,
-        *,
-        sku: Optional["Sku"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, sku: Optional["_models.Sku"] = None, **kwargs):
         """
         :keyword sku: The pricing tier (defines a CDN provider, feature list and rate) of the
          CdnWebApplicationFirewallPolicy.
         :paramtype sku: ~azure.mgmt.cdn.models.Sku
         """
-        super(ManagedRuleSetDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sku = sku
         self.provisioning_state = None
         self.rule_set_type = None
@@ -7151,7 +6983,7 @@ class ManagedRuleSetDefinition(Resource):
         self.rule_groups = None
 
 
-class ManagedRuleSetDefinitionList(msrest.serialization.Model):
+class ManagedRuleSetDefinitionList(_serialization.Model):
     """List of managed rule set definitions available for use in a policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7163,30 +6995,25 @@ class ManagedRuleSetDefinitionList(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ManagedRuleSetDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ManagedRuleSetDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to retrieve next set of managed rule set definitions.
         :paramtype next_link: str
         """
-        super(ManagedRuleSetDefinitionList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class ManagedRuleSetList(msrest.serialization.Model):
+class ManagedRuleSetList(_serialization.Model):
     """Defines the list of managed rule sets for the policy.
 
     :ivar managed_rule_sets: List of rule sets.
@@ -7194,93 +7021,88 @@ class ManagedRuleSetList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'managed_rule_sets': {'key': 'managedRuleSets', 'type': '[ManagedRuleSet]'},
+        "managed_rule_sets": {"key": "managedRuleSets", "type": "[ManagedRuleSet]"},
     }
 
-    def __init__(
-        self,
-        *,
-        managed_rule_sets: Optional[List["ManagedRuleSet"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, managed_rule_sets: Optional[List["_models.ManagedRuleSet"]] = None, **kwargs):
         """
         :keyword managed_rule_sets: List of rule sets.
         :paramtype managed_rule_sets: list[~azure.mgmt.cdn.models.ManagedRuleSet]
         """
-        super(ManagedRuleSetList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.managed_rule_sets = managed_rule_sets
 
 
-class MatchCondition(msrest.serialization.Model):
+class MatchCondition(_serialization.Model):
     """Define match conditions.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar match_variable: Required. Match variable to compare against. Possible values include:
+    :ivar match_variable: Match variable to compare against. Required. Known values are:
      "RemoteAddr", "SocketAddr", "RequestMethod", "RequestHeader", "RequestUri", "QueryString",
-     "RequestBody", "Cookies", "PostArgs".
+     "RequestBody", "Cookies", and "PostArgs".
     :vartype match_variable: str or ~azure.mgmt.cdn.models.WafMatchVariable
     :ivar selector: Selector can used to match a specific key for QueryString, Cookies,
      RequestHeader or PostArgs.
     :vartype selector: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan", "LessThanOrEqual",
-     "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx".
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "IPMatch",
+     "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan", "LessThanOrEqual",
+     "GreaterThanOrEqual", "BeginsWith", "EndsWith", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.Operator
     :ivar negate_condition: Describes if the result of this condition should be negated.
     :vartype negate_condition: bool
-    :ivar match_value: Required. List of possible match values.
+    :ivar match_value: List of possible match values. Required.
     :vartype match_value: list[str]
     :ivar transforms: List of transforms.
     :vartype transforms: list[str or ~azure.mgmt.cdn.models.TransformType]
     """
 
     _validation = {
-        'match_variable': {'required': True},
-        'operator': {'required': True},
-        'match_value': {'required': True},
+        "match_variable": {"required": True},
+        "operator": {"required": True},
+        "match_value": {"required": True},
     }
 
     _attribute_map = {
-        'match_variable': {'key': 'matchVariable', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_value': {'key': 'matchValue', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "match_variable": {"key": "matchVariable", "type": "str"},
+        "selector": {"key": "selector", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_value": {"key": "matchValue", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        match_variable: Union[str, "WafMatchVariable"],
-        operator: Union[str, "Operator"],
+        match_variable: Union[str, "_models.WafMatchVariable"],
+        operator: Union[str, "_models.Operator"],
         match_value: List[str],
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
-        transforms: Optional[List[Union[str, "TransformType"]]] = None,
+        transforms: Optional[List[Union[str, "_models.TransformType"]]] = None,
         **kwargs
     ):
         """
-        :keyword match_variable: Required. Match variable to compare against. Possible values include:
+        :keyword match_variable: Match variable to compare against. Required. Known values are:
          "RemoteAddr", "SocketAddr", "RequestMethod", "RequestHeader", "RequestUri", "QueryString",
-         "RequestBody", "Cookies", "PostArgs".
+         "RequestBody", "Cookies", and "PostArgs".
         :paramtype match_variable: str or ~azure.mgmt.cdn.models.WafMatchVariable
         :keyword selector: Selector can used to match a specific key for QueryString, Cookies,
          RequestHeader or PostArgs.
         :paramtype selector: str
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "IPMatch", "GeoMatch", "Equal", "Contains", "LessThan", "GreaterThan", "LessThanOrEqual",
-         "GreaterThanOrEqual", "BeginsWith", "EndsWith", "RegEx".
+         "GreaterThanOrEqual", "BeginsWith", "EndsWith", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.Operator
         :keyword negate_condition: Describes if the result of this condition should be negated.
         :paramtype negate_condition: bool
-        :keyword match_value: Required. List of possible match values.
+        :keyword match_value: List of possible match values. Required.
         :paramtype match_value: list[str]
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.TransformType]
         """
-        super(MatchCondition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.match_variable = match_variable
         self.selector = selector
         self.operator = operator
@@ -7289,7 +7111,7 @@ class MatchCondition(msrest.serialization.Model):
         self.transforms = transforms
 
 
-class MetricAvailability(msrest.serialization.Model):
+class MetricAvailability(_serialization.Model):
     """Retention policy of a resource metric.
 
     :ivar time_grain:
@@ -7299,29 +7121,23 @@ class MetricAvailability(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'time_grain': {'key': 'timeGrain', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "time_grain": {"key": "timeGrain", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        time_grain: Optional[str] = None,
-        blob_duration: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, time_grain: Optional[str] = None, blob_duration: Optional[str] = None, **kwargs):
         """
         :keyword time_grain:
         :paramtype time_grain: str
         :keyword blob_duration:
         :paramtype blob_duration: str
         """
-        super(MetricAvailability, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.time_grain = time_grain
         self.blob_duration = blob_duration
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Metric specification of operation.
 
     :ivar name: Name of metric specification.
@@ -7350,17 +7166,17 @@ class MetricSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'availabilities': {'key': 'availabilities', 'type': '[MetricAvailability]'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
-        'dimensions': {'key': 'dimensions', 'type': '[DimensionProperties]'},
-        'fill_gap_with_zero': {'key': 'fillGapWithZero', 'type': 'bool'},
-        'metric_filter_pattern': {'key': 'metricFilterPattern', 'type': 'str'},
-        'is_internal': {'key': 'isInternal', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "availabilities": {"key": "availabilities", "type": "[MetricAvailability]"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
+        "dimensions": {"key": "dimensions", "type": "[DimensionProperties]"},
+        "fill_gap_with_zero": {"key": "fillGapWithZero", "type": "bool"},
+        "metric_filter_pattern": {"key": "metricFilterPattern", "type": "str"},
+        "is_internal": {"key": "isInternal", "type": "bool"},
     }
 
     def __init__(
@@ -7371,9 +7187,9 @@ class MetricSpecification(msrest.serialization.Model):
         display_description: Optional[str] = None,
         unit: Optional[str] = None,
         aggregation_type: Optional[str] = None,
-        availabilities: Optional[List["MetricAvailability"]] = None,
+        availabilities: Optional[List["_models.MetricAvailability"]] = None,
         supported_time_grain_types: Optional[List[str]] = None,
-        dimensions: Optional[List["DimensionProperties"]] = None,
+        dimensions: Optional[List["_models.DimensionProperties"]] = None,
         fill_gap_with_zero: Optional[bool] = None,
         metric_filter_pattern: Optional[str] = None,
         is_internal: Optional[bool] = None,
@@ -7404,7 +7220,7 @@ class MetricSpecification(msrest.serialization.Model):
         :keyword is_internal: Property to specify metric is internal or not.
         :paramtype is_internal: bool
         """
-        super(MetricSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.display_description = display_description
@@ -7418,24 +7234,24 @@ class MetricSpecification(msrest.serialization.Model):
         self.is_internal = is_internal
 
 
-class MetricsResponse(msrest.serialization.Model):
+class MetricsResponse(_serialization.Model):
     """Metrics Response.
 
     :ivar date_time_begin:
     :vartype date_time_begin: ~datetime.datetime
     :ivar date_time_end:
     :vartype date_time_end: ~datetime.datetime
-    :ivar granularity: Possible values include: "PT5M", "PT1H", "P1D".
+    :ivar granularity: Known values are: "PT5M", "PT1H", and "P1D".
     :vartype granularity: str or ~azure.mgmt.cdn.models.MetricsResponseGranularity
     :ivar series:
     :vartype series: list[~azure.mgmt.cdn.models.MetricsResponseSeriesItem]
     """
 
     _attribute_map = {
-        'date_time_begin': {'key': 'dateTimeBegin', 'type': 'iso-8601'},
-        'date_time_end': {'key': 'dateTimeEnd', 'type': 'iso-8601'},
-        'granularity': {'key': 'granularity', 'type': 'str'},
-        'series': {'key': 'series', 'type': '[MetricsResponseSeriesItem]'},
+        "date_time_begin": {"key": "dateTimeBegin", "type": "iso-8601"},
+        "date_time_end": {"key": "dateTimeEnd", "type": "iso-8601"},
+        "granularity": {"key": "granularity", "type": "str"},
+        "series": {"key": "series", "type": "[MetricsResponseSeriesItem]"},
     }
 
     def __init__(
@@ -7443,8 +7259,8 @@ class MetricsResponse(msrest.serialization.Model):
         *,
         date_time_begin: Optional[datetime.datetime] = None,
         date_time_end: Optional[datetime.datetime] = None,
-        granularity: Optional[Union[str, "MetricsResponseGranularity"]] = None,
-        series: Optional[List["MetricsResponseSeriesItem"]] = None,
+        granularity: Optional[Union[str, "_models.MetricsResponseGranularity"]] = None,
+        series: Optional[List["_models.MetricsResponseSeriesItem"]] = None,
         **kwargs
     ):
         """
@@ -7452,24 +7268,24 @@ class MetricsResponse(msrest.serialization.Model):
         :paramtype date_time_begin: ~datetime.datetime
         :keyword date_time_end:
         :paramtype date_time_end: ~datetime.datetime
-        :keyword granularity: Possible values include: "PT5M", "PT1H", "P1D".
+        :keyword granularity: Known values are: "PT5M", "PT1H", and "P1D".
         :paramtype granularity: str or ~azure.mgmt.cdn.models.MetricsResponseGranularity
         :keyword series:
         :paramtype series: list[~azure.mgmt.cdn.models.MetricsResponseSeriesItem]
         """
-        super(MetricsResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.date_time_begin = date_time_begin
         self.date_time_end = date_time_end
         self.granularity = granularity
         self.series = series
 
 
-class MetricsResponseSeriesItem(msrest.serialization.Model):
+class MetricsResponseSeriesItem(_serialization.Model):
     """MetricsResponseSeriesItem.
 
     :ivar metric:
     :vartype metric: str
-    :ivar unit: Possible values include: "count", "bytes", "bitsPerSecond", "milliSeconds".
+    :ivar unit: Known values are: "count", "bytes", "bitsPerSecond", and "milliSeconds".
     :vartype unit: str or ~azure.mgmt.cdn.models.MetricsResponseSeriesItemUnit
     :ivar groups:
     :vartype groups: list[~azure.mgmt.cdn.models.MetricsResponseSeriesPropertiesItemsItem]
@@ -7479,25 +7295,30 @@ class MetricsResponseSeriesItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric': {'key': 'metric', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'groups': {'key': 'groups', 'type': '[MetricsResponseSeriesPropertiesItemsItem]'},
-        'data': {'key': 'data', 'type': '[Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems]'},
+        "metric": {"key": "metric", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "groups": {"key": "groups", "type": "[MetricsResponseSeriesPropertiesItemsItem]"},
+        "data": {
+            "key": "data",
+            "type": "[Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems]",
+        },
     }
 
     def __init__(
         self,
         *,
         metric: Optional[str] = None,
-        unit: Optional[Union[str, "MetricsResponseSeriesItemUnit"]] = None,
-        groups: Optional[List["MetricsResponseSeriesPropertiesItemsItem"]] = None,
-        data: Optional[List["Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems"]] = None,
+        unit: Optional[Union[str, "_models.MetricsResponseSeriesItemUnit"]] = None,
+        groups: Optional[List["_models.MetricsResponseSeriesPropertiesItemsItem"]] = None,
+        data: Optional[
+            List["_models.Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems"]
+        ] = None,
         **kwargs
     ):
         """
         :keyword metric:
         :paramtype metric: str
-        :keyword unit: Possible values include: "count", "bytes", "bitsPerSecond", "milliSeconds".
+        :keyword unit: Known values are: "count", "bytes", "bitsPerSecond", and "milliSeconds".
         :paramtype unit: str or ~azure.mgmt.cdn.models.MetricsResponseSeriesItemUnit
         :keyword groups:
         :paramtype groups: list[~azure.mgmt.cdn.models.MetricsResponseSeriesPropertiesItemsItem]
@@ -7505,14 +7326,14 @@ class MetricsResponseSeriesItem(msrest.serialization.Model):
         :paramtype data:
          list[~azure.mgmt.cdn.models.Components1Gs0LlpSchemasMetricsresponsePropertiesSeriesItemsPropertiesDataItems]
         """
-        super(MetricsResponseSeriesItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric = metric
         self.unit = unit
         self.groups = groups
         self.data = data
 
 
-class MetricsResponseSeriesPropertiesItemsItem(msrest.serialization.Model):
+class MetricsResponseSeriesPropertiesItemsItem(_serialization.Model):
     """MetricsResponseSeriesPropertiesItemsItem.
 
     :ivar name:
@@ -7522,29 +7343,23 @@ class MetricsResponseSeriesPropertiesItemsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name:
         :paramtype name: str
         :keyword value:
         :paramtype value: str
         """
-        super(MetricsResponseSeriesPropertiesItemsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """CDN REST API operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7562,24 +7377,24 @@ class Operation(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'origin': {'readonly': True},
+        "name": {"readonly": True},
+        "origin": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'ServiceSpecification'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "service_specification": {"key": "properties.serviceSpecification", "type": "ServiceSpecification"},
     }
 
     def __init__(
         self,
         *,
         is_data_action: Optional[bool] = None,
-        display: Optional["OperationDisplay"] = None,
-        service_specification: Optional["ServiceSpecification"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
+        service_specification: Optional["_models.ServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -7590,7 +7405,7 @@ class Operation(msrest.serialization.Model):
         :keyword service_specification: One property of operation, include metric specifications.
         :paramtype service_specification: ~azure.mgmt.cdn.models.ServiceSpecification
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = is_data_action
         self.display = display
@@ -7598,7 +7413,7 @@ class Operation(msrest.serialization.Model):
         self.service_specification = service_specification
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7614,33 +7429,29 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationsListResult(msrest.serialization.Model):
+class OperationsListResult(_serialization.Model):
     """Result of the request to list CDN operations. It contains a list of operations and a URL link to get the next set of results.
 
     :ivar value: List of CDN operations supported by the CDN resource provider.
@@ -7650,29 +7461,23 @@ class OperationsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: List of CDN operations supported by the CDN resource provider.
         :paramtype value: list[~azure.mgmt.cdn.models.Operation]
         :keyword next_link: URL to get the next set of operation list results if there are any.
         :paramtype next_link: str
         """
-        super(OperationsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Origin(ProxyResource):
+class Origin(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """CDN origin is the source of the content being delivered via CDN. When the edge nodes represented by an endpoint do not have the requested content cached, they attempt to fetch it from one or more of the configured origins.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7718,49 +7523,50 @@ class Origin(ProxyResource):
     :ivar private_link_approval_message: A custom message to be included in the approval request to
      connect to the Private Link.
     :vartype private_link_approval_message: str
-    :ivar resource_state: Resource status of the origin. Possible values include: "Creating",
-     "Active", "Deleting".
+    :ivar resource_state: Resource status of the origin. Known values are: "Creating", "Active",
+     and "Deleting".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.OriginResourceState
-    :ivar provisioning_state: Provisioning status of the origin.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning status of the origin. Known values are: "Succeeded",
+     "Failed", "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.OriginProvisioningState
     :ivar private_endpoint_status: The approval status for the connection to the Private Link.
-     Possible values include: "Pending", "Approved", "Rejected", "Disconnected", "Timeout".
+     Known values are: "Pending", "Approved", "Rejected", "Disconnected", and "Timeout".
     :vartype private_endpoint_status: str or ~azure.mgmt.cdn.models.PrivateEndpointStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
+        "resource_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
-        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'private_link_alias': {'key': 'properties.privateLinkAlias', 'type': 'str'},
-        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
-        'private_link_location': {'key': 'properties.privateLinkLocation', 'type': 'str'},
-        'private_link_approval_message': {'key': 'properties.privateLinkApprovalMessage', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_status': {'key': 'properties.privateEndpointStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "http_port": {"key": "properties.httpPort", "type": "int"},
+        "https_port": {"key": "properties.httpsPort", "type": "int"},
+        "origin_host_header": {"key": "properties.originHostHeader", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "weight": {"key": "properties.weight", "type": "int"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "private_link_alias": {"key": "properties.privateLinkAlias", "type": "str"},
+        "private_link_resource_id": {"key": "properties.privateLinkResourceId", "type": "str"},
+        "private_link_location": {"key": "properties.privateLinkLocation", "type": "str"},
+        "private_link_approval_message": {"key": "properties.privateLinkApprovalMessage", "type": "str"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_status": {"key": "properties.privateEndpointStatus", "type": "str"},
     }
 
     def __init__(
@@ -7814,7 +7620,7 @@ class Origin(ProxyResource):
          to connect to the Private Link.
         :paramtype private_link_approval_message: str
         """
-        super(Origin, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
@@ -7858,43 +7664,52 @@ class OriginGroup(ProxyResource):
      not supported.
     :vartype response_based_origin_error_detection_settings:
      ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
-    :ivar resource_state: Resource status of the origin group. Possible values include: "Creating",
-     "Active", "Deleting".
+    :ivar resource_state: Resource status of the origin group. Known values are: "Creating",
+     "Active", and "Deleting".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.OriginGroupResourceState
-    :ivar provisioning_state: Provisioning status of the origin group.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning status of the origin group. Known values are:
+     "Succeeded", "Failed", "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.OriginGroupProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
+        "resource_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'origins': {'key': 'properties.origins', 'type': '[ResourceReference]'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'response_based_origin_error_detection_settings': {'key': 'properties.responseBasedOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "health_probe_settings": {"key": "properties.healthProbeSettings", "type": "HealthProbeParameters"},
+        "origins": {"key": "properties.origins", "type": "[ResourceReference]"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "response_based_origin_error_detection_settings": {
+            "key": "properties.responseBasedOriginErrorDetectionSettings",
+            "type": "ResponseBasedOriginErrorDetectionParameters",
+        },
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
-        origins: Optional[List["ResourceReference"]] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
+        origins: Optional[List["_models.ResourceReference"]] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        response_based_origin_error_detection_settings: Optional["ResponseBasedOriginErrorDetectionParameters"] = None,
+        response_based_origin_error_detection_settings: Optional[
+            "_models.ResponseBasedOriginErrorDetectionParameters"
+        ] = None,
         **kwargs
     ):
         """
@@ -7913,16 +7728,18 @@ class OriginGroup(ProxyResource):
         :paramtype response_based_origin_error_detection_settings:
          ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
         """
-        super(OriginGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.health_probe_settings = health_probe_settings
         self.origins = origins
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = (
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        )
         self.response_based_origin_error_detection_settings = response_based_origin_error_detection_settings
         self.resource_state = None
         self.provisioning_state = None
 
 
-class OriginGroupListResult(msrest.serialization.Model):
+class OriginGroupListResult(_serialization.Model):
     """Result of the request to list origin groups. It contains a list of origin groups objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7934,50 +7751,45 @@ class OriginGroupListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OriginGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OriginGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of origin objects if there are any.
         :paramtype next_link: str
         """
-        super(OriginGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class OriginGroupOverride(msrest.serialization.Model):
+class OriginGroupOverride(_serialization.Model):
     """Defines the parameters for the origin group override configuration.
 
     :ivar origin_group: defines the OriginGroup that would override the DefaultOriginGroup on
      route.
     :vartype origin_group: ~azure.mgmt.cdn.models.ResourceReference
     :ivar forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+     Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
     :vartype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
     """
 
     _attribute_map = {
-        'origin_group': {'key': 'originGroup', 'type': 'ResourceReference'},
-        'forwarding_protocol': {'key': 'forwardingProtocol', 'type': 'str'},
+        "origin_group": {"key": "originGroup", "type": "ResourceReference"},
+        "forwarding_protocol": {"key": "forwardingProtocol", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        origin_group: Optional["ResourceReference"] = None,
-        forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
+        origin_group: Optional["_models.ResourceReference"] = None,
+        forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
         **kwargs
     ):
         """
@@ -7985,10 +7797,10 @@ class OriginGroupOverride(msrest.serialization.Model):
          route.
         :paramtype origin_group: ~azure.mgmt.cdn.models.ResourceReference
         :keyword forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-         Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+         Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
         :paramtype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
         """
-        super(OriginGroupOverride, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.origin_group = origin_group
         self.forwarding_protocol = forwarding_protocol
 
@@ -7998,82 +7810,77 @@ class OriginGroupOverrideAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.OriginGroupOverrideActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'OriginGroupOverrideActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "OriginGroupOverrideActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "OriginGroupOverrideActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.OriginGroupOverrideActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.OriginGroupOverrideActionParameters
         """
-        super(OriginGroupOverrideAction, self).__init__(**kwargs)
-        self.name = 'OriginGroupOverride'  # type: str
+        super().__init__(**kwargs)
+        self.name = "OriginGroupOverride"  # type: str
         self.parameters = parameters
 
 
-class OriginGroupOverrideActionParameters(msrest.serialization.Model):
+class OriginGroupOverrideActionParameters(_serialization.Model):
     """Defines the parameters for the origin group override action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleOriginGroupOverrideActionParameters".
-    :vartype type_name: str
-    :ivar origin_group: Required. defines the OriginGroup that would override the
-     DefaultOriginGroup.
+    :ivar type_name: Required. "DeliveryRuleOriginGroupOverrideActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.OriginGroupOverrideActionParametersTypeName
+    :ivar origin_group: defines the OriginGroup that would override the DefaultOriginGroup.
+     Required.
     :vartype origin_group: ~azure.mgmt.cdn.models.ResourceReference
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'origin_group': {'required': True},
+        "type_name": {"required": True},
+        "origin_group": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'origin_group': {'key': 'originGroup', 'type': 'ResourceReference'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "origin_group": {"key": "originGroup", "type": "ResourceReference"},
     }
-
-    type_name = "DeliveryRuleOriginGroupOverrideActionParameters"
 
     def __init__(
         self,
         *,
-        origin_group: "ResourceReference",
+        type_name: Union[str, "_models.OriginGroupOverrideActionParametersTypeName"],
+        origin_group: "_models.ResourceReference",
         **kwargs
     ):
         """
-        :keyword origin_group: Required. defines the OriginGroup that would override the
-         DefaultOriginGroup.
+        :keyword type_name: Required. "DeliveryRuleOriginGroupOverrideActionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.OriginGroupOverrideActionParametersTypeName
+        :keyword origin_group: defines the OriginGroup that would override the DefaultOriginGroup.
+         Required.
         :paramtype origin_group: ~azure.mgmt.cdn.models.ResourceReference
         """
-        super(OriginGroupOverrideActionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.origin_group = origin_group
 
 
-class OriginGroupUpdatePropertiesParameters(msrest.serialization.Model):
+class OriginGroupUpdatePropertiesParameters(_serialization.Model):
     """The JSON object that contains the properties of the origin group.
 
     :ivar health_probe_settings: Health probe settings to the origin that is used to determine the
@@ -8093,23 +7900,31 @@ class OriginGroupUpdatePropertiesParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
     }
 
     _attribute_map = {
-        'health_probe_settings': {'key': 'healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'origins': {'key': 'origins', 'type': '[ResourceReference]'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'response_based_origin_error_detection_settings': {'key': 'responseBasedOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
+        "health_probe_settings": {"key": "healthProbeSettings", "type": "HealthProbeParameters"},
+        "origins": {"key": "origins", "type": "[ResourceReference]"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "response_based_origin_error_detection_settings": {
+            "key": "responseBasedOriginErrorDetectionSettings",
+            "type": "ResponseBasedOriginErrorDetectionParameters",
+        },
     }
 
     def __init__(
         self,
         *,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
-        origins: Optional[List["ResourceReference"]] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
+        origins: Optional[List["_models.ResourceReference"]] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        response_based_origin_error_detection_settings: Optional["ResponseBasedOriginErrorDetectionParameters"] = None,
+        response_based_origin_error_detection_settings: Optional[
+            "_models.ResponseBasedOriginErrorDetectionParameters"
+        ] = None,
         **kwargs
     ):
         """
@@ -8128,10 +7943,12 @@ class OriginGroupUpdatePropertiesParameters(msrest.serialization.Model):
         :paramtype response_based_origin_error_detection_settings:
          ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
         """
-        super(OriginGroupUpdatePropertiesParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.health_probe_settings = health_probe_settings
         self.origins = origins
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = (
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        )
         self.response_based_origin_error_detection_settings = response_based_origin_error_detection_settings
 
 
@@ -8154,35 +7971,44 @@ class OriginGroupProperties(OriginGroupUpdatePropertiesParameters):
      not supported.
     :vartype response_based_origin_error_detection_settings:
      ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
-    :ivar resource_state: Resource status of the origin group. Possible values include: "Creating",
-     "Active", "Deleting".
+    :ivar resource_state: Resource status of the origin group. Known values are: "Creating",
+     "Active", and "Deleting".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.OriginGroupResourceState
-    :ivar provisioning_state: Provisioning status of the origin group.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning status of the origin group. Known values are:
+     "Succeeded", "Failed", "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.OriginGroupProvisioningState
     """
 
     _validation = {
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
+        "resource_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'health_probe_settings': {'key': 'healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'origins': {'key': 'origins', 'type': '[ResourceReference]'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'response_based_origin_error_detection_settings': {'key': 'responseBasedOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
-        'resource_state': {'key': 'resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
+        "health_probe_settings": {"key": "healthProbeSettings", "type": "HealthProbeParameters"},
+        "origins": {"key": "origins", "type": "[ResourceReference]"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "response_based_origin_error_detection_settings": {
+            "key": "responseBasedOriginErrorDetectionSettings",
+            "type": "ResponseBasedOriginErrorDetectionParameters",
+        },
+        "resource_state": {"key": "resourceState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
-        origins: Optional[List["ResourceReference"]] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
+        origins: Optional[List["_models.ResourceReference"]] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        response_based_origin_error_detection_settings: Optional["ResponseBasedOriginErrorDetectionParameters"] = None,
+        response_based_origin_error_detection_settings: Optional[
+            "_models.ResponseBasedOriginErrorDetectionParameters"
+        ] = None,
         **kwargs
     ):
         """
@@ -8201,12 +8027,18 @@ class OriginGroupProperties(OriginGroupUpdatePropertiesParameters):
         :paramtype response_based_origin_error_detection_settings:
          ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
         """
-        super(OriginGroupProperties, self).__init__(health_probe_settings=health_probe_settings, origins=origins, traffic_restoration_time_to_healed_or_new_endpoints_in_minutes=traffic_restoration_time_to_healed_or_new_endpoints_in_minutes, response_based_origin_error_detection_settings=response_based_origin_error_detection_settings, **kwargs)
+        super().__init__(
+            health_probe_settings=health_probe_settings,
+            origins=origins,
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes=traffic_restoration_time_to_healed_or_new_endpoints_in_minutes,
+            response_based_origin_error_detection_settings=response_based_origin_error_detection_settings,
+            **kwargs
+        )
         self.resource_state = None
         self.provisioning_state = None
 
 
-class OriginGroupUpdateParameters(msrest.serialization.Model):
+class OriginGroupUpdateParameters(_serialization.Model):
     """Origin group properties needed for origin group creation or update.
 
     :ivar health_probe_settings: Health probe settings to the origin that is used to determine the
@@ -8226,23 +8058,31 @@ class OriginGroupUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'maximum': 50, 'minimum': 0},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {"maximum": 50, "minimum": 0},
     }
 
     _attribute_map = {
-        'health_probe_settings': {'key': 'properties.healthProbeSettings', 'type': 'HealthProbeParameters'},
-        'origins': {'key': 'properties.origins', 'type': '[ResourceReference]'},
-        'traffic_restoration_time_to_healed_or_new_endpoints_in_minutes': {'key': 'properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes', 'type': 'int'},
-        'response_based_origin_error_detection_settings': {'key': 'properties.responseBasedOriginErrorDetectionSettings', 'type': 'ResponseBasedOriginErrorDetectionParameters'},
+        "health_probe_settings": {"key": "properties.healthProbeSettings", "type": "HealthProbeParameters"},
+        "origins": {"key": "properties.origins", "type": "[ResourceReference]"},
+        "traffic_restoration_time_to_healed_or_new_endpoints_in_minutes": {
+            "key": "properties.trafficRestorationTimeToHealedOrNewEndpointsInMinutes",
+            "type": "int",
+        },
+        "response_based_origin_error_detection_settings": {
+            "key": "properties.responseBasedOriginErrorDetectionSettings",
+            "type": "ResponseBasedOriginErrorDetectionParameters",
+        },
     }
 
     def __init__(
         self,
         *,
-        health_probe_settings: Optional["HealthProbeParameters"] = None,
-        origins: Optional[List["ResourceReference"]] = None,
+        health_probe_settings: Optional["_models.HealthProbeParameters"] = None,
+        origins: Optional[List["_models.ResourceReference"]] = None,
         traffic_restoration_time_to_healed_or_new_endpoints_in_minutes: Optional[int] = None,
-        response_based_origin_error_detection_settings: Optional["ResponseBasedOriginErrorDetectionParameters"] = None,
+        response_based_origin_error_detection_settings: Optional[
+            "_models.ResponseBasedOriginErrorDetectionParameters"
+        ] = None,
         **kwargs
     ):
         """
@@ -8261,14 +8101,16 @@ class OriginGroupUpdateParameters(msrest.serialization.Model):
         :paramtype response_based_origin_error_detection_settings:
          ~azure.mgmt.cdn.models.ResponseBasedOriginErrorDetectionParameters
         """
-        super(OriginGroupUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.health_probe_settings = health_probe_settings
         self.origins = origins
-        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        self.traffic_restoration_time_to_healed_or_new_endpoints_in_minutes = (
+            traffic_restoration_time_to_healed_or_new_endpoints_in_minutes
+        )
         self.response_based_origin_error_detection_settings = response_based_origin_error_detection_settings
 
 
-class OriginListResult(msrest.serialization.Model):
+class OriginListResult(_serialization.Model):
     """Result of the request to list origins. It contains a list of origin objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8280,30 +8122,25 @@ class OriginListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Origin]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Origin]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of origin objects if there are any.
         :paramtype next_link: str
         """
-        super(OriginListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class OriginUpdatePropertiesParameters(msrest.serialization.Model):
+class OriginUpdatePropertiesParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The JSON object that contains the properties of the origin.
 
     :ivar host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
@@ -8342,24 +8179,24 @@ class OriginUpdatePropertiesParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'http_port': {'key': 'httpPort', 'type': 'int'},
-        'https_port': {'key': 'httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'originHostHeader', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'private_link_alias': {'key': 'privateLinkAlias', 'type': 'str'},
-        'private_link_resource_id': {'key': 'privateLinkResourceId', 'type': 'str'},
-        'private_link_location': {'key': 'privateLinkLocation', 'type': 'str'},
-        'private_link_approval_message': {'key': 'privateLinkApprovalMessage', 'type': 'str'},
+        "host_name": {"key": "hostName", "type": "str"},
+        "http_port": {"key": "httpPort", "type": "int"},
+        "https_port": {"key": "httpsPort", "type": "int"},
+        "origin_host_header": {"key": "originHostHeader", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "weight": {"key": "weight", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "private_link_alias": {"key": "privateLinkAlias", "type": "str"},
+        "private_link_resource_id": {"key": "privateLinkResourceId", "type": "str"},
+        "private_link_location": {"key": "privateLinkLocation", "type": "str"},
+        "private_link_approval_message": {"key": "privateLinkApprovalMessage", "type": "str"},
     }
 
     def __init__(
@@ -8413,7 +8250,7 @@ class OriginUpdatePropertiesParameters(msrest.serialization.Model):
          to connect to the Private Link.
         :paramtype private_link_approval_message: str
         """
-        super(OriginUpdatePropertiesParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
@@ -8427,7 +8264,7 @@ class OriginUpdatePropertiesParameters(msrest.serialization.Model):
         self.private_link_approval_message = private_link_approval_message
 
 
-class OriginProperties(OriginUpdatePropertiesParameters):
+class OriginProperties(OriginUpdatePropertiesParameters):  # pylint: disable=too-many-instance-attributes
     """The JSON object that contains the properties of the origin.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8465,41 +8302,42 @@ class OriginProperties(OriginUpdatePropertiesParameters):
     :ivar private_link_approval_message: A custom message to be included in the approval request to
      connect to the Private Link.
     :vartype private_link_approval_message: str
-    :ivar resource_state: Resource status of the origin. Possible values include: "Creating",
-     "Active", "Deleting".
+    :ivar resource_state: Resource status of the origin. Known values are: "Creating", "Active",
+     and "Deleting".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.OriginResourceState
-    :ivar provisioning_state: Provisioning status of the origin.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning status of the origin. Known values are: "Succeeded",
+     "Failed", "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.OriginProvisioningState
     :ivar private_endpoint_status: The approval status for the connection to the Private Link.
-     Possible values include: "Pending", "Approved", "Rejected", "Disconnected", "Timeout".
+     Known values are: "Pending", "Approved", "Rejected", "Disconnected", and "Timeout".
     :vartype private_endpoint_status: str or ~azure.mgmt.cdn.models.PrivateEndpointStatus
     """
 
     _validation = {
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_status': {'readonly': True},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
+        "resource_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'http_port': {'key': 'httpPort', 'type': 'int'},
-        'https_port': {'key': 'httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'originHostHeader', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'weight': {'key': 'weight', 'type': 'int'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'private_link_alias': {'key': 'privateLinkAlias', 'type': 'str'},
-        'private_link_resource_id': {'key': 'privateLinkResourceId', 'type': 'str'},
-        'private_link_location': {'key': 'privateLinkLocation', 'type': 'str'},
-        'private_link_approval_message': {'key': 'privateLinkApprovalMessage', 'type': 'str'},
-        'resource_state': {'key': 'resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'private_endpoint_status': {'key': 'privateEndpointStatus', 'type': 'str'},
+        "host_name": {"key": "hostName", "type": "str"},
+        "http_port": {"key": "httpPort", "type": "int"},
+        "https_port": {"key": "httpsPort", "type": "int"},
+        "origin_host_header": {"key": "originHostHeader", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "weight": {"key": "weight", "type": "int"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "private_link_alias": {"key": "privateLinkAlias", "type": "str"},
+        "private_link_resource_id": {"key": "privateLinkResourceId", "type": "str"},
+        "private_link_location": {"key": "privateLinkLocation", "type": "str"},
+        "private_link_approval_message": {"key": "privateLinkApprovalMessage", "type": "str"},
+        "resource_state": {"key": "resourceState", "type": "str"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "private_endpoint_status": {"key": "privateEndpointStatus", "type": "str"},
     }
 
     def __init__(
@@ -8553,13 +8391,26 @@ class OriginProperties(OriginUpdatePropertiesParameters):
          to connect to the Private Link.
         :paramtype private_link_approval_message: str
         """
-        super(OriginProperties, self).__init__(host_name=host_name, http_port=http_port, https_port=https_port, origin_host_header=origin_host_header, priority=priority, weight=weight, enabled=enabled, private_link_alias=private_link_alias, private_link_resource_id=private_link_resource_id, private_link_location=private_link_location, private_link_approval_message=private_link_approval_message, **kwargs)
+        super().__init__(
+            host_name=host_name,
+            http_port=http_port,
+            https_port=https_port,
+            origin_host_header=origin_host_header,
+            priority=priority,
+            weight=weight,
+            enabled=enabled,
+            private_link_alias=private_link_alias,
+            private_link_resource_id=private_link_resource_id,
+            private_link_location=private_link_location,
+            private_link_approval_message=private_link_approval_message,
+            **kwargs
+        )
         self.resource_state = None
         self.provisioning_state = None
         self.private_endpoint_status = None
 
 
-class OriginUpdateParameters(msrest.serialization.Model):
+class OriginUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Origin properties needed for origin update.
 
     :ivar host_name: The address of the origin. Domain names, IPv4 addresses, and IPv6 addresses
@@ -8598,24 +8449,24 @@ class OriginUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'http_port': {'maximum': 65535, 'minimum': 1},
-        'https_port': {'maximum': 65535, 'minimum': 1},
-        'priority': {'maximum': 5, 'minimum': 1},
-        'weight': {'maximum': 1000, 'minimum': 1},
+        "http_port": {"maximum": 65535, "minimum": 1},
+        "https_port": {"maximum": 65535, "minimum": 1},
+        "priority": {"maximum": 5, "minimum": 1},
+        "weight": {"maximum": 1000, "minimum": 1},
     }
 
     _attribute_map = {
-        'host_name': {'key': 'properties.hostName', 'type': 'str'},
-        'http_port': {'key': 'properties.httpPort', 'type': 'int'},
-        'https_port': {'key': 'properties.httpsPort', 'type': 'int'},
-        'origin_host_header': {'key': 'properties.originHostHeader', 'type': 'str'},
-        'priority': {'key': 'properties.priority', 'type': 'int'},
-        'weight': {'key': 'properties.weight', 'type': 'int'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'private_link_alias': {'key': 'properties.privateLinkAlias', 'type': 'str'},
-        'private_link_resource_id': {'key': 'properties.privateLinkResourceId', 'type': 'str'},
-        'private_link_location': {'key': 'properties.privateLinkLocation', 'type': 'str'},
-        'private_link_approval_message': {'key': 'properties.privateLinkApprovalMessage', 'type': 'str'},
+        "host_name": {"key": "properties.hostName", "type": "str"},
+        "http_port": {"key": "properties.httpPort", "type": "int"},
+        "https_port": {"key": "properties.httpsPort", "type": "int"},
+        "origin_host_header": {"key": "properties.originHostHeader", "type": "str"},
+        "priority": {"key": "properties.priority", "type": "int"},
+        "weight": {"key": "properties.weight", "type": "int"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "private_link_alias": {"key": "properties.privateLinkAlias", "type": "str"},
+        "private_link_resource_id": {"key": "properties.privateLinkResourceId", "type": "str"},
+        "private_link_location": {"key": "properties.privateLinkLocation", "type": "str"},
+        "private_link_approval_message": {"key": "properties.privateLinkApprovalMessage", "type": "str"},
     }
 
     def __init__(
@@ -8669,7 +8520,7 @@ class OriginUpdateParameters(msrest.serialization.Model):
          to connect to the Private Link.
         :paramtype private_link_approval_message: str
         """
-        super(OriginUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.host_name = host_name
         self.http_port = http_port
         self.https_port = https_port
@@ -8683,21 +8534,21 @@ class OriginUpdateParameters(msrest.serialization.Model):
         self.private_link_approval_message = private_link_approval_message
 
 
-class PolicySettings(msrest.serialization.Model):
+class PolicySettings(_serialization.Model):
     """Defines contents of a web application firewall global configuration.
 
-    :ivar enabled_state: describes if the policy is in enabled state or disabled state. Possible
-     values include: "Disabled", "Enabled".
+    :ivar enabled_state: describes if the policy is in enabled state or disabled state. Known
+     values are: "Disabled" and "Enabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.PolicyEnabledState
-    :ivar mode: Describes if it is in detection mode or prevention mode at policy level. Possible
-     values include: "Prevention", "Detection".
+    :ivar mode: Describes if it is in detection mode or prevention mode at policy level. Known
+     values are: "Prevention" and "Detection".
     :vartype mode: str or ~azure.mgmt.cdn.models.PolicyMode
     :ivar default_redirect_url: If action type is redirect, this field represents the default
      redirect URL for the client.
     :vartype default_redirect_url: str
     :ivar default_custom_block_response_status_code: If the action type is block, this field
-     defines the default customer overridable http response status code. Possible values include:
-     200, 403, 405, 406, 429.
+     defines the default customer overridable http response status code. Known values are: 200, 403,
+     405, 406, and 429.
     :vartype default_custom_block_response_status_code: int or
      ~azure.mgmt.cdn.models.PolicySettingsDefaultCustomBlockResponseStatusCode
     :ivar default_custom_block_response_body: If the action type is block, customer can override
@@ -8706,47 +8557,51 @@ class PolicySettings(msrest.serialization.Model):
     """
 
     _validation = {
-        'default_custom_block_response_body': {'pattern': r'^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$'},
+        "default_custom_block_response_body": {
+            "pattern": r"^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$"
+        },
     }
 
     _attribute_map = {
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
-        'default_redirect_url': {'key': 'defaultRedirectUrl', 'type': 'str'},
-        'default_custom_block_response_status_code': {'key': 'defaultCustomBlockResponseStatusCode', 'type': 'int'},
-        'default_custom_block_response_body': {'key': 'defaultCustomBlockResponseBody', 'type': 'str'},
+        "enabled_state": {"key": "enabledState", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
+        "default_redirect_url": {"key": "defaultRedirectUrl", "type": "str"},
+        "default_custom_block_response_status_code": {"key": "defaultCustomBlockResponseStatusCode", "type": "int"},
+        "default_custom_block_response_body": {"key": "defaultCustomBlockResponseBody", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        enabled_state: Optional[Union[str, "PolicyEnabledState"]] = None,
-        mode: Optional[Union[str, "PolicyMode"]] = None,
+        enabled_state: Optional[Union[str, "_models.PolicyEnabledState"]] = None,
+        mode: Optional[Union[str, "_models.PolicyMode"]] = None,
         default_redirect_url: Optional[str] = None,
-        default_custom_block_response_status_code: Optional[Union[int, "PolicySettingsDefaultCustomBlockResponseStatusCode"]] = None,
+        default_custom_block_response_status_code: Optional[
+            Union[int, "_models.PolicySettingsDefaultCustomBlockResponseStatusCode"]
+        ] = None,
         default_custom_block_response_body: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword enabled_state: describes if the policy is in enabled state or disabled state. Possible
-         values include: "Disabled", "Enabled".
+        :keyword enabled_state: describes if the policy is in enabled state or disabled state. Known
+         values are: "Disabled" and "Enabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.PolicyEnabledState
-        :keyword mode: Describes if it is in detection mode or prevention mode at policy level.
-         Possible values include: "Prevention", "Detection".
+        :keyword mode: Describes if it is in detection mode or prevention mode at policy level. Known
+         values are: "Prevention" and "Detection".
         :paramtype mode: str or ~azure.mgmt.cdn.models.PolicyMode
         :keyword default_redirect_url: If action type is redirect, this field represents the default
          redirect URL for the client.
         :paramtype default_redirect_url: str
         :keyword default_custom_block_response_status_code: If the action type is block, this field
-         defines the default customer overridable http response status code. Possible values include:
-         200, 403, 405, 406, 429.
+         defines the default customer overridable http response status code. Known values are: 200, 403,
+         405, 406, and 429.
         :paramtype default_custom_block_response_status_code: int or
          ~azure.mgmt.cdn.models.PolicySettingsDefaultCustomBlockResponseStatusCode
         :keyword default_custom_block_response_body: If the action type is block, customer can override
          the response body. The body must be specified in base64 encoding.
         :paramtype default_custom_block_response_body: str
         """
-        super(PolicySettings, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.enabled_state = enabled_state
         self.mode = mode
         self.default_redirect_url = default_redirect_url
@@ -8754,20 +8609,18 @@ class PolicySettings(msrest.serialization.Model):
         self.default_custom_block_response_body = default_custom_block_response_body
 
 
-class PostArgsMatchConditionParameters(msrest.serialization.Model):
+class PostArgsMatchConditionParameters(_serialization.Model):
     """Defines the parameters for PostArgs match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRulePostArgsConditionParameters".
-    :vartype type_name: str
+    :ivar type_name: Required. "DeliveryRulePostArgsConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.PostArgsMatchConditionParametersTypeName
     :ivar selector: Name of PostArg to be matched.
     :vartype selector: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.PostArgsOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -8778,37 +8631,38 @@ class PostArgsMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "selector": {"key": "selector", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRulePostArgsConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "PostArgsOperator"],
+        type_name: Union[str, "_models.PostArgsMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.PostArgsOperator"],
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
+        :keyword type_name: Required. "DeliveryRulePostArgsConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.PostArgsMatchConditionParametersTypeName
         :keyword selector: Name of PostArg to be matched.
         :paramtype selector: str
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.PostArgsOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -8817,7 +8671,8 @@ class PostArgsMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(PostArgsMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.selector = selector
         self.operator = operator
         self.negate_condition = negate_condition
@@ -8825,7 +8680,7 @@ class PostArgsMatchConditionParameters(msrest.serialization.Model):
         self.transforms = transforms
 
 
-class Profile(TrackedResource):
+class Profile(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """A profile is a logical grouping of endpoints that share the same settings.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8840,21 +8695,22 @@ class Profile(TrackedResource):
     :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    :ivar location: Required. Resource location.
+    :ivar location: Resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar sku: Required. The pricing tier (defines Azure Front Door Standard or Premium or a CDN
-     provider, feature list and rate) of the profile.
+    :ivar sku: The pricing tier (defines Azure Front Door Standard or Premium or a CDN provider,
+     feature list and rate) of the profile. Required.
     :vartype sku: ~azure.mgmt.cdn.models.Sku
     :ivar kind: Kind of the profile. Used by portal to differentiate traditional CDN profile and
      new AFD profile.
     :vartype kind: str
-    :ivar resource_state: Resource status of the profile. Possible values include: "Creating",
-     "Active", "Deleting", "Disabled".
+    :ivar resource_state: Resource status of the profile. Known values are: "Creating", "Active",
+     "Deleting", and "Disabled".
     :vartype resource_state: str or ~azure.mgmt.cdn.models.ProfileResourceState
-    :ivar provisioning_state: Provisioning status of the profile.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: Provisioning status of the profile. Known values are: "Succeeded",
+     "Failed", "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.ProfileProvisioningState
     :ivar front_door_id: The Id of the frontdoor.
     :vartype front_door_id: str
     :ivar origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
@@ -8863,56 +8719,56 @@ class Profile(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'sku': {'required': True},
-        'kind': {'readonly': True},
-        'resource_state': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'front_door_id': {'readonly': True},
-        'origin_response_timeout_seconds': {'minimum': 16},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "sku": {"required": True},
+        "kind": {"readonly": True},
+        "resource_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "front_door_id": {"readonly": True},
+        "origin_response_timeout_seconds": {"minimum": 16},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'resource_state': {'key': 'properties.resourceState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'front_door_id': {'key': 'properties.frontDoorId', 'type': 'str'},
-        'origin_response_timeout_seconds': {'key': 'properties.originResponseTimeoutSeconds', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "kind": {"key": "kind", "type": "str"},
+        "resource_state": {"key": "properties.resourceState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "front_door_id": {"key": "properties.frontDoorId", "type": "str"},
+        "origin_response_timeout_seconds": {"key": "properties.originResponseTimeoutSeconds", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        sku: "Sku",
+        sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
         origin_response_timeout_seconds: Optional[int] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. Resource location.
+        :keyword location: Resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword sku: Required. The pricing tier (defines Azure Front Door Standard or Premium or a CDN
-         provider, feature list and rate) of the profile.
+        :keyword sku: The pricing tier (defines Azure Front Door Standard or Premium or a CDN provider,
+         feature list and rate) of the profile. Required.
         :paramtype sku: ~azure.mgmt.cdn.models.Sku
         :keyword origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
          origin. When timeout is reached, the request fails and returns.
         :paramtype origin_response_timeout_seconds: int
         """
-        super(Profile, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.kind = None
         self.resource_state = None
@@ -8921,7 +8777,7 @@ class Profile(TrackedResource):
         self.origin_response_timeout_seconds = origin_response_timeout_seconds
 
 
-class ProfileListResult(msrest.serialization.Model):
+class ProfileListResult(_serialization.Model):
     """Result of the request to list profiles. It contains a list of profile objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8933,33 +8789,28 @@ class ProfileListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Profile]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Profile]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of profile objects if there are any.
         :paramtype next_link: str
         """
-        super(ProfileListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class ProfileUpdateParameters(msrest.serialization.Model):
+class ProfileUpdateParameters(_serialization.Model):
     """Properties required to update a profile.
 
-    :ivar tags: A set of tags. Profile tags.
+    :ivar tags: Profile tags.
     :vartype tags: dict[str, str]
     :ivar origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
      origin. When timeout is reached, the request fails and returns.
@@ -8967,78 +8818,67 @@ class ProfileUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'origin_response_timeout_seconds': {'minimum': 16},
+        "origin_response_timeout_seconds": {"minimum": 16},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'origin_response_timeout_seconds': {'key': 'properties.originResponseTimeoutSeconds', 'type': 'int'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "origin_response_timeout_seconds": {"key": "properties.originResponseTimeoutSeconds", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        origin_response_timeout_seconds: Optional[int] = None,
-        **kwargs
+        self, *, tags: Optional[Dict[str, str]] = None, origin_response_timeout_seconds: Optional[int] = None, **kwargs
     ):
         """
-        :keyword tags: A set of tags. Profile tags.
+        :keyword tags: Profile tags.
         :paramtype tags: dict[str, str]
         :keyword origin_response_timeout_seconds: Send and receive timeout on forwarding request to the
          origin. When timeout is reached, the request fails and returns.
         :paramtype origin_response_timeout_seconds: int
         """
-        super(ProfileUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.origin_response_timeout_seconds = origin_response_timeout_seconds
 
 
-class PurgeParameters(msrest.serialization.Model):
+class PurgeParameters(_serialization.Model):
     """Parameters required for content purge.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar content_paths: Required. The path to the content to be purged. Can describe a file path
-     or a wild card directory.
+    :ivar content_paths: The path to the content to be purged. Can describe a file path or a wild
+     card directory. Required.
     :vartype content_paths: list[str]
     """
 
     _validation = {
-        'content_paths': {'required': True},
+        "content_paths": {"required": True},
     }
 
     _attribute_map = {
-        'content_paths': {'key': 'contentPaths', 'type': '[str]'},
+        "content_paths": {"key": "contentPaths", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        content_paths: List[str],
-        **kwargs
-    ):
+    def __init__(self, *, content_paths: List[str], **kwargs):
         """
-        :keyword content_paths: Required. The path to the content to be purged. Can describe a file
-         path or a wild card directory.
+        :keyword content_paths: The path to the content to be purged. Can describe a file path or a
+         wild card directory. Required.
         :paramtype content_paths: list[str]
         """
-        super(PurgeParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content_paths = content_paths
 
 
-class QueryStringMatchConditionParameters(msrest.serialization.Model):
+class QueryStringMatchConditionParameters(_serialization.Model):
     """Defines the parameters for QueryString match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleQueryStringConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleQueryStringConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.QueryStringMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.QueryStringOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -9049,33 +8889,34 @@ class QueryStringMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleQueryStringConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "QueryStringOperator"],
+        type_name: Union[str, "_models.QueryStringMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.QueryStringOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleQueryStringConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.QueryStringMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.QueryStringOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -9084,14 +8925,15 @@ class QueryStringMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(QueryStringMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class RankingsResponse(msrest.serialization.Model):
+class RankingsResponse(_serialization.Model):
     """Rankings Response.
 
     :ivar date_time_begin:
@@ -9103,9 +8945,9 @@ class RankingsResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'date_time_begin': {'key': 'dateTimeBegin', 'type': 'iso-8601'},
-        'date_time_end': {'key': 'dateTimeEnd', 'type': 'iso-8601'},
-        'tables': {'key': 'tables', 'type': '[RankingsResponseTablesItem]'},
+        "date_time_begin": {"key": "dateTimeBegin", "type": "iso-8601"},
+        "date_time_end": {"key": "dateTimeEnd", "type": "iso-8601"},
+        "tables": {"key": "tables", "type": "[RankingsResponseTablesItem]"},
     }
 
     def __init__(
@@ -9113,7 +8955,7 @@ class RankingsResponse(msrest.serialization.Model):
         *,
         date_time_begin: Optional[datetime.datetime] = None,
         date_time_end: Optional[datetime.datetime] = None,
-        tables: Optional[List["RankingsResponseTablesItem"]] = None,
+        tables: Optional[List["_models.RankingsResponseTablesItem"]] = None,
         **kwargs
     ):
         """
@@ -9124,13 +8966,13 @@ class RankingsResponse(msrest.serialization.Model):
         :keyword tables:
         :paramtype tables: list[~azure.mgmt.cdn.models.RankingsResponseTablesItem]
         """
-        super(RankingsResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.date_time_begin = date_time_begin
         self.date_time_end = date_time_end
         self.tables = tables
 
 
-class RankingsResponseTablesItem(msrest.serialization.Model):
+class RankingsResponseTablesItem(_serialization.Model):
     """RankingsResponseTablesItem.
 
     :ivar ranking:
@@ -9140,15 +8982,15 @@ class RankingsResponseTablesItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'ranking': {'key': 'ranking', 'type': 'str'},
-        'data': {'key': 'data', 'type': '[RankingsResponseTablesPropertiesItemsItem]'},
+        "ranking": {"key": "ranking", "type": "str"},
+        "data": {"key": "data", "type": "[RankingsResponseTablesPropertiesItemsItem]"},
     }
 
     def __init__(
         self,
         *,
         ranking: Optional[str] = None,
-        data: Optional[List["RankingsResponseTablesPropertiesItemsItem"]] = None,
+        data: Optional[List["_models.RankingsResponseTablesPropertiesItemsItem"]] = None,
         **kwargs
     ):
         """
@@ -9157,12 +8999,12 @@ class RankingsResponseTablesItem(msrest.serialization.Model):
         :keyword data:
         :paramtype data: list[~azure.mgmt.cdn.models.RankingsResponseTablesPropertiesItemsItem]
         """
-        super(RankingsResponseTablesItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ranking = ranking
         self.data = data
 
 
-class RankingsResponseTablesPropertiesItemsItem(msrest.serialization.Model):
+class RankingsResponseTablesPropertiesItemsItem(_serialization.Model):
     """RankingsResponseTablesPropertiesItemsItem.
 
     :ivar name:
@@ -9172,15 +9014,15 @@ class RankingsResponseTablesPropertiesItemsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'metrics': {'key': 'metrics', 'type': '[RankingsResponseTablesPropertiesItemsMetricsItem]'},
+        "name": {"key": "name", "type": "str"},
+        "metrics": {"key": "metrics", "type": "[RankingsResponseTablesPropertiesItemsMetricsItem]"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        metrics: Optional[List["RankingsResponseTablesPropertiesItemsMetricsItem"]] = None,
+        metrics: Optional[List["_models.RankingsResponseTablesPropertiesItemsMetricsItem"]] = None,
         **kwargs
     ):
         """
@@ -9190,45 +9032,40 @@ class RankingsResponseTablesPropertiesItemsItem(msrest.serialization.Model):
         :paramtype metrics:
          list[~azure.mgmt.cdn.models.RankingsResponseTablesPropertiesItemsMetricsItem]
         """
-        super(RankingsResponseTablesPropertiesItemsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.metrics = metrics
 
 
-class RankingsResponseTablesPropertiesItemsMetricsItem(msrest.serialization.Model):
+class RankingsResponseTablesPropertiesItemsMetricsItem(_serialization.Model):
     """RankingsResponseTablesPropertiesItemsMetricsItem.
 
     :ivar metric:
     :vartype metric: str
     :ivar value:
-    :vartype value: long
+    :vartype value: int
     :ivar percentage:
     :vartype percentage: float
     """
 
     _attribute_map = {
-        'metric': {'key': 'metric', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'long'},
-        'percentage': {'key': 'percentage', 'type': 'float'},
+        "metric": {"key": "metric", "type": "str"},
+        "value": {"key": "value", "type": "int"},
+        "percentage": {"key": "percentage", "type": "float"},
     }
 
     def __init__(
-        self,
-        *,
-        metric: Optional[str] = None,
-        value: Optional[int] = None,
-        percentage: Optional[float] = None,
-        **kwargs
+        self, *, metric: Optional[str] = None, value: Optional[int] = None, percentage: Optional[float] = None, **kwargs
     ):
         """
         :keyword metric:
         :paramtype metric: str
         :keyword value:
-        :paramtype value: long
+        :paramtype value: int
         :keyword percentage:
         :paramtype percentage: float
         """
-        super(RankingsResponseTablesPropertiesItemsMetricsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric = metric
         self.value = value
         self.percentage = percentage
@@ -9239,43 +9076,43 @@ class RateLimitRule(CustomRule):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Defines the name of the custom rule.
+    :ivar name: Defines the name of the custom rule. Required.
     :vartype name: str
     :ivar enabled_state: Describes if the custom rule is in enabled or disabled state. Defaults to
-     Enabled if not specified. Possible values include: "Disabled", "Enabled".
+     Enabled if not specified. Known values are: "Disabled" and "Enabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.CustomRuleEnabledState
-    :ivar priority: Required. Defines in what order this rule be evaluated in the overall list of
-     custom rules.
+    :ivar priority: Defines in what order this rule be evaluated in the overall list of custom
+     rules. Required.
     :vartype priority: int
-    :ivar match_conditions: Required. List of match conditions.
+    :ivar match_conditions: List of match conditions. Required.
     :vartype match_conditions: list[~azure.mgmt.cdn.models.MatchCondition]
-    :ivar action: Required. Describes what action to be applied when rule matches. Possible values
-     include: "Allow", "Block", "Log", "Redirect".
+    :ivar action: Describes what action to be applied when rule matches. Required. Known values
+     are: "Allow", "Block", "Log", and "Redirect".
     :vartype action: str or ~azure.mgmt.cdn.models.ActionType
-    :ivar rate_limit_threshold: Required. Defines rate limit threshold.
+    :ivar rate_limit_threshold: Defines rate limit threshold. Required.
     :vartype rate_limit_threshold: int
-    :ivar rate_limit_duration_in_minutes: Required. Defines rate limit duration. Default is 1
-     minute.
+    :ivar rate_limit_duration_in_minutes: Defines rate limit duration. Default is 1 minute.
+     Required.
     :vartype rate_limit_duration_in_minutes: int
     """
 
     _validation = {
-        'name': {'required': True},
-        'priority': {'required': True, 'maximum': 1000, 'minimum': 0},
-        'match_conditions': {'required': True},
-        'action': {'required': True},
-        'rate_limit_threshold': {'required': True, 'minimum': 0},
-        'rate_limit_duration_in_minutes': {'required': True, 'maximum': 60, 'minimum': 0},
+        "name": {"required": True},
+        "priority": {"required": True, "maximum": 1000, "minimum": 0},
+        "match_conditions": {"required": True},
+        "action": {"required": True},
+        "rate_limit_threshold": {"required": True, "minimum": 0},
+        "rate_limit_duration_in_minutes": {"required": True, "maximum": 60, "minimum": 0},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'priority': {'key': 'priority', 'type': 'int'},
-        'match_conditions': {'key': 'matchConditions', 'type': '[MatchCondition]'},
-        'action': {'key': 'action', 'type': 'str'},
-        'rate_limit_threshold': {'key': 'rateLimitThreshold', 'type': 'int'},
-        'rate_limit_duration_in_minutes': {'key': 'rateLimitDurationInMinutes', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "enabled_state": {"key": "enabledState", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+        "match_conditions": {"key": "matchConditions", "type": "[MatchCondition]"},
+        "action": {"key": "action", "type": "str"},
+        "rate_limit_threshold": {"key": "rateLimitThreshold", "type": "int"},
+        "rate_limit_duration_in_minutes": {"key": "rateLimitDurationInMinutes", "type": "int"},
     }
 
     def __init__(
@@ -9283,39 +9120,46 @@ class RateLimitRule(CustomRule):
         *,
         name: str,
         priority: int,
-        match_conditions: List["MatchCondition"],
-        action: Union[str, "ActionType"],
+        match_conditions: List["_models.MatchCondition"],
+        action: Union[str, "_models.ActionType"],
         rate_limit_threshold: int,
         rate_limit_duration_in_minutes: int,
-        enabled_state: Optional[Union[str, "CustomRuleEnabledState"]] = None,
+        enabled_state: Optional[Union[str, "_models.CustomRuleEnabledState"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. Defines the name of the custom rule.
+        :keyword name: Defines the name of the custom rule. Required.
         :paramtype name: str
         :keyword enabled_state: Describes if the custom rule is in enabled or disabled state. Defaults
-         to Enabled if not specified. Possible values include: "Disabled", "Enabled".
+         to Enabled if not specified. Known values are: "Disabled" and "Enabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.CustomRuleEnabledState
-        :keyword priority: Required. Defines in what order this rule be evaluated in the overall list
-         of custom rules.
+        :keyword priority: Defines in what order this rule be evaluated in the overall list of custom
+         rules. Required.
         :paramtype priority: int
-        :keyword match_conditions: Required. List of match conditions.
+        :keyword match_conditions: List of match conditions. Required.
         :paramtype match_conditions: list[~azure.mgmt.cdn.models.MatchCondition]
-        :keyword action: Required. Describes what action to be applied when rule matches. Possible
-         values include: "Allow", "Block", "Log", "Redirect".
+        :keyword action: Describes what action to be applied when rule matches. Required. Known values
+         are: "Allow", "Block", "Log", and "Redirect".
         :paramtype action: str or ~azure.mgmt.cdn.models.ActionType
-        :keyword rate_limit_threshold: Required. Defines rate limit threshold.
+        :keyword rate_limit_threshold: Defines rate limit threshold. Required.
         :paramtype rate_limit_threshold: int
-        :keyword rate_limit_duration_in_minutes: Required. Defines rate limit duration. Default is 1
-         minute.
+        :keyword rate_limit_duration_in_minutes: Defines rate limit duration. Default is 1 minute.
+         Required.
         :paramtype rate_limit_duration_in_minutes: int
         """
-        super(RateLimitRule, self).__init__(name=name, enabled_state=enabled_state, priority=priority, match_conditions=match_conditions, action=action, **kwargs)
+        super().__init__(
+            name=name,
+            enabled_state=enabled_state,
+            priority=priority,
+            match_conditions=match_conditions,
+            action=action,
+            **kwargs
+        )
         self.rate_limit_threshold = rate_limit_threshold
         self.rate_limit_duration_in_minutes = rate_limit_duration_in_minutes
 
 
-class RateLimitRuleList(msrest.serialization.Model):
+class RateLimitRuleList(_serialization.Model):
     """Defines contents of rate limit rules.
 
     :ivar rules: List of rules.
@@ -9323,34 +9167,27 @@ class RateLimitRuleList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'rules': {'key': 'rules', 'type': '[RateLimitRule]'},
+        "rules": {"key": "rules", "type": "[RateLimitRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        rules: Optional[List["RateLimitRule"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rules: Optional[List["_models.RateLimitRule"]] = None, **kwargs):
         """
         :keyword rules: List of rules.
         :paramtype rules: list[~azure.mgmt.cdn.models.RateLimitRule]
         """
-        super(RateLimitRuleList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rules = rules
 
 
-class RemoteAddressMatchConditionParameters(msrest.serialization.Model):
+class RemoteAddressMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RemoteAddress match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleRemoteAddressConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "IPMatch", "GeoMatch".
+    :ivar type_name: Required. "DeliveryRuleRemoteAddressConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.RemoteAddressMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "IPMatch",
+     and "GeoMatch".
     :vartype operator: str or ~azure.mgmt.cdn.models.RemoteAddressOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -9363,32 +9200,34 @@ class RemoteAddressMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleRemoteAddressConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "RemoteAddressOperator"],
+        type_name: Union[str, "_models.RemoteAddressMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.RemoteAddressOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
-         "IPMatch", "GeoMatch".
+        :keyword type_name: Required. "DeliveryRuleRemoteAddressConditionParameters"
+        :paramtype type_name: str or
+         ~azure.mgmt.cdn.models.RemoteAddressMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
+         "IPMatch", and "GeoMatch".
         :paramtype operator: str or ~azure.mgmt.cdn.models.RemoteAddressOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -9399,25 +9238,24 @@ class RemoteAddressMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(RemoteAddressMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class RequestBodyMatchConditionParameters(msrest.serialization.Model):
+class RequestBodyMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestBody match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleRequestBodyConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleRequestBodyConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.RequestBodyMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.RequestBodyOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -9428,33 +9266,34 @@ class RequestBodyMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleRequestBodyConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "RequestBodyOperator"],
+        type_name: Union[str, "_models.RequestBodyMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.RequestBodyOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleRequestBodyConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.RequestBodyMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.RequestBodyOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -9463,27 +9302,26 @@ class RequestBodyMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(RequestBodyMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class RequestHeaderMatchConditionParameters(msrest.serialization.Model):
+class RequestHeaderMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestHeader match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleRequestHeaderConditionParameters".
-    :vartype type_name: str
+    :ivar type_name: Required. "DeliveryRuleRequestHeaderConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.RequestHeaderMatchConditionParametersTypeName
     :ivar selector: Name of Header to be matched.
     :vartype selector: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.RequestHeaderOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -9494,37 +9332,39 @@ class RequestHeaderMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'selector': {'key': 'selector', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "selector": {"key": "selector", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleRequestHeaderConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "RequestHeaderOperator"],
+        type_name: Union[str, "_models.RequestHeaderMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.RequestHeaderOperator"],
         selector: Optional[str] = None,
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
+        :keyword type_name: Required. "DeliveryRuleRequestHeaderConditionParameters"
+        :paramtype type_name: str or
+         ~azure.mgmt.cdn.models.RequestHeaderMatchConditionParametersTypeName
         :keyword selector: Name of Header to be matched.
         :paramtype selector: str
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.RequestHeaderOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -9533,7 +9373,8 @@ class RequestHeaderMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(RequestHeaderMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.selector = selector
         self.operator = operator
         self.negate_condition = negate_condition
@@ -9541,16 +9382,14 @@ class RequestHeaderMatchConditionParameters(msrest.serialization.Model):
         self.transforms = transforms
 
 
-class RequestMethodMatchConditionParameters(msrest.serialization.Model):
+class RequestMethodMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestMethod match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleRequestMethodConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Equal".
+    :ivar type_name: Required. "DeliveryRuleRequestMethodConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.RequestMethodMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. "Equal"
     :vartype operator: str or ~azure.mgmt.cdn.models.RequestMethodOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -9562,32 +9401,33 @@ class RequestMethodMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "transforms": {"key": "transforms", "type": "[str]"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleRequestMethodConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "RequestMethodOperator"],
+        type_name: Union[str, "_models.RequestMethodMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.RequestMethodOperator"],
         negate_condition: Optional[bool] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
-        match_values: Optional[List[Union[str, "RequestMethodMatchConditionParametersMatchValuesItem"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
+        match_values: Optional[List[Union[str, "_models.RequestMethodMatchConditionParametersMatchValuesItem"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include:
-         "Equal".
+        :keyword type_name: Required. "DeliveryRuleRequestMethodConditionParameters"
+        :paramtype type_name: str or
+         ~azure.mgmt.cdn.models.RequestMethodMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. "Equal"
         :paramtype operator: str or ~azure.mgmt.cdn.models.RequestMethodOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -9597,24 +9437,23 @@ class RequestMethodMatchConditionParameters(msrest.serialization.Model):
         :paramtype match_values: list[str or
          ~azure.mgmt.cdn.models.RequestMethodMatchConditionParametersMatchValuesItem]
         """
-        super(RequestMethodMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.transforms = transforms
         self.match_values = match_values
 
 
-class RequestSchemeMatchConditionParameters(msrest.serialization.Model):
+class RequestSchemeMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestScheme match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleRequestSchemeConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Describes operator to be matched. Has constant value: "Equal".
-    :vartype operator: str
+    :ivar type_name: Required. "DeliveryRuleRequestSchemeConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. "Equal"
+    :vartype operator: str or ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParametersOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
     :ivar transforms: List of transforms.
@@ -9625,30 +9464,35 @@ class RequestSchemeMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True, 'constant': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "transforms": {"key": "transforms", "type": "[str]"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleRequestSchemeConditionParameters"
-    operator = "Equal"
 
     def __init__(
         self,
         *,
+        type_name: Union[str, "_models.RequestSchemeMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.RequestSchemeMatchConditionParametersOperator"],
         negate_condition: Optional[bool] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
-        match_values: Optional[List[Union[str, "RequestSchemeMatchConditionParametersMatchValuesItem"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
+        match_values: Optional[List[Union[str, "_models.RequestSchemeMatchConditionParametersMatchValuesItem"]]] = None,
         **kwargs
     ):
         """
+        :keyword type_name: Required. "DeliveryRuleRequestSchemeConditionParameters"
+        :paramtype type_name: str or
+         ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. "Equal"
+        :paramtype operator: str or
+         ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParametersOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
         :keyword transforms: List of transforms.
@@ -9657,24 +9501,24 @@ class RequestSchemeMatchConditionParameters(msrest.serialization.Model):
         :paramtype match_values: list[str or
          ~azure.mgmt.cdn.models.RequestSchemeMatchConditionParametersMatchValuesItem]
         """
-        super(RequestSchemeMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
+        self.operator = operator
         self.negate_condition = negate_condition
         self.transforms = transforms
         self.match_values = match_values
 
 
-class RequestUriMatchConditionParameters(msrest.serialization.Model):
+class RequestUriMatchConditionParameters(_serialization.Model):
     """Defines the parameters for RequestUri match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleRequestUriConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleRequestUriConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.RequestUriMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.RequestUriOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -9685,33 +9529,34 @@ class RequestUriMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleRequestUriConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "RequestUriOperator"],
+        type_name: Union[str, "_models.RequestUriMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.RequestUriOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleRequestUriConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.RequestUriMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.RequestUriOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -9720,14 +9565,15 @@ class RequestUriMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(RequestUriMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class ResourceReference(msrest.serialization.Model):
+class ResourceReference(_serialization.Model):
     """Reference to another resource.
 
     :ivar id: Resource ID.
@@ -9735,24 +9581,19 @@ class ResourceReference(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource ID.
         :paramtype id: str
         """
-        super(ResourceReference, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class ResourcesResponse(msrest.serialization.Model):
+class ResourcesResponse(_serialization.Model):
     """Resources Response.
 
     :ivar endpoints:
@@ -9762,15 +9603,15 @@ class ResourcesResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'endpoints': {'key': 'endpoints', 'type': '[ResourcesResponseEndpointsItem]'},
-        'custom_domains': {'key': 'customDomains', 'type': '[ResourcesResponseCustomDomainsItem]'},
+        "endpoints": {"key": "endpoints", "type": "[ResourcesResponseEndpointsItem]"},
+        "custom_domains": {"key": "customDomains", "type": "[ResourcesResponseCustomDomainsItem]"},
     }
 
     def __init__(
         self,
         *,
-        endpoints: Optional[List["ResourcesResponseEndpointsItem"]] = None,
-        custom_domains: Optional[List["ResourcesResponseCustomDomainsItem"]] = None,
+        endpoints: Optional[List["_models.ResourcesResponseEndpointsItem"]] = None,
+        custom_domains: Optional[List["_models.ResourcesResponseCustomDomainsItem"]] = None,
         **kwargs
     ):
         """
@@ -9779,12 +9620,12 @@ class ResourcesResponse(msrest.serialization.Model):
         :keyword custom_domains:
         :paramtype custom_domains: list[~azure.mgmt.cdn.models.ResourcesResponseCustomDomainsItem]
         """
-        super(ResourcesResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.endpoints = endpoints
         self.custom_domains = custom_domains
 
 
-class ResourcesResponseCustomDomainsItem(msrest.serialization.Model):
+class ResourcesResponseCustomDomainsItem(_serialization.Model):
     """ResourcesResponseCustomDomainsItem.
 
     :ivar id:
@@ -9798,16 +9639,16 @@ class ResourcesResponseCustomDomainsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'endpoint_id': {'key': 'endpointId', 'type': 'str'},
-        'history': {'key': 'history', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "endpoint_id": {"key": "endpointId", "type": "str"},
+        "history": {"key": "history", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         endpoint_id: Optional[str] = None,
         history: Optional[bool] = None,
@@ -9823,14 +9664,14 @@ class ResourcesResponseCustomDomainsItem(msrest.serialization.Model):
         :keyword history:
         :paramtype history: bool
         """
-        super(ResourcesResponseCustomDomainsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.endpoint_id = endpoint_id
         self.history = history
 
 
-class ResourcesResponseEndpointsItem(msrest.serialization.Model):
+class ResourcesResponseEndpointsItem(_serialization.Model):
     """ResourcesResponseEndpointsItem.
 
     :ivar id:
@@ -9845,19 +9686,19 @@ class ResourcesResponseEndpointsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'history': {'key': 'history', 'type': 'bool'},
-        'custom_domains': {'key': 'customDomains', 'type': '[ResourcesResponseEndpointsPropertiesItemsItem]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "history": {"key": "history", "type": "bool"},
+        "custom_domains": {"key": "customDomains", "type": "[ResourcesResponseEndpointsPropertiesItemsItem]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         history: Optional[bool] = None,
-        custom_domains: Optional[List["ResourcesResponseEndpointsPropertiesItemsItem"]] = None,
+        custom_domains: Optional[List["_models.ResourcesResponseEndpointsPropertiesItemsItem"]] = None,
         **kwargs
     ):
         """
@@ -9871,14 +9712,14 @@ class ResourcesResponseEndpointsItem(msrest.serialization.Model):
         :paramtype custom_domains:
          list[~azure.mgmt.cdn.models.ResourcesResponseEndpointsPropertiesItemsItem]
         """
-        super(ResourcesResponseEndpointsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.history = history
         self.custom_domains = custom_domains
 
 
-class ResourcesResponseEndpointsPropertiesItemsItem(msrest.serialization.Model):
+class ResourcesResponseEndpointsPropertiesItemsItem(_serialization.Model):
     """ResourcesResponseEndpointsPropertiesItemsItem.
 
     :ivar id:
@@ -9892,16 +9733,16 @@ class ResourcesResponseEndpointsPropertiesItemsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'endpoint_id': {'key': 'endpointId', 'type': 'str'},
-        'history': {'key': 'history', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "endpoint_id": {"key": "endpointId", "type": "str"},
+        "history": {"key": "history", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         endpoint_id: Optional[str] = None,
         history: Optional[bool] = None,
@@ -9917,22 +9758,22 @@ class ResourcesResponseEndpointsPropertiesItemsItem(msrest.serialization.Model):
         :keyword history:
         :paramtype history: bool
         """
-        super(ResourcesResponseEndpointsPropertiesItemsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.endpoint_id = endpoint_id
         self.history = history
 
 
-class ResourceUsage(msrest.serialization.Model):
+class ResourceUsage(_serialization.Model):
     """Output of check resource usage API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar resource_type: Resource type for which the usage is provided.
     :vartype resource_type: str
-    :ivar unit: Unit of the usage. e.g. Count.
-    :vartype unit: str
+    :ivar unit: Unit of the usage. e.g. count. "count"
+    :vartype unit: str or ~azure.mgmt.cdn.models.ResourceUsageUnit
     :ivar current_value: Actual value of usage on the specified resource type.
     :vartype current_value: int
     :ivar limit: Quota of the specified resource type.
@@ -9940,33 +9781,29 @@ class ResourceUsage(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'unit': {'readonly': True},
-        'current_value': {'readonly': True},
-        'limit': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "unit": {"readonly": True},
+        "current_value": {"readonly": True},
+        "limit": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ResourceUsage, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.resource_type = None
         self.unit = None
         self.current_value = None
         self.limit = None
 
 
-class ResourceUsageListResult(msrest.serialization.Model):
+class ResourceUsageListResult(_serialization.Model):
     """Output of check resource usage API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9978,34 +9815,29 @@ class ResourceUsageListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceUsage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceUsage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of custom domain objects if there are any.
         :paramtype next_link: str
         """
-        super(ResourceUsageListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class ResponseBasedOriginErrorDetectionParameters(msrest.serialization.Model):
+class ResponseBasedOriginErrorDetectionParameters(_serialization.Model):
     """The JSON object that contains the properties to determine origin health using real requests/responses.
 
     :ivar response_based_detected_error_types: Type of response errors for real user requests for
-     which origin will be deemed unhealthy. Possible values include: "None", "TcpErrorsOnly",
+     which origin will be deemed unhealthy. Known values are: "None", "TcpErrorsOnly", and
      "TcpAndHttpErrors".
     :vartype response_based_detected_error_types: str or
      ~azure.mgmt.cdn.models.ResponseBasedDetectedErrorTypes
@@ -10018,26 +9850,29 @@ class ResponseBasedOriginErrorDetectionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'response_based_failover_threshold_percentage': {'maximum': 100, 'minimum': 0},
+        "response_based_failover_threshold_percentage": {"maximum": 100, "minimum": 0},
     }
 
     _attribute_map = {
-        'response_based_detected_error_types': {'key': 'responseBasedDetectedErrorTypes', 'type': 'str'},
-        'response_based_failover_threshold_percentage': {'key': 'responseBasedFailoverThresholdPercentage', 'type': 'int'},
-        'http_error_ranges': {'key': 'httpErrorRanges', 'type': '[HttpErrorRangeParameters]'},
+        "response_based_detected_error_types": {"key": "responseBasedDetectedErrorTypes", "type": "str"},
+        "response_based_failover_threshold_percentage": {
+            "key": "responseBasedFailoverThresholdPercentage",
+            "type": "int",
+        },
+        "http_error_ranges": {"key": "httpErrorRanges", "type": "[HttpErrorRangeParameters]"},
     }
 
     def __init__(
         self,
         *,
-        response_based_detected_error_types: Optional[Union[str, "ResponseBasedDetectedErrorTypes"]] = None,
+        response_based_detected_error_types: Optional[Union[str, "_models.ResponseBasedDetectedErrorTypes"]] = None,
         response_based_failover_threshold_percentage: Optional[int] = None,
-        http_error_ranges: Optional[List["HttpErrorRangeParameters"]] = None,
+        http_error_ranges: Optional[List["_models.HttpErrorRangeParameters"]] = None,
         **kwargs
     ):
         """
         :keyword response_based_detected_error_types: Type of response errors for real user requests
-         for which origin will be deemed unhealthy. Possible values include: "None", "TcpErrorsOnly",
+         for which origin will be deemed unhealthy. Known values are: "None", "TcpErrorsOnly", and
          "TcpAndHttpErrors".
         :paramtype response_based_detected_error_types: str or
          ~azure.mgmt.cdn.models.ResponseBasedDetectedErrorTypes
@@ -10048,13 +9883,13 @@ class ResponseBasedOriginErrorDetectionParameters(msrest.serialization.Model):
          errors for origin and it is marked as unhealthy.
         :paramtype http_error_ranges: list[~azure.mgmt.cdn.models.HttpErrorRangeParameters]
         """
-        super(ResponseBasedOriginErrorDetectionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.response_based_detected_error_types = response_based_detected_error_types
         self.response_based_failover_threshold_percentage = response_based_failover_threshold_percentage
         self.http_error_ranges = http_error_ranges
 
 
-class Route(ProxyResource):
+class Route(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Friendly Routes name mapping to the any Routes or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10086,71 +9921,71 @@ class Route(ProxyResource):
      provide a cacheConfiguration object.
     :vartype cache_configuration: ~azure.mgmt.cdn.models.AfdRouteCacheConfiguration
     :ivar forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+     Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
     :vartype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
     :ivar link_to_default_domain: whether this route will be linked to the default endpoint domain.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
     :ivar https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
      that this is a easy way to set up this rule and it will be the first rule that gets executed.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'endpoint_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "endpoint_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'endpoint_name': {'key': 'properties.endpointName', 'type': 'str'},
-        'custom_domains': {'key': 'properties.customDomains', 'type': '[ActivatedResourceReference]'},
-        'origin_group': {'key': 'properties.originGroup', 'type': 'ResourceReference'},
-        'origin_path': {'key': 'properties.originPath', 'type': 'str'},
-        'rule_sets': {'key': 'properties.ruleSets', 'type': '[ResourceReference]'},
-        'supported_protocols': {'key': 'properties.supportedProtocols', 'type': '[str]'},
-        'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
-        'cache_configuration': {'key': 'properties.cacheConfiguration', 'type': 'AfdRouteCacheConfiguration'},
-        'forwarding_protocol': {'key': 'properties.forwardingProtocol', 'type': 'str'},
-        'link_to_default_domain': {'key': 'properties.linkToDefaultDomain', 'type': 'str'},
-        'https_redirect': {'key': 'properties.httpsRedirect', 'type': 'str'},
-        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "endpoint_name": {"key": "properties.endpointName", "type": "str"},
+        "custom_domains": {"key": "properties.customDomains", "type": "[ActivatedResourceReference]"},
+        "origin_group": {"key": "properties.originGroup", "type": "ResourceReference"},
+        "origin_path": {"key": "properties.originPath", "type": "str"},
+        "rule_sets": {"key": "properties.ruleSets", "type": "[ResourceReference]"},
+        "supported_protocols": {"key": "properties.supportedProtocols", "type": "[str]"},
+        "patterns_to_match": {"key": "properties.patternsToMatch", "type": "[str]"},
+        "cache_configuration": {"key": "properties.cacheConfiguration", "type": "AfdRouteCacheConfiguration"},
+        "forwarding_protocol": {"key": "properties.forwardingProtocol", "type": "str"},
+        "link_to_default_domain": {"key": "properties.linkToDefaultDomain", "type": "str"},
+        "https_redirect": {"key": "properties.httpsRedirect", "type": "str"},
+        "enabled_state": {"key": "properties.enabledState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        custom_domains: Optional[List["ActivatedResourceReference"]] = None,
-        origin_group: Optional["ResourceReference"] = None,
+        custom_domains: Optional[List["_models.ActivatedResourceReference"]] = None,
+        origin_group: Optional["_models.ResourceReference"] = None,
         origin_path: Optional[str] = None,
-        rule_sets: Optional[List["ResourceReference"]] = None,
-        supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
+        rule_sets: Optional[List["_models.ResourceReference"]] = None,
+        supported_protocols: Optional[List[Union[str, "_models.AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        cache_configuration: Optional["AfdRouteCacheConfiguration"] = None,
-        forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
-        link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
-        https_redirect: Optional[Union[str, "HttpsRedirect"]] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
+        cache_configuration: Optional["_models.AfdRouteCacheConfiguration"] = None,
+        forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
+        link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
+        https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
@@ -10171,20 +10006,20 @@ class Route(ProxyResource):
          not provide a cacheConfiguration object.
         :paramtype cache_configuration: ~azure.mgmt.cdn.models.AfdRouteCacheConfiguration
         :keyword forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-         Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+         Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
         :paramtype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
         :keyword link_to_default_domain: whether this route will be linked to the default endpoint
-         domain. Possible values include: "Enabled", "Disabled".
+         domain. Known values are: "Enabled" and "Disabled".
         :paramtype link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
         :keyword https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
          that this is a easy way to set up this rule and it will be the first rule that gets executed.
-         Possible values include: "Enabled", "Disabled".
+         Known values are: "Enabled" and "Disabled".
         :paramtype https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(Route, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.endpoint_name = None
         self.custom_domains = custom_domains
         self.origin_group = origin_group
@@ -10201,15 +10036,14 @@ class Route(ProxyResource):
         self.deployment_status = None
 
 
-class RouteConfigurationOverrideActionParameters(msrest.serialization.Model):
+class RouteConfigurationOverrideActionParameters(_serialization.Model):
     """Defines the parameters for the route configuration override action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleRouteConfigurationOverrideActionParameters".
-    :vartype type_name: str
+    :ivar type_name: Required. "DeliveryRuleRouteConfigurationOverrideActionParameters"
+    :vartype type_name: str or
+     ~azure.mgmt.cdn.models.RouteConfigurationOverrideActionParametersTypeName
     :ivar origin_group_override: A reference to the origin group override configuration. Leave
      empty to use the default origin group on route.
     :vartype origin_group_override: ~azure.mgmt.cdn.models.OriginGroupOverride
@@ -10219,25 +10053,27 @@ class RouteConfigurationOverrideActionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
+        "type_name": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'origin_group_override': {'key': 'originGroupOverride', 'type': 'OriginGroupOverride'},
-        'cache_configuration': {'key': 'cacheConfiguration', 'type': 'CacheConfiguration'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "origin_group_override": {"key": "originGroupOverride", "type": "OriginGroupOverride"},
+        "cache_configuration": {"key": "cacheConfiguration", "type": "CacheConfiguration"},
     }
-
-    type_name = "DeliveryRuleRouteConfigurationOverrideActionParameters"
 
     def __init__(
         self,
         *,
-        origin_group_override: Optional["OriginGroupOverride"] = None,
-        cache_configuration: Optional["CacheConfiguration"] = None,
+        type_name: Union[str, "_models.RouteConfigurationOverrideActionParametersTypeName"],
+        origin_group_override: Optional["_models.OriginGroupOverride"] = None,
+        cache_configuration: Optional["_models.CacheConfiguration"] = None,
         **kwargs
     ):
         """
+        :keyword type_name: Required. "DeliveryRuleRouteConfigurationOverrideActionParameters"
+        :paramtype type_name: str or
+         ~azure.mgmt.cdn.models.RouteConfigurationOverrideActionParametersTypeName
         :keyword origin_group_override: A reference to the origin group override configuration. Leave
          empty to use the default origin group on route.
         :paramtype origin_group_override: ~azure.mgmt.cdn.models.OriginGroupOverride
@@ -10245,12 +10081,13 @@ class RouteConfigurationOverrideActionParameters(msrest.serialization.Model):
          caching, do not provide a cacheConfiguration object.
         :paramtype cache_configuration: ~azure.mgmt.cdn.models.CacheConfiguration
         """
-        super(RouteConfigurationOverrideActionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.origin_group_override = origin_group_override
         self.cache_configuration = cache_configuration
 
 
-class RouteListResult(msrest.serialization.Model):
+class RouteListResult(_serialization.Model):
     """Result of the request to list routes. It contains a list of route objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10262,30 +10099,25 @@ class RouteListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Route]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Route]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of route objects if there are any.
         :paramtype next_link: str
         """
-        super(RouteListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class RouteUpdatePropertiesParameters(msrest.serialization.Model):
+class RouteUpdatePropertiesParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The JSON object that contains the properties of the domain to create.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10309,53 +10141,53 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
      provide a cacheConfiguration object.
     :vartype cache_configuration: ~azure.mgmt.cdn.models.AfdRouteCacheConfiguration
     :ivar forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+     Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
     :vartype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
     :ivar link_to_default_domain: whether this route will be linked to the default endpoint domain.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
     :ivar https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
      that this is a easy way to set up this rule and it will be the first rule that gets executed.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     """
 
     _validation = {
-        'endpoint_name': {'readonly': True},
+        "endpoint_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'endpoint_name': {'key': 'endpointName', 'type': 'str'},
-        'custom_domains': {'key': 'customDomains', 'type': '[ActivatedResourceReference]'},
-        'origin_group': {'key': 'originGroup', 'type': 'ResourceReference'},
-        'origin_path': {'key': 'originPath', 'type': 'str'},
-        'rule_sets': {'key': 'ruleSets', 'type': '[ResourceReference]'},
-        'supported_protocols': {'key': 'supportedProtocols', 'type': '[str]'},
-        'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
-        'cache_configuration': {'key': 'cacheConfiguration', 'type': 'AfdRouteCacheConfiguration'},
-        'forwarding_protocol': {'key': 'forwardingProtocol', 'type': 'str'},
-        'link_to_default_domain': {'key': 'linkToDefaultDomain', 'type': 'str'},
-        'https_redirect': {'key': 'httpsRedirect', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
+        "endpoint_name": {"key": "endpointName", "type": "str"},
+        "custom_domains": {"key": "customDomains", "type": "[ActivatedResourceReference]"},
+        "origin_group": {"key": "originGroup", "type": "ResourceReference"},
+        "origin_path": {"key": "originPath", "type": "str"},
+        "rule_sets": {"key": "ruleSets", "type": "[ResourceReference]"},
+        "supported_protocols": {"key": "supportedProtocols", "type": "[str]"},
+        "patterns_to_match": {"key": "patternsToMatch", "type": "[str]"},
+        "cache_configuration": {"key": "cacheConfiguration", "type": "AfdRouteCacheConfiguration"},
+        "forwarding_protocol": {"key": "forwardingProtocol", "type": "str"},
+        "link_to_default_domain": {"key": "linkToDefaultDomain", "type": "str"},
+        "https_redirect": {"key": "httpsRedirect", "type": "str"},
+        "enabled_state": {"key": "enabledState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        custom_domains: Optional[List["ActivatedResourceReference"]] = None,
-        origin_group: Optional["ResourceReference"] = None,
+        custom_domains: Optional[List["_models.ActivatedResourceReference"]] = None,
+        origin_group: Optional["_models.ResourceReference"] = None,
         origin_path: Optional[str] = None,
-        rule_sets: Optional[List["ResourceReference"]] = None,
-        supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
+        rule_sets: Optional[List["_models.ResourceReference"]] = None,
+        supported_protocols: Optional[List[Union[str, "_models.AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        cache_configuration: Optional["AfdRouteCacheConfiguration"] = None,
-        forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
-        link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
-        https_redirect: Optional[Union[str, "HttpsRedirect"]] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
+        cache_configuration: Optional["_models.AfdRouteCacheConfiguration"] = None,
+        forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
+        link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
+        https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
@@ -10376,20 +10208,20 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
          not provide a cacheConfiguration object.
         :paramtype cache_configuration: ~azure.mgmt.cdn.models.AfdRouteCacheConfiguration
         :keyword forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-         Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+         Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
         :paramtype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
         :keyword link_to_default_domain: whether this route will be linked to the default endpoint
-         domain. Possible values include: "Enabled", "Disabled".
+         domain. Known values are: "Enabled" and "Disabled".
         :paramtype link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
         :keyword https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
          that this is a easy way to set up this rule and it will be the first rule that gets executed.
-         Possible values include: "Enabled", "Disabled".
+         Known values are: "Enabled" and "Disabled".
         :paramtype https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(RouteUpdatePropertiesParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.endpoint_name = None
         self.custom_domains = custom_domains
         self.origin_group = origin_group
@@ -10404,11 +10236,19 @@ class RouteUpdatePropertiesParameters(msrest.serialization.Model):
         self.enabled_state = enabled_state
 
 
-class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
+class RouteProperties(
+    RouteUpdatePropertiesParameters, AFDStateProperties
+):  # pylint: disable=too-many-instance-attributes
     """The JSON object that contains the properties of the Routes to create.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar endpoint_name: The name of the endpoint which holds the route.
     :vartype endpoint_name: str
     :ivar custom_domains: Domains referenced by this endpoint.
@@ -10428,63 +10268,57 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
      provide a cacheConfiguration object.
     :vartype cache_configuration: ~azure.mgmt.cdn.models.AfdRouteCacheConfiguration
     :ivar forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+     Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
     :vartype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
     :ivar link_to_default_domain: whether this route will be linked to the default endpoint domain.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
     :ivar https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
      that this is a easy way to set up this rule and it will be the first rule that gets executed.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
-    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
-     "Failed".
-    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     """
 
     _validation = {
-        'endpoint_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "endpoint_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'endpoint_name': {'key': 'endpointName', 'type': 'str'},
-        'custom_domains': {'key': 'customDomains', 'type': '[ActivatedResourceReference]'},
-        'origin_group': {'key': 'originGroup', 'type': 'ResourceReference'},
-        'origin_path': {'key': 'originPath', 'type': 'str'},
-        'rule_sets': {'key': 'ruleSets', 'type': '[ResourceReference]'},
-        'supported_protocols': {'key': 'supportedProtocols', 'type': '[str]'},
-        'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
-        'cache_configuration': {'key': 'cacheConfiguration', 'type': 'AfdRouteCacheConfiguration'},
-        'forwarding_protocol': {'key': 'forwardingProtocol', 'type': 'str'},
-        'link_to_default_domain': {'key': 'linkToDefaultDomain', 'type': 'str'},
-        'https_redirect': {'key': 'httpsRedirect', 'type': 'str'},
-        'enabled_state': {'key': 'enabledState', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "endpoint_name": {"key": "endpointName", "type": "str"},
+        "custom_domains": {"key": "customDomains", "type": "[ActivatedResourceReference]"},
+        "origin_group": {"key": "originGroup", "type": "ResourceReference"},
+        "origin_path": {"key": "originPath", "type": "str"},
+        "rule_sets": {"key": "ruleSets", "type": "[ResourceReference]"},
+        "supported_protocols": {"key": "supportedProtocols", "type": "[str]"},
+        "patterns_to_match": {"key": "patternsToMatch", "type": "[str]"},
+        "cache_configuration": {"key": "cacheConfiguration", "type": "AfdRouteCacheConfiguration"},
+        "forwarding_protocol": {"key": "forwardingProtocol", "type": "str"},
+        "link_to_default_domain": {"key": "linkToDefaultDomain", "type": "str"},
+        "https_redirect": {"key": "httpsRedirect", "type": "str"},
+        "enabled_state": {"key": "enabledState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        custom_domains: Optional[List["ActivatedResourceReference"]] = None,
-        origin_group: Optional["ResourceReference"] = None,
+        custom_domains: Optional[List["_models.ActivatedResourceReference"]] = None,
+        origin_group: Optional["_models.ResourceReference"] = None,
         origin_path: Optional[str] = None,
-        rule_sets: Optional[List["ResourceReference"]] = None,
-        supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
+        rule_sets: Optional[List["_models.ResourceReference"]] = None,
+        supported_protocols: Optional[List[Union[str, "_models.AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        cache_configuration: Optional["AfdRouteCacheConfiguration"] = None,
-        forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
-        link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
-        https_redirect: Optional[Union[str, "HttpsRedirect"]] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
+        cache_configuration: Optional["_models.AfdRouteCacheConfiguration"] = None,
+        forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
+        link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
+        https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
@@ -10505,20 +10339,35 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
          not provide a cacheConfiguration object.
         :paramtype cache_configuration: ~azure.mgmt.cdn.models.AfdRouteCacheConfiguration
         :keyword forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-         Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+         Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
         :paramtype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
         :keyword link_to_default_domain: whether this route will be linked to the default endpoint
-         domain. Possible values include: "Enabled", "Disabled".
+         domain. Known values are: "Enabled" and "Disabled".
         :paramtype link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
         :keyword https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
          that this is a easy way to set up this rule and it will be the first rule that gets executed.
-         Possible values include: "Enabled", "Disabled".
+         Known values are: "Enabled" and "Disabled".
         :paramtype https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(RouteProperties, self).__init__(custom_domains=custom_domains, origin_group=origin_group, origin_path=origin_path, rule_sets=rule_sets, supported_protocols=supported_protocols, patterns_to_match=patterns_to_match, cache_configuration=cache_configuration, forwarding_protocol=forwarding_protocol, link_to_default_domain=link_to_default_domain, https_redirect=https_redirect, enabled_state=enabled_state, **kwargs)
+        super().__init__(
+            custom_domains=custom_domains,
+            origin_group=origin_group,
+            origin_path=origin_path,
+            rule_sets=rule_sets,
+            supported_protocols=supported_protocols,
+            patterns_to_match=patterns_to_match,
+            cache_configuration=cache_configuration,
+            forwarding_protocol=forwarding_protocol,
+            link_to_default_domain=link_to_default_domain,
+            https_redirect=https_redirect,
+            enabled_state=enabled_state,
+            **kwargs
+        )
+        self.provisioning_state = None
+        self.deployment_status = None
         self.endpoint_name = None
         self.custom_domains = custom_domains
         self.origin_group = origin_group
@@ -10531,11 +10380,9 @@ class RouteProperties(AFDStateProperties, RouteUpdatePropertiesParameters):
         self.link_to_default_domain = link_to_default_domain
         self.https_redirect = https_redirect
         self.enabled_state = enabled_state
-        self.provisioning_state = None
-        self.deployment_status = None
 
 
-class RouteUpdateParameters(msrest.serialization.Model):
+class RouteUpdateParameters(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The domain JSON object required for domain creation or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10559,53 +10406,53 @@ class RouteUpdateParameters(msrest.serialization.Model):
      provide a cacheConfiguration object.
     :vartype cache_configuration: ~azure.mgmt.cdn.models.AfdRouteCacheConfiguration
     :ivar forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-     Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+     Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
     :vartype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
     :ivar link_to_default_domain: whether this route will be linked to the default endpoint domain.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
     :ivar https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
      that this is a easy way to set up this rule and it will be the first rule that gets executed.
-     Possible values include: "Enabled", "Disabled".
+     Known values are: "Enabled" and "Disabled".
     :vartype https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
     :ivar enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-     'Disabled'. Possible values include: "Enabled", "Disabled".
+     'Disabled'. Known values are: "Enabled" and "Disabled".
     :vartype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
     """
 
     _validation = {
-        'endpoint_name': {'readonly': True},
+        "endpoint_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'endpoint_name': {'key': 'properties.endpointName', 'type': 'str'},
-        'custom_domains': {'key': 'properties.customDomains', 'type': '[ActivatedResourceReference]'},
-        'origin_group': {'key': 'properties.originGroup', 'type': 'ResourceReference'},
-        'origin_path': {'key': 'properties.originPath', 'type': 'str'},
-        'rule_sets': {'key': 'properties.ruleSets', 'type': '[ResourceReference]'},
-        'supported_protocols': {'key': 'properties.supportedProtocols', 'type': '[str]'},
-        'patterns_to_match': {'key': 'properties.patternsToMatch', 'type': '[str]'},
-        'cache_configuration': {'key': 'properties.cacheConfiguration', 'type': 'AfdRouteCacheConfiguration'},
-        'forwarding_protocol': {'key': 'properties.forwardingProtocol', 'type': 'str'},
-        'link_to_default_domain': {'key': 'properties.linkToDefaultDomain', 'type': 'str'},
-        'https_redirect': {'key': 'properties.httpsRedirect', 'type': 'str'},
-        'enabled_state': {'key': 'properties.enabledState', 'type': 'str'},
+        "endpoint_name": {"key": "properties.endpointName", "type": "str"},
+        "custom_domains": {"key": "properties.customDomains", "type": "[ActivatedResourceReference]"},
+        "origin_group": {"key": "properties.originGroup", "type": "ResourceReference"},
+        "origin_path": {"key": "properties.originPath", "type": "str"},
+        "rule_sets": {"key": "properties.ruleSets", "type": "[ResourceReference]"},
+        "supported_protocols": {"key": "properties.supportedProtocols", "type": "[str]"},
+        "patterns_to_match": {"key": "properties.patternsToMatch", "type": "[str]"},
+        "cache_configuration": {"key": "properties.cacheConfiguration", "type": "AfdRouteCacheConfiguration"},
+        "forwarding_protocol": {"key": "properties.forwardingProtocol", "type": "str"},
+        "link_to_default_domain": {"key": "properties.linkToDefaultDomain", "type": "str"},
+        "https_redirect": {"key": "properties.httpsRedirect", "type": "str"},
+        "enabled_state": {"key": "properties.enabledState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        custom_domains: Optional[List["ActivatedResourceReference"]] = None,
-        origin_group: Optional["ResourceReference"] = None,
+        custom_domains: Optional[List["_models.ActivatedResourceReference"]] = None,
+        origin_group: Optional["_models.ResourceReference"] = None,
         origin_path: Optional[str] = None,
-        rule_sets: Optional[List["ResourceReference"]] = None,
-        supported_protocols: Optional[List[Union[str, "AFDEndpointProtocols"]]] = None,
+        rule_sets: Optional[List["_models.ResourceReference"]] = None,
+        supported_protocols: Optional[List[Union[str, "_models.AFDEndpointProtocols"]]] = None,
         patterns_to_match: Optional[List[str]] = None,
-        cache_configuration: Optional["AfdRouteCacheConfiguration"] = None,
-        forwarding_protocol: Optional[Union[str, "ForwardingProtocol"]] = None,
-        link_to_default_domain: Optional[Union[str, "LinkToDefaultDomain"]] = None,
-        https_redirect: Optional[Union[str, "HttpsRedirect"]] = None,
-        enabled_state: Optional[Union[str, "EnabledState"]] = None,
+        cache_configuration: Optional["_models.AfdRouteCacheConfiguration"] = None,
+        forwarding_protocol: Optional[Union[str, "_models.ForwardingProtocol"]] = None,
+        link_to_default_domain: Optional[Union[str, "_models.LinkToDefaultDomain"]] = None,
+        https_redirect: Optional[Union[str, "_models.HttpsRedirect"]] = None,
+        enabled_state: Optional[Union[str, "_models.EnabledState"]] = None,
         **kwargs
     ):
         """
@@ -10626,20 +10473,20 @@ class RouteUpdateParameters(msrest.serialization.Model):
          not provide a cacheConfiguration object.
         :paramtype cache_configuration: ~azure.mgmt.cdn.models.AfdRouteCacheConfiguration
         :keyword forwarding_protocol: Protocol this rule will use when forwarding traffic to backends.
-         Possible values include: "HttpOnly", "HttpsOnly", "MatchRequest".
+         Known values are: "HttpOnly", "HttpsOnly", and "MatchRequest".
         :paramtype forwarding_protocol: str or ~azure.mgmt.cdn.models.ForwardingProtocol
         :keyword link_to_default_domain: whether this route will be linked to the default endpoint
-         domain. Possible values include: "Enabled", "Disabled".
+         domain. Known values are: "Enabled" and "Disabled".
         :paramtype link_to_default_domain: str or ~azure.mgmt.cdn.models.LinkToDefaultDomain
         :keyword https_redirect: Whether to automatically redirect HTTP traffic to HTTPS traffic. Note
          that this is a easy way to set up this rule and it will be the first rule that gets executed.
-         Possible values include: "Enabled", "Disabled".
+         Known values are: "Enabled" and "Disabled".
         :paramtype https_redirect: str or ~azure.mgmt.cdn.models.HttpsRedirect
         :keyword enabled_state: Whether to enable use of this rule. Permitted values are 'Enabled' or
-         'Disabled'. Possible values include: "Enabled", "Disabled".
+         'Disabled'. Known values are: "Enabled" and "Disabled".
         :paramtype enabled_state: str or ~azure.mgmt.cdn.models.EnabledState
         """
-        super(RouteUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.endpoint_name = None
         self.custom_domains = custom_domains
         self.origin_group = origin_group
@@ -10654,7 +10501,7 @@ class RouteUpdateParameters(msrest.serialization.Model):
         self.enabled_state = enabled_state
 
 
-class Rule(ProxyResource):
+class Rule(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Friendly Rules name mapping to the any Rules or secret related information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10680,48 +10527,48 @@ class Rule(ProxyResource):
      satisfied.
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
-     running the remaining rules or stop. If not present, defaults to Continue. Possible values
-     include: "Continue", "Stop".
+     running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+     "Continue" and "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'rule_set_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "rule_set_name": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'rule_set_name': {'key': 'properties.ruleSetName', 'type': 'str'},
-        'order': {'key': 'properties.order', 'type': 'int'},
-        'conditions': {'key': 'properties.conditions', 'type': '[DeliveryRuleCondition]'},
-        'actions': {'key': 'properties.actions', 'type': '[DeliveryRuleAction]'},
-        'match_processing_behavior': {'key': 'properties.matchProcessingBehavior', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "rule_set_name": {"key": "properties.ruleSetName", "type": "str"},
+        "order": {"key": "properties.order", "type": "int"},
+        "conditions": {"key": "properties.conditions", "type": "[DeliveryRuleCondition]"},
+        "actions": {"key": "properties.actions", "type": "[DeliveryRuleAction]"},
+        "match_processing_behavior": {"key": "properties.matchProcessingBehavior", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         order: Optional[int] = None,
-        conditions: Optional[List["DeliveryRuleCondition"]] = None,
-        actions: Optional[List["DeliveryRuleAction"]] = None,
-        match_processing_behavior: Optional[Union[str, "MatchProcessingBehavior"]] = None,
+        conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
+        actions: Optional[List["_models.DeliveryRuleAction"]] = None,
+        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
         **kwargs
     ):
         """
@@ -10736,11 +10583,11 @@ class Rule(ProxyResource):
          satisfied.
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
-         running the remaining rules or stop. If not present, defaults to Continue. Possible values
-         include: "Continue", "Stop".
+         running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+         "Continue" and "Stop".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
-        super(Rule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rule_set_name = None
         self.order = order
         self.conditions = conditions
@@ -10750,7 +10597,7 @@ class Rule(ProxyResource):
         self.deployment_status = None
 
 
-class RuleListResult(msrest.serialization.Model):
+class RuleListResult(_serialization.Model):
     """Result of the request to list rules. It contains a list of rule objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10762,30 +10609,25 @@ class RuleListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Rule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Rule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of rule objects if there are any.
         :paramtype next_link: str
         """
-        super(RuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class RuleUpdatePropertiesParameters(msrest.serialization.Model):
+class RuleUpdatePropertiesParameters(_serialization.Model):
     """The JSON object that contains the properties of the rule to update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -10803,30 +10645,30 @@ class RuleUpdatePropertiesParameters(msrest.serialization.Model):
      satisfied.
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
-     running the remaining rules or stop. If not present, defaults to Continue. Possible values
-     include: "Continue", "Stop".
+     running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+     "Continue" and "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     """
 
     _validation = {
-        'rule_set_name': {'readonly': True},
+        "rule_set_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'rule_set_name': {'key': 'ruleSetName', 'type': 'str'},
-        'order': {'key': 'order', 'type': 'int'},
-        'conditions': {'key': 'conditions', 'type': '[DeliveryRuleCondition]'},
-        'actions': {'key': 'actions', 'type': '[DeliveryRuleAction]'},
-        'match_processing_behavior': {'key': 'matchProcessingBehavior', 'type': 'str'},
+        "rule_set_name": {"key": "ruleSetName", "type": "str"},
+        "order": {"key": "order", "type": "int"},
+        "conditions": {"key": "conditions", "type": "[DeliveryRuleCondition]"},
+        "actions": {"key": "actions", "type": "[DeliveryRuleAction]"},
+        "match_processing_behavior": {"key": "matchProcessingBehavior", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         order: Optional[int] = None,
-        conditions: Optional[List["DeliveryRuleCondition"]] = None,
-        actions: Optional[List["DeliveryRuleAction"]] = None,
-        match_processing_behavior: Optional[Union[str, "MatchProcessingBehavior"]] = None,
+        conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
+        actions: Optional[List["_models.DeliveryRuleAction"]] = None,
+        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
         **kwargs
     ):
         """
@@ -10841,11 +10683,11 @@ class RuleUpdatePropertiesParameters(msrest.serialization.Model):
          satisfied.
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
-         running the remaining rules or stop. If not present, defaults to Continue. Possible values
-         include: "Continue", "Stop".
+         running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+         "Continue" and "Stop".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
-        super(RuleUpdatePropertiesParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rule_set_name = None
         self.order = order
         self.conditions = conditions
@@ -10853,11 +10695,17 @@ class RuleUpdatePropertiesParameters(msrest.serialization.Model):
         self.match_processing_behavior = match_processing_behavior
 
 
-class RuleProperties(AFDStateProperties, RuleUpdatePropertiesParameters):
+class RuleProperties(RuleUpdatePropertiesParameters, AFDStateProperties):
     """The JSON object that contains the properties of the Rules to create.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
+    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
+     "Failed".
+    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar rule_set_name: The name of the rule set containing the rule.
     :vartype rule_set_name: str
     :ivar order: The order in which the rules are applied for the endpoint. Possible values
@@ -10871,40 +10719,34 @@ class RuleProperties(AFDStateProperties, RuleUpdatePropertiesParameters):
      satisfied.
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
-     running the remaining rules or stop. If not present, defaults to Continue. Possible values
-     include: "Continue", "Stop".
+     running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+     "Continue" and "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
-    :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
-     "Failed".
-    :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     """
 
     _validation = {
-        'rule_set_name': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "rule_set_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'rule_set_name': {'key': 'ruleSetName', 'type': 'str'},
-        'order': {'key': 'order', 'type': 'int'},
-        'conditions': {'key': 'conditions', 'type': '[DeliveryRuleCondition]'},
-        'actions': {'key': 'actions', 'type': '[DeliveryRuleAction]'},
-        'match_processing_behavior': {'key': 'matchProcessingBehavior', 'type': 'str'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "rule_set_name": {"key": "ruleSetName", "type": "str"},
+        "order": {"key": "order", "type": "int"},
+        "conditions": {"key": "conditions", "type": "[DeliveryRuleCondition]"},
+        "actions": {"key": "actions", "type": "[DeliveryRuleAction]"},
+        "match_processing_behavior": {"key": "matchProcessingBehavior", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         order: Optional[int] = None,
-        conditions: Optional[List["DeliveryRuleCondition"]] = None,
-        actions: Optional[List["DeliveryRuleAction"]] = None,
-        match_processing_behavior: Optional[Union[str, "MatchProcessingBehavior"]] = None,
+        conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
+        actions: Optional[List["_models.DeliveryRuleAction"]] = None,
+        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
         **kwargs
     ):
         """
@@ -10919,18 +10761,24 @@ class RuleProperties(AFDStateProperties, RuleUpdatePropertiesParameters):
          satisfied.
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
-         running the remaining rules or stop. If not present, defaults to Continue. Possible values
-         include: "Continue", "Stop".
+         running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+         "Continue" and "Stop".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
-        super(RuleProperties, self).__init__(order=order, conditions=conditions, actions=actions, match_processing_behavior=match_processing_behavior, **kwargs)
+        super().__init__(
+            order=order,
+            conditions=conditions,
+            actions=actions,
+            match_processing_behavior=match_processing_behavior,
+            **kwargs
+        )
+        self.provisioning_state = None
+        self.deployment_status = None
         self.rule_set_name = None
         self.order = order
         self.conditions = conditions
         self.actions = actions
         self.match_processing_behavior = match_processing_behavior
-        self.provisioning_state = None
-        self.deployment_status = None
 
 
 class RuleSet(ProxyResource):
@@ -10946,10 +10794,10 @@ class RuleSet(ProxyResource):
     :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar profile_name: The name of the profile which holds the rule set.
@@ -10957,38 +10805,34 @@ class RuleSet(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'profile_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RuleSet, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.deployment_status = None
         self.profile_name = None
 
 
-class RuleSetListResult(msrest.serialization.Model):
+class RuleSetListResult(_serialization.Model):
     """Result of the request to list rule sets. It contains a list of rule set objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11000,25 +10844,20 @@ class RuleSetListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[RuleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[RuleSet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of rule set objects if there are any.
         :paramtype next_link: str
         """
-        super(RuleSetListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
@@ -11028,10 +10867,10 @@ class RuleSetProperties(AFDStateProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar profile_name: The name of the profile which holds the rule set.
@@ -11039,28 +10878,24 @@ class RuleSetProperties(AFDStateProperties):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'profile_name': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'profile_name': {'key': 'profileName', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "profile_name": {"key": "profileName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(RuleSetProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.profile_name = None
 
 
-class RuleUpdateParameters(msrest.serialization.Model):
+class RuleUpdateParameters(_serialization.Model):
     """The domain JSON object required for domain creation or update.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11078,30 +10913,30 @@ class RuleUpdateParameters(msrest.serialization.Model):
      satisfied.
     :vartype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
     :ivar match_processing_behavior: If this rule is a match should the rules engine continue
-     running the remaining rules or stop. If not present, defaults to Continue. Possible values
-     include: "Continue", "Stop".
+     running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+     "Continue" and "Stop".
     :vartype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
     """
 
     _validation = {
-        'rule_set_name': {'readonly': True},
+        "rule_set_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'rule_set_name': {'key': 'properties.ruleSetName', 'type': 'str'},
-        'order': {'key': 'properties.order', 'type': 'int'},
-        'conditions': {'key': 'properties.conditions', 'type': '[DeliveryRuleCondition]'},
-        'actions': {'key': 'properties.actions', 'type': '[DeliveryRuleAction]'},
-        'match_processing_behavior': {'key': 'properties.matchProcessingBehavior', 'type': 'str'},
+        "rule_set_name": {"key": "properties.ruleSetName", "type": "str"},
+        "order": {"key": "properties.order", "type": "int"},
+        "conditions": {"key": "properties.conditions", "type": "[DeliveryRuleCondition]"},
+        "actions": {"key": "properties.actions", "type": "[DeliveryRuleAction]"},
+        "match_processing_behavior": {"key": "properties.matchProcessingBehavior", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         order: Optional[int] = None,
-        conditions: Optional[List["DeliveryRuleCondition"]] = None,
-        actions: Optional[List["DeliveryRuleAction"]] = None,
-        match_processing_behavior: Optional[Union[str, "MatchProcessingBehavior"]] = None,
+        conditions: Optional[List["_models.DeliveryRuleCondition"]] = None,
+        actions: Optional[List["_models.DeliveryRuleAction"]] = None,
+        match_processing_behavior: Optional[Union[str, "_models.MatchProcessingBehavior"]] = None,
         **kwargs
     ):
         """
@@ -11116,11 +10951,11 @@ class RuleUpdateParameters(msrest.serialization.Model):
          satisfied.
         :paramtype actions: list[~azure.mgmt.cdn.models.DeliveryRuleAction]
         :keyword match_processing_behavior: If this rule is a match should the rules engine continue
-         running the remaining rules or stop. If not present, defaults to Continue. Possible values
-         include: "Continue", "Stop".
+         running the remaining rules or stop. If not present, defaults to Continue. Known values are:
+         "Continue" and "Stop".
         :paramtype match_processing_behavior: str or ~azure.mgmt.cdn.models.MatchProcessingBehavior
         """
-        super(RuleUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rule_set_name = None
         self.order = order
         self.conditions = conditions
@@ -11141,10 +10976,10 @@ class Secret(ProxyResource):
     :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar profile_name: The name of the profile which holds the secret.
@@ -11154,44 +10989,39 @@ class Secret(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'profile_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'SecretParameters'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "SecretParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: Optional["SecretParameters"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, parameters: Optional["_models.SecretParameters"] = None, **kwargs):
         """
         :keyword parameters: object which contains secret parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecretParameters
         """
-        super(Secret, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.deployment_status = None
         self.profile_name = None
         self.parameters = parameters
 
 
-class SecretListResult(msrest.serialization.Model):
+class SecretListResult(_serialization.Model):
     """Result of the request to list secrets. It contains a list of Secret objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11203,25 +11033,20 @@ class SecretListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Secret]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Secret]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of Secret objects if there are any.
         :paramtype next_link: str
         """
-        super(SecretListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
@@ -11231,10 +11056,10 @@ class SecretProperties(AFDStateProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar profile_name: The name of the profile which holds the secret.
@@ -11244,29 +11069,24 @@ class SecretProperties(AFDStateProperties):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'profile_name': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'profile_name': {'key': 'profileName', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'SecretParameters'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "parameters": {"key": "parameters", "type": "SecretParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: Optional["SecretParameters"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, parameters: Optional["_models.SecretParameters"] = None, **kwargs):
         """
         :keyword parameters: object which contains secret parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecretParameters
         """
-        super(SecretProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.parameters = parameters
 
@@ -11284,10 +11104,10 @@ class SecurityPolicy(ProxyResource):
     :vartype type: str
     :ivar system_data: Read only system data.
     :vartype system_data: ~azure.mgmt.cdn.models.SystemData
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar profile_name: The name of the profile which holds the security policy.
@@ -11297,44 +11117,39 @@ class SecurityPolicy(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'profile_name': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'properties.deploymentStatus', 'type': 'str'},
-        'profile_name': {'key': 'properties.profileName', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'SecurityPolicyPropertiesParameters'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "deployment_status": {"key": "properties.deploymentStatus", "type": "str"},
+        "profile_name": {"key": "properties.profileName", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "SecurityPolicyPropertiesParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: Optional["SecurityPolicyPropertiesParameters"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs):
         """
         :keyword parameters: object which contains security policy parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecurityPolicyPropertiesParameters
         """
-        super(SecurityPolicy, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provisioning_state = None
         self.deployment_status = None
         self.profile_name = None
         self.parameters = parameters
 
 
-class SecurityPolicyListResult(msrest.serialization.Model):
+class SecurityPolicyListResult(_serialization.Model):
     """Result of the request to list security policies. It contains a list of security policy objects and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11346,25 +11161,20 @@ class SecurityPolicyListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SecurityPolicy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SecurityPolicy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
         """
         :keyword next_link: URL to get the next set of security policy objects if there is any.
         :paramtype next_link: str
         """
-        super(SecurityPolicyListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
@@ -11374,10 +11184,10 @@ class SecurityPolicyProperties(AFDStateProperties):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar provisioning_state: Provisioning status. Possible values include: "Succeeded", "Failed",
-     "Updating", "Deleting", "Creating".
+    :ivar provisioning_state: Provisioning status. Known values are: "Succeeded", "Failed",
+     "Updating", "Deleting", and "Creating".
     :vartype provisioning_state: str or ~azure.mgmt.cdn.models.AfdProvisioningState
-    :ivar deployment_status: Possible values include: "NotStarted", "InProgress", "Succeeded",
+    :ivar deployment_status: Known values are: "NotStarted", "InProgress", "Succeeded", and
      "Failed".
     :vartype deployment_status: str or ~azure.mgmt.cdn.models.DeploymentStatus
     :ivar profile_name: The name of the profile which holds the security policy.
@@ -11387,69 +11197,57 @@ class SecurityPolicyProperties(AFDStateProperties):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'deployment_status': {'readonly': True},
-        'profile_name': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "deployment_status": {"readonly": True},
+        "profile_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'profile_name': {'key': 'profileName', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'SecurityPolicyPropertiesParameters'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "profile_name": {"key": "profileName", "type": "str"},
+        "parameters": {"key": "parameters", "type": "SecurityPolicyPropertiesParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: Optional["SecurityPolicyPropertiesParameters"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs):
         """
         :keyword parameters: object which contains security policy parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecurityPolicyPropertiesParameters
         """
-        super(SecurityPolicyProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.profile_name = None
         self.parameters = parameters
 
 
-class SecurityPolicyPropertiesParameters(msrest.serialization.Model):
+class SecurityPolicyPropertiesParameters(_serialization.Model):
     """The json object containing security policy parameters.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SecurityPolicyWebApplicationFirewallParameters.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SecurityPolicyWebApplicationFirewallParameters
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the Security policy to create.Constant filled by server.
-     Possible values include: "WebApplicationFirewall".
+    :ivar type: The type of the Security policy to create. Required. "WebApplicationFirewall"
     :vartype type: str or ~azure.mgmt.cdn.models.SecurityPolicyType
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'WebApplicationFirewall': 'SecurityPolicyWebApplicationFirewallParameters'}
-    }
+    _subtype_map = {"type": {"WebApplicationFirewall": "SecurityPolicyWebApplicationFirewallParameters"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SecurityPolicyPropertiesParameters, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None  # type: Optional[str]
 
 
-class SecurityPolicyUpdateParameters(msrest.serialization.Model):
+class SecurityPolicyUpdateParameters(_serialization.Model):
     """The JSON object containing security policy update parameters.
 
     :ivar parameters: object which contains security policy parameters.
@@ -11457,24 +11255,19 @@ class SecurityPolicyUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'parameters': {'key': 'properties.parameters', 'type': 'SecurityPolicyPropertiesParameters'},
+        "parameters": {"key": "properties.parameters", "type": "SecurityPolicyPropertiesParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: Optional["SecurityPolicyPropertiesParameters"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, parameters: Optional["_models.SecurityPolicyPropertiesParameters"] = None, **kwargs):
         """
         :keyword parameters: object which contains security policy parameters.
         :paramtype parameters: ~azure.mgmt.cdn.models.SecurityPolicyPropertiesParameters
         """
-        super(SecurityPolicyUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.parameters = parameters
 
 
-class SecurityPolicyWebApplicationFirewallAssociation(msrest.serialization.Model):
+class SecurityPolicyWebApplicationFirewallAssociation(_serialization.Model):
     """settings for security policy patterns to match.
 
     :ivar domains: List of domains.
@@ -11484,14 +11277,14 @@ class SecurityPolicyWebApplicationFirewallAssociation(msrest.serialization.Model
     """
 
     _attribute_map = {
-        'domains': {'key': 'domains', 'type': '[ActivatedResourceReference]'},
-        'patterns_to_match': {'key': 'patternsToMatch', 'type': '[str]'},
+        "domains": {"key": "domains", "type": "[ActivatedResourceReference]"},
+        "patterns_to_match": {"key": "patternsToMatch", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        domains: Optional[List["ActivatedResourceReference"]] = None,
+        domains: Optional[List["_models.ActivatedResourceReference"]] = None,
         patterns_to_match: Optional[List[str]] = None,
         **kwargs
     ):
@@ -11501,7 +11294,7 @@ class SecurityPolicyWebApplicationFirewallAssociation(msrest.serialization.Model
         :keyword patterns_to_match: List of paths.
         :paramtype patterns_to_match: list[str]
         """
-        super(SecurityPolicyWebApplicationFirewallAssociation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.domains = domains
         self.patterns_to_match = patterns_to_match
 
@@ -11511,8 +11304,7 @@ class SecurityPolicyWebApplicationFirewallParameters(SecurityPolicyPropertiesPar
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the Security policy to create.Constant filled by server.
-     Possible values include: "WebApplicationFirewall".
+    :ivar type: The type of the Security policy to create. Required. "WebApplicationFirewall"
     :vartype type: str or ~azure.mgmt.cdn.models.SecurityPolicyType
     :ivar waf_policy: Resource ID.
     :vartype waf_policy: ~azure.mgmt.cdn.models.ResourceReference
@@ -11522,20 +11314,20 @@ class SecurityPolicyWebApplicationFirewallParameters(SecurityPolicyPropertiesPar
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'waf_policy': {'key': 'wafPolicy', 'type': 'ResourceReference'},
-        'associations': {'key': 'associations', 'type': '[SecurityPolicyWebApplicationFirewallAssociation]'},
+        "type": {"key": "type", "type": "str"},
+        "waf_policy": {"key": "wafPolicy", "type": "ResourceReference"},
+        "associations": {"key": "associations", "type": "[SecurityPolicyWebApplicationFirewallAssociation]"},
     }
 
     def __init__(
         self,
         *,
-        waf_policy: Optional["ResourceReference"] = None,
-        associations: Optional[List["SecurityPolicyWebApplicationFirewallAssociation"]] = None,
+        waf_policy: Optional["_models.ResourceReference"] = None,
+        associations: Optional[List["_models.SecurityPolicyWebApplicationFirewallAssociation"]] = None,
         **kwargs
     ):
         """
@@ -11545,24 +11337,22 @@ class SecurityPolicyWebApplicationFirewallParameters(SecurityPolicyPropertiesPar
         :paramtype associations:
          list[~azure.mgmt.cdn.models.SecurityPolicyWebApplicationFirewallAssociation]
         """
-        super(SecurityPolicyWebApplicationFirewallParameters, self).__init__(**kwargs)
-        self.type = 'WebApplicationFirewall'  # type: str
+        super().__init__(**kwargs)
+        self.type = "WebApplicationFirewall"  # type: str
         self.waf_policy = waf_policy
         self.associations = associations
 
 
-class ServerPortMatchConditionParameters(msrest.serialization.Model):
+class ServerPortMatchConditionParameters(_serialization.Model):
     """Defines the parameters for ServerPort match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleServerPortConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleServerPortConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.ServerPortMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.ServerPortOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -11573,33 +11363,34 @@ class ServerPortMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleServerPortConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "ServerPortOperator"],
+        type_name: Union[str, "_models.ServerPortMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.ServerPortOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleServerPortConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.ServerPortMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.ServerPortOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -11608,14 +11399,15 @@ class ServerPortMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(ServerPortMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """One property of operation, include log specifications.
 
     :ivar log_specifications: Log specifications of operation.
@@ -11625,15 +11417,15 @@ class ServiceSpecification(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["LogSpecification"]] = None,
-        metric_specifications: Optional[List["MetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
         **kwargs
     ):
         """
@@ -11642,12 +11434,12 @@ class ServiceSpecification(msrest.serialization.Model):
         :keyword metric_specifications: Metric specifications of operation.
         :paramtype metric_specifications: list[~azure.mgmt.cdn.models.MetricSpecification]
         """
-        super(ServiceSpecification, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.log_specifications = log_specifications
         self.metric_specifications = metric_specifications
 
 
-class SharedPrivateLinkResourceProperties(msrest.serialization.Model):
+class SharedPrivateLinkResourceProperties(_serialization.Model):
     """Describes the properties of an existing Shared Private Link Resource to use when connecting to a private origin.
 
     :ivar private_link: The resource id of the resource the shared private link resource is for.
@@ -11661,27 +11453,27 @@ class SharedPrivateLinkResourceProperties(msrest.serialization.Model):
      resource.
     :vartype request_message: str
     :ivar status: Status of the shared private link resource. Can be Pending, Approved, Rejected,
-     Disconnected, or Timeout. Possible values include: "Pending", "Approved", "Rejected",
-     "Disconnected", "Timeout".
+     Disconnected, or Timeout. Known values are: "Pending", "Approved", "Rejected", "Disconnected",
+     and "Timeout".
     :vartype status: str or ~azure.mgmt.cdn.models.SharedPrivateLinkResourceStatus
     """
 
     _attribute_map = {
-        'private_link': {'key': 'privateLink', 'type': 'ResourceReference'},
-        'private_link_location': {'key': 'privateLinkLocation', 'type': 'str'},
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'request_message': {'key': 'requestMessage', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "private_link": {"key": "privateLink", "type": "ResourceReference"},
+        "private_link_location": {"key": "privateLinkLocation", "type": "str"},
+        "group_id": {"key": "groupId", "type": "str"},
+        "request_message": {"key": "requestMessage", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        private_link: Optional["ResourceReference"] = None,
+        private_link: Optional["_models.ResourceReference"] = None,
         private_link_location: Optional[str] = None,
         group_id: Optional[str] = None,
         request_message: Optional[str] = None,
-        status: Optional[Union[str, "SharedPrivateLinkResourceStatus"]] = None,
+        status: Optional[Union[str, "_models.SharedPrivateLinkResourceStatus"]] = None,
         **kwargs
     ):
         """
@@ -11696,11 +11488,11 @@ class SharedPrivateLinkResourceProperties(msrest.serialization.Model):
          link resource.
         :paramtype request_message: str
         :keyword status: Status of the shared private link resource. Can be Pending, Approved,
-         Rejected, Disconnected, or Timeout. Possible values include: "Pending", "Approved", "Rejected",
-         "Disconnected", "Timeout".
+         Rejected, Disconnected, or Timeout. Known values are: "Pending", "Approved", "Rejected",
+         "Disconnected", and "Timeout".
         :paramtype status: str or ~azure.mgmt.cdn.models.SharedPrivateLinkResourceStatus
         """
-        super(SharedPrivateLinkResourceProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.private_link = private_link
         self.private_link_location = private_link_location
         self.group_id = group_id
@@ -11708,61 +11500,54 @@ class SharedPrivateLinkResourceProperties(msrest.serialization.Model):
         self.status = status
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """Standard_Verizon = The SKU name for a Standard Verizon CDN profile.
-Premium_Verizon = The SKU name for a Premium Verizon CDN profile.
-Custom_Verizon = The SKU name for a Custom Verizon CDN profile.
-Standard_Akamai = The SKU name for an Akamai CDN profile.
-Standard_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using GB based billing model.
-Standard_Microsoft = The SKU name for a Standard Microsoft CDN profile.
-Standard_AzureFrontDoor =  The SKU name for an Azure Front Door Standard profile.
-Premium_AzureFrontDoor = The SKU name for an Azure Front Door Premium profile.
-Standard_955BandWidth_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using 95-5 peak bandwidth billing model.
-Standard_AvgBandWidth_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using monthly average peak bandwidth billing model.
-StandardPlus_ChinaCdn = The SKU name for a China CDN profile for live-streaming using GB based billing model.
-StandardPlus_955BandWidth_ChinaCdn = The SKU name for a China CDN live-streaming profile using 95-5 peak bandwidth billing model.
-StandardPlus_AvgBandWidth_ChinaCdn = The SKU name for a China CDN live-streaming profile using monthly average peak bandwidth billing model.
+    Premium_Verizon = The SKU name for a Premium Verizon CDN profile.
+    Custom_Verizon = The SKU name for a Custom Verizon CDN profile.
+    Standard_Akamai = The SKU name for an Akamai CDN profile.
+    Standard_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using GB based billing model.
+    Standard_Microsoft = The SKU name for a Standard Microsoft CDN profile.
+    Standard_AzureFrontDoor =  The SKU name for an Azure Front Door Standard profile.
+    Premium_AzureFrontDoor = The SKU name for an Azure Front Door Premium profile.
+    Standard_955BandWidth_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using 95-5 peak bandwidth billing model.
+    Standard_AvgBandWidth_ChinaCdn = The SKU name for a China CDN profile for VOD, Web and download scenarios using monthly average peak bandwidth billing model.
+    StandardPlus_ChinaCdn = The SKU name for a China CDN profile for live-streaming using GB based billing model.
+    StandardPlus_955BandWidth_ChinaCdn = The SKU name for a China CDN live-streaming profile using 95-5 peak bandwidth billing model.
+    StandardPlus_AvgBandWidth_ChinaCdn = The SKU name for a China CDN live-streaming profile using monthly average peak bandwidth billing model.
 
-    :ivar name: Name of the pricing tier. Possible values include: "Standard_Verizon",
-     "Premium_Verizon", "Custom_Verizon", "Standard_Akamai", "Standard_ChinaCdn",
-     "Standard_Microsoft", "Standard_AzureFrontDoor", "Premium_AzureFrontDoor",
-     "Standard_955BandWidth_ChinaCdn", "Standard_AvgBandWidth_ChinaCdn", "StandardPlus_ChinaCdn",
-     "StandardPlus_955BandWidth_ChinaCdn", "StandardPlus_AvgBandWidth_ChinaCdn".
-    :vartype name: str or ~azure.mgmt.cdn.models.SkuName
+        :ivar name: Name of the pricing tier. Known values are: "Standard_Verizon", "Premium_Verizon",
+         "Custom_Verizon", "Standard_Akamai", "Standard_ChinaCdn", "Standard_Microsoft",
+         "Standard_AzureFrontDoor", "Premium_AzureFrontDoor", "Standard_955BandWidth_ChinaCdn",
+         "Standard_AvgBandWidth_ChinaCdn", "StandardPlus_ChinaCdn",
+         "StandardPlus_955BandWidth_ChinaCdn", and "StandardPlus_AvgBandWidth_ChinaCdn".
+        :vartype name: str or ~azure.mgmt.cdn.models.SkuName
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "SkuName"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[Union[str, "_models.SkuName"]] = None, **kwargs):
         """
-        :keyword name: Name of the pricing tier. Possible values include: "Standard_Verizon",
+        :keyword name: Name of the pricing tier. Known values are: "Standard_Verizon",
          "Premium_Verizon", "Custom_Verizon", "Standard_Akamai", "Standard_ChinaCdn",
          "Standard_Microsoft", "Standard_AzureFrontDoor", "Premium_AzureFrontDoor",
          "Standard_955BandWidth_ChinaCdn", "Standard_AvgBandWidth_ChinaCdn", "StandardPlus_ChinaCdn",
-         "StandardPlus_955BandWidth_ChinaCdn", "StandardPlus_AvgBandWidth_ChinaCdn".
+         "StandardPlus_955BandWidth_ChinaCdn", and "StandardPlus_AvgBandWidth_ChinaCdn".
         :paramtype name: str or ~azure.mgmt.cdn.models.SkuName
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class SocketAddrMatchConditionParameters(msrest.serialization.Model):
+class SocketAddrMatchConditionParameters(_serialization.Model):
     """Defines the parameters for SocketAddress match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleSocketAddrConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
+    :ivar type_name: Required. "DeliveryRuleSocketAddrConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.SocketAddrMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any" and
      "IPMatch".
     :vartype operator: str or ~azure.mgmt.cdn.models.SocketAddrOperator
     :ivar negate_condition: Describes if this is negate condition or not.
@@ -11774,31 +11559,32 @@ class SocketAddrMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleSocketAddrConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "SocketAddrOperator"],
+        type_name: Union[str, "_models.SocketAddrMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.SocketAddrOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleSocketAddrConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.SocketAddrMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any" and
          "IPMatch".
         :paramtype operator: str or ~azure.mgmt.cdn.models.SocketAddrOperator
         :keyword negate_condition: Describes if this is negate condition or not.
@@ -11808,23 +11594,22 @@ class SocketAddrMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(SocketAddrMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class SslProtocolMatchConditionParameters(msrest.serialization.Model):
+class SslProtocolMatchConditionParameters(_serialization.Model):
     """Defines the parameters for SslProtocol match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleSslProtocolConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Equal".
+    :ivar type_name: Required. "DeliveryRuleSslProtocolConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.SslProtocolMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. "Equal"
     :vartype operator: str or ~azure.mgmt.cdn.models.SslProtocolOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -11835,32 +11620,32 @@ class SslProtocolMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleSslProtocolConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "SslProtocolOperator"],
+        type_name: Union[str, "_models.SslProtocolMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.SslProtocolOperator"],
         negate_condition: Optional[bool] = None,
-        match_values: Optional[List[Union[str, "SslProtocol"]]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        match_values: Optional[List[Union[str, "_models.SslProtocol"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include:
-         "Equal".
+        :keyword type_name: Required. "DeliveryRuleSslProtocolConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.SslProtocolMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. "Equal"
         :paramtype operator: str or ~azure.mgmt.cdn.models.SslProtocolOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -11869,14 +11654,15 @@ class SslProtocolMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(SslProtocolMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class SsoUri(msrest.serialization.Model):
+class SsoUri(_serialization.Model):
     """The URI required to login to the supplemental portal from the Azure portal.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11886,24 +11672,20 @@ class SsoUri(msrest.serialization.Model):
     """
 
     _validation = {
-        'sso_uri_value': {'readonly': True},
+        "sso_uri_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'sso_uri_value': {'key': 'ssoUriValue', 'type': 'str'},
+        "sso_uri_value": {"key": "ssoUriValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SsoUri, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.sso_uri_value = None
 
 
-class SupportedOptimizationTypesListResult(msrest.serialization.Model):
+class SupportedOptimizationTypesListResult(_serialization.Model):
     """The result of the GetSupportedOptimizationTypes API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -11913,79 +11695,75 @@ class SupportedOptimizationTypesListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'supported_optimization_types': {'readonly': True},
+        "supported_optimization_types": {"readonly": True},
     }
 
     _attribute_map = {
-        'supported_optimization_types': {'key': 'supportedOptimizationTypes', 'type': '[str]'},
+        "supported_optimization_types": {"key": "supportedOptimizationTypes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(SupportedOptimizationTypesListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.supported_optimization_types = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Read only system data.
 
     :ivar created_by: An identifier for the identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "user", "application", "managedIdentity", "key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "user", "application", "managedIdentity", and "key".
     :vartype created_by_type: str or ~azure.mgmt.cdn.models.IdentityType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: An identifier for the identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "user", "application", "managedIdentity", "key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "user", "application", "managedIdentity", and "key".
     :vartype last_modified_by_type: str or ~azure.mgmt.cdn.models.IdentityType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "IdentityType"]] = None,
+        created_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "IdentityType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.IdentityType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: An identifier for the identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "user", "application", "managedIdentity", "key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "user", "application", "managedIdentity", and "key".
         :paramtype created_by_type: str or ~azure.mgmt.cdn.models.IdentityType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: An identifier for the identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "user", "application", "managedIdentity", "key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "user", "application", "managedIdentity", and "key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.cdn.models.IdentityType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -11994,18 +11772,17 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UrlFileExtensionMatchConditionParameters(msrest.serialization.Model):
+class UrlFileExtensionMatchConditionParameters(_serialization.Model):
     """Defines the parameters for UrlFileExtension match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleUrlFileExtensionMatchConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleUrlFileExtensionMatchConditionParameters"
+    :vartype type_name: str or
+     ~azure.mgmt.cdn.models.UrlFileExtensionMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.UrlFileExtensionOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -12016,33 +11793,35 @@ class UrlFileExtensionMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleUrlFileExtensionMatchConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "UrlFileExtensionOperator"],
+        type_name: Union[str, "_models.UrlFileExtensionMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.UrlFileExtensionOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleUrlFileExtensionMatchConditionParameters"
+        :paramtype type_name: str or
+         ~azure.mgmt.cdn.models.UrlFileExtensionMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.UrlFileExtensionOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -12051,25 +11830,24 @@ class UrlFileExtensionMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(UrlFileExtensionMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class UrlFileNameMatchConditionParameters(msrest.serialization.Model):
+class UrlFileNameMatchConditionParameters(_serialization.Model):
     """Defines the parameters for UrlFilename match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleUrlFilenameConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleUrlFilenameConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.UrlFileNameMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.UrlFileNameOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -12080,33 +11858,34 @@ class UrlFileNameMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleUrlFilenameConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "UrlFileNameOperator"],
+        type_name: Union[str, "_models.UrlFileNameMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.UrlFileNameOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleUrlFilenameConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlFileNameMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "RegEx".
+         "GreaterThanOrEqual", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.UrlFileNameOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -12115,25 +11894,24 @@ class UrlFileNameMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(UrlFileNameMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
         self.transforms = transforms
 
 
-class UrlPathMatchConditionParameters(msrest.serialization.Model):
+class UrlPathMatchConditionParameters(_serialization.Model):
     """Defines the parameters for UrlPath match conditions.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleUrlPathMatchConditionParameters".
-    :vartype type_name: str
-    :ivar operator: Required. Describes operator to be matched. Possible values include: "Any",
-     "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-     "GreaterThanOrEqual", "Wildcard", "RegEx".
+    :ivar type_name: Required. "DeliveryRuleUrlPathMatchConditionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.UrlPathMatchConditionParametersTypeName
+    :ivar operator: Describes operator to be matched. Required. Known values are: "Any", "Equal",
+     "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
+     "GreaterThanOrEqual", "Wildcard", and "RegEx".
     :vartype operator: str or ~azure.mgmt.cdn.models.UrlPathOperator
     :ivar negate_condition: Describes if this is negate condition or not.
     :vartype negate_condition: bool
@@ -12144,33 +11922,34 @@ class UrlPathMatchConditionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'operator': {'required': True},
+        "type_name": {"required": True},
+        "operator": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'operator': {'key': 'operator', 'type': 'str'},
-        'negate_condition': {'key': 'negateCondition', 'type': 'bool'},
-        'match_values': {'key': 'matchValues', 'type': '[str]'},
-        'transforms': {'key': 'transforms', 'type': '[str]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "operator": {"key": "operator", "type": "str"},
+        "negate_condition": {"key": "negateCondition", "type": "bool"},
+        "match_values": {"key": "matchValues", "type": "[str]"},
+        "transforms": {"key": "transforms", "type": "[str]"},
     }
-
-    type_name = "DeliveryRuleUrlPathMatchConditionParameters"
 
     def __init__(
         self,
         *,
-        operator: Union[str, "UrlPathOperator"],
+        type_name: Union[str, "_models.UrlPathMatchConditionParametersTypeName"],
+        operator: Union[str, "_models.UrlPathOperator"],
         negate_condition: Optional[bool] = None,
         match_values: Optional[List[str]] = None,
-        transforms: Optional[List[Union[str, "Transform"]]] = None,
+        transforms: Optional[List[Union[str, "_models.Transform"]]] = None,
         **kwargs
     ):
         """
-        :keyword operator: Required. Describes operator to be matched. Possible values include: "Any",
+        :keyword type_name: Required. "DeliveryRuleUrlPathMatchConditionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlPathMatchConditionParametersTypeName
+        :keyword operator: Describes operator to be matched. Required. Known values are: "Any",
          "Equal", "Contains", "BeginsWith", "EndsWith", "LessThan", "LessThanOrEqual", "GreaterThan",
-         "GreaterThanOrEqual", "Wildcard", "RegEx".
+         "GreaterThanOrEqual", "Wildcard", and "RegEx".
         :paramtype operator: str or ~azure.mgmt.cdn.models.UrlPathOperator
         :keyword negate_condition: Describes if this is negate condition or not.
         :paramtype negate_condition: bool
@@ -12179,7 +11958,8 @@ class UrlPathMatchConditionParameters(msrest.serialization.Model):
         :keyword transforms: List of transforms.
         :paramtype transforms: list[str or ~azure.mgmt.cdn.models.Transform]
         """
-        super(UrlPathMatchConditionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.operator = operator
         self.negate_condition = negate_condition
         self.match_values = match_values
@@ -12191,54 +11971,47 @@ class UrlRedirectAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.UrlRedirectActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'UrlRedirectActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "UrlRedirectActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "UrlRedirectActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.UrlRedirectActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlRedirectActionParameters
         """
-        super(UrlRedirectAction, self).__init__(**kwargs)
-        self.name = 'UrlRedirect'  # type: str
+        super().__init__(**kwargs)
+        self.name = "UrlRedirect"  # type: str
         self.parameters = parameters
 
 
-class UrlRedirectActionParameters(msrest.serialization.Model):
+class UrlRedirectActionParameters(_serialization.Model):
     """Defines the parameters for the url redirect action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleUrlRedirectActionParameters".
-    :vartype type_name: str
-    :ivar redirect_type: Required. The redirect type the rule will use when redirecting traffic.
-     Possible values include: "Moved", "Found", "TemporaryRedirect", "PermanentRedirect".
+    :ivar type_name: Required. "DeliveryRuleUrlRedirectActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.UrlRedirectActionParametersTypeName
+    :ivar redirect_type: The redirect type the rule will use when redirecting traffic. Required.
+     Known values are: "Moved", "Found", "TemporaryRedirect", and "PermanentRedirect".
     :vartype redirect_type: str or ~azure.mgmt.cdn.models.RedirectType
     :ivar destination_protocol: Protocol to use for the redirect. The default value is
-     MatchRequest. Possible values include: "MatchRequest", "Http", "Https".
+     MatchRequest. Known values are: "MatchRequest", "Http", and "Https".
     :vartype destination_protocol: str or ~azure.mgmt.cdn.models.DestinationProtocol
     :ivar custom_path: The full path to redirect. Path cannot be empty and must start with /. Leave
      empty to use the incoming path as destination path.
@@ -12257,27 +12030,26 @@ class UrlRedirectActionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'redirect_type': {'required': True},
+        "type_name": {"required": True},
+        "redirect_type": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'redirect_type': {'key': 'redirectType', 'type': 'str'},
-        'destination_protocol': {'key': 'destinationProtocol', 'type': 'str'},
-        'custom_path': {'key': 'customPath', 'type': 'str'},
-        'custom_hostname': {'key': 'customHostname', 'type': 'str'},
-        'custom_query_string': {'key': 'customQueryString', 'type': 'str'},
-        'custom_fragment': {'key': 'customFragment', 'type': 'str'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "redirect_type": {"key": "redirectType", "type": "str"},
+        "destination_protocol": {"key": "destinationProtocol", "type": "str"},
+        "custom_path": {"key": "customPath", "type": "str"},
+        "custom_hostname": {"key": "customHostname", "type": "str"},
+        "custom_query_string": {"key": "customQueryString", "type": "str"},
+        "custom_fragment": {"key": "customFragment", "type": "str"},
     }
-
-    type_name = "DeliveryRuleUrlRedirectActionParameters"
 
     def __init__(
         self,
         *,
-        redirect_type: Union[str, "RedirectType"],
-        destination_protocol: Optional[Union[str, "DestinationProtocol"]] = None,
+        type_name: Union[str, "_models.UrlRedirectActionParametersTypeName"],
+        redirect_type: Union[str, "_models.RedirectType"],
+        destination_protocol: Optional[Union[str, "_models.DestinationProtocol"]] = None,
         custom_path: Optional[str] = None,
         custom_hostname: Optional[str] = None,
         custom_query_string: Optional[str] = None,
@@ -12285,11 +12057,13 @@ class UrlRedirectActionParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword redirect_type: Required. The redirect type the rule will use when redirecting traffic.
-         Possible values include: "Moved", "Found", "TemporaryRedirect", "PermanentRedirect".
+        :keyword type_name: Required. "DeliveryRuleUrlRedirectActionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlRedirectActionParametersTypeName
+        :keyword redirect_type: The redirect type the rule will use when redirecting traffic. Required.
+         Known values are: "Moved", "Found", "TemporaryRedirect", and "PermanentRedirect".
         :paramtype redirect_type: str or ~azure.mgmt.cdn.models.RedirectType
         :keyword destination_protocol: Protocol to use for the redirect. The default value is
-         MatchRequest. Possible values include: "MatchRequest", "Http", "Https".
+         MatchRequest. Known values are: "MatchRequest", "Http", and "Https".
         :paramtype destination_protocol: str or ~azure.mgmt.cdn.models.DestinationProtocol
         :keyword custom_path: The full path to redirect. Path cannot be empty and must start with /.
          Leave empty to use the incoming path as destination path.
@@ -12306,7 +12080,8 @@ class UrlRedirectActionParameters(msrest.serialization.Model):
          that comes after #. Do not include the #.
         :paramtype custom_fragment: str
         """
-        super(UrlRedirectActionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.redirect_type = redirect_type
         self.destination_protocol = destination_protocol
         self.custom_path = custom_path
@@ -12320,93 +12095,88 @@ class UrlRewriteAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.UrlRewriteActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'UrlRewriteActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "UrlRewriteActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "UrlRewriteActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.UrlRewriteActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlRewriteActionParameters
         """
-        super(UrlRewriteAction, self).__init__(**kwargs)
-        self.name = 'UrlRewrite'  # type: str
+        super().__init__(**kwargs)
+        self.name = "UrlRewrite"  # type: str
         self.parameters = parameters
 
 
-class UrlRewriteActionParameters(msrest.serialization.Model):
+class UrlRewriteActionParameters(_serialization.Model):
     """Defines the parameters for the url rewrite action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleUrlRewriteActionParameters".
-    :vartype type_name: str
-    :ivar source_pattern: Required. define a request URI pattern that identifies the type of
-     requests that may be rewritten. If value is blank, all strings are matched.
+    :ivar type_name: Required. "DeliveryRuleUrlRewriteActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.UrlRewriteActionParametersTypeName
+    :ivar source_pattern: define a request URI pattern that identifies the type of requests that
+     may be rewritten. If value is blank, all strings are matched. Required.
     :vartype source_pattern: str
-    :ivar destination: Required. Define the relative URL to which the above requests will be
-     rewritten by.
+    :ivar destination: Define the relative URL to which the above requests will be rewritten by.
+     Required.
     :vartype destination: str
     :ivar preserve_unmatched_path: Whether to preserve unmatched path. Default value is true.
     :vartype preserve_unmatched_path: bool
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
-        'source_pattern': {'required': True},
-        'destination': {'required': True},
+        "type_name": {"required": True},
+        "source_pattern": {"required": True},
+        "destination": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'source_pattern': {'key': 'sourcePattern', 'type': 'str'},
-        'destination': {'key': 'destination', 'type': 'str'},
-        'preserve_unmatched_path': {'key': 'preserveUnmatchedPath', 'type': 'bool'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "source_pattern": {"key": "sourcePattern", "type": "str"},
+        "destination": {"key": "destination", "type": "str"},
+        "preserve_unmatched_path": {"key": "preserveUnmatchedPath", "type": "bool"},
     }
-
-    type_name = "DeliveryRuleUrlRewriteActionParameters"
 
     def __init__(
         self,
         *,
+        type_name: Union[str, "_models.UrlRewriteActionParametersTypeName"],
         source_pattern: str,
         destination: str,
         preserve_unmatched_path: Optional[bool] = None,
         **kwargs
     ):
         """
-        :keyword source_pattern: Required. define a request URI pattern that identifies the type of
-         requests that may be rewritten. If value is blank, all strings are matched.
+        :keyword type_name: Required. "DeliveryRuleUrlRewriteActionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlRewriteActionParametersTypeName
+        :keyword source_pattern: define a request URI pattern that identifies the type of requests that
+         may be rewritten. If value is blank, all strings are matched. Required.
         :paramtype source_pattern: str
-        :keyword destination: Required. Define the relative URL to which the above requests will be
-         rewritten by.
+        :keyword destination: Define the relative URL to which the above requests will be rewritten by.
+         Required.
         :paramtype destination: str
         :keyword preserve_unmatched_path: Whether to preserve unmatched path. Default value is true.
         :paramtype preserve_unmatched_path: bool
         """
-        super(UrlRewriteActionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.source_pattern = source_pattern
         self.destination = destination
         self.preserve_unmatched_path = preserve_unmatched_path
@@ -12417,50 +12187,43 @@ class UrlSigningAction(DeliveryRuleAction):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the action for the delivery rule.Constant filled by server.
-     Possible values include: "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader",
-     "ModifyResponseHeader", "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride",
+    :ivar name: The name of the action for the delivery rule. Required. Known values are:
+     "CacheExpiration", "CacheKeyQueryString", "ModifyRequestHeader", "ModifyResponseHeader",
+     "UrlRedirect", "UrlRewrite", "UrlSigning", "OriginGroupOverride", and
      "RouteConfigurationOverride".
     :vartype name: str or ~azure.mgmt.cdn.models.DeliveryRuleActionEnum
-    :ivar parameters: Required. Defines the parameters for the action.
+    :ivar parameters: Defines the parameters for the action. Required.
     :vartype parameters: ~azure.mgmt.cdn.models.UrlSigningActionParameters
     """
 
     _validation = {
-        'name': {'required': True},
-        'parameters': {'required': True},
+        "name": {"required": True},
+        "parameters": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': 'UrlSigningActionParameters'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "UrlSigningActionParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: "UrlSigningActionParameters",
-        **kwargs
-    ):
+    def __init__(self, *, parameters: "_models.UrlSigningActionParameters", **kwargs):
         """
-        :keyword parameters: Required. Defines the parameters for the action.
+        :keyword parameters: Defines the parameters for the action. Required.
         :paramtype parameters: ~azure.mgmt.cdn.models.UrlSigningActionParameters
         """
-        super(UrlSigningAction, self).__init__(**kwargs)
-        self.name = 'UrlSigning'  # type: str
+        super().__init__(**kwargs)
+        self.name = "UrlSigning"  # type: str
         self.parameters = parameters
 
 
-class UrlSigningActionParameters(msrest.serialization.Model):
+class UrlSigningActionParameters(_serialization.Model):
     """Defines the parameters for the Url Signing action.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type_name:  Has constant value: "DeliveryRuleUrlSigningActionParameters".
-    :vartype type_name: str
-    :ivar algorithm: Algorithm to use for URL signing. Possible values include: "SHA256".
+    :ivar type_name: Required. "DeliveryRuleUrlSigningActionParameters"
+    :vartype type_name: str or ~azure.mgmt.cdn.models.UrlSigningActionParametersTypeName
+    :ivar algorithm: Algorithm to use for URL signing. "SHA256"
     :vartype algorithm: str or ~azure.mgmt.cdn.models.Algorithm
     :ivar parameter_name_override: Defines which query string parameters in the url to be
      considered for expires, key id etc.
@@ -12468,75 +12231,71 @@ class UrlSigningActionParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'type_name': {'required': True, 'constant': True},
+        "type_name": {"required": True},
     }
 
     _attribute_map = {
-        'type_name': {'key': 'typeName', 'type': 'str'},
-        'algorithm': {'key': 'algorithm', 'type': 'str'},
-        'parameter_name_override': {'key': 'parameterNameOverride', 'type': '[UrlSigningParamIdentifier]'},
+        "type_name": {"key": "typeName", "type": "str"},
+        "algorithm": {"key": "algorithm", "type": "str"},
+        "parameter_name_override": {"key": "parameterNameOverride", "type": "[UrlSigningParamIdentifier]"},
     }
-
-    type_name = "DeliveryRuleUrlSigningActionParameters"
 
     def __init__(
         self,
         *,
-        algorithm: Optional[Union[str, "Algorithm"]] = None,
-        parameter_name_override: Optional[List["UrlSigningParamIdentifier"]] = None,
+        type_name: Union[str, "_models.UrlSigningActionParametersTypeName"],
+        algorithm: Optional[Union[str, "_models.Algorithm"]] = None,
+        parameter_name_override: Optional[List["_models.UrlSigningParamIdentifier"]] = None,
         **kwargs
     ):
         """
-        :keyword algorithm: Algorithm to use for URL signing. Possible values include: "SHA256".
+        :keyword type_name: Required. "DeliveryRuleUrlSigningActionParameters"
+        :paramtype type_name: str or ~azure.mgmt.cdn.models.UrlSigningActionParametersTypeName
+        :keyword algorithm: Algorithm to use for URL signing. "SHA256"
         :paramtype algorithm: str or ~azure.mgmt.cdn.models.Algorithm
         :keyword parameter_name_override: Defines which query string parameters in the url to be
          considered for expires, key id etc.
         :paramtype parameter_name_override: list[~azure.mgmt.cdn.models.UrlSigningParamIdentifier]
         """
-        super(UrlSigningActionParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.type_name = type_name
         self.algorithm = algorithm
         self.parameter_name_override = parameter_name_override
 
 
-class UrlSigningKey(msrest.serialization.Model):
+class UrlSigningKey(_serialization.Model):
     """Url signing key.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_id: Required. Defines the customer defined key Id. This id will exist in the incoming
-     request to indicate the key used to form the hash.
+    :ivar key_id: Defines the customer defined key Id. This id will exist in the incoming request
+     to indicate the key used to form the hash. Required.
     :vartype key_id: str
-    :ivar key_source_parameters: Required. Defines the parameters for using customer key vault for
-     Url Signing Key.
+    :ivar key_source_parameters: Defines the parameters for using customer key vault for Url
+     Signing Key. Required.
     :vartype key_source_parameters: ~azure.mgmt.cdn.models.KeyVaultSigningKeyParameters
     """
 
     _validation = {
-        'key_id': {'required': True},
-        'key_source_parameters': {'required': True},
+        "key_id": {"required": True},
+        "key_source_parameters": {"required": True},
     }
 
     _attribute_map = {
-        'key_id': {'key': 'keyId', 'type': 'str'},
-        'key_source_parameters': {'key': 'keySourceParameters', 'type': 'KeyVaultSigningKeyParameters'},
+        "key_id": {"key": "keyId", "type": "str"},
+        "key_source_parameters": {"key": "keySourceParameters", "type": "KeyVaultSigningKeyParameters"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_id: str,
-        key_source_parameters: "KeyVaultSigningKeyParameters",
-        **kwargs
-    ):
+    def __init__(self, *, key_id: str, key_source_parameters: "_models.KeyVaultSigningKeyParameters", **kwargs):
         """
-        :keyword key_id: Required. Defines the customer defined key Id. This id will exist in the
-         incoming request to indicate the key used to form the hash.
+        :keyword key_id: Defines the customer defined key Id. This id will exist in the incoming
+         request to indicate the key used to form the hash. Required.
         :paramtype key_id: str
-        :keyword key_source_parameters: Required. Defines the parameters for using customer key vault
-         for Url Signing Key.
+        :keyword key_source_parameters: Defines the parameters for using customer key vault for Url
+         Signing Key. Required.
         :paramtype key_source_parameters: ~azure.mgmt.cdn.models.KeyVaultSigningKeyParameters
         """
-        super(UrlSigningKey, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_id = key_id
         self.key_source_parameters = key_source_parameters
 
@@ -12546,102 +12305,92 @@ class UrlSigningKeyParameters(SecretParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the secret resource.Constant filled by server. Possible
-     values include: "UrlSigningKey", "CustomerCertificate", "ManagedCertificate",
-     "AzureFirstPartyManagedCertificate".
+    :ivar type: The type of the secret resource. Required. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype type: str or ~azure.mgmt.cdn.models.SecretType
-    :ivar key_id: Required. Defines the customer defined key Id. This id will exist in the incoming
-     request to indicate the key used to form the hash.
+    :ivar key_id: Defines the customer defined key Id. This id will exist in the incoming request
+     to indicate the key used to form the hash. Required.
     :vartype key_id: str
-    :ivar secret_source: Required. Resource reference to the Azure Key Vault secret. Expected to be
-     in format of
+    :ivar secret_source: Resource reference to the Azure Key Vault secret. Expected to be in format
+     of
      /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+     Required.
     :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :ivar secret_version: Version of the secret to be used.
     :vartype secret_version: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'key_id': {'required': True},
-        'secret_source': {'required': True},
+        "type": {"required": True},
+        "key_id": {"required": True},
+        "secret_source": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'key_id': {'key': 'keyId', 'type': 'str'},
-        'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
-        'secret_version': {'key': 'secretVersion', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "key_id": {"key": "keyId", "type": "str"},
+        "secret_source": {"key": "secretSource", "type": "ResourceReference"},
+        "secret_version": {"key": "secretVersion", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        key_id: str,
-        secret_source: "ResourceReference",
-        secret_version: Optional[str] = None,
-        **kwargs
+        self, *, key_id: str, secret_source: "_models.ResourceReference", secret_version: Optional[str] = None, **kwargs
     ):
         """
-        :keyword key_id: Required. Defines the customer defined key Id. This id will exist in the
-         incoming request to indicate the key used to form the hash.
+        :keyword key_id: Defines the customer defined key Id. This id will exist in the incoming
+         request to indicate the key used to form the hash. Required.
         :paramtype key_id: str
-        :keyword secret_source: Required. Resource reference to the Azure Key Vault secret. Expected to
-         be in format of
+        :keyword secret_source: Resource reference to the Azure Key Vault secret. Expected to be in
+         format of
          /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+         Required.
         :paramtype secret_source: ~azure.mgmt.cdn.models.ResourceReference
         :keyword secret_version: Version of the secret to be used.
         :paramtype secret_version: str
         """
-        super(UrlSigningKeyParameters, self).__init__(**kwargs)
-        self.type = 'UrlSigningKey'  # type: str
+        super().__init__(**kwargs)
+        self.type = "UrlSigningKey"  # type: str
         self.key_id = key_id
         self.secret_source = secret_source
         self.secret_version = secret_version
 
 
-class UrlSigningParamIdentifier(msrest.serialization.Model):
+class UrlSigningParamIdentifier(_serialization.Model):
     """Defines how to identify a parameter for a specific purpose e.g. expires.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar param_indicator: Required. Indicates the purpose of the parameter. Possible values
-     include: "Expires", "KeyId", "Signature".
+    :ivar param_indicator: Indicates the purpose of the parameter. Required. Known values are:
+     "Expires", "KeyId", and "Signature".
     :vartype param_indicator: str or ~azure.mgmt.cdn.models.ParamIndicator
-    :ivar param_name: Required. Parameter name.
+    :ivar param_name: Parameter name. Required.
     :vartype param_name: str
     """
 
     _validation = {
-        'param_indicator': {'required': True},
-        'param_name': {'required': True},
+        "param_indicator": {"required": True},
+        "param_name": {"required": True},
     }
 
     _attribute_map = {
-        'param_indicator': {'key': 'paramIndicator', 'type': 'str'},
-        'param_name': {'key': 'paramName', 'type': 'str'},
+        "param_indicator": {"key": "paramIndicator", "type": "str"},
+        "param_name": {"key": "paramName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        param_indicator: Union[str, "ParamIndicator"],
-        param_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, param_indicator: Union[str, "_models.ParamIndicator"], param_name: str, **kwargs):
         """
-        :keyword param_indicator: Required. Indicates the purpose of the parameter. Possible values
-         include: "Expires", "KeyId", "Signature".
+        :keyword param_indicator: Indicates the purpose of the parameter. Required. Known values are:
+         "Expires", "KeyId", and "Signature".
         :paramtype param_indicator: str or ~azure.mgmt.cdn.models.ParamIndicator
-        :keyword param_name: Required. Parameter name.
+        :keyword param_name: Parameter name. Required.
         :paramtype param_name: str
         """
-        super(UrlSigningParamIdentifier, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.param_indicator = param_indicator
         self.param_name = param_name
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """Describes resource usage.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12650,54 +12399,52 @@ class Usage(msrest.serialization.Model):
 
     :ivar id: Resource identifier.
     :vartype id: str
-    :ivar unit: Required. An enum describing the unit of measurement. Possible values include:
-     "Count".
+    :ivar unit: An enum describing the unit of measurement. Required. "Count"
     :vartype unit: str or ~azure.mgmt.cdn.models.UsageUnit
-    :ivar current_value: Required. The current value of the usage.
-    :vartype current_value: long
-    :ivar limit: Required. The limit of usage.
-    :vartype limit: long
-    :ivar name: Required. The name of the type of usage.
+    :ivar current_value: The current value of the usage. Required.
+    :vartype current_value: int
+    :ivar limit: The limit of usage. Required.
+    :vartype limit: int
+    :ivar name: The name of the type of usage. Required.
     :vartype name: ~azure.mgmt.cdn.models.UsageName
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'unit': {'required': True},
-        'current_value': {'required': True},
-        'limit': {'required': True},
-        'name': {'required': True},
+        "id": {"readonly": True},
+        "unit": {"required": True},
+        "current_value": {"required": True},
+        "limit": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'long'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "id": {"key": "id", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
     def __init__(
         self,
         *,
-        unit: Union[str, "UsageUnit"],
+        unit: Union[str, "_models.UsageUnit"],
         current_value: int,
         limit: int,
-        name: "UsageName",
+        name: "_models.UsageName",
         **kwargs
     ):
         """
-        :keyword unit: Required. An enum describing the unit of measurement. Possible values include:
-         "Count".
+        :keyword unit: An enum describing the unit of measurement. Required. "Count"
         :paramtype unit: str or ~azure.mgmt.cdn.models.UsageUnit
-        :keyword current_value: Required. The current value of the usage.
-        :paramtype current_value: long
-        :keyword limit: Required. The limit of usage.
-        :paramtype limit: long
-        :keyword name: Required. The name of the type of usage.
+        :keyword current_value: The current value of the usage. Required.
+        :paramtype current_value: int
+        :keyword limit: The limit of usage. Required.
+        :paramtype limit: int
+        :keyword name: The name of the type of usage. Required.
         :paramtype name: ~azure.mgmt.cdn.models.UsageName
         """
-        super(Usage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.unit = unit
         self.current_value = current_value
@@ -12705,7 +12452,7 @@ class Usage(msrest.serialization.Model):
         self.name = name
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """The usage names.
 
     :ivar value: A string describing the resource name.
@@ -12715,29 +12462,23 @@ class UsageName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
         """
         :keyword value: A string describing the resource name.
         :paramtype value: str
         :keyword localized_value: A localized string describing the resource name.
         :paramtype localized_value: str
         """
-        super(UsageName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class UsagesListResult(msrest.serialization.Model):
+class UsagesListResult(_serialization.Model):
     """The list usages operation response.
 
     :ivar value: The list of resource usages.
@@ -12747,24 +12488,18 @@ class UsagesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Usage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Usage"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: The list of resource usages.
         :paramtype value: list[~azure.mgmt.cdn.models.Usage]
         :keyword next_link: URL to get the next set of results.
         :paramtype next_link: str
         """
-        super(UsagesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -12774,91 +12509,89 @@ class UserManagedHttpsParameters(CustomDomainHttpsParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar certificate_source: Required. Defines the source of the SSL certificate.Constant filled
-     by server. Possible values include: "AzureKeyVault", "Cdn".
+    :ivar certificate_source: Defines the source of the SSL certificate. Required. Known values
+     are: "AzureKeyVault" and "Cdn".
     :vartype certificate_source: str or ~azure.mgmt.cdn.models.CertificateSource
-    :ivar protocol_type: Required. Defines the TLS extension protocol that is used for secure
-     delivery. Possible values include: "ServerNameIndication", "IPBased".
+    :ivar protocol_type: Defines the TLS extension protocol that is used for secure delivery.
+     Required. Known values are: "ServerNameIndication" and "IPBased".
     :vartype protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
-    :ivar minimum_tls_version: TLS protocol version that will be used for Https. Possible values
-     include: "None", "TLS10", "TLS12".
+    :ivar minimum_tls_version: TLS protocol version that will be used for Https. Known values are:
+     "None", "TLS10", and "TLS12".
     :vartype minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
-    :ivar certificate_source_parameters: Required. Defines the certificate source parameters using
-     user's keyvault certificate for enabling SSL.
+    :ivar certificate_source_parameters: Defines the certificate source parameters using user's
+     keyvault certificate for enabling SSL. Required.
     :vartype certificate_source_parameters:
      ~azure.mgmt.cdn.models.KeyVaultCertificateSourceParameters
     """
 
     _validation = {
-        'certificate_source': {'required': True},
-        'protocol_type': {'required': True},
-        'certificate_source_parameters': {'required': True},
+        "certificate_source": {"required": True},
+        "protocol_type": {"required": True},
+        "certificate_source_parameters": {"required": True},
     }
 
     _attribute_map = {
-        'certificate_source': {'key': 'certificateSource', 'type': 'str'},
-        'protocol_type': {'key': 'protocolType', 'type': 'str'},
-        'minimum_tls_version': {'key': 'minimumTlsVersion', 'type': 'str'},
-        'certificate_source_parameters': {'key': 'certificateSourceParameters', 'type': 'KeyVaultCertificateSourceParameters'},
+        "certificate_source": {"key": "certificateSource", "type": "str"},
+        "protocol_type": {"key": "protocolType", "type": "str"},
+        "minimum_tls_version": {"key": "minimumTlsVersion", "type": "str"},
+        "certificate_source_parameters": {
+            "key": "certificateSourceParameters",
+            "type": "KeyVaultCertificateSourceParameters",
+        },
     }
 
     def __init__(
         self,
         *,
-        protocol_type: Union[str, "ProtocolType"],
-        certificate_source_parameters: "KeyVaultCertificateSourceParameters",
-        minimum_tls_version: Optional[Union[str, "MinimumTlsVersion"]] = None,
+        protocol_type: Union[str, "_models.ProtocolType"],
+        certificate_source_parameters: "_models.KeyVaultCertificateSourceParameters",
+        minimum_tls_version: Optional[Union[str, "_models.MinimumTlsVersion"]] = None,
         **kwargs
     ):
         """
-        :keyword protocol_type: Required. Defines the TLS extension protocol that is used for secure
-         delivery. Possible values include: "ServerNameIndication", "IPBased".
+        :keyword protocol_type: Defines the TLS extension protocol that is used for secure delivery.
+         Required. Known values are: "ServerNameIndication" and "IPBased".
         :paramtype protocol_type: str or ~azure.mgmt.cdn.models.ProtocolType
-        :keyword minimum_tls_version: TLS protocol version that will be used for Https. Possible values
-         include: "None", "TLS10", "TLS12".
+        :keyword minimum_tls_version: TLS protocol version that will be used for Https. Known values
+         are: "None", "TLS10", and "TLS12".
         :paramtype minimum_tls_version: str or ~azure.mgmt.cdn.models.MinimumTlsVersion
-        :keyword certificate_source_parameters: Required. Defines the certificate source parameters
-         using user's keyvault certificate for enabling SSL.
+        :keyword certificate_source_parameters: Defines the certificate source parameters using user's
+         keyvault certificate for enabling SSL. Required.
         :paramtype certificate_source_parameters:
          ~azure.mgmt.cdn.models.KeyVaultCertificateSourceParameters
         """
-        super(UserManagedHttpsParameters, self).__init__(protocol_type=protocol_type, minimum_tls_version=minimum_tls_version, **kwargs)
-        self.certificate_source = 'AzureKeyVault'  # type: str
+        super().__init__(protocol_type=protocol_type, minimum_tls_version=minimum_tls_version, **kwargs)
+        self.certificate_source = "AzureKeyVault"  # type: str
         self.certificate_source_parameters = certificate_source_parameters
 
 
-class ValidateCustomDomainInput(msrest.serialization.Model):
+class ValidateCustomDomainInput(_serialization.Model):
     """Input of the custom domain to be validated for DNS mapping.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar host_name: Required. The host name of the custom domain. Must be a domain name.
+    :ivar host_name: The host name of the custom domain. Must be a domain name. Required.
     :vartype host_name: str
     """
 
     _validation = {
-        'host_name': {'required': True},
+        "host_name": {"required": True},
     }
 
     _attribute_map = {
-        'host_name': {'key': 'hostName', 'type': 'str'},
+        "host_name": {"key": "hostName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        host_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, host_name: str, **kwargs):
         """
-        :keyword host_name: Required. The host name of the custom domain. Must be a domain name.
+        :keyword host_name: The host name of the custom domain. Must be a domain name. Required.
         :paramtype host_name: str
         """
-        super(ValidateCustomDomainInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.host_name = host_name
 
 
-class ValidateCustomDomainOutput(msrest.serialization.Model):
+class ValidateCustomDomainOutput(_serialization.Model):
     """Output of custom domain validation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12872,61 +12605,52 @@ class ValidateCustomDomainOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'custom_domain_validated': {'readonly': True},
-        'reason': {'readonly': True},
-        'message': {'readonly': True},
+        "custom_domain_validated": {"readonly": True},
+        "reason": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'custom_domain_validated': {'key': 'customDomainValidated', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "custom_domain_validated": {"key": "customDomainValidated", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ValidateCustomDomainOutput, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.custom_domain_validated = None
         self.reason = None
         self.message = None
 
 
-class ValidateProbeInput(msrest.serialization.Model):
+class ValidateProbeInput(_serialization.Model):
     """Input of the validate probe API.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar probe_url: Required. The probe URL to validate.
+    :ivar probe_url: The probe URL to validate. Required.
     :vartype probe_url: str
     """
 
     _validation = {
-        'probe_url': {'required': True},
+        "probe_url": {"required": True},
     }
 
     _attribute_map = {
-        'probe_url': {'key': 'probeURL', 'type': 'str'},
+        "probe_url": {"key": "probeURL", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        probe_url: str,
-        **kwargs
-    ):
+    def __init__(self, *, probe_url: str, **kwargs):
         """
-        :keyword probe_url: Required. The probe URL to validate.
+        :keyword probe_url: The probe URL to validate. Required.
         :paramtype probe_url: str
         """
-        super(ValidateProbeInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.probe_url = probe_url
 
 
-class ValidateProbeOutput(msrest.serialization.Model):
+class ValidateProbeOutput(_serialization.Model):
     """Output of the validate probe API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -12940,116 +12664,110 @@ class ValidateProbeOutput(msrest.serialization.Model):
     """
 
     _validation = {
-        'is_valid': {'readonly': True},
-        'error_code': {'readonly': True},
-        'message': {'readonly': True},
+        "is_valid": {"readonly": True},
+        "error_code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'is_valid': {'key': 'isValid', 'type': 'bool'},
-        'error_code': {'key': 'errorCode', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "is_valid": {"key": "isValid", "type": "bool"},
+        "error_code": {"key": "errorCode", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ValidateProbeOutput, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.is_valid = None
         self.error_code = None
         self.message = None
 
 
-class ValidateSecretInput(msrest.serialization.Model):
+class ValidateSecretInput(_serialization.Model):
     """Input of the secret to be validated.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar secret_type: Required. The secret type. Possible values include: "UrlSigningKey",
-     "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+    :ivar secret_type: The secret type. Required. Known values are: "UrlSigningKey",
+     "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
     :vartype secret_type: str or ~azure.mgmt.cdn.models.SecretType
-    :ivar secret_source: Required. Resource reference to the Azure Key Vault secret. Expected to be
-     in format of
+    :ivar secret_source: Resource reference to the Azure Key Vault secret. Expected to be in format
+     of
      /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+     Required.
     :vartype secret_source: ~azure.mgmt.cdn.models.ResourceReference
     :ivar secret_version: Secret version, if customer is using a specific version.
     :vartype secret_version: str
     """
 
     _validation = {
-        'secret_type': {'required': True},
-        'secret_source': {'required': True},
+        "secret_type": {"required": True},
+        "secret_source": {"required": True},
     }
 
     _attribute_map = {
-        'secret_type': {'key': 'secretType', 'type': 'str'},
-        'secret_source': {'key': 'secretSource', 'type': 'ResourceReference'},
-        'secret_version': {'key': 'secretVersion', 'type': 'str'},
+        "secret_type": {"key": "secretType", "type": "str"},
+        "secret_source": {"key": "secretSource", "type": "ResourceReference"},
+        "secret_version": {"key": "secretVersion", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        secret_type: Union[str, "SecretType"],
-        secret_source: "ResourceReference",
+        secret_type: Union[str, "_models.SecretType"],
+        secret_source: "_models.ResourceReference",
         secret_version: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword secret_type: Required. The secret type. Possible values include: "UrlSigningKey",
-         "CustomerCertificate", "ManagedCertificate", "AzureFirstPartyManagedCertificate".
+        :keyword secret_type: The secret type. Required. Known values are: "UrlSigningKey",
+         "CustomerCertificate", "ManagedCertificate", and "AzureFirstPartyManagedCertificate".
         :paramtype secret_type: str or ~azure.mgmt.cdn.models.SecretType
-        :keyword secret_source: Required. Resource reference to the Azure Key Vault secret. Expected to
-         be in format of
+        :keyword secret_source: Resource reference to the Azure Key Vault secret. Expected to be in
+         format of
          /subscriptions/{​​​​​​​​​subscriptionId}​​​​​​​​​/resourceGroups/{​​​​​​​​​resourceGroupName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/providers/Microsoft.KeyVault/vaults/{vaultName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​/secrets/{secretName}​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​.
+         Required.
         :paramtype secret_source: ~azure.mgmt.cdn.models.ResourceReference
         :keyword secret_version: Secret version, if customer is using a specific version.
         :paramtype secret_version: str
         """
-        super(ValidateSecretInput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.secret_type = secret_type
         self.secret_source = secret_source
         self.secret_version = secret_version
 
 
-class ValidateSecretOutput(msrest.serialization.Model):
+class ValidateSecretOutput(_serialization.Model):
     """Output of the validated secret.
 
-    :ivar status: The validation status. Possible values include: "Valid", "Invalid",
-     "AccessDenied", "CertificateExpired".
+    :ivar status: The validation status. Known values are: "Valid", "Invalid", "AccessDenied", and
+     "CertificateExpired".
     :vartype status: str or ~azure.mgmt.cdn.models.Status
     :ivar message: Detailed error message.
     :vartype message: str
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "Status"]] = None,
-        message: Optional[str] = None,
-        **kwargs
+        self, *, status: Optional[Union[str, "_models.Status"]] = None, message: Optional[str] = None, **kwargs
     ):
         """
-        :keyword status: The validation status. Possible values include: "Valid", "Invalid",
-         "AccessDenied", "CertificateExpired".
+        :keyword status: The validation status. Known values are: "Valid", "Invalid", "AccessDenied",
+         and "CertificateExpired".
         :paramtype status: str or ~azure.mgmt.cdn.models.Status
         :keyword message: Detailed error message.
         :paramtype message: str
         """
-        super(ValidateSecretOutput, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.message = message
 
 
-class ValidationToken(msrest.serialization.Model):
+class ValidationToken(_serialization.Model):
     """The validation token.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13059,41 +12777,37 @@ class ValidationToken(msrest.serialization.Model):
     """
 
     _validation = {
-        'token': {'readonly': True},
+        "token": {"readonly": True},
     }
 
     _attribute_map = {
-        'token': {'key': 'token', 'type': 'str'},
+        "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ValidationToken, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.token = None
 
 
-class WafMetricsResponse(msrest.serialization.Model):
+class WafMetricsResponse(_serialization.Model):
     """Waf Metrics Response.
 
     :ivar date_time_begin:
     :vartype date_time_begin: ~datetime.datetime
     :ivar date_time_end:
     :vartype date_time_end: ~datetime.datetime
-    :ivar granularity: Possible values include: "PT5M", "PT1H", "P1D".
+    :ivar granularity: Known values are: "PT5M", "PT1H", and "P1D".
     :vartype granularity: str or ~azure.mgmt.cdn.models.WafMetricsResponseGranularity
     :ivar series:
     :vartype series: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesItem]
     """
 
     _attribute_map = {
-        'date_time_begin': {'key': 'dateTimeBegin', 'type': 'iso-8601'},
-        'date_time_end': {'key': 'dateTimeEnd', 'type': 'iso-8601'},
-        'granularity': {'key': 'granularity', 'type': 'str'},
-        'series': {'key': 'series', 'type': '[WafMetricsResponseSeriesItem]'},
+        "date_time_begin": {"key": "dateTimeBegin", "type": "iso-8601"},
+        "date_time_end": {"key": "dateTimeEnd", "type": "iso-8601"},
+        "granularity": {"key": "granularity", "type": "str"},
+        "series": {"key": "series", "type": "[WafMetricsResponseSeriesItem]"},
     }
 
     def __init__(
@@ -13101,8 +12815,8 @@ class WafMetricsResponse(msrest.serialization.Model):
         *,
         date_time_begin: Optional[datetime.datetime] = None,
         date_time_end: Optional[datetime.datetime] = None,
-        granularity: Optional[Union[str, "WafMetricsResponseGranularity"]] = None,
-        series: Optional[List["WafMetricsResponseSeriesItem"]] = None,
+        granularity: Optional[Union[str, "_models.WafMetricsResponseGranularity"]] = None,
+        series: Optional[List["_models.WafMetricsResponseSeriesItem"]] = None,
         **kwargs
     ):
         """
@@ -13110,26 +12824,25 @@ class WafMetricsResponse(msrest.serialization.Model):
         :paramtype date_time_begin: ~datetime.datetime
         :keyword date_time_end:
         :paramtype date_time_end: ~datetime.datetime
-        :keyword granularity: Possible values include: "PT5M", "PT1H", "P1D".
+        :keyword granularity: Known values are: "PT5M", "PT1H", and "P1D".
         :paramtype granularity: str or ~azure.mgmt.cdn.models.WafMetricsResponseGranularity
         :keyword series:
         :paramtype series: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesItem]
         """
-        super(WafMetricsResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.date_time_begin = date_time_begin
         self.date_time_end = date_time_end
         self.granularity = granularity
         self.series = series
 
 
-class WafMetricsResponseSeriesItem(msrest.serialization.Model):
+class WafMetricsResponseSeriesItem(_serialization.Model):
     """WafMetricsResponseSeriesItem.
 
     :ivar metric:
     :vartype metric: str
-    :ivar unit:  The only acceptable values to pass in are None and "count". The default value is
-     None.
-    :vartype unit: str
+    :ivar unit: "count"
+    :vartype unit: str or ~azure.mgmt.cdn.models.WafMetricsResponseSeriesItemUnit
     :ivar groups:
     :vartype groups: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesPropertiesItemsItem]
     :ivar data:
@@ -13138,41 +12851,45 @@ class WafMetricsResponseSeriesItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'metric': {'key': 'metric', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'groups': {'key': 'groups', 'type': '[WafMetricsResponseSeriesPropertiesItemsItem]'},
-        'data': {'key': 'data', 'type': '[Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems]'},
+        "metric": {"key": "metric", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "groups": {"key": "groups", "type": "[WafMetricsResponseSeriesPropertiesItemsItem]"},
+        "data": {
+            "key": "data",
+            "type": "[Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems]",
+        },
     }
 
     def __init__(
         self,
         *,
         metric: Optional[str] = None,
-        unit: Optional[str] = None,
-        groups: Optional[List["WafMetricsResponseSeriesPropertiesItemsItem"]] = None,
-        data: Optional[List["Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems"]] = None,
+        unit: Optional[Union[str, "_models.WafMetricsResponseSeriesItemUnit"]] = None,
+        groups: Optional[List["_models.WafMetricsResponseSeriesPropertiesItemsItem"]] = None,
+        data: Optional[
+            List["_models.Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems"]
+        ] = None,
         **kwargs
     ):
         """
         :keyword metric:
         :paramtype metric: str
-        :keyword unit:  The only acceptable values to pass in are None and "count". The default value
-         is None.
-        :paramtype unit: str
+        :keyword unit: "count"
+        :paramtype unit: str or ~azure.mgmt.cdn.models.WafMetricsResponseSeriesItemUnit
         :keyword groups:
         :paramtype groups: list[~azure.mgmt.cdn.models.WafMetricsResponseSeriesPropertiesItemsItem]
         :keyword data:
         :paramtype data:
          list[~azure.mgmt.cdn.models.Components18OrqelSchemasWafmetricsresponsePropertiesSeriesItemsPropertiesDataItems]
         """
-        super(WafMetricsResponseSeriesItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.metric = metric
         self.unit = unit
         self.groups = groups
         self.data = data
 
 
-class WafMetricsResponseSeriesPropertiesItemsItem(msrest.serialization.Model):
+class WafMetricsResponseSeriesPropertiesItemsItem(_serialization.Model):
     """WafMetricsResponseSeriesPropertiesItemsItem.
 
     :ivar name:
@@ -13182,29 +12899,23 @@ class WafMetricsResponseSeriesPropertiesItemsItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name:
         :paramtype name: str
         :keyword value:
         :paramtype value: str
         """
-        super(WafMetricsResponseSeriesPropertiesItemsItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class WafRankingsResponse(msrest.serialization.Model):
+class WafRankingsResponse(_serialization.Model):
     """Waf Rankings Response.
 
     :ivar date_time_begin:
@@ -13218,10 +12929,10 @@ class WafRankingsResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'date_time_begin': {'key': 'dateTimeBegin', 'type': 'iso-8601'},
-        'date_time_end': {'key': 'dateTimeEnd', 'type': 'iso-8601'},
-        'groups': {'key': 'groups', 'type': '[str]'},
-        'data': {'key': 'data', 'type': '[WafRankingsResponseDataItem]'},
+        "date_time_begin": {"key": "dateTimeBegin", "type": "iso-8601"},
+        "date_time_end": {"key": "dateTimeEnd", "type": "iso-8601"},
+        "groups": {"key": "groups", "type": "[str]"},
+        "data": {"key": "data", "type": "[WafRankingsResponseDataItem]"},
     }
 
     def __init__(
@@ -13230,7 +12941,7 @@ class WafRankingsResponse(msrest.serialization.Model):
         date_time_begin: Optional[datetime.datetime] = None,
         date_time_end: Optional[datetime.datetime] = None,
         groups: Optional[List[str]] = None,
-        data: Optional[List["WafRankingsResponseDataItem"]] = None,
+        data: Optional[List["_models.WafRankingsResponseDataItem"]] = None,
         **kwargs
     ):
         """
@@ -13243,14 +12954,14 @@ class WafRankingsResponse(msrest.serialization.Model):
         :keyword data:
         :paramtype data: list[~azure.mgmt.cdn.models.WafRankingsResponseDataItem]
         """
-        super(WafRankingsResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.date_time_begin = date_time_begin
         self.date_time_end = date_time_end
         self.groups = groups
         self.data = data
 
 
-class WafRankingsResponseDataItem(msrest.serialization.Model):
+class WafRankingsResponseDataItem(_serialization.Model):
     """WafRankingsResponseDataItem.
 
     :ivar group_values:
@@ -13261,15 +12972,20 @@ class WafRankingsResponseDataItem(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'group_values': {'key': 'groupValues', 'type': '[str]'},
-        'metrics': {'key': 'metrics', 'type': '[ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems]'},
+        "group_values": {"key": "groupValues", "type": "[str]"},
+        "metrics": {
+            "key": "metrics",
+            "type": "[ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems]",
+        },
     }
 
     def __init__(
         self,
         *,
         group_values: Optional[List[str]] = None,
-        metrics: Optional[List["ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems"]] = None,
+        metrics: Optional[
+            List["_models.ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems"]
+        ] = None,
         **kwargs
     ):
         """
@@ -13279,6 +12995,6 @@ class WafRankingsResponseDataItem(msrest.serialization.Model):
         :paramtype metrics:
          list[~azure.mgmt.cdn.models.ComponentsKpo1PjSchemasWafrankingsresponsePropertiesDataItemsPropertiesMetricsItems]
         """
-        super(WafRankingsResponseDataItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.group_values = group_values
         self.metrics = metrics

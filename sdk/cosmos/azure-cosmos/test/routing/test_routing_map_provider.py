@@ -175,7 +175,7 @@ class RoutingMapProviderTests(unittest.TestCase):
         self.validate_overlapping_ranges_results(ranges, [self.partition_key_ranges[1], self.partition_key_ranges[4]])
     
     def validate_against_cached_collection_results(self, queryRanges):
-        # validates the results of smart routing map provider against the results of cached colleciton map
+        # validates the results of smart routing map provider against the results of cached collection map
         overlapping_partition_key_ranges = self.get_overlapping_ranges(queryRanges)
         self.assertEqual(overlapping_partition_key_ranges, self.cached_collection_routing_map.get_overlapping_ranges(queryRanges))
 

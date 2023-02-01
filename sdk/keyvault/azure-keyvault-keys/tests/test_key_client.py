@@ -6,31 +6,37 @@ import codecs
 import functools
 import json
 import logging
+import os
 import time
 
 import pytest
-from azure.core.exceptions import (HttpResponseError, ResourceExistsError,
-                                   ResourceNotFoundError)
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
-from azure.keyvault.keys import (ApiVersion, JsonWebKey, KeyClient,
-                                 KeyReleasePolicy, KeyRotationLifetimeAction,
-                                 KeyRotationPolicy, KeyRotationPolicyAction,
-                                 KeyType)
-from azure.keyvault.keys._generated.v7_3.models import \
-    KeyRotationPolicy as _KeyRotationPolicy
+from azure.core.rest import HttpRequest
+from azure.keyvault.keys import (
+    ApiVersion,
+    JsonWebKey,
+    KeyClient,
+    KeyReleasePolicy,
+    KeyRotationLifetimeAction,
+    KeyRotationPolicy,
+    KeyRotationPolicyAction,
+    KeyType
+)
+from azure.keyvault.keys._generated.v7_3.models import KeyRotationPolicy as _KeyRotationPolicy
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION
 from dateutil import parser as date_parse
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
-from _test_case import (KeysClientPreparer, get_attestation_token,
-                        get_decorator, get_release_policy, is_public_cloud)
+from _test_case import KeysClientPreparer, get_attestation_token, get_decorator, get_release_policy, is_public_cloud
 
 from _keys_test_case import KeysTestCase
 
 all_api_versions = get_decorator()
 only_hsm = get_decorator(only_hsm=True)
 only_hsm_7_3 = get_decorator(only_hsm=True, api_versions=[ApiVersion.V7_3])
+only_vault_latest = get_decorator(only_vault=True, api_versions=[DEFAULT_VERSION])
 only_vault_7_3 = get_decorator(only_vault=True, api_versions=[ApiVersion.V7_3])
 only_7_3 = get_decorator(api_versions=[ApiVersion.V7_3])
 logging_enabled = get_decorator(logging_enable=True)
@@ -104,8 +110,8 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         key = key_attributes.key
         kid = key_attributes.id
         assert key_curve == key.crv
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on,"Missing required date attributes."
         
 
@@ -113,10 +119,10 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         prefix = "/".join(s.strip("/") for s in [vault, "keys", key_name])
         key = key_attributes.key
         kid = key_attributes.id
-        assert kid.index(prefix) == 0, "Key Id should start with '{}', but value is '{}'".format(prefix, kid)
-        assert key.kty == kty, "kty should by '{}', but is '{}'".format(key, key.kty)
+        assert kid.index(prefix) == 0, f"Key Id should start with '{prefix}', but value is '{kid}'"
+        assert key.kty == kty, f"kty should by '{key}', but is '{key.kty}'"
         assert key.n and key.e, "Bad RSA public material."
-        assert sorted(key_ops) == sorted(key.key_ops), "keyOps should be '{}', but is '{}'".format(key_ops, key.key_ops)
+        assert sorted(key_ops) == sorted(key.key_ops), f"keyOps should be '{key_ops}', but is '{key.key_ops}'"
         assert key_attributes.properties.created_on and key_attributes.properties.updated_on, "Missing required date attributes."
 
     def _update_key_properties(self, client, key, release_policy=None):
@@ -142,7 +148,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     def _import_test_key(self, client, name, hardware_protected=False, **kwargs):
         def _to_bytes(hex):
             if len(hex) % 2:
-                hex = "0{}".format(hex)
+                hex = f"0{hex}"
             return codecs.decode(hex, "hex_codec")
 
         key = JsonWebKey(
@@ -250,7 +256,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         key_name = self.get_resource_name("rsa-key")
         key = self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
-        public_exponent = byte2int(key.key.e)
+        public_exponent = key.key.e[0]
         assert public_exponent == 17
 
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
@@ -293,7 +299,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         # create many keys
         for x in range(max_keys):
-            key_name = self.get_resource_name("key{}".format(x))
+            key_name = self.get_resource_name(f"key{x}")
             key = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
             expected[key.name] = key
 
@@ -342,7 +348,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         # create keys
         for i in range(LIST_TEST_SIZE):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             expected[key_name] = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete them
@@ -372,7 +378,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         # create keys
         keys = {}
         for i in range(LIST_TEST_SIZE):
-            key_name = self.get_resource_name("key{}".format(i))
+            key_name = self.get_resource_name(f"key{i}")
             keys[key_name] = self._create_rsa_key(client, key_name, hardware_protected=is_hsm)
 
         # delete them
@@ -397,7 +403,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert client is not None
 
         # create keys
-        key_names = [self.get_resource_name("key{}".format(i)) for i in range(LIST_TEST_SIZE)]
+        key_names = [self.get_resource_name(f"key{i}") for i in range(LIST_TEST_SIZE)]
         for name in key_names:
             self._create_rsa_key(client, name, hardware_protected=is_hsm)
 
@@ -510,6 +516,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_release(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         attestation = get_attestation_token(attestation_uri)
@@ -550,6 +559,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_update_release_policy(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri)
@@ -592,6 +604,9 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_immutable_release_policy(self, client, **kwargs):
+        if (self.is_live and os.environ["KEYVAULT_SKU"] != "premium"):
+            pytest.skip("This test is not supported on standard SKU vaults. Follow up with service team")
+
         set_bodiless_matcher()
         attestation_uri = self._get_attestation_uri()
         release_policy = get_release_policy(attestation_uri, immutable=True)
@@ -626,10 +641,10 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_rotation(self, client, **kwargs):
-        set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
-            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+            pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
+        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         key = self._create_rsa_key(client, key_name)
         rotated_key = client.rotate_key(key_name)
@@ -639,14 +654,15 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert key.properties.version != rotated_key.properties.version
         assert key.key.n != rotated_key.key.n
 
+    @pytest.mark.playback_test_only("Currently fails in live mode because of service regression; will be fixed soon.")
     @pytest.mark.parametrize("api_version,is_hsm",only_vault_7_3)
     @KeysClientPreparer()
     @recorded_by_proxy
     def test_key_rotation_policy(self, client, **kwargs):
-        set_bodiless_matcher()
         if (not is_public_cloud() and self.is_live):
-            pytest.skip("This test not supprot in usgov/china region. Follow up with service team.")
+            pytest.skip("This test is not supported in usgov/china region. Follow up with service team.")
 
+        set_bodiless_matcher()
         key_name = self.get_resource_name("rotation-key")
         self._create_rsa_key(client, key_name)
 
@@ -742,6 +758,22 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
         assert result.key_id == key.id
         assert "RSA-OAEP" == result.algorithm
         assert plaintext == result.plaintext
+
+    @pytest.mark.parametrize("api_version,is_hsm",only_vault_latest)
+    @KeysClientPreparer()
+    @recorded_by_proxy
+    def test_send_request(self, client, is_hsm, **kwargs):
+        key_name = self.get_resource_name("key-name")
+        key = self._create_rsa_key(client, key_name)
+
+        # fetch the key we just created
+        request = HttpRequest(
+            method="GET",
+            url=f"keys/{key_name}/{key.properties.version}",
+            headers={"Accept": "application/json"},
+        )
+        response = client.send_request(request)
+        assert response.json()["key"]["kid"] == key.id
 
 
 def test_positive_bytes_count_required():

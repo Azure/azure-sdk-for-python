@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,28 +7,41 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import functools
-from typing import Any, Callable, Dict, Generic, Iterable, Optional, TypeVar, Union
-import warnings
+import sys
+from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union, cast
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
-from msrest import Serializer
 
 from .. import models as _models
+from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
+
 
 def build_list_by_agent_request(
     resource_group_name: str,
@@ -44,48 +58,49 @@ def build_list_by_agent_request(
     top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2020-11-01-preview"
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-11-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/executions')
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/executions",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
-        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if create_time_min is not None:
-        query_parameters['createTimeMin'] = _SERIALIZER.query("create_time_min", create_time_min, 'iso-8601')
+        _params["createTimeMin"] = _SERIALIZER.query("create_time_min", create_time_min, "iso-8601")
     if create_time_max is not None:
-        query_parameters['createTimeMax'] = _SERIALIZER.query("create_time_max", create_time_max, 'iso-8601')
+        _params["createTimeMax"] = _SERIALIZER.query("create_time_max", create_time_max, "iso-8601")
     if end_time_min is not None:
-        query_parameters['endTimeMin'] = _SERIALIZER.query("end_time_min", end_time_min, 'iso-8601')
+        _params["endTimeMin"] = _SERIALIZER.query("end_time_min", end_time_min, "iso-8601")
     if end_time_max is not None:
-        query_parameters['endTimeMax'] = _SERIALIZER.query("end_time_max", end_time_max, 'iso-8601')
+        _params["endTimeMax"] = _SERIALIZER.query("end_time_max", end_time_max, "iso-8601")
     if is_active is not None:
-        query_parameters['isActive'] = _SERIALIZER.query("is_active", is_active, 'bool')
+        _params["isActive"] = _SERIALIZER.query("is_active", is_active, "bool")
     if skip is not None:
-        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if top is not None:
-        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_cancel_request(
@@ -97,69 +112,66 @@ def build_cancel_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2020-11-01-preview"
-    # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/cancel')
-    path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
-        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
-        "jobName": _SERIALIZER.url("job_name", job_name, 'str'),
-        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
-    }
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    url = _format_url_section(url, **path_format_arguments)
-
-    # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
-
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        **kwargs
+    api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-11-01-preview")
     )
-
-
-def build_create_request_initial(
-    resource_group_name: str,
-    server_name: str,
-    job_agent_name: str,
-    job_name: str,
-    subscription_id: str,
-    **kwargs: Any
-) -> HttpRequest:
-    api_version = "2020-11-01-preview"
-    accept = "application/json"
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/start')
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/cancel",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
-        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
-        "jobName": _SERIALIZER.url("job_name", job_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, "str"),
+        "jobName": _SERIALIZER.url("job_name", job_name, "str"),
+        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
+def build_create_request(
+    resource_group_name: str, server_name: str, job_agent_name: str, job_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-11-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/start",
+    )  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, "str"),
+        "jobName": _SERIALIZER.url("job_name", job_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_list_by_job_request(
@@ -178,49 +190,50 @@ def build_list_by_job_request(
     top: Optional[int] = None,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2020-11-01-preview"
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-11-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions')
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
-        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
-        "jobName": _SERIALIZER.url("job_name", job_name, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, "str"),
+        "jobName": _SERIALIZER.url("job_name", job_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
     if create_time_min is not None:
-        query_parameters['createTimeMin'] = _SERIALIZER.query("create_time_min", create_time_min, 'iso-8601')
+        _params["createTimeMin"] = _SERIALIZER.query("create_time_min", create_time_min, "iso-8601")
     if create_time_max is not None:
-        query_parameters['createTimeMax'] = _SERIALIZER.query("create_time_max", create_time_max, 'iso-8601')
+        _params["createTimeMax"] = _SERIALIZER.query("create_time_max", create_time_max, "iso-8601")
     if end_time_min is not None:
-        query_parameters['endTimeMin'] = _SERIALIZER.query("end_time_min", end_time_min, 'iso-8601')
+        _params["endTimeMin"] = _SERIALIZER.query("end_time_min", end_time_min, "iso-8601")
     if end_time_max is not None:
-        query_parameters['endTimeMax'] = _SERIALIZER.query("end_time_max", end_time_max, 'iso-8601')
+        _params["endTimeMax"] = _SERIALIZER.query("end_time_max", end_time_max, "iso-8601")
     if is_active is not None:
-        query_parameters['isActive'] = _SERIALIZER.query("is_active", is_active, 'bool')
+        _params["isActive"] = _SERIALIZER.query("is_active", is_active, "bool")
     if skip is not None:
-        query_parameters['$skip'] = _SERIALIZER.query("skip", skip, 'int')
+        _params["$skip"] = _SERIALIZER.query("skip", skip, "int")
     if top is not None:
-        query_parameters['$top'] = _SERIALIZER.query("top", top, 'int')
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_request(
@@ -232,39 +245,40 @@ def build_get_request(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2020-11-01-preview"
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-11-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}')
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
-        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
-        "jobName": _SERIALIZER.url("job_name", job_name, 'str'),
-        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, "str"),
+        "jobName": _SERIALIZER.url("job_name", job_name, "str"),
+        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_create_or_update_request_initial(
+def build_create_or_update_request(
     resource_group_name: str,
     server_name: str,
     job_agent_name: str,
@@ -273,58 +287,57 @@ def build_create_or_update_request_initial(
     subscription_id: str,
     **kwargs: Any
 ) -> HttpRequest:
-    api_version = "2020-11-01-preview"
-    accept = "application/json"
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2020-11-01-preview")
+    )
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}')
+    _url = kwargs.pop(
+        "template_url",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}",
+    )  # pylint: disable=line-too-long
     path_format_arguments = {
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, 'str'),
-        "serverName": _SERIALIZER.url("server_name", server_name, 'str'),
-        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, 'str'),
-        "jobName": _SERIALIZER.url("job_name", job_name, 'str'),
-        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, 'str'),
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, 'str'),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "serverName": _SERIALIZER.url("server_name", server_name, "str"),
+        "jobAgentName": _SERIALIZER.url("job_agent_name", job_agent_name, "str"),
+        "jobName": _SERIALIZER.url("job_name", job_name, "str"),
+        "jobExecutionId": _SERIALIZER.url("job_execution_id", job_execution_id, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
-    url = _format_url_section(url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
-    query_parameters = kwargs.pop("params", {})  # type: Dict[str, Any]
-    query_parameters['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    header_parameters = kwargs.pop("headers", {})  # type: Dict[str, Any]
-    header_parameters['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=url,
-        params=query_parameters,
-        headers=header_parameters,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
-class JobExecutionsOperations(object):
-    """JobExecutionsOperations operations.
 
-    You should not instantiate this class directly. Instead, you should create a Client instance that
-    instantiates it for you and attaches it as an attribute.
+class JobExecutionsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
 
-    :ivar models: Alias to model classes used in this operation group.
-    :type models: ~azure.mgmt.sql.models
-    :param client: Client for service requests.
-    :param config: Configuration of service client.
-    :param serializer: An object model serializer.
-    :param deserializer: An object model deserializer.
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.sql.SqlManagementClient`'s
+        :attr:`job_executions` attribute.
     """
 
     models = _models
 
-    def __init__(self, client, config, serializer, deserializer):
-        self._client = client
-        self._serialize = serializer
-        self._deserialize = deserializer
-        self._config = config
+    def __init__(self, *args, **kwargs):
+        input_args = list(args)
+        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
     def list_by_agent(
@@ -340,48 +353,59 @@ class JobExecutionsOperations(object):
         skip: Optional[int] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.JobExecutionListResult"]:
+    ) -> Iterable["_models.JobExecution"]:
         """Lists all executions in a job agent.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
-        :param job_agent_name: The name of the job agent.
+        :param job_agent_name: The name of the job agent. Required.
         :type job_agent_name: str
         :param create_time_min: If specified, only job executions created at or after the specified
-         time are included.
+         time are included. Default value is None.
         :type create_time_min: ~datetime.datetime
         :param create_time_max: If specified, only job executions created before the specified time are
-         included.
+         included. Default value is None.
         :type create_time_max: ~datetime.datetime
         :param end_time_min: If specified, only job executions completed at or after the specified time
-         are included.
+         are included. Default value is None.
         :type end_time_min: ~datetime.datetime
         :param end_time_max: If specified, only job executions completed before the specified time are
-         included.
+         included. Default value is None.
         :type end_time_max: ~datetime.datetime
         :param is_active: If specified, only active or only completed job executions are included.
+         Default value is None.
         :type is_active: bool
-        :param skip: The number of elements in the collection to skip.
+        :param skip: The number of elements in the collection to skip. Default value is None.
         :type skip: int
-        :param top: The number of elements to return from the collection.
+        :param top: The number of elements to return from the collection. Default value is None.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either JobExecutionListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either JobExecution or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobExecution]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecutionListResult"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2020-11-01-preview")
+        )
+        cls: ClsType[_models.JobExecutionListResult] = kwargs.pop("cls", None)
+
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_agent_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
@@ -394,27 +418,16 @@ class JobExecutionsOperations(object):
                     is_active=is_active,
                     skip=skip,
                     top=top,
-                    template_url=self.list_by_agent.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list_by_agent.metadata["url"],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_by_agent_request(
-                    resource_group_name=resource_group_name,
-                    server_name=server_name,
-                    job_agent_name=job_agent_name,
-                    subscription_id=self._config.subscription_id,
-                    create_time_min=create_time_min,
-                    create_time_max=create_time_max,
-                    end_time_min=end_time_min,
-                    end_time_max=end_time_max,
-                    is_active=is_active,
-                    skip=skip,
-                    top=top,
-                    template_url=next_link,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -424,13 +437,15 @@ class JobExecutionsOperations(object):
             deserialized = self._deserialize("JobExecutionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -439,14 +454,14 @@ class JobExecutionsOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_by_agent.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/executions'}  # type: ignore
+    list_by_agent.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/executions"
+    }
 
     @distributed_trace
-    def cancel(
+    def cancel(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         server_name: str,
@@ -458,28 +473,37 @@ class JobExecutionsOperations(object):
         """Requests cancellation of a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
-        :param job_agent_name: The name of the job agent.
+        :param job_agent_name: The name of the job agent. Required.
         :type job_agent_name: str
-        :param job_name: The name of the job.
+        :param job_name: The name of the job. Required.
         :type job_name: str
-        :param job_execution_id: The id of the job execution to cancel.
+        :param job_execution_id: The id of the job execution to cancel. Required.
         :type job_execution_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None, or the result of cls(response)
+        :return: None or the result of cls(response)
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2020-11-01-preview")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
         request = build_cancel_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
@@ -487,12 +511,18 @@ class JobExecutionsOperations(object):
             job_name=job_name,
             job_execution_id=job_execution_id,
             subscription_id=self._config.subscription_id,
-            template_url=self.cancel.metadata['url'],
+            api_version=api_version,
+            template_url=self.cancel.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -502,36 +532,47 @@ class JobExecutionsOperations(object):
         if cls:
             return cls(pipeline_response, None, {})
 
-    cancel.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/cancel'}  # type: ignore
-
+    cancel.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}/cancel"
+    }
 
     def _create_initial(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        job_agent_name: str,
-        job_name: str,
-        **kwargs: Any
-    ) -> Optional["_models.JobExecution"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.JobExecution"]]
+        self, resource_group_name: str, server_name: str, job_agent_name: str, job_name: str, **kwargs: Any
+    ) -> Optional[_models.JobExecution]:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        
-        request = build_create_request_initial(
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2020-11-01-preview")
+        )
+        cls: ClsType[Optional[_models.JobExecution]] = kwargs.pop("cls", None)
+
+        request = build_create_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             job_agent_name=job_agent_name,
             job_name=job_name,
             subscription_id=self._config.subscription_id,
-            template_url=self._create_initial.metadata['url'],
+            api_version=api_version,
+            template_url=self._create_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -540,35 +581,31 @@ class JobExecutionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('JobExecution', pipeline_response)
+            deserialized = self._deserialize("JobExecution", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/start'}  # type: ignore
-
+    _create_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/start"
+    }
 
     @distributed_trace
     def begin_create(
-        self,
-        resource_group_name: str,
-        server_name: str,
-        job_agent_name: str,
-        job_name: str,
-        **kwargs: Any
-    ) -> LROPoller["_models.JobExecution"]:
+        self, resource_group_name: str, server_name: str, job_agent_name: str, job_name: str, **kwargs: Any
+    ) -> LROPoller[_models.JobExecution]:
         """Starts an elastic job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
-        :param job_agent_name: The name of the job agent.
+        :param job_agent_name: The name of the job agent. Required.
         :type job_agent_name: str
-        :param job_name: The name of the job to get.
+        :param job_name: The name of the job to get. Required.
         :type job_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -581,48 +618,56 @@ class JobExecutionsOperations(object):
         :return: An instance of LROPoller that returns either JobExecution or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.JobExecution]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecution"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2020-11-01-preview")
         )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls: ClsType[_models.JobExecution] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_initial(
                 resource_group_name=resource_group_name,
                 server_name=server_name,
                 job_agent_name=job_agent_name,
                 job_name=job_name,
-                cls=lambda x,y,z: x,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('JobExecution', pipeline_response)
+            deserialized = self._deserialize("JobExecution", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/start'}  # type: ignore
+    begin_create.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/start"
+    }
 
     @distributed_trace
     def list_by_job(
@@ -639,50 +684,61 @@ class JobExecutionsOperations(object):
         skip: Optional[int] = None,
         top: Optional[int] = None,
         **kwargs: Any
-    ) -> Iterable["_models.JobExecutionListResult"]:
+    ) -> Iterable["_models.JobExecution"]:
         """Lists a job's executions.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
-        :param job_agent_name: The name of the job agent.
+        :param job_agent_name: The name of the job agent. Required.
         :type job_agent_name: str
-        :param job_name: The name of the job to get.
+        :param job_name: The name of the job to get. Required.
         :type job_name: str
         :param create_time_min: If specified, only job executions created at or after the specified
-         time are included.
+         time are included. Default value is None.
         :type create_time_min: ~datetime.datetime
         :param create_time_max: If specified, only job executions created before the specified time are
-         included.
+         included. Default value is None.
         :type create_time_max: ~datetime.datetime
         :param end_time_min: If specified, only job executions completed at or after the specified time
-         are included.
+         are included. Default value is None.
         :type end_time_min: ~datetime.datetime
         :param end_time_max: If specified, only job executions completed before the specified time are
-         included.
+         included. Default value is None.
         :type end_time_max: ~datetime.datetime
         :param is_active: If specified, only active or only completed job executions are included.
+         Default value is None.
         :type is_active: bool
-        :param skip: The number of elements in the collection to skip.
+        :param skip: The number of elements in the collection to skip. Default value is None.
         :type skip: int
-        :param top: The number of elements to return from the collection.
+        :param top: The number of elements to return from the collection. Default value is None.
         :type top: int
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either JobExecutionListResult or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobExecutionListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either JobExecution or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.sql.models.JobExecution]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecutionListResult"]
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2020-11-01-preview")
+        )
+        cls: ClsType[_models.JobExecutionListResult] = kwargs.pop("cls", None)
+
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_by_job_request(
                     resource_group_name=resource_group_name,
                     server_name=server_name,
@@ -696,28 +752,16 @@ class JobExecutionsOperations(object):
                     is_active=is_active,
                     skip=skip,
                     top=top,
-                    template_url=self.list_by_job.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list_by_job.metadata["url"],
+                    headers=_headers,
+                    params=_params,
                 )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
 
             else:
-                
-                request = build_list_by_job_request(
-                    resource_group_name=resource_group_name,
-                    server_name=server_name,
-                    job_agent_name=job_agent_name,
-                    job_name=job_name,
-                    subscription_id=self._config.subscription_id,
-                    create_time_min=create_time_min,
-                    create_time_max=create_time_max,
-                    end_time_min=end_time_min,
-                    end_time_max=end_time_max,
-                    is_active=is_active,
-                    skip=skip,
-                    top=top,
-                    template_url=next_link,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)
                 request.method = "GET"
@@ -727,13 +771,15 @@ class JobExecutionsOperations(object):
             deserialized = self._deserialize("JobExecutionListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
@@ -742,11 +788,11 @@ class JobExecutionsOperations(object):
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    list_by_job.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions'}  # type: ignore
+    list_by_job.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions"
+    }
 
     @distributed_trace
     def get(
@@ -757,32 +803,41 @@ class JobExecutionsOperations(object):
         job_name: str,
         job_execution_id: str,
         **kwargs: Any
-    ) -> "_models.JobExecution":
+    ) -> _models.JobExecution:
         """Gets a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
-        :param job_agent_name: The name of the job agent.
+        :param job_agent_name: The name of the job agent. Required.
         :type job_agent_name: str
-        :param job_name: The name of the job.
+        :param job_name: The name of the job. Required.
         :type job_name: str
-        :param job_execution_id: The id of the job execution.
+        :param job_execution_id: The id of the job execution. Required.
         :type job_execution_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: JobExecution, or the result of cls(response)
+        :return: JobExecution or the result of cls(response)
         :rtype: ~azure.mgmt.sql.models.JobExecution
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecution"]
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2020-11-01-preview")
+        )
+        cls: ClsType[_models.JobExecution] = kwargs.pop("cls", None)
+
         request = build_get_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
@@ -790,27 +845,34 @@ class JobExecutionsOperations(object):
             job_name=job_name,
             job_execution_id=job_execution_id,
             subscription_id=self._config.subscription_id,
-            template_url=self.get.metadata['url'],
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('JobExecution', pipeline_response)
+        deserialized = self._deserialize("JobExecution", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}'}  # type: ignore
-
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}"
+    }
 
     def _create_or_update_initial(
         self,
@@ -820,27 +882,42 @@ class JobExecutionsOperations(object):
         job_name: str,
         job_execution_id: str,
         **kwargs: Any
-    ) -> Optional["_models.JobExecution"]:
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional["_models.JobExecution"]]
+    ) -> Optional[_models.JobExecution]:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}))
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        
-        request = build_create_or_update_request_initial(
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2020-11-01-preview")
+        )
+        cls: ClsType[Optional[_models.JobExecution]] = kwargs.pop("cls", None)
+
+        request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             server_name=server_name,
             job_agent_name=job_agent_name,
             job_name=job_name,
             job_execution_id=job_execution_id,
             subscription_id=self._config.subscription_id,
-            template_url=self._create_or_update_initial.metadata['url'],
+            api_version=api_version,
+            template_url=self._create_or_update_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
         )
         request = _convert_request(request)
         request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(request, stream=False, **kwargs)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 201, 202]:
@@ -849,18 +926,19 @@ class JobExecutionsOperations(object):
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('JobExecution', pipeline_response)
+            deserialized = self._deserialize("JobExecution", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize('JobExecution', pipeline_response)
+            deserialized = self._deserialize("JobExecution", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_initial.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}'}  # type: ignore
-
+    _create_or_update_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}"
+    }
 
     @distributed_trace
     def begin_create_or_update(
@@ -871,19 +949,19 @@ class JobExecutionsOperations(object):
         job_name: str,
         job_execution_id: str,
         **kwargs: Any
-    ) -> LROPoller["_models.JobExecution"]:
+    ) -> LROPoller[_models.JobExecution]:
         """Creates or updates a job execution.
 
         :param resource_group_name: The name of the resource group that contains the resource. You can
-         obtain this value from the Azure Resource Manager API or the portal.
+         obtain this value from the Azure Resource Manager API or the portal. Required.
         :type resource_group_name: str
-        :param server_name: The name of the server.
+        :param server_name: The name of the server. Required.
         :type server_name: str
-        :param job_agent_name: The name of the job agent.
+        :param job_agent_name: The name of the job agent. Required.
         :type job_agent_name: str
-        :param job_name: The name of the job to get.
+        :param job_name: The name of the job to get. Required.
         :type job_name: str
-        :param job_execution_id: The job execution id to create the job execution under.
+        :param job_execution_id: The job execution id to create the job execution under. Required.
         :type job_execution_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -896,15 +974,18 @@ class JobExecutionsOperations(object):
         :return: An instance of LROPoller that returns either JobExecution or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.sql.models.JobExecution]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
-        cls = kwargs.pop('cls', None)  # type: ClsType["_models.JobExecution"]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2020-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", "2020-11-01-preview")
         )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        cls: ClsType[_models.JobExecution] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = self._create_or_update_initial(
                 resource_group_name=resource_group_name,
@@ -912,30 +993,35 @@ class JobExecutionsOperations(object):
                 job_agent_name=job_agent_name,
                 job_name=job_name,
                 job_execution_id=job_execution_id,
-                cls=lambda x,y,z: x,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = self._deserialize('JobExecution', pipeline_response)
+            deserialized = self._deserialize("JobExecution", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
-        if polling is True: polling_method = ARMPolling(lro_delay, **kwargs)
-        elif polling is False: polling_method = NoPolling()
-        else: polling_method = polling
+        if polling is True:
+            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
-        else:
-            return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}'}  # type: ignore
+    begin_create_or_update.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/jobAgents/{jobAgentName}/jobs/{jobName}/executions/{jobExecutionId}"
+    }

@@ -11,31 +11,34 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessLevel."""
 
     NONE = "None"
     READ = "Read"
+
 
 class CachingTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the caching requirements. :code:`<br>`:code:`<br>` Possible values are:
     :code:`<br>`:code:`<br>` **None** :code:`<br>`:code:`<br>` **ReadOnly**
     :code:`<br>`:code:`<br>` **ReadWrite** :code:`<br>`:code:`<br>` Default: **None for Standard
-    storage. ReadOnly for Premium storage**
+    storage. ReadOnly for Premium storage**.
     """
 
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
+
 class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This enumerates the possible sources of a disk's creation.
-    """
+    """This enumerates the possible sources of a disk's creation."""
 
     EMPTY = "Empty"
     ATTACH = "Attach"
     FROM_IMAGE = "FromImage"
-    IMPORT_ENUM = "Import"
+    IMPORT = "Import"
     COPY = "Copy"
     RESTORE = "Restore"
+
 
 class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies how the virtual machine should be created.:code:`<br>`:code:`<br>` Possible values
@@ -50,27 +53,29 @@ class DiskCreateOptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EMPTY = "Empty"
     ATTACH = "Attach"
 
+
 class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The OS State.
-    """
+    """The OS State."""
 
     GENERALIZED = "Generalized"
     SPECIALIZED = "Specialized"
 
+
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operating system of the osDiskImage.
-    """
+    """The operating system of the osDiskImage."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the protocol of listener. :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`\
-    **http** :code:`<br>`:code:`<br>` **https**
+    **http** :code:`<br>`:code:`<br>` **https**.
     """
 
     HTTP = "Http"
     HTTPS = "Https"
+
 
 class SettingNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the name of the setting to which the content applies. Possible values are:
@@ -80,13 +85,14 @@ class SettingNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO_LOGON = "AutoLogon"
     FIRST_LOGON_COMMANDS = "FirstLogonCommands"
 
+
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The level code.
-    """
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
+
 
 class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the storage account type for the managed disk. Possible values are: Standard_LRS or
@@ -95,6 +101,7 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     STANDARD_LRS = "Standard_LRS"
     PREMIUM_LRS = "Premium_LRS"
+
 
 class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of an upgrade to virtual machines in the scale set.:code:`<br />`:code:`<br
@@ -107,12 +114,13 @@ class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTOMATIC = "Automatic"
     MANUAL = "Manual"
 
+
 class VirtualMachineScaleSetSkuScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The scale type applicable to the sku.
-    """
+    """The scale type applicable to the sku."""
 
     AUTOMATIC = "Automatic"
     NONE = "None"
+
 
 class VirtualMachineSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the size of the virtual machine. For more information about virtual machine sizes,
@@ -123,7 +131,7 @@ class VirtualMachineSizeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     machine sizes in an availability set <virtualmachines-list-sizes-availability-set.md>`_
     :code:`<br>`:code:`<br>` `List all available virtual machine sizes in a region
     <virtualmachines-list-sizes-region.md>`_ :code:`<br>`:code:`<br>` `List all available virtual
-    machine sizes for resizing <virtualmachines-list-sizes-for-resizing.md>`_
+    machine sizes for resizing <virtualmachines-list-sizes-for-resizing.md>`_.
     """
 
     BASIC_A0 = "Basic_A0"

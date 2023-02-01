@@ -3,18 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import TYPE_CHECKING
+from typing import Optional, Union, Any
 
 from azure.core.exceptions import ClientAuthenticationError
-
+from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, Union
-    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,7 +25,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     description of the on-behalf-of flow.
 
     :param str tenant_id: ID of the service principal's tenant. Also called its "directory" ID.
-    :param str client_id: the service principal's client ID
+    :param str client_id: The service principal's client ID
     :keyword str client_secret: Optional. A client secret to authenticate the service principal.
         Either **client_secret** or **client_certificate** must be provided.
     :keyword bytes client_certificate: Optional. The bytes of a certificate in PEM or PKCS12 format including
@@ -41,10 +37,13 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com",
         the authority for Azure Public Cloud (which is the default). :class:`~azure.identity.AzureAuthorityHosts`
         defines authorities for other clouds.
-    :keyword password: a certificate password. Used only when **client_certificate** is provided. If this value
+    :keyword password: A certificate password. Used only when **client_certificate** is provided. If this value
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
     def __init__(
@@ -55,7 +54,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         client_certificate: bytes = None,
         client_secret: str = None,
         user_assertion: str,
-        **kwargs: "Any"
+        **kwargs: Any
     ) -> None:
         super().__init__()
         validate_tenant_id(tenant_id)
@@ -87,13 +86,13 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         await self._client.__aenter__()
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs: Any) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def _request_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
         # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
         # to change an instance's assertion.

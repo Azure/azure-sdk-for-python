@@ -64,6 +64,16 @@ async def test_decompress_compressed_header(client):
     assert response.text() == "hello world"
 
 @pytest.mark.asyncio
+async def test_deflate_decompress_compressed_header(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/deflate")
+    response = await client.send_request(request)
+    content = await response.read()
+    assert content == b"hi there"
+    assert response.content == content
+    assert response.text() == "hi there"
+
+@pytest.mark.asyncio
 async def test_decompress_compressed_header_stream(client):
     # expect plain text
     request = HttpRequest("GET", "/encoding/gzip")

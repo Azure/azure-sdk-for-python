@@ -394,10 +394,5 @@ def test_request_bytes_body_and_content_kwarg(old_request):
         new_request.content ==
         bytes_input
     )
-    if sys.version_info < (3, 0):
-        # in 2.7, b'' is a string, so we're setting content-type headers
-        assert old_request.headers["Content-Length"] == new_request.headers['Content-Length'] == '13'
-        assert new_request.headers["Content-Type"] == "text/plain"
-    else:
-        assert old_request.headers == new_request.headers == {'Content-Length': '13'}
+    assert old_request.headers == new_request.headers == {'Content-Length': '13'}
     assert old_request.files == new_request.files

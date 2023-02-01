@@ -2,25 +2,23 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import time
 import os
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic list operations on a vault(secret) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations. See
-# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
+# https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create secret (set_secret)
 #
@@ -45,8 +43,8 @@ client = SecretClient(vault_url=VAULT_URL, credential=credential)
 print("\n.. Create Secret")
 bank_secret = client.set_secret("listOpsBankSecretName", "listOpsSecretValue1")
 storage_secret = client.set_secret("listOpsStorageSecretName", "listOpsSecretValue2")
-print("Secret with name '{0}' was created.".format(bank_secret.name))
-print("Secret with name '{0}' was created.".format(storage_secret.name))
+print(f"Secret with name '{bank_secret.name}' was created.")
+print(f"Secret with name '{storage_secret.name}' was created.")
 
 # You need to check if any of the secrets are sharing same values.
 # Let's list the secrets and print their values.
@@ -57,7 +55,7 @@ secrets = client.list_properties_of_secrets()
 for secret in secrets:
     retrieved_secret = client.get_secret(secret.name)
     print(
-        "Secret with name '{0}' and value {1} was found.".format(retrieved_secret.name, retrieved_secret.name)
+        f"Secret with name '{retrieved_secret.name}' and value {retrieved_secret.name} was found."
     )
 
 # The bank account password got updated, so you want to update the secret in Key Vault to ensure it reflects the
@@ -65,7 +63,7 @@ for secret in secrets:
 # with the new value.
 updated_secret = client.set_secret(bank_secret.name, "newSecretValue")
 print(
-    "Secret with name '{0}' was updated with new value '{1}'".format(updated_secret.name, updated_secret.value)
+    f"Secret with name '{updated_secret.name}' was updated with new value '{updated_secret.value}'"
 )
 
 # You need to check all the different values your bank account password secret had previously. Lets print all
@@ -73,11 +71,7 @@ print(
 print("\n.. List versions of the secret using its name")
 secret_versions = client.list_properties_of_secret_versions(bank_secret.name)
 for secret_version in secret_versions:
-    print(
-        "Bank Secret with name '{0}' has version: '{1}'.".format(
-            secret_version.name, secret_version.version
-        )
-    )
+    print(f"Bank Secret with name '{secret_version.name}' has version: '{secret_version.version}'.")
 
 # The bank account and storage accounts got closed. Let's delete bank and storage accounts secrets.
 # Calling result() on the method will immediately return the `DeletedSecret`, but calling wait() blocks
@@ -92,5 +86,5 @@ print("\n.. List deleted secrets from the Key Vault")
 deleted_secrets = client.list_deleted_secrets()
 for deleted_secret in deleted_secrets:
     print(
-        "Secret with name '{0}' has recovery id '{1}'".format(deleted_secret.name, deleted_secret.recovery_id)
+        f"Secret with name '{deleted_secret.name}' has recovery id '{deleted_secret.recovery_id}'"
     )

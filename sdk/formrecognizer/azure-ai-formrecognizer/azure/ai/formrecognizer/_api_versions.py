@@ -11,7 +11,7 @@ class DocumentAnalysisApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Form Recognizer API versions supported by DocumentAnalysisClient and DocumentModelAdministrationClient."""
 
     #: This is the default version
-    V2022_06_30_PREVIEW = "2022-06-30-preview"
+    V2022_08_31 = "2022-08-31"
 
 
 class FormRecognizerApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -22,37 +22,34 @@ class FormRecognizerApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2_0 = "2.0"
 
 
-def validate_api_version(api_version, client_kind):
-    # type: (str, str) -> None
+def validate_api_version(api_version: str, client_kind: str) -> None:
     """Raise ValueError if api_version is invalid"""
 
     if client_kind == "form":
         try:
-            api_version = FormRecognizerApiVersion(api_version)
+            FormRecognizerApiVersion(api_version)
         except ValueError:
             err_message = "Unsupported API version '{}'. Please select from: {}".format(
                 api_version, ", ".join(v.value for v in FormRecognizerApiVersion)
             )
             try:
-                api_version = DocumentAnalysisApiVersion(api_version)
+                DocumentAnalysisApiVersion(api_version)
                 err_message += (
                     "\nAPI version '{}' is only available for "
-                    "DocumentAnalysisClient and DocumentModelAdministrationClient.".format(
-                        api_version
-                    )
+                    "DocumentAnalysisClient and DocumentModelAdministrationClient.".format(api_version)
                 )
             except ValueError:
                 pass
             raise ValueError(err_message)
     else:
         try:
-            api_version = DocumentAnalysisApiVersion(api_version)
+            DocumentAnalysisApiVersion(api_version)
         except ValueError:
             err_message = "Unsupported API version '{}'. Please select from: {}".format(
                 api_version, ", ".join(v.value for v in DocumentAnalysisApiVersion)
             )
             try:
-                api_version = FormRecognizerApiVersion(api_version)
+                FormRecognizerApiVersion(api_version)
                 err_message += (
                     "\nAPI version '{}' is only available for "
                     "FormRecognizerClient and FormTrainingClient.".format(api_version)

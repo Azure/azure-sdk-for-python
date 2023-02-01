@@ -31,5 +31,3 @@ jobs:
         type: mltable
         mode: eval_mount
       sample_input_string: ${{parent.inputs.pipeline_sample_input_string}}
-
-

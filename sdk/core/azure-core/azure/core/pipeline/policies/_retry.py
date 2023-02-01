@@ -1,4 +1,4 @@
-#pylint: disable=no-self-use
+# pylint: disable=no-self-use
 # --------------------------------------------------------------------------
 #
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -27,12 +27,10 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
 from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
-from typing import TYPE_CHECKING, List, Callable, Iterator, Any, Union, Dict, Optional  # pylint: disable=unused-import
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
     AzureError,
@@ -49,12 +47,14 @@ from ..._enum_meta import CaseInsensitiveEnumMeta
 
 _LOGGER = logging.getLogger(__name__)
 
+
 class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     # pylint: disable=enum-must-be-uppercase
-    Exponential = 'exponential'
-    Fixed = 'fixed'
+    Exponential = "exponential"
+    Fixed = "fixed"
 
-class RetryPolicyBase(object):
+
+class RetryPolicyBase:
     # pylint: disable=too-many-instance-attributes
     #: Maximum backoff time.
     BACKOFF_MAX = 120
@@ -62,26 +62,27 @@ class RetryPolicyBase(object):
     _RETRY_CODES = set(range(999)) - _SAFE_CODES
 
     def __init__(self, **kwargs):
-        self.total_retries = kwargs.pop('retry_total', 10)
-        self.connect_retries = kwargs.pop('retry_connect', 3)
-        self.read_retries = kwargs.pop('retry_read', 3)
-        self.status_retries = kwargs.pop('retry_status', 3)
-        self.backoff_factor = kwargs.pop('retry_backoff_factor', 0.8)
-        self.backoff_max = kwargs.pop('retry_backoff_max', self.BACKOFF_MAX)
-        self.retry_mode = kwargs.pop('retry_mode', RetryMode.Exponential)
-        self.timeout = kwargs.pop('timeout', 604800)
+        self.total_retries = kwargs.pop("retry_total", 10)
+        self.connect_retries = kwargs.pop("retry_connect", 3)
+        self.read_retries = kwargs.pop("retry_read", 3)
+        self.status_retries = kwargs.pop("retry_status", 3)
+        self.backoff_factor = kwargs.pop("retry_backoff_factor", 0.8)
+        self.backoff_max = kwargs.pop("retry_backoff_max", self.BACKOFF_MAX)
+        self.retry_mode = kwargs.pop("retry_mode", RetryMode.Exponential)
+        self.timeout = kwargs.pop("timeout", 604800)
 
         retry_codes = self._RETRY_CODES
-        status_codes = kwargs.pop('retry_on_status_codes', [])
+        status_codes = kwargs.pop("retry_on_status_codes", [])
         self._retry_on_status_codes = set(status_codes) | retry_codes
-        self._method_whitelist = frozenset(['HEAD', 'GET', 'PUT', 'DELETE', 'OPTIONS', 'TRACE'])
+        self._method_whitelist = frozenset(
+            ["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"]
+        )
         self._respect_retry_after_header = True
         super(RetryPolicyBase, self).__init__()
 
     @classmethod
     def no_retries(cls):
-        """Disable retries.
-        """
+        """Disable retries."""
         return cls(retry_total=0)
 
     def configure_retries(self, options):
@@ -92,15 +93,15 @@ class RetryPolicyBase(object):
         :rtype: dict
         """
         return {
-            'total': options.pop("retry_total", self.total_retries),
-            'connect': options.pop("retry_connect", self.connect_retries),
-            'read': options.pop("retry_read", self.read_retries),
-            'status': options.pop("retry_status", self.status_retries),
-            'backoff': options.pop("retry_backoff_factor", self.backoff_factor),
-            'max_backoff': options.pop("retry_backoff_max", self.BACKOFF_MAX),
-            'methods': options.pop("retry_on_methods", self._method_whitelist),
-            'timeout': options.pop("timeout", self.timeout),
-            'history': []
+            "total": options.pop("retry_total", self.total_retries),
+            "connect": options.pop("retry_connect", self.connect_retries),
+            "read": options.pop("retry_read", self.read_retries),
+            "status": options.pop("retry_status", self.status_retries),
+            "backoff": options.pop("retry_backoff_factor", self.backoff_factor),
+            "max_backoff": options.pop("retry_backoff_max", self.BACKOFF_MAX),
+            "methods": options.pop("retry_on_methods", self._method_whitelist),
+            "timeout": options.pop("timeout", self.timeout),
+            "history": [],
         }
 
     def get_backoff_time(self, settings):
@@ -111,15 +112,15 @@ class RetryPolicyBase(object):
         :rtype: float
         """
         # We want to consider only the last consecutive errors sequence (Ignore redirects).
-        consecutive_errors_len = len(settings['history'])
+        consecutive_errors_len = len(settings["history"])
         if consecutive_errors_len <= 1:
             return 0
 
         if self.retry_mode == RetryMode.Fixed:
-            backoff_value = settings['backoff']
+            backoff_value = settings["backoff"]
         else:
-            backoff_value = settings['backoff'] * (2 ** (consecutive_errors_len - 1))
-        return min(settings['max_backoff'], backoff_value)
+            backoff_value = settings["backoff"] * (2 ** (consecutive_errors_len - 1))
+        return min(settings["max_backoff"], backoff_value)
 
     def parse_retry_after(self, retry_after):
         """Helper to parse Retry-After and get value in seconds.
@@ -163,10 +164,13 @@ class RetryPolicyBase(object):
         :return: True if method should be retried upon. False if not in method allowlist.
         :rtype: bool
         """
-        if response and request.method.upper() in ['POST', 'PATCH'] and \
-                response.status_code in [500, 503, 504]:
+        if (
+            response
+            and request.method.upper() in ["POST", "PATCH"]
+            and response.status_code in [500, 503, 504]
+        ):
             return True
-        if request.method.upper() not in settings['methods']:
+        if request.method.upper() not in settings["methods"]:
             return False
 
         return True
@@ -197,9 +201,14 @@ class RetryPolicyBase(object):
         has_retry_after = bool(response.http_response.headers.get("Retry-After"))
         if has_retry_after and self._respect_retry_after_header:
             return True
-        if not self._is_method_retryable(settings, response.http_request, response=response.http_response):
+        if not self._is_method_retryable(
+            settings, response.http_request, response=response.http_response
+        ):
             return False
-        return settings['total'] and response.http_response.status_code in self._retry_on_status_codes
+        return (
+            settings["total"]
+            and response.http_response.status_code in self._retry_on_status_codes
+        )
 
     def is_exhausted(self, settings):
         """Checks if any retries left.
@@ -208,7 +217,12 @@ class RetryPolicyBase(object):
         :return: False if have more retries. True if retries exhausted.
         :rtype: bool
         """
-        retry_counts = (settings['total'], settings['connect'], settings['read'], settings['status'])
+        retry_counts = (
+            settings["total"],
+            settings["connect"],
+            settings["read"],
+            settings["status"],
+        )
         retry_counts = list(filter(None, retry_counts))
         if not retry_counts:
             return False
@@ -227,48 +241,56 @@ class RetryPolicyBase(object):
          True if more retry attempts available, False otherwise
         :rtype: bool
         """
-        settings['total'] -= 1
+        settings["total"] -= 1
 
-        if isinstance(response, PipelineResponse) and response.http_response.status_code == 202:
+        if (
+            isinstance(response, PipelineResponse)
+            and response.http_response.status_code == 202
+        ):
             return False
 
         if error and self._is_connection_error(error):
             # Connect retry?
-            settings['connect'] -= 1
-            settings['history'].append(RequestHistory(response.http_request, error=error))
+            settings["connect"] -= 1
+            settings["history"].append(
+                RequestHistory(response.http_request, error=error)
+            )
 
         elif error and self._is_read_error(error):
             # Read retry?
-            settings['read'] -= 1
-            if hasattr(response, 'http_request'):
-                settings['history'].append(RequestHistory(response.http_request, error=error))
+            settings["read"] -= 1
+            if hasattr(response, "http_request"):
+                settings["history"].append(
+                    RequestHistory(response.http_request, error=error)
+                )
 
         else:
             # Incrementing because of a server error like a 500 in
             # status_forcelist and a the given method is in the allowlist
             if response:
-                settings['status'] -= 1
-                if hasattr(response, 'http_request') and hasattr(response, 'http_response'):
-                    settings['history'].append(
+                settings["status"] -= 1
+                if hasattr(response, "http_request") and hasattr(
+                    response, "http_response"
+                ):
+                    settings["history"].append(
                         RequestHistory(
-                            response.http_request,
-                            http_response=response.http_response
+                            response.http_request, http_response=response.http_response
                         )
                     )
 
         if self.is_exhausted(settings):
             return False
 
-        if response.http_request.body and hasattr(response.http_request.body, 'read'):
-            if 'body_position' not in settings:
+        if response.http_request.body and hasattr(response.http_request.body, "read"):
+            if "body_position" not in settings:
                 return False
             try:
                 # attempt to rewind the body to the initial position
-                response.http_request.body.seek(settings['body_position'], SEEK_SET)
+                response.http_request.body.seek(settings["body_position"], SEEK_SET)
             except (UnsupportedOperation, ValueError, AttributeError):
                 # if body is not seekable, then retry would not work
                 return False
-        file_positions = settings.get('file_positions')
+        file_positions = settings.get("file_positions")
         if response.http_request.files and file_positions:
             try:
                 for value in response.http_request.files.values():
@@ -289,24 +311,28 @@ class RetryPolicyBase(object):
         :param retry_settings: The retry settings.
         :type retry_settings: dict
         """
-        if retry_settings['history']:
-            context['history'] = retry_settings['history']
+        if retry_settings["history"]:
+            context["history"] = retry_settings["history"]
 
     def _configure_timeout(self, request, absolute_timeout, is_response_error):
         if absolute_timeout <= 0:
             if is_response_error:
-                raise ServiceResponseTimeoutError('Response timeout')
-            raise ServiceRequestTimeoutError('Request timeout')
+                raise ServiceResponseTimeoutError("Response timeout")
+            raise ServiceRequestTimeoutError("Request timeout")
 
         # if connection_timeout is already set, ensure it doesn't exceed absolute_timeout
-        connection_timeout = request.context.options.get('connection_timeout')
+        connection_timeout = request.context.options.get("connection_timeout")
         if connection_timeout:
-            request.context.options["connection_timeout"] = min(connection_timeout, absolute_timeout)
+            request.context.options["connection_timeout"] = min(
+                connection_timeout, absolute_timeout
+            )
 
         # otherwise, try to ensure the transport's configured connection_timeout doesn't exceed absolute_timeout
         # ("connection_config" isn't defined on Async/HttpTransport but all implementations in this library have it)
         elif hasattr(request.context.transport, "connection_config"):
-            default_timeout = getattr(request.context.transport.connection_config, "timeout", absolute_timeout)
+            default_timeout = getattr(
+                request.context.transport.connection_config, "timeout", absolute_timeout
+            )
             try:
                 if absolute_timeout < default_timeout:
                     request.context.options["connection_timeout"] = absolute_timeout
@@ -317,7 +343,7 @@ class RetryPolicyBase(object):
     def _configure_positions(self, request, retry_settings):
         body_position = None
         file_positions = None
-        if request.http_request.body and hasattr(request.http_request.body, 'read'):
+        if request.http_request.body and hasattr(request.http_request.body, "read"):
             try:
                 body_position = request.http_request.body.tell()
             except (AttributeError, UnsupportedOperation):
@@ -329,14 +355,15 @@ class RetryPolicyBase(object):
                 try:
                     for value in request.http_request.files.values():
                         name, body = value[0], value[1]
-                        if name and body and hasattr(body, 'read'):
+                        if name and body and hasattr(body, "read"):
                             position = body.tell()
                             file_positions[name] = position
                 except (AttributeError, UnsupportedOperation):
                     file_positions = None
 
-        retry_settings['body_position'] = body_position
-        retry_settings['file_positions'] = file_positions
+        retry_settings["body_position"] = body_position
+        retry_settings["file_positions"] = file_positions
+
 
 class RetryPolicy(RetryPolicyBase, HTTPPolicy):
     """A retry policy.
@@ -358,7 +385,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
 
     :keyword float retry_backoff_factor: A backoff factor to apply between attempts after the second try
      (most errors are resolved immediately by a second try without a delay).
-     In fixed mode, retry policy will alwasy sleep for {backoff factor}.
+     In fixed mode, retry policy will always sleep for {backoff factor}.
      In 'exponential' mode, retry policy will sleep for: `{backoff factor} * (2 ** ({number of total retries} - 1))`
      seconds. If the backoff_factor is 0.1, then the retry will sleep
      for [0.0s, 0.2s, 0.4s, ...] between retries. The default value is 0.8.
@@ -378,6 +405,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
             :dedent: 4
             :caption: Configuring a retry policy.
     """
+
     def _sleep_for_retry(self, response, transport):
         """Sleep based on the Retry-After response header value.
 
@@ -436,7 +464,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
         retry_settings = self.configure_retries(request.context.options)
         self._configure_positions(request, retry_settings)
 
-        absolute_timeout = retry_settings['timeout']
+        absolute_timeout = retry_settings["timeout"]
         is_response_error = True
 
         while retry_active:
@@ -447,7 +475,9 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 if self.is_retry(retry_settings, response):
                     retry_active = self.increment(retry_settings, response=response)
                     if retry_active:
-                        self.sleep(retry_settings, request.context.transport, response=response)
+                        self.sleep(
+                            retry_settings, request.context.transport, response=response
+                        )
                         is_response_error = True
                         continue
                 break
@@ -456,8 +486,12 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
                 # succeed--we'll never have a response to it, so propagate the exception
                 raise
             except AzureError as err:
-                if absolute_timeout > 0 and self._is_method_retryable(retry_settings, request.http_request):
-                    retry_active = self.increment(retry_settings, response=request, error=err)
+                if absolute_timeout > 0 and self._is_method_retryable(
+                    retry_settings, request.http_request
+                ):
+                    retry_active = self.increment(
+                        retry_settings, response=request, error=err
+                    )
                     if retry_active:
                         self.sleep(retry_settings, request.context.transport)
                         if isinstance(err, ServiceRequestError):
@@ -469,7 +503,7 @@ class RetryPolicy(RetryPolicyBase, HTTPPolicy):
             finally:
                 end_time = time.time()
                 if absolute_timeout:
-                    absolute_timeout -= (end_time - start_time)
+                    absolute_timeout -= end_time - start_time
 
         self.update_context(response.context, retry_settings)
         return response

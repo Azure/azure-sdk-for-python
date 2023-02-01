@@ -6,46 +6,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DiskMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the different types of disk modes.
-    """
+
+class DiskMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of disk modes."""
 
     PERSISTENT = "persistent"
     INDEPENDENT_PERSISTENT = "independent_persistent"
     INDEPENDENT_NONPERSISTENT = "independent_nonpersistent"
 
-class DiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the different types of disks.
-    """
+
+class DiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of disks."""
 
     FLAT = "flat"
     PMEM = "pmem"
@@ -55,23 +38,23 @@ class DiskType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SESPARSE = "sesparse"
     UNKNOWN = "unknown"
 
-class FirmwareType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Firmware type
-    """
+
+class FirmwareType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Firmware type."""
 
     BIOS = "bios"
     EFI = "efi"
 
-class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of managed service identity.
-    """
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of managed service identity."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
 
-class InventoryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The inventory type.
-    """
+
+class InventoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The inventory type."""
 
     RESOURCE_POOL = "ResourcePool"
     VIRTUAL_MACHINE = "VirtualMachine"
@@ -81,9 +64,9 @@ class InventoryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DATASTORE = "Datastore"
     HOST = "Host"
 
-class IPAddressAllocationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """IP address allocation method.
-    """
+
+class IPAddressAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IP address allocation method."""
 
     UNSET = "unset"
     DYNAMIC = "dynamic"
@@ -92,9 +75,9 @@ class IPAddressAllocationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     RANDOM = "random"
     OTHER = "other"
 
-class NICType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """NIC type
-    """
+
+class NICType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """NIC type."""
 
     VMXNET3 = "vmxnet3"
     VMXNET2 = "vmxnet2"
@@ -103,32 +86,70 @@ class NICType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     E1000_E = "e1000e"
     PCNET32 = "pcnet32"
 
-class OsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the different types of VM guest operating systems.
-    """
+
+class OsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of VM guest operating systems."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
     OTHER = "Other"
 
-class PowerOnBootOption(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the options for power on boot.
+
+class OsTypeUM(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operating system type of the machine."""
+
+    WINDOWS = "Windows"
+    LINUX = "Linux"
+
+
+class PatchOperationStartedBy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if operation was triggered by user or by platform."""
+
+    USER = "User"
+    PLATFORM = "Platform"
+
+
+class PatchOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The overall success or failure status of the operation. It remains "InProgress" until the
+    operation completes. At that point it will become "Unknown", "Failed", "Succeeded", or
+    "CompletedWithWarnings.".
     """
+
+    UNKNOWN = "Unknown"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+    SUCCEEDED = "Succeeded"
+    COMPLETED_WITH_WARNINGS = "CompletedWithWarnings"
+
+
+class PatchServiceUsed(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the patch service used for the operation."""
+
+    UNKNOWN = "Unknown"
+    WU = "WU"
+    WU_WSUS = "WU_WSUS"
+    YUM = "YUM"
+    APT = "APT"
+    ZYPPER = "Zypper"
+
+
+class PowerOnBootOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the options for power on boot."""
 
     ENABLED = "enabled"
     DISABLED = "disabled"
 
-class ProvisioningAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the different types of operations for guest agent.
-    """
+
+class ProvisioningAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of operations for guest agent."""
 
     INSTALL = "install"
     UNINSTALL = "uninstall"
     REPAIR = "repair"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The current deployment state of resource.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current deployment state of resource."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -139,35 +160,75 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ACCEPTED = "Accepted"
     CREATED = "Created"
 
-class SCSIControllerType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the different types of SCSI controllers.
-    """
+
+class SCSIControllerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the different types of SCSI controllers."""
 
     LSILOGIC = "lsilogic"
     BUSLOGIC = "buslogic"
     PVSCSI = "pvscsi"
     LSILOGICSAS = "lsilogicsas"
 
-class StatusLevelTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The level code.
-    """
+
+class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The level code."""
 
     INFO = "Info"
     WARNING = "Warning"
     ERROR = "Error"
 
-class StatusTypes(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the hybrid machine agent.
-    """
+
+class StatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the hybrid machine agent."""
 
     CONNECTED = "Connected"
     DISCONNECTED = "Disconnected"
     ERROR = "Error"
 
-class VirtualSCSISharing(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Defines the sharing mode for sharing the SCSI bus.
-    """
+
+class VirtualSCSISharing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines the sharing mode for sharing the SCSI bus."""
 
     NO_SHARING = "noSharing"
     PHYSICAL_SHARING = "physicalSharing"
     VIRTUAL_SHARING = "virtualSharing"
+
+
+class VMGuestPatchClassificationLinux(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VMGuestPatchClassificationLinux."""
+
+    CRITICAL = "Critical"
+    SECURITY = "Security"
+    OTHER = "Other"
+
+
+class VMGuestPatchClassificationWindows(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """VMGuestPatchClassificationWindows."""
+
+    CRITICAL = "Critical"
+    SECURITY = "Security"
+    UPDATE_ROLL_UP = "UpdateRollUp"
+    FEATURE_PACK = "FeaturePack"
+    SERVICE_PACK = "ServicePack"
+    DEFINITION = "Definition"
+    TOOLS = "Tools"
+    UPDATES = "Updates"
+
+
+class VMGuestPatchRebootSetting(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Defines when it is acceptable to reboot a VM during a software update operation."""
+
+    IF_REQUIRED = "IfRequired"
+    NEVER = "Never"
+    ALWAYS = "Always"
+
+
+class VMGuestPatchRebootStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reboot state of the VM following completion of the operation."""
+
+    UNKNOWN = "Unknown"
+    NOT_NEEDED = "NotNeeded"
+    REQUIRED = "Required"
+    STARTED = "Started"
+    FAILED = "Failed"
+    COMPLETED = "Completed"

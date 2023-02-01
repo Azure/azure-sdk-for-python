@@ -11,6 +11,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity.aio import (
     AzurePowerShellCredential,
     AzureCliCredential,
+    AzureDeveloperCliCredential,
     DefaultAzureCredential,
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
@@ -92,7 +93,13 @@ def test_authority(authority):
             shared_cache.supported = lambda: False
             with patch.dict("os.environ", {}, clear=True):
                 test_initialization(mock_credential, expect_argument=False)
-
+                
+    # authority should not be passed to AzureDeveloperCliCredential
+    with patch(DefaultAzureCredential.__module__ + ".AzureDeveloperCliCredential") as mock_credential:
+        with patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential") as shared_cache:
+            shared_cache.supported = lambda: False
+            with patch.dict("os.environ", {}, clear=True):
+                test_initialization(mock_credential, expect_argument=False)
 
 def test_exclude_options():
     def assert_credentials_not_present(chain, *credential_classes):
@@ -118,6 +125,9 @@ def test_exclude_options():
 
     credential = DefaultAzureCredential(exclude_cli_credential=True)
     assert_credentials_not_present(credential, AzureCliCredential)
+
+    credential = DefaultAzureCredential(exclude_azd_cli_credential=True)
+    assert_credentials_not_present(credential, AzureDeveloperCliCredential)
 
     credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
     assert_credentials_not_present(credential, VisualStudioCodeCredential)
@@ -210,46 +220,6 @@ async def test_shared_cache_username():
         credential = get_credential_for_shared_cache_test(refresh_token_b, expected_access_token, cache)
     token = await credential.get_token("scope")
     assert token.token == expected_access_token
-
-
-def test_vscode_arguments(monkeypatch):
-    monkeypatch.delenv(EnvironmentVariables.AZURE_AUTHORITY_HOST, raising=False)
-    monkeypatch.delenv(EnvironmentVariables.AZURE_TENANT_ID, raising=False)
-
-    credential = DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential"
-
-    # DefaultAzureCredential shouldn't specify a default authority or tenant to VisualStudioCodeCredential
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential()
-    mock_credential.assert_called_once_with()
-
-    tenant = {"tenant_id": "the-tenant"}
-
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
-    mock_credential.assert_called_once_with(**tenant)
-
-    # tenant id can also be specified in $AZURE_TENANT_ID
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: tenant["tenant_id"]}):
-        with patch(credential) as mock_credential:
-            DefaultAzureCredential()
-    mock_credential.assert_called_once_with(**tenant)
-
-    # keyword argument should override environment variable
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + tenant["tenant_id"]}):
-        with patch(credential) as mock_credential:
-            DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
-    mock_credential.assert_called_once_with(**tenant)
-
-    # DefaultAzureCredential should pass the authority kwarg along
-    authority = {"authority": "the-authority"}
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(**authority)
-    mock_credential.assert_called_once_with(**authority)
-
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"], **authority)
-    mock_credential.assert_called_once_with(**dict(authority, **tenant))
 
 
 @pytest.mark.asyncio

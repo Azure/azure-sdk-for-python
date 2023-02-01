@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class AccessRights(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The permissions assigned to the shared access policy.
-    """
+class AccessRights(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The permissions assigned to the shared access policy."""
 
     REGISTRY_READ = "RegistryRead"
     REGISTRY_WRITE = "RegistryWrite"
@@ -29,42 +27,44 @@ class AccessRights(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     REGISTRY_READ_REGISTRY_WRITE_DEVICE_CONNECT = "RegistryRead, RegistryWrite, DeviceConnect"
     REGISTRY_READ_SERVICE_CONNECT_DEVICE_CONNECT = "RegistryRead, ServiceConnect, DeviceConnect"
     REGISTRY_WRITE_SERVICE_CONNECT_DEVICE_CONNECT = "RegistryWrite, ServiceConnect, DeviceConnect"
-    REGISTRY_READ_REGISTRY_WRITE_SERVICE_CONNECT_DEVICE_CONNECT = "RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect"
+    REGISTRY_READ_REGISTRY_WRITE_SERVICE_CONNECT_DEVICE_CONNECT = (
+        "RegistryRead, RegistryWrite, ServiceConnect, DeviceConnect"
+    )
 
-class Capabilities(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The capabilities and features enabled for the IoT hub.
-    """
+
+class Capabilities(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The capabilities and features enabled for the IoT hub."""
 
     NONE = "None"
     DEVICE_MANAGEMENT = "DeviceManagement"
 
-class EndpointHealthStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The health status code of the endpoint
-    """
+
+class EndpointHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The health status code of the endpoint."""
 
     UNKNOWN = "unknown"
     HEALTHY = "healthy"
     UNHEALTHY = "unhealthy"
     DEAD = "dead"
 
-class IotHubNameUnavailabilityReason(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason for unavailability.
-    """
+
+class IotHubNameUnavailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason for unavailability."""
 
     INVALID = "Invalid"
     ALREADY_EXISTS = "AlreadyExists"
 
-class IotHubScaleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the scaling enabled.
-    """
+
+class IotHubScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the scaling enabled."""
 
     AUTOMATIC = "Automatic"
     MANUAL = "Manual"
     NONE = "None"
 
-class IotHubSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the SKU.
-    """
+
+class IotHubSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the SKU."""
 
     F1 = "F1"
     S1 = "S1"
@@ -74,24 +74,24 @@ class IotHubSku(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     B2 = "B2"
     B3 = "B3"
 
-class IotHubSkuTier(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The billing tier for the IoT hub.
-    """
+
+class IotHubSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The billing tier for the IoT hub."""
 
     FREE = "Free"
     STANDARD = "Standard"
     BASIC = "Basic"
 
-class IpFilterActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The desired action for requests captured by this rule.
-    """
+
+class IpFilterActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The desired action for requests captured by this rule."""
 
     ACCEPT = "Accept"
     REJECT = "Reject"
 
-class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the job.
-    """
+
+class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the job."""
 
     UNKNOWN = "unknown"
     ENQUEUED = "enqueued"
@@ -100,13 +100,13 @@ class JobStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FAILED = "failed"
     CANCELLED = "cancelled"
 
-class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the job.
-    """
+
+class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the job."""
 
     UNKNOWN = "unknown"
     EXPORT = "export"
-    IMPORT_ENUM = "import"
+    IMPORT = "import"
     BACKUP = "backup"
     READ_DEVICE_PROPERTIES = "readDeviceProperties"
     WRITE_DEVICE_PROPERTIES = "writeDeviceProperties"
@@ -115,25 +115,25 @@ class JobType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     FACTORY_RESET_DEVICE = "factoryResetDevice"
     FIRMWARE_UPDATE = "firmwareUpdate"
 
-class OperationMonitoringLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The operations monitoring level.
-    """
+
+class OperationMonitoringLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The operations monitoring level."""
 
     NONE = "None"
     ERROR = "Error"
     INFORMATION = "Information"
     ERROR_INFORMATION = "Error, Information"
 
-class RouteErrorSeverity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Severity of the route error
-    """
+
+class RouteErrorSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity of the route error."""
 
     ERROR = "error"
     WARNING = "warning"
 
-class RoutingSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The source that the routing rule is to be applied to, such as DeviceMessages.
-    """
+
+class RoutingSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source that the routing rule is to be applied to, such as DeviceMessages."""
 
     INVALID = "Invalid"
     DEVICE_MESSAGES = "DeviceMessages"
@@ -141,9 +141,9 @@ class RoutingSource(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DEVICE_LIFECYCLE_EVENTS = "DeviceLifecycleEvents"
     DEVICE_JOB_LIFECYCLE_EVENTS = "DeviceJobLifecycleEvents"
 
-class TestResultStatus(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Result of testing route
-    """
+
+class TestResultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Result of testing route."""
 
     UNDEFINED = "undefined"
     FALSE = "false"

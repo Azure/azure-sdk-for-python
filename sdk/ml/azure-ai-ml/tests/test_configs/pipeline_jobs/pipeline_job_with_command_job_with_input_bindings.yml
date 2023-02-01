@@ -19,7 +19,7 @@ outputs:
     mode: mount
 
 jobs:
-  hello_world_inline_commandjob_1:
+  hello_world:
     type: command
 
     command: pip freeze && echo Hello World
@@ -46,7 +46,7 @@ jobs:
     experiment_name: test-iris-example-2
     description: Train a model on the Iris dataset-2.
     inputs:
-      "input_from_previous_node": ${{parent.jobs.hello_world_inline_commandjob_1.outputs.job_output}}
+      "input_from_previous_node": ${{parent.jobs.hello_world.outputs.job_output}}
       "test2": ${{parent.inputs.job_data_path}}
     properties:
       test_property: test_value

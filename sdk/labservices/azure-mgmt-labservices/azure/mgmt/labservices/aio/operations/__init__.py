@@ -12,20 +12,26 @@ from ._operations import Operations
 from ._labs_operations import LabsOperations
 from ._operation_results_operations import OperationResultsOperations
 from ._schedules_operations import SchedulesOperations
+from ._skus_operations import SkusOperations
+from ._usages_operations import UsagesOperations
 from ._users_operations import UsersOperations
 from ._virtual_machines_operations import VirtualMachinesOperations
-from ._usages_operations import UsagesOperations
-from ._skus_operations import SkusOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ImagesOperations',
-    'LabPlansOperations',
-    'Operations',
-    'LabsOperations',
-    'OperationResultsOperations',
-    'SchedulesOperations',
-    'UsersOperations',
-    'VirtualMachinesOperations',
-    'UsagesOperations',
-    'SkusOperations',
+    "ImagesOperations",
+    "LabPlansOperations",
+    "Operations",
+    "LabsOperations",
+    "OperationResultsOperations",
+    "SchedulesOperations",
+    "SkusOperations",
+    "UsagesOperations",
+    "UsersOperations",
+    "VirtualMachinesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

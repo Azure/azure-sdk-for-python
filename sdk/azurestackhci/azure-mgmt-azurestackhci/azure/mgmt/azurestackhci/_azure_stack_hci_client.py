@@ -9,20 +9,36 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
 from ._configuration import AzureStackHCIClientConfiguration
-from .operations import ArcSettingsOperations, ClustersOperations, ExtensionsOperations, Operations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    ArcSettingsOperations,
+    ClustersOperations,
+    ExtensionsOperations,
+    GalleryimagesOperations,
+    GuestAgentOperations,
+    GuestAgentsOperations,
+    HybridIdentityMetadataOperations,
+    MachineExtensionsOperations,
+    MarketplacegalleryimagesOperations,
+    NetworkinterfacesOperations,
+    Operations,
+    StoragecontainersOperations,
+    VirtualharddisksOperations,
+    VirtualmachinesOperations,
+    VirtualnetworksOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class AzureStackHCIClient:
+
+class AzureStackHCIClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Stack HCI management service.
 
     :ivar arc_settings: ArcSettingsOperations operations
@@ -31,16 +47,40 @@ class AzureStackHCIClient:
     :vartype clusters: azure.mgmt.azurestackhci.operations.ClustersOperations
     :ivar extensions: ExtensionsOperations operations
     :vartype extensions: azure.mgmt.azurestackhci.operations.ExtensionsOperations
+    :ivar galleryimages: GalleryimagesOperations operations
+    :vartype galleryimages: azure.mgmt.azurestackhci.operations.GalleryimagesOperations
+    :ivar marketplacegalleryimages: MarketplacegalleryimagesOperations operations
+    :vartype marketplacegalleryimages:
+     azure.mgmt.azurestackhci.operations.MarketplacegalleryimagesOperations
+    :ivar networkinterfaces: NetworkinterfacesOperations operations
+    :vartype networkinterfaces: azure.mgmt.azurestackhci.operations.NetworkinterfacesOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.azurestackhci.operations.Operations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar storagecontainers: StoragecontainersOperations operations
+    :vartype storagecontainers: azure.mgmt.azurestackhci.operations.StoragecontainersOperations
+    :ivar virtualharddisks: VirtualharddisksOperations operations
+    :vartype virtualharddisks: azure.mgmt.azurestackhci.operations.VirtualharddisksOperations
+    :ivar virtualmachines: VirtualmachinesOperations operations
+    :vartype virtualmachines: azure.mgmt.azurestackhci.operations.VirtualmachinesOperations
+    :ivar hybrid_identity_metadata: HybridIdentityMetadataOperations operations
+    :vartype hybrid_identity_metadata:
+     azure.mgmt.azurestackhci.operations.HybridIdentityMetadataOperations
+    :ivar machine_extensions: MachineExtensionsOperations operations
+    :vartype machine_extensions: azure.mgmt.azurestackhci.operations.MachineExtensionsOperations
+    :ivar guest_agent: GuestAgentOperations operations
+    :vartype guest_agent: azure.mgmt.azurestackhci.operations.GuestAgentOperations
+    :ivar guest_agents: GuestAgentsOperations operations
+    :vartype guest_agents: azure.mgmt.azurestackhci.operations.GuestAgentsOperations
+    :ivar virtualnetworks: VirtualnetworksOperations operations
+    :vartype virtualnetworks: azure.mgmt.azurestackhci.operations.VirtualnetworksOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
-     default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2021-09-01-preview". Note that overriding
+     this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -53,24 +93,44 @@ class AzureStackHCIClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = AzureStackHCIClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = AzureStackHCIClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.arc_settings = ArcSettingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.galleryimages = GalleryimagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.marketplacegalleryimages = MarketplacegalleryimagesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.networkinterfaces = NetworkinterfacesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.storagecontainers = StoragecontainersOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtualharddisks = VirtualharddisksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtualmachines = VirtualmachinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.hybrid_identity_metadata = HybridIdentityMetadataOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.machine_extensions = MachineExtensionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.guest_agent = GuestAgentOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.guest_agents = GuestAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtualnetworks = VirtualnetworksOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -79,7 +139,7 @@ class AzureStackHCIClient:
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -92,15 +152,12 @@ class AzureStackHCIClient:
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureStackHCIClient
+    def __enter__(self) -> "AzureStackHCIClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,14 +8,23 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
-from ._dev_test_labs_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """An Azure resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -25,34 +35,34 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -71,32 +81,32 @@ class ApplicableSchedule(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param lab_vms_shutdown: The auto-shutdown schedule, if one has been set at the lab or lab
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar lab_vms_shutdown: The auto-shutdown schedule, if one has been set at the lab or lab
      resource level.
-    :type lab_vms_shutdown: ~azure.mgmt.devtestlabs.models.Schedule
-    :param lab_vms_startup: The auto-startup schedule, if one has been set at the lab or lab
+    :vartype lab_vms_shutdown: ~azure.mgmt.devtestlabs.models.Schedule
+    :ivar lab_vms_startup: The auto-startup schedule, if one has been set at the lab or lab
      resource level.
-    :type lab_vms_startup: ~azure.mgmt.devtestlabs.models.Schedule
+    :vartype lab_vms_startup: ~azure.mgmt.devtestlabs.models.Schedule
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'lab_vms_shutdown': {'key': 'properties.labVmsShutdown', 'type': 'Schedule'},
-        'lab_vms_startup': {'key': 'properties.labVmsStartup', 'type': 'Schedule'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "lab_vms_shutdown": {"key": "properties.labVmsShutdown", "type": "Schedule"},
+        "lab_vms_startup": {"key": "properties.labVmsStartup", "type": "Schedule"},
     }
 
     def __init__(
@@ -104,90 +114,87 @@ class ApplicableSchedule(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        lab_vms_shutdown: Optional["Schedule"] = None,
-        lab_vms_startup: Optional["Schedule"] = None,
+        lab_vms_shutdown: Optional["_models.Schedule"] = None,
+        lab_vms_startup: Optional["_models.Schedule"] = None,
         **kwargs
     ):
-        super(ApplicableSchedule, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword lab_vms_shutdown: The auto-shutdown schedule, if one has been set at the lab or lab
+         resource level.
+        :paramtype lab_vms_shutdown: ~azure.mgmt.devtestlabs.models.Schedule
+        :keyword lab_vms_startup: The auto-startup schedule, if one has been set at the lab or lab
+         resource level.
+        :paramtype lab_vms_startup: ~azure.mgmt.devtestlabs.models.Schedule
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.lab_vms_shutdown = lab_vms_shutdown
         self.lab_vms_startup = lab_vms_startup
 
 
-class UpdateResource(msrest.serialization.Model):
+class UpdateResource(_serialization.Model):
     """Represents an update resource.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(UpdateResource, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
 
 
 class ApplicableScheduleFragment(UpdateResource):
     """Schedules applicable to a virtual machine. The schedules may have been defined on a VM or on lab level.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param lab_vms_shutdown: The auto-shutdown schedule, if one has been set at the lab or lab
-     resource level.
-    :type lab_vms_shutdown: ~azure.mgmt.devtestlabs.models.ScheduleFragment
-    :param lab_vms_startup: The auto-startup schedule, if one has been set at the lab or lab
-     resource level.
-    :type lab_vms_startup: ~azure.mgmt.devtestlabs.models.ScheduleFragment
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'lab_vms_shutdown': {'key': 'properties.labVmsShutdown', 'type': 'ScheduleFragment'},
-        'lab_vms_startup': {'key': 'properties.labVmsStartup', 'type': 'ScheduleFragment'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        lab_vms_shutdown: Optional["ScheduleFragment"] = None,
-        lab_vms_startup: Optional["ScheduleFragment"] = None,
-        **kwargs
-    ):
-        super(ApplicableScheduleFragment, self).__init__(tags=tags, **kwargs)
-        self.lab_vms_shutdown = lab_vms_shutdown
-        self.lab_vms_startup = lab_vms_startup
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class ApplyArtifactsRequest(msrest.serialization.Model):
+class ApplyArtifactsRequest(_serialization.Model):
     """Request body for applying artifacts to a virtual machine.
 
-    :param artifacts: The list of artifacts to apply.
-    :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
+    :ivar artifacts: The list of artifacts to apply.
+    :vartype artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
     """
 
     _attribute_map = {
-        'artifacts': {'key': 'artifacts', 'type': '[ArtifactInstallProperties]'},
+        "artifacts": {"key": "artifacts", "type": "[ArtifactInstallProperties]"},
     }
 
-    def __init__(
-        self,
-        *,
-        artifacts: Optional[List["ArtifactInstallProperties"]] = None,
-        **kwargs
-    ):
-        super(ApplyArtifactsRequest, self).__init__(**kwargs)
+    def __init__(self, *, artifacts: Optional[List["_models.ArtifactInstallProperties"]] = None, **kwargs):
+        """
+        :keyword artifacts: The list of artifacts to apply.
+        :paramtype artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
+        """
+        super().__init__(**kwargs)
         self.artifacts = artifacts
 
 
-class ArmTemplate(Resource):
+class ArmTemplate(Resource):  # pylint: disable=too-many-instance-attributes
     """An Azure Resource Manager template.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -198,10 +205,10 @@ class ArmTemplate(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     :ivar display_name: The display name of the ARM template.
     :vartype display_name: str
     :ivar description: The description of the ARM template.
@@ -211,7 +218,7 @@ class ArmTemplate(Resource):
     :ivar icon: The URI to the icon of the ARM template.
     :vartype icon: str
     :ivar contents: The contents of the ARM template.
-    :vartype contents: object
+    :vartype contents: JSON
     :ivar created_date: The creation date of the armTemplate.
     :vartype created_date: ~datetime.datetime
     :ivar parameters_value_files_info: File name and parameter values information from all
@@ -223,43 +230,46 @@ class ArmTemplate(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'display_name': {'readonly': True},
-        'description': {'readonly': True},
-        'publisher': {'readonly': True},
-        'icon': {'readonly': True},
-        'contents': {'readonly': True},
-        'created_date': {'readonly': True},
-        'parameters_value_files_info': {'readonly': True},
-        'enabled': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "display_name": {"readonly": True},
+        "description": {"readonly": True},
+        "publisher": {"readonly": True},
+        "icon": {"readonly": True},
+        "contents": {"readonly": True},
+        "created_date": {"readonly": True},
+        "parameters_value_files_info": {"readonly": True},
+        "enabled": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'icon': {'key': 'properties.icon', 'type': 'str'},
-        'contents': {'key': 'properties.contents', 'type': 'object'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'parameters_value_files_info': {'key': 'properties.parametersValueFilesInfo', 'type': '[ParametersValueFileInfo]'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "icon": {"key": "properties.icon", "type": "str"},
+        "contents": {"key": "properties.contents", "type": "object"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "parameters_value_files_info": {
+            "key": "properties.parametersValueFilesInfo",
+            "type": "[ParametersValueFileInfo]",
+        },
+        "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(ArmTemplate, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.display_name = None
         self.description = None
         self.publisher = None
@@ -270,111 +280,87 @@ class ArmTemplate(Resource):
         self.enabled = None
 
 
-class ArmTemplateInfo(msrest.serialization.Model):
+class ArmTemplateInfo(_serialization.Model):
     """Information about a generated ARM template.
 
-    :param template: The template's contents.
-    :type template: object
-    :param parameters: The parameters of the ARM template.
-    :type parameters: object
+    :ivar template: The template's contents.
+    :vartype template: JSON
+    :ivar parameters: The parameters of the ARM template.
+    :vartype parameters: JSON
     """
 
     _attribute_map = {
-        'template': {'key': 'template', 'type': 'object'},
-        'parameters': {'key': 'parameters', 'type': 'object'},
+        "template": {"key": "template", "type": "object"},
+        "parameters": {"key": "parameters", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        template: Optional[object] = None,
-        parameters: Optional[object] = None,
-        **kwargs
-    ):
-        super(ArmTemplateInfo, self).__init__(**kwargs)
+    def __init__(self, *, template: Optional[JSON] = None, parameters: Optional[JSON] = None, **kwargs):
+        """
+        :keyword template: The template's contents.
+        :paramtype template: JSON
+        :keyword parameters: The parameters of the ARM template.
+        :paramtype parameters: JSON
+        """
+        super().__init__(**kwargs)
         self.template = template
         self.parameters = parameters
 
 
-class ArmTemplateList(msrest.serialization.Model):
+class ArmTemplateList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.ArmTemplate]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.ArmTemplate]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ArmTemplate]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ArmTemplate]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ArmTemplate"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ArmTemplate"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(ArmTemplateList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.ArmTemplate]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ArmTemplateParameterProperties(msrest.serialization.Model):
+class ArmTemplateParameterProperties(_serialization.Model):
     """Properties of an Azure Resource Manager template parameter.
 
-    :param name: The name of the template parameter.
-    :type name: str
-    :param value: The value of the template parameter.
-    :type value: str
+    :ivar name: The name of the template parameter.
+    :vartype name: str
+    :ivar value: The value of the template parameter.
+    :vartype value: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ArmTemplateParameterProperties, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the template parameter.
+        :paramtype name: str
+        :keyword value: The value of the template parameter.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class ArmTemplateParameterPropertiesFragment(msrest.serialization.Model):
-    """Properties of an Azure Resource Manager template parameter.
-
-    :param name: The name of the template parameter.
-    :type name: str
-    :param value: The value of the template parameter.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ArmTemplateParameterPropertiesFragment, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
-
-
-class Artifact(Resource):
+class Artifact(Resource):  # pylint: disable=too-many-instance-attributes
     """An artifact.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -385,10 +371,10 @@ class Artifact(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     :ivar title: The artifact's title.
     :vartype title: str
     :ivar description: The artifact's description.
@@ -402,49 +388,49 @@ class Artifact(Resource):
     :ivar target_os_type: The artifact's target OS.
     :vartype target_os_type: str
     :ivar parameters: The artifact's parameters.
-    :vartype parameters: object
+    :vartype parameters: JSON
     :ivar created_date: The artifact's creation date.
     :vartype created_date: ~datetime.datetime
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'title': {'readonly': True},
-        'description': {'readonly': True},
-        'publisher': {'readonly': True},
-        'file_path': {'readonly': True},
-        'icon': {'readonly': True},
-        'target_os_type': {'readonly': True},
-        'parameters': {'readonly': True},
-        'created_date': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "title": {"readonly": True},
+        "description": {"readonly": True},
+        "publisher": {"readonly": True},
+        "file_path": {"readonly": True},
+        "icon": {"readonly": True},
+        "target_os_type": {"readonly": True},
+        "parameters": {"readonly": True},
+        "created_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'publisher': {'key': 'properties.publisher', 'type': 'str'},
-        'file_path': {'key': 'properties.filePath', 'type': 'str'},
-        'icon': {'key': 'properties.icon', 'type': 'str'},
-        'target_os_type': {'key': 'properties.targetOsType', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': 'object'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "title": {"key": "properties.title", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "publisher": {"key": "properties.publisher", "type": "str"},
+        "file_path": {"key": "properties.filePath", "type": "str"},
+        "icon": {"key": "properties.icon", "type": "str"},
+        "target_os_type": {"key": "properties.targetOsType", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "object"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(Artifact, self).__init__(location=location, tags=tags, **kwargs)
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.title = None
         self.description = None
         self.publisher = None
@@ -455,21 +441,21 @@ class Artifact(Resource):
         self.created_date = None
 
 
-class ArtifactDeploymentStatusProperties(msrest.serialization.Model):
+class ArtifactDeploymentStatusProperties(_serialization.Model):
     """Properties of an artifact deployment.
 
-    :param deployment_status: The deployment status of the artifact.
-    :type deployment_status: str
-    :param artifacts_applied: The total count of the artifacts that were successfully applied.
-    :type artifacts_applied: int
-    :param total_artifacts: The total count of the artifacts that were tentatively applied.
-    :type total_artifacts: int
+    :ivar deployment_status: The deployment status of the artifact.
+    :vartype deployment_status: str
+    :ivar artifacts_applied: The total count of the artifacts that were successfully applied.
+    :vartype artifacts_applied: int
+    :ivar total_artifacts: The total count of the artifacts that were tentatively applied.
+    :vartype total_artifacts: int
     """
 
     _attribute_map = {
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'artifacts_applied': {'key': 'artifactsApplied', 'type': 'int'},
-        'total_artifacts': {'key': 'totalArtifacts', 'type': 'int'},
+        "deployment_status": {"key": "deploymentStatus", "type": "str"},
+        "artifacts_applied": {"key": "artifactsApplied", "type": "int"},
+        "total_artifacts": {"key": "totalArtifacts", "type": "int"},
     }
 
     def __init__(
@@ -480,70 +466,47 @@ class ArtifactDeploymentStatusProperties(msrest.serialization.Model):
         total_artifacts: Optional[int] = None,
         **kwargs
     ):
-        super(ArtifactDeploymentStatusProperties, self).__init__(**kwargs)
+        """
+        :keyword deployment_status: The deployment status of the artifact.
+        :paramtype deployment_status: str
+        :keyword artifacts_applied: The total count of the artifacts that were successfully applied.
+        :paramtype artifacts_applied: int
+        :keyword total_artifacts: The total count of the artifacts that were tentatively applied.
+        :paramtype total_artifacts: int
+        """
+        super().__init__(**kwargs)
         self.deployment_status = deployment_status
         self.artifacts_applied = artifacts_applied
         self.total_artifacts = total_artifacts
 
 
-class ArtifactDeploymentStatusPropertiesFragment(msrest.serialization.Model):
-    """Properties of an artifact deployment.
-
-    :param deployment_status: The deployment status of the artifact.
-    :type deployment_status: str
-    :param artifacts_applied: The total count of the artifacts that were successfully applied.
-    :type artifacts_applied: int
-    :param total_artifacts: The total count of the artifacts that were tentatively applied.
-    :type total_artifacts: int
-    """
-
-    _attribute_map = {
-        'deployment_status': {'key': 'deploymentStatus', 'type': 'str'},
-        'artifacts_applied': {'key': 'artifactsApplied', 'type': 'int'},
-        'total_artifacts': {'key': 'totalArtifacts', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        deployment_status: Optional[str] = None,
-        artifacts_applied: Optional[int] = None,
-        total_artifacts: Optional[int] = None,
-        **kwargs
-    ):
-        super(ArtifactDeploymentStatusPropertiesFragment, self).__init__(**kwargs)
-        self.deployment_status = deployment_status
-        self.artifacts_applied = artifacts_applied
-        self.total_artifacts = total_artifacts
-
-
-class ArtifactInstallProperties(msrest.serialization.Model):
+class ArtifactInstallProperties(_serialization.Model):
     """Properties of an artifact.
 
-    :param artifact_id: The artifact's identifier.
-    :type artifact_id: str
-    :param artifact_title: The artifact's title.
-    :type artifact_title: str
-    :param parameters: The parameters of the artifact.
-    :type parameters: list[~azure.mgmt.devtestlabs.models.ArtifactParameterProperties]
-    :param status: The status of the artifact.
-    :type status: str
-    :param deployment_status_message: The status message from the deployment.
-    :type deployment_status_message: str
-    :param vm_extension_status_message: The status message from the virtual machine extension.
-    :type vm_extension_status_message: str
-    :param install_time: The time that the artifact starts to install on the virtual machine.
-    :type install_time: ~datetime.datetime
+    :ivar artifact_id: The artifact's identifier.
+    :vartype artifact_id: str
+    :ivar artifact_title: The artifact's title.
+    :vartype artifact_title: str
+    :ivar parameters: The parameters of the artifact.
+    :vartype parameters: list[~azure.mgmt.devtestlabs.models.ArtifactParameterProperties]
+    :ivar status: The status of the artifact.
+    :vartype status: str
+    :ivar deployment_status_message: The status message from the deployment.
+    :vartype deployment_status_message: str
+    :ivar vm_extension_status_message: The status message from the virtual machine extension.
+    :vartype vm_extension_status_message: str
+    :ivar install_time: The time that the artifact starts to install on the virtual machine.
+    :vartype install_time: ~datetime.datetime
     """
 
     _attribute_map = {
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'artifact_title': {'key': 'artifactTitle', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ArtifactParameterProperties]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'deployment_status_message': {'key': 'deploymentStatusMessage', 'type': 'str'},
-        'vm_extension_status_message': {'key': 'vmExtensionStatusMessage', 'type': 'str'},
-        'install_time': {'key': 'installTime', 'type': 'iso-8601'},
+        "artifact_id": {"key": "artifactId", "type": "str"},
+        "artifact_title": {"key": "artifactTitle", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[ArtifactParameterProperties]"},
+        "status": {"key": "status", "type": "str"},
+        "deployment_status_message": {"key": "deploymentStatusMessage", "type": "str"},
+        "vm_extension_status_message": {"key": "vmExtensionStatusMessage", "type": "str"},
+        "install_time": {"key": "installTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -551,14 +514,30 @@ class ArtifactInstallProperties(msrest.serialization.Model):
         *,
         artifact_id: Optional[str] = None,
         artifact_title: Optional[str] = None,
-        parameters: Optional[List["ArtifactParameterProperties"]] = None,
+        parameters: Optional[List["_models.ArtifactParameterProperties"]] = None,
         status: Optional[str] = None,
         deployment_status_message: Optional[str] = None,
         vm_extension_status_message: Optional[str] = None,
         install_time: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(ArtifactInstallProperties, self).__init__(**kwargs)
+        """
+        :keyword artifact_id: The artifact's identifier.
+        :paramtype artifact_id: str
+        :keyword artifact_title: The artifact's title.
+        :paramtype artifact_title: str
+        :keyword parameters: The parameters of the artifact.
+        :paramtype parameters: list[~azure.mgmt.devtestlabs.models.ArtifactParameterProperties]
+        :keyword status: The status of the artifact.
+        :paramtype status: str
+        :keyword deployment_status_message: The status message from the deployment.
+        :paramtype deployment_status_message: str
+        :keyword vm_extension_status_message: The status message from the virtual machine extension.
+        :paramtype vm_extension_status_message: str
+        :keyword install_time: The time that the artifact starts to install on the virtual machine.
+        :paramtype install_time: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.artifact_id = artifact_id
         self.artifact_title = artifact_title
         self.parameters = parameters
@@ -568,136 +547,59 @@ class ArtifactInstallProperties(msrest.serialization.Model):
         self.install_time = install_time
 
 
-class ArtifactInstallPropertiesFragment(msrest.serialization.Model):
-    """Properties of an artifact.
-
-    :param artifact_id: The artifact's identifier.
-    :type artifact_id: str
-    :param artifact_title: The artifact's title.
-    :type artifact_title: str
-    :param parameters: The parameters of the artifact.
-    :type parameters: list[~azure.mgmt.devtestlabs.models.ArtifactParameterPropertiesFragment]
-    :param status: The status of the artifact.
-    :type status: str
-    :param deployment_status_message: The status message from the deployment.
-    :type deployment_status_message: str
-    :param vm_extension_status_message: The status message from the virtual machine extension.
-    :type vm_extension_status_message: str
-    :param install_time: The time that the artifact starts to install on the virtual machine.
-    :type install_time: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        'artifact_id': {'key': 'artifactId', 'type': 'str'},
-        'artifact_title': {'key': 'artifactTitle', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ArtifactParameterPropertiesFragment]'},
-        'status': {'key': 'status', 'type': 'str'},
-        'deployment_status_message': {'key': 'deploymentStatusMessage', 'type': 'str'},
-        'vm_extension_status_message': {'key': 'vmExtensionStatusMessage', 'type': 'str'},
-        'install_time': {'key': 'installTime', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        *,
-        artifact_id: Optional[str] = None,
-        artifact_title: Optional[str] = None,
-        parameters: Optional[List["ArtifactParameterPropertiesFragment"]] = None,
-        status: Optional[str] = None,
-        deployment_status_message: Optional[str] = None,
-        vm_extension_status_message: Optional[str] = None,
-        install_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        super(ArtifactInstallPropertiesFragment, self).__init__(**kwargs)
-        self.artifact_id = artifact_id
-        self.artifact_title = artifact_title
-        self.parameters = parameters
-        self.status = status
-        self.deployment_status_message = deployment_status_message
-        self.vm_extension_status_message = vm_extension_status_message
-        self.install_time = install_time
-
-
-class ArtifactList(msrest.serialization.Model):
+class ArtifactList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.Artifact]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.Artifact]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Artifact]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Artifact]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Artifact"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(ArtifactList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Artifact"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.Artifact]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ArtifactParameterProperties(msrest.serialization.Model):
+class ArtifactParameterProperties(_serialization.Model):
     """Properties of an artifact parameter.
 
-    :param name: The name of the artifact parameter.
-    :type name: str
-    :param value: The value of the artifact parameter.
-    :type value: str
+    :ivar name: The name of the artifact parameter.
+    :vartype name: str
+    :ivar value: The value of the artifact parameter.
+    :vartype value: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ArtifactParameterProperties, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the artifact parameter.
+        :paramtype name: str
+        :keyword value: The value of the artifact parameter.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class ArtifactParameterPropertiesFragment(msrest.serialization.Model):
-    """Properties of an artifact parameter.
-
-    :param name: The name of the artifact parameter.
-    :type name: str
-    :param value: The value of the artifact parameter.
-    :type value: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ArtifactParameterPropertiesFragment, self).__init__(**kwargs)
-        self.name = name
-        self.value = value
-
-
-class ArtifactSource(Resource):
+class ArtifactSource(Resource):  # pylint: disable=too-many-instance-attributes
     """Properties of an artifact source.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -708,27 +610,28 @@ class ArtifactSource(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param display_name: The artifact source's display name.
-    :type display_name: str
-    :param uri: The artifact source's URI.
-    :type uri: str
-    :param source_type: The artifact source's type. Possible values include: "VsoGit", "GitHub".
-    :type source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
-    :param folder_path: The folder containing artifacts.
-    :type folder_path: str
-    :param arm_template_folder_path: The folder containing Azure Resource Manager templates.
-    :type arm_template_folder_path: str
-    :param branch_ref: The artifact source's branch reference.
-    :type branch_ref: str
-    :param security_token: The security token to authenticate to the artifact source.
-    :type security_token: str
-    :param status: Indicates if the artifact source is enabled (values: Enabled, Disabled).
-     Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar display_name: The artifact source's display name.
+    :vartype display_name: str
+    :ivar uri: The artifact source's URI.
+    :vartype uri: str
+    :ivar source_type: The artifact source's type. Known values are: "VsoGit", "GitHub", and
+     "StorageAccount".
+    :vartype source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
+    :ivar folder_path: The folder containing artifacts.
+    :vartype folder_path: str
+    :ivar arm_template_folder_path: The folder containing Azure Resource Manager templates.
+    :vartype arm_template_folder_path: str
+    :ivar branch_ref: The artifact source's branch reference.
+    :vartype branch_ref: str
+    :ivar security_token: The security token to authenticate to the artifact source.
+    :vartype security_token: str
+    :ivar status: Indicates if the artifact source is enabled (values: Enabled, Disabled). Known
+     values are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
     :ivar created_date: The artifact source's creation date.
     :vartype created_date: ~datetime.datetime
     :ivar provisioning_state: The provisioning status of the resource.
@@ -738,31 +641,31 @@ class ArtifactSource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'uri': {'key': 'properties.uri', 'type': 'str'},
-        'source_type': {'key': 'properties.sourceType', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'arm_template_folder_path': {'key': 'properties.armTemplateFolderPath', 'type': 'str'},
-        'branch_ref': {'key': 'properties.branchRef', 'type': 'str'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "uri": {"key": "properties.uri", "type": "str"},
+        "source_type": {"key": "properties.sourceType", "type": "str"},
+        "folder_path": {"key": "properties.folderPath", "type": "str"},
+        "arm_template_folder_path": {"key": "properties.armTemplateFolderPath", "type": "str"},
+        "branch_ref": {"key": "properties.branchRef", "type": "str"},
+        "security_token": {"key": "properties.securityToken", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -772,15 +675,39 @@ class ArtifactSource(Resource):
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
         uri: Optional[str] = None,
-        source_type: Optional[Union[str, "SourceControlType"]] = None,
+        source_type: Optional[Union[str, "_models.SourceControlType"]] = None,
         folder_path: Optional[str] = None,
         arm_template_folder_path: Optional[str] = None,
         branch_ref: Optional[str] = None,
         security_token: Optional[str] = None,
-        status: Optional[Union[str, "EnableStatus"]] = None,
+        status: Optional[Union[str, "_models.EnableStatus"]] = None,
         **kwargs
     ):
-        super(ArtifactSource, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword display_name: The artifact source's display name.
+        :paramtype display_name: str
+        :keyword uri: The artifact source's URI.
+        :paramtype uri: str
+        :keyword source_type: The artifact source's type. Known values are: "VsoGit", "GitHub", and
+         "StorageAccount".
+        :paramtype source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
+        :keyword folder_path: The folder containing artifacts.
+        :paramtype folder_path: str
+        :keyword arm_template_folder_path: The folder containing Azure Resource Manager templates.
+        :paramtype arm_template_folder_path: str
+        :keyword branch_ref: The artifact source's branch reference.
+        :paramtype branch_ref: str
+        :keyword security_token: The security token to authenticate to the artifact source.
+        :paramtype security_token: str
+        :keyword status: Indicates if the artifact source is enabled (values: Enabled, Disabled). Known
+         values are: "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.display_name = display_name
         self.uri = uri
         self.source_type = source_type
@@ -797,128 +724,88 @@ class ArtifactSource(Resource):
 class ArtifactSourceFragment(UpdateResource):
     """Properties of an artifact source.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param display_name: The artifact source's display name.
-    :type display_name: str
-    :param uri: The artifact source's URI.
-    :type uri: str
-    :param source_type: The artifact source's type. Possible values include: "VsoGit", "GitHub".
-    :type source_type: str or ~azure.mgmt.devtestlabs.models.SourceControlType
-    :param folder_path: The folder containing artifacts.
-    :type folder_path: str
-    :param arm_template_folder_path: The folder containing Azure Resource Manager templates.
-    :type arm_template_folder_path: str
-    :param branch_ref: The artifact source's branch reference.
-    :type branch_ref: str
-    :param security_token: The security token to authenticate to the artifact source.
-    :type security_token: str
-    :param status: Indicates if the artifact source is enabled (values: Enabled, Disabled).
-     Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'display_name': {'key': 'properties.displayName', 'type': 'str'},
-        'uri': {'key': 'properties.uri', 'type': 'str'},
-        'source_type': {'key': 'properties.sourceType', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'arm_template_folder_path': {'key': 'properties.armTemplateFolderPath', 'type': 'str'},
-        'branch_ref': {'key': 'properties.branchRef', 'type': 'str'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        display_name: Optional[str] = None,
-        uri: Optional[str] = None,
-        source_type: Optional[Union[str, "SourceControlType"]] = None,
-        folder_path: Optional[str] = None,
-        arm_template_folder_path: Optional[str] = None,
-        branch_ref: Optional[str] = None,
-        security_token: Optional[str] = None,
-        status: Optional[Union[str, "EnableStatus"]] = None,
-        **kwargs
-    ):
-        super(ArtifactSourceFragment, self).__init__(tags=tags, **kwargs)
-        self.display_name = display_name
-        self.uri = uri
-        self.source_type = source_type
-        self.folder_path = folder_path
-        self.arm_template_folder_path = arm_template_folder_path
-        self.branch_ref = branch_ref
-        self.security_token = security_token
-        self.status = status
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class ArtifactSourceList(msrest.serialization.Model):
+class ArtifactSourceList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.ArtifactSource]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.ArtifactSource]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ArtifactSource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ArtifactSource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ArtifactSource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ArtifactSource"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(ArtifactSourceList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.ArtifactSource]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class AttachDiskProperties(msrest.serialization.Model):
+class AttachDiskProperties(_serialization.Model):
     """Properties of the disk to attach.
 
-    :param leased_by_lab_vm_id: The resource ID of the Lab virtual machine to which the disk is
+    :ivar leased_by_lab_vm_id: The resource ID of the Lab virtual machine to which the disk is
      attached.
-    :type leased_by_lab_vm_id: str
+    :vartype leased_by_lab_vm_id: str
     """
 
     _attribute_map = {
-        'leased_by_lab_vm_id': {'key': 'leasedByLabVmId', 'type': 'str'},
+        "leased_by_lab_vm_id": {"key": "leasedByLabVmId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        leased_by_lab_vm_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(AttachDiskProperties, self).__init__(**kwargs)
+    def __init__(self, *, leased_by_lab_vm_id: Optional[str] = None, **kwargs):
+        """
+        :keyword leased_by_lab_vm_id: The resource ID of the Lab virtual machine to which the disk is
+         attached.
+        :paramtype leased_by_lab_vm_id: str
+        """
+        super().__init__(**kwargs)
         self.leased_by_lab_vm_id = leased_by_lab_vm_id
 
 
-class AttachNewDataDiskOptions(msrest.serialization.Model):
+class AttachNewDataDiskOptions(_serialization.Model):
     """Properties to attach new disk to the Virtual Machine.
 
-    :param disk_size_gi_b: Size of the disk to be attached in GibiBytes.
-    :type disk_size_gi_b: int
-    :param disk_name: The name of the disk to be attached.
-    :type disk_name: str
-    :param disk_type: The storage type for the disk (i.e. Standard, Premium). Possible values
-     include: "Standard", "Premium", "StandardSSD".
-    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+    :ivar disk_size_gi_b: Size of the disk to be attached in Gibibytes.
+    :vartype disk_size_gi_b: int
+    :ivar disk_name: The name of the disk to be attached.
+    :vartype disk_name: str
+    :ivar disk_type: The storage type for the disk (i.e. Standard, Premium). Known values are:
+     "Standard", "Premium", and "StandardSSD".
+    :vartype disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
     """
 
     _attribute_map = {
-        'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
-        'disk_name': {'key': 'diskName', 'type': 'str'},
-        'disk_type': {'key': 'diskType', 'type': 'str'},
+        "disk_size_gi_b": {"key": "diskSizeGiB", "type": "int"},
+        "disk_name": {"key": "diskName", "type": "str"},
+        "disk_type": {"key": "diskType", "type": "str"},
     }
 
     def __init__(
@@ -926,107 +813,62 @@ class AttachNewDataDiskOptions(msrest.serialization.Model):
         *,
         disk_size_gi_b: Optional[int] = None,
         disk_name: Optional[str] = None,
-        disk_type: Optional[Union[str, "StorageType"]] = None,
+        disk_type: Optional[Union[str, "_models.StorageType"]] = None,
         **kwargs
     ):
-        super(AttachNewDataDiskOptions, self).__init__(**kwargs)
+        """
+        :keyword disk_size_gi_b: Size of the disk to be attached in Gibibytes.
+        :paramtype disk_size_gi_b: int
+        :keyword disk_name: The name of the disk to be attached.
+        :paramtype disk_name: str
+        :keyword disk_type: The storage type for the disk (i.e. Standard, Premium). Known values are:
+         "Standard", "Premium", and "StandardSSD".
+        :paramtype disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+        """
+        super().__init__(**kwargs)
         self.disk_size_gi_b = disk_size_gi_b
         self.disk_name = disk_name
         self.disk_type = disk_type
 
 
-class AttachNewDataDiskOptionsFragment(msrest.serialization.Model):
-    """Properties to attach new disk to the Virtual Machine.
-
-    :param disk_size_gi_b: Size of the disk to be attached in GibiBytes.
-    :type disk_size_gi_b: int
-    :param disk_name: The name of the disk to be attached.
-    :type disk_name: str
-    :param disk_type: The storage type for the disk (i.e. Standard, Premium). Possible values
-     include: "Standard", "Premium", "StandardSSD".
-    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    """
-
-    _attribute_map = {
-        'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
-        'disk_name': {'key': 'diskName', 'type': 'str'},
-        'disk_type': {'key': 'diskType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        disk_size_gi_b: Optional[int] = None,
-        disk_name: Optional[str] = None,
-        disk_type: Optional[Union[str, "StorageType"]] = None,
-        **kwargs
-    ):
-        super(AttachNewDataDiskOptionsFragment, self).__init__(**kwargs)
-        self.disk_size_gi_b = disk_size_gi_b
-        self.disk_name = disk_name
-        self.disk_type = disk_type
-
-
-class BulkCreationParameters(msrest.serialization.Model):
+class BulkCreationParameters(_serialization.Model):
     """Parameters for creating multiple virtual machines as a single action.
 
-    :param instance_count: The number of virtual machine instances to create.
-    :type instance_count: int
+    :ivar instance_count: The number of virtual machine instances to create.
+    :vartype instance_count: int
     """
 
     _attribute_map = {
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
+        "instance_count": {"key": "instanceCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        instance_count: Optional[int] = None,
-        **kwargs
-    ):
-        super(BulkCreationParameters, self).__init__(**kwargs)
+    def __init__(self, *, instance_count: Optional[int] = None, **kwargs):
+        """
+        :keyword instance_count: The number of virtual machine instances to create.
+        :paramtype instance_count: int
+        """
+        super().__init__(**kwargs)
         self.instance_count = instance_count
 
 
-class BulkCreationParametersFragment(msrest.serialization.Model):
-    """Parameters for creating multiple virtual machines as a single action.
-
-    :param instance_count: The number of virtual machine instances to create.
-    :type instance_count: int
-    """
-
-    _attribute_map = {
-        'instance_count': {'key': 'instanceCount', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        instance_count: Optional[int] = None,
-        **kwargs
-    ):
-        super(BulkCreationParametersFragment, self).__init__(**kwargs)
-        self.instance_count = instance_count
-
-
-class CloudErrorBody(msrest.serialization.Model):
+class CloudErrorBody(_serialization.Model):
     """Body of an error from a REST request.
 
-    :param code: The error code.
-    :type code: str
-    :param message: The error message.
-    :type message: str
-    :param target: The error target.
-    :type target: str
-    :param details: Inner errors.
-    :type details: list[~azure.mgmt.devtestlabs.models.CloudErrorBody]
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: Inner errors.
+    :vartype details: list[~azure.mgmt.devtestlabs.models.CloudErrorBody]
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -1035,35 +877,45 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
-        super(CloudErrorBody, self).__init__(**kwargs)
+        """
+        :keyword code: The error code.
+        :paramtype code: str
+        :keyword message: The error message.
+        :paramtype message: str
+        :keyword target: The error target.
+        :paramtype target: str
+        :keyword details: Inner errors.
+        :paramtype details: list[~azure.mgmt.devtestlabs.models.CloudErrorBody]
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class ComputeDataDisk(msrest.serialization.Model):
+class ComputeDataDisk(_serialization.Model):
     """A data disks attached to a virtual machine.
 
-    :param name: Gets data disk name.
-    :type name: str
-    :param disk_uri: When backed by a blob, the URI of underlying blob.
-    :type disk_uri: str
-    :param managed_disk_id: When backed by managed disk, this is the ID of the compute disk
+    :ivar name: Gets data disk name.
+    :vartype name: str
+    :ivar disk_uri: When backed by a blob, the URI of underlying blob.
+    :vartype disk_uri: str
+    :ivar managed_disk_id: When backed by managed disk, this is the ID of the compute disk
      resource.
-    :type managed_disk_id: str
-    :param disk_size_gi_b: Gets data disk size in GiB.
-    :type disk_size_gi_b: int
+    :vartype managed_disk_id: str
+    :ivar disk_size_gi_b: Gets data disk size in GiB.
+    :vartype disk_size_gi_b: int
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'disk_uri': {'key': 'diskUri', 'type': 'str'},
-        'managed_disk_id': {'key': 'managedDiskId', 'type': 'str'},
-        'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "disk_uri": {"key": "diskUri", "type": "str"},
+        "managed_disk_id": {"key": "managedDiskId", "type": "str"},
+        "disk_size_gi_b": {"key": "diskSizeGiB", "type": "int"},
     }
 
     def __init__(
@@ -1075,65 +927,39 @@ class ComputeDataDisk(msrest.serialization.Model):
         disk_size_gi_b: Optional[int] = None,
         **kwargs
     ):
-        super(ComputeDataDisk, self).__init__(**kwargs)
+        """
+        :keyword name: Gets data disk name.
+        :paramtype name: str
+        :keyword disk_uri: When backed by a blob, the URI of underlying blob.
+        :paramtype disk_uri: str
+        :keyword managed_disk_id: When backed by managed disk, this is the ID of the compute disk
+         resource.
+        :paramtype managed_disk_id: str
+        :keyword disk_size_gi_b: Gets data disk size in GiB.
+        :paramtype disk_size_gi_b: int
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.disk_uri = disk_uri
         self.managed_disk_id = managed_disk_id
         self.disk_size_gi_b = disk_size_gi_b
 
 
-class ComputeDataDiskFragment(msrest.serialization.Model):
-    """A data disks attached to a virtual machine.
-
-    :param name: Gets data disk name.
-    :type name: str
-    :param disk_uri: When backed by a blob, the URI of underlying blob.
-    :type disk_uri: str
-    :param managed_disk_id: When backed by managed disk, this is the ID of the compute disk
-     resource.
-    :type managed_disk_id: str
-    :param disk_size_gi_b: Gets data disk size in GiB.
-    :type disk_size_gi_b: int
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'disk_uri': {'key': 'diskUri', 'type': 'str'},
-        'managed_disk_id': {'key': 'managedDiskId', 'type': 'str'},
-        'disk_size_gi_b': {'key': 'diskSizeGiB', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        disk_uri: Optional[str] = None,
-        managed_disk_id: Optional[str] = None,
-        disk_size_gi_b: Optional[int] = None,
-        **kwargs
-    ):
-        super(ComputeDataDiskFragment, self).__init__(**kwargs)
-        self.name = name
-        self.disk_uri = disk_uri
-        self.managed_disk_id = managed_disk_id
-        self.disk_size_gi_b = disk_size_gi_b
-
-
-class ComputeVmInstanceViewStatus(msrest.serialization.Model):
+class ComputeVmInstanceViewStatus(_serialization.Model):
     """Status information about a virtual machine.
 
-    :param code: Gets the status Code.
-    :type code: str
-    :param display_status: Gets the short localizable label for the status.
-    :type display_status: str
-    :param message: Gets the message associated with the status.
-    :type message: str
+    :ivar code: Gets the status Code.
+    :vartype code: str
+    :ivar display_status: Gets the short localizable label for the status.
+    :vartype display_status: str
+    :ivar message: Gets the message associated with the status.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "display_status": {"key": "displayStatus", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
@@ -1144,85 +970,78 @@ class ComputeVmInstanceViewStatus(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
-        super(ComputeVmInstanceViewStatus, self).__init__(**kwargs)
+        """
+        :keyword code: Gets the status Code.
+        :paramtype code: str
+        :keyword display_status: Gets the short localizable label for the status.
+        :paramtype display_status: str
+        :keyword message: Gets the message associated with the status.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.display_status = display_status
         self.message = message
 
 
-class ComputeVmInstanceViewStatusFragment(msrest.serialization.Model):
-    """Status information about a virtual machine.
-
-    :param code: Gets the status Code.
-    :type code: str
-    :param display_status: Gets the short localizable label for the status.
-    :type display_status: str
-    :param message: Gets the message associated with the status.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'display_status': {'key': 'displayStatus', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        display_status: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(ComputeVmInstanceViewStatusFragment, self).__init__(**kwargs)
-        self.code = code
-        self.display_status = display_status
-        self.message = message
-
-
-class ComputeVmProperties(msrest.serialization.Model):
+class ComputeVmProperties(_serialization.Model):
     """Properties of a virtual machine returned by the Microsoft.Compute API.
 
-    :param statuses: Gets the statuses of the virtual machine.
-    :type statuses: list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatus]
-    :param os_type: Gets the OS type of the virtual machine.
-    :type os_type: str
-    :param vm_size: Gets the size of the virtual machine.
-    :type vm_size: str
-    :param network_interface_id: Gets the network interface ID of the virtual machine.
-    :type network_interface_id: str
-    :param os_disk_id: Gets OS disk blob uri for the virtual machine.
-    :type os_disk_id: str
-    :param data_disk_ids: Gets data disks blob uri for the virtual machine.
-    :type data_disk_ids: list[str]
-    :param data_disks: Gets all data disks attached to the virtual machine.
-    :type data_disks: list[~azure.mgmt.devtestlabs.models.ComputeDataDisk]
+    :ivar statuses: Gets the statuses of the virtual machine.
+    :vartype statuses: list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatus]
+    :ivar os_type: Gets the OS type of the virtual machine.
+    :vartype os_type: str
+    :ivar vm_size: Gets the size of the virtual machine.
+    :vartype vm_size: str
+    :ivar network_interface_id: Gets the network interface ID of the virtual machine.
+    :vartype network_interface_id: str
+    :ivar os_disk_id: Gets OS disk blob uri for the virtual machine.
+    :vartype os_disk_id: str
+    :ivar data_disk_ids: Gets data disks blob uri for the virtual machine.
+    :vartype data_disk_ids: list[str]
+    :ivar data_disks: Gets all data disks attached to the virtual machine.
+    :vartype data_disks: list[~azure.mgmt.devtestlabs.models.ComputeDataDisk]
     """
 
     _attribute_map = {
-        'statuses': {'key': 'statuses', 'type': '[ComputeVmInstanceViewStatus]'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'network_interface_id': {'key': 'networkInterfaceId', 'type': 'str'},
-        'os_disk_id': {'key': 'osDiskId', 'type': 'str'},
-        'data_disk_ids': {'key': 'dataDiskIds', 'type': '[str]'},
-        'data_disks': {'key': 'dataDisks', 'type': '[ComputeDataDisk]'},
+        "statuses": {"key": "statuses", "type": "[ComputeVmInstanceViewStatus]"},
+        "os_type": {"key": "osType", "type": "str"},
+        "vm_size": {"key": "vmSize", "type": "str"},
+        "network_interface_id": {"key": "networkInterfaceId", "type": "str"},
+        "os_disk_id": {"key": "osDiskId", "type": "str"},
+        "data_disk_ids": {"key": "dataDiskIds", "type": "[str]"},
+        "data_disks": {"key": "dataDisks", "type": "[ComputeDataDisk]"},
     }
 
     def __init__(
         self,
         *,
-        statuses: Optional[List["ComputeVmInstanceViewStatus"]] = None,
+        statuses: Optional[List["_models.ComputeVmInstanceViewStatus"]] = None,
         os_type: Optional[str] = None,
         vm_size: Optional[str] = None,
         network_interface_id: Optional[str] = None,
         os_disk_id: Optional[str] = None,
         data_disk_ids: Optional[List[str]] = None,
-        data_disks: Optional[List["ComputeDataDisk"]] = None,
+        data_disks: Optional[List["_models.ComputeDataDisk"]] = None,
         **kwargs
     ):
-        super(ComputeVmProperties, self).__init__(**kwargs)
+        """
+        :keyword statuses: Gets the statuses of the virtual machine.
+        :paramtype statuses: list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatus]
+        :keyword os_type: Gets the OS type of the virtual machine.
+        :paramtype os_type: str
+        :keyword vm_size: Gets the size of the virtual machine.
+        :paramtype vm_size: str
+        :keyword network_interface_id: Gets the network interface ID of the virtual machine.
+        :paramtype network_interface_id: str
+        :keyword os_disk_id: Gets OS disk blob uri for the virtual machine.
+        :paramtype os_disk_id: str
+        :keyword data_disk_ids: Gets data disks blob uri for the virtual machine.
+        :paramtype data_disk_ids: list[str]
+        :keyword data_disks: Gets all data disks attached to the virtual machine.
+        :paramtype data_disks: list[~azure.mgmt.devtestlabs.models.ComputeDataDisk]
+        """
+        super().__init__(**kwargs)
         self.statuses = statuses
         self.os_type = os_type
         self.vm_size = vm_size
@@ -1232,95 +1051,61 @@ class ComputeVmProperties(msrest.serialization.Model):
         self.data_disks = data_disks
 
 
-class ComputeVmPropertiesFragment(msrest.serialization.Model):
-    """Properties of a virtual machine returned by the Microsoft.Compute API.
-
-    :param statuses: Gets the statuses of the virtual machine.
-    :type statuses: list[~azure.mgmt.devtestlabs.models.ComputeVmInstanceViewStatusFragment]
-    :param os_type: Gets the OS type of the virtual machine.
-    :type os_type: str
-    :param vm_size: Gets the size of the virtual machine.
-    :type vm_size: str
-    :param network_interface_id: Gets the network interface ID of the virtual machine.
-    :type network_interface_id: str
-    :param os_disk_id: Gets OS disk blob uri for the virtual machine.
-    :type os_disk_id: str
-    :param data_disk_ids: Gets data disks blob uri for the virtual machine.
-    :type data_disk_ids: list[str]
-    :param data_disks: Gets all data disks attached to the virtual machine.
-    :type data_disks: list[~azure.mgmt.devtestlabs.models.ComputeDataDiskFragment]
-    """
-
-    _attribute_map = {
-        'statuses': {'key': 'statuses', 'type': '[ComputeVmInstanceViewStatusFragment]'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'vm_size': {'key': 'vmSize', 'type': 'str'},
-        'network_interface_id': {'key': 'networkInterfaceId', 'type': 'str'},
-        'os_disk_id': {'key': 'osDiskId', 'type': 'str'},
-        'data_disk_ids': {'key': 'dataDiskIds', 'type': '[str]'},
-        'data_disks': {'key': 'dataDisks', 'type': '[ComputeDataDiskFragment]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        statuses: Optional[List["ComputeVmInstanceViewStatusFragment"]] = None,
-        os_type: Optional[str] = None,
-        vm_size: Optional[str] = None,
-        network_interface_id: Optional[str] = None,
-        os_disk_id: Optional[str] = None,
-        data_disk_ids: Optional[List[str]] = None,
-        data_disks: Optional[List["ComputeDataDiskFragment"]] = None,
-        **kwargs
-    ):
-        super(ComputeVmPropertiesFragment, self).__init__(**kwargs)
-        self.statuses = statuses
-        self.os_type = os_type
-        self.vm_size = vm_size
-        self.network_interface_id = network_interface_id
-        self.os_disk_id = os_disk_id
-        self.data_disk_ids = data_disk_ids
-        self.data_disks = data_disks
-
-
-class CostThresholdProperties(msrest.serialization.Model):
+class CostThresholdProperties(_serialization.Model):
     """Properties of a cost threshold item.
 
-    :param threshold_id: The ID of the cost threshold item.
-    :type threshold_id: str
-    :param percentage_threshold: The value of the percentage cost threshold.
-    :type percentage_threshold: ~azure.mgmt.devtestlabs.models.PercentageCostThresholdProperties
-    :param display_on_chart: Indicates whether this threshold will be displayed on cost charts.
-     Possible values include: "Enabled", "Disabled".
-    :type display_on_chart: str or ~azure.mgmt.devtestlabs.models.CostThresholdStatus
-    :param send_notification_when_exceeded: Indicates whether notifications will be sent when this
-     threshold is exceeded. Possible values include: "Enabled", "Disabled".
-    :type send_notification_when_exceeded: str or
+    :ivar threshold_id: The ID of the cost threshold item.
+    :vartype threshold_id: str
+    :ivar percentage_threshold: The value of the percentage cost threshold.
+    :vartype percentage_threshold: ~azure.mgmt.devtestlabs.models.PercentageCostThresholdProperties
+    :ivar display_on_chart: Indicates whether this threshold will be displayed on cost charts.
+     Known values are: "Enabled" and "Disabled".
+    :vartype display_on_chart: str or ~azure.mgmt.devtestlabs.models.CostThresholdStatus
+    :ivar send_notification_when_exceeded: Indicates whether notifications will be sent when this
+     threshold is exceeded. Known values are: "Enabled" and "Disabled".
+    :vartype send_notification_when_exceeded: str or
      ~azure.mgmt.devtestlabs.models.CostThresholdStatus
-    :param notification_sent: Indicates the datetime when notifications were last sent for this
+    :ivar notification_sent: Indicates the datetime when notifications were last sent for this
      threshold.
-    :type notification_sent: str
+    :vartype notification_sent: str
     """
 
     _attribute_map = {
-        'threshold_id': {'key': 'thresholdId', 'type': 'str'},
-        'percentage_threshold': {'key': 'percentageThreshold', 'type': 'PercentageCostThresholdProperties'},
-        'display_on_chart': {'key': 'displayOnChart', 'type': 'str'},
-        'send_notification_when_exceeded': {'key': 'sendNotificationWhenExceeded', 'type': 'str'},
-        'notification_sent': {'key': 'notificationSent', 'type': 'str'},
+        "threshold_id": {"key": "thresholdId", "type": "str"},
+        "percentage_threshold": {"key": "percentageThreshold", "type": "PercentageCostThresholdProperties"},
+        "display_on_chart": {"key": "displayOnChart", "type": "str"},
+        "send_notification_when_exceeded": {"key": "sendNotificationWhenExceeded", "type": "str"},
+        "notification_sent": {"key": "notificationSent", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         threshold_id: Optional[str] = None,
-        percentage_threshold: Optional["PercentageCostThresholdProperties"] = None,
-        display_on_chart: Optional[Union[str, "CostThresholdStatus"]] = None,
-        send_notification_when_exceeded: Optional[Union[str, "CostThresholdStatus"]] = None,
+        percentage_threshold: Optional["_models.PercentageCostThresholdProperties"] = None,
+        display_on_chart: Optional[Union[str, "_models.CostThresholdStatus"]] = None,
+        send_notification_when_exceeded: Optional[Union[str, "_models.CostThresholdStatus"]] = None,
         notification_sent: Optional[str] = None,
         **kwargs
     ):
-        super(CostThresholdProperties, self).__init__(**kwargs)
+        """
+        :keyword threshold_id: The ID of the cost threshold item.
+        :paramtype threshold_id: str
+        :keyword percentage_threshold: The value of the percentage cost threshold.
+        :paramtype percentage_threshold:
+         ~azure.mgmt.devtestlabs.models.PercentageCostThresholdProperties
+        :keyword display_on_chart: Indicates whether this threshold will be displayed on cost charts.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype display_on_chart: str or ~azure.mgmt.devtestlabs.models.CostThresholdStatus
+        :keyword send_notification_when_exceeded: Indicates whether notifications will be sent when
+         this threshold is exceeded. Known values are: "Enabled" and "Disabled".
+        :paramtype send_notification_when_exceeded: str or
+         ~azure.mgmt.devtestlabs.models.CostThresholdStatus
+        :keyword notification_sent: Indicates the datetime when notifications were last sent for this
+         threshold.
+        :paramtype notification_sent: str
+        """
+        super().__init__(**kwargs)
         self.threshold_id = threshold_id
         self.percentage_threshold = percentage_threshold
         self.display_on_chart = display_on_chart
@@ -1328,7 +1113,7 @@ class CostThresholdProperties(msrest.serialization.Model):
         self.notification_sent = notification_sent
 
 
-class CustomImage(Resource):
+class CustomImage(Resource):  # pylint: disable=too-many-instance-attributes
     """A custom image.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1339,32 +1124,32 @@ class CustomImage(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param vm: The virtual machine from which the image is to be created.
-    :type vm: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromVm
-    :param vhd: The VHD from which the image is to be created.
-    :type vhd: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesCustom
-    :param description: The description of the custom image.
-    :type description: str
-    :param author: The author of the custom image.
-    :type author: str
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar vm: The virtual machine from which the image is to be created.
+    :vartype vm: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromVm
+    :ivar vhd: The VHD from which the image is to be created.
+    :vartype vhd: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesCustom
+    :ivar description: The description of the custom image.
+    :vartype description: str
+    :ivar author: The author of the custom image.
+    :vartype author: str
     :ivar creation_date: The creation date of the custom image.
     :vartype creation_date: ~datetime.datetime
-    :param managed_image_id: The Managed Image Id backing the custom image.
-    :type managed_image_id: str
-    :param managed_snapshot_id: The Managed Snapshot Id backing the custom image.
-    :type managed_snapshot_id: str
-    :param data_disk_storage_info: Storage information about the data disks present in the custom
+    :ivar managed_image_id: The Managed Image Id backing the custom image.
+    :vartype managed_image_id: str
+    :ivar managed_snapshot_id: The Managed Snapshot Id backing the custom image.
+    :vartype managed_snapshot_id: str
+    :ivar data_disk_storage_info: Storage information about the data disks present in the custom
      image.
-    :type data_disk_storage_info: list[~azure.mgmt.devtestlabs.models.DataDiskStorageTypeInfo]
-    :param custom_image_plan: Storage information about the plan related to this custom image.
-    :type custom_image_plan: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromPlan
-    :param is_plan_authorized: Whether or not the custom images underlying offer/plan has been
+    :vartype data_disk_storage_info: list[~azure.mgmt.devtestlabs.models.DataDiskStorageTypeInfo]
+    :ivar custom_image_plan: Storage information about the plan related to this custom image.
+    :vartype custom_image_plan: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromPlan
+    :ivar is_plan_authorized: Whether or not the custom images underlying offer/plan has been
      enabled for programmatic deployment.
-    :type is_plan_authorized: bool
+    :vartype is_plan_authorized: bool
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -1372,32 +1157,32 @@ class CustomImage(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'vm': {'key': 'properties.vm', 'type': 'CustomImagePropertiesFromVm'},
-        'vhd': {'key': 'properties.vhd', 'type': 'CustomImagePropertiesCustom'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
-        'managed_image_id': {'key': 'properties.managedImageId', 'type': 'str'},
-        'managed_snapshot_id': {'key': 'properties.managedSnapshotId', 'type': 'str'},
-        'data_disk_storage_info': {'key': 'properties.dataDiskStorageInfo', 'type': '[DataDiskStorageTypeInfo]'},
-        'custom_image_plan': {'key': 'properties.customImagePlan', 'type': 'CustomImagePropertiesFromPlan'},
-        'is_plan_authorized': {'key': 'properties.isPlanAuthorized', 'type': 'bool'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "vm": {"key": "properties.vm", "type": "CustomImagePropertiesFromVm"},
+        "vhd": {"key": "properties.vhd", "type": "CustomImagePropertiesCustom"},
+        "description": {"key": "properties.description", "type": "str"},
+        "author": {"key": "properties.author", "type": "str"},
+        "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
+        "managed_image_id": {"key": "properties.managedImageId", "type": "str"},
+        "managed_snapshot_id": {"key": "properties.managedSnapshotId", "type": "str"},
+        "data_disk_storage_info": {"key": "properties.dataDiskStorageInfo", "type": "[DataDiskStorageTypeInfo]"},
+        "custom_image_plan": {"key": "properties.customImagePlan", "type": "CustomImagePropertiesFromPlan"},
+        "is_plan_authorized": {"key": "properties.isPlanAuthorized", "type": "bool"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -1405,18 +1190,44 @@ class CustomImage(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        vm: Optional["CustomImagePropertiesFromVm"] = None,
-        vhd: Optional["CustomImagePropertiesCustom"] = None,
+        vm: Optional["_models.CustomImagePropertiesFromVm"] = None,
+        vhd: Optional["_models.CustomImagePropertiesCustom"] = None,
         description: Optional[str] = None,
         author: Optional[str] = None,
         managed_image_id: Optional[str] = None,
         managed_snapshot_id: Optional[str] = None,
-        data_disk_storage_info: Optional[List["DataDiskStorageTypeInfo"]] = None,
-        custom_image_plan: Optional["CustomImagePropertiesFromPlan"] = None,
+        data_disk_storage_info: Optional[List["_models.DataDiskStorageTypeInfo"]] = None,
+        custom_image_plan: Optional["_models.CustomImagePropertiesFromPlan"] = None,
         is_plan_authorized: Optional[bool] = None,
         **kwargs
     ):
-        super(CustomImage, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword vm: The virtual machine from which the image is to be created.
+        :paramtype vm: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromVm
+        :keyword vhd: The VHD from which the image is to be created.
+        :paramtype vhd: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesCustom
+        :keyword description: The description of the custom image.
+        :paramtype description: str
+        :keyword author: The author of the custom image.
+        :paramtype author: str
+        :keyword managed_image_id: The Managed Image Id backing the custom image.
+        :paramtype managed_image_id: str
+        :keyword managed_snapshot_id: The Managed Snapshot Id backing the custom image.
+        :paramtype managed_snapshot_id: str
+        :keyword data_disk_storage_info: Storage information about the data disks present in the custom
+         image.
+        :paramtype data_disk_storage_info: list[~azure.mgmt.devtestlabs.models.DataDiskStorageTypeInfo]
+        :keyword custom_image_plan: Storage information about the plan related to this custom image.
+        :paramtype custom_image_plan: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromPlan
+        :keyword is_plan_authorized: Whether or not the custom images underlying offer/plan has been
+         enabled for programmatic deployment.
+        :paramtype is_plan_authorized: bool
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.vm = vm
         self.vhd = vhd
         self.description = description
@@ -1434,501 +1245,314 @@ class CustomImage(Resource):
 class CustomImageFragment(UpdateResource):
     """A custom image.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param vm: The virtual machine from which the image is to be created.
-    :type vm: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromVmFragment
-    :param vhd: The VHD from which the image is to be created.
-    :type vhd: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesCustomFragment
-    :param description: The description of the custom image.
-    :type description: str
-    :param author: The author of the custom image.
-    :type author: str
-    :param managed_image_id: The Managed Image Id backing the custom image.
-    :type managed_image_id: str
-    :param managed_snapshot_id: The Managed Snapshot Id backing the custom image.
-    :type managed_snapshot_id: str
-    :param data_disk_storage_info: Storage information about the data disks present in the custom
-     image.
-    :type data_disk_storage_info:
-     list[~azure.mgmt.devtestlabs.models.DataDiskStorageTypeInfoFragment]
-    :param custom_image_plan: Storage information about the plan related to this custom image.
-    :type custom_image_plan: ~azure.mgmt.devtestlabs.models.CustomImagePropertiesFromPlanFragment
-    :param is_plan_authorized: Whether or not the custom images underlying offer/plan has been
-     enabled for programmatic deployment.
-    :type is_plan_authorized: bool
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'vm': {'key': 'properties.vm', 'type': 'CustomImagePropertiesFromVmFragment'},
-        'vhd': {'key': 'properties.vhd', 'type': 'CustomImagePropertiesCustomFragment'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'managed_image_id': {'key': 'properties.managedImageId', 'type': 'str'},
-        'managed_snapshot_id': {'key': 'properties.managedSnapshotId', 'type': 'str'},
-        'data_disk_storage_info': {'key': 'properties.dataDiskStorageInfo', 'type': '[DataDiskStorageTypeInfoFragment]'},
-        'custom_image_plan': {'key': 'properties.customImagePlan', 'type': 'CustomImagePropertiesFromPlanFragment'},
-        'is_plan_authorized': {'key': 'properties.isPlanAuthorized', 'type': 'bool'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        vm: Optional["CustomImagePropertiesFromVmFragment"] = None,
-        vhd: Optional["CustomImagePropertiesCustomFragment"] = None,
-        description: Optional[str] = None,
-        author: Optional[str] = None,
-        managed_image_id: Optional[str] = None,
-        managed_snapshot_id: Optional[str] = None,
-        data_disk_storage_info: Optional[List["DataDiskStorageTypeInfoFragment"]] = None,
-        custom_image_plan: Optional["CustomImagePropertiesFromPlanFragment"] = None,
-        is_plan_authorized: Optional[bool] = None,
-        **kwargs
-    ):
-        super(CustomImageFragment, self).__init__(tags=tags, **kwargs)
-        self.vm = vm
-        self.vhd = vhd
-        self.description = description
-        self.author = author
-        self.managed_image_id = managed_image_id
-        self.managed_snapshot_id = managed_snapshot_id
-        self.data_disk_storage_info = data_disk_storage_info
-        self.custom_image_plan = custom_image_plan
-        self.is_plan_authorized = is_plan_authorized
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class CustomImageList(msrest.serialization.Model):
+class CustomImageList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.CustomImage]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.CustomImage]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CustomImage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CustomImage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["CustomImage"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.CustomImage"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(CustomImageList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.CustomImage]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class CustomImagePropertiesCustom(msrest.serialization.Model):
+class CustomImagePropertiesCustom(_serialization.Model):
     """Properties for creating a custom image from a VHD.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param image_name: The image name.
-    :type image_name: str
-    :param sys_prep: Indicates whether sysprep has been run on the VHD.
-    :type sys_prep: bool
-    :param os_type: Required. The OS type of the custom image (i.e. Windows, Linux). Possible
-     values include: "Windows", "Linux", "None".
-    :type os_type: str or ~azure.mgmt.devtestlabs.models.CustomImageOsType
+    :ivar image_name: The image name.
+    :vartype image_name: str
+    :ivar sys_prep: Indicates whether sysprep has been run on the VHD.
+    :vartype sys_prep: bool
+    :ivar os_type: The OS type of the custom image (i.e. Windows, Linux). Required. Known values
+     are: "Windows", "Linux", and "None".
+    :vartype os_type: str or ~azure.mgmt.devtestlabs.models.CustomImageOsType
     """
 
     _validation = {
-        'os_type': {'required': True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'sys_prep': {'key': 'sysPrep', 'type': 'bool'},
-        'os_type': {'key': 'osType', 'type': 'str'},
+        "image_name": {"key": "imageName", "type": "str"},
+        "sys_prep": {"key": "sysPrep", "type": "bool"},
+        "os_type": {"key": "osType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        os_type: Union[str, "CustomImageOsType"],
+        os_type: Union[str, "_models.CustomImageOsType"],
         image_name: Optional[str] = None,
         sys_prep: Optional[bool] = None,
         **kwargs
     ):
-        super(CustomImagePropertiesCustom, self).__init__(**kwargs)
+        """
+        :keyword image_name: The image name.
+        :paramtype image_name: str
+        :keyword sys_prep: Indicates whether sysprep has been run on the VHD.
+        :paramtype sys_prep: bool
+        :keyword os_type: The OS type of the custom image (i.e. Windows, Linux). Required. Known values
+         are: "Windows", "Linux", and "None".
+        :paramtype os_type: str or ~azure.mgmt.devtestlabs.models.CustomImageOsType
+        """
+        super().__init__(**kwargs)
         self.image_name = image_name
         self.sys_prep = sys_prep
         self.os_type = os_type
 
 
-class CustomImagePropertiesCustomFragment(msrest.serialization.Model):
-    """Properties for creating a custom image from a VHD.
-
-    :param image_name: The image name.
-    :type image_name: str
-    :param sys_prep: Indicates whether sysprep has been run on the VHD.
-    :type sys_prep: bool
-    :param os_type: The OS type of the custom image (i.e. Windows, Linux). Possible values include:
-     "Windows", "Linux", "None".
-    :type os_type: str or ~azure.mgmt.devtestlabs.models.CustomImageOsType
-    """
-
-    _attribute_map = {
-        'image_name': {'key': 'imageName', 'type': 'str'},
-        'sys_prep': {'key': 'sysPrep', 'type': 'bool'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        image_name: Optional[str] = None,
-        sys_prep: Optional[bool] = None,
-        os_type: Optional[Union[str, "CustomImageOsType"]] = None,
-        **kwargs
-    ):
-        super(CustomImagePropertiesCustomFragment, self).__init__(**kwargs)
-        self.image_name = image_name
-        self.sys_prep = sys_prep
-        self.os_type = os_type
-
-
-class CustomImagePropertiesFromPlan(msrest.serialization.Model):
+class CustomImagePropertiesFromPlan(_serialization.Model):
     """Properties for plan on a custom image.
 
-    :param id: The id of the plan, equivalent to name of the plan.
-    :type id: str
-    :param publisher: The publisher for the plan from the marketplace image the custom image is
+    :ivar id: The id of the plan, equivalent to name of the plan.
+    :vartype id: str
+    :ivar publisher: The publisher for the plan from the marketplace image the custom image is
      derived from.
-    :type publisher: str
-    :param offer: The offer for the plan from the marketplace image the custom image is derived
+    :vartype publisher: str
+    :ivar offer: The offer for the plan from the marketplace image the custom image is derived
      from.
-    :type offer: str
+    :vartype offer: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "offer": {"key": "offer", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         publisher: Optional[str] = None,
         offer: Optional[str] = None,
         **kwargs
     ):
-        super(CustomImagePropertiesFromPlan, self).__init__(**kwargs)
+        """
+        :keyword id: The id of the plan, equivalent to name of the plan.
+        :paramtype id: str
+        :keyword publisher: The publisher for the plan from the marketplace image the custom image is
+         derived from.
+        :paramtype publisher: str
+        :keyword offer: The offer for the plan from the marketplace image the custom image is derived
+         from.
+        :paramtype offer: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.publisher = publisher
         self.offer = offer
 
 
-class CustomImagePropertiesFromPlanFragment(msrest.serialization.Model):
-    """Properties for plan on a custom image.
-
-    :param id: The id of the plan, equivalent to name of the plan.
-    :type id: str
-    :param publisher: The publisher for the plan from the marketplace image the custom image is
-     derived from.
-    :type publisher: str
-    :param offer: The offer for the plan from the marketplace image the custom image is derived
-     from.
-    :type offer: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'offer': {'key': 'offer', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        publisher: Optional[str] = None,
-        offer: Optional[str] = None,
-        **kwargs
-    ):
-        super(CustomImagePropertiesFromPlanFragment, self).__init__(**kwargs)
-        self.id = id
-        self.publisher = publisher
-        self.offer = offer
-
-
-class CustomImagePropertiesFromVm(msrest.serialization.Model):
+class CustomImagePropertiesFromVm(_serialization.Model):
     """Properties for creating a custom image from a virtual machine.
 
-    :param source_vm_id: The source vm identifier.
-    :type source_vm_id: str
-    :param windows_os_info: The Windows OS information of the VM.
-    :type windows_os_info: ~azure.mgmt.devtestlabs.models.WindowsOsInfo
-    :param linux_os_info: The Linux OS information of the VM.
-    :type linux_os_info: ~azure.mgmt.devtestlabs.models.LinuxOsInfo
+    :ivar source_vm_id: The source vm identifier.
+    :vartype source_vm_id: str
+    :ivar windows_os_info: The Windows OS information of the VM.
+    :vartype windows_os_info: ~azure.mgmt.devtestlabs.models.WindowsOsInfo
+    :ivar linux_os_info: The Linux OS information of the VM.
+    :vartype linux_os_info: ~azure.mgmt.devtestlabs.models.LinuxOsInfo
     """
 
     _attribute_map = {
-        'source_vm_id': {'key': 'sourceVmId', 'type': 'str'},
-        'windows_os_info': {'key': 'windowsOsInfo', 'type': 'WindowsOsInfo'},
-        'linux_os_info': {'key': 'linuxOsInfo', 'type': 'LinuxOsInfo'},
+        "source_vm_id": {"key": "sourceVmId", "type": "str"},
+        "windows_os_info": {"key": "windowsOsInfo", "type": "WindowsOsInfo"},
+        "linux_os_info": {"key": "linuxOsInfo", "type": "LinuxOsInfo"},
     }
 
     def __init__(
         self,
         *,
         source_vm_id: Optional[str] = None,
-        windows_os_info: Optional["WindowsOsInfo"] = None,
-        linux_os_info: Optional["LinuxOsInfo"] = None,
+        windows_os_info: Optional["_models.WindowsOsInfo"] = None,
+        linux_os_info: Optional["_models.LinuxOsInfo"] = None,
         **kwargs
     ):
-        super(CustomImagePropertiesFromVm, self).__init__(**kwargs)
+        """
+        :keyword source_vm_id: The source vm identifier.
+        :paramtype source_vm_id: str
+        :keyword windows_os_info: The Windows OS information of the VM.
+        :paramtype windows_os_info: ~azure.mgmt.devtestlabs.models.WindowsOsInfo
+        :keyword linux_os_info: The Linux OS information of the VM.
+        :paramtype linux_os_info: ~azure.mgmt.devtestlabs.models.LinuxOsInfo
+        """
+        super().__init__(**kwargs)
         self.source_vm_id = source_vm_id
         self.windows_os_info = windows_os_info
         self.linux_os_info = linux_os_info
 
 
-class CustomImagePropertiesFromVmFragment(msrest.serialization.Model):
-    """Properties for creating a custom image from a virtual machine.
-
-    :param source_vm_id: The source vm identifier.
-    :type source_vm_id: str
-    :param windows_os_info: The Windows OS information of the VM.
-    :type windows_os_info: ~azure.mgmt.devtestlabs.models.WindowsOsInfoFragment
-    :param linux_os_info: The Linux OS information of the VM.
-    :type linux_os_info: ~azure.mgmt.devtestlabs.models.LinuxOsInfoFragment
-    """
-
-    _attribute_map = {
-        'source_vm_id': {'key': 'sourceVmId', 'type': 'str'},
-        'windows_os_info': {'key': 'windowsOsInfo', 'type': 'WindowsOsInfoFragment'},
-        'linux_os_info': {'key': 'linuxOsInfo', 'type': 'LinuxOsInfoFragment'},
-    }
-
-    def __init__(
-        self,
-        *,
-        source_vm_id: Optional[str] = None,
-        windows_os_info: Optional["WindowsOsInfoFragment"] = None,
-        linux_os_info: Optional["LinuxOsInfoFragment"] = None,
-        **kwargs
-    ):
-        super(CustomImagePropertiesFromVmFragment, self).__init__(**kwargs)
-        self.source_vm_id = source_vm_id
-        self.windows_os_info = windows_os_info
-        self.linux_os_info = linux_os_info
-
-
-class DataDiskProperties(msrest.serialization.Model):
+class DataDiskProperties(_serialization.Model):
     """Request body for adding a new or existing data disk to a virtual machine.
 
-    :param attach_new_data_disk_options: Specifies options to attach a new disk to the virtual
+    :ivar attach_new_data_disk_options: Specifies options to attach a new disk to the virtual
      machine.
-    :type attach_new_data_disk_options: ~azure.mgmt.devtestlabs.models.AttachNewDataDiskOptions
-    :param existing_lab_disk_id: Specifies the existing lab disk id to attach to virtual machine.
-    :type existing_lab_disk_id: str
-    :param host_caching: Caching option for a data disk (i.e. None, ReadOnly, ReadWrite). Possible
-     values include: "None", "ReadOnly", "ReadWrite".
-    :type host_caching: str or ~azure.mgmt.devtestlabs.models.HostCachingOptions
+    :vartype attach_new_data_disk_options: ~azure.mgmt.devtestlabs.models.AttachNewDataDiskOptions
+    :ivar existing_lab_disk_id: Specifies the existing lab disk id to attach to virtual machine.
+    :vartype existing_lab_disk_id: str
+    :ivar host_caching: Caching option for a data disk (i.e. None, ReadOnly, ReadWrite). Known
+     values are: "None", "ReadOnly", and "ReadWrite".
+    :vartype host_caching: str or ~azure.mgmt.devtestlabs.models.HostCachingOptions
     """
 
     _attribute_map = {
-        'attach_new_data_disk_options': {'key': 'attachNewDataDiskOptions', 'type': 'AttachNewDataDiskOptions'},
-        'existing_lab_disk_id': {'key': 'existingLabDiskId', 'type': 'str'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
+        "attach_new_data_disk_options": {"key": "attachNewDataDiskOptions", "type": "AttachNewDataDiskOptions"},
+        "existing_lab_disk_id": {"key": "existingLabDiskId", "type": "str"},
+        "host_caching": {"key": "hostCaching", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        attach_new_data_disk_options: Optional["AttachNewDataDiskOptions"] = None,
+        attach_new_data_disk_options: Optional["_models.AttachNewDataDiskOptions"] = None,
         existing_lab_disk_id: Optional[str] = None,
-        host_caching: Optional[Union[str, "HostCachingOptions"]] = None,
+        host_caching: Optional[Union[str, "_models.HostCachingOptions"]] = None,
         **kwargs
     ):
-        super(DataDiskProperties, self).__init__(**kwargs)
+        """
+        :keyword attach_new_data_disk_options: Specifies options to attach a new disk to the virtual
+         machine.
+        :paramtype attach_new_data_disk_options:
+         ~azure.mgmt.devtestlabs.models.AttachNewDataDiskOptions
+        :keyword existing_lab_disk_id: Specifies the existing lab disk id to attach to virtual machine.
+        :paramtype existing_lab_disk_id: str
+        :keyword host_caching: Caching option for a data disk (i.e. None, ReadOnly, ReadWrite). Known
+         values are: "None", "ReadOnly", and "ReadWrite".
+        :paramtype host_caching: str or ~azure.mgmt.devtestlabs.models.HostCachingOptions
+        """
+        super().__init__(**kwargs)
         self.attach_new_data_disk_options = attach_new_data_disk_options
         self.existing_lab_disk_id = existing_lab_disk_id
         self.host_caching = host_caching
 
 
-class DataDiskPropertiesFragment(msrest.serialization.Model):
-    """Request body for adding a new or existing data disk to a virtual machine.
-
-    :param attach_new_data_disk_options: Specifies options to attach a new disk to the virtual
-     machine.
-    :type attach_new_data_disk_options:
-     ~azure.mgmt.devtestlabs.models.AttachNewDataDiskOptionsFragment
-    :param existing_lab_disk_id: Specifies the existing lab disk id to attach to virtual machine.
-    :type existing_lab_disk_id: str
-    :param host_caching: Caching option for a data disk (i.e. None, ReadOnly, ReadWrite). Possible
-     values include: "None", "ReadOnly", "ReadWrite".
-    :type host_caching: str or ~azure.mgmt.devtestlabs.models.HostCachingOptions
-    """
-
-    _attribute_map = {
-        'attach_new_data_disk_options': {'key': 'attachNewDataDiskOptions', 'type': 'AttachNewDataDiskOptionsFragment'},
-        'existing_lab_disk_id': {'key': 'existingLabDiskId', 'type': 'str'},
-        'host_caching': {'key': 'hostCaching', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        attach_new_data_disk_options: Optional["AttachNewDataDiskOptionsFragment"] = None,
-        existing_lab_disk_id: Optional[str] = None,
-        host_caching: Optional[Union[str, "HostCachingOptions"]] = None,
-        **kwargs
-    ):
-        super(DataDiskPropertiesFragment, self).__init__(**kwargs)
-        self.attach_new_data_disk_options = attach_new_data_disk_options
-        self.existing_lab_disk_id = existing_lab_disk_id
-        self.host_caching = host_caching
-
-
-class DataDiskStorageTypeInfo(msrest.serialization.Model):
+class DataDiskStorageTypeInfo(_serialization.Model):
     """Storage information about the data disks present in the custom image.
 
-    :param lun: Disk Lun.
-    :type lun: str
-    :param storage_type: Disk Storage Type. Possible values include: "Standard", "Premium",
+    :ivar lun: Disk Lun.
+    :vartype lun: str
+    :ivar storage_type: Disk Storage Type. Known values are: "Standard", "Premium", and
      "StandardSSD".
-    :type storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+    :vartype storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
     """
 
     _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'str'},
-        'storage_type': {'key': 'storageType', 'type': 'str'},
+        "lun": {"key": "lun", "type": "str"},
+        "storage_type": {"key": "storageType", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        lun: Optional[str] = None,
-        storage_type: Optional[Union[str, "StorageType"]] = None,
-        **kwargs
+        self, *, lun: Optional[str] = None, storage_type: Optional[Union[str, "_models.StorageType"]] = None, **kwargs
     ):
-        super(DataDiskStorageTypeInfo, self).__init__(**kwargs)
+        """
+        :keyword lun: Disk Lun.
+        :paramtype lun: str
+        :keyword storage_type: Disk Storage Type. Known values are: "Standard", "Premium", and
+         "StandardSSD".
+        :paramtype storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+        """
+        super().__init__(**kwargs)
         self.lun = lun
         self.storage_type = storage_type
 
 
-class DataDiskStorageTypeInfoFragment(msrest.serialization.Model):
-    """Storage information about the data disks present in the custom image.
-
-    :param lun: Disk Lun.
-    :type lun: str
-    :param storage_type: Disk Storage Type. Possible values include: "Standard", "Premium",
-     "StandardSSD".
-    :type storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    """
-
-    _attribute_map = {
-        'lun': {'key': 'lun', 'type': 'str'},
-        'storage_type': {'key': 'storageType', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        lun: Optional[str] = None,
-        storage_type: Optional[Union[str, "StorageType"]] = None,
-        **kwargs
-    ):
-        super(DataDiskStorageTypeInfoFragment, self).__init__(**kwargs)
-        self.lun = lun
-        self.storage_type = storage_type
-
-
-class DayDetails(msrest.serialization.Model):
+class DayDetails(_serialization.Model):
     """Properties of a daily schedule.
 
-    :param time: The time of day the schedule will occur.
-    :type time: str
+    :ivar time: The time of day the schedule will occur.
+    :vartype time: str
     """
 
     _attribute_map = {
-        'time': {'key': 'time', 'type': 'str'},
+        "time": {"key": "time", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        time: Optional[str] = None,
-        **kwargs
-    ):
-        super(DayDetails, self).__init__(**kwargs)
+    def __init__(self, *, time: Optional[str] = None, **kwargs):
+        """
+        :keyword time: The time of day the schedule will occur.
+        :paramtype time: str
+        """
+        super().__init__(**kwargs)
         self.time = time
 
 
-class DayDetailsFragment(msrest.serialization.Model):
-    """Properties of a daily schedule.
-
-    :param time: The time of day the schedule will occur.
-    :type time: str
-    """
-
-    _attribute_map = {
-        'time': {'key': 'time', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        time: Optional[str] = None,
-        **kwargs
-    ):
-        super(DayDetailsFragment, self).__init__(**kwargs)
-        self.time = time
-
-
-class DetachDataDiskProperties(msrest.serialization.Model):
+class DetachDataDiskProperties(_serialization.Model):
     """Request body for detaching data disk from a virtual machine.
 
-    :param existing_lab_disk_id: Specifies the disk resource ID to detach from virtual machine.
-    :type existing_lab_disk_id: str
+    :ivar existing_lab_disk_id: Specifies the disk resource ID to detach from virtual machine.
+    :vartype existing_lab_disk_id: str
     """
 
     _attribute_map = {
-        'existing_lab_disk_id': {'key': 'existingLabDiskId', 'type': 'str'},
+        "existing_lab_disk_id": {"key": "existingLabDiskId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        existing_lab_disk_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(DetachDataDiskProperties, self).__init__(**kwargs)
+    def __init__(self, *, existing_lab_disk_id: Optional[str] = None, **kwargs):
+        """
+        :keyword existing_lab_disk_id: Specifies the disk resource ID to detach from virtual machine.
+        :paramtype existing_lab_disk_id: str
+        """
+        super().__init__(**kwargs)
         self.existing_lab_disk_id = existing_lab_disk_id
 
 
-class DetachDiskProperties(msrest.serialization.Model):
+class DetachDiskProperties(_serialization.Model):
     """Properties of the disk to detach.
 
-    :param leased_by_lab_vm_id: The resource ID of the Lab VM to which the disk is attached.
-    :type leased_by_lab_vm_id: str
+    :ivar leased_by_lab_vm_id: The resource ID of the Lab VM to which the disk is attached.
+    :vartype leased_by_lab_vm_id: str
     """
 
     _attribute_map = {
-        'leased_by_lab_vm_id': {'key': 'leasedByLabVmId', 'type': 'str'},
+        "leased_by_lab_vm_id": {"key": "leasedByLabVmId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        leased_by_lab_vm_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(DetachDiskProperties, self).__init__(**kwargs)
+    def __init__(self, *, leased_by_lab_vm_id: Optional[str] = None, **kwargs):
+        """
+        :keyword leased_by_lab_vm_id: The resource ID of the Lab VM to which the disk is attached.
+        :paramtype leased_by_lab_vm_id: str
+        """
+        super().__init__(**kwargs)
         self.leased_by_lab_vm_id = leased_by_lab_vm_id
 
 
-class Disk(Resource):
+class Disk(Resource):  # pylint: disable=too-many-instance-attributes
     """A Disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1939,28 +1563,30 @@ class Disk(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param disk_type: The storage type for the disk (i.e. Standard, Premium). Possible values
-     include: "Standard", "Premium", "StandardSSD".
-    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param disk_size_gi_b: The size of the disk in GibiBytes.
-    :type disk_size_gi_b: int
-    :param leased_by_lab_vm_id: The resource ID of the VM to which this disk is leased.
-    :type leased_by_lab_vm_id: str
-    :param disk_blob_name: When backed by a blob, the name of the VHD blob without extension.
-    :type disk_blob_name: str
-    :param disk_uri: When backed by a blob, the URI of underlying blob.
-    :type disk_uri: str
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar disk_type: The storage type for the disk (i.e. Standard, Premium). Known values are:
+     "Standard", "Premium", and "StandardSSD".
+    :vartype disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+    :ivar disk_size_gi_b: The size of the disk in Gibibytes.
+    :vartype disk_size_gi_b: int
+    :ivar leased_by_lab_vm_id: The resource ID of the VM to which this disk is leased.
+    :vartype leased_by_lab_vm_id: str
+    :ivar disk_blob_name: When backed by a blob, the name of the VHD blob without extension.
+    :vartype disk_blob_name: str
+    :ivar disk_uri: When backed by a blob, the URI of underlying blob.
+    :vartype disk_uri: str
+    :ivar storage_account_id: When backed by a blob, the storage account where the blob is.
+    :vartype storage_account_id: str
     :ivar created_date: The creation date of the disk.
     :vartype created_date: ~datetime.datetime
-    :param host_caching: The host caching policy of the disk (i.e. None, ReadOnly, ReadWrite).
-    :type host_caching: str
-    :param managed_disk_id: When backed by managed disk, this is the ID of the compute disk
+    :ivar host_caching: The host caching policy of the disk (i.e. None, ReadOnly, ReadWrite).
+    :vartype host_caching: str
+    :ivar managed_disk_id: When backed by managed disk, this is the ID of the compute disk
      resource.
-    :type managed_disk_id: str
+    :vartype managed_disk_id: str
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -1968,30 +1594,31 @@ class Disk(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'disk_type': {'key': 'properties.diskType', 'type': 'str'},
-        'disk_size_gi_b': {'key': 'properties.diskSizeGiB', 'type': 'int'},
-        'leased_by_lab_vm_id': {'key': 'properties.leasedByLabVmId', 'type': 'str'},
-        'disk_blob_name': {'key': 'properties.diskBlobName', 'type': 'str'},
-        'disk_uri': {'key': 'properties.diskUri', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'host_caching': {'key': 'properties.hostCaching', 'type': 'str'},
-        'managed_disk_id': {'key': 'properties.managedDiskId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "disk_type": {"key": "properties.diskType", "type": "str"},
+        "disk_size_gi_b": {"key": "properties.diskSizeGiB", "type": "int"},
+        "leased_by_lab_vm_id": {"key": "properties.leasedByLabVmId", "type": "str"},
+        "disk_blob_name": {"key": "properties.diskBlobName", "type": "str"},
+        "disk_uri": {"key": "properties.diskUri", "type": "str"},
+        "storage_account_id": {"key": "properties.storageAccountId", "type": "str"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "host_caching": {"key": "properties.hostCaching", "type": "str"},
+        "managed_disk_id": {"key": "properties.managedDiskId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -1999,21 +1626,47 @@ class Disk(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        disk_type: Optional[Union[str, "StorageType"]] = None,
+        disk_type: Optional[Union[str, "_models.StorageType"]] = None,
         disk_size_gi_b: Optional[int] = None,
         leased_by_lab_vm_id: Optional[str] = None,
         disk_blob_name: Optional[str] = None,
         disk_uri: Optional[str] = None,
+        storage_account_id: Optional[str] = None,
         host_caching: Optional[str] = None,
         managed_disk_id: Optional[str] = None,
         **kwargs
     ):
-        super(Disk, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword disk_type: The storage type for the disk (i.e. Standard, Premium). Known values are:
+         "Standard", "Premium", and "StandardSSD".
+        :paramtype disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+        :keyword disk_size_gi_b: The size of the disk in Gibibytes.
+        :paramtype disk_size_gi_b: int
+        :keyword leased_by_lab_vm_id: The resource ID of the VM to which this disk is leased.
+        :paramtype leased_by_lab_vm_id: str
+        :keyword disk_blob_name: When backed by a blob, the name of the VHD blob without extension.
+        :paramtype disk_blob_name: str
+        :keyword disk_uri: When backed by a blob, the URI of underlying blob.
+        :paramtype disk_uri: str
+        :keyword storage_account_id: When backed by a blob, the storage account where the blob is.
+        :paramtype storage_account_id: str
+        :keyword host_caching: The host caching policy of the disk (i.e. None, ReadOnly, ReadWrite).
+        :paramtype host_caching: str
+        :keyword managed_disk_id: When backed by managed disk, this is the ID of the compute disk
+         resource.
+        :paramtype managed_disk_id: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.disk_type = disk_type
         self.disk_size_gi_b = disk_size_gi_b
         self.leased_by_lab_vm_id = leased_by_lab_vm_id
         self.disk_blob_name = disk_blob_name
         self.disk_uri = disk_uri
+        self.storage_account_id = storage_account_id
         self.created_date = None
         self.host_caching = host_caching
         self.managed_disk_id = managed_disk_id
@@ -2024,87 +1677,49 @@ class Disk(Resource):
 class DiskFragment(UpdateResource):
     """A Disk.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param disk_type: The storage type for the disk (i.e. Standard, Premium). Possible values
-     include: "Standard", "Premium", "StandardSSD".
-    :type disk_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param disk_size_gi_b: The size of the disk in GibiBytes.
-    :type disk_size_gi_b: int
-    :param leased_by_lab_vm_id: The resource ID of the VM to which this disk is leased.
-    :type leased_by_lab_vm_id: str
-    :param disk_blob_name: When backed by a blob, the name of the VHD blob without extension.
-    :type disk_blob_name: str
-    :param disk_uri: When backed by a blob, the URI of underlying blob.
-    :type disk_uri: str
-    :param host_caching: The host caching policy of the disk (i.e. None, ReadOnly, ReadWrite).
-    :type host_caching: str
-    :param managed_disk_id: When backed by managed disk, this is the ID of the compute disk
-     resource.
-    :type managed_disk_id: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'disk_type': {'key': 'properties.diskType', 'type': 'str'},
-        'disk_size_gi_b': {'key': 'properties.diskSizeGiB', 'type': 'int'},
-        'leased_by_lab_vm_id': {'key': 'properties.leasedByLabVmId', 'type': 'str'},
-        'disk_blob_name': {'key': 'properties.diskBlobName', 'type': 'str'},
-        'disk_uri': {'key': 'properties.diskUri', 'type': 'str'},
-        'host_caching': {'key': 'properties.hostCaching', 'type': 'str'},
-        'managed_disk_id': {'key': 'properties.managedDiskId', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        disk_type: Optional[Union[str, "StorageType"]] = None,
-        disk_size_gi_b: Optional[int] = None,
-        leased_by_lab_vm_id: Optional[str] = None,
-        disk_blob_name: Optional[str] = None,
-        disk_uri: Optional[str] = None,
-        host_caching: Optional[str] = None,
-        managed_disk_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(DiskFragment, self).__init__(tags=tags, **kwargs)
-        self.disk_type = disk_type
-        self.disk_size_gi_b = disk_size_gi_b
-        self.leased_by_lab_vm_id = leased_by_lab_vm_id
-        self.disk_blob_name = disk_blob_name
-        self.disk_uri = disk_uri
-        self.host_caching = host_caching
-        self.managed_disk_id = managed_disk_id
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class DiskList(msrest.serialization.Model):
+class DiskList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.Disk]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.Disk]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Disk]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Disk]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Disk"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(DiskList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Disk"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.Disk]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class DtlEnvironment(Resource):
+class DtlEnvironment(Resource):  # pylint: disable=too-many-instance-attributes
     """An environment, which is essentially an ARM template deployment.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2115,15 +1730,15 @@ class DtlEnvironment(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param deployment_properties: The deployment properties of the environment.
-    :type deployment_properties: ~azure.mgmt.devtestlabs.models.EnvironmentDeploymentProperties
-    :param arm_template_display_name: The display name of the Azure Resource Manager template that
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar deployment_properties: The deployment properties of the environment.
+    :vartype deployment_properties: ~azure.mgmt.devtestlabs.models.EnvironmentDeploymentProperties
+    :ivar arm_template_display_name: The display name of the Azure Resource Manager template that
      produced the environment.
-    :type arm_template_display_name: str
+    :vartype arm_template_display_name: str
     :ivar resource_group_id: The identifier of the resource group containing the environment's
      resources.
     :vartype resource_group_id: str
@@ -2136,27 +1751,27 @@ class DtlEnvironment(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'resource_group_id': {'readonly': True},
-        'created_by_user': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "resource_group_id": {"readonly": True},
+        "created_by_user": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'deployment_properties': {'key': 'properties.deploymentProperties', 'type': 'EnvironmentDeploymentProperties'},
-        'arm_template_display_name': {'key': 'properties.armTemplateDisplayName', 'type': 'str'},
-        'resource_group_id': {'key': 'properties.resourceGroupId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "deployment_properties": {"key": "properties.deploymentProperties", "type": "EnvironmentDeploymentProperties"},
+        "arm_template_display_name": {"key": "properties.armTemplateDisplayName", "type": "str"},
+        "resource_group_id": {"key": "properties.resourceGroupId", "type": "str"},
+        "created_by_user": {"key": "properties.createdByUser", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -2164,11 +1779,23 @@ class DtlEnvironment(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        deployment_properties: Optional["EnvironmentDeploymentProperties"] = None,
+        deployment_properties: Optional["_models.EnvironmentDeploymentProperties"] = None,
         arm_template_display_name: Optional[str] = None,
         **kwargs
     ):
-        super(DtlEnvironment, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword deployment_properties: The deployment properties of the environment.
+        :paramtype deployment_properties:
+         ~azure.mgmt.devtestlabs.models.EnvironmentDeploymentProperties
+        :keyword arm_template_display_name: The display name of the Azure Resource Manager template
+         that produced the environment.
+        :paramtype arm_template_display_name: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.deployment_properties = deployment_properties
         self.arm_template_display_name = arm_template_display_name
         self.resource_group_id = None
@@ -2180,131 +1807,100 @@ class DtlEnvironment(Resource):
 class DtlEnvironmentFragment(UpdateResource):
     """An environment, which is essentially an ARM template deployment.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param deployment_properties: The deployment properties of the environment.
-    :type deployment_properties:
-     ~azure.mgmt.devtestlabs.models.EnvironmentDeploymentPropertiesFragment
-    :param arm_template_display_name: The display name of the Azure Resource Manager template that
-     produced the environment.
-    :type arm_template_display_name: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'deployment_properties': {'key': 'properties.deploymentProperties', 'type': 'EnvironmentDeploymentPropertiesFragment'},
-        'arm_template_display_name': {'key': 'properties.armTemplateDisplayName', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        deployment_properties: Optional["EnvironmentDeploymentPropertiesFragment"] = None,
-        arm_template_display_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(DtlEnvironmentFragment, self).__init__(tags=tags, **kwargs)
-        self.deployment_properties = deployment_properties
-        self.arm_template_display_name = arm_template_display_name
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class DtlEnvironmentList(msrest.serialization.Model):
+class DtlEnvironmentList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.DtlEnvironment]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.DtlEnvironment]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DtlEnvironment]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DtlEnvironment]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["DtlEnvironment"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.DtlEnvironment"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(DtlEnvironmentList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.DtlEnvironment]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class EnvironmentDeploymentProperties(msrest.serialization.Model):
+class EnvironmentDeploymentProperties(_serialization.Model):
     """Properties of an environment deployment.
 
-    :param arm_template_id: The Azure Resource Manager template's identifier.
-    :type arm_template_id: str
-    :param parameters: The parameters of the Azure Resource Manager template.
-    :type parameters: list[~azure.mgmt.devtestlabs.models.ArmTemplateParameterProperties]
+    :ivar arm_template_id: The Azure Resource Manager template's identifier.
+    :vartype arm_template_id: str
+    :ivar parameters: The parameters of the Azure Resource Manager template.
+    :vartype parameters: list[~azure.mgmt.devtestlabs.models.ArmTemplateParameterProperties]
     """
 
     _attribute_map = {
-        'arm_template_id': {'key': 'armTemplateId', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ArmTemplateParameterProperties]'},
+        "arm_template_id": {"key": "armTemplateId", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[ArmTemplateParameterProperties]"},
     }
 
     def __init__(
         self,
         *,
         arm_template_id: Optional[str] = None,
-        parameters: Optional[List["ArmTemplateParameterProperties"]] = None,
+        parameters: Optional[List["_models.ArmTemplateParameterProperties"]] = None,
         **kwargs
     ):
-        super(EnvironmentDeploymentProperties, self).__init__(**kwargs)
+        """
+        :keyword arm_template_id: The Azure Resource Manager template's identifier.
+        :paramtype arm_template_id: str
+        :keyword parameters: The parameters of the Azure Resource Manager template.
+        :paramtype parameters: list[~azure.mgmt.devtestlabs.models.ArmTemplateParameterProperties]
+        """
+        super().__init__(**kwargs)
         self.arm_template_id = arm_template_id
         self.parameters = parameters
 
 
-class EnvironmentDeploymentPropertiesFragment(msrest.serialization.Model):
-    """Properties of an environment deployment.
-
-    :param arm_template_id: The Azure Resource Manager template's identifier.
-    :type arm_template_id: str
-    :param parameters: The parameters of the Azure Resource Manager template.
-    :type parameters: list[~azure.mgmt.devtestlabs.models.ArmTemplateParameterPropertiesFragment]
-    """
-
-    _attribute_map = {
-        'arm_template_id': {'key': 'armTemplateId', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ArmTemplateParameterPropertiesFragment]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        arm_template_id: Optional[str] = None,
-        parameters: Optional[List["ArmTemplateParameterPropertiesFragment"]] = None,
-        **kwargs
-    ):
-        super(EnvironmentDeploymentPropertiesFragment, self).__init__(**kwargs)
-        self.arm_template_id = arm_template_id
-        self.parameters = parameters
-
-
-class EvaluatePoliciesProperties(msrest.serialization.Model):
+class EvaluatePoliciesProperties(_serialization.Model):
     """Properties for evaluating a policy set.
 
-    :param fact_name: The fact name.
-    :type fact_name: str
-    :param fact_data: The fact data.
-    :type fact_data: str
-    :param value_offset: The value offset.
-    :type value_offset: str
-    :param user_object_id: The user for which policies will be evaluated.
-    :type user_object_id: str
+    :ivar fact_name: The fact name.
+    :vartype fact_name: str
+    :ivar fact_data: The fact data.
+    :vartype fact_data: str
+    :ivar value_offset: The value offset.
+    :vartype value_offset: str
+    :ivar user_object_id: The user for which policies will be evaluated.
+    :vartype user_object_id: str
     """
 
     _attribute_map = {
-        'fact_name': {'key': 'factName', 'type': 'str'},
-        'fact_data': {'key': 'factData', 'type': 'str'},
-        'value_offset': {'key': 'valueOffset', 'type': 'str'},
-        'user_object_id': {'key': 'userObjectId', 'type': 'str'},
+        "fact_name": {"key": "factName", "type": "str"},
+        "fact_data": {"key": "factData", "type": "str"},
+        "value_offset": {"key": "valueOffset", "type": "str"},
+        "user_object_id": {"key": "userObjectId", "type": "str"},
     }
 
     def __init__(
@@ -2316,113 +1912,99 @@ class EvaluatePoliciesProperties(msrest.serialization.Model):
         user_object_id: Optional[str] = None,
         **kwargs
     ):
-        super(EvaluatePoliciesProperties, self).__init__(**kwargs)
+        """
+        :keyword fact_name: The fact name.
+        :paramtype fact_name: str
+        :keyword fact_data: The fact data.
+        :paramtype fact_data: str
+        :keyword value_offset: The value offset.
+        :paramtype value_offset: str
+        :keyword user_object_id: The user for which policies will be evaluated.
+        :paramtype user_object_id: str
+        """
+        super().__init__(**kwargs)
         self.fact_name = fact_name
         self.fact_data = fact_data
         self.value_offset = value_offset
         self.user_object_id = user_object_id
 
 
-class EvaluatePoliciesRequest(msrest.serialization.Model):
+class EvaluatePoliciesRequest(_serialization.Model):
     """Request body for evaluating a policy set.
 
-    :param policies: Policies to evaluate.
-    :type policies: list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
+    :ivar policies: Policies to evaluate.
+    :vartype policies: list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
     """
 
     _attribute_map = {
-        'policies': {'key': 'policies', 'type': '[EvaluatePoliciesProperties]'},
+        "policies": {"key": "policies", "type": "[EvaluatePoliciesProperties]"},
     }
 
-    def __init__(
-        self,
-        *,
-        policies: Optional[List["EvaluatePoliciesProperties"]] = None,
-        **kwargs
-    ):
-        super(EvaluatePoliciesRequest, self).__init__(**kwargs)
+    def __init__(self, *, policies: Optional[List["_models.EvaluatePoliciesProperties"]] = None, **kwargs):
+        """
+        :keyword policies: Policies to evaluate.
+        :paramtype policies: list[~azure.mgmt.devtestlabs.models.EvaluatePoliciesProperties]
+        """
+        super().__init__(**kwargs)
         self.policies = policies
 
 
-class EvaluatePoliciesResponse(msrest.serialization.Model):
+class EvaluatePoliciesResponse(_serialization.Model):
     """Response body for evaluating a policy set.
 
-    :param results: Results of evaluating a policy set.
-    :type results: list[~azure.mgmt.devtestlabs.models.PolicySetResult]
+    :ivar results: Results of evaluating a policy set.
+    :vartype results: list[~azure.mgmt.devtestlabs.models.PolicySetResult]
     """
 
     _attribute_map = {
-        'results': {'key': 'results', 'type': '[PolicySetResult]'},
+        "results": {"key": "results", "type": "[PolicySetResult]"},
     }
 
-    def __init__(
-        self,
-        *,
-        results: Optional[List["PolicySetResult"]] = None,
-        **kwargs
-    ):
-        super(EvaluatePoliciesResponse, self).__init__(**kwargs)
+    def __init__(self, *, results: Optional[List["_models.PolicySetResult"]] = None, **kwargs):
+        """
+        :keyword results: Results of evaluating a policy set.
+        :paramtype results: list[~azure.mgmt.devtestlabs.models.PolicySetResult]
+        """
+        super().__init__(**kwargs)
         self.results = results
 
 
-class Event(msrest.serialization.Model):
+class Event(_serialization.Model):
     """An event to be notified for.
 
-    :param event_name: The event type for which this notification is enabled (i.e. AutoShutdown,
-     Cost). Possible values include: "AutoShutdown", "Cost".
-    :type event_name: str or ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
+    :ivar event_name: The event type for which this notification is enabled (i.e. AutoShutdown,
+     Cost). Known values are: "AutoShutdown" and "Cost".
+    :vartype event_name: str or ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
     """
 
     _attribute_map = {
-        'event_name': {'key': 'eventName', 'type': 'str'},
+        "event_name": {"key": "eventName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        event_name: Optional[Union[str, "NotificationChannelEventType"]] = None,
-        **kwargs
-    ):
-        super(Event, self).__init__(**kwargs)
+    def __init__(self, *, event_name: Optional[Union[str, "_models.NotificationChannelEventType"]] = None, **kwargs):
+        """
+        :keyword event_name: The event type for which this notification is enabled (i.e. AutoShutdown,
+         Cost). Known values are: "AutoShutdown" and "Cost".
+        :paramtype event_name: str or ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
+        """
+        super().__init__(**kwargs)
         self.event_name = event_name
 
 
-class EventFragment(msrest.serialization.Model):
-    """An event to be notified for.
-
-    :param event_name: The event type for which this notification is enabled (i.e. AutoShutdown,
-     Cost). Possible values include: "AutoShutdown", "Cost".
-    :type event_name: str or ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
-    """
-
-    _attribute_map = {
-        'event_name': {'key': 'eventName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        event_name: Optional[Union[str, "NotificationChannelEventType"]] = None,
-        **kwargs
-    ):
-        super(EventFragment, self).__init__(**kwargs)
-        self.event_name = event_name
-
-
-class ExportResourceUsageParameters(msrest.serialization.Model):
+class ExportResourceUsageParameters(_serialization.Model):
     """The parameters of the export operation.
 
-    :param blob_storage_absolute_sas_uri: The blob storage absolute sas uri with write permission
-     to the container which the usage data needs to be uploaded to.
-    :type blob_storage_absolute_sas_uri: str
-    :param usage_start_date: The start time of the usage. If not provided, usage will be reported
+    :ivar blob_storage_absolute_sas_uri: The blob storage absolute sas uri with write permission to
+     the container which the usage data needs to be uploaded to.
+    :vartype blob_storage_absolute_sas_uri: str
+    :ivar usage_start_date: The start time of the usage. If not provided, usage will be reported
      since the beginning of data collection.
-    :type usage_start_date: ~datetime.datetime
+    :vartype usage_start_date: ~datetime.datetime
     """
 
     _attribute_map = {
-        'blob_storage_absolute_sas_uri': {'key': 'blobStorageAbsoluteSasUri', 'type': 'str'},
-        'usage_start_date': {'key': 'usageStartDate', 'type': 'iso-8601'},
+        "blob_storage_absolute_sas_uri": {"key": "blobStorageAbsoluteSasUri", "type": "str"},
+        "usage_start_date": {"key": "usageStartDate", "type": "iso-8601"},
     }
 
     def __init__(
@@ -2432,64 +2014,48 @@ class ExportResourceUsageParameters(msrest.serialization.Model):
         usage_start_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(ExportResourceUsageParameters, self).__init__(**kwargs)
+        """
+        :keyword blob_storage_absolute_sas_uri: The blob storage absolute sas uri with write permission
+         to the container which the usage data needs to be uploaded to.
+        :paramtype blob_storage_absolute_sas_uri: str
+        :keyword usage_start_date: The start time of the usage. If not provided, usage will be reported
+         since the beginning of data collection.
+        :paramtype usage_start_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.blob_storage_absolute_sas_uri = blob_storage_absolute_sas_uri
         self.usage_start_date = usage_start_date
 
 
-class ExternalSubnet(msrest.serialization.Model):
+class ExternalSubnet(_serialization.Model):
     """Subnet information as returned by the Microsoft.Network API.
 
-    :param id: Gets or sets the identifier.
-    :type id: str
-    :param name: Gets or sets the name.
-    :type name: str
+    :ivar id: Gets or sets the identifier.
+    :vartype id: str
+    :ivar name: Gets or sets the name.
+    :vartype name: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        **kwargs
+        self, *, id: Optional[str] = None, name: Optional[str] = None, **kwargs  # pylint: disable=redefined-builtin
     ):
-        super(ExternalSubnet, self).__init__(**kwargs)
+        """
+        :keyword id: Gets or sets the identifier.
+        :paramtype id: str
+        :keyword name: Gets or sets the name.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
 
 
-class ExternalSubnetFragment(msrest.serialization.Model):
-    """Subnet information as returned by the Microsoft.Network API.
-
-    :param id: Gets or sets the identifier.
-    :type id: str
-    :param name: Gets or sets the name.
-    :type name: str
-    """
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        **kwargs
-    ):
-        super(ExternalSubnetFragment, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-
-
-class Formula(Resource):
+class Formula(Resource):  # pylint: disable=too-many-instance-attributes
     """A formula for creating a VM, specifying an image base and other parameters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2500,22 +2066,22 @@ class Formula(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param description: The description of the formula.
-    :type description: str
-    :param author: The author of the formula.
-    :type author: str
-    :param os_type: The OS type of the formula.
-    :type os_type: str
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar description: The description of the formula.
+    :vartype description: str
+    :ivar author: The author of the formula.
+    :vartype author: str
+    :ivar os_type: The OS type of the formula.
+    :vartype os_type: str
     :ivar creation_date: The creation date of the formula.
     :vartype creation_date: ~datetime.datetime
-    :param formula_content: The content of the formula.
-    :type formula_content: ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter
-    :param vm: Information about a VM from which a formula is to be created.
-    :type vm: ~azure.mgmt.devtestlabs.models.FormulaPropertiesFromVm
+    :ivar formula_content: The content of the formula.
+    :vartype formula_content: ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter
+    :ivar vm: Information about a VM from which a formula is to be created.
+    :vartype vm: ~azure.mgmt.devtestlabs.models.FormulaPropertiesFromVm
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -2523,28 +2089,29 @@ class Formula(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "author": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
-        'formula_content': {'key': 'properties.formulaContent', 'type': 'LabVirtualMachineCreationParameter'},
-        'vm': {'key': 'properties.vm', 'type': 'FormulaPropertiesFromVm'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "author": {"key": "properties.author", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
+        "formula_content": {"key": "properties.formulaContent", "type": "LabVirtualMachineCreationParameter"},
+        "vm": {"key": "properties.vm", "type": "FormulaPropertiesFromVm"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -2553,15 +2120,28 @@ class Formula(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        author: Optional[str] = None,
         os_type: Optional[str] = None,
-        formula_content: Optional["LabVirtualMachineCreationParameter"] = None,
-        vm: Optional["FormulaPropertiesFromVm"] = None,
+        formula_content: Optional["_models.LabVirtualMachineCreationParameter"] = None,
+        vm: Optional["_models.FormulaPropertiesFromVm"] = None,
         **kwargs
     ):
-        super(Formula, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword description: The description of the formula.
+        :paramtype description: str
+        :keyword os_type: The OS type of the formula.
+        :paramtype os_type: str
+        :keyword formula_content: The content of the formula.
+        :paramtype formula_content: ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameter
+        :keyword vm: Information about a VM from which a formula is to be created.
+        :paramtype vm: ~azure.mgmt.devtestlabs.models.FormulaPropertiesFromVm
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
-        self.author = author
+        self.author = None
         self.os_type = os_type
         self.creation_date = None
         self.formula_content = formula_content
@@ -2573,118 +2153,69 @@ class Formula(Resource):
 class FormulaFragment(UpdateResource):
     """A formula for creating a VM, specifying an image base and other parameters.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param description: The description of the formula.
-    :type description: str
-    :param author: The author of the formula.
-    :type author: str
-    :param os_type: The OS type of the formula.
-    :type os_type: str
-    :param formula_content: The content of the formula.
-    :type formula_content:
-     ~azure.mgmt.devtestlabs.models.LabVirtualMachineCreationParameterFragment
-    :param vm: Information about a VM from which a formula is to be created.
-    :type vm: ~azure.mgmt.devtestlabs.models.FormulaPropertiesFromVmFragment
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'formula_content': {'key': 'properties.formulaContent', 'type': 'LabVirtualMachineCreationParameterFragment'},
-        'vm': {'key': 'properties.vm', 'type': 'FormulaPropertiesFromVmFragment'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        description: Optional[str] = None,
-        author: Optional[str] = None,
-        os_type: Optional[str] = None,
-        formula_content: Optional["LabVirtualMachineCreationParameterFragment"] = None,
-        vm: Optional["FormulaPropertiesFromVmFragment"] = None,
-        **kwargs
-    ):
-        super(FormulaFragment, self).__init__(tags=tags, **kwargs)
-        self.description = description
-        self.author = author
-        self.os_type = os_type
-        self.formula_content = formula_content
-        self.vm = vm
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class FormulaList(msrest.serialization.Model):
+class FormulaList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.Formula]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.Formula]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Formula]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Formula]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Formula"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(FormulaList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Formula"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.Formula]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class FormulaPropertiesFromVm(msrest.serialization.Model):
+class FormulaPropertiesFromVm(_serialization.Model):
     """Information about a VM from which a formula is to be created.
 
-    :param lab_vm_id: The identifier of the VM from which a formula is to be created.
-    :type lab_vm_id: str
+    :ivar lab_vm_id: The identifier of the VM from which a formula is to be created.
+    :vartype lab_vm_id: str
     """
 
     _attribute_map = {
-        'lab_vm_id': {'key': 'labVmId', 'type': 'str'},
+        "lab_vm_id": {"key": "labVmId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        lab_vm_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(FormulaPropertiesFromVm, self).__init__(**kwargs)
+    def __init__(self, *, lab_vm_id: Optional[str] = None, **kwargs):
+        """
+        :keyword lab_vm_id: The identifier of the VM from which a formula is to be created.
+        :paramtype lab_vm_id: str
+        """
+        super().__init__(**kwargs)
         self.lab_vm_id = lab_vm_id
 
 
-class FormulaPropertiesFromVmFragment(msrest.serialization.Model):
-    """Information about a VM from which a formula is to be created.
-
-    :param lab_vm_id: The identifier of the VM from which a formula is to be created.
-    :type lab_vm_id: str
-    """
-
-    _attribute_map = {
-        'lab_vm_id': {'key': 'labVmId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        lab_vm_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(FormulaPropertiesFromVmFragment, self).__init__(**kwargs)
-        self.lab_vm_id = lab_vm_id
-
-
-class GalleryImage(Resource):
+class GalleryImage(Resource):  # pylint: disable=too-many-instance-attributes
     """A gallery image.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2695,50 +2226,50 @@ class GalleryImage(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param author: The author of the gallery image.
-    :type author: str
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar author: The author of the gallery image.
+    :vartype author: str
     :ivar created_date: The creation date of the gallery image.
     :vartype created_date: ~datetime.datetime
-    :param description: The description of the gallery image.
-    :type description: str
-    :param image_reference: The image reference of the gallery image.
-    :type image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
-    :param icon: The icon of the gallery image.
-    :type icon: str
-    :param enabled: Indicates whether this gallery image is enabled.
-    :type enabled: bool
-    :param plan_id: The third party plan that applies to this image.
-    :type plan_id: str
-    :param is_plan_authorized: Indicates if the plan has been authorized for programmatic
+    :ivar description: The description of the gallery image.
+    :vartype description: str
+    :ivar image_reference: The image reference of the gallery image.
+    :vartype image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
+    :ivar icon: The icon of the gallery image.
+    :vartype icon: str
+    :ivar enabled: Indicates whether this gallery image is enabled.
+    :vartype enabled: bool
+    :ivar plan_id: The third party plan that applies to this image.
+    :vartype plan_id: str
+    :ivar is_plan_authorized: Indicates if the plan has been authorized for programmatic
      deployment.
-    :type is_plan_authorized: bool
+    :vartype is_plan_authorized: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_date': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_date": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'author': {'key': 'properties.author', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'image_reference': {'key': 'properties.imageReference', 'type': 'GalleryImageReference'},
-        'icon': {'key': 'properties.icon', 'type': 'str'},
-        'enabled': {'key': 'properties.enabled', 'type': 'bool'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'is_plan_authorized': {'key': 'properties.isPlanAuthorized', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "author": {"key": "properties.author", "type": "str"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
+        "image_reference": {"key": "properties.imageReference", "type": "GalleryImageReference"},
+        "icon": {"key": "properties.icon", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "plan_id": {"key": "properties.planId", "type": "str"},
+        "is_plan_authorized": {"key": "properties.isPlanAuthorized", "type": "bool"},
     }
 
     def __init__(
@@ -2748,14 +2279,35 @@ class GalleryImage(Resource):
         tags: Optional[Dict[str, str]] = None,
         author: Optional[str] = None,
         description: Optional[str] = None,
-        image_reference: Optional["GalleryImageReference"] = None,
+        image_reference: Optional["_models.GalleryImageReference"] = None,
         icon: Optional[str] = None,
         enabled: Optional[bool] = None,
         plan_id: Optional[str] = None,
         is_plan_authorized: Optional[bool] = None,
         **kwargs
     ):
-        super(GalleryImage, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword author: The author of the gallery image.
+        :paramtype author: str
+        :keyword description: The description of the gallery image.
+        :paramtype description: str
+        :keyword image_reference: The image reference of the gallery image.
+        :paramtype image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
+        :keyword icon: The icon of the gallery image.
+        :paramtype icon: str
+        :keyword enabled: Indicates whether this gallery image is enabled.
+        :paramtype enabled: bool
+        :keyword plan_id: The third party plan that applies to this image.
+        :paramtype plan_id: str
+        :keyword is_plan_authorized: Indicates if the plan has been authorized for programmatic
+         deployment.
+        :paramtype is_plan_authorized: bool
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.author = author
         self.created_date = None
         self.description = description
@@ -2766,53 +2318,55 @@ class GalleryImage(Resource):
         self.is_plan_authorized = is_plan_authorized
 
 
-class GalleryImageList(msrest.serialization.Model):
+class GalleryImageList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.GalleryImage]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.GalleryImage]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GalleryImage]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[GalleryImage]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["GalleryImage"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.GalleryImage"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(GalleryImageList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.GalleryImage]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class GalleryImageReference(msrest.serialization.Model):
+class GalleryImageReference(_serialization.Model):
     """The reference information for an Azure Marketplace image.
 
-    :param offer: The offer of the gallery image.
-    :type offer: str
-    :param publisher: The publisher of the gallery image.
-    :type publisher: str
-    :param sku: The SKU of the gallery image.
-    :type sku: str
-    :param os_type: The OS type of the gallery image.
-    :type os_type: str
-    :param version: The version of the gallery image.
-    :type version: str
+    :ivar offer: The offer of the gallery image.
+    :vartype offer: str
+    :ivar publisher: The publisher of the gallery image.
+    :vartype publisher: str
+    :ivar sku: The SKU of the gallery image.
+    :vartype sku: str
+    :ivar os_type: The OS type of the gallery image.
+    :vartype os_type: str
+    :ivar version: The version of the gallery image.
+    :vartype version: str
     """
 
     _attribute_map = {
-        'offer': {'key': 'offer', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "offer": {"key": "offer", "type": "str"},
+        "publisher": {"key": "publisher", "type": "str"},
+        "sku": {"key": "sku", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
     def __init__(
@@ -2825,7 +2379,19 @@ class GalleryImageReference(msrest.serialization.Model):
         version: Optional[str] = None,
         **kwargs
     ):
-        super(GalleryImageReference, self).__init__(**kwargs)
+        """
+        :keyword offer: The offer of the gallery image.
+        :paramtype offer: str
+        :keyword publisher: The publisher of the gallery image.
+        :paramtype publisher: str
+        :keyword sku: The SKU of the gallery image.
+        :paramtype sku: str
+        :keyword os_type: The OS type of the gallery image.
+        :paramtype os_type: str
+        :keyword version: The version of the gallery image.
+        :paramtype version: str
+        """
+        super().__init__(**kwargs)
         self.offer = offer
         self.publisher = publisher
         self.sku = sku
@@ -2833,219 +2399,177 @@ class GalleryImageReference(msrest.serialization.Model):
         self.version = version
 
 
-class GalleryImageReferenceFragment(msrest.serialization.Model):
-    """The reference information for an Azure Marketplace image.
-
-    :param offer: The offer of the gallery image.
-    :type offer: str
-    :param publisher: The publisher of the gallery image.
-    :type publisher: str
-    :param sku: The SKU of the gallery image.
-    :type sku: str
-    :param os_type: The OS type of the gallery image.
-    :type os_type: str
-    :param version: The version of the gallery image.
-    :type version: str
-    """
-
-    _attribute_map = {
-        'offer': {'key': 'offer', 'type': 'str'},
-        'publisher': {'key': 'publisher', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        offer: Optional[str] = None,
-        publisher: Optional[str] = None,
-        sku: Optional[str] = None,
-        os_type: Optional[str] = None,
-        version: Optional[str] = None,
-        **kwargs
-    ):
-        super(GalleryImageReferenceFragment, self).__init__(**kwargs)
-        self.offer = offer
-        self.publisher = publisher
-        self.sku = sku
-        self.os_type = os_type
-        self.version = version
-
-
-class GenerateArmTemplateRequest(msrest.serialization.Model):
+class GenerateArmTemplateRequest(_serialization.Model):
     """Parameters for generating an ARM template for deploying artifacts.
 
-    :param virtual_machine_name: The resource name of the virtual machine.
-    :type virtual_machine_name: str
-    :param parameters: The parameters of the ARM template.
-    :type parameters: list[~azure.mgmt.devtestlabs.models.ParameterInfo]
-    :param location: The location of the virtual machine.
-    :type location: str
-    :param file_upload_options: Options for uploading the files for the artifact.
-     UploadFilesAndGenerateSasTokens is the default value. Possible values include:
-     "UploadFilesAndGenerateSasTokens", "None".
-    :type file_upload_options: str or ~azure.mgmt.devtestlabs.models.FileUploadOptions
+    :ivar virtual_machine_name: The resource name of the virtual machine.
+    :vartype virtual_machine_name: str
+    :ivar parameters: The parameters of the ARM template.
+    :vartype parameters: list[~azure.mgmt.devtestlabs.models.ParameterInfo]
+    :ivar location: The location of the virtual machine.
+    :vartype location: str
+    :ivar file_upload_options: Options for uploading the files for the artifact.
+     UploadFilesAndGenerateSasTokens is the default value. Known values are:
+     "UploadFilesAndGenerateSasTokens" and "None".
+    :vartype file_upload_options: str or ~azure.mgmt.devtestlabs.models.FileUploadOptions
     """
 
     _attribute_map = {
-        'virtual_machine_name': {'key': 'virtualMachineName', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ParameterInfo]'},
-        'location': {'key': 'location', 'type': 'str'},
-        'file_upload_options': {'key': 'fileUploadOptions', 'type': 'str'},
+        "virtual_machine_name": {"key": "virtualMachineName", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[ParameterInfo]"},
+        "location": {"key": "location", "type": "str"},
+        "file_upload_options": {"key": "fileUploadOptions", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         virtual_machine_name: Optional[str] = None,
-        parameters: Optional[List["ParameterInfo"]] = None,
+        parameters: Optional[List["_models.ParameterInfo"]] = None,
         location: Optional[str] = None,
-        file_upload_options: Optional[Union[str, "FileUploadOptions"]] = None,
+        file_upload_options: Optional[Union[str, "_models.FileUploadOptions"]] = None,
         **kwargs
     ):
-        super(GenerateArmTemplateRequest, self).__init__(**kwargs)
+        """
+        :keyword virtual_machine_name: The resource name of the virtual machine.
+        :paramtype virtual_machine_name: str
+        :keyword parameters: The parameters of the ARM template.
+        :paramtype parameters: list[~azure.mgmt.devtestlabs.models.ParameterInfo]
+        :keyword location: The location of the virtual machine.
+        :paramtype location: str
+        :keyword file_upload_options: Options for uploading the files for the artifact.
+         UploadFilesAndGenerateSasTokens is the default value. Known values are:
+         "UploadFilesAndGenerateSasTokens" and "None".
+        :paramtype file_upload_options: str or ~azure.mgmt.devtestlabs.models.FileUploadOptions
+        """
+        super().__init__(**kwargs)
         self.virtual_machine_name = virtual_machine_name
         self.parameters = parameters
         self.location = location
         self.file_upload_options = file_upload_options
 
 
-class GenerateUploadUriParameter(msrest.serialization.Model):
+class GenerateUploadUriParameter(_serialization.Model):
     """Properties for generating an upload URI.
 
-    :param blob_name: The blob name of the upload URI.
-    :type blob_name: str
+    :ivar blob_name: The blob name of the upload URI.
+    :vartype blob_name: str
     """
 
     _attribute_map = {
-        'blob_name': {'key': 'blobName', 'type': 'str'},
+        "blob_name": {"key": "blobName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        blob_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(GenerateUploadUriParameter, self).__init__(**kwargs)
+    def __init__(self, *, blob_name: Optional[str] = None, **kwargs):
+        """
+        :keyword blob_name: The blob name of the upload URI.
+        :paramtype blob_name: str
+        """
+        super().__init__(**kwargs)
         self.blob_name = blob_name
 
 
-class GenerateUploadUriResponse(msrest.serialization.Model):
+class GenerateUploadUriResponse(_serialization.Model):
     """Response body for generating an upload URI.
 
-    :param upload_uri: The upload URI for the VHD.
-    :type upload_uri: str
+    :ivar upload_uri: The upload URI for the VHD.
+    :vartype upload_uri: str
     """
 
     _attribute_map = {
-        'upload_uri': {'key': 'uploadUri', 'type': 'str'},
+        "upload_uri": {"key": "uploadUri", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        upload_uri: Optional[str] = None,
-        **kwargs
-    ):
-        super(GenerateUploadUriResponse, self).__init__(**kwargs)
+    def __init__(self, *, upload_uri: Optional[str] = None, **kwargs):
+        """
+        :keyword upload_uri: The upload URI for the VHD.
+        :paramtype upload_uri: str
+        """
+        super().__init__(**kwargs)
         self.upload_uri = upload_uri
 
 
-class HourDetails(msrest.serialization.Model):
+class HourDetails(_serialization.Model):
     """Properties of an hourly schedule.
 
-    :param minute: Minutes of the hour the schedule will run.
-    :type minute: int
+    :ivar minute: Minutes of the hour the schedule will run.
+    :vartype minute: int
     """
 
     _attribute_map = {
-        'minute': {'key': 'minute', 'type': 'int'},
+        "minute": {"key": "minute", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        minute: Optional[int] = None,
-        **kwargs
-    ):
-        super(HourDetails, self).__init__(**kwargs)
+    def __init__(self, *, minute: Optional[int] = None, **kwargs):
+        """
+        :keyword minute: Minutes of the hour the schedule will run.
+        :paramtype minute: int
+        """
+        super().__init__(**kwargs)
         self.minute = minute
 
 
-class HourDetailsFragment(msrest.serialization.Model):
-    """Properties of an hourly schedule.
-
-    :param minute: Minutes of the hour the schedule will run.
-    :type minute: int
-    """
-
-    _attribute_map = {
-        'minute': {'key': 'minute', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        minute: Optional[int] = None,
-        **kwargs
-    ):
-        super(HourDetailsFragment, self).__init__(**kwargs)
-        self.minute = minute
-
-
-class IdentityProperties(msrest.serialization.Model):
+class IdentityProperties(_serialization.Model):
     """Properties of a managed identity.
 
-    :param type: Managed identity.
-    :type type: str
-    :param principal_id: The principal id of resource identity.
-    :type principal_id: str
-    :param tenant_id: The tenant identifier of resource.
-    :type tenant_id: str
-    :param client_secret_url: The client secret URL of the identity.
-    :type client_secret_url: str
+    :ivar type: Managed identity. Known values are: "None", "SystemAssigned", "UserAssigned", and
+     "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.devtestlabs.models.ManagedIdentityType
+    :ivar principal_id: The principal id of resource identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant identifier of resource.
+    :vartype tenant_id: str
+    :ivar client_secret_url: The client secret URL of the identity.
+    :vartype client_secret_url: str
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'client_secret_url': {'key': 'clientSecretUrl', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "client_secret_url": {"key": "clientSecretUrl", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[str] = None,
+        type: Optional[Union[str, "_models.ManagedIdentityType"]] = None,
         principal_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_secret_url: Optional[str] = None,
         **kwargs
     ):
-        super(IdentityProperties, self).__init__(**kwargs)
+        """
+        :keyword type: Managed identity. Known values are: "None", "SystemAssigned", "UserAssigned",
+         and "SystemAssigned,UserAssigned".
+        :paramtype type: str or ~azure.mgmt.devtestlabs.models.ManagedIdentityType
+        :keyword principal_id: The principal id of resource identity.
+        :paramtype principal_id: str
+        :keyword tenant_id: The tenant identifier of resource.
+        :paramtype tenant_id: str
+        :keyword client_secret_url: The client secret URL of the identity.
+        :paramtype client_secret_url: str
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.principal_id = principal_id
         self.tenant_id = tenant_id
         self.client_secret_url = client_secret_url
 
 
-class ImportLabVirtualMachineRequest(msrest.serialization.Model):
+class ImportLabVirtualMachineRequest(_serialization.Model):
     """This represents the payload required to import a virtual machine from a different lab into the current one.
 
-    :param source_virtual_machine_resource_id: The full resource ID of the virtual machine to be
+    :ivar source_virtual_machine_resource_id: The full resource ID of the virtual machine to be
      imported.
-    :type source_virtual_machine_resource_id: str
-    :param destination_virtual_machine_name: The name of the virtual machine in the destination
-     lab.
-    :type destination_virtual_machine_name: str
+    :vartype source_virtual_machine_resource_id: str
+    :ivar destination_virtual_machine_name: The name of the virtual machine in the destination lab.
+    :vartype destination_virtual_machine_name: str
     """
 
     _attribute_map = {
-        'source_virtual_machine_resource_id': {'key': 'sourceVirtualMachineResourceId', 'type': 'str'},
-        'destination_virtual_machine_name': {'key': 'destinationVirtualMachineName', 'type': 'str'},
+        "source_virtual_machine_resource_id": {"key": "sourceVirtualMachineResourceId", "type": "str"},
+        "destination_virtual_machine_name": {"key": "destinationVirtualMachineName", "type": "str"},
     }
 
     def __init__(
@@ -3055,78 +2579,63 @@ class ImportLabVirtualMachineRequest(msrest.serialization.Model):
         destination_virtual_machine_name: Optional[str] = None,
         **kwargs
     ):
-        super(ImportLabVirtualMachineRequest, self).__init__(**kwargs)
+        """
+        :keyword source_virtual_machine_resource_id: The full resource ID of the virtual machine to be
+         imported.
+        :paramtype source_virtual_machine_resource_id: str
+        :keyword destination_virtual_machine_name: The name of the virtual machine in the destination
+         lab.
+        :paramtype destination_virtual_machine_name: str
+        """
+        super().__init__(**kwargs)
         self.source_virtual_machine_resource_id = source_virtual_machine_resource_id
         self.destination_virtual_machine_name = destination_virtual_machine_name
 
 
-class InboundNatRule(msrest.serialization.Model):
+class InboundNatRule(_serialization.Model):
     """A rule for NAT - exposing a VM's port (backendPort) on the public IP address using a load balancer.
 
-    :param transport_protocol: The transport protocol for the endpoint. Possible values include:
-     "Tcp", "Udp".
-    :type transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
-    :param frontend_port: The external endpoint port of the inbound connection. Possible values
+    :ivar transport_protocol: The transport protocol for the endpoint. Known values are: "Tcp" and
+     "Udp".
+    :vartype transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
+    :ivar frontend_port: The external endpoint port of the inbound connection. Possible values
      range between 1 and 65535, inclusive. If unspecified, a value will be allocated automatically.
-    :type frontend_port: int
-    :param backend_port: The port to which the external traffic will be redirected.
-    :type backend_port: int
+    :vartype frontend_port: int
+    :ivar backend_port: The port to which the external traffic will be redirected.
+    :vartype backend_port: int
     """
 
     _attribute_map = {
-        'transport_protocol': {'key': 'transportProtocol', 'type': 'str'},
-        'frontend_port': {'key': 'frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
+        "transport_protocol": {"key": "transportProtocol", "type": "str"},
+        "frontend_port": {"key": "frontendPort", "type": "int"},
+        "backend_port": {"key": "backendPort", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        transport_protocol: Optional[Union[str, "TransportProtocol"]] = None,
+        transport_protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
         frontend_port: Optional[int] = None,
         backend_port: Optional[int] = None,
         **kwargs
     ):
-        super(InboundNatRule, self).__init__(**kwargs)
+        """
+        :keyword transport_protocol: The transport protocol for the endpoint. Known values are: "Tcp"
+         and "Udp".
+        :paramtype transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
+        :keyword frontend_port: The external endpoint port of the inbound connection. Possible values
+         range between 1 and 65535, inclusive. If unspecified, a value will be allocated automatically.
+        :paramtype frontend_port: int
+        :keyword backend_port: The port to which the external traffic will be redirected.
+        :paramtype backend_port: int
+        """
+        super().__init__(**kwargs)
         self.transport_protocol = transport_protocol
         self.frontend_port = frontend_port
         self.backend_port = backend_port
 
 
-class InboundNatRuleFragment(msrest.serialization.Model):
-    """A rule for NAT - exposing a VM's port (backendPort) on the public IP address using a load balancer.
-
-    :param transport_protocol: The transport protocol for the endpoint. Possible values include:
-     "Tcp", "Udp".
-    :type transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
-    :param frontend_port: The external endpoint port of the inbound connection. Possible values
-     range between 1 and 65535, inclusive. If unspecified, a value will be allocated automatically.
-    :type frontend_port: int
-    :param backend_port: The port to which the external traffic will be redirected.
-    :type backend_port: int
-    """
-
-    _attribute_map = {
-        'transport_protocol': {'key': 'transportProtocol', 'type': 'str'},
-        'frontend_port': {'key': 'frontendPort', 'type': 'int'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        transport_protocol: Optional[Union[str, "TransportProtocol"]] = None,
-        frontend_port: Optional[int] = None,
-        backend_port: Optional[int] = None,
-        **kwargs
-    ):
-        super(InboundNatRuleFragment, self).__init__(**kwargs)
-        self.transport_protocol = transport_protocol
-        self.frontend_port = frontend_port
-        self.backend_port = backend_port
-
-
-class Lab(Resource):
+class Lab(Resource):  # pylint: disable=too-many-instance-attributes
     """A lab.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3137,10 +2646,10 @@ class Lab(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     :ivar default_storage_account: The lab's default storage account.
     :vartype default_storage_account: str
     :ivar default_premium_storage_account: The lab's default premium storage account.
@@ -3151,31 +2660,31 @@ class Lab(Resource):
     :vartype premium_data_disk_storage_account: str
     :ivar vault_name: The lab's Key vault.
     :vartype vault_name: str
-    :param lab_storage_type: Type of storage used by the lab. It can be either Premium or Standard.
-     Default is Premium. Possible values include: "Standard", "Premium", "StandardSSD".
-    :type lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param mandatory_artifacts_resource_ids_linux: The ordered list of artifact resource IDs that
+    :ivar lab_storage_type: Type of storage used by the lab. It can be either Premium or Standard.
+     Default is Premium. Known values are: "Standard", "Premium", and "StandardSSD".
+    :vartype lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+    :ivar mandatory_artifacts_resource_ids_linux: The ordered list of artifact resource IDs that
      should be applied on all Linux VM creations by default, prior to the artifacts specified by the
      user.
-    :type mandatory_artifacts_resource_ids_linux: list[str]
-    :param mandatory_artifacts_resource_ids_windows: The ordered list of artifact resource IDs that
+    :vartype mandatory_artifacts_resource_ids_linux: list[str]
+    :ivar mandatory_artifacts_resource_ids_windows: The ordered list of artifact resource IDs that
      should be applied on all Windows VM creations by default, prior to the artifacts specified by
      the user.
-    :type mandatory_artifacts_resource_ids_windows: list[str]
+    :vartype mandatory_artifacts_resource_ids_windows: list[str]
     :ivar created_date: The creation date of the lab.
     :vartype created_date: ~datetime.datetime
-    :param premium_data_disks: The setting to enable usage of premium data disks.
+    :ivar premium_data_disks: The setting to enable usage of premium data disks.
      When its value is 'Enabled', creation of standard or premium data disks is allowed.
-     When its value is 'Disabled', only creation of standard data disks is allowed. Possible values
-     include: "Disabled", "Enabled".
-    :type premium_data_disks: str or ~azure.mgmt.devtestlabs.models.PremiumDataDisk
-    :param environment_permission: The access rights to be granted to the user when provisioning an
-     environment. Possible values include: "Reader", "Contributor".
-    :type environment_permission: str or ~azure.mgmt.devtestlabs.models.EnvironmentPermission
-    :param announcement: The properties of any lab announcement associated with this lab.
-    :type announcement: ~azure.mgmt.devtestlabs.models.LabAnnouncementProperties
-    :param support: The properties of any lab support message associated with this lab.
-    :type support: ~azure.mgmt.devtestlabs.models.LabSupportProperties
+     When its value is 'Disabled', only creation of standard data disks is allowed. Known values
+     are: "Disabled" and "Enabled".
+    :vartype premium_data_disks: str or ~azure.mgmt.devtestlabs.models.PremiumDataDisk
+    :ivar environment_permission: The access rights to be granted to the user when provisioning an
+     environment. Known values are: "Reader" and "Contributor".
+    :vartype environment_permission: str or ~azure.mgmt.devtestlabs.models.EnvironmentPermission
+    :ivar announcement: The properties of any lab announcement associated with this lab.
+    :vartype announcement: ~azure.mgmt.devtestlabs.models.LabAnnouncementProperties
+    :ivar support: The properties of any lab support message associated with this lab.
+    :vartype support: ~azure.mgmt.devtestlabs.models.LabSupportProperties
     :ivar vm_creation_resource_group: The resource group in which all new lab virtual machines will
      be created. To let DevTest Labs manage resource group creation, set this value to null.
     :vartype vm_creation_resource_group: str
@@ -3186,8 +2695,8 @@ class Lab(Resource):
     :ivar network_security_group_id: The Network Security Group attached to the lab VMs Network
      interfaces to restrict open ports.
     :vartype network_security_group_id: str
-    :param extended_properties: Extended properties of the lab used for experimental features.
-    :type extended_properties: dict[str, str]
+    :ivar extended_properties: Extended properties of the lab used for experimental features.
+    :vartype extended_properties: dict[str, str]
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -3195,67 +2704,104 @@ class Lab(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'default_storage_account': {'readonly': True},
-        'default_premium_storage_account': {'readonly': True},
-        'artifacts_storage_account': {'readonly': True},
-        'premium_data_disk_storage_account': {'readonly': True},
-        'vault_name': {'readonly': True},
-        'created_date': {'readonly': True},
-        'vm_creation_resource_group': {'readonly': True},
-        'public_ip_id': {'readonly': True},
-        'load_balancer_id': {'readonly': True},
-        'network_security_group_id': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "default_storage_account": {"readonly": True},
+        "default_premium_storage_account": {"readonly": True},
+        "artifacts_storage_account": {"readonly": True},
+        "premium_data_disk_storage_account": {"readonly": True},
+        "vault_name": {"readonly": True},
+        "created_date": {"readonly": True},
+        "vm_creation_resource_group": {"readonly": True},
+        "public_ip_id": {"readonly": True},
+        "load_balancer_id": {"readonly": True},
+        "network_security_group_id": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'default_storage_account': {'key': 'properties.defaultStorageAccount', 'type': 'str'},
-        'default_premium_storage_account': {'key': 'properties.defaultPremiumStorageAccount', 'type': 'str'},
-        'artifacts_storage_account': {'key': 'properties.artifactsStorageAccount', 'type': 'str'},
-        'premium_data_disk_storage_account': {'key': 'properties.premiumDataDiskStorageAccount', 'type': 'str'},
-        'vault_name': {'key': 'properties.vaultName', 'type': 'str'},
-        'lab_storage_type': {'key': 'properties.labStorageType', 'type': 'str'},
-        'mandatory_artifacts_resource_ids_linux': {'key': 'properties.mandatoryArtifactsResourceIdsLinux', 'type': '[str]'},
-        'mandatory_artifacts_resource_ids_windows': {'key': 'properties.mandatoryArtifactsResourceIdsWindows', 'type': '[str]'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'premium_data_disks': {'key': 'properties.premiumDataDisks', 'type': 'str'},
-        'environment_permission': {'key': 'properties.environmentPermission', 'type': 'str'},
-        'announcement': {'key': 'properties.announcement', 'type': 'LabAnnouncementProperties'},
-        'support': {'key': 'properties.support', 'type': 'LabSupportProperties'},
-        'vm_creation_resource_group': {'key': 'properties.vmCreationResourceGroup', 'type': 'str'},
-        'public_ip_id': {'key': 'properties.publicIpId', 'type': 'str'},
-        'load_balancer_id': {'key': 'properties.loadBalancerId', 'type': 'str'},
-        'network_security_group_id': {'key': 'properties.networkSecurityGroupId', 'type': 'str'},
-        'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "default_storage_account": {"key": "properties.defaultStorageAccount", "type": "str"},
+        "default_premium_storage_account": {"key": "properties.defaultPremiumStorageAccount", "type": "str"},
+        "artifacts_storage_account": {"key": "properties.artifactsStorageAccount", "type": "str"},
+        "premium_data_disk_storage_account": {"key": "properties.premiumDataDiskStorageAccount", "type": "str"},
+        "vault_name": {"key": "properties.vaultName", "type": "str"},
+        "lab_storage_type": {"key": "properties.labStorageType", "type": "str"},
+        "mandatory_artifacts_resource_ids_linux": {
+            "key": "properties.mandatoryArtifactsResourceIdsLinux",
+            "type": "[str]",
+        },
+        "mandatory_artifacts_resource_ids_windows": {
+            "key": "properties.mandatoryArtifactsResourceIdsWindows",
+            "type": "[str]",
+        },
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "premium_data_disks": {"key": "properties.premiumDataDisks", "type": "str"},
+        "environment_permission": {"key": "properties.environmentPermission", "type": "str"},
+        "announcement": {"key": "properties.announcement", "type": "LabAnnouncementProperties"},
+        "support": {"key": "properties.support", "type": "LabSupportProperties"},
+        "vm_creation_resource_group": {"key": "properties.vmCreationResourceGroup", "type": "str"},
+        "public_ip_id": {"key": "properties.publicIpId", "type": "str"},
+        "load_balancer_id": {"key": "properties.loadBalancerId", "type": "str"},
+        "network_security_group_id": {"key": "properties.networkSecurityGroupId", "type": "str"},
+        "extended_properties": {"key": "properties.extendedProperties", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        lab_storage_type: Optional[Union[str, "StorageType"]] = None,
+        lab_storage_type: Optional[Union[str, "_models.StorageType"]] = None,
         mandatory_artifacts_resource_ids_linux: Optional[List[str]] = None,
         mandatory_artifacts_resource_ids_windows: Optional[List[str]] = None,
-        premium_data_disks: Optional[Union[str, "PremiumDataDisk"]] = None,
-        environment_permission: Optional[Union[str, "EnvironmentPermission"]] = None,
-        announcement: Optional["LabAnnouncementProperties"] = None,
-        support: Optional["LabSupportProperties"] = None,
+        premium_data_disks: Optional[Union[str, "_models.PremiumDataDisk"]] = None,
+        environment_permission: Optional[Union[str, "_models.EnvironmentPermission"]] = None,
+        announcement: Optional["_models.LabAnnouncementProperties"] = None,
+        support: Optional["_models.LabSupportProperties"] = None,
         extended_properties: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(Lab, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword lab_storage_type: Type of storage used by the lab. It can be either Premium or
+         Standard. Default is Premium. Known values are: "Standard", "Premium", and "StandardSSD".
+        :paramtype lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
+        :keyword mandatory_artifacts_resource_ids_linux: The ordered list of artifact resource IDs that
+         should be applied on all Linux VM creations by default, prior to the artifacts specified by the
+         user.
+        :paramtype mandatory_artifacts_resource_ids_linux: list[str]
+        :keyword mandatory_artifacts_resource_ids_windows: The ordered list of artifact resource IDs
+         that should be applied on all Windows VM creations by default, prior to the artifacts specified
+         by the user.
+        :paramtype mandatory_artifacts_resource_ids_windows: list[str]
+        :keyword premium_data_disks: The setting to enable usage of premium data disks.
+         When its value is 'Enabled', creation of standard or premium data disks is allowed.
+         When its value is 'Disabled', only creation of standard data disks is allowed. Known values
+         are: "Disabled" and "Enabled".
+        :paramtype premium_data_disks: str or ~azure.mgmt.devtestlabs.models.PremiumDataDisk
+        :keyword environment_permission: The access rights to be granted to the user when provisioning
+         an environment. Known values are: "Reader" and "Contributor".
+        :paramtype environment_permission: str or ~azure.mgmt.devtestlabs.models.EnvironmentPermission
+        :keyword announcement: The properties of any lab announcement associated with this lab.
+        :paramtype announcement: ~azure.mgmt.devtestlabs.models.LabAnnouncementProperties
+        :keyword support: The properties of any lab support message associated with this lab.
+        :paramtype support: ~azure.mgmt.devtestlabs.models.LabSupportProperties
+        :keyword extended_properties: Extended properties of the lab used for experimental features.
+        :paramtype extended_properties: dict[str, str]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.default_storage_account = None
         self.default_premium_storage_account = None
         self.artifacts_storage_account = None
@@ -3278,23 +2824,23 @@ class Lab(Resource):
         self.unique_identifier = None
 
 
-class LabAnnouncementProperties(msrest.serialization.Model):
+class LabAnnouncementProperties(_serialization.Model):
     """Properties of a lab's announcement banner.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param title: The plain text title for the lab announcement.
-    :type title: str
-    :param markdown: The markdown text (if any) that this lab displays in the UI. If left
+    :ivar title: The plain text title for the lab announcement.
+    :vartype title: str
+    :ivar markdown: The markdown text (if any) that this lab displays in the UI. If left
      empty/null, nothing will be shown.
-    :type markdown: str
-    :param enabled: Is the lab announcement active/enabled at this time?. Possible values include:
-     "Enabled", "Disabled".
-    :type enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param expiration_date: The time at which the announcement expires (null for never).
-    :type expiration_date: ~datetime.datetime
-    :param expired: Has this announcement expired?.
-    :type expired: bool
+    :vartype markdown: str
+    :ivar enabled: Is the lab announcement active/enabled at this time?. Known values are:
+     "Enabled" and "Disabled".
+    :vartype enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+    :ivar expiration_date: The time at which the announcement expires (null for never).
+    :vartype expiration_date: ~datetime.datetime
+    :ivar expired: Has this announcement expired?.
+    :vartype expired: bool
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -3302,18 +2848,18 @@ class LabAnnouncementProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'markdown': {'key': 'markdown', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'expired': {'key': 'expired', 'type': 'bool'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'uniqueIdentifier', 'type': 'str'},
+        "title": {"key": "title", "type": "str"},
+        "markdown": {"key": "markdown", "type": "str"},
+        "enabled": {"key": "enabled", "type": "str"},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
+        "expired": {"key": "expired", "type": "bool"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "unique_identifier": {"key": "uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -3321,12 +2867,26 @@ class LabAnnouncementProperties(msrest.serialization.Model):
         *,
         title: Optional[str] = None,
         markdown: Optional[str] = None,
-        enabled: Optional[Union[str, "EnableStatus"]] = None,
+        enabled: Optional[Union[str, "_models.EnableStatus"]] = None,
         expiration_date: Optional[datetime.datetime] = None,
         expired: Optional[bool] = None,
         **kwargs
     ):
-        super(LabAnnouncementProperties, self).__init__(**kwargs)
+        """
+        :keyword title: The plain text title for the lab announcement.
+        :paramtype title: str
+        :keyword markdown: The markdown text (if any) that this lab displays in the UI. If left
+         empty/null, nothing will be shown.
+        :paramtype markdown: str
+        :keyword enabled: Is the lab announcement active/enabled at this time?. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+        :keyword expiration_date: The time at which the announcement expires (null for never).
+        :paramtype expiration_date: ~datetime.datetime
+        :keyword expired: Has this announcement expired?.
+        :paramtype expired: bool
+        """
+        super().__init__(**kwargs)
         self.title = title
         self.markdown = markdown
         self.enabled = enabled
@@ -3336,50 +2896,7 @@ class LabAnnouncementProperties(msrest.serialization.Model):
         self.unique_identifier = None
 
 
-class LabAnnouncementPropertiesFragment(msrest.serialization.Model):
-    """Properties of a lab's announcement banner.
-
-    :param title: The plain text title for the lab announcement.
-    :type title: str
-    :param markdown: The markdown text (if any) that this lab displays in the UI. If left
-     empty/null, nothing will be shown.
-    :type markdown: str
-    :param enabled: Is the lab announcement active/enabled at this time?. Possible values include:
-     "Enabled", "Disabled".
-    :type enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param expiration_date: The time at which the announcement expires (null for never).
-    :type expiration_date: ~datetime.datetime
-    :param expired: Has this announcement expired?.
-    :type expired: bool
-    """
-
-    _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'markdown': {'key': 'markdown', 'type': 'str'},
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'expired': {'key': 'expired', 'type': 'bool'},
-    }
-
-    def __init__(
-        self,
-        *,
-        title: Optional[str] = None,
-        markdown: Optional[str] = None,
-        enabled: Optional[Union[str, "EnableStatus"]] = None,
-        expiration_date: Optional[datetime.datetime] = None,
-        expired: Optional[bool] = None,
-        **kwargs
-    ):
-        super(LabAnnouncementPropertiesFragment, self).__init__(**kwargs)
-        self.title = title
-        self.markdown = markdown
-        self.enabled = enabled
-        self.expiration_date = expiration_date
-        self.expired = expired
-
-
-class LabCost(Resource):
+class LabCost(Resource):  # pylint: disable=too-many-instance-attributes
     """A cost item.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3390,26 +2907,26 @@ class LabCost(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param target_cost: The target cost properties.
-    :type target_cost: ~azure.mgmt.devtestlabs.models.TargetCostProperties
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar target_cost: The target cost properties.
+    :vartype target_cost: ~azure.mgmt.devtestlabs.models.TargetCostProperties
     :ivar lab_cost_summary: The lab cost summary component of the cost data.
     :vartype lab_cost_summary: ~azure.mgmt.devtestlabs.models.LabCostSummaryProperties
     :ivar lab_cost_details: The lab cost details component of the cost data.
     :vartype lab_cost_details: list[~azure.mgmt.devtestlabs.models.LabCostDetailsProperties]
     :ivar resource_costs: The resource cost component of the cost data.
     :vartype resource_costs: list[~azure.mgmt.devtestlabs.models.LabResourceCostProperties]
-    :param currency_code: The currency code of the cost.
-    :type currency_code: str
-    :param start_date_time: The start time of the cost data.
-    :type start_date_time: ~datetime.datetime
-    :param end_date_time: The end time of the cost data.
-    :type end_date_time: ~datetime.datetime
-    :param created_date: The creation date of the cost.
-    :type created_date: ~datetime.datetime
+    :ivar currency_code: The currency code of the cost.
+    :vartype currency_code: str
+    :ivar start_date_time: The start time of the cost data.
+    :vartype start_date_time: ~datetime.datetime
+    :ivar end_date_time: The end time of the cost data.
+    :vartype end_date_time: ~datetime.datetime
+    :ivar created_date: The creation date of the cost.
+    :vartype created_date: ~datetime.datetime
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -3417,32 +2934,32 @@ class LabCost(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'lab_cost_summary': {'readonly': True},
-        'lab_cost_details': {'readonly': True},
-        'resource_costs': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "lab_cost_summary": {"readonly": True},
+        "lab_cost_details": {"readonly": True},
+        "resource_costs": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'target_cost': {'key': 'properties.targetCost', 'type': 'TargetCostProperties'},
-        'lab_cost_summary': {'key': 'properties.labCostSummary', 'type': 'LabCostSummaryProperties'},
-        'lab_cost_details': {'key': 'properties.labCostDetails', 'type': '[LabCostDetailsProperties]'},
-        'resource_costs': {'key': 'properties.resourceCosts', 'type': '[LabResourceCostProperties]'},
-        'currency_code': {'key': 'properties.currencyCode', 'type': 'str'},
-        'start_date_time': {'key': 'properties.startDateTime', 'type': 'iso-8601'},
-        'end_date_time': {'key': 'properties.endDateTime', 'type': 'iso-8601'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "target_cost": {"key": "properties.targetCost", "type": "TargetCostProperties"},
+        "lab_cost_summary": {"key": "properties.labCostSummary", "type": "LabCostSummaryProperties"},
+        "lab_cost_details": {"key": "properties.labCostDetails", "type": "[LabCostDetailsProperties]"},
+        "resource_costs": {"key": "properties.resourceCosts", "type": "[LabResourceCostProperties]"},
+        "currency_code": {"key": "properties.currencyCode", "type": "str"},
+        "start_date_time": {"key": "properties.startDateTime", "type": "iso-8601"},
+        "end_date_time": {"key": "properties.endDateTime", "type": "iso-8601"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -3450,14 +2967,30 @@ class LabCost(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        target_cost: Optional["TargetCostProperties"] = None,
+        target_cost: Optional["_models.TargetCostProperties"] = None,
         currency_code: Optional[str] = None,
         start_date_time: Optional[datetime.datetime] = None,
         end_date_time: Optional[datetime.datetime] = None,
         created_date: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(LabCost, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword target_cost: The target cost properties.
+        :paramtype target_cost: ~azure.mgmt.devtestlabs.models.TargetCostProperties
+        :keyword currency_code: The currency code of the cost.
+        :paramtype currency_code: str
+        :keyword start_date_time: The start time of the cost data.
+        :paramtype start_date_time: ~datetime.datetime
+        :keyword end_date_time: The end time of the cost data.
+        :paramtype end_date_time: ~datetime.datetime
+        :keyword created_date: The creation date of the cost.
+        :paramtype created_date: ~datetime.datetime
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.target_cost = target_cost
         self.lab_cost_summary = None
         self.lab_cost_details = None
@@ -3470,22 +3003,22 @@ class LabCost(Resource):
         self.unique_identifier = None
 
 
-class LabCostDetailsProperties(msrest.serialization.Model):
+class LabCostDetailsProperties(_serialization.Model):
     """The properties of a lab cost item.
 
-    :param date: The date of the cost item.
-    :type date: ~datetime.datetime
-    :param cost: The cost component of the cost item.
-    :type cost: float
-    :param cost_type: The type of the cost. Possible values include: "Unavailable", "Reported",
+    :ivar date: The date of the cost item.
+    :vartype date: ~datetime.datetime
+    :ivar cost: The cost component of the cost item.
+    :vartype cost: float
+    :ivar cost_type: The type of the cost. Known values are: "Unavailable", "Reported", and
      "Projected".
-    :type cost_type: str or ~azure.mgmt.devtestlabs.models.CostType
+    :vartype cost_type: str or ~azure.mgmt.devtestlabs.models.CostType
     """
 
     _attribute_map = {
-        'date': {'key': 'date', 'type': 'iso-8601'},
-        'cost': {'key': 'cost', 'type': 'float'},
-        'cost_type': {'key': 'costType', 'type': 'str'},
+        "date": {"key": "date", "type": "iso-8601"},
+        "cost": {"key": "cost", "type": "float"},
+        "cost_type": {"key": "costType", "type": "str"},
     }
 
     def __init__(
@@ -3493,164 +3026,122 @@ class LabCostDetailsProperties(msrest.serialization.Model):
         *,
         date: Optional[datetime.datetime] = None,
         cost: Optional[float] = None,
-        cost_type: Optional[Union[str, "CostType"]] = None,
+        cost_type: Optional[Union[str, "_models.CostType"]] = None,
         **kwargs
     ):
-        super(LabCostDetailsProperties, self).__init__(**kwargs)
+        """
+        :keyword date: The date of the cost item.
+        :paramtype date: ~datetime.datetime
+        :keyword cost: The cost component of the cost item.
+        :paramtype cost: float
+        :keyword cost_type: The type of the cost. Known values are: "Unavailable", "Reported", and
+         "Projected".
+        :paramtype cost_type: str or ~azure.mgmt.devtestlabs.models.CostType
+        """
+        super().__init__(**kwargs)
         self.date = date
         self.cost = cost
         self.cost_type = cost_type
 
 
-class LabCostSummaryProperties(msrest.serialization.Model):
+class LabCostSummaryProperties(_serialization.Model):
     """The properties of the cost summary.
 
-    :param estimated_lab_cost: The cost component of the cost item.
-    :type estimated_lab_cost: float
+    :ivar estimated_lab_cost: The cost component of the cost item.
+    :vartype estimated_lab_cost: float
     """
 
     _attribute_map = {
-        'estimated_lab_cost': {'key': 'estimatedLabCost', 'type': 'float'},
+        "estimated_lab_cost": {"key": "estimatedLabCost", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        estimated_lab_cost: Optional[float] = None,
-        **kwargs
-    ):
-        super(LabCostSummaryProperties, self).__init__(**kwargs)
+    def __init__(self, *, estimated_lab_cost: Optional[float] = None, **kwargs):
+        """
+        :keyword estimated_lab_cost: The cost component of the cost item.
+        :paramtype estimated_lab_cost: float
+        """
+        super().__init__(**kwargs)
         self.estimated_lab_cost = estimated_lab_cost
 
 
 class LabFragment(UpdateResource):
     """A lab.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param lab_storage_type: Type of storage used by the lab. It can be either Premium or Standard.
-     Default is Premium. Possible values include: "Standard", "Premium", "StandardSSD".
-    :type lab_storage_type: str or ~azure.mgmt.devtestlabs.models.StorageType
-    :param mandatory_artifacts_resource_ids_linux: The ordered list of artifact resource IDs that
-     should be applied on all Linux VM creations by default, prior to the artifacts specified by the
-     user.
-    :type mandatory_artifacts_resource_ids_linux: list[str]
-    :param mandatory_artifacts_resource_ids_windows: The ordered list of artifact resource IDs that
-     should be applied on all Windows VM creations by default, prior to the artifacts specified by
-     the user.
-    :type mandatory_artifacts_resource_ids_windows: list[str]
-    :param premium_data_disks: The setting to enable usage of premium data disks.
-     When its value is 'Enabled', creation of standard or premium data disks is allowed.
-     When its value is 'Disabled', only creation of standard data disks is allowed. Possible values
-     include: "Disabled", "Enabled".
-    :type premium_data_disks: str or ~azure.mgmt.devtestlabs.models.PremiumDataDisk
-    :param environment_permission: The access rights to be granted to the user when provisioning an
-     environment. Possible values include: "Reader", "Contributor".
-    :type environment_permission: str or ~azure.mgmt.devtestlabs.models.EnvironmentPermission
-    :param announcement: The properties of any lab announcement associated with this lab.
-    :type announcement: ~azure.mgmt.devtestlabs.models.LabAnnouncementPropertiesFragment
-    :param support: The properties of any lab support message associated with this lab.
-    :type support: ~azure.mgmt.devtestlabs.models.LabSupportPropertiesFragment
-    :param extended_properties: Extended properties of the lab used for experimental features.
-    :type extended_properties: dict[str, str]
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'lab_storage_type': {'key': 'properties.labStorageType', 'type': 'str'},
-        'mandatory_artifacts_resource_ids_linux': {'key': 'properties.mandatoryArtifactsResourceIdsLinux', 'type': '[str]'},
-        'mandatory_artifacts_resource_ids_windows': {'key': 'properties.mandatoryArtifactsResourceIdsWindows', 'type': '[str]'},
-        'premium_data_disks': {'key': 'properties.premiumDataDisks', 'type': 'str'},
-        'environment_permission': {'key': 'properties.environmentPermission', 'type': 'str'},
-        'announcement': {'key': 'properties.announcement', 'type': 'LabAnnouncementPropertiesFragment'},
-        'support': {'key': 'properties.support', 'type': 'LabSupportPropertiesFragment'},
-        'extended_properties': {'key': 'properties.extendedProperties', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        lab_storage_type: Optional[Union[str, "StorageType"]] = None,
-        mandatory_artifacts_resource_ids_linux: Optional[List[str]] = None,
-        mandatory_artifacts_resource_ids_windows: Optional[List[str]] = None,
-        premium_data_disks: Optional[Union[str, "PremiumDataDisk"]] = None,
-        environment_permission: Optional[Union[str, "EnvironmentPermission"]] = None,
-        announcement: Optional["LabAnnouncementPropertiesFragment"] = None,
-        support: Optional["LabSupportPropertiesFragment"] = None,
-        extended_properties: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(LabFragment, self).__init__(tags=tags, **kwargs)
-        self.lab_storage_type = lab_storage_type
-        self.mandatory_artifacts_resource_ids_linux = mandatory_artifacts_resource_ids_linux
-        self.mandatory_artifacts_resource_ids_windows = mandatory_artifacts_resource_ids_windows
-        self.premium_data_disks = premium_data_disks
-        self.environment_permission = environment_permission
-        self.announcement = announcement
-        self.support = support
-        self.extended_properties = extended_properties
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class LabList(msrest.serialization.Model):
+class LabList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.Lab]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.Lab]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Lab]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Lab]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Lab"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(LabList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Lab"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.Lab]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LabResourceCostProperties(msrest.serialization.Model):
+class LabResourceCostProperties(_serialization.Model):
     """The properties of a resource cost item.
 
-    :param resourcename: The name of the resource.
-    :type resourcename: str
-    :param resource_u_id: The unique identifier of the resource.
-    :type resource_u_id: str
-    :param resource_cost: The cost component of the resource cost item.
-    :type resource_cost: float
-    :param resource_type: The logical resource type (ex. virtualmachine, storageaccount).
-    :type resource_type: str
-    :param resource_owner: The owner of the resource (ex. janedoe@microsoft.com).
-    :type resource_owner: str
-    :param resource_pricing_tier: The category of the resource (ex. Premium_LRS, Standard_DS1).
-    :type resource_pricing_tier: str
-    :param resource_status: The status of the resource (ex. Active).
-    :type resource_status: str
-    :param resource_id: The ID of the resource.
-    :type resource_id: str
-    :param external_resource_id: The ID of the external resource.
-    :type external_resource_id: str
+    :ivar resourcename: The name of the resource.
+    :vartype resourcename: str
+    :ivar resource_u_id: The unique identifier of the resource.
+    :vartype resource_u_id: str
+    :ivar resource_cost: The cost component of the resource cost item.
+    :vartype resource_cost: float
+    :ivar resource_type: The logical resource type (ex. virtualmachine, storageaccount).
+    :vartype resource_type: str
+    :ivar resource_owner: The owner of the resource (ex. janedoe@microsoft.com).
+    :vartype resource_owner: str
+    :ivar resource_pricing_tier: The category of the resource (ex. Premium_LRS, Standard_DS1).
+    :vartype resource_pricing_tier: str
+    :ivar resource_status: The status of the resource (ex. Active).
+    :vartype resource_status: str
+    :ivar resource_id: The ID of the resource.
+    :vartype resource_id: str
+    :ivar external_resource_id: The ID of the external resource.
+    :vartype external_resource_id: str
     """
 
     _attribute_map = {
-        'resourcename': {'key': 'resourcename', 'type': 'str'},
-        'resource_u_id': {'key': 'resourceUId', 'type': 'str'},
-        'resource_cost': {'key': 'resourceCost', 'type': 'float'},
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'resource_owner': {'key': 'resourceOwner', 'type': 'str'},
-        'resource_pricing_tier': {'key': 'resourcePricingTier', 'type': 'str'},
-        'resource_status': {'key': 'resourceStatus', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'external_resource_id': {'key': 'externalResourceId', 'type': 'str'},
+        "resourcename": {"key": "resourcename", "type": "str"},
+        "resource_u_id": {"key": "resourceUId", "type": "str"},
+        "resource_cost": {"key": "resourceCost", "type": "float"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "resource_owner": {"key": "resourceOwner", "type": "str"},
+        "resource_pricing_tier": {"key": "resourcePricingTier", "type": "str"},
+        "resource_status": {"key": "resourceStatus", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "external_resource_id": {"key": "externalResourceId", "type": "str"},
     }
 
     def __init__(
@@ -3667,7 +3158,27 @@ class LabResourceCostProperties(msrest.serialization.Model):
         external_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(LabResourceCostProperties, self).__init__(**kwargs)
+        """
+        :keyword resourcename: The name of the resource.
+        :paramtype resourcename: str
+        :keyword resource_u_id: The unique identifier of the resource.
+        :paramtype resource_u_id: str
+        :keyword resource_cost: The cost component of the resource cost item.
+        :paramtype resource_cost: float
+        :keyword resource_type: The logical resource type (ex. virtualmachine, storageaccount).
+        :paramtype resource_type: str
+        :keyword resource_owner: The owner of the resource (ex. janedoe@microsoft.com).
+        :paramtype resource_owner: str
+        :keyword resource_pricing_tier: The category of the resource (ex. Premium_LRS, Standard_DS1).
+        :paramtype resource_pricing_tier: str
+        :keyword resource_status: The status of the resource (ex. Active).
+        :paramtype resource_status: str
+        :keyword resource_id: The ID of the resource.
+        :paramtype resource_id: str
+        :keyword external_resource_id: The ID of the external resource.
+        :paramtype external_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.resourcename = resourcename
         self.resource_u_id = resource_u_id
         self.resource_cost = resource_cost
@@ -3679,110 +3190,85 @@ class LabResourceCostProperties(msrest.serialization.Model):
         self.external_resource_id = external_resource_id
 
 
-class LabSupportProperties(msrest.serialization.Model):
+class LabSupportProperties(_serialization.Model):
     """Properties of a lab's support banner.
 
-    :param enabled: Is the lab support banner active/enabled at this time?. Possible values
-     include: "Enabled", "Disabled".
-    :type enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param markdown: The markdown text (if any) that this lab displays in the UI. If left
+    :ivar enabled: Is the lab support banner active/enabled at this time?. Known values are:
+     "Enabled" and "Disabled".
+    :vartype enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+    :ivar markdown: The markdown text (if any) that this lab displays in the UI. If left
      empty/null, nothing will be shown.
-    :type markdown: str
+    :vartype markdown: str
     """
 
     _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'markdown': {'key': 'markdown', 'type': 'str'},
+        "enabled": {"key": "enabled", "type": "str"},
+        "markdown": {"key": "markdown", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        enabled: Optional[Union[str, "EnableStatus"]] = None,
-        markdown: Optional[str] = None,
-        **kwargs
+        self, *, enabled: Optional[Union[str, "_models.EnableStatus"]] = None, markdown: Optional[str] = None, **kwargs
     ):
-        super(LabSupportProperties, self).__init__(**kwargs)
+        """
+        :keyword enabled: Is the lab support banner active/enabled at this time?. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+        :keyword markdown: The markdown text (if any) that this lab displays in the UI. If left
+         empty/null, nothing will be shown.
+        :paramtype markdown: str
+        """
+        super().__init__(**kwargs)
         self.enabled = enabled
         self.markdown = markdown
 
 
-class LabSupportPropertiesFragment(msrest.serialization.Model):
-    """Properties of a lab's support banner.
-
-    :param enabled: Is the lab support banner active/enabled at this time?. Possible values
-     include: "Enabled", "Disabled".
-    :type enabled: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param markdown: The markdown text (if any) that this lab displays in the UI. If left
-     empty/null, nothing will be shown.
-    :type markdown: str
-    """
-
-    _attribute_map = {
-        'enabled': {'key': 'enabled', 'type': 'str'},
-        'markdown': {'key': 'markdown', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        enabled: Optional[Union[str, "EnableStatus"]] = None,
-        markdown: Optional[str] = None,
-        **kwargs
-    ):
-        super(LabSupportPropertiesFragment, self).__init__(**kwargs)
-        self.enabled = enabled
-        self.markdown = markdown
-
-
-class LabVhd(msrest.serialization.Model):
+class LabVhd(_serialization.Model):
     """Properties of a VHD in the lab.
 
-    :param id: The URI to the VHD.
-    :type id: str
+    :ivar id: The URI to the VHD.
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(LabVhd, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The URI to the VHD.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class LabVhdList(msrest.serialization.Model):
+class LabVhdList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.LabVhd]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.LabVhd]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LabVhd]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LabVhd]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["LabVhd"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(LabVhdList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.LabVhd"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.LabVhd]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LabVirtualMachine(Resource):
+class LabVirtualMachine(Resource):  # pylint: disable=too-many-instance-attributes
     """A virtual machine.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3793,85 +3279,85 @@ class LabVirtualMachine(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param notes: The notes of the virtual machine.
-    :type notes: str
-    :param owner_object_id: The object identifier of the owner of the virtual machine.
-    :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual machine owner.
-    :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual machine.
-    :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: ~datetime.datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
-    :type compute_id: str
-    :param custom_image_id: The custom image identifier of the virtual machine.
-    :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
-    :param size: The size of the virtual machine.
-    :type size: str
-    :param user_name: The user name of the virtual machine.
-    :type user_name: str
-    :param password: The password of the virtual machine administrator.
-    :type password: str
-    :param ssh_key: The SSH key of the virtual machine administrator.
-    :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar notes: The notes of the virtual machine.
+    :vartype notes: str
+    :ivar owner_object_id: The object identifier of the owner of the virtual machine.
+    :vartype owner_object_id: str
+    :ivar owner_user_principal_name: The user principal name of the virtual machine owner.
+    :vartype owner_user_principal_name: str
+    :ivar created_by_user_id: The object identifier of the creator of the virtual machine.
+    :vartype created_by_user_id: str
+    :ivar created_by_user: The email address of creator of the virtual machine.
+    :vartype created_by_user: str
+    :ivar created_date: The creation date of the virtual machine.
+    :vartype created_date: ~datetime.datetime
+    :ivar compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
+    :vartype compute_id: str
+    :ivar custom_image_id: The custom image identifier of the virtual machine.
+    :vartype custom_image_id: str
+    :ivar os_type: The OS type of the virtual machine.
+    :vartype os_type: str
+    :ivar size: The size of the virtual machine.
+    :vartype size: str
+    :ivar user_name: The user name of the virtual machine.
+    :vartype user_name: str
+    :ivar password: The password of the virtual machine administrator.
+    :vartype password: str
+    :ivar ssh_key: The SSH key of the virtual machine administrator.
+    :vartype ssh_key: str
+    :ivar is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
      for authentication.
-    :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
-    :param lab_subnet_name: The lab subnet name of the virtual machine.
-    :type lab_subnet_name: str
-    :param lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
-    :type lab_virtual_network_id: str
-    :param disallow_public_ip_address: Indicates whether the virtual machine is to be created
+    :vartype is_authentication_with_ssh_key: bool
+    :ivar fqdn: The fully-qualified domain name of the virtual machine.
+    :vartype fqdn: str
+    :ivar lab_subnet_name: The lab subnet name of the virtual machine.
+    :vartype lab_subnet_name: str
+    :ivar lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
+    :vartype lab_virtual_network_id: str
+    :ivar disallow_public_ip_address: Indicates whether the virtual machine is to be created
      without a public IP address.
-    :type disallow_public_ip_address: bool
-    :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
-    :param artifact_deployment_status: The artifact deployment status for the virtual machine.
-    :type artifact_deployment_status:
+    :vartype disallow_public_ip_address: bool
+    :ivar artifacts: The artifacts to be installed on the virtual machine.
+    :vartype artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
+    :ivar artifact_deployment_status: The artifact deployment status for the virtual machine.
+    :vartype artifact_deployment_status:
      ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusProperties
-    :param gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
+    :ivar gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
      machine.
-    :type gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
-    :param plan_id: The id of the plan associated with the virtual machine image.
-    :type plan_id: str
+    :vartype gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
+    :ivar plan_id: The id of the plan associated with the virtual machine image.
+    :vartype plan_id: str
     :ivar compute_vm: The compute virtual machine properties.
     :vartype compute_vm: ~azure.mgmt.devtestlabs.models.ComputeVmProperties
-    :param network_interface: The network interface properties.
-    :type network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfaceProperties
+    :ivar network_interface: The network interface properties.
+    :vartype network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfaceProperties
     :ivar applicable_schedule: The applicable schedule for the virtual machine.
     :vartype applicable_schedule: ~azure.mgmt.devtestlabs.models.ApplicableSchedule
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: ~datetime.datetime
-    :param allow_claim: Indicates whether another user can take ownership of the virtual machine.
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
-     property only. Possible values include: "FromCustomImage", "FromGalleryImage",
+    :ivar expiration_date: The expiration date for VM.
+    :vartype expiration_date: ~datetime.datetime
+    :ivar allow_claim: Indicates whether another user can take ownership of the virtual machine.
+    :vartype allow_claim: bool
+    :ivar storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
+    :vartype storage_type: str
+    :ivar virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
+     property only. Known values are: "FromCustomImage", "FromGalleryImage", and
      "FromSharedGalleryImage".
-    :type virtual_machine_creation_source: str or
+    :vartype virtual_machine_creation_source: str or
      ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
-    :param environment_id: The resource ID of the environment that contains this virtual machine,
-     if any.
-    :type environment_id: str
-    :param data_disk_parameters: New or existing data disks to attach to the virtual machine after
+    :ivar environment_id: The resource ID of the environment that contains this virtual machine, if
+     any.
+    :vartype environment_id: str
+    :ivar data_disk_parameters: New or existing data disks to attach to the virtual machine after
      creation.
-    :type data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskProperties]
-    :param schedule_parameters: Virtual Machine schedules to be created.
-    :type schedule_parameters: list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
-    :param last_known_power_state: Last known compute power state captured in DTL.
-    :type last_known_power_state: str
+    :vartype data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskProperties]
+    :ivar schedule_parameters: Virtual Machine schedules to be created.
+    :vartype schedule_parameters: list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
+    :ivar last_known_power_state: Last known compute power state captured in DTL.
+    :vartype last_known_power_state: str
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -3879,117 +3365,177 @@ class LabVirtualMachine(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'compute_vm': {'readonly': True},
-        'applicable_schedule': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_by_user_id": {"readonly": True},
+        "created_by_user": {"readonly": True},
+        "compute_id": {"readonly": True},
+        "os_type": {"readonly": True},
+        "fqdn": {"readonly": True},
+        "artifact_deployment_status": {"readonly": True},
+        "compute_vm": {"readonly": True},
+        "applicable_schedule": {"readonly": True},
+        "virtual_machine_creation_source": {"readonly": True},
+        "last_known_power_state": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
-        'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
-        'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
-        'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
-        'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallProperties]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusProperties'},
-        'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReference'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'compute_vm': {'key': 'properties.computeVm', 'type': 'ComputeVmProperties'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfaceProperties'},
-        'applicable_schedule': {'key': 'properties.applicableSchedule', 'type': 'ApplicableSchedule'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskProperties]'},
-        'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameter]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "notes": {"key": "properties.notes", "type": "str"},
+        "owner_object_id": {"key": "properties.ownerObjectId", "type": "str"},
+        "owner_user_principal_name": {"key": "properties.ownerUserPrincipalName", "type": "str"},
+        "created_by_user_id": {"key": "properties.createdByUserId", "type": "str"},
+        "created_by_user": {"key": "properties.createdByUser", "type": "str"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "compute_id": {"key": "properties.computeId", "type": "str"},
+        "custom_image_id": {"key": "properties.customImageId", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "size": {"key": "properties.size", "type": "str"},
+        "user_name": {"key": "properties.userName", "type": "str"},
+        "password": {"key": "properties.password", "type": "str"},
+        "ssh_key": {"key": "properties.sshKey", "type": "str"},
+        "is_authentication_with_ssh_key": {"key": "properties.isAuthenticationWithSshKey", "type": "bool"},
+        "fqdn": {"key": "properties.fqdn", "type": "str"},
+        "lab_subnet_name": {"key": "properties.labSubnetName", "type": "str"},
+        "lab_virtual_network_id": {"key": "properties.labVirtualNetworkId", "type": "str"},
+        "disallow_public_ip_address": {"key": "properties.disallowPublicIpAddress", "type": "bool"},
+        "artifacts": {"key": "properties.artifacts", "type": "[ArtifactInstallProperties]"},
+        "artifact_deployment_status": {
+            "key": "properties.artifactDeploymentStatus",
+            "type": "ArtifactDeploymentStatusProperties",
+        },
+        "gallery_image_reference": {"key": "properties.galleryImageReference", "type": "GalleryImageReference"},
+        "plan_id": {"key": "properties.planId", "type": "str"},
+        "compute_vm": {"key": "properties.computeVm", "type": "ComputeVmProperties"},
+        "network_interface": {"key": "properties.networkInterface", "type": "NetworkInterfaceProperties"},
+        "applicable_schedule": {"key": "properties.applicableSchedule", "type": "ApplicableSchedule"},
+        "expiration_date": {"key": "properties.expirationDate", "type": "iso-8601"},
+        "allow_claim": {"key": "properties.allowClaim", "type": "bool"},
+        "storage_type": {"key": "properties.storageType", "type": "str"},
+        "virtual_machine_creation_source": {"key": "properties.virtualMachineCreationSource", "type": "str"},
+        "environment_id": {"key": "properties.environmentId", "type": "str"},
+        "data_disk_parameters": {"key": "properties.dataDiskParameters", "type": "[DataDiskProperties]"},
+        "schedule_parameters": {"key": "properties.scheduleParameters", "type": "[ScheduleCreationParameter]"},
+        "last_known_power_state": {"key": "properties.lastKnownPowerState", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         notes: Optional[str] = None,
-        owner_object_id: Optional[str] = None,
+        owner_object_id: str = "dynamicValue",
         owner_user_principal_name: Optional[str] = None,
-        created_by_user_id: Optional[str] = None,
-        created_by_user: Optional[str] = None,
         created_date: Optional[datetime.datetime] = None,
-        compute_id: Optional[str] = None,
         custom_image_id: Optional[str] = None,
-        os_type: Optional[str] = None,
         size: Optional[str] = None,
         user_name: Optional[str] = None,
         password: Optional[str] = None,
         ssh_key: Optional[str] = None,
         is_authentication_with_ssh_key: Optional[bool] = None,
-        fqdn: Optional[str] = None,
         lab_subnet_name: Optional[str] = None,
         lab_virtual_network_id: Optional[str] = None,
-        disallow_public_ip_address: Optional[bool] = None,
-        artifacts: Optional[List["ArtifactInstallProperties"]] = None,
-        artifact_deployment_status: Optional["ArtifactDeploymentStatusProperties"] = None,
-        gallery_image_reference: Optional["GalleryImageReference"] = None,
+        disallow_public_ip_address: bool = False,
+        artifacts: Optional[List["_models.ArtifactInstallProperties"]] = None,
+        gallery_image_reference: Optional["_models.GalleryImageReference"] = None,
         plan_id: Optional[str] = None,
-        network_interface: Optional["NetworkInterfaceProperties"] = None,
+        network_interface: Optional["_models.NetworkInterfaceProperties"] = None,
         expiration_date: Optional[datetime.datetime] = None,
-        allow_claim: Optional[bool] = None,
-        storage_type: Optional[str] = None,
-        virtual_machine_creation_source: Optional[Union[str, "VirtualMachineCreationSource"]] = None,
+        allow_claim: bool = False,
+        storage_type: str = "labStorageType",
         environment_id: Optional[str] = None,
-        data_disk_parameters: Optional[List["DataDiskProperties"]] = None,
-        schedule_parameters: Optional[List["ScheduleCreationParameter"]] = None,
-        last_known_power_state: Optional[str] = None,
+        data_disk_parameters: Optional[List["_models.DataDiskProperties"]] = None,
+        schedule_parameters: Optional[List["_models.ScheduleCreationParameter"]] = None,
         **kwargs
     ):
-        super(LabVirtualMachine, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword notes: The notes of the virtual machine.
+        :paramtype notes: str
+        :keyword owner_object_id: The object identifier of the owner of the virtual machine.
+        :paramtype owner_object_id: str
+        :keyword owner_user_principal_name: The user principal name of the virtual machine owner.
+        :paramtype owner_user_principal_name: str
+        :keyword created_date: The creation date of the virtual machine.
+        :paramtype created_date: ~datetime.datetime
+        :keyword custom_image_id: The custom image identifier of the virtual machine.
+        :paramtype custom_image_id: str
+        :keyword size: The size of the virtual machine.
+        :paramtype size: str
+        :keyword user_name: The user name of the virtual machine.
+        :paramtype user_name: str
+        :keyword password: The password of the virtual machine administrator.
+        :paramtype password: str
+        :keyword ssh_key: The SSH key of the virtual machine administrator.
+        :paramtype ssh_key: str
+        :keyword is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
+         for authentication.
+        :paramtype is_authentication_with_ssh_key: bool
+        :keyword lab_subnet_name: The lab subnet name of the virtual machine.
+        :paramtype lab_subnet_name: str
+        :keyword lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
+        :paramtype lab_virtual_network_id: str
+        :keyword disallow_public_ip_address: Indicates whether the virtual machine is to be created
+         without a public IP address.
+        :paramtype disallow_public_ip_address: bool
+        :keyword artifacts: The artifacts to be installed on the virtual machine.
+        :paramtype artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
+        :keyword gallery_image_reference: The Microsoft Azure Marketplace image reference of the
+         virtual machine.
+        :paramtype gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
+        :keyword plan_id: The id of the plan associated with the virtual machine image.
+        :paramtype plan_id: str
+        :keyword network_interface: The network interface properties.
+        :paramtype network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfaceProperties
+        :keyword expiration_date: The expiration date for VM.
+        :paramtype expiration_date: ~datetime.datetime
+        :keyword allow_claim: Indicates whether another user can take ownership of the virtual machine.
+        :paramtype allow_claim: bool
+        :keyword storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
+        :paramtype storage_type: str
+        :keyword environment_id: The resource ID of the environment that contains this virtual machine,
+         if any.
+        :paramtype environment_id: str
+        :keyword data_disk_parameters: New or existing data disks to attach to the virtual machine
+         after creation.
+        :paramtype data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskProperties]
+        :keyword schedule_parameters: Virtual Machine schedules to be created.
+        :paramtype schedule_parameters: list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.notes = notes
         self.owner_object_id = owner_object_id
         self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
+        self.created_by_user_id = None
+        self.created_by_user = None
         self.created_date = created_date
-        self.compute_id = compute_id
+        self.compute_id = None
         self.custom_image_id = custom_image_id
-        self.os_type = os_type
+        self.os_type = None
         self.size = size
         self.user_name = user_name
         self.password = password
         self.ssh_key = ssh_key
         self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
+        self.fqdn = None
         self.lab_subnet_name = lab_subnet_name
         self.lab_virtual_network_id = lab_virtual_network_id
         self.disallow_public_ip_address = disallow_public_ip_address
         self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
+        self.artifact_deployment_status = None
         self.gallery_image_reference = gallery_image_reference
         self.plan_id = plan_id
         self.compute_vm = None
@@ -3998,178 +3544,203 @@ class LabVirtualMachine(Resource):
         self.expiration_date = expiration_date
         self.allow_claim = allow_claim
         self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
+        self.virtual_machine_creation_source = None
         self.environment_id = environment_id
         self.data_disk_parameters = data_disk_parameters
         self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = last_known_power_state
+        self.last_known_power_state = None
         self.provisioning_state = None
         self.unique_identifier = None
 
 
-class LabVirtualMachineCreationParameter(msrest.serialization.Model):
+class LabVirtualMachineCreationParameter(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties for creating a virtual machine.
 
-    :param name: The name of the virtual machine or environment.
-    :type name: str
-    :param location: The location of the new virtual machine or environment.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param bulk_creation_parameters: The number of virtual machine instances to create.
-    :type bulk_creation_parameters: ~azure.mgmt.devtestlabs.models.BulkCreationParameters
-    :param notes: The notes of the virtual machine.
-    :type notes: str
-    :param owner_object_id: The object identifier of the owner of the virtual machine.
-    :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual machine owner.
-    :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual machine.
-    :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: ~datetime.datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
-    :type compute_id: str
-    :param custom_image_id: The custom image identifier of the virtual machine.
-    :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
-    :param size: The size of the virtual machine.
-    :type size: str
-    :param user_name: The user name of the virtual machine.
-    :type user_name: str
-    :param password: The password of the virtual machine administrator.
-    :type password: str
-    :param ssh_key: The SSH key of the virtual machine administrator.
-    :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
+    :ivar name: The name of the virtual machine or environment.
+    :vartype name: str
+    :ivar location: The location of the new virtual machine or environment.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar bulk_creation_parameters: The number of virtual machine instances to create.
+    :vartype bulk_creation_parameters: ~azure.mgmt.devtestlabs.models.BulkCreationParameters
+    :ivar notes: The notes of the virtual machine.
+    :vartype notes: str
+    :ivar owner_object_id: The object identifier of the owner of the virtual machine.
+    :vartype owner_object_id: str
+    :ivar owner_user_principal_name: The user principal name of the virtual machine owner.
+    :vartype owner_user_principal_name: str
+    :ivar created_date: The creation date of the virtual machine.
+    :vartype created_date: ~datetime.datetime
+    :ivar custom_image_id: The custom image identifier of the virtual machine.
+    :vartype custom_image_id: str
+    :ivar size: The size of the virtual machine.
+    :vartype size: str
+    :ivar user_name: The user name of the virtual machine.
+    :vartype user_name: str
+    :ivar password: The password of the virtual machine administrator.
+    :vartype password: str
+    :ivar ssh_key: The SSH key of the virtual machine administrator.
+    :vartype ssh_key: str
+    :ivar is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
      for authentication.
-    :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
-    :param lab_subnet_name: The lab subnet name of the virtual machine.
-    :type lab_subnet_name: str
-    :param lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
-    :type lab_virtual_network_id: str
-    :param disallow_public_ip_address: Indicates whether the virtual machine is to be created
+    :vartype is_authentication_with_ssh_key: bool
+    :ivar lab_subnet_name: The lab subnet name of the virtual machine.
+    :vartype lab_subnet_name: str
+    :ivar lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
+    :vartype lab_virtual_network_id: str
+    :ivar disallow_public_ip_address: Indicates whether the virtual machine is to be created
      without a public IP address.
-    :type disallow_public_ip_address: bool
-    :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
-    :param artifact_deployment_status: The artifact deployment status for the virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusProperties
-    :param gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
+    :vartype disallow_public_ip_address: bool
+    :ivar artifacts: The artifacts to be installed on the virtual machine.
+    :vartype artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
+    :ivar gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
      machine.
-    :type gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
-    :param plan_id: The id of the plan associated with the virtual machine image.
-    :type plan_id: str
-    :param network_interface: The network interface properties.
-    :type network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfaceProperties
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: ~datetime.datetime
-    :param allow_claim: Indicates whether another user can take ownership of the virtual machine.
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
-     property only. Possible values include: "FromCustomImage", "FromGalleryImage",
-     "FromSharedGalleryImage".
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
-    :param environment_id: The resource ID of the environment that contains this virtual machine,
-     if any.
-    :type environment_id: str
-    :param data_disk_parameters: New or existing data disks to attach to the virtual machine after
+    :vartype gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
+    :ivar plan_id: The id of the plan associated with the virtual machine image.
+    :vartype plan_id: str
+    :ivar network_interface: The network interface properties.
+    :vartype network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfaceProperties
+    :ivar expiration_date: The expiration date for VM.
+    :vartype expiration_date: ~datetime.datetime
+    :ivar allow_claim: Indicates whether another user can take ownership of the virtual machine.
+    :vartype allow_claim: bool
+    :ivar storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
+    :vartype storage_type: str
+    :ivar environment_id: The resource ID of the environment that contains this virtual machine, if
+     any.
+    :vartype environment_id: str
+    :ivar data_disk_parameters: New or existing data disks to attach to the virtual machine after
      creation.
-    :type data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskProperties]
-    :param schedule_parameters: Virtual Machine schedules to be created.
-    :type schedule_parameters: list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
-    :param last_known_power_state: Last known compute power state captured in DTL.
-    :type last_known_power_state: str
+    :vartype data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskProperties]
+    :ivar schedule_parameters: Virtual Machine schedules to be created.
+    :vartype schedule_parameters: list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'bulk_creation_parameters': {'key': 'properties.bulkCreationParameters', 'type': 'BulkCreationParameters'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
-        'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
-        'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
-        'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
-        'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallProperties]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusProperties'},
-        'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReference'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfaceProperties'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskProperties]'},
-        'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameter]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "bulk_creation_parameters": {"key": "properties.bulkCreationParameters", "type": "BulkCreationParameters"},
+        "notes": {"key": "properties.notes", "type": "str"},
+        "owner_object_id": {"key": "properties.ownerObjectId", "type": "str"},
+        "owner_user_principal_name": {"key": "properties.ownerUserPrincipalName", "type": "str"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "custom_image_id": {"key": "properties.customImageId", "type": "str"},
+        "size": {"key": "properties.size", "type": "str"},
+        "user_name": {"key": "properties.userName", "type": "str"},
+        "password": {"key": "properties.password", "type": "str"},
+        "ssh_key": {"key": "properties.sshKey", "type": "str"},
+        "is_authentication_with_ssh_key": {"key": "properties.isAuthenticationWithSshKey", "type": "bool"},
+        "lab_subnet_name": {"key": "properties.labSubnetName", "type": "str"},
+        "lab_virtual_network_id": {"key": "properties.labVirtualNetworkId", "type": "str"},
+        "disallow_public_ip_address": {"key": "properties.disallowPublicIpAddress", "type": "bool"},
+        "artifacts": {"key": "properties.artifacts", "type": "[ArtifactInstallProperties]"},
+        "gallery_image_reference": {"key": "properties.galleryImageReference", "type": "GalleryImageReference"},
+        "plan_id": {"key": "properties.planId", "type": "str"},
+        "network_interface": {"key": "properties.networkInterface", "type": "NetworkInterfaceProperties"},
+        "expiration_date": {"key": "properties.expirationDate", "type": "iso-8601"},
+        "allow_claim": {"key": "properties.allowClaim", "type": "bool"},
+        "storage_type": {"key": "properties.storageType", "type": "str"},
+        "environment_id": {"key": "properties.environmentId", "type": "str"},
+        "data_disk_parameters": {"key": "properties.dataDiskParameters", "type": "[DataDiskProperties]"},
+        "schedule_parameters": {"key": "properties.scheduleParameters", "type": "[ScheduleCreationParameter]"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        bulk_creation_parameters: Optional["BulkCreationParameters"] = None,
+        bulk_creation_parameters: Optional["_models.BulkCreationParameters"] = None,
         notes: Optional[str] = None,
-        owner_object_id: Optional[str] = None,
+        owner_object_id: str = "dynamicValue",
         owner_user_principal_name: Optional[str] = None,
-        created_by_user_id: Optional[str] = None,
-        created_by_user: Optional[str] = None,
         created_date: Optional[datetime.datetime] = None,
-        compute_id: Optional[str] = None,
         custom_image_id: Optional[str] = None,
-        os_type: Optional[str] = None,
         size: Optional[str] = None,
         user_name: Optional[str] = None,
         password: Optional[str] = None,
         ssh_key: Optional[str] = None,
         is_authentication_with_ssh_key: Optional[bool] = None,
-        fqdn: Optional[str] = None,
         lab_subnet_name: Optional[str] = None,
         lab_virtual_network_id: Optional[str] = None,
-        disallow_public_ip_address: Optional[bool] = None,
-        artifacts: Optional[List["ArtifactInstallProperties"]] = None,
-        artifact_deployment_status: Optional["ArtifactDeploymentStatusProperties"] = None,
-        gallery_image_reference: Optional["GalleryImageReference"] = None,
+        disallow_public_ip_address: bool = False,
+        artifacts: Optional[List["_models.ArtifactInstallProperties"]] = None,
+        gallery_image_reference: Optional["_models.GalleryImageReference"] = None,
         plan_id: Optional[str] = None,
-        network_interface: Optional["NetworkInterfaceProperties"] = None,
+        network_interface: Optional["_models.NetworkInterfaceProperties"] = None,
         expiration_date: Optional[datetime.datetime] = None,
-        allow_claim: Optional[bool] = None,
-        storage_type: Optional[str] = None,
-        virtual_machine_creation_source: Optional[Union[str, "VirtualMachineCreationSource"]] = None,
+        allow_claim: bool = False,
+        storage_type: str = "labStorageType",
         environment_id: Optional[str] = None,
-        data_disk_parameters: Optional[List["DataDiskProperties"]] = None,
-        schedule_parameters: Optional[List["ScheduleCreationParameter"]] = None,
-        last_known_power_state: Optional[str] = None,
+        data_disk_parameters: Optional[List["_models.DataDiskProperties"]] = None,
+        schedule_parameters: Optional[List["_models.ScheduleCreationParameter"]] = None,
         **kwargs
     ):
-        super(LabVirtualMachineCreationParameter, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the virtual machine or environment.
+        :paramtype name: str
+        :keyword location: The location of the new virtual machine or environment.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword bulk_creation_parameters: The number of virtual machine instances to create.
+        :paramtype bulk_creation_parameters: ~azure.mgmt.devtestlabs.models.BulkCreationParameters
+        :keyword notes: The notes of the virtual machine.
+        :paramtype notes: str
+        :keyword owner_object_id: The object identifier of the owner of the virtual machine.
+        :paramtype owner_object_id: str
+        :keyword owner_user_principal_name: The user principal name of the virtual machine owner.
+        :paramtype owner_user_principal_name: str
+        :keyword created_date: The creation date of the virtual machine.
+        :paramtype created_date: ~datetime.datetime
+        :keyword custom_image_id: The custom image identifier of the virtual machine.
+        :paramtype custom_image_id: str
+        :keyword size: The size of the virtual machine.
+        :paramtype size: str
+        :keyword user_name: The user name of the virtual machine.
+        :paramtype user_name: str
+        :keyword password: The password of the virtual machine administrator.
+        :paramtype password: str
+        :keyword ssh_key: The SSH key of the virtual machine administrator.
+        :paramtype ssh_key: str
+        :keyword is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
+         for authentication.
+        :paramtype is_authentication_with_ssh_key: bool
+        :keyword lab_subnet_name: The lab subnet name of the virtual machine.
+        :paramtype lab_subnet_name: str
+        :keyword lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
+        :paramtype lab_virtual_network_id: str
+        :keyword disallow_public_ip_address: Indicates whether the virtual machine is to be created
+         without a public IP address.
+        :paramtype disallow_public_ip_address: bool
+        :keyword artifacts: The artifacts to be installed on the virtual machine.
+        :paramtype artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallProperties]
+        :keyword gallery_image_reference: The Microsoft Azure Marketplace image reference of the
+         virtual machine.
+        :paramtype gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReference
+        :keyword plan_id: The id of the plan associated with the virtual machine image.
+        :paramtype plan_id: str
+        :keyword network_interface: The network interface properties.
+        :paramtype network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfaceProperties
+        :keyword expiration_date: The expiration date for VM.
+        :paramtype expiration_date: ~datetime.datetime
+        :keyword allow_claim: Indicates whether another user can take ownership of the virtual machine.
+        :paramtype allow_claim: bool
+        :keyword storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
+        :paramtype storage_type: str
+        :keyword environment_id: The resource ID of the environment that contains this virtual machine,
+         if any.
+        :paramtype environment_id: str
+        :keyword data_disk_parameters: New or existing data disks to attach to the virtual machine
+         after creation.
+        :paramtype data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskProperties]
+        :keyword schedule_parameters: Virtual Machine schedules to be created.
+        :paramtype schedule_parameters: list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameter]
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.tags = tags
@@ -4177,531 +3748,139 @@ class LabVirtualMachineCreationParameter(msrest.serialization.Model):
         self.notes = notes
         self.owner_object_id = owner_object_id
         self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
         self.created_date = created_date
-        self.compute_id = compute_id
         self.custom_image_id = custom_image_id
-        self.os_type = os_type
         self.size = size
         self.user_name = user_name
         self.password = password
         self.ssh_key = ssh_key
         self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
         self.lab_subnet_name = lab_subnet_name
         self.lab_virtual_network_id = lab_virtual_network_id
         self.disallow_public_ip_address = disallow_public_ip_address
         self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
         self.gallery_image_reference = gallery_image_reference
         self.plan_id = plan_id
         self.network_interface = network_interface
         self.expiration_date = expiration_date
         self.allow_claim = allow_claim
         self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
         self.environment_id = environment_id
         self.data_disk_parameters = data_disk_parameters
         self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = last_known_power_state
-
-
-class LabVirtualMachineCreationParameterFragment(msrest.serialization.Model):
-    """Properties for creating a virtual machine.
-
-    :param name: The name of the virtual machine or environment.
-    :type name: str
-    :param location: The location of the new virtual machine or environment.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param bulk_creation_parameters: The number of virtual machine instances to create.
-    :type bulk_creation_parameters: ~azure.mgmt.devtestlabs.models.BulkCreationParametersFragment
-    :param notes: The notes of the virtual machine.
-    :type notes: str
-    :param owner_object_id: The object identifier of the owner of the virtual machine.
-    :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual machine owner.
-    :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual machine.
-    :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: ~datetime.datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
-    :type compute_id: str
-    :param custom_image_id: The custom image identifier of the virtual machine.
-    :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
-    :param size: The size of the virtual machine.
-    :type size: str
-    :param user_name: The user name of the virtual machine.
-    :type user_name: str
-    :param password: The password of the virtual machine administrator.
-    :type password: str
-    :param ssh_key: The SSH key of the virtual machine administrator.
-    :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
-     for authentication.
-    :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
-    :param lab_subnet_name: The lab subnet name of the virtual machine.
-    :type lab_subnet_name: str
-    :param lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
-    :type lab_virtual_network_id: str
-    :param disallow_public_ip_address: Indicates whether the virtual machine is to be created
-     without a public IP address.
-    :type disallow_public_ip_address: bool
-    :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallPropertiesFragment]
-    :param artifact_deployment_status: The artifact deployment status for the virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusPropertiesFragment
-    :param gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
-     machine.
-    :type gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReferenceFragment
-    :param plan_id: The id of the plan associated with the virtual machine image.
-    :type plan_id: str
-    :param network_interface: The network interface properties.
-    :type network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfacePropertiesFragment
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: ~datetime.datetime
-    :param allow_claim: Indicates whether another user can take ownership of the virtual machine.
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
-     property only. Possible values include: "FromCustomImage", "FromGalleryImage",
-     "FromSharedGalleryImage".
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
-    :param environment_id: The resource ID of the environment that contains this virtual machine,
-     if any.
-    :type environment_id: str
-    :param data_disk_parameters: New or existing data disks to attach to the virtual machine after
-     creation.
-    :type data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskPropertiesFragment]
-    :param schedule_parameters: Virtual Machine schedules to be created.
-    :type schedule_parameters:
-     list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameterFragment]
-    :param last_known_power_state: Last known compute power state captured in DTL.
-    :type last_known_power_state: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'bulk_creation_parameters': {'key': 'properties.bulkCreationParameters', 'type': 'BulkCreationParametersFragment'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
-        'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
-        'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
-        'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
-        'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallPropertiesFragment]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusPropertiesFragment'},
-        'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReferenceFragment'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfacePropertiesFragment'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskPropertiesFragment]'},
-        'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameterFragment]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        bulk_creation_parameters: Optional["BulkCreationParametersFragment"] = None,
-        notes: Optional[str] = None,
-        owner_object_id: Optional[str] = None,
-        owner_user_principal_name: Optional[str] = None,
-        created_by_user_id: Optional[str] = None,
-        created_by_user: Optional[str] = None,
-        created_date: Optional[datetime.datetime] = None,
-        compute_id: Optional[str] = None,
-        custom_image_id: Optional[str] = None,
-        os_type: Optional[str] = None,
-        size: Optional[str] = None,
-        user_name: Optional[str] = None,
-        password: Optional[str] = None,
-        ssh_key: Optional[str] = None,
-        is_authentication_with_ssh_key: Optional[bool] = None,
-        fqdn: Optional[str] = None,
-        lab_subnet_name: Optional[str] = None,
-        lab_virtual_network_id: Optional[str] = None,
-        disallow_public_ip_address: Optional[bool] = None,
-        artifacts: Optional[List["ArtifactInstallPropertiesFragment"]] = None,
-        artifact_deployment_status: Optional["ArtifactDeploymentStatusPropertiesFragment"] = None,
-        gallery_image_reference: Optional["GalleryImageReferenceFragment"] = None,
-        plan_id: Optional[str] = None,
-        network_interface: Optional["NetworkInterfacePropertiesFragment"] = None,
-        expiration_date: Optional[datetime.datetime] = None,
-        allow_claim: Optional[bool] = None,
-        storage_type: Optional[str] = None,
-        virtual_machine_creation_source: Optional[Union[str, "VirtualMachineCreationSource"]] = None,
-        environment_id: Optional[str] = None,
-        data_disk_parameters: Optional[List["DataDiskPropertiesFragment"]] = None,
-        schedule_parameters: Optional[List["ScheduleCreationParameterFragment"]] = None,
-        last_known_power_state: Optional[str] = None,
-        **kwargs
-    ):
-        super(LabVirtualMachineCreationParameterFragment, self).__init__(**kwargs)
-        self.name = name
-        self.location = location
-        self.tags = tags
-        self.bulk_creation_parameters = bulk_creation_parameters
-        self.notes = notes
-        self.owner_object_id = owner_object_id
-        self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
-        self.created_date = created_date
-        self.compute_id = compute_id
-        self.custom_image_id = custom_image_id
-        self.os_type = os_type
-        self.size = size
-        self.user_name = user_name
-        self.password = password
-        self.ssh_key = ssh_key
-        self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
-        self.lab_subnet_name = lab_subnet_name
-        self.lab_virtual_network_id = lab_virtual_network_id
-        self.disallow_public_ip_address = disallow_public_ip_address
-        self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
-        self.gallery_image_reference = gallery_image_reference
-        self.plan_id = plan_id
-        self.network_interface = network_interface
-        self.expiration_date = expiration_date
-        self.allow_claim = allow_claim
-        self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
-        self.environment_id = environment_id
-        self.data_disk_parameters = data_disk_parameters
-        self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = last_known_power_state
 
 
 class LabVirtualMachineFragment(UpdateResource):
     """A virtual machine.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param notes: The notes of the virtual machine.
-    :type notes: str
-    :param owner_object_id: The object identifier of the owner of the virtual machine.
-    :type owner_object_id: str
-    :param owner_user_principal_name: The user principal name of the virtual machine owner.
-    :type owner_user_principal_name: str
-    :param created_by_user_id: The object identifier of the creator of the virtual machine.
-    :type created_by_user_id: str
-    :param created_by_user: The email address of creator of the virtual machine.
-    :type created_by_user: str
-    :param created_date: The creation date of the virtual machine.
-    :type created_date: ~datetime.datetime
-    :param compute_id: The resource identifier (Microsoft.Compute) of the virtual machine.
-    :type compute_id: str
-    :param custom_image_id: The custom image identifier of the virtual machine.
-    :type custom_image_id: str
-    :param os_type: The OS type of the virtual machine.
-    :type os_type: str
-    :param size: The size of the virtual machine.
-    :type size: str
-    :param user_name: The user name of the virtual machine.
-    :type user_name: str
-    :param password: The password of the virtual machine administrator.
-    :type password: str
-    :param ssh_key: The SSH key of the virtual machine administrator.
-    :type ssh_key: str
-    :param is_authentication_with_ssh_key: Indicates whether this virtual machine uses an SSH key
-     for authentication.
-    :type is_authentication_with_ssh_key: bool
-    :param fqdn: The fully-qualified domain name of the virtual machine.
-    :type fqdn: str
-    :param lab_subnet_name: The lab subnet name of the virtual machine.
-    :type lab_subnet_name: str
-    :param lab_virtual_network_id: The lab virtual network identifier of the virtual machine.
-    :type lab_virtual_network_id: str
-    :param disallow_public_ip_address: Indicates whether the virtual machine is to be created
-     without a public IP address.
-    :type disallow_public_ip_address: bool
-    :param artifacts: The artifacts to be installed on the virtual machine.
-    :type artifacts: list[~azure.mgmt.devtestlabs.models.ArtifactInstallPropertiesFragment]
-    :param artifact_deployment_status: The artifact deployment status for the virtual machine.
-    :type artifact_deployment_status:
-     ~azure.mgmt.devtestlabs.models.ArtifactDeploymentStatusPropertiesFragment
-    :param gallery_image_reference: The Microsoft Azure Marketplace image reference of the virtual
-     machine.
-    :type gallery_image_reference: ~azure.mgmt.devtestlabs.models.GalleryImageReferenceFragment
-    :param plan_id: The id of the plan associated with the virtual machine image.
-    :type plan_id: str
-    :param network_interface: The network interface properties.
-    :type network_interface: ~azure.mgmt.devtestlabs.models.NetworkInterfacePropertiesFragment
-    :param expiration_date: The expiration date for VM.
-    :type expiration_date: ~datetime.datetime
-    :param allow_claim: Indicates whether another user can take ownership of the virtual machine.
-    :type allow_claim: bool
-    :param storage_type: Storage type to use for virtual machine (i.e. Standard, Premium).
-    :type storage_type: str
-    :param virtual_machine_creation_source: Tells source of creation of lab virtual machine. Output
-     property only. Possible values include: "FromCustomImage", "FromGalleryImage",
-     "FromSharedGalleryImage".
-    :type virtual_machine_creation_source: str or
-     ~azure.mgmt.devtestlabs.models.VirtualMachineCreationSource
-    :param environment_id: The resource ID of the environment that contains this virtual machine,
-     if any.
-    :type environment_id: str
-    :param data_disk_parameters: New or existing data disks to attach to the virtual machine after
-     creation.
-    :type data_disk_parameters: list[~azure.mgmt.devtestlabs.models.DataDiskPropertiesFragment]
-    :param schedule_parameters: Virtual Machine schedules to be created.
-    :type schedule_parameters:
-     list[~azure.mgmt.devtestlabs.models.ScheduleCreationParameterFragment]
-    :param last_known_power_state: Last known compute power state captured in DTL.
-    :type last_known_power_state: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'notes': {'key': 'properties.notes', 'type': 'str'},
-        'owner_object_id': {'key': 'properties.ownerObjectId', 'type': 'str'},
-        'owner_user_principal_name': {'key': 'properties.ownerUserPrincipalName', 'type': 'str'},
-        'created_by_user_id': {'key': 'properties.createdByUserId', 'type': 'str'},
-        'created_by_user': {'key': 'properties.createdByUser', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'compute_id': {'key': 'properties.computeId', 'type': 'str'},
-        'custom_image_id': {'key': 'properties.customImageId', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'size': {'key': 'properties.size', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'ssh_key': {'key': 'properties.sshKey', 'type': 'str'},
-        'is_authentication_with_ssh_key': {'key': 'properties.isAuthenticationWithSshKey', 'type': 'bool'},
-        'fqdn': {'key': 'properties.fqdn', 'type': 'str'},
-        'lab_subnet_name': {'key': 'properties.labSubnetName', 'type': 'str'},
-        'lab_virtual_network_id': {'key': 'properties.labVirtualNetworkId', 'type': 'str'},
-        'disallow_public_ip_address': {'key': 'properties.disallowPublicIpAddress', 'type': 'bool'},
-        'artifacts': {'key': 'properties.artifacts', 'type': '[ArtifactInstallPropertiesFragment]'},
-        'artifact_deployment_status': {'key': 'properties.artifactDeploymentStatus', 'type': 'ArtifactDeploymentStatusPropertiesFragment'},
-        'gallery_image_reference': {'key': 'properties.galleryImageReference', 'type': 'GalleryImageReferenceFragment'},
-        'plan_id': {'key': 'properties.planId', 'type': 'str'},
-        'network_interface': {'key': 'properties.networkInterface', 'type': 'NetworkInterfacePropertiesFragment'},
-        'expiration_date': {'key': 'properties.expirationDate', 'type': 'iso-8601'},
-        'allow_claim': {'key': 'properties.allowClaim', 'type': 'bool'},
-        'storage_type': {'key': 'properties.storageType', 'type': 'str'},
-        'virtual_machine_creation_source': {'key': 'properties.virtualMachineCreationSource', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'data_disk_parameters': {'key': 'properties.dataDiskParameters', 'type': '[DataDiskPropertiesFragment]'},
-        'schedule_parameters': {'key': 'properties.scheduleParameters', 'type': '[ScheduleCreationParameterFragment]'},
-        'last_known_power_state': {'key': 'properties.lastKnownPowerState', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        notes: Optional[str] = None,
-        owner_object_id: Optional[str] = None,
-        owner_user_principal_name: Optional[str] = None,
-        created_by_user_id: Optional[str] = None,
-        created_by_user: Optional[str] = None,
-        created_date: Optional[datetime.datetime] = None,
-        compute_id: Optional[str] = None,
-        custom_image_id: Optional[str] = None,
-        os_type: Optional[str] = None,
-        size: Optional[str] = None,
-        user_name: Optional[str] = None,
-        password: Optional[str] = None,
-        ssh_key: Optional[str] = None,
-        is_authentication_with_ssh_key: Optional[bool] = None,
-        fqdn: Optional[str] = None,
-        lab_subnet_name: Optional[str] = None,
-        lab_virtual_network_id: Optional[str] = None,
-        disallow_public_ip_address: Optional[bool] = None,
-        artifacts: Optional[List["ArtifactInstallPropertiesFragment"]] = None,
-        artifact_deployment_status: Optional["ArtifactDeploymentStatusPropertiesFragment"] = None,
-        gallery_image_reference: Optional["GalleryImageReferenceFragment"] = None,
-        plan_id: Optional[str] = None,
-        network_interface: Optional["NetworkInterfacePropertiesFragment"] = None,
-        expiration_date: Optional[datetime.datetime] = None,
-        allow_claim: Optional[bool] = None,
-        storage_type: Optional[str] = None,
-        virtual_machine_creation_source: Optional[Union[str, "VirtualMachineCreationSource"]] = None,
-        environment_id: Optional[str] = None,
-        data_disk_parameters: Optional[List["DataDiskPropertiesFragment"]] = None,
-        schedule_parameters: Optional[List["ScheduleCreationParameterFragment"]] = None,
-        last_known_power_state: Optional[str] = None,
-        **kwargs
-    ):
-        super(LabVirtualMachineFragment, self).__init__(tags=tags, **kwargs)
-        self.notes = notes
-        self.owner_object_id = owner_object_id
-        self.owner_user_principal_name = owner_user_principal_name
-        self.created_by_user_id = created_by_user_id
-        self.created_by_user = created_by_user
-        self.created_date = created_date
-        self.compute_id = compute_id
-        self.custom_image_id = custom_image_id
-        self.os_type = os_type
-        self.size = size
-        self.user_name = user_name
-        self.password = password
-        self.ssh_key = ssh_key
-        self.is_authentication_with_ssh_key = is_authentication_with_ssh_key
-        self.fqdn = fqdn
-        self.lab_subnet_name = lab_subnet_name
-        self.lab_virtual_network_id = lab_virtual_network_id
-        self.disallow_public_ip_address = disallow_public_ip_address
-        self.artifacts = artifacts
-        self.artifact_deployment_status = artifact_deployment_status
-        self.gallery_image_reference = gallery_image_reference
-        self.plan_id = plan_id
-        self.network_interface = network_interface
-        self.expiration_date = expiration_date
-        self.allow_claim = allow_claim
-        self.storage_type = storage_type
-        self.virtual_machine_creation_source = virtual_machine_creation_source
-        self.environment_id = environment_id
-        self.data_disk_parameters = data_disk_parameters
-        self.schedule_parameters = schedule_parameters
-        self.last_known_power_state = last_known_power_state
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class LabVirtualMachineList(msrest.serialization.Model):
+class LabVirtualMachineList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.LabVirtualMachine]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.LabVirtualMachine]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LabVirtualMachine]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LabVirtualMachine]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["LabVirtualMachine"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.LabVirtualMachine"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(LabVirtualMachineList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.LabVirtualMachine]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LinuxOsInfo(msrest.serialization.Model):
+class LinuxOsInfo(_serialization.Model):
     """Information about a Linux OS.
 
-    :param linux_os_state: The state of the Linux OS (i.e. NonDeprovisioned, DeprovisionRequested,
-     DeprovisionApplied). Possible values include: "NonDeprovisioned", "DeprovisionRequested",
+    :ivar linux_os_state: The state of the Linux OS (i.e. NonDeprovisioned, DeprovisionRequested,
+     DeprovisionApplied). Known values are: "NonDeprovisioned", "DeprovisionRequested", and
      "DeprovisionApplied".
-    :type linux_os_state: str or ~azure.mgmt.devtestlabs.models.LinuxOsState
+    :vartype linux_os_state: str or ~azure.mgmt.devtestlabs.models.LinuxOsState
     """
 
     _attribute_map = {
-        'linux_os_state': {'key': 'linuxOsState', 'type': 'str'},
+        "linux_os_state": {"key": "linuxOsState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        linux_os_state: Optional[Union[str, "LinuxOsState"]] = None,
-        **kwargs
-    ):
-        super(LinuxOsInfo, self).__init__(**kwargs)
+    def __init__(self, *, linux_os_state: Optional[Union[str, "_models.LinuxOsState"]] = None, **kwargs):
+        """
+        :keyword linux_os_state: The state of the Linux OS (i.e. NonDeprovisioned,
+         DeprovisionRequested, DeprovisionApplied). Known values are: "NonDeprovisioned",
+         "DeprovisionRequested", and "DeprovisionApplied".
+        :paramtype linux_os_state: str or ~azure.mgmt.devtestlabs.models.LinuxOsState
+        """
+        super().__init__(**kwargs)
         self.linux_os_state = linux_os_state
 
 
-class LinuxOsInfoFragment(msrest.serialization.Model):
-    """Information about a Linux OS.
-
-    :param linux_os_state: The state of the Linux OS (i.e. NonDeprovisioned, DeprovisionRequested,
-     DeprovisionApplied). Possible values include: "NonDeprovisioned", "DeprovisionRequested",
-     "DeprovisionApplied".
-    :type linux_os_state: str or ~azure.mgmt.devtestlabs.models.LinuxOsState
-    """
-
-    _attribute_map = {
-        'linux_os_state': {'key': 'linuxOsState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        linux_os_state: Optional[Union[str, "LinuxOsState"]] = None,
-        **kwargs
-    ):
-        super(LinuxOsInfoFragment, self).__init__(**kwargs)
-        self.linux_os_state = linux_os_state
-
-
-class NetworkInterfaceProperties(msrest.serialization.Model):
+class NetworkInterfaceProperties(_serialization.Model):
     """Properties of a network interface.
 
-    :param virtual_network_id: The resource ID of the virtual network.
-    :type virtual_network_id: str
-    :param subnet_id: The resource ID of the sub net.
-    :type subnet_id: str
-    :param public_ip_address_id: The resource ID of the public IP address.
-    :type public_ip_address_id: str
-    :param public_ip_address: The public IP address.
-    :type public_ip_address: str
-    :param private_ip_address: The private IP address.
-    :type private_ip_address: str
-    :param dns_name: The DNS name.
-    :type dns_name: str
-    :param rdp_authority: The RdpAuthority property is a server DNS host name or IP address
-     followed by the service port number for RDP (Remote Desktop Protocol).
-    :type rdp_authority: str
-    :param ssh_authority: The SshAuthority property is a server DNS host name or IP address
-     followed by the service port number for SSH.
-    :type ssh_authority: str
-    :param shared_public_ip_address_configuration: The configuration for sharing a public IP
-     address across multiple virtual machines.
-    :type shared_public_ip_address_configuration:
+    :ivar virtual_network_id: The resource ID of the virtual network.
+    :vartype virtual_network_id: str
+    :ivar subnet_id: The resource ID of the sub net.
+    :vartype subnet_id: str
+    :ivar public_ip_address_id: The resource ID of the public IP address.
+    :vartype public_ip_address_id: str
+    :ivar public_ip_address: The public IP address.
+    :vartype public_ip_address: str
+    :ivar private_ip_address: The private IP address.
+    :vartype private_ip_address: str
+    :ivar dns_name: The DNS name.
+    :vartype dns_name: str
+    :ivar rdp_authority: The RdpAuthority property is a server DNS host name or IP address followed
+     by the service port number for RDP (Remote Desktop Protocol).
+    :vartype rdp_authority: str
+    :ivar ssh_authority: The SshAuthority property is a server DNS host name or IP address followed
+     by the service port number for SSH.
+    :vartype ssh_authority: str
+    :ivar shared_public_ip_address_configuration: The configuration for sharing a public IP address
+     across multiple virtual machines.
+    :vartype shared_public_ip_address_configuration:
      ~azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfiguration
     """
 
     _attribute_map = {
-        'virtual_network_id': {'key': 'virtualNetworkId', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'public_ip_address_id': {'key': 'publicIpAddressId', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
-        'dns_name': {'key': 'dnsName', 'type': 'str'},
-        'rdp_authority': {'key': 'rdpAuthority', 'type': 'str'},
-        'ssh_authority': {'key': 'sshAuthority', 'type': 'str'},
-        'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SharedPublicIpAddressConfiguration'},
+        "virtual_network_id": {"key": "virtualNetworkId", "type": "str"},
+        "subnet_id": {"key": "subnetId", "type": "str"},
+        "public_ip_address_id": {"key": "publicIpAddressId", "type": "str"},
+        "public_ip_address": {"key": "publicIpAddress", "type": "str"},
+        "private_ip_address": {"key": "privateIpAddress", "type": "str"},
+        "dns_name": {"key": "dnsName", "type": "str"},
+        "rdp_authority": {"key": "rdpAuthority", "type": "str"},
+        "ssh_authority": {"key": "sshAuthority", "type": "str"},
+        "shared_public_ip_address_configuration": {
+            "key": "sharedPublicIpAddressConfiguration",
+            "type": "SharedPublicIpAddressConfiguration",
+        },
     }
 
     def __init__(
@@ -4715,10 +3894,34 @@ class NetworkInterfaceProperties(msrest.serialization.Model):
         dns_name: Optional[str] = None,
         rdp_authority: Optional[str] = None,
         ssh_authority: Optional[str] = None,
-        shared_public_ip_address_configuration: Optional["SharedPublicIpAddressConfiguration"] = None,
+        shared_public_ip_address_configuration: Optional["_models.SharedPublicIpAddressConfiguration"] = None,
         **kwargs
     ):
-        super(NetworkInterfaceProperties, self).__init__(**kwargs)
+        """
+        :keyword virtual_network_id: The resource ID of the virtual network.
+        :paramtype virtual_network_id: str
+        :keyword subnet_id: The resource ID of the sub net.
+        :paramtype subnet_id: str
+        :keyword public_ip_address_id: The resource ID of the public IP address.
+        :paramtype public_ip_address_id: str
+        :keyword public_ip_address: The public IP address.
+        :paramtype public_ip_address: str
+        :keyword private_ip_address: The private IP address.
+        :paramtype private_ip_address: str
+        :keyword dns_name: The DNS name.
+        :paramtype dns_name: str
+        :keyword rdp_authority: The RdpAuthority property is a server DNS host name or IP address
+         followed by the service port number for RDP (Remote Desktop Protocol).
+        :paramtype rdp_authority: str
+        :keyword ssh_authority: The SshAuthority property is a server DNS host name or IP address
+         followed by the service port number for SSH.
+        :paramtype ssh_authority: str
+        :keyword shared_public_ip_address_configuration: The configuration for sharing a public IP
+         address across multiple virtual machines.
+        :paramtype shared_public_ip_address_configuration:
+         ~azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfiguration
+        """
+        super().__init__(**kwargs)
         self.virtual_network_id = virtual_network_id
         self.subnet_id = subnet_id
         self.public_ip_address_id = public_ip_address_id
@@ -4730,72 +3933,7 @@ class NetworkInterfaceProperties(msrest.serialization.Model):
         self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
 
 
-class NetworkInterfacePropertiesFragment(msrest.serialization.Model):
-    """Properties of a network interface.
-
-    :param virtual_network_id: The resource ID of the virtual network.
-    :type virtual_network_id: str
-    :param subnet_id: The resource ID of the sub net.
-    :type subnet_id: str
-    :param public_ip_address_id: The resource ID of the public IP address.
-    :type public_ip_address_id: str
-    :param public_ip_address: The public IP address.
-    :type public_ip_address: str
-    :param private_ip_address: The private IP address.
-    :type private_ip_address: str
-    :param dns_name: The DNS name.
-    :type dns_name: str
-    :param rdp_authority: The RdpAuthority property is a server DNS host name or IP address
-     followed by the service port number for RDP (Remote Desktop Protocol).
-    :type rdp_authority: str
-    :param ssh_authority: The SshAuthority property is a server DNS host name or IP address
-     followed by the service port number for SSH.
-    :type ssh_authority: str
-    :param shared_public_ip_address_configuration: The configuration for sharing a public IP
-     address across multiple virtual machines.
-    :type shared_public_ip_address_configuration:
-     ~azure.mgmt.devtestlabs.models.SharedPublicIpAddressConfigurationFragment
-    """
-
-    _attribute_map = {
-        'virtual_network_id': {'key': 'virtualNetworkId', 'type': 'str'},
-        'subnet_id': {'key': 'subnetId', 'type': 'str'},
-        'public_ip_address_id': {'key': 'publicIpAddressId', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'private_ip_address': {'key': 'privateIpAddress', 'type': 'str'},
-        'dns_name': {'key': 'dnsName', 'type': 'str'},
-        'rdp_authority': {'key': 'rdpAuthority', 'type': 'str'},
-        'ssh_authority': {'key': 'sshAuthority', 'type': 'str'},
-        'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SharedPublicIpAddressConfigurationFragment'},
-    }
-
-    def __init__(
-        self,
-        *,
-        virtual_network_id: Optional[str] = None,
-        subnet_id: Optional[str] = None,
-        public_ip_address_id: Optional[str] = None,
-        public_ip_address: Optional[str] = None,
-        private_ip_address: Optional[str] = None,
-        dns_name: Optional[str] = None,
-        rdp_authority: Optional[str] = None,
-        ssh_authority: Optional[str] = None,
-        shared_public_ip_address_configuration: Optional["SharedPublicIpAddressConfigurationFragment"] = None,
-        **kwargs
-    ):
-        super(NetworkInterfacePropertiesFragment, self).__init__(**kwargs)
-        self.virtual_network_id = virtual_network_id
-        self.subnet_id = subnet_id
-        self.public_ip_address_id = public_ip_address_id
-        self.public_ip_address = public_ip_address
-        self.private_ip_address = private_ip_address
-        self.dns_name = dns_name
-        self.rdp_authority = rdp_authority
-        self.ssh_authority = ssh_authority
-        self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
-
-
-class NotificationChannel(Resource):
+class NotificationChannel(Resource):  # pylint: disable=too-many-instance-attributes
     """A notification.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4806,22 +3944,22 @@ class NotificationChannel(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param web_hook_url: The webhook URL to send notifications to.
-    :type web_hook_url: str
-    :param email_recipient: The email recipient to send notifications to (can be a list of semi-
-     colon separated email addresses).
-    :type email_recipient: str
-    :param notification_locale: The locale to use when sending a notification (fallback for
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar web_hook_url: The webhook URL to send notifications to.
+    :vartype web_hook_url: str
+    :ivar email_recipient: The email recipient to send notifications to (can be a list of
+     semi-colon separated email addresses).
+    :vartype email_recipient: str
+    :ivar notification_locale: The locale to use when sending a notification (fallback for
      unsupported languages is EN).
-    :type notification_locale: str
-    :param description: Description of notification.
-    :type description: str
-    :param events: The list of event for which this notification is enabled.
-    :type events: list[~azure.mgmt.devtestlabs.models.Event]
+    :vartype notification_locale: str
+    :ivar description: Description of notification.
+    :vartype description: str
+    :ivar events: The list of event for which this notification is enabled.
+    :vartype events: list[~azure.mgmt.devtestlabs.models.Event]
     :ivar created_date: The creation date of the notification channel.
     :vartype created_date: ~datetime.datetime
     :ivar provisioning_state: The provisioning status of the resource.
@@ -4831,28 +3969,28 @@ class NotificationChannel(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'web_hook_url': {'key': 'properties.webHookUrl', 'type': 'str'},
-        'email_recipient': {'key': 'properties.emailRecipient', 'type': 'str'},
-        'notification_locale': {'key': 'properties.notificationLocale', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'events': {'key': 'properties.events', 'type': '[Event]'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "web_hook_url": {"key": "properties.webHookUrl", "type": "str"},
+        "email_recipient": {"key": "properties.emailRecipient", "type": "str"},
+        "notification_locale": {"key": "properties.notificationLocale", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "events": {"key": "properties.events", "type": "[Event]"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -4864,10 +4002,28 @@ class NotificationChannel(Resource):
         email_recipient: Optional[str] = None,
         notification_locale: Optional[str] = None,
         description: Optional[str] = None,
-        events: Optional[List["Event"]] = None,
+        events: Optional[List["_models.Event"]] = None,
         **kwargs
     ):
-        super(NotificationChannel, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword web_hook_url: The webhook URL to send notifications to.
+        :paramtype web_hook_url: str
+        :keyword email_recipient: The email recipient to send notifications to (can be a list of
+         semi-colon separated email addresses).
+        :paramtype email_recipient: str
+        :keyword notification_locale: The locale to use when sending a notification (fallback for
+         unsupported languages is EN).
+        :paramtype notification_locale: str
+        :keyword description: Description of notification.
+        :paramtype description: str
+        :keyword events: The list of event for which this notification is enabled.
+        :paramtype events: list[~azure.mgmt.devtestlabs.models.Event]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.web_hook_url = web_hook_url
         self.email_recipient = email_recipient
         self.notification_locale = notification_locale
@@ -4881,113 +4037,102 @@ class NotificationChannel(Resource):
 class NotificationChannelFragment(UpdateResource):
     """A notification.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param web_hook_url: The webhook URL to send notifications to.
-    :type web_hook_url: str
-    :param email_recipient: The email recipient to send notifications to (can be a list of semi-
-     colon separated email addresses).
-    :type email_recipient: str
-    :param notification_locale: The locale to use when sending a notification (fallback for
-     unsupported languages is EN).
-    :type notification_locale: str
-    :param description: Description of notification.
-    :type description: str
-    :param events: The list of event for which this notification is enabled.
-    :type events: list[~azure.mgmt.devtestlabs.models.EventFragment]
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'web_hook_url': {'key': 'properties.webHookUrl', 'type': 'str'},
-        'email_recipient': {'key': 'properties.emailRecipient', 'type': 'str'},
-        'notification_locale': {'key': 'properties.notificationLocale', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'events': {'key': 'properties.events', 'type': '[EventFragment]'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        web_hook_url: Optional[str] = None,
-        email_recipient: Optional[str] = None,
-        notification_locale: Optional[str] = None,
-        description: Optional[str] = None,
-        events: Optional[List["EventFragment"]] = None,
-        **kwargs
-    ):
-        super(NotificationChannelFragment, self).__init__(tags=tags, **kwargs)
-        self.web_hook_url = web_hook_url
-        self.email_recipient = email_recipient
-        self.notification_locale = notification_locale
-        self.description = description
-        self.events = events
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class NotificationChannelList(msrest.serialization.Model):
+class NotificationChannelList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.NotificationChannel]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.NotificationChannel]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NotificationChannel]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NotificationChannel]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["NotificationChannel"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NotificationChannel"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(NotificationChannelList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.NotificationChannel]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class NotificationSettings(msrest.serialization.Model):
+class NotificationSettings(_serialization.Model):
     """Notification settings for a schedule.
 
-    :param status: If notifications are enabled for this schedule (i.e. Enabled, Disabled).
-     Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param time_in_minutes: Time in minutes before event at which notification will be sent.
-    :type time_in_minutes: int
-    :param webhook_url: The webhook URL to which the notification will be sent.
-    :type webhook_url: str
-    :param email_recipient: The email recipient to send notifications to (can be a list of semi-
-     colon separated email addresses).
-    :type email_recipient: str
-    :param notification_locale: The locale to use when sending a notification (fallback for
+    :ivar status: If notifications are enabled for this schedule (i.e. Enabled, Disabled). Known
+     values are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+    :ivar time_in_minutes: Time in minutes before event at which notification will be sent.
+    :vartype time_in_minutes: int
+    :ivar webhook_url: The webhook URL to which the notification will be sent.
+    :vartype webhook_url: str
+    :ivar email_recipient: The email recipient to send notifications to (can be a list of
+     semi-colon separated email addresses).
+    :vartype email_recipient: str
+    :ivar notification_locale: The locale to use when sending a notification (fallback for
      unsupported languages is EN).
-    :type notification_locale: str
+    :vartype notification_locale: str
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'time_in_minutes': {'key': 'timeInMinutes', 'type': 'int'},
-        'webhook_url': {'key': 'webhookUrl', 'type': 'str'},
-        'email_recipient': {'key': 'emailRecipient', 'type': 'str'},
-        'notification_locale': {'key': 'notificationLocale', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "time_in_minutes": {"key": "timeInMinutes", "type": "int"},
+        "webhook_url": {"key": "webhookUrl", "type": "str"},
+        "email_recipient": {"key": "emailRecipient", "type": "str"},
+        "notification_locale": {"key": "notificationLocale", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "EnableStatus"]] = None,
+        status: Optional[Union[str, "_models.EnableStatus"]] = None,
         time_in_minutes: Optional[int] = None,
         webhook_url: Optional[str] = None,
         email_recipient: Optional[str] = None,
         notification_locale: Optional[str] = None,
         **kwargs
     ):
-        super(NotificationSettings, self).__init__(**kwargs)
+        """
+        :keyword status: If notifications are enabled for this schedule (i.e. Enabled, Disabled). Known
+         values are: "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+        :keyword time_in_minutes: Time in minutes before event at which notification will be sent.
+        :paramtype time_in_minutes: int
+        :keyword webhook_url: The webhook URL to which the notification will be sent.
+        :paramtype webhook_url: str
+        :keyword email_recipient: The email recipient to send notifications to (can be a list of
+         semi-colon separated email addresses).
+        :paramtype email_recipient: str
+        :keyword notification_locale: The locale to use when sending a notification (fallback for
+         unsupported languages is EN).
+        :paramtype notification_locale: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.time_in_minutes = time_in_minutes
         self.webhook_url = webhook_url
@@ -4995,147 +4140,112 @@ class NotificationSettings(msrest.serialization.Model):
         self.notification_locale = notification_locale
 
 
-class NotificationSettingsFragment(msrest.serialization.Model):
-    """Notification settings for a schedule.
-
-    :param status: If notifications are enabled for this schedule (i.e. Enabled, Disabled).
-     Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param time_in_minutes: Time in minutes before event at which notification will be sent.
-    :type time_in_minutes: int
-    :param webhook_url: The webhook URL to which the notification will be sent.
-    :type webhook_url: str
-    :param email_recipient: The email recipient to send notifications to (can be a list of semi-
-     colon separated email addresses).
-    :type email_recipient: str
-    :param notification_locale: The locale to use when sending a notification (fallback for
-     unsupported languages is EN).
-    :type notification_locale: str
-    """
-
-    _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'time_in_minutes': {'key': 'timeInMinutes', 'type': 'int'},
-        'webhook_url': {'key': 'webhookUrl', 'type': 'str'},
-        'email_recipient': {'key': 'emailRecipient', 'type': 'str'},
-        'notification_locale': {'key': 'notificationLocale', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "EnableStatus"]] = None,
-        time_in_minutes: Optional[int] = None,
-        webhook_url: Optional[str] = None,
-        email_recipient: Optional[str] = None,
-        notification_locale: Optional[str] = None,
-        **kwargs
-    ):
-        super(NotificationSettingsFragment, self).__init__(**kwargs)
-        self.status = status
-        self.time_in_minutes = time_in_minutes
-        self.webhook_url = webhook_url
-        self.email_recipient = email_recipient
-        self.notification_locale = notification_locale
-
-
-class NotifyParameters(msrest.serialization.Model):
+class NotifyParameters(_serialization.Model):
     """Properties for generating a Notification.
 
-    :param event_name: The type of event (i.e. AutoShutdown, Cost). Possible values include:
-     "AutoShutdown", "Cost".
-    :type event_name: str or ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
-    :param json_payload: Properties for the notification in json format.
-    :type json_payload: str
+    :ivar event_name: The type of event (i.e. AutoShutdown, Cost). Known values are: "AutoShutdown"
+     and "Cost".
+    :vartype event_name: str or ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
+    :ivar json_payload: Properties for the notification in json format.
+    :vartype json_payload: str
     """
 
     _attribute_map = {
-        'event_name': {'key': 'eventName', 'type': 'str'},
-        'json_payload': {'key': 'jsonPayload', 'type': 'str'},
+        "event_name": {"key": "eventName", "type": "str"},
+        "json_payload": {"key": "jsonPayload", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        event_name: Optional[Union[str, "NotificationChannelEventType"]] = None,
+        event_name: Optional[Union[str, "_models.NotificationChannelEventType"]] = None,
         json_payload: Optional[str] = None,
         **kwargs
     ):
-        super(NotifyParameters, self).__init__(**kwargs)
+        """
+        :keyword event_name: The type of event (i.e. AutoShutdown, Cost). Known values are:
+         "AutoShutdown" and "Cost".
+        :paramtype event_name: str or ~azure.mgmt.devtestlabs.models.NotificationChannelEventType
+        :keyword json_payload: Properties for the notification in json format.
+        :paramtype json_payload: str
+        """
+        super().__init__(**kwargs)
         self.event_name = event_name
         self.json_payload = json_payload
 
 
-class OperationError(msrest.serialization.Model):
+class OperationError(_serialization.Model):
     """Error details for the operation in case of a failure.
 
-    :param code: The error code of the operation error.
-    :type code: str
-    :param message: The error message of the operation error.
-    :type message: str
+    :ivar code: The error code of the operation error.
+    :vartype code: str
+    :ivar message: The error message of the operation error.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationError, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: The error code of the operation error.
+        :paramtype code: str
+        :keyword message: The error message of the operation error.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class OperationMetadata(msrest.serialization.Model):
+class OperationMetadata(_serialization.Model):
     """The REST API operation supported by DevTestLab ResourceProvider.
 
-    :param name: Operation name: {provider}/{resource}/{operation}.
-    :type name: str
-    :param display: The object that describes the operations.
-    :type display: ~azure.mgmt.devtestlabs.models.OperationMetadataDisplay
+    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    :vartype name: str
+    :ivar display: The object that describes the operations.
+    :vartype display: ~azure.mgmt.devtestlabs.models.OperationMetadataDisplay
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationMetadataDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationMetadataDisplay"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        display: Optional["OperationMetadataDisplay"] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationMetadataDisplay"] = None, **kwargs
     ):
-        super(OperationMetadata, self).__init__(**kwargs)
+        """
+        :keyword name: Operation name: {provider}/{resource}/{operation}.
+        :paramtype name: str
+        :keyword display: The object that describes the operations.
+        :paramtype display: ~azure.mgmt.devtestlabs.models.OperationMetadataDisplay
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class OperationMetadataDisplay(msrest.serialization.Model):
+class OperationMetadataDisplay(_serialization.Model):
     """The object that describes the operations.
 
-    :param provider: Friendly name of the resource provider.
-    :type provider: str
-    :param resource: Resource type on which the operation is performed.
-    :type resource: str
-    :param operation: Operation type: read, write, delete, listKeys/action, etc.
-    :type operation: str
-    :param description: Friendly name of the operation.
-    :type description: str
+    :ivar provider: Friendly name of the resource provider.
+    :vartype provider: str
+    :ivar resource: Resource type on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: Operation type: read, write, delete, listKeys/action, etc.
+    :vartype operation: str
+    :ivar description: Friendly name of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -5147,127 +4257,155 @@ class OperationMetadataDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationMetadataDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: Friendly name of the resource provider.
+        :paramtype provider: str
+        :keyword resource: Resource type on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: Operation type: read, write, delete, listKeys/action, etc.
+        :paramtype operation: str
+        :keyword description: Friendly name of the operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationResult(msrest.serialization.Model):
+class OperationResult(_serialization.Model):
     """An Operation Result.
 
-    :param status: The operation status.
-    :type status: str
-    :param status_code: The status code for the operation. Possible values include: "Continue",
+    :ivar status: The operation status.
+    :vartype status: str
+    :ivar status_code: The status code for the operation. Known values are: "Continue",
      "SwitchingProtocols", "OK", "Created", "Accepted", "NonAuthoritativeInformation", "NoContent",
-     "ResetContent", "PartialContent", "MultipleChoices", "MovedPermanently", "Redirect",
-     "SeeOther", "NotModified", "UseProxy", "Unused", "TemporaryRedirect", "BadRequest",
-     "Unauthorized", "PaymentRequired", "Forbidden", "NotFound", "MethodNotAllowed",
-     "NotAcceptable", "ProxyAuthenticationRequired", "RequestTimeout", "Conflict", "Gone",
-     "LengthRequired", "PreconditionFailed", "RequestEntityTooLarge", "RequestUriTooLong",
-     "UnsupportedMediaType", "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired",
-     "InternalServerError", "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
+     "ResetContent", "PartialContent", "MultipleChoices", "Ambiguous", "MovedPermanently", "Moved",
+     "Found", "Redirect", "SeeOther", "RedirectMethod", "NotModified", "UseProxy", "Unused",
+     "TemporaryRedirect", "RedirectKeepVerb", "BadRequest", "Unauthorized", "PaymentRequired",
+     "Forbidden", "NotFound", "MethodNotAllowed", "NotAcceptable", "ProxyAuthenticationRequired",
+     "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
+     "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
+     "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
+     "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
      "HttpVersionNotSupported".
-    :type status_code: str or ~azure.mgmt.devtestlabs.models.HttpStatusCode
-    :param error: Error details for the operation in case of a failure.
-    :type error: ~azure.mgmt.devtestlabs.models.OperationError
+    :vartype status_code: str or ~azure.mgmt.devtestlabs.models.HttpStatusCode
+    :ivar error: Error details for the operation in case of a failure.
+    :vartype error: ~azure.mgmt.devtestlabs.models.OperationError
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'status_code': {'key': 'statusCode', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'OperationError'},
+        "status": {"key": "status", "type": "str"},
+        "status_code": {"key": "statusCode", "type": "str"},
+        "error": {"key": "error", "type": "OperationError"},
     }
 
     def __init__(
         self,
         *,
         status: Optional[str] = None,
-        status_code: Optional[Union[str, "HttpStatusCode"]] = None,
-        error: Optional["OperationError"] = None,
+        status_code: Optional[Union[str, "_models.HttpStatusCode"]] = None,
+        error: Optional["_models.OperationError"] = None,
         **kwargs
     ):
-        super(OperationResult, self).__init__(**kwargs)
+        """
+        :keyword status: The operation status.
+        :paramtype status: str
+        :keyword status_code: The status code for the operation. Known values are: "Continue",
+         "SwitchingProtocols", "OK", "Created", "Accepted", "NonAuthoritativeInformation", "NoContent",
+         "ResetContent", "PartialContent", "MultipleChoices", "Ambiguous", "MovedPermanently", "Moved",
+         "Found", "Redirect", "SeeOther", "RedirectMethod", "NotModified", "UseProxy", "Unused",
+         "TemporaryRedirect", "RedirectKeepVerb", "BadRequest", "Unauthorized", "PaymentRequired",
+         "Forbidden", "NotFound", "MethodNotAllowed", "NotAcceptable", "ProxyAuthenticationRequired",
+         "RequestTimeout", "Conflict", "Gone", "LengthRequired", "PreconditionFailed",
+         "RequestEntityTooLarge", "RequestUriTooLong", "UnsupportedMediaType",
+         "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired", "InternalServerError",
+         "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout", and
+         "HttpVersionNotSupported".
+        :paramtype status_code: str or ~azure.mgmt.devtestlabs.models.HttpStatusCode
+        :keyword error: Error details for the operation in case of a failure.
+        :paramtype error: ~azure.mgmt.devtestlabs.models.OperationError
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.status_code = status_code
         self.error = error
 
 
-class ParameterInfo(msrest.serialization.Model):
+class ParameterInfo(_serialization.Model):
     """Information about an artifact's parameter.
 
-    :param name: The name of the artifact parameter.
-    :type name: str
-    :param value: The value of the artifact parameter.
-    :type value: str
+    :ivar name: The name of the artifact parameter.
+    :vartype name: str
+    :ivar value: The value of the artifact parameter.
+    :vartype value: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ParameterInfo, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the artifact parameter.
+        :paramtype name: str
+        :keyword value: The value of the artifact parameter.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class ParametersValueFileInfo(msrest.serialization.Model):
+class ParametersValueFileInfo(_serialization.Model):
     """A file containing a set of parameter values for an ARM template.
 
-    :param file_name: File name.
-    :type file_name: str
-    :param parameters_value_info: Contents of the file.
-    :type parameters_value_info: object
+    :ivar file_name: File name.
+    :vartype file_name: str
+    :ivar parameters_value_info: Contents of the file.
+    :vartype parameters_value_info: JSON
     """
 
     _attribute_map = {
-        'file_name': {'key': 'fileName', 'type': 'str'},
-        'parameters_value_info': {'key': 'parametersValueInfo', 'type': 'object'},
+        "file_name": {"key": "fileName", "type": "str"},
+        "parameters_value_info": {"key": "parametersValueInfo", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        file_name: Optional[str] = None,
-        parameters_value_info: Optional[object] = None,
-        **kwargs
-    ):
-        super(ParametersValueFileInfo, self).__init__(**kwargs)
+    def __init__(self, *, file_name: Optional[str] = None, parameters_value_info: Optional[JSON] = None, **kwargs):
+        """
+        :keyword file_name: File name.
+        :paramtype file_name: str
+        :keyword parameters_value_info: Contents of the file.
+        :paramtype parameters_value_info: JSON
+        """
+        super().__init__(**kwargs)
         self.file_name = file_name
         self.parameters_value_info = parameters_value_info
 
 
-class PercentageCostThresholdProperties(msrest.serialization.Model):
+class PercentageCostThresholdProperties(_serialization.Model):
     """Properties of a percentage cost threshold.
 
-    :param threshold_value: The cost threshold value.
-    :type threshold_value: float
+    :ivar threshold_value: The cost threshold value.
+    :vartype threshold_value: float
     """
 
     _attribute_map = {
-        'threshold_value': {'key': 'thresholdValue', 'type': 'float'},
+        "threshold_value": {"key": "thresholdValue", "type": "float"},
     }
 
-    def __init__(
-        self,
-        *,
-        threshold_value: Optional[float] = None,
-        **kwargs
-    ):
-        super(PercentageCostThresholdProperties, self).__init__(**kwargs)
+    def __init__(self, *, threshold_value: Optional[float] = None, **kwargs):
+        """
+        :keyword threshold_value: The cost threshold value.
+        :paramtype threshold_value: float
+        """
+        super().__init__(**kwargs)
         self.threshold_value = threshold_value
 
 
-class Policy(Resource):
+class Policy(Resource):  # pylint: disable=too-many-instance-attributes
     """A Policy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5278,27 +4416,27 @@ class Policy(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param description: The description of the policy.
-    :type description: str
-    :param status: The status of the policy. Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.PolicyStatus
-    :param fact_name: The fact name of the policy (e.g. LabVmCount, LabVmSize, MaxVmsAllowedPerLab,
-     etc. Possible values include: "UserOwnedLabVmCount", "UserOwnedLabPremiumVmCount",
-     "LabVmCount", "LabPremiumVmCount", "LabVmSize", "GalleryImage", "UserOwnedLabVmCountInSubnet",
-     "LabTargetCost", "EnvironmentTemplate", "ScheduleEditPermission".
-    :type fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
-    :param fact_data: The fact data of the policy.
-    :type fact_data: str
-    :param threshold: The threshold of the policy (i.e. a number for MaxValuePolicy, and a JSON
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar description: The description of the policy.
+    :vartype description: str
+    :ivar status: The status of the policy. Known values are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.devtestlabs.models.PolicyStatus
+    :ivar fact_name: The fact name of the policy (e.g. LabVmCount, LabVmSize, MaxVmsAllowedPerLab,
+     etc. Known values are: "UserOwnedLabVmCount", "UserOwnedLabPremiumVmCount", "LabVmCount",
+     "LabPremiumVmCount", "LabVmSize", "GalleryImage", "UserOwnedLabVmCountInSubnet",
+     "LabTargetCost", "EnvironmentTemplate", and "ScheduleEditPermission".
+    :vartype fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
+    :ivar fact_data: The fact data of the policy.
+    :vartype fact_data: str
+    :ivar threshold: The threshold of the policy (i.e. a number for MaxValuePolicy, and a JSON
      array of values for AllowedValuesPolicy).
-    :type threshold: str
-    :param evaluator_type: The evaluator type of the policy (i.e. AllowedValuesPolicy,
-     MaxValuePolicy). Possible values include: "AllowedValuesPolicy", "MaxValuePolicy".
-    :type evaluator_type: str or ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
+    :vartype threshold: str
+    :ivar evaluator_type: The evaluator type of the policy (i.e. AllowedValuesPolicy,
+     MaxValuePolicy). Known values are: "AllowedValuesPolicy" and "MaxValuePolicy".
+    :vartype evaluator_type: str or ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
     :ivar created_date: The creation date of the policy.
     :vartype created_date: ~datetime.datetime
     :ivar provisioning_state: The provisioning status of the resource.
@@ -5308,29 +4446,29 @@ class Policy(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'fact_name': {'key': 'properties.factName', 'type': 'str'},
-        'fact_data': {'key': 'properties.factData', 'type': 'str'},
-        'threshold': {'key': 'properties.threshold', 'type': 'str'},
-        'evaluator_type': {'key': 'properties.evaluatorType', 'type': 'str'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "fact_name": {"key": "properties.factName", "type": "str"},
+        "fact_data": {"key": "properties.factData", "type": "str"},
+        "threshold": {"key": "properties.threshold", "type": "str"},
+        "evaluator_type": {"key": "properties.evaluatorType", "type": "str"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -5339,14 +4477,38 @@ class Policy(Resource):
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        status: Optional[Union[str, "PolicyStatus"]] = None,
-        fact_name: Optional[Union[str, "PolicyFactName"]] = None,
+        status: Optional[Union[str, "_models.PolicyStatus"]] = None,
+        fact_name: Optional[Union[str, "_models.PolicyFactName"]] = None,
         fact_data: Optional[str] = None,
         threshold: Optional[str] = None,
-        evaluator_type: Optional[Union[str, "PolicyEvaluatorType"]] = None,
+        evaluator_type: Optional[Union[str, "_models.PolicyEvaluatorType"]] = None,
         **kwargs
     ):
-        super(Policy, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword description: The description of the policy.
+        :paramtype description: str
+        :keyword status: The status of the policy. Known values are: "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.devtestlabs.models.PolicyStatus
+        :keyword fact_name: The fact name of the policy (e.g. LabVmCount, LabVmSize,
+         MaxVmsAllowedPerLab, etc. Known values are: "UserOwnedLabVmCount",
+         "UserOwnedLabPremiumVmCount", "LabVmCount", "LabPremiumVmCount", "LabVmSize", "GalleryImage",
+         "UserOwnedLabVmCountInSubnet", "LabTargetCost", "EnvironmentTemplate", and
+         "ScheduleEditPermission".
+        :paramtype fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
+        :keyword fact_data: The fact data of the policy.
+        :paramtype fact_data: str
+        :keyword threshold: The threshold of the policy (i.e. a number for MaxValuePolicy, and a JSON
+         array of values for AllowedValuesPolicy).
+        :paramtype threshold: str
+        :keyword evaluator_type: The evaluator type of the policy (i.e. AllowedValuesPolicy,
+         MaxValuePolicy). Known values are: "AllowedValuesPolicy" and "MaxValuePolicy".
+        :paramtype evaluator_type: str or ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.status = status
         self.fact_name = fact_name
@@ -5361,291 +4523,243 @@ class Policy(Resource):
 class PolicyFragment(UpdateResource):
     """A Policy.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param description: The description of the policy.
-    :type description: str
-    :param status: The status of the policy. Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.PolicyStatus
-    :param fact_name: The fact name of the policy (e.g. LabVmCount, LabVmSize, MaxVmsAllowedPerLab,
-     etc. Possible values include: "UserOwnedLabVmCount", "UserOwnedLabPremiumVmCount",
-     "LabVmCount", "LabPremiumVmCount", "LabVmSize", "GalleryImage", "UserOwnedLabVmCountInSubnet",
-     "LabTargetCost", "EnvironmentTemplate", "ScheduleEditPermission".
-    :type fact_name: str or ~azure.mgmt.devtestlabs.models.PolicyFactName
-    :param fact_data: The fact data of the policy.
-    :type fact_data: str
-    :param threshold: The threshold of the policy (i.e. a number for MaxValuePolicy, and a JSON
-     array of values for AllowedValuesPolicy).
-    :type threshold: str
-    :param evaluator_type: The evaluator type of the policy (i.e. AllowedValuesPolicy,
-     MaxValuePolicy). Possible values include: "AllowedValuesPolicy", "MaxValuePolicy".
-    :type evaluator_type: str or ~azure.mgmt.devtestlabs.models.PolicyEvaluatorType
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'fact_name': {'key': 'properties.factName', 'type': 'str'},
-        'fact_data': {'key': 'properties.factData', 'type': 'str'},
-        'threshold': {'key': 'properties.threshold', 'type': 'str'},
-        'evaluator_type': {'key': 'properties.evaluatorType', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        description: Optional[str] = None,
-        status: Optional[Union[str, "PolicyStatus"]] = None,
-        fact_name: Optional[Union[str, "PolicyFactName"]] = None,
-        fact_data: Optional[str] = None,
-        threshold: Optional[str] = None,
-        evaluator_type: Optional[Union[str, "PolicyEvaluatorType"]] = None,
-        **kwargs
-    ):
-        super(PolicyFragment, self).__init__(tags=tags, **kwargs)
-        self.description = description
-        self.status = status
-        self.fact_name = fact_name
-        self.fact_data = fact_data
-        self.threshold = threshold
-        self.evaluator_type = evaluator_type
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class PolicyList(msrest.serialization.Model):
+class PolicyList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.Policy]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.Policy]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Policy]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Policy]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Policy"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(PolicyList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Policy"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.Policy]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PolicySetResult(msrest.serialization.Model):
+class PolicySetResult(_serialization.Model):
     """Result of a policy set evaluation.
 
-    :param has_error: A value indicating whether this policy set evaluation has discovered
+    :ivar has_error: A value indicating whether this policy set evaluation has discovered
      violations.
-    :type has_error: bool
-    :param policy_violations: The list of policy violations.
-    :type policy_violations: list[~azure.mgmt.devtestlabs.models.PolicyViolation]
+    :vartype has_error: bool
+    :ivar policy_violations: The list of policy violations.
+    :vartype policy_violations: list[~azure.mgmt.devtestlabs.models.PolicyViolation]
     """
 
     _attribute_map = {
-        'has_error': {'key': 'hasError', 'type': 'bool'},
-        'policy_violations': {'key': 'policyViolations', 'type': '[PolicyViolation]'},
+        "has_error": {"key": "hasError", "type": "bool"},
+        "policy_violations": {"key": "policyViolations", "type": "[PolicyViolation]"},
     }
 
     def __init__(
         self,
         *,
         has_error: Optional[bool] = None,
-        policy_violations: Optional[List["PolicyViolation"]] = None,
+        policy_violations: Optional[List["_models.PolicyViolation"]] = None,
         **kwargs
     ):
-        super(PolicySetResult, self).__init__(**kwargs)
+        """
+        :keyword has_error: A value indicating whether this policy set evaluation has discovered
+         violations.
+        :paramtype has_error: bool
+        :keyword policy_violations: The list of policy violations.
+        :paramtype policy_violations: list[~azure.mgmt.devtestlabs.models.PolicyViolation]
+        """
+        super().__init__(**kwargs)
         self.has_error = has_error
         self.policy_violations = policy_violations
 
 
-class PolicyViolation(msrest.serialization.Model):
+class PolicyViolation(_serialization.Model):
     """Policy violation.
 
-    :param code: The code of the policy violation.
-    :type code: str
-    :param message: The message of the policy violation.
-    :type message: str
+    :ivar code: The code of the policy violation.
+    :vartype code: str
+    :ivar message: The message of the policy violation.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(PolicyViolation, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: The code of the policy violation.
+        :paramtype code: str
+        :keyword message: The message of the policy violation.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class Port(msrest.serialization.Model):
+class Port(_serialization.Model):
     """Properties of a network port.
 
-    :param transport_protocol: Protocol type of the port. Possible values include: "Tcp", "Udp".
-    :type transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
-    :param backend_port: Backend port of the target virtual machine.
-    :type backend_port: int
+    :ivar transport_protocol: Protocol type of the port. Known values are: "Tcp" and "Udp".
+    :vartype transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
+    :ivar backend_port: Backend port of the target virtual machine.
+    :vartype backend_port: int
     """
 
     _attribute_map = {
-        'transport_protocol': {'key': 'transportProtocol', 'type': 'str'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
+        "transport_protocol": {"key": "transportProtocol", "type": "str"},
+        "backend_port": {"key": "backendPort", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        transport_protocol: Optional[Union[str, "TransportProtocol"]] = None,
+        transport_protocol: Optional[Union[str, "_models.TransportProtocol"]] = None,
         backend_port: Optional[int] = None,
         **kwargs
     ):
-        super(Port, self).__init__(**kwargs)
+        """
+        :keyword transport_protocol: Protocol type of the port. Known values are: "Tcp" and "Udp".
+        :paramtype transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
+        :keyword backend_port: Backend port of the target virtual machine.
+        :paramtype backend_port: int
+        """
+        super().__init__(**kwargs)
         self.transport_protocol = transport_protocol
         self.backend_port = backend_port
 
 
-class PortFragment(msrest.serialization.Model):
-    """Properties of a network port.
-
-    :param transport_protocol: Protocol type of the port. Possible values include: "Tcp", "Udp".
-    :type transport_protocol: str or ~azure.mgmt.devtestlabs.models.TransportProtocol
-    :param backend_port: Backend port of the target virtual machine.
-    :type backend_port: int
-    """
-
-    _attribute_map = {
-        'transport_protocol': {'key': 'transportProtocol', 'type': 'str'},
-        'backend_port': {'key': 'backendPort', 'type': 'int'},
-    }
-
-    def __init__(
-        self,
-        *,
-        transport_protocol: Optional[Union[str, "TransportProtocol"]] = None,
-        backend_port: Optional[int] = None,
-        **kwargs
-    ):
-        super(PortFragment, self).__init__(**kwargs)
-        self.transport_protocol = transport_protocol
-        self.backend_port = backend_port
-
-
-class ProviderOperationResult(msrest.serialization.Model):
+class ProviderOperationResult(_serialization.Model):
     """Result of the request to list REST API operations.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param value: List of operations supported by the resource provider.
-    :type value: list[~azure.mgmt.devtestlabs.models.OperationMetadata]
+    :ivar value: List of operations supported by the resource provider.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.OperationMetadata]
     :ivar next_link: URL to get the next set of operation list results if there are any.
     :vartype next_link: str
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationMetadata]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationMetadata]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["OperationMetadata"]] = None,
-        **kwargs
-    ):
-        super(ProviderOperationResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.OperationMetadata"]] = None, **kwargs):
+        """
+        :keyword value: List of operations supported by the resource provider.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.OperationMetadata]
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class RdpConnection(msrest.serialization.Model):
+class RdpConnection(_serialization.Model):
     """Represents a .rdp file.
 
-    :param contents: The contents of the .rdp file.
-    :type contents: str
+    :ivar contents: The contents of the .rdp file.
+    :vartype contents: str
     """
 
     _attribute_map = {
-        'contents': {'key': 'contents', 'type': 'str'},
+        "contents": {"key": "contents", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        contents: Optional[str] = None,
-        **kwargs
-    ):
-        super(RdpConnection, self).__init__(**kwargs)
+    def __init__(self, *, contents: Optional[str] = None, **kwargs):
+        """
+        :keyword contents: The contents of the .rdp file.
+        :paramtype contents: str
+        """
+        super().__init__(**kwargs)
         self.contents = contents
 
 
-class ResizeLabVirtualMachineProperties(msrest.serialization.Model):
+class ResizeLabVirtualMachineProperties(_serialization.Model):
     """Request body for resizing a virtual machine.
 
-    :param size: Specifies the size of the virtual machine.
-    :type size: str
+    :ivar size: Specifies the size of the virtual machine.
+    :vartype size: str
     """
 
     _attribute_map = {
-        'size': {'key': 'size', 'type': 'str'},
+        "size": {"key": "size", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        size: Optional[str] = None,
-        **kwargs
-    ):
-        super(ResizeLabVirtualMachineProperties, self).__init__(**kwargs)
+    def __init__(self, *, size: Optional[str] = None, **kwargs):
+        """
+        :keyword size: Specifies the size of the virtual machine.
+        :paramtype size: str
+        """
+        super().__init__(**kwargs)
         self.size = size
 
 
-class RetargetScheduleProperties(msrest.serialization.Model):
+class RetargetScheduleProperties(_serialization.Model):
     """Properties for retargeting a virtual machine schedule.
 
-    :param current_resource_id: The resource Id of the virtual machine on which the schedule
+    :ivar current_resource_id: The resource Id of the virtual machine on which the schedule
      operates.
-    :type current_resource_id: str
-    :param target_resource_id: The resource Id of the virtual machine that the schedule should be
+    :vartype current_resource_id: str
+    :ivar target_resource_id: The resource Id of the virtual machine that the schedule should be
      retargeted to.
-    :type target_resource_id: str
+    :vartype target_resource_id: str
     """
 
     _attribute_map = {
-        'current_resource_id': {'key': 'currentResourceId', 'type': 'str'},
-        'target_resource_id': {'key': 'targetResourceId', 'type': 'str'},
+        "current_resource_id": {"key": "currentResourceId", "type": "str"},
+        "target_resource_id": {"key": "targetResourceId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        current_resource_id: Optional[str] = None,
-        target_resource_id: Optional[str] = None,
-        **kwargs
+        self, *, current_resource_id: Optional[str] = None, target_resource_id: Optional[str] = None, **kwargs
     ):
-        super(RetargetScheduleProperties, self).__init__(**kwargs)
+        """
+        :keyword current_resource_id: The resource Id of the virtual machine on which the schedule
+         operates.
+        :paramtype current_resource_id: str
+        :keyword target_resource_id: The resource Id of the virtual machine that the schedule should be
+         retargeted to.
+        :paramtype target_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.current_resource_id = current_resource_id
         self.target_resource_id = target_resource_id
 
 
-class Schedule(Resource):
+class Schedule(Resource):  # pylint: disable=too-many-instance-attributes
     """A schedule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5656,32 +4770,32 @@ class Schedule(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param status: The status of the schedule (i.e. Enabled, Disabled). Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
-    :type task_type: str
-    :param weekly_recurrence: If the schedule will occur only some days of the week, specify the
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar status: The status of the schedule (i.e. Enabled, Disabled). Known values are: "Enabled"
+     and "Disabled".
+    :vartype status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+    :ivar task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
+    :vartype task_type: str
+    :ivar weekly_recurrence: If the schedule will occur only some days of the week, specify the
      weekly recurrence.
-    :type weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetails
-    :param daily_recurrence: If the schedule will occur once each day of the week, specify the
-     daily recurrence.
-    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetails
-    :param hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
+    :vartype weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetails
+    :ivar daily_recurrence: If the schedule will occur once each day of the week, specify the daily
      recurrence.
-    :type hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
-    :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
-    :type time_zone_id: str
-    :param notification_settings: Notification settings.
-    :type notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
+    :vartype daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetails
+    :ivar hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
+     recurrence.
+    :vartype hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
+    :ivar time_zone_id: The time zone ID (e.g. Pacific Standard time).
+    :vartype time_zone_id: str
+    :ivar notification_settings: Notification settings.
+    :vartype notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
     :ivar created_date: The creation date of the schedule.
     :vartype created_date: ~datetime.datetime
-    :param target_resource_id: The resource ID to which the schedule belongs.
-    :type target_resource_id: str
+    :ivar target_resource_id: The resource ID to which the schedule belongs.
+    :vartype target_resource_id: str
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -5689,31 +4803,31 @@ class Schedule(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'task_type': {'key': 'properties.taskType', 'type': 'str'},
-        'weekly_recurrence': {'key': 'properties.weeklyRecurrence', 'type': 'WeekDetails'},
-        'daily_recurrence': {'key': 'properties.dailyRecurrence', 'type': 'DayDetails'},
-        'hourly_recurrence': {'key': 'properties.hourlyRecurrence', 'type': 'HourDetails'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettings'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "status": {"key": "properties.status", "type": "str"},
+        "task_type": {"key": "properties.taskType", "type": "str"},
+        "weekly_recurrence": {"key": "properties.weeklyRecurrence", "type": "WeekDetails"},
+        "daily_recurrence": {"key": "properties.dailyRecurrence", "type": "DayDetails"},
+        "hourly_recurrence": {"key": "properties.hourlyRecurrence", "type": "HourDetails"},
+        "time_zone_id": {"key": "properties.timeZoneId", "type": "str"},
+        "notification_settings": {"key": "properties.notificationSettings", "type": "NotificationSettings"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "target_resource_id": {"key": "properties.targetResourceId", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -5721,17 +4835,43 @@ class Schedule(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        status: Optional[Union[str, "EnableStatus"]] = None,
+        status: Optional[Union[str, "_models.EnableStatus"]] = None,
         task_type: Optional[str] = None,
-        weekly_recurrence: Optional["WeekDetails"] = None,
-        daily_recurrence: Optional["DayDetails"] = None,
-        hourly_recurrence: Optional["HourDetails"] = None,
+        weekly_recurrence: Optional["_models.WeekDetails"] = None,
+        daily_recurrence: Optional["_models.DayDetails"] = None,
+        hourly_recurrence: Optional["_models.HourDetails"] = None,
         time_zone_id: Optional[str] = None,
-        notification_settings: Optional["NotificationSettings"] = None,
+        notification_settings: Optional["_models.NotificationSettings"] = None,
         target_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(Schedule, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword status: The status of the schedule (i.e. Enabled, Disabled). Known values are:
+         "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+        :keyword task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
+        :paramtype task_type: str
+        :keyword weekly_recurrence: If the schedule will occur only some days of the week, specify the
+         weekly recurrence.
+        :paramtype weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetails
+        :keyword daily_recurrence: If the schedule will occur once each day of the week, specify the
+         daily recurrence.
+        :paramtype daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetails
+        :keyword hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
+         recurrence.
+        :paramtype hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
+        :keyword time_zone_id: The time zone ID (e.g. Pacific Standard time).
+        :paramtype time_zone_id: str
+        :keyword notification_settings: Notification settings.
+        :paramtype notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
+        :keyword target_resource_id: The resource ID to which the schedule belongs.
+        :paramtype target_resource_id: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.status = status
         self.task_type = task_type
         self.weekly_recurrence = weekly_recurrence
@@ -5745,145 +4885,101 @@ class Schedule(Resource):
         self.unique_identifier = None
 
 
-class ScheduleCreationParameter(msrest.serialization.Model):
+class ScheduleCreationParameter(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Properties for creating a schedule.
 
-    :param name: The name of the virtual machine or environment.
-    :type name: str
-    :param location: The location of the new virtual machine or environment.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param status: The status of the schedule (i.e. Enabled, Disabled). Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
-    :type task_type: str
-    :param weekly_recurrence: If the schedule will occur only some days of the week, specify the
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the virtual machine or environment.
+    :vartype name: str
+    :ivar location: The location of the new virtual machine or environment.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar status: The status of the schedule (i.e. Enabled, Disabled). Known values are: "Enabled"
+     and "Disabled".
+    :vartype status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+    :ivar task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
+    :vartype task_type: str
+    :ivar weekly_recurrence: If the schedule will occur only some days of the week, specify the
      weekly recurrence.
-    :type weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetails
-    :param daily_recurrence: If the schedule will occur once each day of the week, specify the
-     daily recurrence.
-    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetails
-    :param hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
+    :vartype weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetails
+    :ivar daily_recurrence: If the schedule will occur once each day of the week, specify the daily
      recurrence.
-    :type hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
-    :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
-    :type time_zone_id: str
-    :param notification_settings: Notification settings.
-    :type notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
-    :param target_resource_id: The resource ID to which the schedule belongs.
-    :type target_resource_id: str
+    :vartype daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetails
+    :ivar hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
+     recurrence.
+    :vartype hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
+    :ivar time_zone_id: The time zone ID (e.g. Pacific Standard time).
+    :vartype time_zone_id: str
+    :ivar notification_settings: Notification settings.
+    :vartype notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
+    :ivar target_resource_id: The resource ID to which the schedule belongs.
+    :vartype target_resource_id: str
     """
 
+    _validation = {
+        "location": {"readonly": True},
+    }
+
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'task_type': {'key': 'properties.taskType', 'type': 'str'},
-        'weekly_recurrence': {'key': 'properties.weeklyRecurrence', 'type': 'WeekDetails'},
-        'daily_recurrence': {'key': 'properties.dailyRecurrence', 'type': 'DayDetails'},
-        'hourly_recurrence': {'key': 'properties.hourlyRecurrence', 'type': 'HourDetails'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettings'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "status": {"key": "properties.status", "type": "str"},
+        "task_type": {"key": "properties.taskType", "type": "str"},
+        "weekly_recurrence": {"key": "properties.weeklyRecurrence", "type": "WeekDetails"},
+        "daily_recurrence": {"key": "properties.dailyRecurrence", "type": "DayDetails"},
+        "hourly_recurrence": {"key": "properties.hourlyRecurrence", "type": "HourDetails"},
+        "time_zone_id": {"key": "properties.timeZoneId", "type": "str"},
+        "notification_settings": {"key": "properties.notificationSettings", "type": "NotificationSettings"},
+        "target_resource_id": {"key": "properties.targetResourceId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        status: Optional[Union[str, "EnableStatus"]] = None,
+        status: Optional[Union[str, "_models.EnableStatus"]] = None,
         task_type: Optional[str] = None,
-        weekly_recurrence: Optional["WeekDetails"] = None,
-        daily_recurrence: Optional["DayDetails"] = None,
-        hourly_recurrence: Optional["HourDetails"] = None,
+        weekly_recurrence: Optional["_models.WeekDetails"] = None,
+        daily_recurrence: Optional["_models.DayDetails"] = None,
+        hourly_recurrence: Optional["_models.HourDetails"] = None,
         time_zone_id: Optional[str] = None,
-        notification_settings: Optional["NotificationSettings"] = None,
+        notification_settings: Optional["_models.NotificationSettings"] = None,
         target_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(ScheduleCreationParameter, self).__init__(**kwargs)
+        """
+        :keyword name: The name of the virtual machine or environment.
+        :paramtype name: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword status: The status of the schedule (i.e. Enabled, Disabled). Known values are:
+         "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
+        :keyword task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
+        :paramtype task_type: str
+        :keyword weekly_recurrence: If the schedule will occur only some days of the week, specify the
+         weekly recurrence.
+        :paramtype weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetails
+        :keyword daily_recurrence: If the schedule will occur once each day of the week, specify the
+         daily recurrence.
+        :paramtype daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetails
+        :keyword hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
+         recurrence.
+        :paramtype hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetails
+        :keyword time_zone_id: The time zone ID (e.g. Pacific Standard time).
+        :paramtype time_zone_id: str
+        :keyword notification_settings: Notification settings.
+        :paramtype notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettings
+        :keyword target_resource_id: The resource ID to which the schedule belongs.
+        :paramtype target_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.name = name
-        self.location = location
-        self.tags = tags
-        self.status = status
-        self.task_type = task_type
-        self.weekly_recurrence = weekly_recurrence
-        self.daily_recurrence = daily_recurrence
-        self.hourly_recurrence = hourly_recurrence
-        self.time_zone_id = time_zone_id
-        self.notification_settings = notification_settings
-        self.target_resource_id = target_resource_id
-
-
-class ScheduleCreationParameterFragment(msrest.serialization.Model):
-    """Properties for creating a schedule.
-
-    :param name: The name of the virtual machine or environment.
-    :type name: str
-    :param location: The location of the new virtual machine or environment.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param status: The status of the schedule (i.e. Enabled, Disabled). Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
-    :type task_type: str
-    :param weekly_recurrence: If the schedule will occur only some days of the week, specify the
-     weekly recurrence.
-    :type weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetailsFragment
-    :param daily_recurrence: If the schedule will occur once each day of the week, specify the
-     daily recurrence.
-    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetailsFragment
-    :param hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
-     recurrence.
-    :type hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetailsFragment
-    :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
-    :type time_zone_id: str
-    :param notification_settings: Notification settings.
-    :type notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettingsFragment
-    :param target_resource_id: The resource ID to which the schedule belongs.
-    :type target_resource_id: str
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'task_type': {'key': 'properties.taskType', 'type': 'str'},
-        'weekly_recurrence': {'key': 'properties.weeklyRecurrence', 'type': 'WeekDetailsFragment'},
-        'daily_recurrence': {'key': 'properties.dailyRecurrence', 'type': 'DayDetailsFragment'},
-        'hourly_recurrence': {'key': 'properties.hourlyRecurrence', 'type': 'HourDetailsFragment'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettingsFragment'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        status: Optional[Union[str, "EnableStatus"]] = None,
-        task_type: Optional[str] = None,
-        weekly_recurrence: Optional["WeekDetailsFragment"] = None,
-        daily_recurrence: Optional["DayDetailsFragment"] = None,
-        hourly_recurrence: Optional["HourDetailsFragment"] = None,
-        time_zone_id: Optional[str] = None,
-        notification_settings: Optional["NotificationSettingsFragment"] = None,
-        target_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ScheduleCreationParameterFragment, self).__init__(**kwargs)
-        self.name = name
-        self.location = location
+        self.location = None
         self.tags = tags
         self.status = status
         self.task_type = task_type
@@ -5898,89 +4994,44 @@ class ScheduleCreationParameterFragment(msrest.serialization.Model):
 class ScheduleFragment(UpdateResource):
     """A schedule.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param status: The status of the schedule (i.e. Enabled, Disabled). Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.EnableStatus
-    :param task_type: The task type of the schedule (e.g. LabVmsShutdownTask, LabVmAutoStart).
-    :type task_type: str
-    :param weekly_recurrence: If the schedule will occur only some days of the week, specify the
-     weekly recurrence.
-    :type weekly_recurrence: ~azure.mgmt.devtestlabs.models.WeekDetailsFragment
-    :param daily_recurrence: If the schedule will occur once each day of the week, specify the
-     daily recurrence.
-    :type daily_recurrence: ~azure.mgmt.devtestlabs.models.DayDetailsFragment
-    :param hourly_recurrence: If the schedule will occur multiple times a day, specify the hourly
-     recurrence.
-    :type hourly_recurrence: ~azure.mgmt.devtestlabs.models.HourDetailsFragment
-    :param time_zone_id: The time zone ID (e.g. Pacific Standard time).
-    :type time_zone_id: str
-    :param notification_settings: Notification settings.
-    :type notification_settings: ~azure.mgmt.devtestlabs.models.NotificationSettingsFragment
-    :param target_resource_id: The resource ID to which the schedule belongs.
-    :type target_resource_id: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'task_type': {'key': 'properties.taskType', 'type': 'str'},
-        'weekly_recurrence': {'key': 'properties.weeklyRecurrence', 'type': 'WeekDetailsFragment'},
-        'daily_recurrence': {'key': 'properties.dailyRecurrence', 'type': 'DayDetailsFragment'},
-        'hourly_recurrence': {'key': 'properties.hourlyRecurrence', 'type': 'HourDetailsFragment'},
-        'time_zone_id': {'key': 'properties.timeZoneId', 'type': 'str'},
-        'notification_settings': {'key': 'properties.notificationSettings', 'type': 'NotificationSettingsFragment'},
-        'target_resource_id': {'key': 'properties.targetResourceId', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        status: Optional[Union[str, "EnableStatus"]] = None,
-        task_type: Optional[str] = None,
-        weekly_recurrence: Optional["WeekDetailsFragment"] = None,
-        daily_recurrence: Optional["DayDetailsFragment"] = None,
-        hourly_recurrence: Optional["HourDetailsFragment"] = None,
-        time_zone_id: Optional[str] = None,
-        notification_settings: Optional["NotificationSettingsFragment"] = None,
-        target_resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ScheduleFragment, self).__init__(tags=tags, **kwargs)
-        self.status = status
-        self.task_type = task_type
-        self.weekly_recurrence = weekly_recurrence
-        self.daily_recurrence = daily_recurrence
-        self.hourly_recurrence = hourly_recurrence
-        self.time_zone_id = time_zone_id
-        self.notification_settings = notification_settings
-        self.target_resource_id = target_resource_id
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class ScheduleList(msrest.serialization.Model):
+class ScheduleList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.Schedule]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.Schedule]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Schedule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Schedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Schedule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(ScheduleList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Schedule"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.Schedule]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -5996,12 +5047,12 @@ class Secret(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param value: The value of the secret for secret creation.
-    :type value: str
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar value: The value of the secret for secret creation.
+    :vartype value: str
     :ivar provisioning_state: The provisioning status of the resource.
     :vartype provisioning_state: str
     :ivar unique_identifier: The unique immutable identifier of a resource (Guid).
@@ -6009,22 +5060,22 @@ class Secret(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'value': {'key': 'properties.value', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "value": {"key": "properties.value", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -6035,7 +5086,15 @@ class Secret(Resource):
         value: Optional[str] = None,
         **kwargs
     ):
-        super(Secret, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword value: The value of the secret for secret creation.
+        :paramtype value: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.value = value
         self.provisioning_state = None
         self.unique_identifier = None
@@ -6044,50 +5103,44 @@ class Secret(Resource):
 class SecretFragment(UpdateResource):
     """A secret.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param value: The value of the secret for secret creation.
-    :type value: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'value': {'key': 'properties.value', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(SecretFragment, self).__init__(tags=tags, **kwargs)
-        self.value = value
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class SecretList(msrest.serialization.Model):
+class SecretList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.Secret]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.Secret]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Secret]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Secret]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Secret"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(SecretList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Secret"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.Secret]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -6103,15 +5156,15 @@ class ServiceFabric(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param external_service_fabric_id: The backing service fabric resource's id.
-    :type external_service_fabric_id: str
-    :param environment_id: The resource id of the environment under which the service fabric
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar external_service_fabric_id: The backing service fabric resource's id.
+    :vartype external_service_fabric_id: str
+    :ivar environment_id: The resource id of the environment under which the service fabric
      resource is present.
-    :type environment_id: str
+    :vartype environment_id: str
     :ivar applicable_schedule: The applicable schedule for the virtual machine.
     :vartype applicable_schedule: ~azure.mgmt.devtestlabs.models.ApplicableSchedule
     :ivar provisioning_state: The provisioning status of the resource.
@@ -6121,25 +5174,25 @@ class ServiceFabric(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'applicable_schedule': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "applicable_schedule": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'external_service_fabric_id': {'key': 'properties.externalServiceFabricId', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
-        'applicable_schedule': {'key': 'properties.applicableSchedule', 'type': 'ApplicableSchedule'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "external_service_fabric_id": {"key": "properties.externalServiceFabricId", "type": "str"},
+        "environment_id": {"key": "properties.environmentId", "type": "str"},
+        "applicable_schedule": {"key": "properties.applicableSchedule", "type": "ApplicableSchedule"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -6151,7 +5204,18 @@ class ServiceFabric(Resource):
         environment_id: Optional[str] = None,
         **kwargs
     ):
-        super(ServiceFabric, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword external_service_fabric_id: The backing service fabric resource's id.
+        :paramtype external_service_fabric_id: str
+        :keyword environment_id: The resource id of the environment under which the service fabric
+         resource is present.
+        :paramtype environment_id: str
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.external_service_fabric_id = external_service_fabric_id
         self.environment_id = environment_id
         self.applicable_schedule = None
@@ -6162,56 +5226,46 @@ class ServiceFabric(Resource):
 class ServiceFabricFragment(UpdateResource):
     """A Service Fabric.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param external_service_fabric_id: The backing service fabric resource's id.
-    :type external_service_fabric_id: str
-    :param environment_id: The resource id of the environment under which the service fabric
-     resource is present.
-    :type environment_id: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'external_service_fabric_id': {'key': 'properties.externalServiceFabricId', 'type': 'str'},
-        'environment_id': {'key': 'properties.environmentId', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        external_service_fabric_id: Optional[str] = None,
-        environment_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ServiceFabricFragment, self).__init__(tags=tags, **kwargs)
-        self.external_service_fabric_id = external_service_fabric_id
-        self.environment_id = environment_id
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class ServiceFabricList(msrest.serialization.Model):
+class ServiceFabricList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.ServiceFabric]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.ServiceFabric]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ServiceFabric]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ServiceFabric]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ServiceFabric"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ServiceFabric"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(ServiceFabricList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.ServiceFabric]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -6227,27 +5281,27 @@ class ServiceRunner(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param identity: The identity of the resource.
-    :type identity: ~azure.mgmt.devtestlabs.models.IdentityProperties
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar identity: The identity of the resource.
+    :vartype identity: ~azure.mgmt.devtestlabs.models.IdentityProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'IdentityProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "IdentityProperties"},
     }
 
     def __init__(
@@ -6255,100 +5309,114 @@ class ServiceRunner(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["IdentityProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
         **kwargs
     ):
-        super(ServiceRunner, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identity of the resource.
+        :paramtype identity: ~azure.mgmt.devtestlabs.models.IdentityProperties
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
 
 
-class SharedPublicIpAddressConfiguration(msrest.serialization.Model):
-    """Properties of a virtual machine that determine how it is connected to a load balancer.
+class ServiceRunnerList(_serialization.Model):
+    """The response of a list operation.
 
-    :param inbound_nat_rules: The incoming NAT rules.
-    :type inbound_nat_rules: list[~azure.mgmt.devtestlabs.models.InboundNatRule]
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.ServiceRunner]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'inbound_nat_rules': {'key': 'inboundNatRules', 'type': '[InboundNatRule]'},
+        "value": {"key": "value", "type": "[ServiceRunner]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        inbound_nat_rules: Optional[List["InboundNatRule"]] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ServiceRunner"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(SharedPublicIpAddressConfiguration, self).__init__(**kwargs)
-        self.inbound_nat_rules = inbound_nat_rules
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.ServiceRunner]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
 
 
-class SharedPublicIpAddressConfigurationFragment(msrest.serialization.Model):
+class SharedPublicIpAddressConfiguration(_serialization.Model):
     """Properties of a virtual machine that determine how it is connected to a load balancer.
 
-    :param inbound_nat_rules: The incoming NAT rules.
-    :type inbound_nat_rules: list[~azure.mgmt.devtestlabs.models.InboundNatRuleFragment]
+    :ivar inbound_nat_rules: The incoming NAT rules.
+    :vartype inbound_nat_rules: list[~azure.mgmt.devtestlabs.models.InboundNatRule]
     """
 
     _attribute_map = {
-        'inbound_nat_rules': {'key': 'inboundNatRules', 'type': '[InboundNatRuleFragment]'},
+        "inbound_nat_rules": {"key": "inboundNatRules", "type": "[InboundNatRule]"},
     }
 
-    def __init__(
-        self,
-        *,
-        inbound_nat_rules: Optional[List["InboundNatRuleFragment"]] = None,
-        **kwargs
-    ):
-        super(SharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
+    def __init__(self, *, inbound_nat_rules: Optional[List["_models.InboundNatRule"]] = None, **kwargs):
+        """
+        :keyword inbound_nat_rules: The incoming NAT rules.
+        :paramtype inbound_nat_rules: list[~azure.mgmt.devtestlabs.models.InboundNatRule]
+        """
+        super().__init__(**kwargs)
         self.inbound_nat_rules = inbound_nat_rules
 
 
-class ShutdownNotificationContent(msrest.serialization.Model):
+class ShutdownNotificationContent(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The contents of a shutdown notification. Webhooks can use this type to deserialize the request body when they get notified of an imminent shutdown.
 
-    :param skip_url: The URL to skip auto-shutdown.
-    :type skip_url: str
-    :param delay_url60: The URL to delay shutdown by 60 minutes.
-    :type delay_url60: str
-    :param delay_url120: The URL to delay shutdown by 2 hours.
-    :type delay_url120: str
-    :param vm_name: The virtual machine to be shut down.
-    :type vm_name: str
-    :param guid: The GUID for the virtual machine to be shut down.
-    :type guid: str
-    :param owner: The owner of the virtual machine.
-    :type owner: str
-    :param vm_url: The URL of the virtual machine.
-    :type vm_url: str
-    :param minutes_until_shutdown: Minutes remaining until shutdown.
-    :type minutes_until_shutdown: str
-    :param event_type: The event for which a notification will be sent.
-    :type event_type: str
-    :param text: The text for the notification.
-    :type text: str
-    :param subscription_id: The subscription ID for the schedule.
-    :type subscription_id: str
-    :param resource_group_name: The resource group name for the schedule.
-    :type resource_group_name: str
-    :param lab_name: The lab for the schedule.
-    :type lab_name: str
+    :ivar skip_url: The URL to skip auto-shutdown.
+    :vartype skip_url: str
+    :ivar delay_url60: The URL to delay shutdown by 60 minutes.
+    :vartype delay_url60: str
+    :ivar delay_url120: The URL to delay shutdown by 2 hours.
+    :vartype delay_url120: str
+    :ivar vm_name: The virtual machine to be shut down.
+    :vartype vm_name: str
+    :ivar guid: The GUID for the virtual machine to be shut down.
+    :vartype guid: str
+    :ivar owner: The owner of the virtual machine.
+    :vartype owner: str
+    :ivar vm_url: The URL of the virtual machine.
+    :vartype vm_url: str
+    :ivar minutes_until_shutdown: Minutes remaining until shutdown.
+    :vartype minutes_until_shutdown: str
+    :ivar event_type: The event for which a notification will be sent.
+    :vartype event_type: str
+    :ivar text: The text for the notification.
+    :vartype text: str
+    :ivar subscription_id: The subscription ID for the schedule.
+    :vartype subscription_id: str
+    :ivar resource_group_name: The resource group name for the schedule.
+    :vartype resource_group_name: str
+    :ivar lab_name: The lab for the schedule.
+    :vartype lab_name: str
     """
 
     _attribute_map = {
-        'skip_url': {'key': 'skipUrl', 'type': 'str'},
-        'delay_url60': {'key': 'delayUrl60', 'type': 'str'},
-        'delay_url120': {'key': 'delayUrl120', 'type': 'str'},
-        'vm_name': {'key': 'vmName', 'type': 'str'},
-        'guid': {'key': 'guid', 'type': 'str'},
-        'owner': {'key': 'owner', 'type': 'str'},
-        'vm_url': {'key': 'vmUrl', 'type': 'str'},
-        'minutes_until_shutdown': {'key': 'minutesUntilShutdown', 'type': 'str'},
-        'event_type': {'key': 'eventType', 'type': 'str'},
-        'text': {'key': 'text', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
-        'lab_name': {'key': 'labName', 'type': 'str'},
+        "skip_url": {"key": "skipUrl", "type": "str"},
+        "delay_url60": {"key": "delayUrl60", "type": "str"},
+        "delay_url120": {"key": "delayUrl120", "type": "str"},
+        "vm_name": {"key": "vmName", "type": "str"},
+        "guid": {"key": "guid", "type": "str"},
+        "owner": {"key": "owner", "type": "str"},
+        "vm_url": {"key": "vmUrl", "type": "str"},
+        "minutes_until_shutdown": {"key": "minutesUntilShutdown", "type": "str"},
+        "event_type": {"key": "eventType", "type": "str"},
+        "text": {"key": "text", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "lab_name": {"key": "labName", "type": "str"},
     }
 
     def __init__(
@@ -6369,7 +5437,35 @@ class ShutdownNotificationContent(msrest.serialization.Model):
         lab_name: Optional[str] = None,
         **kwargs
     ):
-        super(ShutdownNotificationContent, self).__init__(**kwargs)
+        """
+        :keyword skip_url: The URL to skip auto-shutdown.
+        :paramtype skip_url: str
+        :keyword delay_url60: The URL to delay shutdown by 60 minutes.
+        :paramtype delay_url60: str
+        :keyword delay_url120: The URL to delay shutdown by 2 hours.
+        :paramtype delay_url120: str
+        :keyword vm_name: The virtual machine to be shut down.
+        :paramtype vm_name: str
+        :keyword guid: The GUID for the virtual machine to be shut down.
+        :paramtype guid: str
+        :keyword owner: The owner of the virtual machine.
+        :paramtype owner: str
+        :keyword vm_url: The URL of the virtual machine.
+        :paramtype vm_url: str
+        :keyword minutes_until_shutdown: Minutes remaining until shutdown.
+        :paramtype minutes_until_shutdown: str
+        :keyword event_type: The event for which a notification will be sent.
+        :paramtype event_type: str
+        :keyword text: The text for the notification.
+        :paramtype text: str
+        :keyword subscription_id: The subscription ID for the schedule.
+        :paramtype subscription_id: str
+        :keyword resource_group_name: The resource group name for the schedule.
+        :paramtype resource_group_name: str
+        :keyword lab_name: The lab for the schedule.
+        :paramtype lab_name: str
+        """
+        super().__init__(**kwargs)
         self.skip_url = skip_url
         self.delay_url60 = delay_url60
         self.delay_url120 = delay_url120
@@ -6385,22 +5481,22 @@ class ShutdownNotificationContent(msrest.serialization.Model):
         self.lab_name = lab_name
 
 
-class Subnet(msrest.serialization.Model):
+class Subnet(_serialization.Model):
     """Subnet information.
 
-    :param resource_id: The resource ID of the subnet.
-    :type resource_id: str
-    :param lab_subnet_name: The name of the subnet as seen in the lab.
-    :type lab_subnet_name: str
-    :param allow_public_ip: The permission policy of the subnet for allowing public IP addresses
-     (i.e. Allow, Deny)). Possible values include: "Default", "Deny", "Allow".
-    :type allow_public_ip: str or ~azure.mgmt.devtestlabs.models.UsagePermissionType
+    :ivar resource_id: The resource ID of the subnet.
+    :vartype resource_id: str
+    :ivar lab_subnet_name: The name of the subnet as seen in the lab.
+    :vartype lab_subnet_name: str
+    :ivar allow_public_ip: The permission policy of the subnet for allowing public IP addresses
+     (i.e. Allow, Deny)). Known values are: "Default", "Deny", and "Allow".
+    :vartype allow_public_ip: str or ~azure.mgmt.devtestlabs.models.UsagePermissionType
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'lab_subnet_name': {'key': 'labSubnetName', 'type': 'str'},
-        'allow_public_ip': {'key': 'allowPublicIp', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "lab_subnet_name": {"key": "labSubnetName", "type": "str"},
+        "allow_public_ip": {"key": "allowPublicIp", "type": "str"},
     }
 
     def __init__(
@@ -6408,77 +5504,58 @@ class Subnet(msrest.serialization.Model):
         *,
         resource_id: Optional[str] = None,
         lab_subnet_name: Optional[str] = None,
-        allow_public_ip: Optional[Union[str, "UsagePermissionType"]] = None,
+        allow_public_ip: Optional[Union[str, "_models.UsagePermissionType"]] = None,
         **kwargs
     ):
-        super(Subnet, self).__init__(**kwargs)
+        """
+        :keyword resource_id: The resource ID of the subnet.
+        :paramtype resource_id: str
+        :keyword lab_subnet_name: The name of the subnet as seen in the lab.
+        :paramtype lab_subnet_name: str
+        :keyword allow_public_ip: The permission policy of the subnet for allowing public IP addresses
+         (i.e. Allow, Deny)). Known values are: "Default", "Deny", and "Allow".
+        :paramtype allow_public_ip: str or ~azure.mgmt.devtestlabs.models.UsagePermissionType
+        """
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.lab_subnet_name = lab_subnet_name
         self.allow_public_ip = allow_public_ip
 
 
-class SubnetFragment(msrest.serialization.Model):
-    """Subnet information.
-
-    :param resource_id: The resource ID of the subnet.
-    :type resource_id: str
-    :param lab_subnet_name: The name of the subnet as seen in the lab.
-    :type lab_subnet_name: str
-    :param allow_public_ip: The permission policy of the subnet for allowing public IP addresses
-     (i.e. Allow, Deny)). Possible values include: "Default", "Deny", "Allow".
-    :type allow_public_ip: str or ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    """
-
-    _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'lab_subnet_name': {'key': 'labSubnetName', 'type': 'str'},
-        'allow_public_ip': {'key': 'allowPublicIp', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        lab_subnet_name: Optional[str] = None,
-        allow_public_ip: Optional[Union[str, "UsagePermissionType"]] = None,
-        **kwargs
-    ):
-        super(SubnetFragment, self).__init__(**kwargs)
-        self.resource_id = resource_id
-        self.lab_subnet_name = lab_subnet_name
-        self.allow_public_ip = allow_public_ip
-
-
-class SubnetOverride(msrest.serialization.Model):
+class SubnetOverride(_serialization.Model):
     """Property overrides on a subnet of a virtual network.
 
-    :param resource_id: The resource ID of the subnet.
-    :type resource_id: str
-    :param lab_subnet_name: The name given to the subnet within the lab.
-    :type lab_subnet_name: str
-    :param use_in_vm_creation_permission: Indicates whether this subnet can be used during virtual
-     machine creation (i.e. Allow, Deny). Possible values include: "Default", "Deny", "Allow".
-    :type use_in_vm_creation_permission: str or ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    :param use_public_ip_address_permission: Indicates whether public IP addresses can be assigned
-     to virtual machines on this subnet (i.e. Allow, Deny). Possible values include: "Default",
-     "Deny", "Allow".
-    :type use_public_ip_address_permission: str or
+    :ivar resource_id: The resource ID of the subnet.
+    :vartype resource_id: str
+    :ivar lab_subnet_name: The name given to the subnet within the lab.
+    :vartype lab_subnet_name: str
+    :ivar use_in_vm_creation_permission: Indicates whether this subnet can be used during virtual
+     machine creation (i.e. Allow, Deny). Known values are: "Default", "Deny", and "Allow".
+    :vartype use_in_vm_creation_permission: str or
      ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    :param shared_public_ip_address_configuration: Properties that virtual machines on this subnet
+    :ivar use_public_ip_address_permission: Indicates whether public IP addresses can be assigned
+     to virtual machines on this subnet (i.e. Allow, Deny). Known values are: "Default", "Deny", and
+     "Allow".
+    :vartype use_public_ip_address_permission: str or
+     ~azure.mgmt.devtestlabs.models.UsagePermissionType
+    :ivar shared_public_ip_address_configuration: Properties that virtual machines on this subnet
      will share.
-    :type shared_public_ip_address_configuration:
+    :vartype shared_public_ip_address_configuration:
      ~azure.mgmt.devtestlabs.models.SubnetSharedPublicIpAddressConfiguration
-    :param virtual_network_pool_name: The virtual network pool associated with this subnet.
-    :type virtual_network_pool_name: str
+    :ivar virtual_network_pool_name: The virtual network pool associated with this subnet.
+    :vartype virtual_network_pool_name: str
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'lab_subnet_name': {'key': 'labSubnetName', 'type': 'str'},
-        'use_in_vm_creation_permission': {'key': 'useInVmCreationPermission', 'type': 'str'},
-        'use_public_ip_address_permission': {'key': 'usePublicIpAddressPermission', 'type': 'str'},
-        'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SubnetSharedPublicIpAddressConfiguration'},
-        'virtual_network_pool_name': {'key': 'virtualNetworkPoolName', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "lab_subnet_name": {"key": "labSubnetName", "type": "str"},
+        "use_in_vm_creation_permission": {"key": "useInVmCreationPermission", "type": "str"},
+        "use_public_ip_address_permission": {"key": "usePublicIpAddressPermission", "type": "str"},
+        "shared_public_ip_address_configuration": {
+            "key": "sharedPublicIpAddressConfiguration",
+            "type": "SubnetSharedPublicIpAddressConfiguration",
+        },
+        "virtual_network_pool_name": {"key": "virtualNetworkPoolName", "type": "str"},
     }
 
     def __init__(
@@ -6486,13 +5563,34 @@ class SubnetOverride(msrest.serialization.Model):
         *,
         resource_id: Optional[str] = None,
         lab_subnet_name: Optional[str] = None,
-        use_in_vm_creation_permission: Optional[Union[str, "UsagePermissionType"]] = None,
-        use_public_ip_address_permission: Optional[Union[str, "UsagePermissionType"]] = None,
-        shared_public_ip_address_configuration: Optional["SubnetSharedPublicIpAddressConfiguration"] = None,
+        use_in_vm_creation_permission: Optional[Union[str, "_models.UsagePermissionType"]] = None,
+        use_public_ip_address_permission: Optional[Union[str, "_models.UsagePermissionType"]] = None,
+        shared_public_ip_address_configuration: Optional["_models.SubnetSharedPublicIpAddressConfiguration"] = None,
         virtual_network_pool_name: Optional[str] = None,
         **kwargs
     ):
-        super(SubnetOverride, self).__init__(**kwargs)
+        """
+        :keyword resource_id: The resource ID of the subnet.
+        :paramtype resource_id: str
+        :keyword lab_subnet_name: The name given to the subnet within the lab.
+        :paramtype lab_subnet_name: str
+        :keyword use_in_vm_creation_permission: Indicates whether this subnet can be used during
+         virtual machine creation (i.e. Allow, Deny). Known values are: "Default", "Deny", and "Allow".
+        :paramtype use_in_vm_creation_permission: str or
+         ~azure.mgmt.devtestlabs.models.UsagePermissionType
+        :keyword use_public_ip_address_permission: Indicates whether public IP addresses can be
+         assigned to virtual machines on this subnet (i.e. Allow, Deny). Known values are: "Default",
+         "Deny", and "Allow".
+        :paramtype use_public_ip_address_permission: str or
+         ~azure.mgmt.devtestlabs.models.UsagePermissionType
+        :keyword shared_public_ip_address_configuration: Properties that virtual machines on this
+         subnet will share.
+        :paramtype shared_public_ip_address_configuration:
+         ~azure.mgmt.devtestlabs.models.SubnetSharedPublicIpAddressConfiguration
+        :keyword virtual_network_pool_name: The virtual network pool associated with this subnet.
+        :paramtype virtual_network_pool_name: str
+        """
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.lab_subnet_name = lab_subnet_name
         self.use_in_vm_creation_permission = use_in_vm_creation_permission
@@ -6501,138 +5599,79 @@ class SubnetOverride(msrest.serialization.Model):
         self.virtual_network_pool_name = virtual_network_pool_name
 
 
-class SubnetOverrideFragment(msrest.serialization.Model):
-    """Property overrides on a subnet of a virtual network.
-
-    :param resource_id: The resource ID of the subnet.
-    :type resource_id: str
-    :param lab_subnet_name: The name given to the subnet within the lab.
-    :type lab_subnet_name: str
-    :param use_in_vm_creation_permission: Indicates whether this subnet can be used during virtual
-     machine creation (i.e. Allow, Deny). Possible values include: "Default", "Deny", "Allow".
-    :type use_in_vm_creation_permission: str or ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    :param use_public_ip_address_permission: Indicates whether public IP addresses can be assigned
-     to virtual machines on this subnet (i.e. Allow, Deny). Possible values include: "Default",
-     "Deny", "Allow".
-    :type use_public_ip_address_permission: str or
-     ~azure.mgmt.devtestlabs.models.UsagePermissionType
-    :param shared_public_ip_address_configuration: Properties that virtual machines on this subnet
-     will share.
-    :type shared_public_ip_address_configuration:
-     ~azure.mgmt.devtestlabs.models.SubnetSharedPublicIpAddressConfigurationFragment
-    :param virtual_network_pool_name: The virtual network pool associated with this subnet.
-    :type virtual_network_pool_name: str
-    """
-
-    _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'lab_subnet_name': {'key': 'labSubnetName', 'type': 'str'},
-        'use_in_vm_creation_permission': {'key': 'useInVmCreationPermission', 'type': 'str'},
-        'use_public_ip_address_permission': {'key': 'usePublicIpAddressPermission', 'type': 'str'},
-        'shared_public_ip_address_configuration': {'key': 'sharedPublicIpAddressConfiguration', 'type': 'SubnetSharedPublicIpAddressConfigurationFragment'},
-        'virtual_network_pool_name': {'key': 'virtualNetworkPoolName', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        lab_subnet_name: Optional[str] = None,
-        use_in_vm_creation_permission: Optional[Union[str, "UsagePermissionType"]] = None,
-        use_public_ip_address_permission: Optional[Union[str, "UsagePermissionType"]] = None,
-        shared_public_ip_address_configuration: Optional["SubnetSharedPublicIpAddressConfigurationFragment"] = None,
-        virtual_network_pool_name: Optional[str] = None,
-        **kwargs
-    ):
-        super(SubnetOverrideFragment, self).__init__(**kwargs)
-        self.resource_id = resource_id
-        self.lab_subnet_name = lab_subnet_name
-        self.use_in_vm_creation_permission = use_in_vm_creation_permission
-        self.use_public_ip_address_permission = use_public_ip_address_permission
-        self.shared_public_ip_address_configuration = shared_public_ip_address_configuration
-        self.virtual_network_pool_name = virtual_network_pool_name
-
-
-class SubnetSharedPublicIpAddressConfiguration(msrest.serialization.Model):
+class SubnetSharedPublicIpAddressConfiguration(_serialization.Model):
     """Configuration for public IP address sharing.
 
-    :param allowed_ports: Backend ports that virtual machines on this subnet are allowed to expose.
-    :type allowed_ports: list[~azure.mgmt.devtestlabs.models.Port]
+    :ivar allowed_ports: Backend ports that virtual machines on this subnet are allowed to expose.
+    :vartype allowed_ports: list[~azure.mgmt.devtestlabs.models.Port]
     """
 
     _attribute_map = {
-        'allowed_ports': {'key': 'allowedPorts', 'type': '[Port]'},
+        "allowed_ports": {"key": "allowedPorts", "type": "[Port]"},
     }
 
-    def __init__(
-        self,
-        *,
-        allowed_ports: Optional[List["Port"]] = None,
-        **kwargs
-    ):
-        super(SubnetSharedPublicIpAddressConfiguration, self).__init__(**kwargs)
+    def __init__(self, *, allowed_ports: Optional[List["_models.Port"]] = None, **kwargs):
+        """
+        :keyword allowed_ports: Backend ports that virtual machines on this subnet are allowed to
+         expose.
+        :paramtype allowed_ports: list[~azure.mgmt.devtestlabs.models.Port]
+        """
+        super().__init__(**kwargs)
         self.allowed_ports = allowed_ports
 
 
-class SubnetSharedPublicIpAddressConfigurationFragment(msrest.serialization.Model):
-    """Configuration for public IP address sharing.
-
-    :param allowed_ports: Backend ports that virtual machines on this subnet are allowed to expose.
-    :type allowed_ports: list[~azure.mgmt.devtestlabs.models.PortFragment]
-    """
-
-    _attribute_map = {
-        'allowed_ports': {'key': 'allowedPorts', 'type': '[PortFragment]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        allowed_ports: Optional[List["PortFragment"]] = None,
-        **kwargs
-    ):
-        super(SubnetSharedPublicIpAddressConfigurationFragment, self).__init__(**kwargs)
-        self.allowed_ports = allowed_ports
-
-
-class TargetCostProperties(msrest.serialization.Model):
+class TargetCostProperties(_serialization.Model):
     """Properties of a cost target.
 
-    :param status: Target cost status. Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.devtestlabs.models.TargetCostStatus
-    :param target: Lab target cost.
-    :type target: int
-    :param cost_thresholds: Cost thresholds.
-    :type cost_thresholds: list[~azure.mgmt.devtestlabs.models.CostThresholdProperties]
-    :param cycle_start_date_time: Reporting cycle start date.
-    :type cycle_start_date_time: ~datetime.datetime
-    :param cycle_end_date_time: Reporting cycle end date.
-    :type cycle_end_date_time: ~datetime.datetime
-    :param cycle_type: Reporting cycle type. Possible values include: "CalendarMonth", "Custom".
-    :type cycle_type: str or ~azure.mgmt.devtestlabs.models.ReportingCycleType
+    :ivar status: Target cost status. Known values are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.devtestlabs.models.TargetCostStatus
+    :ivar target: Lab target cost.
+    :vartype target: int
+    :ivar cost_thresholds: Cost thresholds.
+    :vartype cost_thresholds: list[~azure.mgmt.devtestlabs.models.CostThresholdProperties]
+    :ivar cycle_start_date_time: Reporting cycle start date.
+    :vartype cycle_start_date_time: ~datetime.datetime
+    :ivar cycle_end_date_time: Reporting cycle end date.
+    :vartype cycle_end_date_time: ~datetime.datetime
+    :ivar cycle_type: Reporting cycle type. Known values are: "CalendarMonth" and "Custom".
+    :vartype cycle_type: str or ~azure.mgmt.devtestlabs.models.ReportingCycleType
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'int'},
-        'cost_thresholds': {'key': 'costThresholds', 'type': '[CostThresholdProperties]'},
-        'cycle_start_date_time': {'key': 'cycleStartDateTime', 'type': 'iso-8601'},
-        'cycle_end_date_time': {'key': 'cycleEndDateTime', 'type': 'iso-8601'},
-        'cycle_type': {'key': 'cycleType', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "target": {"key": "target", "type": "int"},
+        "cost_thresholds": {"key": "costThresholds", "type": "[CostThresholdProperties]"},
+        "cycle_start_date_time": {"key": "cycleStartDateTime", "type": "iso-8601"},
+        "cycle_end_date_time": {"key": "cycleEndDateTime", "type": "iso-8601"},
+        "cycle_type": {"key": "cycleType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "TargetCostStatus"]] = None,
+        status: Optional[Union[str, "_models.TargetCostStatus"]] = None,
         target: Optional[int] = None,
-        cost_thresholds: Optional[List["CostThresholdProperties"]] = None,
+        cost_thresholds: Optional[List["_models.CostThresholdProperties"]] = None,
         cycle_start_date_time: Optional[datetime.datetime] = None,
         cycle_end_date_time: Optional[datetime.datetime] = None,
-        cycle_type: Optional[Union[str, "ReportingCycleType"]] = None,
+        cycle_type: Optional[Union[str, "_models.ReportingCycleType"]] = None,
         **kwargs
     ):
-        super(TargetCostProperties, self).__init__(**kwargs)
+        """
+        :keyword status: Target cost status. Known values are: "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.devtestlabs.models.TargetCostStatus
+        :keyword target: Lab target cost.
+        :paramtype target: int
+        :keyword cost_thresholds: Cost thresholds.
+        :paramtype cost_thresholds: list[~azure.mgmt.devtestlabs.models.CostThresholdProperties]
+        :keyword cycle_start_date_time: Reporting cycle start date.
+        :paramtype cycle_start_date_time: ~datetime.datetime
+        :keyword cycle_end_date_time: Reporting cycle end date.
+        :paramtype cycle_end_date_time: ~datetime.datetime
+        :keyword cycle_type: Reporting cycle type. Known values are: "CalendarMonth" and "Custom".
+        :paramtype cycle_type: str or ~azure.mgmt.devtestlabs.models.ReportingCycleType
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.target = target
         self.cost_thresholds = cost_thresholds
@@ -6652,14 +5691,14 @@ class User(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param identity: The identity of the user.
-    :type identity: ~azure.mgmt.devtestlabs.models.UserIdentity
-    :param secret_store: The secret store of the user.
-    :type secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStore
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar identity: The identity of the user.
+    :vartype identity: ~azure.mgmt.devtestlabs.models.UserIdentity
+    :ivar secret_store: The secret store of the user.
+    :vartype secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStore
     :ivar created_date: The creation date of the user profile.
     :vartype created_date: ~datetime.datetime
     :ivar provisioning_state: The provisioning status of the resource.
@@ -6669,25 +5708,25 @@ class User(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'created_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "created_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'properties.identity', 'type': 'UserIdentity'},
-        'secret_store': {'key': 'properties.secretStore', 'type': 'UserSecretStore'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "properties.identity", "type": "UserIdentity"},
+        "secret_store": {"key": "properties.secretStore", "type": "UserSecretStore"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -6695,11 +5734,21 @@ class User(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["UserIdentity"] = None,
-        secret_store: Optional["UserSecretStore"] = None,
+        identity: Optional["_models.UserIdentity"] = None,
+        secret_store: Optional["_models.UserSecretStore"] = None,
         **kwargs
     ):
-        super(User, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identity of the user.
+        :paramtype identity: ~azure.mgmt.devtestlabs.models.UserIdentity
+        :keyword secret_store: The secret store of the user.
+        :paramtype secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStore
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.identity = identity
         self.secret_store = secret_store
         self.created_date = None
@@ -6710,56 +5759,45 @@ class User(Resource):
 class UserFragment(UpdateResource):
     """Profile of a lab user.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param identity: The identity of the user.
-    :type identity: ~azure.mgmt.devtestlabs.models.UserIdentityFragment
-    :param secret_store: The secret store of the user.
-    :type secret_store: ~azure.mgmt.devtestlabs.models.UserSecretStoreFragment
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'properties.identity', 'type': 'UserIdentityFragment'},
-        'secret_store': {'key': 'properties.secretStore', 'type': 'UserSecretStoreFragment'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        identity: Optional["UserIdentityFragment"] = None,
-        secret_store: Optional["UserSecretStoreFragment"] = None,
-        **kwargs
-    ):
-        super(UserFragment, self).__init__(tags=tags, **kwargs)
-        self.identity = identity
-        self.secret_store = secret_store
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class UserIdentity(msrest.serialization.Model):
+class UserIdentity(_serialization.Model):
     """Identity attributes of a lab user.
 
-    :param principal_name: Set to the principal name / UPN of the client JWT making the request.
-    :type principal_name: str
-    :param principal_id: Set to the principal Id of the client JWT making the request. Service
+    :ivar principal_name: Set to the principal name / UPN of the client JWT making the request.
+    :vartype principal_name: str
+    :ivar principal_id: Set to the principal Id of the client JWT making the request. Service
      principal will not have the principal Id.
-    :type principal_id: str
-    :param tenant_id: Set to the tenant ID of the client JWT making the request.
-    :type tenant_id: str
-    :param object_id: Set to the object Id of the client JWT making the request. Not all users have
+    :vartype principal_id: str
+    :ivar tenant_id: Set to the tenant ID of the client JWT making the request.
+    :vartype tenant_id: str
+    :ivar object_id: Set to the object Id of the client JWT making the request. Not all users have
      object Id. For CSP (reseller) scenarios for example, object Id is not available.
-    :type object_id: str
-    :param app_id: Set to the app Id of the client JWT making the request.
-    :type app_id: str
+    :vartype object_id: str
+    :ivar app_id: Set to the app Id of the client JWT making the request.
+    :vartype app_id: str
     """
 
     _attribute_map = {
-        'principal_name': {'key': 'principalName', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
+        "principal_name": {"key": "principalName", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "object_id": {"key": "objectId", "type": "str"},
+        "app_id": {"key": "appId", "type": "str"},
     }
 
     def __init__(
@@ -6772,7 +5810,21 @@ class UserIdentity(msrest.serialization.Model):
         app_id: Optional[str] = None,
         **kwargs
     ):
-        super(UserIdentity, self).__init__(**kwargs)
+        """
+        :keyword principal_name: Set to the principal name / UPN of the client JWT making the request.
+        :paramtype principal_name: str
+        :keyword principal_id: Set to the principal Id of the client JWT making the request. Service
+         principal will not have the principal Id.
+        :paramtype principal_id: str
+        :keyword tenant_id: Set to the tenant ID of the client JWT making the request.
+        :paramtype tenant_id: str
+        :keyword object_id: Set to the object Id of the client JWT making the request. Not all users
+         have object Id. For CSP (reseller) scenarios for example, object Id is not available.
+        :paramtype object_id: str
+        :keyword app_id: Set to the app Id of the client JWT making the request.
+        :paramtype app_id: str
+        """
+        super().__init__(**kwargs)
         self.principal_name = principal_name
         self.principal_id = principal_id
         self.tenant_id = tenant_id
@@ -6780,128 +5832,59 @@ class UserIdentity(msrest.serialization.Model):
         self.app_id = app_id
 
 
-class UserIdentityFragment(msrest.serialization.Model):
-    """Identity attributes of a lab user.
-
-    :param principal_name: Set to the principal name / UPN of the client JWT making the request.
-    :type principal_name: str
-    :param principal_id: Set to the principal Id of the client JWT making the request. Service
-     principal will not have the principal Id.
-    :type principal_id: str
-    :param tenant_id: Set to the tenant ID of the client JWT making the request.
-    :type tenant_id: str
-    :param object_id: Set to the object Id of the client JWT making the request. Not all users have
-     object Id. For CSP (reseller) scenarios for example, object Id is not available.
-    :type object_id: str
-    :param app_id: Set to the app Id of the client JWT making the request.
-    :type app_id: str
-    """
-
-    _attribute_map = {
-        'principal_name': {'key': 'principalName', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'object_id': {'key': 'objectId', 'type': 'str'},
-        'app_id': {'key': 'appId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        principal_name: Optional[str] = None,
-        principal_id: Optional[str] = None,
-        tenant_id: Optional[str] = None,
-        object_id: Optional[str] = None,
-        app_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(UserIdentityFragment, self).__init__(**kwargs)
-        self.principal_name = principal_name
-        self.principal_id = principal_id
-        self.tenant_id = tenant_id
-        self.object_id = object_id
-        self.app_id = app_id
-
-
-class UserList(msrest.serialization.Model):
+class UserList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.User]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.User]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[User]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[User]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["User"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(UserList, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.User"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.User]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class UserSecretStore(msrest.serialization.Model):
+class UserSecretStore(_serialization.Model):
     """Properties of a user's secret store.
 
-    :param key_vault_uri: The URI of the user's Key vault.
-    :type key_vault_uri: str
-    :param key_vault_id: The ID of the user's Key vault.
-    :type key_vault_id: str
+    :ivar key_vault_uri: The URI of the user's Key vault.
+    :vartype key_vault_uri: str
+    :ivar key_vault_id: The ID of the user's Key vault.
+    :vartype key_vault_id: str
     """
 
     _attribute_map = {
-        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
-        'key_vault_id': {'key': 'keyVaultId', 'type': 'str'},
+        "key_vault_uri": {"key": "keyVaultUri", "type": "str"},
+        "key_vault_id": {"key": "keyVaultId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_vault_uri: Optional[str] = None,
-        key_vault_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(UserSecretStore, self).__init__(**kwargs)
+    def __init__(self, *, key_vault_uri: Optional[str] = None, key_vault_id: Optional[str] = None, **kwargs):
+        """
+        :keyword key_vault_uri: The URI of the user's Key vault.
+        :paramtype key_vault_uri: str
+        :keyword key_vault_id: The ID of the user's Key vault.
+        :paramtype key_vault_id: str
+        """
+        super().__init__(**kwargs)
         self.key_vault_uri = key_vault_uri
         self.key_vault_id = key_vault_id
 
 
-class UserSecretStoreFragment(msrest.serialization.Model):
-    """Properties of a user's secret store.
-
-    :param key_vault_uri: The URI of the user's Key vault.
-    :type key_vault_uri: str
-    :param key_vault_id: The ID of the user's Key vault.
-    :type key_vault_id: str
-    """
-
-    _attribute_map = {
-        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
-        'key_vault_id': {'key': 'keyVaultId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        key_vault_uri: Optional[str] = None,
-        key_vault_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(UserSecretStoreFragment, self).__init__(**kwargs)
-        self.key_vault_uri = key_vault_uri
-        self.key_vault_id = key_vault_id
-
-
-class VirtualNetwork(Resource):
+class VirtualNetwork(Resource):  # pylint: disable=too-many-instance-attributes
     """A virtual network.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6912,21 +5895,21 @@ class VirtualNetwork(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :param location: The location of the resource.
-    :type location: str
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param allowed_subnets: The allowed subnets of the virtual network.
-    :type allowed_subnets: list[~azure.mgmt.devtestlabs.models.Subnet]
-    :param description: The description of the virtual network.
-    :type description: str
-    :param external_provider_resource_id: The Microsoft.Network resource identifier of the virtual
+    :ivar location: The location of the resource.
+    :vartype location: str
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
+    :ivar allowed_subnets: The allowed subnets of the virtual network.
+    :vartype allowed_subnets: list[~azure.mgmt.devtestlabs.models.Subnet]
+    :ivar description: The description of the virtual network.
+    :vartype description: str
+    :ivar external_provider_resource_id: The Microsoft.Network resource identifier of the virtual
      network.
-    :type external_provider_resource_id: str
+    :vartype external_provider_resource_id: str
     :ivar external_subnets: The external subnet properties.
     :vartype external_subnets: list[~azure.mgmt.devtestlabs.models.ExternalSubnet]
-    :param subnet_overrides: The subnet overrides of the virtual network.
-    :type subnet_overrides: list[~azure.mgmt.devtestlabs.models.SubnetOverride]
+    :ivar subnet_overrides: The subnet overrides of the virtual network.
+    :vartype subnet_overrides: list[~azure.mgmt.devtestlabs.models.SubnetOverride]
     :ivar created_date: The creation date of the virtual network.
     :vartype created_date: ~datetime.datetime
     :ivar provisioning_state: The provisioning status of the resource.
@@ -6936,29 +5919,29 @@ class VirtualNetwork(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'external_subnets': {'readonly': True},
-        'created_date': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'unique_identifier': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "external_subnets": {"readonly": True},
+        "created_date": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "unique_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'allowed_subnets': {'key': 'properties.allowedSubnets', 'type': '[Subnet]'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'external_provider_resource_id': {'key': 'properties.externalProviderResourceId', 'type': 'str'},
-        'external_subnets': {'key': 'properties.externalSubnets', 'type': '[ExternalSubnet]'},
-        'subnet_overrides': {'key': 'properties.subnetOverrides', 'type': '[SubnetOverride]'},
-        'created_date': {'key': 'properties.createdDate', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'unique_identifier': {'key': 'properties.uniqueIdentifier', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "allowed_subnets": {"key": "properties.allowedSubnets", "type": "[Subnet]"},
+        "description": {"key": "properties.description", "type": "str"},
+        "external_provider_resource_id": {"key": "properties.externalProviderResourceId", "type": "str"},
+        "external_subnets": {"key": "properties.externalSubnets", "type": "[ExternalSubnet]"},
+        "subnet_overrides": {"key": "properties.subnetOverrides", "type": "[SubnetOverride]"},
+        "created_date": {"key": "properties.createdDate", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "unique_identifier": {"key": "properties.uniqueIdentifier", "type": "str"},
     }
 
     def __init__(
@@ -6966,13 +5949,28 @@ class VirtualNetwork(Resource):
         *,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        allowed_subnets: Optional[List["Subnet"]] = None,
+        allowed_subnets: Optional[List["_models.Subnet"]] = None,
         description: Optional[str] = None,
         external_provider_resource_id: Optional[str] = None,
-        subnet_overrides: Optional[List["SubnetOverride"]] = None,
+        subnet_overrides: Optional[List["_models.SubnetOverride"]] = None,
         **kwargs
     ):
-        super(VirtualNetwork, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: The location of the resource.
+        :paramtype location: str
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        :keyword allowed_subnets: The allowed subnets of the virtual network.
+        :paramtype allowed_subnets: list[~azure.mgmt.devtestlabs.models.Subnet]
+        :keyword description: The description of the virtual network.
+        :paramtype description: str
+        :keyword external_provider_resource_id: The Microsoft.Network resource identifier of the
+         virtual network.
+        :paramtype external_provider_resource_id: str
+        :keyword subnet_overrides: The subnet overrides of the virtual network.
+        :paramtype subnet_overrides: list[~azure.mgmt.devtestlabs.models.SubnetOverride]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.allowed_subnets = allowed_subnets
         self.description = description
         self.external_provider_resource_id = external_provider_resource_id
@@ -6986,165 +5984,95 @@ class VirtualNetwork(Resource):
 class VirtualNetworkFragment(UpdateResource):
     """A virtual network.
 
-    :param tags: A set of tags. The tags of the resource.
-    :type tags: dict[str, str]
-    :param allowed_subnets: The allowed subnets of the virtual network.
-    :type allowed_subnets: list[~azure.mgmt.devtestlabs.models.SubnetFragment]
-    :param description: The description of the virtual network.
-    :type description: str
-    :param external_provider_resource_id: The Microsoft.Network resource identifier of the virtual
-     network.
-    :type external_provider_resource_id: str
-    :param subnet_overrides: The subnet overrides of the virtual network.
-    :type subnet_overrides: list[~azure.mgmt.devtestlabs.models.SubnetOverrideFragment]
+    :ivar tags: The tags of the resource.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'allowed_subnets': {'key': 'properties.allowedSubnets', 'type': '[SubnetFragment]'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'external_provider_resource_id': {'key': 'properties.externalProviderResourceId', 'type': 'str'},
-        'subnet_overrides': {'key': 'properties.subnetOverrides', 'type': '[SubnetOverrideFragment]'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        allowed_subnets: Optional[List["SubnetFragment"]] = None,
-        description: Optional[str] = None,
-        external_provider_resource_id: Optional[str] = None,
-        subnet_overrides: Optional[List["SubnetOverrideFragment"]] = None,
-        **kwargs
-    ):
-        super(VirtualNetworkFragment, self).__init__(tags=tags, **kwargs)
-        self.allowed_subnets = allowed_subnets
-        self.description = description
-        self.external_provider_resource_id = external_provider_resource_id
-        self.subnet_overrides = subnet_overrides
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: The tags of the resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(tags=tags, **kwargs)
 
 
-class VirtualNetworkList(msrest.serialization.Model):
+class VirtualNetworkList(_serialization.Model):
     """The response of a list operation.
 
-    :param value: Results of the list operation.
-    :type value: list[~azure.mgmt.devtestlabs.models.VirtualNetwork]
-    :param next_link: Link for next set of results.
-    :type next_link: str
+    :ivar value: Results of the list operation.
+    :vartype value: list[~azure.mgmt.devtestlabs.models.VirtualNetwork]
+    :ivar next_link: Link for next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VirtualNetwork]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VirtualNetwork]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VirtualNetwork"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.VirtualNetwork"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(VirtualNetworkList, self).__init__(**kwargs)
+        """
+        :keyword value: Results of the list operation.
+        :paramtype value: list[~azure.mgmt.devtestlabs.models.VirtualNetwork]
+        :keyword next_link: Link for next set of results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class WeekDetails(msrest.serialization.Model):
+class WeekDetails(_serialization.Model):
     """Properties of a weekly schedule.
 
-    :param weekdays: The days of the week for which the schedule is set (e.g. Sunday, Monday,
+    :ivar weekdays: The days of the week for which the schedule is set (e.g. Sunday, Monday,
      Tuesday, etc.).
-    :type weekdays: list[str]
-    :param time: The time of the day the schedule will occur.
-    :type time: str
+    :vartype weekdays: list[str]
+    :ivar time: The time of the day the schedule will occur.
+    :vartype time: str
     """
 
     _attribute_map = {
-        'weekdays': {'key': 'weekdays', 'type': '[str]'},
-        'time': {'key': 'time', 'type': 'str'},
+        "weekdays": {"key": "weekdays", "type": "[str]"},
+        "time": {"key": "time", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        weekdays: Optional[List[str]] = None,
-        time: Optional[str] = None,
-        **kwargs
-    ):
-        super(WeekDetails, self).__init__(**kwargs)
+    def __init__(self, *, weekdays: Optional[List[str]] = None, time: Optional[str] = None, **kwargs):
+        """
+        :keyword weekdays: The days of the week for which the schedule is set (e.g. Sunday, Monday,
+         Tuesday, etc.).
+        :paramtype weekdays: list[str]
+        :keyword time: The time of the day the schedule will occur.
+        :paramtype time: str
+        """
+        super().__init__(**kwargs)
         self.weekdays = weekdays
         self.time = time
 
 
-class WeekDetailsFragment(msrest.serialization.Model):
-    """Properties of a weekly schedule.
-
-    :param weekdays: The days of the week for which the schedule is set (e.g. Sunday, Monday,
-     Tuesday, etc.).
-    :type weekdays: list[str]
-    :param time: The time of the day the schedule will occur.
-    :type time: str
-    """
-
-    _attribute_map = {
-        'weekdays': {'key': 'weekdays', 'type': '[str]'},
-        'time': {'key': 'time', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        weekdays: Optional[List[str]] = None,
-        time: Optional[str] = None,
-        **kwargs
-    ):
-        super(WeekDetailsFragment, self).__init__(**kwargs)
-        self.weekdays = weekdays
-        self.time = time
-
-
-class WindowsOsInfo(msrest.serialization.Model):
+class WindowsOsInfo(_serialization.Model):
     """Information about a Windows OS.
 
-    :param windows_os_state: The state of the Windows OS (i.e. NonSysprepped, SysprepRequested,
-     SysprepApplied). Possible values include: "NonSysprepped", "SysprepRequested",
-     "SysprepApplied".
-    :type windows_os_state: str or ~azure.mgmt.devtestlabs.models.WindowsOsState
+    :ivar windows_os_state: The state of the Windows OS (i.e. NonSysprepped, SysprepRequested,
+     SysprepApplied). Known values are: "NonSysprepped", "SysprepRequested", and "SysprepApplied".
+    :vartype windows_os_state: str or ~azure.mgmt.devtestlabs.models.WindowsOsState
     """
 
     _attribute_map = {
-        'windows_os_state': {'key': 'windowsOsState', 'type': 'str'},
+        "windows_os_state": {"key": "windowsOsState", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        windows_os_state: Optional[Union[str, "WindowsOsState"]] = None,
-        **kwargs
-    ):
-        super(WindowsOsInfo, self).__init__(**kwargs)
-        self.windows_os_state = windows_os_state
-
-
-class WindowsOsInfoFragment(msrest.serialization.Model):
-    """Information about a Windows OS.
-
-    :param windows_os_state: The state of the Windows OS (i.e. NonSysprepped, SysprepRequested,
-     SysprepApplied). Possible values include: "NonSysprepped", "SysprepRequested",
-     "SysprepApplied".
-    :type windows_os_state: str or ~azure.mgmt.devtestlabs.models.WindowsOsState
-    """
-
-    _attribute_map = {
-        'windows_os_state': {'key': 'windowsOsState', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        windows_os_state: Optional[Union[str, "WindowsOsState"]] = None,
-        **kwargs
-    ):
-        super(WindowsOsInfoFragment, self).__init__(**kwargs)
+    def __init__(self, *, windows_os_state: Optional[Union[str, "_models.WindowsOsState"]] = None, **kwargs):
+        """
+        :keyword windows_os_state: The state of the Windows OS (i.e. NonSysprepped, SysprepRequested,
+         SysprepApplied). Known values are: "NonSysprepped", "SysprepRequested", and "SysprepApplied".
+        :paramtype windows_os_state: str or ~azure.mgmt.devtestlabs.models.WindowsOsState
+        """
+        super().__init__(**kwargs)
         self.windows_os_state = windows_os_state

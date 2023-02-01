@@ -7,16 +7,15 @@ import os
 import asyncio
 from azure.keyvault.secrets.aio import SecretClient
 from azure.identity.aio import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates the basic CRUD operations on a vault(secret) resource for Azure Key Vault
@@ -32,9 +31,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 async def run_sample():
     # Instantiate a secret client that will be used to call the service.
-    # Notice that the client is using default Azure credentials.
-    # To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-    # 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+    # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
     VAULT_URL = os.environ["VAULT_URL"]
     credential = DefaultAzureCredential()
     client = SecretClient(vault_url=VAULT_URL, credential=credential)
@@ -43,14 +40,14 @@ async def run_sample():
     # if the secret already exists in the key vault, then a new version of the secret is created.
     print("\n.. Create Secret")
     expires_on = datetime.datetime.utcnow() + datetime.timedelta(days=365)
-    secret = await client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires_on=expires_on)
-    print("Secret with name '{0}' created with value '{1}'".format(secret.name, secret.value))
-    print("Secret with name '{0}' expires on '{1}'".format(secret.name, secret.properties.expires_on))
+    secret = await client.set_secret("helloWorldSecretNameAsync", "helloWorldSecretValue", expires_on=expires_on)
+    print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
+    print(f"Secret with name '{secret.name}' expires on '{secret.properties.expires_on}'")
 
     # Let's get the bank secret using its name
     print("\n.. Get a Secret by name")
     bank_secret = await client.get_secret(secret.name)
-    print("Secret with name '{0}' was found with value '{1}'.".format(bank_secret.name, bank_secret.value))
+    print(f"Secret with name '{bank_secret.name}' was found with value '{bank_secret.value}'.")
 
     # After one year, the bank account is still active, we need to update the expiry time of the secret.
     # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
@@ -59,26 +56,24 @@ async def run_sample():
     expires_on = bank_secret.properties.expires_on + datetime.timedelta(days=365)
     updated_secret_properties = await client.update_secret_properties(secret.name, expires_on=expires_on)
     print(
-        "Secret with name '{0}' was updated on date '{1}'".format(
-            updated_secret_properties.name, updated_secret_properties.updated_on
-        )
+        f"Secret with name '{updated_secret_properties.name}' was updated on date "
+        f"'{updated_secret_properties.updated_on}'"
     )
     print(
-        "Secret with name '{0}' was updated to expire on '{1}'".format(
-            updated_secret_properties.name, updated_secret_properties.expires_on
-        )
+        f"Secret with name '{updated_secret_properties.name}' was updated to expire on "
+        f"'{updated_secret_properties.expires_on}'"
     )
 
     # Bank forced a password update for security purposes. Let's change the value of the secret in the key vault.
     # To achieve this, we need to create a new version of the secret in the key vault. The update operation cannot
     # change the value of the secret.
-    new_secret = await client.set_secret(secret.name, "newSecretValue")
-    print("Secret with name '{0}' created with value '{1}'".format(new_secret.name, new_secret.value))
+    new_secret = await client.set_secret(secret.name, "newSecretValueAsync")
+    print(f"Secret with name '{new_secret.name}' created with value '{new_secret.value}'")
 
     # The bank account was closed, need to delete its credentials from the Key Vault.
     print("\n.. Deleting Secret...")
     deleted_secret = await client.delete_secret(secret.name)
-    print("Secret with name '{0}' was deleted.".format(deleted_secret.name))
+    print(f"Secret with name '{deleted_secret.name}' was deleted.")
 
     print("\nrun_sample done")
     await credential.close()
@@ -86,6 +81,4 @@ async def run_sample():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_sample())
-    loop.close()
+    asyncio.run(run_sample())

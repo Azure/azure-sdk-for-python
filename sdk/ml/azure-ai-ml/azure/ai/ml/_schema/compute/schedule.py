@@ -2,17 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=unused-argument,no-self-use
+
 from marshmallow import fields
 from marshmallow.decorators import post_load
-from azure.ai.ml._schema import NestedField, UnionField, StringTransformedEnum
+
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputePowerAction, RecurrenceFrequency
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScheduleStatus as ScheduleState
+from azure.ai.ml._restclient.v2022_10_01_preview.models import TriggerType, WeekDay
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
-    TriggerType,
-    RecurrenceFrequency,
-    ComputePowerAction,
-    ScheduleStatus as ScheduleState,
-    DaysOfWeek,
-)
 
 
 class BaseTriggerSchema(metaclass=PatchedSchemaMeta):
@@ -28,6 +27,7 @@ class CronTriggerSchema(BaseTriggerSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import CronTrigger
 
+        data.pop("type")
         return CronTrigger(**data)
 
 
@@ -35,18 +35,24 @@ class RecurrenceScheduleSchema(metaclass=PatchedSchemaMeta):
     week_days = fields.List(
         StringTransformedEnum(
             allowed_values=[
-                DaysOfWeek.Sunday,
-                DaysOfWeek.Monday,
-                DaysOfWeek.Tuesday,
-                DaysOfWeek.Wednesday,
-                DaysOfWeek.Thursday,
-                DaysOfWeek.Friday,
-                DaysOfWeek.Saturday,
+                WeekDay.SUNDAY,
+                WeekDay.MONDAY,
+                WeekDay.TUESDAY,
+                WeekDay.WEDNESDAY,
+                WeekDay.THURSDAY,
+                WeekDay.FRIDAY,
+                WeekDay.SATURDAY,
             ],
         )
     )
     hours = fields.List(fields.Int())
     minutes = fields.List(fields.Int())
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities import RecurrencePattern
+
+        return RecurrencePattern(**data)
 
 
 class RecurrenceTriggerSchema(BaseTriggerSchema):
@@ -54,7 +60,6 @@ class RecurrenceTriggerSchema(BaseTriggerSchema):
     frequency = StringTransformedEnum(
         required=True,
         allowed_values=[
-            RecurrenceFrequency.SECOND,
             RecurrenceFrequency.MINUTE,
             RecurrenceFrequency.HOUR,
             RecurrenceFrequency.DAY,
@@ -69,6 +74,7 @@ class RecurrenceTriggerSchema(BaseTriggerSchema):
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import RecurrenceTrigger
 
+        data.pop("type")
         return RecurrenceTrigger(**data)
 
 

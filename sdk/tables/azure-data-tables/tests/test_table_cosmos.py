@@ -8,16 +8,12 @@ import pytest
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 
-from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import ResourceExistsError
-from azure.data.tables import TableServiceClient
+from azure.core.exceptions import ResourceExistsError, HttpResponseError
+from azure.data.tables import TableServiceClient, TableClient
 
-from _shared.testcase import TableTestCase, SLEEP_DELAY
+from _shared.testcase import TableTestCase
 from preparers import cosmos_decorator
 
-# ------------------------------------------------------------------------------
-TEST_TABLE_PREFIX = 'pytablesync'
-# ------------------------------------------------------------------------------
 
 class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
     @cosmos_decorator
@@ -215,3 +211,37 @@ class TestTableCosmos(AzureRecordedTestCase, TableTestCase):
         assert client.table_name == table_name
         
         ts.delete_table(table_name)
+    
+    @cosmos_decorator
+    @recorded_by_proxy
+    def test_client_with_url_ends_with_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
+        # test table client has the same table name as in url
+        tc = TableClient(invalid_url, table_name, credential=tables_primary_cosmos_account_key)
+        with pytest.raises(HttpResponseError) as exc:
+            tc.create_table()
+        assert ("Request url is invalid") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        # test table client has a different table name as in url
+        table_name2 = self.get_resource_name("mytable2")
+        tc2 = TableClient(invalid_url, table_name2, credential=tables_primary_cosmos_account_key)
+        with pytest.raises(HttpResponseError) as exc:
+            tc2.create_table()
+        assert ("Request url is invalid") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        valid_tc = TableClient(url, table_name, credential=tables_primary_cosmos_account_key)
+        valid_tc.create_table()
+        # test creating a table when it already exists
+        with pytest.raises(HttpResponseError) as exc:
+            tc.create_table()
+        assert ("Request url is invalid") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        # test deleting a table when it already exists
+        with pytest.raises(HttpResponseError) as exc:
+            tc.delete_table()
+        assert ("Request url is invalid") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+        valid_tc.delete_table()

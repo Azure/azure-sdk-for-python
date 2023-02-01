@@ -7,12 +7,11 @@ import os
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.certificates import CertificateClient, CertificatePolicy
 from azure.keyvault.secrets import SecretClient
-from azure.core.exceptions import HttpResponseError
 from cryptography.hazmat.primitives.serialization import pkcs12
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault. (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault. (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. A service principal with certificate get, delete, and purge permissions, as well as secret get
 #    permissions.
@@ -20,8 +19,8 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 # 3. azure-keyvault-certificates, azure-keyvault-secrets, azure-identity, and cryptography (v3.3+) packages
 #    (pip install these).
 #
-# 4. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL. (See
-#    https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-certificates#authenticate-the-client)
+# 4. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates how to get the private key of an existing Key Vault certificate
@@ -37,9 +36,7 @@ from cryptography.hazmat.primitives.serialization import pkcs12
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a certificate client that will be used to call the service.
-# Notice that the client is using default Azure credentials.
-# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 certificate_client = CertificateClient(vault_url=VAULT_URL, credential=credential)
@@ -63,14 +60,14 @@ cert_policy = CertificatePolicy.get_default()
 created_certificate = certificate_client.begin_create_certificate(
     certificate_name=cert_name, policy=cert_policy
 ).result()
-print("Certificate with name '{}' was created".format(created_certificate.name))
+print(f"Certificate with name '{created_certificate.name}' was created")
 
 # Key Vault also creates a secret with the same name as the created certificate.
 # This secret contains the certificate's bytes, which include the private key if the certificate's
 # policy indicates that the key is exportable.
 print("\n.. Get a secret by name")
 certificate_secret = secret_client.get_secret(name=cert_name)
-print("Certificate secret with name '{}' was found.".format(certificate_secret.name))
+print(f"Certificate secret with name '{certificate_secret.name}' was found.")
 
 # Now we can extract the private key and public certificate from the secret using the cryptography
 # package. `additional_certificates` will be empty since the secret only contains one certificate.
@@ -82,7 +79,7 @@ private_key, public_certificate, additional_certificates = pkcs12.load_key_and_c
     data=cert_bytes,
     password=None
 )
-print("Certificate with name '{}' was parsed.".format(certificate_secret.name))
+print(f"Certificate with name '{certificate_secret.name}' was parsed.")
 
 # Now we can clean up the vault by deleting, then purging, the certificate.
 print("\n.. Delete certificate")
@@ -91,9 +88,9 @@ delete_operation_poller = certificate_client.begin_delete_certificate(
 )
 deleted_certificate = delete_operation_poller.result()
 delete_operation_poller.wait()
-print("Certificate with name '{}' was deleted.".format(deleted_certificate.name))
+print(f"Certificate with name '{deleted_certificate.name}' was deleted.")
 
 certificate_client.purge_deleted_certificate(certificate_name=deleted_certificate.name)
-print("Certificate with name '{}' is being purged.".format(deleted_certificate.name))
+print(f"Certificate with name '{deleted_certificate.name}' is being purged.")
 
 print("\nrun_sample done")

@@ -78,6 +78,7 @@ class StandardBlobTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ARCHIVE = 'Archive'  #: Archive
     COOL = 'Cool'  #: Cool
+    COLD = 'Cold'  #: Cold
     HOT = 'Hot'  #: Hot
 
 

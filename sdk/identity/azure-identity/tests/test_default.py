@@ -7,6 +7,7 @@ import os
 from azure.core.credentials import AccessToken
 from azure.identity import (
     AzureCliCredential,
+    AzureDeveloperCliCredential,
     AzurePowerShellCredential,
     CredentialUnavailableError,
     DefaultAzureCredential,
@@ -16,6 +17,7 @@ from azure.identity import (
 )
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._credentials.azure_cli import AzureCliCredential
+from azure.identity._credentials.azd_cli import AzureDeveloperCliCredential
 from azure.identity._credentials.managed_identity import ManagedIdentityCredential
 import pytest
 from six.moves.urllib_parse import urlparse
@@ -119,6 +121,12 @@ def test_authority(authority):
             with patch.dict("os.environ", {}, clear=True):
                 test_initialization(mock_credential, expect_argument=False)
 
+    # authority should not be passed to AzureDeveloperCliCredential
+    with patch(DefaultAzureCredential.__module__ + ".AzureDeveloperCliCredential") as mock_credential:
+        with patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential") as shared_cache:
+            shared_cache.supported = lambda: False
+            with patch.dict("os.environ", {}, clear=True):
+                test_initialization(mock_credential, expect_argument=False)
 
 def test_exclude_options():
     def assert_credentials_not_present(chain, *excluded_credential_classes):
@@ -153,6 +161,9 @@ def test_exclude_options():
 
     credential = DefaultAzureCredential(exclude_powershell_credential=True)
     assert_credentials_not_present(credential, AzurePowerShellCredential)
+    
+    credential = DefaultAzureCredential(exclude_azd_cli_credential=True)
+    assert_credentials_not_present(credential, AzureDeveloperCliCredential)
 
     # interactive auth is excluded by default
     credential = DefaultAzureCredential(exclude_interactive_browser_credential=False)
@@ -252,46 +263,6 @@ def test_shared_cache_username():
     assert token.token == expected_access_token
 
 
-def test_vscode_arguments(monkeypatch):
-    monkeypatch.delenv(EnvironmentVariables.AZURE_AUTHORITY_HOST, raising=False)
-    monkeypatch.delenv(EnvironmentVariables.AZURE_TENANT_ID, raising=False)
-
-    credential = DefaultAzureCredential.__module__ + ".VisualStudioCodeCredential"
-
-    # DefaultAzureCredential shouldn't specify a default authority or tenant to VisualStudioCodeCredential
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential()
-    mock_credential.assert_called_once_with()
-
-    tenant = {"tenant_id": "the-tenant"}
-
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
-    mock_credential.assert_called_once_with(**tenant)
-
-    # tenant id can also be specified in $AZURE_TENANT_ID
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: tenant["tenant_id"]}):
-        with patch(credential) as mock_credential:
-            DefaultAzureCredential()
-    mock_credential.assert_called_once_with(**tenant)
-
-    # keyword argument should override environment variable
-    with patch.dict(os.environ, {EnvironmentVariables.AZURE_TENANT_ID: "not-" + tenant["tenant_id"]}):
-        with patch(credential) as mock_credential:
-            DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"])
-    mock_credential.assert_called_once_with(**tenant)
-
-    # DefaultAzureCredential should pass the authority kwarg along
-    authority = {"authority": "the-authority"}
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(**authority)
-    mock_credential.assert_called_once_with(**authority)
-
-    with patch(credential) as mock_credential:
-        DefaultAzureCredential(visual_studio_code_tenant_id=tenant["tenant_id"], **authority)
-    mock_credential.assert_called_once_with(**dict(authority, **tenant))
-
-
 @patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential")
 def test_default_credential_shared_cache_use(mock_credential):
     mock_credential.supported = Mock(return_value=False)
@@ -340,6 +311,7 @@ def get_credential_for_shared_cache_test(expected_refresh_token, expected_access
         option: True
         for option in (
             "exclude_cli_credential",
+            "exclude_azd_cli_credential",
             "exclude_environment_credential",
             "exclude_managed_identity_credential",
             "exclude_powershell_credential",

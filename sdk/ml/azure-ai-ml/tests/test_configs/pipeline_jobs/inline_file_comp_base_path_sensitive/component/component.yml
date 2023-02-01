@@ -6,13 +6,10 @@ name: r_iris_example
 version: 01
 
 command: >
-  Rscript train.R 
+  Rscript train.R
   --data_folder ${{inputs.iris}}
 code: ../../../python
 inputs:
-  iris: 
+  iris:
     type: uri_file
-environment:
-  build:
-    path: ../../../environment/environment_files
-    dockerfile_path: DockerfileNonDefault
+environment: file:../../../environment/environment_docker_context.yml

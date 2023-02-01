@@ -47,11 +47,10 @@ setup(
     url='https://github.com/Azure/azure-sdk-for-python',
     keywords="azure, azure sdk",  # update with search keywords relevant to the azure service / product
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 7 - Inactive',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
@@ -65,10 +64,14 @@ setup(
         'azure',
         'azure.mgmt',
     ]),
+    include_package_data=True,
+    package_data={
+        'pytyped': ['py.typed'],
+    },
     install_requires=[
-        'msrest>=0.6.21',
+        'msrest>=0.7.1',
         'azure-common~=1.1',
-        'azure-mgmt-core>=1.3.0,<2.0.0',
+        'azure-mgmt-core>=1.3.2,<2.0.0',
     ],
-    python_requires=">=3.6"
+    python_requires=">=3.7"
 )

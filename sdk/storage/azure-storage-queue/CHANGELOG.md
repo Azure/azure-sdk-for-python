@@ -1,6 +1,29 @@
 # Release History
 
-## 12.4.0 (Unreleased)
+## 12.6.0b1 (Unreleased)
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-queue[aio]` to install.
+
+## 12.5.0 (2022-10-11)
+
+### Features Added
+- Stable release of features from 12.5.0b1.
+
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
+## 12.5.0b1 (2022-08-23)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+
+## 12.4.0 (2022-07-07)
 
 ### Features Added
 - Stable release of features from 12.4.0b1.

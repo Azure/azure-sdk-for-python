@@ -2,25 +2,23 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import time
 import os
 from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
-from azure.core.exceptions import HttpResponseError
 
 # ----------------------------------------------------------------------------------------------------------
 # Prerequisites:
-# 1. An Azure Key Vault (https://docs.microsoft.com/en-us/azure/key-vault/quick-create-cli)
+# 1. An Azure Key Vault (https://docs.microsoft.com/azure/key-vault/quick-create-cli)
 #
 # 2. azure-keyvault-secrets and azure-identity libraries (pip install these)
 #
-# 3. Set Environment variables AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, VAULT_URL
-#    (See https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/keyvault/azure-keyvault-keys#authenticate-the-client)
+# 3. Set up your environment to use azure-identity's DefaultAzureCredential. For more information about how to configure
+#    the DefaultAzureCredential, refer to https://aka.ms/azsdk/python/identity/docs#azure.identity.DefaultAzureCredential
 #
 # ----------------------------------------------------------------------------------------------------------
 # Sample - demonstrates deleting and purging a vault(secret) resource for Azure Key Vault.
 # The vault has to be soft-delete enabled to perform one of the following operations. See
-# https://docs.microsoft.com/en-us/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
+# https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete for more information about soft-delete.
 #
 # 1. Create a secret (set_secret)
 #
@@ -32,9 +30,7 @@ from azure.core.exceptions import HttpResponseError
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a secret client that will be used to call the service.
-# Notice that the client is using default Azure credentials.
-# To make default credentials work, ensure that environment variables 'AZURE_CLIENT_ID',
-# 'AZURE_CLIENT_SECRET' and 'AZURE_TENANT_ID' are set with the service principal credentials.
+# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = SecretClient(vault_url=VAULT_URL, credential=credential)
@@ -44,15 +40,15 @@ client = SecretClient(vault_url=VAULT_URL, credential=credential)
 print("\n.. Create Secret")
 bank_secret = client.set_secret("recoverPurgeBankSecretName", "recoverPurgeSecretValue1")
 storage_secret = client.set_secret("recoverPurgeStorageSecretName", "recoverPurgeSecretValue2")
-print("Secret with name '{0}' was created.".format(bank_secret.name))
-print("Secret with name '{0}' was created.".format(storage_secret.name))
+print(f"Secret with name '{bank_secret.name}' was created.")
+print(f"Secret with name '{storage_secret.name}' was created.")
 
 # The storage account was closed, so we need to delete its credentials from the Key Vault.
 print("\n.. Delete a Secret")
 delete_secret_poller = client.begin_delete_secret(bank_secret.name)
 secret = delete_secret_poller.result()
 delete_secret_poller.wait()
-print("Secret with name '{0}' was deleted on date {1}.".format(secret.name, secret.deleted_date))
+print(f"Secret with name '{secret.name}' was deleted on date {secret.deleted_date}.")
 
 # We accidentally deleted the bank account secret. Let's recover it.
 # A deleted secret can only be recovered if the Key Vault is soft-delete enabled.
@@ -62,7 +58,7 @@ recovered_secret = recover_secret_poller.result()
 
 # This wait is just to ensure recovery is complete before we delete the secret again
 recover_secret_poller.wait()
-print("Recovered Secret with name '{0}'.".format(recovered_secret.name))
+print(f"Recovered Secret with name '{recovered_secret.name}'.")
 
 # Let's delete the storage secret now.
 # If the keyvault is soft-delete enabled, then for permanent deletion, the deleted secret needs to be purged.

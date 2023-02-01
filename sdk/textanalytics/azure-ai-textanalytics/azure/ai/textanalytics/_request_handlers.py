@@ -92,9 +92,13 @@ def _determine_action_type(action):  # pylint: disable=too-many-return-statement
     if action.__class__.__name__ == "CustomEntitiesLROTask":
         return _AnalyzeActionsType.RECOGNIZE_CUSTOM_ENTITIES
     if action.__class__.__name__ == "CustomSingleLabelClassificationLROTask":
-        return _AnalyzeActionsType.SINGLE_CATEGORY_CLASSIFY
+        return _AnalyzeActionsType.SINGLE_LABEL_CLASSIFY
     if action.__class__.__name__ == "CustomMultiLabelClassificationLROTask":
-        return _AnalyzeActionsType.MULTI_CATEGORY_CLASSIFY
+        return _AnalyzeActionsType.MULTI_LABEL_CLASSIFY
     if action.__class__.__name__ == "HealthcareLROTask":
         return _AnalyzeActionsType.ANALYZE_HEALTHCARE_ENTITIES
+    if action.__class__.__name__ == "ExtractiveSummarizationLROTask":
+        return _AnalyzeActionsType.EXTRACT_SUMMARY
+    if action.__class__.__name__ == "AbstractiveSummarizationLROTask":
+        return _AnalyzeActionsType.ABSTRACT_SUMMARY
     return _AnalyzeActionsType.EXTRACT_KEY_PHRASES

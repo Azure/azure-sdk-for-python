@@ -1,4 +1,4 @@
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import config
 import asyncio
 
@@ -40,7 +40,7 @@ MASTER_KEY = config.settings['master_key']
 # ----------------------------------------------------------------------------------------------------------
 
 async def change_connection_retry_policy_configs():
-    async with cosmos_client.CosmosClient(url=HOST, credential=MASTER_KEY, retry_total=10, retry_connect=3,
+    async with CosmosClient(url=HOST, credential=MASTER_KEY, retry_total=10, retry_connect=3,
                                retry_read=3, retry_status=3,
                                retry_on_status_codes=([]),
                                retry_backoff_factor=.08, retry_backoff_max=120, retry_fixed_interval=None) as client:
@@ -48,5 +48,4 @@ async def change_connection_retry_policy_configs():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(change_connection_retry_policy_configs())
+    asyncio.run(change_connection_retry_policy_configs())

@@ -10,8 +10,12 @@ from ._code_containers_operations import CodeContainersOperations
 from ._code_versions_operations import CodeVersionsOperations
 from ._component_containers_operations import ComponentContainersOperations
 from ._component_versions_operations import ComponentVersionsOperations
+from ._data_containers_operations import DataContainersOperations
+from ._data_versions_operations import DataVersionsOperations
+from ._data_references_operations import DataReferencesOperations
 from ._environment_containers_operations import EnvironmentContainersOperations
 from ._environment_versions_operations import EnvironmentVersionsOperations
+from ._resource_management_asset_reference_operations import ResourceManagementAssetReferenceOperations
 from ._model_containers_operations import ModelContainersOperations
 from ._model_versions_operations import ModelVersionsOperations
 from ._temporary_data_references_operations import TemporaryDataReferencesOperations
@@ -21,8 +25,12 @@ __all__ = [
     'CodeVersionsOperations',
     'ComponentContainersOperations',
     'ComponentVersionsOperations',
+    'DataContainersOperations',
+    'DataVersionsOperations',
+    'DataReferencesOperations',
     'EnvironmentContainersOperations',
     'EnvironmentVersionsOperations',
+    'ResourceManagementAssetReferenceOperations',
     'ModelContainersOperations',
     'ModelVersionsOperations',
     'TemporaryDataReferencesOperations',

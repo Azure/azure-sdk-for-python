@@ -27,38 +27,26 @@
 import asyncio
 import abc
 from collections.abc import AsyncIterator
+from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic
+from contextlib import AbstractAsyncContextManager
 
-from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic, Any
 from ._base import (
     _HttpResponseBase,
     _HttpClientTransportResponse,
 )
 from ...utils._pipeline_transport_rest_shared_async import _PartGenerator
 
-try:
-    from contextlib import AbstractAsyncContextManager  # type: ignore
-except ImportError:  # Python <= 3.7
-
-    class AbstractAsyncContextManager(object):  # type: ignore
-        async def __aenter__(self):
-            """Return `self` upon entering the runtime context."""
-            return self
-
-        @abc.abstractmethod
-        async def __aexit__(self, exc_type, exc_value, traceback):
-            """Raise any exception triggered within the runtime context."""
-            return None
-
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
+
 
 class _ResponseStopIteration(Exception):
     pass
 
 
 def _iterate_response_content(iterator):
-    """"To avoid:
+    """ "To avoid:
     TypeError: StopIteration interacts badly with generators and cannot be raised into a Future
     """
     try:
@@ -96,7 +84,9 @@ class AsyncHttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
                 "You can't get parts if the response is not multipart/mixed"
             )
 
-        return _PartGenerator(self, default_http_response_type=AsyncHttpClientTransportResponse)
+        return _PartGenerator(
+            self, default_http_response_type=AsyncHttpClientTransportResponse
+        )
 
 
 class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpResponse):
@@ -112,15 +102,13 @@ class AsyncHttpClientTransportResponse(_HttpClientTransportResponse, AsyncHttpRe
 class AsyncHttpTransport(
     AbstractAsyncContextManager,
     abc.ABC,
-    Generic[HTTPRequestType, AsyncHTTPResponseType]
+    Generic[HTTPRequestType, AsyncHTTPResponseType],
 ):
-    """An http sender ABC.
-    """
+    """An http sender ABC."""
 
     @abc.abstractmethod
     async def send(self, request, **kwargs):
-        """Send the request using this HTTP sender.
-        """
+        """Send the request using this HTTP sender."""
 
     @abc.abstractmethod
     async def open(self):

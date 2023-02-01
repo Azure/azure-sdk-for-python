@@ -1,13 +1,70 @@
 # Release History
 
-## 12.13.0 (Unreleased)
+## 12.15.0b1 (Unreleased)
 
 ### Features Added
+- Added support for service version 2021-12-02.
+- Added support for new blob tier, `Cold`.
+- Added support for `AsyncIterable` as data type for async blob upload.
+
+### Bugs Fixed
+- Changed how async streams are detected on async `upload_blob` to increase compatiblity with different types.
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-blob[aio]` to install.
+
+## 12.14.1 (2022-10-18)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty blobs through Azurite.
+
+## 12.14.0 (2022-10-11)
+
+### Features Added
+- Stable release of features from 12.14.0b1 and 12.14.0b2.
+
+### Bugs Fixed
+- Fixed an issue where calling `download_blob` with an invalid base64-encoded account key would cause an
+`AttributeError` rather than the proper `AzureSigningError`.
+
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
+## 12.14.0b2 (2022-08-30)
+
+### Features Added
+- Added a new API, `list_blob_names`, to `ContainerClient` that lists only the names of the blobs in the respective
+container. This API is significantly faster than the traditional `list_blobs` and can be used if only the blob names
+are desired. It does not return any additional properties or metadata for the blobs.
+
+## 12.14.0b1 (2022-08-23)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+- Added standard `read` method to `StorageStreamDownloader`.
+- Added support for async streams (classes with an async `read` method) to async `upload_blob`.
+
+### Bugs Fixed
+- Removed dead retry meachism from async `azure.storage.blob.aio.StorageStreamDownloader`.
+- Updated exception catching of `azure.storage.blob.StorageStreamDownloader`'s retry mechanism.
+- Adjusted type hints for `upload_blob` and `StorageStreamDownloader.readall`.
+- Fixed a bug where uploading an empty blob via `upload_blob` would fail with `validate_content=True`.
+
+## 12.13.1 (2022-08-04)
+
+### Bugs Fixed
+- Fixed two rare issues with ranged blob download when using client-side encryption V1 or V2.
+
+## 12.13.0 (2022-07-07)
 
 ### Bugs Fixed
 - Stable release of features from 12.13.0b1.
 - Added support for deleting versions in `delete_blobs` by supplying `version_id`.
-- Removed forced `aiohttp` import from storage async download. (#24965)
 
 ## 12.13.0b1 (2022-06-15)
 

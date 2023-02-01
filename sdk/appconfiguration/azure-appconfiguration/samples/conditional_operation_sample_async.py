@@ -37,6 +37,8 @@ async def main():
 
     # Unconditional get
     first_get = await client.get_configuration_setting(key="MyKey")
+    if first_get is None:
+        return print("Error, unconditional set failed.")
     print_configuration_setting(first_get)
 
     # Conditional get, expect to return None because it is not modified
@@ -68,5 +70,4 @@ async def main():
     )
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

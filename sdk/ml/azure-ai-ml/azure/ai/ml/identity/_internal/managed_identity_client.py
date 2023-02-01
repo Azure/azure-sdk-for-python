@@ -6,12 +6,13 @@ import abc
 import time
 from typing import TYPE_CHECKING
 
-from msal import TokenCache
 import six
+from msal import TokenCache
 
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, DecodeError
 from azure.core.pipeline.policies import ContentDecodePolicy
+
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
@@ -23,6 +24,7 @@ except AttributeError:  # Python 2.7, abc exists, but not ABC
 if TYPE_CHECKING:
     # pylint:disable=ungrouped-imports
     from typing import Union
+
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpRequest
@@ -53,7 +55,10 @@ class ManagedIdentityClientBase(ABC):
                     message = "Failed to deserialize JSON from response"
                 else:
                     message = 'Unexpected content type "{}"'.format(response.http_response.content_type)
-                six.raise_from(ClientAuthenticationError(message=message, response=response.http_response), ex)
+                six.raise_from(
+                    ClientAuthenticationError(message=message, response=response.http_response),
+                    ex,
+                )
 
         if not content:
             raise ClientAuthenticationError(message="No token received.", response=response.http_response)
@@ -62,7 +67,8 @@ class ManagedIdentityClientBase(ABC):
             if content and "access_token" in content:
                 content["access_token"] = "****"
             raise ClientAuthenticationError(
-                message='Unexpected response "{}"'.format(content), response=response.http_response
+                message='Unexpected response "{}"'.format(content),
+                response=response.http_response,
             )
 
         if self._content_callback:

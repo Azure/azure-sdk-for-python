@@ -19,6 +19,7 @@ _CONFIG = {
     "is_arm": True,
     "need_msrestazure": False,  # track2 does not need it anymore in setup.py
     "need_azuremgmtcore": True,
+    "sample_link": "",
 }
 
 

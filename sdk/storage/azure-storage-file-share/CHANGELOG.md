@@ -1,6 +1,47 @@
 # Release History
 
-## 12.9.0 (Unreleased)
+## 12.11.0b1 (Unreleased)
+
+### Features Added
+- Added support for service version 2021-12-02.
+- Added support for file and directory paths that contain invalid XML characters. When listing or fetching properties,
+the service will encode illegal characters and the SDK will now automatically decode them.
+- Added support for `AsyncIterable` as data type for async file upload.
+
+### Bugs Fixed
+- Fixed an issue where keyword `name_starts_with` was not being passed to the service properly for the `list_shares` async API
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-file-share[aio]` to install.
+
+## 12.10.1 (2022-10-18)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty files through Azurite.
+
+## 12.10.0 (2022-10-11)
+
+### Features Added
+- Stable release of features from 12.10.0b1.
+
+### Bugs Fixed
+- Fixed an issue where calling `download_file` with an invalid base64-encoded account key would raise an
+`AttributeError` rather than the proper `AzureSigningError`.
+
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
+## 12.10.0b1 (2022-08-23)
+
+This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
+
+### Features Added
+- Added support for `AzureNamedKeyCredential` as a valid `credential` type.
+
+## 12.9.0 (2022-07-07)
 
 ### Features Added
 - Stable release of features from 12.9.0b1.
@@ -215,7 +256,7 @@ the following APIs:
   - `path` (str): The full path of the file.
   - `share` (str): The share the file will be downloaded from.
   - `properties` (`FileProperties`): The properties of the file.
-  - `size` (int): The size of the download. Either the total file size, or the length of a subsection if sepcified. Previously called `download_size`.
+  - `size` (int): The size of the download. Either the total file size, or the length of a subsection if specified. Previously called `download_size`.
 - `StorageStreamDownloader` now has new functions:
   - `readall()`: Reads the complete download stream, returning bytes. This replaces the functions `content_as_bytes` and `content_as_text` which have been deprecated.
   - `readinto(stream)`: Download the complete stream into the supplied writable stream, returning the number of bytes written. This replaces the function `download_to_stream` which has been deprecated.

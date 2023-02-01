@@ -40,10 +40,10 @@ def build_list_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
     skiptoken = kwargs.pop('skiptoken', None)  # type: Optional[str]
     list_view_type = kwargs.pop('list_view_type', None)  # type: Optional[Union[str, "_models.ListViewType"]]
 
+    api_version = "2021-10-01-dataplanepreview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models')
@@ -84,8 +84,7 @@ def build_delete_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
-
+    api_version = "2021-10-01-dataplanepreview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}')
@@ -123,8 +122,7 @@ def build_get_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
-
+    api_version = "2021-10-01-dataplanepreview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}')
@@ -162,9 +160,9 @@ def build_create_or_update_request_initial(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
+    api_version = "2021-10-01-dataplanepreview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/models/{name}')
@@ -234,15 +232,12 @@ class ModelContainersOperations(object):
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
         :param skiptoken: Continuation token for pagination.
         :type skiptoken: str
         :param list_view_type: View type for including/excluding (for example) archived entities.
         :type list_view_type: str or ~azure.mgmt.machinelearningservices.models.ListViewType
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either ModelContainerResourceArmPaginatedResult or the
          result of cls(response)
@@ -250,8 +245,6 @@ class ModelContainersOperations(object):
          ~azure.core.paging.ItemPaged[~azure.mgmt.machinelearningservices.models.ModelContainerResourceArmPaginatedResult]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
-
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelContainerResourceArmPaginatedResult"]
         error_map = {
             401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
@@ -264,7 +257,6 @@ class ModelContainersOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
-                    api_version=api_version,
                     skiptoken=skiptoken,
                     list_view_type=list_view_type,
                     template_url=self.list.metadata['url'],
@@ -278,7 +270,6 @@ class ModelContainersOperations(object):
                     subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     registry_name=registry_name,
-                    api_version=api_version,
                     skiptoken=skiptoken,
                     list_view_type=list_view_type,
                     template_url=next_link,
@@ -331,11 +322,8 @@ class ModelContainersOperations(object):
         :type name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None, or the result of cls(response)
         :rtype: None
@@ -347,15 +335,12 @@ class ModelContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
-
         
         request = build_delete_request(
             name=name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            api_version=api_version,
             template_url=self.delete.metadata['url'],
         )
         request = _convert_request(request)
@@ -392,11 +377,8 @@ class ModelContainersOperations(object):
         :type name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ModelContainerData, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.ModelContainerData
@@ -408,15 +390,12 @@ class ModelContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
-
         
         request = build_get_request(
             name=name,
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            api_version=api_version,
             template_url=self.get.metadata['url'],
         )
         request = _convert_request(request)
@@ -455,7 +434,6 @@ class ModelContainersOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'ModelContainerData')
@@ -465,7 +443,6 @@ class ModelContainersOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self._create_or_update_initial.metadata['url'],
@@ -512,13 +489,10 @@ class ModelContainersOperations(object):
         :type name: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
         :param body: Container entity to create or update.
         :type body: ~azure.mgmt.machinelearningservices.models.ModelContainerData
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -533,7 +507,6 @@ class ModelContainersOperations(object):
          ~azure.core.polling.LROPoller[~azure.mgmt.machinelearningservices.models.ModelContainerData]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
         polling = kwargs.pop('polling', True)  # type: Union[bool, azure.core.polling.PollingMethod]
         cls = kwargs.pop('cls', None)  # type: ClsType["_models.ModelContainerData"]
@@ -548,7 +521,6 @@ class ModelContainersOperations(object):
                 resource_group_name=resource_group_name,
                 registry_name=registry_name,
                 body=body,
-                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x,y,z: x,
                 **kwargs

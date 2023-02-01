@@ -4,6 +4,7 @@ from azure.ai.ml.entities import ResourceSettings
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestResourceRequirementsSettings:
     def test_resource_requirements_settings_from_object(self) -> None:
         rest_resource_settings = ResourceSettings(cpu="1", memory="1.0Gi", gpu="1")

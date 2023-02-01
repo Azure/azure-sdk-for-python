@@ -22,8 +22,10 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
+from __future__ import annotations
 
-def sample_analyze_healthcare_entities():
+
+def sample_analyze_healthcare_entities() -> None:
 
     print(
         "In this sample we will be combing through the prescriptions our pharmacy has fulfilled "
@@ -62,7 +64,7 @@ def sample_analyze_healthcare_entities():
     docs = [doc for doc in result if not doc.is_error]
 
     print("Let's first visualize the outputted healthcare result:")
-    for idx, doc in enumerate(docs):
+    for doc in docs:
         for entity in doc.entities:
             print(f"Entity: {entity.text}")
             print(f"...Normalized Text: {entity.normalized_text}")
@@ -102,7 +104,7 @@ def sample_analyze_healthcare_entities():
     import re
     from collections import defaultdict
 
-    medication_to_dosage = defaultdict(int)
+    medication_to_dosage: dict[str, int] = defaultdict(int)
 
     for relation in dosage_of_medication_relations:
         # The DosageOfMedication relation should only contain the dosage and medication roles

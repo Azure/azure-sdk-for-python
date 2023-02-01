@@ -1,6 +1,7 @@
 type: pipeline
 
-compute: azureml:cpu-cluster
+settings:
+  default_compute: azureml:cpu-cluster
 
 inputs:
   pipeline_job_data_path:

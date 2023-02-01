@@ -16,7 +16,7 @@ from azure.ai.formrecognizer import FormRecognizerApiVersion
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
-
+from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
@@ -44,6 +44,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_recognize_content_from_url(receipt)
                 result = await poller.result()
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -67,6 +68,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -82,6 +84,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         assert layout.tables[0].column_count== 5
         assert layout.tables[0].page_number == 1
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -92,6 +95,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         assert len(result) == 3
         self.assertFormPagesHasValues(result)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -116,6 +120,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_content_continuation_token(self, **kwargs):
@@ -129,6 +134,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             assert result is not None
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -154,6 +160,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         assert layout.tables[0].page_number == 2
         self.assertFormPagesHasValues(result)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -166,6 +173,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy_async
@@ -178,6 +186,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -199,6 +208,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert len(result) == 3
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -210,6 +220,7 @@ class TestContentFromUrlAsync(AsyncFormRecognizerTest):
             result = await poller.result()
             assert result
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async

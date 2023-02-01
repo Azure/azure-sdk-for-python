@@ -31,45 +31,47 @@ from ._models_py3 import OrchestratorProfile
 from ._models_py3 import Resource
 from ._models_py3 import TagsObject
 
-
-from ._container_service_client_enums import (
-    ContainerServiceStorageProfileTypes,
-    ContainerServiceVMSizeTypes,
-    Count,
-    NetworkPlugin,
-    NetworkPolicy,
-    OSType,
-)
+from ._container_service_client_enums import ContainerServiceStorageProfileTypes
+from ._container_service_client_enums import ContainerServiceVMSizeTypes
+from ._container_service_client_enums import Count
+from ._container_service_client_enums import NetworkPlugin
+from ._container_service_client_enums import NetworkPolicy
+from ._container_service_client_enums import OSType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ContainerServiceDiagnosticsProfile',
-    'ContainerServiceLinuxProfile',
-    'ContainerServiceMasterProfile',
-    'ContainerServiceNetworkProfile',
-    'ContainerServiceSshConfiguration',
-    'ContainerServiceSshPublicKey',
-    'ContainerServiceVMDiagnostics',
-    'ContainerServiceWindowsProfile',
-    'CredentialResult',
-    'CredentialResults',
-    'ManagedCluster',
-    'ManagedClusterAADProfile',
-    'ManagedClusterAccessProfile',
-    'ManagedClusterAddonProfile',
-    'ManagedClusterAgentPoolProfile',
-    'ManagedClusterListResult',
-    'ManagedClusterPoolUpgradeProfile',
-    'ManagedClusterServicePrincipalProfile',
-    'ManagedClusterUpgradeProfile',
-    'OperationListResult',
-    'OperationValue',
-    'OrchestratorProfile',
-    'Resource',
-    'TagsObject',
-    'ContainerServiceStorageProfileTypes',
-    'ContainerServiceVMSizeTypes',
-    'Count',
-    'NetworkPlugin',
-    'NetworkPolicy',
-    'OSType',
+    "ContainerServiceDiagnosticsProfile",
+    "ContainerServiceLinuxProfile",
+    "ContainerServiceMasterProfile",
+    "ContainerServiceNetworkProfile",
+    "ContainerServiceSshConfiguration",
+    "ContainerServiceSshPublicKey",
+    "ContainerServiceVMDiagnostics",
+    "ContainerServiceWindowsProfile",
+    "CredentialResult",
+    "CredentialResults",
+    "ManagedCluster",
+    "ManagedClusterAADProfile",
+    "ManagedClusterAccessProfile",
+    "ManagedClusterAddonProfile",
+    "ManagedClusterAgentPoolProfile",
+    "ManagedClusterListResult",
+    "ManagedClusterPoolUpgradeProfile",
+    "ManagedClusterServicePrincipalProfile",
+    "ManagedClusterUpgradeProfile",
+    "OperationListResult",
+    "OperationValue",
+    "OrchestratorProfile",
+    "Resource",
+    "TagsObject",
+    "ContainerServiceStorageProfileTypes",
+    "ContainerServiceVMSizeTypes",
+    "Count",
+    "NetworkPlugin",
+    "NetworkPolicy",
+    "OSType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

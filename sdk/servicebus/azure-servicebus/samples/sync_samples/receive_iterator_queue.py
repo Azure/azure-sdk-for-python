@@ -12,8 +12,8 @@ Example to show iterator receiving from a Service Bus Queue.
 import os
 from azure.servicebus import ServiceBusClient
 
-CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR)
 

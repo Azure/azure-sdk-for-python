@@ -11,7 +11,7 @@ _Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. 
 ## Getting started
 
 ### Prerequisites
-* Python 3.6 or later is required to use this package.
+* Python 3.7 or later is required to use this package.
 * You must have an [Azure subscription][azure_subscription] and an Event Grid Topic resource to use this package. Follow this [step-by-step tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart-portal) to register the Event Grid resource provider and create Event Grid topics using the [Azure portal](https://portal.azure.com/). There is a [similar tutorial](https://docs.microsoft.com/azure/event-grid/custom-event-quickstart) using [Azure CLI](https://docs.microsoft.com/cli/azure).
 
 
@@ -331,7 +331,7 @@ with ServiceBusClient.from_connection_string(connection_str) as sb_client:
 
 ## Distributed Tracing with EventGrid
 
-You can use opentelemetry for Python as usual with EventGrid since it's compatible with azure-core tracing integration.
+You can use OpenTelemetry for Python as usual with EventGrid since it's compatible with azure-core tracing integration.
 
 Here is an example of using OpenTelemetry to trace sending a CloudEvent.
 
@@ -351,7 +351,7 @@ This example uses a simple console exporter to export the traces. Any exporter c
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
-from opentelemetry.sdk.trace.export import SimpleSpanProcessor  # this requires opentelemtry >= 1.0.0
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor  # this requires opentelemetry >= 1.0.0
 
 # Simple console exporter
 exporter = ConsoleSpanExporter()

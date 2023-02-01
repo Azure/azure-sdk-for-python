@@ -35,7 +35,7 @@ These options are available for all perf tests:
 
 ### MonitorExporter Test options
 These options are available for all monitor exporter perf tests:
-- `--num-spans` Number ofspans to be exported. Defaults to 10.
+- `--num-spans` Number of spans to be exported. Defaults to 10.
 
 ### T2 Tests
 The tests currently written for the T2 SDK:

@@ -1,6 +1,8 @@
 [packaging]
 package_name = "azure-mgmt-resourcegraph"
 package_pprint_name = "Resource Graph"
-package_doc_id = "resourcegraph"
+package_doc_id = "resource-graph"
 is_stable = false
 is_arm = true
+sample_link = ""
+title = "ResourceGraphClient"

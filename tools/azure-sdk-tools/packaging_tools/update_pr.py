@@ -55,7 +55,12 @@ def update_pr(gh_token, repo_id, pr_number):
             _LOGGER.info("Try update package %s from folder %s", package_name, base_folder)
             build_packaging_by_package_name(package_name, sdk_repo_root / Path(base_folder), build_conf=True)
             # Commit that
-            do_commit(sdk_repo, "Packaging update of {}".format(package_name), head_branch, None)  # Unused
+            do_commit(
+                sdk_repo,
+                "Packaging update of {}".format(package_name),
+                head_branch,
+                None,
+            )  # Unused
         # Push all commits at once
         sdk_repo.git.push("origin", head_branch, set_upstream=True)
 
@@ -66,9 +71,19 @@ def update_pr_main():
     parser = argparse.ArgumentParser(description="Build package.", formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument("--pr-number", "-p", dest="pr_number", type=int, required=True, help="PR number")
     parser.add_argument(
-        "--repo", "-r", dest="repo_id", default="Azure/azure-sdk-for-python", help="Repo id. [default: %(default)s]"
+        "--repo",
+        "-r",
+        dest="repo_id",
+        default="Azure/azure-sdk-for-python",
+        help="Repo id. [default: %(default)s]",
     )
-    parser.add_argument("-v", "--verbose", dest="verbose", action="store_true", help="Verbosity in INFO mode")
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        dest="verbose",
+        action="store_true",
+        help="Verbosity in INFO mode",
+    )
     parser.add_argument("--debug", dest="debug", action="store_true", help="Verbosity in DEBUG mode")
 
     args = parser.parse_args()

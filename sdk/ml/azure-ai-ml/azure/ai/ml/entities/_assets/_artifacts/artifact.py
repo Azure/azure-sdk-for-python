@@ -1,15 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Dict, Optional, Union
-from os import PathLike
 from abc import abstractmethod
+from os import PathLike
 from pathlib import Path, PurePosixPath
+from typing import Dict, Optional, Union
 from urllib.parse import urljoin
 
+from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
 from azure.ai.ml.entities._assets.asset import Asset
-from azure.ai.ml._utils._asset_utils import _is_local_path
-from azure.ai.ml._utils.utils import is_url, is_mlflow_uri
 
 
 class ArtifactStorageInfo:
@@ -42,8 +41,7 @@ class ArtifactStorageInfo:
         if self.is_file:
             path = PurePosixPath(self.relative_path).parent
             return urljoin(self.storage_account_url, f"{self.container_name}/{path}")
-        else:
-            return self.full_storage_path
+        return self.full_storage_path
 
 
 class Artifact(Asset):
@@ -61,6 +59,8 @@ class Artifact(Asset):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param datastore: The datastore to upload the local artifact to.
+    :type datastore: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -73,12 +73,19 @@ class Artifact(Asset):
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         path: Optional[Union[str, PathLike]] = None,
+        datastore: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(
-            name=name, version=version, description=description, tags=tags, properties=properties, **kwargs
+            name=name,
+            version=version,
+            description=description,
+            tags=tags,
+            properties=properties,
+            **kwargs,
         )
         self.path = path
+        self.datastore = datastore
 
     @property
     def path(self) -> Optional[Union[str, PathLike]]:
@@ -97,7 +104,7 @@ class Artifact(Asset):
 
     def __eq__(self, other) -> bool:
         return (
-            type(self) == type(other)
+            type(self) == type(other)  # pylint: disable = unidiomatic-typecheck
             and self.name == other.name
             and self.id == other.id
             and self.version == other.version
@@ -113,5 +120,4 @@ class Artifact(Asset):
 
     @abstractmethod
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        """Updates an an artifact with the remote path of a local upload"""
-        pass
+        """Updates an an artifact with the remote path of a local upload."""

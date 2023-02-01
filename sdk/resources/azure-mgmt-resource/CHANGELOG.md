@@ -1,5 +1,26 @@
 # Release History
 
+## 22.0.0 (2022-12-15)
+
+### Breaking Changes
+
+  - Renamed operation TagsOperations.create_or_update_at_scope to TagsOperations.begin_create_or_update_at_scope
+  - Renamed operation TagsOperations.delete_at_scope to TagsOperations.begin_delete_at_scope
+  - Renamed operation TagsOperations.update_at_scope to TagsOperations.begin_update_at_scope
+
+## 21.2.1 (2022-10-20)
+
+### Bugs Fixed
+
+  - Fixed urlencode in `next_link` of paging operation
+
+## 21.2.0 (2022-10-10)
+
+### Features Added
+
+  - Added operation group VariableValuesOperations
+  - Added operation group VariablesOperations
+
 ## 21.1.0 (2022-05-05)
 
 **Features**

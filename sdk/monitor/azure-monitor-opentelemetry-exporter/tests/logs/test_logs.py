@@ -12,7 +12,7 @@ from opentelemetry.sdk import _logs
 from opentelemetry.sdk.util.instrumentation import InstrumentationScope
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk._logs.export import LogExportResult
-from opentelemetry.sdk._logs.severity import SeverityNumber
+from opentelemetry._logs.severity import SeverityNumber
 
 from azure.monitor.opentelemetry.exporter.export._base import ExportResult
 from azure.monitor.opentelemetry.exporter.export.logs._exporter import (
@@ -43,6 +43,7 @@ class TestAzureLogExporter(unittest.TestCase):
         os.environ[
             "APPINSIGHTS_INSTRUMENTATIONKEY"
         ] = "1234abcd-5678-4efa-8abc-1234567890ab"
+        os.environ["APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL"] = "true"
         cls._exporter = AzureMonitorLogExporter()
         cls._log_data = _logs.LogData(
             _logs.LogRecord(

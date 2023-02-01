@@ -1,0 +1,38 @@
+type: pipeline
+
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  component_in_number: 10
+  hello_string: hello
+  input_data:
+    path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    type: uri_file
+  text_ner_training_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/conll2003/train
+  text_ner_validation_data:
+    type: mltable
+    path: ../../automl_job/test_datasets/conll2003/valid
+
+properties:
+  AZURE_ML_PathOnCompute_input_data: "/tmp/test"
+
+jobs:
+  node7:  # internal command node with properties as a typical implement of internal base node.
+    type: CommandComponent
+    compute: azureml:cpu-cluster
+    component: file:../helloworld/helloworld_component_command.yml
+    inputs:
+      training_data: ${{parent.inputs.input_data}}
+      max_epochs: 10
+      learning_rate: 0.01
+    properties:
+      AZURE_ML_PathOnCompute_job_training_data: "/tmp/test"
