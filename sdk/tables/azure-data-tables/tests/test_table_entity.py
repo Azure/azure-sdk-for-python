@@ -1223,6 +1223,20 @@ class TestTableEntity(AzureRecordedTestCase, TableTestCase):
 
     @tables_decorator
     @recorded_by_proxy
+    def test_delete_entity_with_empty_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+        self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
+        try:
+            entity, _ = self._insert_random_entity(rk="")
+            self.table.delete_entity(entity)
+            entity, _ = self._insert_random_entity(pk="", rk="")
+            self.table.delete_entity(partition_key="", row_key="")
+            res = self.table.list_entities()
+            assert len(list(res)) == 0
+        finally:
+            self._tear_down()
+
+    @tables_decorator
+    @recorded_by_proxy
     def test_unicode_property_value(self, tables_storage_account_name, tables_primary_storage_account_key):
         # Arrange
         self._set_up(tables_storage_account_name, tables_primary_storage_account_key)
