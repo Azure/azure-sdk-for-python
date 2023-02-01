@@ -811,4 +811,4 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-webpubsub-client isodate<1.0.0,>=0.6.1
 #override azure-webpubsub-client azure-core<2.0.0,>=1.24.0
 #override azure-webpubsub-client typing-extensions>=4.3.0; python_version<'3.8.0'
-#override azure-webpubsub-client websocket-client>=1.4.2
+#override azure-webpubsub-client websocket-client<2.0.0,>=1.4.2

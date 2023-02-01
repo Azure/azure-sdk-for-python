@@ -18,7 +18,6 @@ from ._models import (
     OnDisconnectedArgs,
     OnServerDataMessageArgs,
     OnGroupDataMessageArgs,
-    OnRejoinGroupFailedArgs,
     SendEventOptions,
     JoinGroupOptions,
     LeaveGroupOptions,
