@@ -1,0 +1,16 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+display_name: hello world pipeline with Singularity compute
+
+settings:
+  default_compute: azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC
+
+jobs:
+  hello_job:
+    command: echo "hello"
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    compute: /subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC
+  world_job:
+    command: echo "world"
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
