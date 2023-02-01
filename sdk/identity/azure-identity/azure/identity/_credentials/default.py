@@ -104,6 +104,9 @@ class DefaultAzureCredential(ChainedTokenCredential):
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
         )
+        workload_identity_client_id = kwargs.pop(
+            "workload_identity_client_id", managed_identity_client_id
+        )
         interactive_browser_client_id = kwargs.pop("interactive_browser_client_id", None)
 
         shared_cache_username = kwargs.pop("shared_cache_username", os.environ.get(EnvironmentVariables.AZURE_USERNAME))
@@ -124,7 +127,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         if not exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=authority, **kwargs))
         if all(os.environ.get(var) for var in EnvironmentVariables.WORKLOAD_IDENTITY_VARS):
-            client_id = managed_identity_client_id or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
+            client_id = workload_identity_client_id
             credentials.append(WorkloadIdentityCredential(
                 client_id=cast(str, client_id),
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
