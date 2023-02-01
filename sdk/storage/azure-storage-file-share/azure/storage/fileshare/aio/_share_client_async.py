@@ -92,7 +92,7 @@ class ShareClient(AsyncStorageAccountHostsMixin, ShareClientBase):
             credential=credential,
             **kwargs)
         self.file_request_intent = kwargs.pop('file_request_intent', None)
-        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, file_request_intent=self.file_request_intent)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, file_request_intent=self.file_request_intent)  # pylint: disable=line-too-long
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     def get_directory_client(self, directory_path=None):
