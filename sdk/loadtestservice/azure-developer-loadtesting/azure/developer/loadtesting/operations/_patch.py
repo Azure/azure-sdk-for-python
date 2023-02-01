@@ -147,7 +147,6 @@ class AdministrationOperations(AdministrationOperationsGenerated):
         :type file_type: str
         :param poll_for_validation_status: If true, polls for validation status of the file, else does not
         :type poll_for_validation_status: bool
-        :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An instance of LROPoller object to check the validation status of file
         :rtype: ~azure.developer.loadtesting._polling.LoadTestingLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
