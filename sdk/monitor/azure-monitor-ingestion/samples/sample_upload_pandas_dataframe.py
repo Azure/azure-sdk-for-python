@@ -5,15 +5,17 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_send_small_logs.py
+FILE: sample_upload_pandas_dataframe.py
 
 DESCRIPTION:
-    This sample demonstrates how to send a small number of logs to a Log Analytics workspace.
+    This sample demonstrates how to upload data stored in a pandas dataframe to Azure Monitor. For example,
+    a user might have the result of a query stored in a pandas dataframe and want to upload it to a Log Analytics
+    workspace.
 
-    Note: This sample requires the azure-identity library.
+    Note: This sample requires the azure-identity and pandas libraries.
 
 USAGE:
-    python sample_send_small_logs.py
+    python sample_upload_pandas_dataframe.py
 
     Set the environment variables with your own values before running the sample:
     1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
@@ -26,33 +28,41 @@ USAGE:
     3) AZURE_CLIENT_SECRET - your Azure AD client secret
 """
 
+from datetime import datetime
+import json
 import os
+
+import pandas as pd
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.ingestion import LogsIngestionClient
-
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()
 
 client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
-rule_id = os.environ['LOGS_DCR_RULE_ID']
-body = [
-      {
-        "Time": "2021-12-08T23:51:14.1104269Z",
+# Set up example DataFrame.
+data = [
+    {
+        "Time": datetime.now().astimezone(),
         "Computer": "Computer1",
         "AdditionalContext": "context-2"
-      },
-      {
-        "Time": "2021-12-08T23:51:14.1104269Z",
+    },
+    {
+        "Time": datetime.now().astimezone(),
         "Computer": "Computer2",
         "AdditionalContext": "context"
-      }
-    ]
+    }
+]
+df = pd.DataFrame.from_dict(data)
 
+# If you have a populated dataframe that you want to upload, one approach is to use the DataFrame `to_json` method
+# which will convert any datetime objects to ISO 8601 strings. The `json.loads` method will then convert the JSON string
+# into a Python object that can be used for upload.
+body = json.loads(df.to_json(orient='records', date_format='iso'))
 try:
-    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+    client.upload(rule_id=os.environ['LOGS_DCR_RULE_ID'], stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
 except HttpResponseError as e:
     print(f"Upload failed: {e}")

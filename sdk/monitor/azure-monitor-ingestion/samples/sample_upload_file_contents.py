@@ -5,15 +5,16 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_send_small_logs.py
+FILE: sample_upload_file_contents.py
 
 DESCRIPTION:
-    This sample demonstrates how to send a small number of logs to a Log Analytics workspace.
+    This sample demonstrates how to upload the contents of a file to a Log Analytics workspace. The file is
+    expected to contain a list of JSON objects.
 
     Note: This sample requires the azure-identity library.
 
 USAGE:
-    python sample_send_small_logs.py
+    python sample_upload_file_contents.py
 
     Set the environment variables with your own values before running the sample:
     1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
@@ -26,33 +27,35 @@ USAGE:
     3) AZURE_CLIENT_SECRET - your Azure AD client secret
 """
 
+import json
 import os
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.monitor.ingestion import LogsIngestionClient
 
-
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()
 
 client = LogsIngestionClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
-rule_id = os.environ['LOGS_DCR_RULE_ID']
-body = [
-      {
-        "Time": "2021-12-08T23:51:14.1104269Z",
-        "Computer": "Computer1",
-        "AdditionalContext": "context-2"
-      },
-      {
-        "Time": "2021-12-08T23:51:14.1104269Z",
-        "Computer": "Computer2",
-        "AdditionalContext": "context"
-      }
-    ]
+# Update this to point to a file containing a list of JSON objects.
+FILE_PATH ="../test-logs.json"
 
-try:
-    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-except HttpResponseError as e:
-    print(f"Upload failed: {e}")
+# Option 1: Upload the file contents by passing in the file stream. With this option, no chunking is done, and the
+# file contents are uploaded as is through one request. Subject to size service limits.
+with open(FILE_PATH, "r") as f:
+    try:
+        client.upload(rule_id=os.environ['LOGS_DCR_RULE_ID'], stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=f)
+    except HttpResponseError as e:
+        print(f"File stream upload failed: {e}")
+
+
+# Option 2: Upload the file contents by passing in the list of JSON objects. Chunking is done automatically, and the
+# file contents are uploaded through multiple requests.
+with open(FILE_PATH, "r") as f:
+    logs = json.load(f)
+    try:
+        client.upload(rule_id=os.environ['LOGS_DCR_RULE_ID'], stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=logs)
+    except HttpResponseError as e:
+        print(f"List upload failed: {e}")
