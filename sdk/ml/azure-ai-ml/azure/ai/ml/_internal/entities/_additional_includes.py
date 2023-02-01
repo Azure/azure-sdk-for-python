@@ -11,7 +11,7 @@ from typing import Union
 
 import yaml
 
-from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory
+from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory, get_ignore_file
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
@@ -91,17 +91,18 @@ class _AdditionalIncludes:
             # use os.walk to replace shutil.copytree, which may raise FileExistsError
             # for same folder, the expected behavior is merging
             # ignore will be also applied during this process
+            # TODO: inner ignore file is not supported with current implementation
             for root, _, files in os.walk(src):
                 dst_root = Path(dst) / Path(root).relative_to(src)
                 dst_root_mkdir_flag = dst_root.is_dir()
-                for path, _ in traverse_directory(
-                    root, files, str(src), "", ignore_file=ignore_file or self._ignore_file
+                for src_path, _ in traverse_directory(
+                    root, files, str(src), "", ignore_file=ignore_file or IgnoreFile(),
                 ):
                     # if there is nothing to copy under current dst_root, no need to create this folder
                     if dst_root_mkdir_flag is False:
                         dst_root.mkdir(parents=True)
                         dst_root_mkdir_flag = True
-                    _general_copy(path, dst_root / Path(path).name)
+                    _AdditionalIncludes._copy(Path(src_path), dst_root / Path(src_path).name)
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -232,7 +233,7 @@ class _AdditionalIncludes:
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
             for root, _, files in os.walk(folder_to_zip, followlinks=True):
-                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=self._ignore_file):
+                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=ignore_file):
                     zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def cleanup(self) -> None:
