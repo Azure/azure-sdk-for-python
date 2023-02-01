@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import copy
+import enum
 import os
 import shutil
 import tempfile
@@ -25,6 +26,15 @@ from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
+
+
+class AdditionalIncludesCheckFunc(enum.Enum):
+    """Enum for additional includes check function"""
+    SKIP = 0
+    SELF_IS_FILE = 1
+    PARENT_EXISTS = 2
+    NOT_EXISTS = 3
+    NO_PARENT = 4
 
 
 @pytest.mark.usefixtures("enable_internal_components")
@@ -361,29 +371,116 @@ class TestComponent:
         assert component._validate().passed, repr(component._validate())
         # resolve
         with component._resolve_local_code() as code:
-            code_path = code.path
+            code_path: Path = code.path
             assert code_path.is_dir()
             assert (code_path / "LICENSE").is_file()
             assert (code_path / "library.zip").is_file()
             assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
             assert (code_path / "library1" / "hello.py").is_file()
             assert (code_path / "library1" / "world.py").is_file()
+            assert not (code_path / "helloworld_additional_includes.additional_includes").exists()
 
         assert not code_path.is_dir()
 
-    def test_additional_includes_default_ignore(self) -> None:
+    @pytest.mark.parametrize(
+        "test_files",
+        [
+            pytest.param(
+                [
+                    ("component_with_additional_includes/.amlignore", "test_ignore/*\nlibrary1/ignore.py", AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("component_with_additional_includes/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    # will be saved to library1/ignore.py, should be ignored
+                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    # will be saved to library1/ignore.py/a.py, should be ignored
+                    # TODO: can't create with the same name?
+                    # ("additional_includes/library1/ignore.py/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    # will be saved to library1/test_ignore, should be kept
+                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                ],
+                id="amlignore",
+            ),
+            pytest.param(
+                [
+                    # additional_includes for other spec, should be kept
+                    ("component_with_additional_includes/x.additional_includes", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("additional_includes/library1/x.additional_includes", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("additional_includes/library1/test/x.additional_includes", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    # additional_includes in a different level, should be kept
+                    (
+                        "component_with_additional_includes/library2/helloworld_additional_includes.additional_includes",
+                        None,
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                    (
+                        "component_with_additional_includes/library2/library/helloworld_additional_includes.additional_includes",
+                        None,
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                    # additional_includes in a different level in additional includes, should be kept
+                    (
+                        "additional_includes/library1/helloworld_additional_includes.additional_includes",
+                        None,
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                ],
+                id="additional_includes",
+            ),
+            pytest.param(
+                [
+                    ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("component_with_additional_includes/test_code/.amlignore", "hello.py", AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("component_with_additional_includes/test_code/hello.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    # shall we keep the empty folder?
+                    ("component_with_additional_includes/test_code/a/hello.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                ],
+                id="amlignore_subfolder",
+            ),
+            pytest.param(
+                [
+                    ("additional_includes/library1/.amlignore", "test_ignore\nignore.py",
+                     AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    # will be saved to library1/ignore.py, should be ignored
+                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    # will be saved to library1/ignore.py/a.py, should be ignored
+                    # TODO: can't create with the same name?
+                    # ("additional_includes/library1/ignore.py/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    # will be saved to library1/test_ignore, should be kept
+                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                ],
+                id="amlignore_in_additional_includes_folder",
+            ),
+            pytest.param(
+                [
+                    ("additional_includes/library1/test_ignore/.amlignore", "ignore.py",
+                     AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    # will be saved to library1/ignore.py, should be ignored
+                    ("additional_includes/library1/test_ignore/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    (
+                    "additional_includes/library1/test_ignore/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                ],
+                id="amlignore_in_additional_includes_subfolder",
+            ),
+            pytest.param(
+                [
+                    ("component_with_additional_includes/__pycache__/a.pyc", None,
+                     AdditionalIncludesCheckFunc.NO_PARENT),
+                    ("component_with_additional_includes/test/__pycache__/a.pyc", None,
+                     AdditionalIncludesCheckFunc.NO_PARENT),
+                    ("additional_includes/library1/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    ("additional_includes/library1/test/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                ],
+                id="pycache",
+            ),
+        ]
+    )
+    def test_additional_includes_advanced(self, test_files) -> None:
         with build_temp_folder(
             source_base_dir="./tests/test_configs/internal/",
             relative_dirs_to_copy=[
                 "component_with_additional_includes",
                 "additional_includes"
             ],
-            extra_files_to_create={
-                "component_with_additional_includes/x.additional_includes": None,
-                "component_with_additional_includes/__pycache__/a.pyc": None,
-                "additional_includes/__pycache__/a.pyc": None,
-                "additional_includes/library1/x.additional_includes": None,
-            }
+            extra_files_to_create={file: content for file, content, _ in test_files}
         ) as test_configs_dir:
             yaml_path = Path(test_configs_dir) / "component_with_additional_includes" / "helloworld_additional_includes.yml"
 
@@ -391,39 +488,24 @@ class TestComponent:
 
             # resolve and check snapshot directory
             with component._resolve_local_code() as code:
-                code_path = code.path
-                assert not (code_path / "__pycache__").exists()
-                assert not (code_path / "library1" / "__pycache__").exists()
-                assert not (code_path / "helloworld_additional_includes.additional_includes").exists()
-                assert (code_path / "library1" / "x.additional_includes").is_file()
-                assert (code_path / "x.additional_includes").is_file()
-
-    def test_additional_includes_file_ignore(self) -> None:
-        with build_temp_folder(
-            source_base_dir="./tests/test_configs/internal/",
-            relative_dirs_to_copy=[
-                "component_with_additional_includes",
-                "additional_includes"
-            ],
-            extra_files_to_create={
-                "component_with_additional_includes/test_code/hello.py": None,
-                "component_with_additional_includes/.amlignore": "code_only\nlibrary1/world.py",
-                "additional_includes/library1/.amlignore": "hello.py",
-            }
-        ) as test_configs_dir:
-            yaml_path = Path(test_configs_dir) / "component_with_additional_includes" / "helloworld_additional_includes.yml"
-
-            component: InternalComponent = load_component(source=yaml_path)
-
-            # resolve and check snapshot directory
-            assert (Path(test_configs_dir) / "component_with_additional_includes" / "code_only").is_dir()
-            assert (Path(test_configs_dir) / "additional_includes" / "library1" / "hello.py").is_file()
-            with component._resolve_local_code() as code:
-                code_path = code.path
-                assert not (code_path / "code_only").exists()
-                assert not (code_path / "library1" / "hello.py").exists()
-                assert not (code_path / "library1" / "world.py").exists()
-                assert (code_path / "test_code" / "hello.py").is_file()
+                for file, content, check_func in test_files:
+                    # original file is based on test_configs_dir, need to remove the leading
+                    # "component_with_additional_includes" or "additional_includes" to get the relative path
+                    resolved_file_path = Path(os.path.join(code.path, *Path(file).parts[1:]))
+                    if check_func == AdditionalIncludesCheckFunc.NO_PARENT:
+                        assert not resolved_file_path.parent.exists(), f"{file} should not have parent"
+                    elif check_func == AdditionalIncludesCheckFunc.SELF_IS_FILE:
+                        assert resolved_file_path.is_file(), f"{file} is not a file"
+                        if content is not None:
+                            assert resolved_file_path.read_text() == content, f"{file} content is not expected"
+                    elif check_func == AdditionalIncludesCheckFunc.PARENT_EXISTS:
+                        assert resolved_file_path.parent.is_dir(), f"{file} should have parent"
+                    elif check_func == AdditionalIncludesCheckFunc.NOT_EXISTS:
+                        assert not resolved_file_path.exists(), f"{file} should not exist"
+                    elif check_func == AdditionalIncludesCheckFunc.SKIP:
+                        pass
+                    else:
+                        raise ValueError(f"Unknown check func: {check_func}")
 
     def test_additional_includes_merge_folder(self) -> None:
         yaml_path = (
