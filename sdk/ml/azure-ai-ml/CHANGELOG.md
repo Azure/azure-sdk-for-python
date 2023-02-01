@@ -3,10 +3,13 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
--
+-Add dedicated classes for each type of job service. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
 
 ### Bugs Fixed
--
+- Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected
+- Fixed an issue where ignore files weren't considered during upload directory size calculations
+- Fixed an issue where symlinks crashed upload directory size calculations.
+- Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected
 
 ### Other Changes
 - Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights.
@@ -61,7 +64,7 @@
 ## 1.1.2 (2022-11-21)
 
 ### Features Added
-- Restored idle_time_before_shutdown property for Compute Instances. 
+- Restored idle_time_before_shutdown property for Compute Instances.
 - Deprecated idle_time_before_shutdown property in favor of idle_time_before_shutdown_minutes.
 
 ### Bugs Fixed

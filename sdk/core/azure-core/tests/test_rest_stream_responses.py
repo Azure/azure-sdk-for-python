@@ -251,6 +251,15 @@ def test_decompress_compressed_header(client):
     assert response.content == content
     assert response.text() == "hello world"
 
+def test_deflate_decompress_compressed_header(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/deflate")
+    response = client.send_request(request)
+    content = response.read()
+    assert content == b"hi there"
+    assert response.content == content
+    assert response.text() == "hi there"
+
 def test_decompress_compressed_header_stream(client):
     # expect plain text
     request = HttpRequest("GET", "/encoding/gzip")
