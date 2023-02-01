@@ -17,7 +17,11 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     VolumeDefinitionType as RestVolumeDefinitionType,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from azure.ai.ml.constants._compute import CustomApplicationDefaults
+from azure.ai.ml.constants._compute import (
+    CustomApplicationDefaults,
+    DUPLICATE_APPLICATION_ERROR,
+    INVALID_VALUE_ERROR,
+)
 
 
 class ImageSettings:
@@ -48,32 +52,15 @@ class EndpointsSettings:
     """
 
     def __init__(self, *, target: int, published: int):
+        EndpointsSettings._validate_endpoint_settings(
+            target=target, published=published
+        )
         self.target = target
         self.published = published
-        self._validate_endpoint_settings()
-
-    def _validate_endpoint_settings(self):
-        invalid_value_error_message = "Value of {} property should be between {} and {}"
-        ports = {
-            CustomApplicationDefaults.TARGET_PORT: self.target,
-            CustomApplicationDefaults.PUBLISHED_PORT: self.published,
-        }
-        min_value = CustomApplicationDefaults.PORT_MIN_VALUE
-        max_value = CustomApplicationDefaults.PORT_MAX_VALUE
-
-        for port_name, port in ports.items():
-            msg = invalid_value_error_message.format(port_name, min_value, max_value)
-            if port < min_value or port > max_value:
-                raise ValidationException(
-                    message=msg,
-                    target=ErrorTarget.COMPUTE,
-                    no_personal_data_message=msg,
-                    error_category=ErrorCategory.USER_ERROR,
-                )
 
     def _to_rest_object(self) -> RestEndpoint:
         return RestEndpoint(
-            name="connect",
+            name=CustomApplicationDefaults.ENDPOINT_NAME,
             target=self.target,
             published=self.published,
             protocol=Protocol.HTTP,
@@ -82,6 +69,25 @@ class EndpointsSettings:
     @classmethod
     def _from_rest_object(cls, obj: RestEndpoint) -> "EndpointsSettings":
         return EndpointsSettings(target=obj.target, published=obj.published)
+
+    @classmethod
+    def _validate_endpoint_settings(cls, target: int, published: int):
+        ports = {
+            CustomApplicationDefaults.TARGET_PORT: target,
+            CustomApplicationDefaults.PUBLISHED_PORT: published,
+        }
+        min_value = CustomApplicationDefaults.PORT_MIN_VALUE
+        max_value = CustomApplicationDefaults.PORT_MAX_VALUE
+
+        for port_name, port in ports.items():
+            message = INVALID_VALUE_ERROR.format(port_name, min_value, max_value)
+            if not min_value < port < max_value:
+                raise ValidationException(
+                    message=message,
+                    target=ErrorTarget.COMPUTE,
+                    no_personal_data_message=message,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
 
 
 class VolumeSettings:
@@ -202,14 +208,14 @@ class CustomApplications:
 
 
 def validate_custom_applications(custom_apps: List[CustomApplications]):
-    unique_error = "Value of {} is should be unique accross all custom applications"
+    message = DUPLICATE_APPLICATION_ERROR
 
     names = [app.name for app in custom_apps]
     if len(set(names)) != len(names):
         raise ValidationException(
-            message=unique_error.format("application_name"),
+            message=message.format("application_name"),
             target=ErrorTarget.COMPUTE,
-            no_personal_data_message=unique_error.format("application_name"),
+            no_personal_data_message=message.format("application_name"),
             error_category=ErrorCategory.USER_ERROR,
         )
 
@@ -219,8 +225,8 @@ def validate_custom_applications(custom_apps: List[CustomApplications]):
 
     if len(set(published_ports)) != len(published_ports):
         raise ValidationException(
-            message=unique_error.format("published_port"),
+            message=message.format("published_port"),
             target=ErrorTarget.COMPUTE,
-            no_personal_data_message=unique_error.format("published_port"),
+            no_personal_data_message=message.format("published_port"),
             error_category=ErrorCategory.USER_ERROR,
         )
