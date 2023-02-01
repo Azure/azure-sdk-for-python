@@ -20,7 +20,7 @@ def mock_vc_operation(mock_workspace_scope: OperationScope, mock_credential) -> 
 
 
 @pytest.mark.unittest
-@pytest.mark.vc_test
+@pytest.mark.virtual_cluster_test
 class TestVCOperations:
 
     @patch("azure.ai.ml.operations._virtual_cluster_operations.get_virtual_clusters_from_subscriptions")
@@ -50,7 +50,7 @@ class TestVCOperations:
 
         assert mock_function.call_count == 2
 
-    @patch("azure.ai.ml.operations._virtual_cluster_operations.get_vc_by_id")
+    @patch("azure.ai.ml.operations._virtual_cluster_operations.get_virtual_cluster_by_id")
     def test_get(self, mock_function, mock_vc_operation: VirtualClusterOperations, mock_workspace_scope: OperationScope, mock_credential: Mock) -> None:
         dummy_vc = {
             "id": "id1",

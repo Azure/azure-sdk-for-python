@@ -8,7 +8,7 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.azure_resource_utils import get_virtual_clusters_from_subscriptions, get_vc_by_id
+from azure.ai.ml._utils.azure_resource_utils import get_virtual_clusters_from_subscriptions, get_virtual_cluster_by_id
 from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.exceptions import UserErrorException
 from azure.core.tracing.decorator import distributed_trace
@@ -70,4 +70,4 @@ class VirtualClusterOperations():
         """
 
 
-        return get_vc_by_id(name=name, resource_group=self._resource_group_name, subscription_id=self._subscription_id, credential=self._credentials)
+        return get_virtual_cluster_by_id(name=name, resource_group=self._resource_group_name, subscription_id=self._subscription_id, credential=self._credentials)
