@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 from azure.purview.catalog.operations._operations import build_entity_delete_by_guids_request, build_entity_list_by_guids_request
 from azure.purview.catalog.operations._patch import build_glossary_import_glossary_terms_via_csv_request_initial, build_entity_import_business_metadata_request
 from devtools_testutils import recorded_by_proxy
-
+ 
 class TestPurviewCatalogSmoke(PurviewCatalogTest):
     @PurviewCatalogPowerShellPreparer()
     @recorded_by_proxy
