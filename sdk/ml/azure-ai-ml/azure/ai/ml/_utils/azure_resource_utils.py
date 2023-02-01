@@ -42,7 +42,7 @@ def get_generic_resource_by_id(arm_id: str, credential:  TokenCredential, subscr
 
     return generic_resource.as_dict()
 
-def get_vc_by_id(name: str, resource_group: str, subscription_id: str, credential: TokenCredential) -> Dict:
+def get_virtual_cluster_by_id(name: str, resource_group: str, subscription_id: str, credential: TokenCredential) -> Dict:
     arm_id = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/virtualClusters/{name}"
     
     return get_generic_resource_by_id(arm_id, credential, subscription_id, api_version="2021-03-01-preview") # This is the API version Studio UX is using.
