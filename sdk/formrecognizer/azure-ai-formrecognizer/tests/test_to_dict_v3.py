@@ -290,6 +290,150 @@ class TestToDict(FormRecognizerTest):
         }
         assert d == final
 
+    def test_document_field_to_dict_none_value_address(self):
+        model = _models.DocumentField(
+            value_type="address",
+            value=None,
+            content="123 Main St",
+            bounding_regions=[
+                _models.BoundingRegion(
+                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+                _models.BoundingRegion(
+                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+            ],
+            spans=[
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+            ],
+            confidence=0.99,
+        )
+
+        d = model.to_dict()
+
+        final = {
+            "value_type": "address",
+            "value": None,
+            "content": "123 Main St",
+            "bounding_regions": [
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+            ],
+            "spans": [
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+            ],
+            "confidence": 0.99,
+        }
+        assert d == final
+        test_from_dict = _models.DocumentField.from_dict(d)
+        assert test_from_dict.value == None
+
+    def test_document_field_to_dict_none_value_currency(self):
+        model = _models.DocumentField(
+            value_type="currency",
+            value=None,
+            content="$1.33",
+            bounding_regions=[
+                _models.BoundingRegion(
+                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+                _models.BoundingRegion(
+                    polygon=[_models.Point(1, 2), _models.Point(3, 4)],
+                    page_number=1,
+                ),
+            ],
+            spans=[
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+                _models.DocumentSpan(
+                    offset=5,
+                    length=2,
+                ),
+            ],
+            confidence=0.99,
+        )
+
+        d = model.to_dict()
+
+        final = {
+            "value_type": "currency",
+            "value": None,
+            "content": "$1.33",
+            "bounding_regions": [
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+                {
+                    "page_number": 1,
+                    "polygon": [
+                        {"x": 1, "y": 2},
+                        {
+                            "x": 3,
+                            "y": 4,
+                        },
+                    ],
+                },
+            ],
+            "spans": [
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+                {
+                    "offset": 5,
+                    "length": 2,
+                },
+            ],
+            "confidence": 0.99,
+        }
+        assert d == final
+        test_from_dict = _models.DocumentField.from_dict(d)
+        assert test_from_dict.value == None
+
     def test_document_key_value_element_to_dict(self):
         model = _models.DocumentKeyValueElement(
             content="content",
