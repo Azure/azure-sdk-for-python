@@ -447,8 +447,8 @@ class FormTrainingClient(FormRecognizerClientBase):
 
         _pipeline = Pipeline(
             transport=TransportWrapper(self._client._client._pipeline._transport),
-            policies=self._client._client._pipeline._impl_policies,
-        )  # type: Pipeline
+            policies=self._client._client._pipeline._impl_policies,  # type: ignore
+        )
         client = FormRecognizerClient(
             endpoint=self._endpoint,
             credential=self._credential,
