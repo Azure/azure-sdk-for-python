@@ -163,15 +163,16 @@ class AsyncPipelineClient(
 
     def __init__(
         self,
-        base_url,
+        base_url: str,
         *,
         pipeline: Optional[
             AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]
         ] = None,
+        config: Optional[Configuration] = None,
         **kwargs
     ):
         super(AsyncPipelineClient, self).__init__(base_url)
-        self._config = kwargs.pop("config", None) or Configuration(**kwargs)
+        self._config: Configuration = config or Configuration(**kwargs)
         self._base_url = base_url
         self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
 

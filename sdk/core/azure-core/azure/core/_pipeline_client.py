@@ -49,9 +49,7 @@ HTTPRequestType = TypeVar("HTTPRequestType")
 _LOGGER = logging.getLogger(__name__)
 
 
-class PipelineClient(
-    PipelineClientBase, Generic[HTTPRequestType, HTTPResponseType]
-):
+class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseType]):
     """Service client core methods.
 
     Builds a Pipeline client.
@@ -80,13 +78,14 @@ class PipelineClient(
 
     def __init__(
         self,
-        base_url,
+        base_url: str,
         *,
         pipeline: Optional[Pipeline[HTTPRequestType, HTTPResponseType]] = None,
+        config: Optional[Configuration] = None,
         **kwargs
     ):
         super(PipelineClient, self).__init__(base_url)
-        self._config = kwargs.pop("config", None) or Configuration(**kwargs)
+        self._config: Configuration = config or Configuration(**kwargs)
         self._base_url = base_url
 
         self._pipeline = pipeline or self._build_pipeline(self._config, **kwargs)
@@ -105,9 +104,7 @@ class PipelineClient(
         self,
         config,
         *,
-        transport: Optional[
-            HttpTransport[HTTPRequestType, HTTPResponseType]
-        ] = None,
+        transport: Optional[HttpTransport[HTTPRequestType, HTTPResponseType]] = None,
         policies=None,
         per_call_policies=None,
         per_retry_policies=None,
