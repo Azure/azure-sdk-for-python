@@ -135,7 +135,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         transport: HttpTransport[HTTPRequestType, HTTPResponseType],
         policies: Optional[PoliciesType] = None,
     ) -> None:
-        self._impl_policies: List[HTTPPolicy] = []
+        self._impl_policies: List[HTTPPolicy[HTTPRequestType, HTTPResponseType]] = []
         self._transport = transport
 
         for policy in policies or []:
