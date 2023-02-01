@@ -64,7 +64,7 @@ class EventProcessor(
         checkpoint_store: Optional[CheckpointStore] = None,
         initial_event_position: Union[str, int, "datetime", Dict[str, Any]] = "@latest",
         initial_event_position_inclusive: Union[bool, Dict[str, bool]] = False,
-        load_balancing_interval: float = 10.0,
+        load_balancing_interval: float = 30.0,
         partition_ownership_expiration_interval: Optional[float] = None,
         load_balancing_strategy: LoadBalancingStrategy = LoadBalancingStrategy.GREEDY,
         owner_level: Optional[int] = None,
