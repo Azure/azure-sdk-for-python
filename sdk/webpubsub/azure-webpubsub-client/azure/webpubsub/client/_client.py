@@ -712,7 +712,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def off(self, event: Literal[CallBackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]) -> None:
-        """Remove handler for connected evnet.
+        """Remove handler for connected event.
         :param event: The event name. Required.
         :type event: str
         :param listener: The handler
@@ -721,7 +721,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def off(self, event: Literal[CallBackType.DISCONNECTED], listener: Callable[[OnDisconnectedArgs], None]) -> None:
-        """Remove handler for connected evnet.
+        """Remove handler for connected event.
         :param event: The event name. Required.
         :type event: str
         :param listener: The handler
@@ -730,7 +730,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def off(self, event: Literal[CallBackType.STOPPED], listener: Callable[[], None]) -> None:
-        """Remove handler for stopped evnet.
+        """Remove handler for stopped event.
         :param event: The event name. Required.
         :type event: str
         :param listener: The handler

@@ -93,7 +93,9 @@
     "eng/**/*.py",
     ".gitignore",
     "tools/azure-sdk-tools/packaging_tools/**",
-    "tools/azure-sdk-tools/setup.py"
+    "tools/azure-sdk-tools/setup.py",
+    "sdk/webpubsub/azure-webpubsub-client/azure/webpubsub/client/_serialization.py",
+    "sdk/webpubsub/azure-webpubsub-client/azure/webpubsub/client/_model_base.py"
   ],
   "words": [
     "qnamaker",
@@ -1230,6 +1232,12 @@
         "unflattened",
         "wday",
         "deseralize"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-webpubsub-client/azure/webpubsub/client/_client.py",
+      "words": [
+        "awps"
       ]
     }
   ],

@@ -14,12 +14,12 @@ load_dotenv()
 
 
 def on_connected(msg: OnConnectedArgs):
-    print("======== connetced ===========")
+    print("======== connected ===========")
     print(f"Connection {msg.connection_id} is connected")
 
 
 def on_disconnected(msg: OnDisconnectedArgs):
-    print("========== disconnetced =========")
+    print("========== disconnected =========")
     print(f"connection is disconnected: {msg.message}")
 
 
