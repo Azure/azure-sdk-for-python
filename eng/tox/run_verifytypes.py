@@ -115,7 +115,7 @@ if __name__ == "__main__":
     ]
 
     # get type completeness score from current code
-    install_editable(setup_path)
+    # install_editable(setup_path)
     score_from_current = get_type_complete_score(commands, check_pytyped=True)
 
     # get type completeness score from latest release
