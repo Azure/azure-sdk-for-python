@@ -396,7 +396,8 @@ the repo.
 
 The `.assets` folder contains one or more directories with random names, which each are a git directory containing
 recordings. If you `cd` into the folder containing your package's recordings, you can use `git status` to view the
-recording updates you've made.
+recording updates you've made. You can also use other `git` commands; for example, `git diff {file name}` to see
+specific file changes, or `git restore {file name}` to undo changes you don't want to keep.
 
 To find the directory containing your package's recordings, open the `.breadcrumb` file in the `.assets` folder. This
 file lists a package name on each line, followed by the recording directory name; for example:
@@ -416,7 +417,6 @@ python scripts/manage_recordings.py push sdk/{service}/{package}/assets.json
 The verbs that can be provided to this script are "push", "restore", and "reset":
 - **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
 - **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
-- **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 
 After pushing your recordings, the `assets.json` file for your package will be updated to point to a new `Tag` that
 contains the updates. Include this `assets.json` update in any pull request to update the recordings pointer in the

@@ -31,16 +31,6 @@ from io import SEEK_SET, UnsupportedOperation
 import logging
 import time
 from enum import Enum
-from typing import (  # pylint: disable=unused-import
-    TYPE_CHECKING,
-    List,
-    Callable,
-    Iterator,
-    Any,
-    Union,
-    Dict,
-    Optional,
-)
 from azure.core.pipeline import PipelineResponse
 from azure.core.exceptions import (
     AzureError,
@@ -64,7 +54,7 @@ class RetryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Fixed = "fixed"
 
 
-class RetryPolicyBase(object):
+class RetryPolicyBase:
     # pylint: disable=too-many-instance-attributes
     #: Maximum backoff time.
     BACKOFF_MAX = 120

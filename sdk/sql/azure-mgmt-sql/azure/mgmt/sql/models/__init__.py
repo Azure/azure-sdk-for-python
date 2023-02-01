@@ -505,6 +505,7 @@ from ._sql_management_client_enums import RuleStatus
 from ._sql_management_client_enums import RuleType
 from ._sql_management_client_enums import SQLVulnerabilityAssessmentName
 from ._sql_management_client_enums import SampleName
+from ._sql_management_client_enums import SecondaryInstanceType
 from ._sql_management_client_enums import SecondaryType
 from ._sql_management_client_enums import SecurityAlertPolicyName
 from ._sql_management_client_enums import SecurityAlertPolicyState
@@ -1048,6 +1049,7 @@ __all__ = [
     "RuleType",
     "SQLVulnerabilityAssessmentName",
     "SampleName",
+    "SecondaryInstanceType",
     "SecondaryType",
     "SecurityAlertPolicyName",
     "SecurityAlertPolicyState",
