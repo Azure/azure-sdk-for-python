@@ -230,12 +230,9 @@ def _convert_arm_to_cli(arm_cloud_metadata):
                 EndpointURLS.AML_RESOURCE_ID: cloud["resourceManager"],
                 EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"]
             }
-        except KeyError ex:
+        except KeyError as ex:
             continue
     return cli_cloud_metadata_dict
-
-def _get_cloud(cloud_name):
-    return next((data for name,data in _get_all_clouds().items() if name == cloud_name), None)
 
 def _get_all_clouds():
     # Start with the hard coded list of clouds in this file
