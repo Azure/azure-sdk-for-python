@@ -29,15 +29,18 @@ class ChannelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OUTLOOK_CHANNEL = "OutlookChannel"
     OMNICHANNEL = "Omnichannel"
     TELEPHONY_CHANNEL = "TelephonyChannel"
+    ACS_CHAT_CHANNEL = "AcsChatChannel"
+    SEARCH_ASSISTANT = "SearchAssistant"
+    M365_EXTENSIONS = "M365Extensions"
 
 
 class EmailChannelAuthMethod(float, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Email channel auth method. 0 Password (Default); 1 Graph."""
 
-    #: Basic authentication.
     PASSWORD = 0
-    #: Modern authentication.
+    """Basic authentication."""
     GRAPH = 1
+    """Modern authentication."""
 
 
 class Key(str, Enum, metaclass=CaseInsensitiveEnumMeta):
