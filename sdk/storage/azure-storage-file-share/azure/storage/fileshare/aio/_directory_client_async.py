@@ -100,7 +100,9 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
-        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline,
+                                        allow_trailing_dot=self.allow_trailing_dot,
+                                        allow_source_trailing_dot=self.allow_source_trailing_dot)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     def get_file_client(self, file_name, **kwargs):
@@ -155,7 +157,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         return ShareDirectoryClient(
             self.url, share_name=self.share_name, directory_path=directory_path, snapshot=self.snapshot,
             credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=_pipeline, _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs)
+            _pipeline=_pipeline, _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot, **kwargs)
 
     @distributed_trace_async
     async def create_directory(self, **kwargs):
@@ -331,7 +334,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_dir_path,
             credential=new_dir_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot
+            _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))

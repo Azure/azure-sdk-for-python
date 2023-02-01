@@ -183,7 +183,9 @@ class ShareFileClient(StorageAccountHostsMixin):
         super(ShareFileClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline, allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot)
+        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
+                                        allow_trailing_dot=self.allow_trailing_dot,
+                                        allow_source_trailing_dot=self.allow_source_trailing_dot)
         self._client._config.version = get_api_version(kwargs) # pylint: disable=protected-access
 
     @classmethod
@@ -912,7 +914,8 @@ class ShareFileClient(StorageAccountHostsMixin):
             '{}://{}'.format(self.scheme, self.primary_hostname), self.share_name, new_file_path,
             credential=new_file_sas or self.credential, api_version=self.api_version,
             _hosts=self._hosts, _configuration=self._config, _pipeline=self._pipeline,
-            _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot
+            _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
+            allow_source_trailing_dot=self.allow_source_trailing_dot
         )
 
         kwargs.update(get_rename_smb_properties(kwargs))
