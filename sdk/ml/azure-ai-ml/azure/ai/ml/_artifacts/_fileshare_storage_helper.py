@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: skip-file
+# 
+# This file is not currently used and will remain stale until Azure File Storage is supported for artifacts.
 # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,client-method-missing-type-annotations,missing-client-constructor-parameter-kwargs
 
 import logging
@@ -24,9 +27,8 @@ from azure.ai.ml._utils._asset_utils import (
     _build_metadata_dict,
     generate_asset_id,
     get_directory_size,
-    traverse_directory,
 )
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import ShareDirectoryClient, ShareFileClient
 
@@ -159,53 +161,52 @@ class FileStorageClient:
 
     def upload_dir(
         self,
-        source: str,
-        dest: str,
-        msg: str,
-        show_progress: bool,
-        ignore_file: IgnoreFile,
+        # source: str,
+        # dest: str,
+        # msg: str,
+        # show_progress: bool,
     ) -> None:
         """Upload a directory to a path inside the fileshare directory."""
-        subdir = self.directory_client.create_subdirectory(dest)
-        source_path = Path(source).resolve()
-        prefix = "" if dest == "" else dest + "/"
-        prefix += os.path.basename(source) + "/"
+        # subdir = self.directory_client.create_subdirectory(dest)
+        # source_path = Path(source).resolve()
+        # prefix = "" if dest == "" else dest + "/"
+        # prefix += os.path.basename(source) + "/"
 
-        upload_paths = []
-        for root, _, files in os.walk(source_path):
-            upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file))
+        # upload_paths = []
+        # for root, _, files in os.walk(source_path):
+        #     raise NotImplementedError("See implementations for blob and gen2 upload_dir methods")
+        # upload_paths = sorted(upload_paths)
+        # self.total_file_count = len(upload_paths)
 
-        upload_paths = sorted(upload_paths)
-        self.total_file_count = len(upload_paths)
+        # for root, _, files in os.walk(source):
+        #     if sys.platform.startswith(("win32", "cygwin")):
+        #         split_char = "\\"
+        #     else:
+        #         split_char = "/"
+        #     trunc_root = root.rsplit(split_char)[-1]
+        #     subdir = subdir.create_subdirectory(trunc_root)
 
-        for root, _, files in os.walk(source):
-            if sys.platform.startswith(("win32", "cygwin")):
-                split_char = "\\"
-            else:
-                split_char = "/"
-            trunc_root = root.rsplit(split_char)[-1]
-            subdir = subdir.create_subdirectory(trunc_root)
-
-        if show_progress:
-            with DirectoryUploadProgressBar(dir_size=get_directory_size(source_path), msg=msg) as pbar:
-                for src, destination in upload_paths:
-                    self.upload_file(
-                        src,
-                        destination,
-                        in_directory=True,
-                        subdirectory_client=subdir,
-                        show_progress=show_progress,
-                        callback=pbar.update_to,
-                    )
-        else:
-            for src, destination in upload_paths:
-                self.upload_file(
-                    src,
-                    destination,
-                    in_directory=True,
-                    subdirectory_client=subdir,
-                    show_progress=show_progress,
-                )
+        # if show_progress:
+        #     with DirectoryUploadProgressBar(dir_size=get_directory_size(source_path), msg=msg) as pbar:
+        #         for src, destination in upload_paths:
+        #             self.upload_file(
+        #                 src,
+        #                 destination,
+        #                 in_directory=True,
+        #                 subdirectory_client=subdir,
+        #                 show_progress=show_progress,
+        #                 callback=pbar.update_to,
+        #             )
+        # else:
+        #     for src, destination in upload_paths:
+        #         self.upload_file(
+        #             src,
+        #             destination,
+        #             in_directory=True,
+        #             subdirectory_client=subdir,
+        #             show_progress=show_progress,
+        #         )
+        raise NotImplementedError("See implementations for blob and gen2 upload_dir methods")
 
     def exists(self, asset_id: str) -> bool:
         """Check if file or directory already exists in fileshare directory."""
@@ -346,7 +347,7 @@ def recursive_download(
             recursive_download(sub_client, destination=destination, max_concurrency=max_concurrency)
     except Exception:
         msg = f"Saving fileshare directory with prefix {starts_with} was unsuccessful."
-        raise MLException(
+        raise MlException(
             message=msg.format(starts_with),
             no_personal_data_message=msg.format("[prefix]"),
             target=ErrorTarget.ARTIFACT,

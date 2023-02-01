@@ -7,6 +7,8 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+
+from azure.ai.ml.constants._job import PipelineConstants
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
@@ -924,7 +926,7 @@ class TestDSLPipeline:
                 side_effect=mock_arm_id,
         ):
             with mock.patch(
-                    "azure.ai.ml._restclient.v2022_05_01.operations.ComponentVersionsOperations.create_or_update",
+                    "azure.ai.ml._restclient.v2022_10_01.operations.ComponentVersionsOperations.create_or_update",
                     side_effect=mock_create,
             ):
                 with mock.patch.object(Component, "_from_rest_object", side_effect=mock_from_rest):
@@ -1645,7 +1647,7 @@ class TestDSLPipeline:
                         },
                         # add mode in rest if binding output set mode
                         "outputs": {
-                            "trained_model": {
+                            "output": {
                                 "value": "${{parent.outputs.pipeline_trained_model}}",
                                 "type": "literal",
                                 "mode": "Upload",
@@ -2581,3 +2583,40 @@ class TestDSLPipeline:
         pipeline_job.settings.default_compute = "cpu-cluster"
         validate_result = pipeline_job._validate()
         assert validate_result.error_messages == {}
+
+    def test_dsl_pipeline_with_return_annotation(self, client: MLClient) -> None:
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline() -> Output(type="uri_folder", description="new description", mode="upload"):
+            node = hello_world_component_func(component_in_path=Input(path="path/on/ds"), component_in_number=10)
+            return {"output": node.outputs.component_out_path}
+
+        pipeline_job = my_pipeline()
+        expected_outputs = {'output': {
+            'description': 'new description', 'job_output_type': 'uri_folder', 'mode': 'Upload'
+        }}
+        assert pipeline_job._to_rest_object().as_dict()["properties"]["outputs"] == expected_outputs
+
+    def test_dsl_pipeline_run_settings(self) -> None:
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline() -> Output(type="uri_folder", description="new description", mode="upload"):
+            node = hello_world_component_func(component_in_path=Input(path="path/on/ds"), component_in_number=10)
+            return {"output": node.outputs.component_out_path}
+
+        pipeline_job: PipelineJob = my_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job.settings.continue_on_step_failure = True
+        pipeline_job.settings.continue_run_on_failed_optional_input = False
+
+        assert pipeline_job._to_rest_object().properties.settings == {
+            PipelineConstants.DEFAULT_COMPUTE: "cpu-cluster",
+            PipelineConstants.CONTINUE_ON_STEP_FAILURE: True,
+            PipelineConstants.CONTINUE_RUN_ON_FAILED_OPTIONAL_INPUT: False,
+            "_source": "DSL"
+        }
+

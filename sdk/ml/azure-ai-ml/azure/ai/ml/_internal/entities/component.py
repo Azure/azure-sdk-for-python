@@ -20,9 +20,11 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ... import Input, Output
 from ..._utils._arm_id_utils import parse_name_label
+from ..._utils._asset_utils import IgnoreFile
+from ...entities._assets import Code
 from ...entities._job.distribution import DistributionConfiguration
 from .._schema.component import InternalComponentSchema
-from ._additional_includes import _AdditionalIncludes
+from ._additional_includes import _AdditionalIncludes, ADDITIONAL_INCLUDES_SUFFIX
 from ._input_outputs import InternalInput, InternalOutput
 from ._merkle_tree import create_merkletree
 from .code import InternalCode, InternalComponentIgnoreFile
@@ -117,13 +119,13 @@ class InternalComponent(Component):
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
-        self._origin_name, self._origin_version = None, None
 
         self.successful_return_code = successful_return_code
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
         self.__additional_includes = None
+        self.__ignore_file = None
         # TODO: remove these to keep it a general component class
         self.command = command
         self.scope = scope
@@ -152,9 +154,6 @@ class InternalComponent(Component):
             self.__additional_includes = _AdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
-                ignore_file=InternalComponentIgnoreFile(
-                    self.code if self.code is not None else Path(self._source_path).parent,
-                ),  # use YAML's parent as code when self.code is None
             )
         return self.__additional_includes
 
@@ -190,18 +189,9 @@ class InternalComponent(Component):
             init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
         return init_kwargs
 
-    def _set_is_anonymous(self, is_anonymous: bool):
-        if is_anonymous:
-            self._origin_name, self._origin_version = self.name, self.version
-        super()._set_is_anonymous(is_anonymous)
-
     def _to_rest_object(self) -> ComponentVersionData:
         component = convert_ordered_dict_to_dict(self._to_dict())
-
-        if self._origin_name:
-            component["name"] = self._origin_name
-        if self._origin_version:
-            component["version"] = self._origin_version
+        component["_source"] = self._source
 
         properties = ComponentVersionDetails(
             component_spec=component,
@@ -218,7 +208,7 @@ class InternalComponent(Component):
     def _get_snapshot_id(
         cls,
         code_path: Union[str, PathLike],
-        ignore_file: Optional[InternalComponentIgnoreFile],
+        ignore_file: IgnoreFile,
     ) -> str:
         """Get the snapshot id of a component with specific working directory in ml-components.
         Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
@@ -226,21 +216,52 @@ class InternalComponent(Component):
         :param code_path: The path of the working directory.
         :type code_path: str
         :param ignore_file: The ignore file of the snapshot.
-        :type ignore_file: InternalComponentIgnoreFile
+        :type ignore_file: IgnoreFile
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
-        curr_root = create_merkletree(code_path, lambda x: ignore_file.is_file_excluded(code_path))
+        curr_root = create_merkletree(code_path, ignore_file.is_file_excluded)
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id
 
     @contextmanager
-    def _resolve_local_code(self):
-        """Create a Code object pointing to local code and yield it."""
-        # Note that if self.code is already a Code object, this function won't be called
-        # in create_or_update => _try_resolve_code_for_component, which is also
-        # forbidden by schema CodeFields for now.
+    def _resolve_local_code(self) -> Optional[Code]:
+        """Try to create a Code object pointing to local code and yield it.
+        If there is no local code to upload, yield None.
+        Otherwise, yield a Code object pointing to the code.
+        """
+        # an internal component always has a default local code of its base path
+        # otherwise, if there is no local code, yield super()._resolve_local_code() and return early
+        if self.code is not None:
+            with super()._resolve_local_code() as code:
+                if not isinstance(code, Code) or code._is_remote:
+                    yield code
+                    return
 
-        self._additional_includes.resolve()
+        # This is forbidden by schema CodeFields for now so won't happen.
+        if isinstance(self.code, Code):
+            yield code
+            return
+
+        def get_additional_include_file_name():
+            if self._source_path is not None:
+                return Path(self._source_path).with_suffix(ADDITIONAL_INCLUDES_SUFFIX).name
+            return None
+
+        def get_ignore_file() -> InternalComponentIgnoreFile:
+            if self.code is None and self._source_path is None:
+                # no code and no yaml, ignore file is not needed; return ignore file on cwd to avoid error
+                return InternalComponentIgnoreFile(
+                    self.base_path,
+                    additional_include_file_name=get_additional_include_file_name(),
+                )
+
+            return InternalComponentIgnoreFile(
+                self.code if self.code is not None else Path(self._source_path).parent,
+                additional_include_file_name=get_additional_include_file_name(),
+            )
+        ignore_file = get_ignore_file()
+
+        self._additional_includes.resolve(ignore_file=ignore_file)
 
         # file dependency in code will be read during internal environment resolution
         # for example, docker file of the environment may be in additional includes
@@ -250,18 +271,26 @@ class InternalComponent(Component):
             self.environment.resolve(self._additional_includes.code)
         # use absolute path in case temp folder & work dir are in different drive
         tmp_code_dir = self._additional_includes.code.absolute()
-        ignore_file = InternalComponentIgnoreFile(tmp_code_dir)
+        rebased_ignore_file = InternalComponentIgnoreFile(
+            tmp_code_dir,
+            additional_include_file_name=get_additional_include_file_name(),
+        )
         # Use the snapshot id in ml-components as code name to enable anonymous
         # component reuse from ml-component runs.
         # calculate snapshot id here instead of inside InternalCode to ensure that
         # snapshot id is calculated based on the resolved code path
         yield InternalCode(
-            name=self._get_snapshot_id(tmp_code_dir, ignore_file),
+            name=self._get_snapshot_id(
+                # use absolute path in case temp folder & work dir are in different drive
+                self._additional_includes.code.absolute(),
+                # this ignore-file should be rebased to the resolved code path
+                rebased_ignore_file,
+            ),
             version="1",
             base_path=self._base_path,
             path=tmp_code_dir,
             is_anonymous=True,
-            ignore_file=ignore_file,
+            ignore_file=rebased_ignore_file,
         )
 
         self._additional_includes.cleanup()

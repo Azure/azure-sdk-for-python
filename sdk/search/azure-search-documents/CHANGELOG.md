@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added the semantic reranker score and captions on `SearchResult`.(thanks to @LucasVascovici for the contribution)
+
 ### Breaking Changes
 
 ### Bugs Fixed

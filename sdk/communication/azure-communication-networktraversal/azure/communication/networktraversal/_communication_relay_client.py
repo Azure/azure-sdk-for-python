@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 from azure.core.tracing.decorator import distributed_trace
 
@@ -17,7 +17,7 @@ from ._generated.models import CommunicationRelayConfiguration
 from ._api_versions import DEFAULT_VERSION
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials import TokenCredential, AzureKeyCredential
     from azure.communication.identity import CommunicationUserIdentifier
     from azure.communication.networktraversal import RouteType
 
@@ -26,8 +26,8 @@ class CommunicationRelayClient(object):
 
     :param str endpoint:
         The endpoint url for Azure Communication Service resource.
-    :param TokenCredential credential:
-        The TokenCredential we use to authenticate against the service.
+    :param Union[TokenCredential, AzureKeyCredential] credential:
+        The credential we use to authenticate against the service.
     :keyword api_version: Azure Communication Network Traversal API version.
         Default value is "2022-03-01-preview".
         Note that overriding this default value may result in unsupported behavior.
@@ -41,7 +41,7 @@ class CommunicationRelayClient(object):
     def __init__(
             self,
             endpoint, # type: str
-            credential, # type: TokenCredential
+            credential, # type: Union[TokenCredential, AzureKeyCredential]
             **kwargs # type: Any
         ):
         # type: (...) -> None

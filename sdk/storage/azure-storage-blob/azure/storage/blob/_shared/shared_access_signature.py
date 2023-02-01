@@ -151,6 +151,9 @@ class SharedAccessSignature(object):
         :param str protocol:
             Specifies the protocol permitted for a request made. The default value
             is https,http. See :class:`~azure.storage.common.models.Protocol` for possible values.
+        :keyword str encryption_scope:
+            Optional. If specified, this is the encryption scope to use when sending requests
+            authorized with this SAS URI.
         '''
         sas = _SharedAccessHelper()
         sas.add_base(permission, expiry, start, ip, protocol, self.x_ms_version)
@@ -228,4 +231,4 @@ class _SharedAccessHelper(object):
                         sign_string(account_key, string_to_sign))
 
     def get_token(self):
-        return '&'.join(['{0}={1}'.format(n, url_quote(v)) for n, v in self.query_dict.items() if v is not None])
+        return '&'.join([f'{n}={url_quote(v)}' for n, v in self.query_dict.items() if v is not None])
