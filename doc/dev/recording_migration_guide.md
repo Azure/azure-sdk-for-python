@@ -122,7 +122,7 @@ For more details, refer to the documentation in [tests.md][recording_updates].
 [azure_sdk_assets]: https://github.com/Azure/azure-sdk-assets
 [detailed_docs]: https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md
 [docker]: https://docs.docker.com/engine/install/
-[generate_assets_json]: https://github.com/Azure/azure-sdk-for-python/blob/eng/common/tools/testproxy/transition-scripts/generate-assets-json.ps1
+[generate_assets_json]: https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/testproxy/transition-scripts/generate-assets-json.ps1
 [git_setup]: https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup
 [git_token]: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 [podman]: https://podman.io/getting-started/installation.html
