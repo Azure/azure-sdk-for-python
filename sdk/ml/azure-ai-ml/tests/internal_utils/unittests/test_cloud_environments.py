@@ -101,7 +101,6 @@ class TestCloudEnvironments:
     
 
     def mocked_requests_get(*args, **kwargs):
-        print("in the function")
         class MockResponse:
             def __init__(self, json_data):
                 self.json_data = json_data
@@ -115,7 +114,6 @@ class TestCloudEnvironments:
             def json(self):
                 return self.json_data
         
-        print("past the class")
         json_data = [
             {
                 "name": "TEST_ENV", 
@@ -133,7 +131,6 @@ class TestCloudEnvironments:
                 "name": "MISCONFIGURED"
             }
         ]
-        print("past the json")
         response = MockResponse(json_data)
         return response
         
