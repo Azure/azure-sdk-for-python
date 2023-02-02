@@ -13,8 +13,6 @@ from azure.ai.ml._azure_environments import (
     _get_registry_discovery_endpoint_from_metadata,
     _get_storage_endpoint_from_metadata,
     _set_cloud,
-    _get_all_clouds,
-    _get_clouds_by_metadata_url,
 )
 from azure.ai.ml.constants._common import  ArmConstants, AZUREML_CLOUD_ENV_NAME
 
