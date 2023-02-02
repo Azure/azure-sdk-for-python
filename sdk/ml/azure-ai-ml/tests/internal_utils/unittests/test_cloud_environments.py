@@ -145,7 +145,5 @@ class TestCloudEnvironments:
     
     @mock.patch('requests.get', side_effect=mocked_requests_get)
     def test_arm_misconfigured(self, mock_get):
-       
-        _set_cloud("MISCONFIGURED")
-        assert os.environ[AZUREML_CLOUD_ENV_NAME] != "MISCONFIGURED"
-    
+        with pytest.raises(Exception) as e_info:
+            _set_cloud("MISCONFIGURED")

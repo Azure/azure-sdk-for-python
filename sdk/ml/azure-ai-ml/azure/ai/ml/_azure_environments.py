@@ -230,22 +230,21 @@ def _convert_arm_to_cli(arm_cloud_metadata):
                 EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"]["loginEndpoint"],
                 EndpointURLS.AML_RESOURCE_ID: cloud["resourceManager"],
                 EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"]
+
             }
         except KeyError as ex:
             continue
     return cli_cloud_metadata_dict
 
 def _get_all_clouds():
-    # Start with the hard coded list of clouds in this file
+    # Start with the metadata URL
     all_clouds = {}
-    all_clouds.update(_environments)
-    # Get configs from the config file
-    config = configparser.ConfigParser()
-    for section in config.sections():
-        all_clouds[section] = dict(config.items(section))
-    # Now do the metadata URL
     arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME,ArmConstants.DEFAULT_URL)
     all_clouds.update(_get_clouds_by_metadata_url(arm_url))
+
+    # Now the hard coded list of clouds in this file 
+    all_clouds.update(_environments)
+       
     # Send them all along with the hardcoded environments
     return all_clouds
 
