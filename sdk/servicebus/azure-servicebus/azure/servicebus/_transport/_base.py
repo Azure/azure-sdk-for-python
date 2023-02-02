@@ -107,10 +107,11 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_retry_policy(config):
+    def create_retry_policy(config, *, is_session=False):
         """
         Creates the error retry policy.
         :param ~azure.eventhub._configuration.Configuration config: Configuration.
+        :keyword bool is_session: Is session enabled.
         """
 
     @staticmethod
@@ -200,13 +201,12 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def create_source(source, offset, selector):
+    def create_source(source, session_filter):
         """
         Creates and returns the Source.
 
         :param str source: Required.
-        :param int offset: Required.
-        :param bytes selector: Required.
+        :param int or None session_id: Required.
         """
 
     @staticmethod
@@ -243,12 +243,26 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    def check_link_stolen(consumer, exception):
+    def on_attach(receiver, source, target, properties, error):
         """
-        Checks if link stolen and handles exception.
-        :param consumer: The EventHubConsumer.
-        :param exception: Exception to check.
+        Receiver on_attach callback.
         """
+
+    @staticmethod
+    @abstractmethod
+    def enhanced_message_received(reciever, message):
+        """
+        Receiver enhanced_message_received callback.
+        """
+
+    #@staticmethod
+    #@abstractmethod
+    #def check_link_stolen(consumer, exception):
+    #    """
+    #    Checks if link stolen and handles exception.
+    #    :param consumer: The EventHubConsumer.
+    #    :param exception: Exception to check.
+    #    """
 
     @staticmethod
     @abstractmethod
@@ -314,20 +328,20 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
         :keyword description_fields: mgmt status desc.
         """
 
-    @staticmethod
-    @abstractmethod
-    def get_error(status_code, description):
-        """
-        Gets error corresponding to status code.
-        :param status_code: Status code.
-        :param str description: Description of error.
-        """
+    #@staticmethod
+    #@abstractmethod
+    #def get_error(status_code, description):
+    #    """
+    #    Gets error corresponding to status code.
+    #    :param status_code: Status code.
+    #    :param str description: Description of error.
+    #    """
 
-    @staticmethod
-    @abstractmethod
-    def check_timeout_exception(base, exception):
-        """
-        Checks if timeout exception.
-        :param base: ClientBase.
-        :param exception: Exception to check.
-        """
+    #@staticmethod
+    #@abstractmethod
+    #def check_timeout_exception(base, exception):
+    #    """
+    #    Checks if timeout exception.
+    #    :param base: ClientBase.
+    #    :param exception: Exception to check.
+    #    """

@@ -53,6 +53,7 @@ if TYPE_CHECKING:
     except ImportError:
         pass
 
+    from ._pyamqp.client import SendClient as SendClientSync
     MessageTypes = Union[
         Mapping[str, Any],
         ServiceBusMessage,
@@ -160,7 +161,6 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
                 credential=credential,
-                amqp_transport=self._amqp_transport,
                 **kwargs
             )
         else:
@@ -185,7 +185,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._max_message_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
-        self._handler: SendClientSync
+        self._handler: Union["SendClientSync", "uamqp_SendClientSync"]
 
     @classmethod
     def _from_connection_string(cls, conn_str: str, **kwargs: Any) -> "ServiceBusSender":

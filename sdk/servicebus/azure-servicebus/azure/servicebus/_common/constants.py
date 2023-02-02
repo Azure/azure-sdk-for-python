@@ -5,7 +5,6 @@
 # -------------------------------------------------------------------------
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
-from .._pyamqp import constants
 
 VENDOR = b"com.microsoft"
 DATETIMEOFFSET_EPOCH = 621355968000000000
@@ -179,12 +178,6 @@ class ServiceBusMessageState(int, Enum):
     ACTIVE = 0
     DEFERRED = 1
     SCHEDULED = 2
-
-# To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
-ServiceBusToAMQPReceiveModeMap = {
-    ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.Second,
-    ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.First,
-}
 
 
 class ServiceBusSessionFilter(Enum):

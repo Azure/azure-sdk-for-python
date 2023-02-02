@@ -16,7 +16,15 @@ from .._pyamqp import (
     ReceiveClient,
     __version__,
 )
-from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value
+from ._pyamqp.error import (
+    ErrorCondition,
+    AMQPException,
+    AMQPError,
+    RetryPolicy,
+    AMQPConnectionError,
+    AuthenticationException,
+)
+from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
 from .._pyamqp._encode import encode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
@@ -24,14 +32,24 @@ from .._pyamqp.endpoints import Source, ApacheFilters
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
 from ._base import AmqpTransport
+from .._common.utils import utc_from_timestamp, utc_now
 from .._common.constants import (
 #    NO_RETRY_ERRORS,
-#    PROP_PARTITION_KEY,
 #    CUSTOM_CONDITION_BACKOFF,
     PYAMQP_LIBRARY,
+    DATETIMEOFFSET_EPOCH,
+    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    DEADLETTERNAME,
     MAX_ABSOLUTE_EXPIRY_TIME,
     MAX_DURATION_VALUE,
     MAX_MESSAGE_LENGTH_BYTES,
+    MESSAGE_COMPLETE,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER,
+    MESSAGE_DEAD_LETTER,
+    SESSION_FILTER,
+    SESSION_LOCKED_UNTIL,
     _X_OPT_ENQUEUED_TIME,
     _X_OPT_LOCKED_UNTIL,
     ERROR_CODE_SESSION_LOCK_LOST,
@@ -46,6 +64,7 @@ from .._common.constants import (
     ERROR_CODE_ENTITY_DISABLED,
     ERROR_CODE_ENTITY_ALREADY_EXISTS,
     ERROR_CODE_PRECONDITION_FAILED,
+    ServiceBusReceiveMode,
 )
 
 from ..exceptions import (
@@ -64,12 +83,14 @@ from ..exceptions import (
     OperationTimeoutError
 )
 
+if TYPE_CHECKING:
+    from .._common.message import ServiceBusReceivedMessage
 
 _LOGGER = logging.getLogger(__name__)
 
-class _ServiceBusErrorPolicy(AMQPErrors.RetryPolicy):
+class _ServiceBusErrorPolicy(RetryPolicy):
 
-    no_retry = AMQPErrors.RetryPolicy.no_retry + cast(List[AMQPErrors.ErrorCondition], [
+    no_retry = RetryPolicy.no_retry + cast(List[ErrorCondition], [
                 ERROR_CODE_SESSION_LOCK_LOST,
                 ERROR_CODE_MESSAGE_LOCK_LOST,
                 ERROR_CODE_OUT_OF_RANGE,
@@ -100,12 +121,12 @@ _LONG_ANNOTATIONS = (
 )
 
 _ERROR_CODE_TO_ERROR_MAPPING = {
-    AMQPErrors.ErrorCondition.LinkMessageSizeExceeded: MessageSizeExceededError,
-    AMQPErrors.ErrorCondition.ResourceLimitExceeded: ServiceBusQuotaExceededError,
-    AMQPErrors.ErrorCondition.UnauthorizedAccess: ServiceBusAuthorizationError,
-    AMQPErrors.ErrorCondition.NotImplemented: ServiceBusError,
-    AMQPErrors.ErrorCondition.NotAllowed: ServiceBusError,
-    AMQPErrors.ErrorCondition.LinkDetachForced: ServiceBusConnectionError,
+    ErrorCondition.LinkMessageSizeExceeded: MessageSizeExceededError,
+    ErrorCondition.ResourceLimitExceeded: ServiceBusQuotaExceededError,
+    ErrorCondition.UnauthorizedAccess: ServiceBusAuthorizationError,
+    ErrorCondition.NotImplemented: ServiceBusError,
+    ErrorCondition.NotAllowed: ServiceBusError,
+    ErrorCondition.LinkDetachForced: ServiceBusConnectionError,
     ERROR_CODE_MESSAGE_LOCK_LOST: MessageLockLostError,
     ERROR_CODE_MESSAGE_NOT_FOUND: MessageNotFoundError,
     ERROR_CODE_AUTH_FAILED: ServiceBusAuthorizationError,
@@ -131,18 +152,24 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     CONNECTION_CLOSING_STATES: Tuple = _CLOSING_STATES
     TRANSPORT_IDENTIFIER = f"{PYAMQP_LIBRARY}/{__version__}"
 
+    # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
+    ServiceBusToAMQPReceiveModeMap = {
+        ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.Second,
+        ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.First,
+    }
+
     # define symbols
     PRODUCT_SYMBOL = "product"
     VERSION_SYMBOL = "version"
     FRAMEWORK_SYMBOL = "framework"
     PLATFORM_SYMBOL = "platform"
     USER_AGENT_SYMBOL = "user-agent"
-    #PROP_PARTITION_KEY_AMQP_SYMBOL = PROP_PARTITION_KEY
-    #ERROR_CONDITIONS = [condition.value for condition in AMQPErrors.ErrorCondition]
+    #ERROR_CONDITIONS = [condition.value for condition in ErrorCondition]
 
     # amqp value types
     AMQP_LONG_VALUE = amqp_long_value
     AMQP_ARRAY_VALUE = amqp_array_value
+    AMQP_UINT_VALUE = amqp_uint_value
 
     # errors
     TIMEOUT_ERROR = TimeoutError
@@ -165,6 +192,26 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         message[5] = data
         return message
         #return BatchMessage(data=data)
+    
+    @staticmethod
+    def get_message_delivery_tag(message, frame):  # pylint: disable=unused-argument
+        """
+        Gets delivery tag of a Message.
+        :param message: Message to get delivery_tag from for uamqp.Message.
+        :param frame: Message to get delivery_tag from for pyamqp.Message.
+        :rtype: str
+        """
+        return message.delivery_tag
+
+    @staticmethod
+    def get_message_delivery_id(message, frame):  # pylint: disable=unused-argument
+        """
+        Gets delivery id of a Message.
+        :param message: Message to get delivery_id from for uamqp.Message.
+        :param frame: Message to get delivery_id from for pyamqp.Message.
+        :rtype: str
+        """
+        return frame[1] if frame else None
 
     @staticmethod
     def to_outgoing_amqp_message(annotated_message):
@@ -316,13 +363,16 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return handler._link.name
 
     @staticmethod
-    def create_retry_policy(config):
+    def create_retry_policy(config, *, is_session=False):
         """
         Creates the error retry policy.
         :param ~azure.eventhub._configuration.Configuration config: Configuration.
+        :keyword bool is_session: Is session enabled.
         """
+        # TODO: What's the retry overlap between servicebus and pyamqp?
         return _ServiceBusErrorPolicy(
-            retry_total=config.max_retries,
+            is_session=is_session,
+            retry_total=config.retry_total,
             retry_backoff_factor=config.retry_backoff_factor,
             retry_backoff_max=config.retry_backoff_max,
             retry_mode=config.retry_mode,
@@ -420,7 +470,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 sender._handler.send_message(message._message, timeout=timeout) # pylint:disable=protected-access
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
-        except AMQPErrors.MessageException as e:
+        except MessageException as e:
             raise _create_servicebus_exception(_LOGGER, e)
 
     #@staticmethod
@@ -464,18 +514,15 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def create_source(source, offset, selector):
+    def create_source(source, session_filter):
         """
         Creates and returns the Source.
 
         :param str source: Required.
-        :param int offset: Required.
-        :param bytes selector: Required.
+        :param int or None session_id: Required.
         """
-        source = Source(address=source, filters={})
-        if offset is not None:
-            filter_key = ApacheFilters.selector_filter
-            source.filters[filter_key] = (filter_key, amqp_string_value(selector))
+        filter_map = {SESSION_FILTER: session_filter}
+        source = Source(address=source, filters=filter_map)
         return source
 
     @staticmethod
@@ -503,15 +550,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
 
         source = kwargs.pop("source")
+        receive_mode = kwargs.pop("receive_mode")
         return ReceiveClient(
             config.hostname,
             source,
-            receive_settle_mode=constants.ReceiverSettleMode.First,
             http_proxy=config.http_proxy,
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
-            **kwargs,
+            receive_settle_mode=PyamqpTransport.ServiceBusToAMQPReceiveModeMap[receive_mode],
+            send_settle_mode=constants.SenderSettleMode.Settled
+            if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            else SenderSettleMode.Unsettled,
+            **kwargs
         )
 
     @staticmethod
@@ -530,6 +581,117 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
         )
 
+    @staticmethod
+    def on_attach(receiver, attach_frame):
+        """
+        Receiver on_attach callback.
+        """
+        # pylint: disable=protected-access, unused-argument
+        if receiver._session and attach_frame.source.address.decode(receiver._config.encoding) == receiver._entity_uri:
+            # This has to live on the session object so that autorenew has access to it.
+            receiver._session._session_start = utc_now()
+            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
+            if expiry_in_seconds:
+                expiry_in_seconds = (
+                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
+                ) / 10000000
+                receiver._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
+            session_filter = attach_frame.source.filters[SESSION_FILTER]
+            receiver._session_id = session_filter.decode(receiver._config.encoding)
+            receiver._session._session_id = receiver._session_id
+
+    @staticmethod
+    def enhanced_message_received(receiver, frame, message):
+        """
+        Receiver enhanced_message_received callback.
+        """
+        # pylint: disable=protected-access
+        receiver._handler._was_message_received = True
+        if receiver._receive_context.is_set():
+            receiver._handler._received_messages.put((frame, message))
+        else:
+            receiver._handler.settle_messages(frame[1], 'released')
+
+    @staticmethod
+    def get_receive_timeout(handler):
+        """
+        Gets the timeout on the ReceiveClient.
+        :param ReceiveClient handler: Handler to set timeout on.
+        :rtype: int
+        """
+        return handler._idle_timeout
+
+    @staticmethod
+    def set_receive_timeout(handler, max_wait_time):
+        """
+        Sets the timeout on the ReceiveClient and returns original timeout.
+        :param ReceiveClient handler: Handler to set timeout on.
+        :param int max_wait_time: Max wait time.
+        :rtype: None
+        """
+        # _timeout to _idle_timeout
+        handler._idle_timeout = max_wait_time
+
+    @staticmethod
+    def get_current_time(handler):  # pylint: disable=unused-argument
+        """
+        Gets the current time.
+        :param ReceiveClient handler: Handler with counter to get time. Unused for pyamqp.
+        :rtype: int
+        """
+        return time.time()
+    
+    @staticmethod
+    def reset_link_credit(handler, link_credit):
+        """
+        Resets the link credit on the link.
+        :param ReceiveClient handler: Client with link to reset link credit.
+        :param int link_credit: Link credit needed.
+        :rtype: None
+        """
+        handler._link.flow(link_credit=link_credit)
+    
+    @staticmethod
+    def settle_message_via_receiver_link(
+        handler: ReceiveClient,
+        message: "ServiceBusReceivedMessage",
+        settle_operation: str,
+        dead_letter_reason: Optional[str] = None,
+        dead_letter_error_description: Optional[str] = None,
+    ) -> None:
+        if settle_operation == MESSAGE_COMPLETE:
+            return handler.settle_messages(message.delivery_id, 'accepted')
+        if settle_operation == MESSAGE_ABANDON:
+            return handler.settle_messages(
+                message.delivery_id,
+                'modified',
+                delivery_failed=True,
+                undeliverable_here=False
+            )
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            return handler.settle_messages(
+                message.delivery_id,
+                'rejected',
+                error=AMQPError(
+                    condition=DEADLETTERNAME,
+                    description=dead_letter_error_description,
+                    info={
+                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                    }
+                )
+            )
+        if settle_operation == MESSAGE_DEFER:
+            return handler.settle_messages(
+                message.delivery_id,
+                'modified',
+                delivery_failed=True,
+                undeliverable_here=True
+            )
+        raise ValueError(
+            f"Unsupported settle operation type: {settle_operation}"
+        )
+
     #@staticmethod
     #def check_link_stolen(consumer, exception):
     #    """
@@ -539,8 +701,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     #    """
 
     #    if (
-    #        isinstance(exception, AMQPErrors.AMQPLinkError)
-    #        and exception.condition == AMQPErrors.ErrorCondition.LinkStolen
+    #        isinstance(exception, AMQPLinkError)
+    #        and exception.condition == ErrorCondition.LinkStolen
     #    ):
     #        raise consumer._handle_exception(  # pylint: disable=protected-access
     #            exception
@@ -668,18 +830,18 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     #    :param condition: Optional error condition. Will not be used by uamqp.
     #    """
     #    if status_code in [401]:
-    #        return AMQPErrors.AuthenticationException(
-    #            AMQPErrors.ErrorCondition.UnauthorizedAccess,
+    #        return AuthenticationException(
+    #            ErrorCondition.UnauthorizedAccess,
     #            description=f"""Management authentication failed. Status code: {status_code}, """
     #                """Description: {description!r}""",
     #        )
     #    if status_code in [404]:
-    #        return AMQPErrors.AMQPConnectionError(
-    #            AMQPErrors.ErrorCondition.NotFound,
+    #        return AMQPConnectionError(
+    #            ErrorCondition.NotFound,
     #            description=f"Management connection failed. Status code: {status_code}, Description: {description!r}",
     #        )
-    #    return AMQPErrors.AMQPConnectionError(
-    #        AMQPErrors.ErrorCondition.UnknownError,
+    #    return AMQPConnectionError(
+    #        ErrorCondition.UnknownError,
     #        description=f"Management request error. Status code: {status_code}, Description: {description!r}",
     #    )
 
@@ -691,8 +853,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     #    :param exception: Exception to check.
     #    """
     #    if not base.running and isinstance(exception, TimeoutError):
-    #        exception = AMQPErrors.AuthenticationException(
-    #            AMQPErrors.ErrorCondition.InternalError,
+    #        exception = AuthenticationException(
+    #            ErrorCondition.InternalError,
     #            description="Authorization timeout.",
     #        )
     #    return exception
@@ -709,26 +871,26 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             condition,
             description,
         )
-        if isinstance(exception, AMQPErrors.AuthenticationException):
+        if isinstance(exception, AuthenticationException):
             logger.info("AMQP Connection authentication error occurred: (%r).", exception)
             error_cls = ServiceBusAuthenticationError
-        # elif isinstance(exception, AMQPErrors.MessageException):
+        # elif isinstance(exception, MessageException):
         #     logger.info("AMQP Message error occurred: (%r).", exception)
-        #     if isinstance(exception, AMQPErrors.MessageAlreadySettled):
+        #     if isinstance(exception, MessageAlreadySettled):
         #         error_cls = MessageAlreadySettled
-        #     elif isinstance(exception, AMQPErrors.MessageContentTooLarge):
+        #     elif isinstance(exception, MessageContentTooLarge):
         #         error_cls = MessageSizeExceededError
-        elif condition == AMQPErrors.ErrorCondition.NotFound:
+        elif condition == ErrorCondition.NotFound:
             # handle NotFound error code
             error_cls = (
                 ServiceBusCommunicationError
-                if isinstance(exception, AMQPErrors.AMQPConnectionError)
+                if isinstance(exception, AMQPConnectionError)
                 else MessagingEntityNotFoundError
             )
-        elif condition == AMQPErrors.ErrorCondition.ClientError and "timed out" in str(exception):
+        elif condition == ErrorCondition.ClientError and "timed out" in str(exception):
             # handle send timeout
             error_cls = OperationTimeoutError
-        elif condition == AMQPErrors.ErrorCondition.UnknownError or isinstance(exception, AMQPErrors.AMQPConnectionError):
+        elif condition == ErrorCondition.UnknownError or isinstance(exception, AMQPConnectionError):
             error_cls = ServiceBusConnectionError
         else:
             error_cls = _ERROR_CODE_TO_ERROR_MAPPING.get(condition, ServiceBusError)
@@ -763,7 +925,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def _create_servicebus_exception(logger, exception):
-        if isinstance(exception, AMQPErrors.AMQPException):
+        if isinstance(exception, AMQPException):
             # handling AMQP Errors that have the condition field
             condition = exception.condition
             description = exception.description

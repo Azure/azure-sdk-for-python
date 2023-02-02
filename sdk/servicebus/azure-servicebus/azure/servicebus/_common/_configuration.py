@@ -14,7 +14,6 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, **kwargs):
         self.user_agent: Optional[str] = kwargs.get("user_agent")
         self.retry_total: int = kwargs.get("retry_total", 3)
-        self.max_retries: int = self.retry_total
         self.retry_mode = RetryMode(kwargs.get("retry_mode", 'exponential'))
         self.retry_backoff_factor: float = kwargs.get(
             "retry_backoff_factor", 0.8

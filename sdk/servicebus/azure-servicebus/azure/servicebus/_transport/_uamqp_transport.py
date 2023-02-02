@@ -5,6 +5,7 @@
 
 import time
 import logging
+import functools
 from typing import Optional, Union, Any, Tuple
 
 try:
@@ -37,8 +38,19 @@ except ImportError:
 
 from ._base import AmqpTransport
 from ..amqp._constants import AmqpMessageBodyType
+from .._common.utils import utc_from_timestamp, utc_now
 from .._common.constants import (
     UAMQP_LIBRARY,
+    DATETIMEOFFSET_EPOCH,
+    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    DEADLETTERNAME,
+    MESSAGE_COMPLETE,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER,
+    MESSAGE_DEAD_LETTER,
+    SESSION_FILTER,
+    SESSION_LOCKED_UNTIL,
     ERROR_CODE_SESSION_LOCK_LOST,
     ERROR_CODE_MESSAGE_LOCK_LOST,
     ERROR_CODE_MESSAGE_NOT_FOUND,
@@ -164,17 +176,23 @@ if uamqp_installed:
             )
         TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
+        # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
+        ServiceBusToAMQPReceiveModeMap = {
+            ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.PeekLock,
+            ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.ReceiveAndDelete,
+        }
+
         # define symbols
         PRODUCT_SYMBOL = types.AMQPSymbol("product")
         VERSION_SYMBOL = types.AMQPSymbol("version")
         FRAMEWORK_SYMBOL = types.AMQPSymbol("framework")
         PLATFORM_SYMBOL = types.AMQPSymbol("platform")
         USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
-        #PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
 
         # amqp value types
         AMQP_LONG_VALUE = types.AMQPLong
         AMQP_ARRAY_VALUE = types.AMQPArray
+        AMQP_UINT_VALUE = types.AMQPuInt
 
         # errors
         TIMEOUT_ERROR = compat.TimeoutException
@@ -194,6 +212,26 @@ if uamqp_installed:
             :rtype: uamqp.BatchMessage
             """
             return BatchMessage(data=data)
+
+        @staticmethod
+        def get_message_delivery_tag(message, frame):  # pylint: disable=unused-argument
+            """
+            Gets delivery tag of a Message.
+            :param message: Message to get delivery_tag from for uamqp.Message.
+            :param frame: Message to get delivery_tag from for pyamqp.Message.
+            :rtype: str
+            """
+            return 
+
+        @staticmethod
+        def get_message_delivery_tag(message, frame):  # pylint: disable=unused-argument
+            """
+            Gets delivery id of a Message.
+            :param message: Message to get delivery_id from for uamqp.Message.
+            :param frame: Message to get delivery_id from for pyamqp.Message.
+            :rtype: str
+            """
+            return message.delivery_no
 
         @staticmethod
         def to_outgoing_amqp_message(annotated_message):
@@ -343,12 +381,14 @@ if uamqp_installed:
             return handler.message_handler.name
 
         @staticmethod
-        def create_retry_policy(config):
+        def create_retry_policy(config, *, is_session=False):
             """
             Creates the error retry policy.
             :param ~azure.eventhub._configuration.Configuration config: Configuration.
+            :keyword bool is_session: Is session enabled.
             """
-            return _ServiceBusErrorPolicy(max_retries=config.max_retries)
+            # TODO: What's the retry overlap between servicebus and pyamqp?
+            return _ServiceBusErrorPolicy(max_retries=config.retry_total, is_session=is_session)
 
         @staticmethod
         def create_link_properties(link_properties):
@@ -495,17 +535,15 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def create_source(source, offset, selector):
+        def create_source(source, session_filter):
             """
             Creates and returns the Source.
 
             :param str source: Required.
-            :param int offset: Required.
-            :param bytes selector: Required.
+            :param int or None session_id: Required.
             """
             source = Source(source)
-            if offset is not None:
-                source.set_filter(selector)
+            source.set_filter(session_filter, name=SESSION_FILTER, descriptor=None)
             return source
 
         @staticmethod
@@ -532,26 +570,20 @@ if uamqp_installed:
             :keyword timeout: Required.
             """
 
-            source = kwargs.pop("source")
-            symbol_array = kwargs.pop("desired_capabilities")
-            desired_capabilities = None
-            if symbol_array:
-                symbol_array = [types.AMQPSymbol(symbol) for symbol in symbol_array]
-                desired_capabilities = utils.data_factory(types.AMQPArray(symbol_array))
             retry_policy = kwargs.pop("retry_policy")
             network_trace = kwargs.pop("network_trace")
             link_credit = kwargs.pop("link_credit")
-            streaming_receive = kwargs.pop("streaming_receive")
-            message_received_callback = kwargs.pop("message_received_callback")
+            receive_mode = kwargs.pop("receive_mode")
 
             client = ReceiveClient(
                 source,
                 debug=network_trace,  # pylint:disable=protected-access
                 error_policy=retry_policy,
-                desired_capabilities=desired_capabilities,
                 prefetch=link_credit,
-                receive_settle_mode=constants.ReceiverSettleMode.ReceiveAndDelete,
-                auto_complete=False,
+                receive_settle_mode=UamqpTransport.ServiceBusToAMQPReceiveModeMap[receive_mode],
+                send_settle_mode=constants.SenderSettleMode.Settled
+                if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
+                else None,
                 **kwargs
             )
             # pylint:disable=protected-access
@@ -572,6 +604,103 @@ if uamqp_installed:
             handler.open(connection=client._conn_manager.get_connection(
                 client._address.hostname, auth
             ))
+        
+        @staticmethod
+        def on_attach(receiver, source, target, properties, error):
+            """
+            Receiver on_attach callback.
+            """
+            # pylint: disable=protected-access, unused-argument
+            if receiver._session and str(source) == receiver._entity_uri:
+                # This has to live on the session object so that autorenew has access to it.
+                receiver._session._session_start = utc_now()
+                expiry_in_seconds = properties.get(SESSION_LOCKED_UNTIL)
+                if expiry_in_seconds:
+                    expiry_in_seconds = (
+                        expiry_in_seconds - DATETIMEOFFSET_EPOCH
+                    ) / 10000000
+                    receiver._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
+                session_filter = source.get_filter(name=SESSION_FILTER)
+                receiver._session_id = session_filter.decode(receiver._config.encoding)
+                receiver._session._session_id = receiver._session_id
+
+        @staticmethod
+        def enhanced_message_received(reciever, message):
+            """
+            Receiver enhanced_message_received callback.
+            """
+            # pylint: disable=protected-access
+            reciever._handler._was_message_received = True
+            if reciever._receive_context.is_set():
+                reciever._handler._received_messages.put(message)
+            else:
+                message.release()
+
+        @staticmethod
+        def get_receive_timeout(handler):
+            """
+            Gets the timeout on the ReceiveClient.
+            :param ReceiveClient handler: Handler to set timeout on.
+            :rtype: int
+            """
+            return handler._timeout
+
+        @staticmethod
+        def set_receive_timeout(handler, max_wait_time):
+            """
+            Sets the timeout on the ReceiveClient and returns original timeout.
+            :param ReceiveClient handler: Handler to set timeout on.
+            :param int max_wait_time: Max wait time.
+            :rtype: None
+            """
+            handler._timeout = max_wait_time
+        
+        @staticmethod
+        def get_current_time(handler):
+            """
+            Gets the current time.
+            :param ReceiveClient handler: Handler with counter to get time.
+            :rtype: int
+            """
+            return handler._counter.get_current_ms()
+        
+        @staticmethod
+        def reset_link_credit(handler, link_credit):
+            """
+            Resets the link credit on the link.
+            :param ReceiveClient handler: Client with link to reset link credit.
+            :param int link_credit: Link credit needed.
+            :rtype: None
+            """
+            handler.message_handler.reset_link_credit(link_credit)
+
+        @staticmethod
+        def settle_message_via_receiver_link(
+            _: ReceiveClient,
+            message: "ServiceBusReceivedMessage",
+            settle_operation: str,
+            dead_letter_reason: Optional[str] = None,
+            dead_letter_error_description: Optional[str] = None,
+        ) -> None:  # pylint: disable=unused-argument
+            if settle_operation == MESSAGE_COMPLETE:
+                return functools.partial(message.message.accept)
+            if settle_operation == MESSAGE_ABANDON:
+                return functools.partial(message.message.modify, True, False)
+            if settle_operation == MESSAGE_DEAD_LETTER:
+                return functools.partial(
+                    message.message.reject,
+                    condition=DEADLETTERNAME,
+                    description=dead_letter_error_description,
+                    info={
+                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                    },
+                )
+            if settle_operation == MESSAGE_DEFER:
+                return functools.partial(message.message.modify, True, True)
+            raise ValueError(
+                "Unsupported settle operation type: {}".format(settle_operation)
+            )
 
         #@staticmethod
         #def check_link_stolen(consumer, exception):

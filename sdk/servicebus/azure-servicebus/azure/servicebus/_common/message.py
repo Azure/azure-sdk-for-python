@@ -134,8 +134,11 @@ class ServiceBusMessage(
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing ServiceBusMessage
         if "message" in kwargs:
-            self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"])
             self._message = kwargs["message"]
+            if "raw_amqp_message" in kwargs:
+                self._raw_amqp_message = kwargs["raw_amqp_message"]
+            else:
+                self._raw_amqp_message = AmqpAnnotatedMessage(message=kwargs["message"])
         else:
             self._build_annotated_message(body)
             self.application_properties = application_properties
@@ -786,7 +789,6 @@ class ServiceBusMessageBatch(object):
         return self._add(message)
 
 
-# TODO: update during receive switch
 class ServiceBusReceivedMessage(ServiceBusMessage):
     """
     A Service Bus Message received from service side.
@@ -809,29 +811,33 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             self,
             message: Union["Message", "pyamqp_Message"],
             receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
-            frame: Optional["TransferFrame"] = None,
+            *
+            frame: Optional["TransferFrame"] = None,    # TODO: are we okay with implementation specific types leaking out
             **kwargs
     ) -> None:
+        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
         super(ServiceBusReceivedMessage, self).__init__(None, message=message)  # type: ignore
+        if self._amqp_transport != PyamqpTransport:
+            self._uamqp_message = message
         self._message = message
         self._settled = receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-        self._delivery_tag = frame[2] if frame else None
-        self.delivery_id = frame[1] if frame else None
+        self._delivery_tag = self._amqp_transport.get_message_delivery_tag(message, frame)
+        self.delivery_id = self._amqp_transport.get_message_delivery_id(message, frame)    # only used by pyamqp
         self._received_timestamp_utc = utc_now()
         self._is_deferred_message = kwargs.get("is_deferred_message", False)
         self._is_peeked_message = kwargs.get("is_peeked_message", False)
-        self.auto_renew_error = None  # type: Optional[Exception]
+        self.auto_renew_error: Optional[Exception]= None
         try:
-            self._receiver = kwargs.pop(
+            self._receiver: Union["ServiceBusReceiver", "AsyncServiceBusReceiver"] = kwargs.pop(
                 "receiver"
-            )  # type: Union[ServiceBusReceiver, AsyncServiceBusReceiver]
+            )
         except KeyError:
             raise TypeError(
                 "ServiceBusReceivedMessage requires a receiver to be initialized. "
                 + "This class should never be initialized by a user; "
                 + "for outgoing messages, the ServiceBusMessage class should be utilized instead."
             )
-        self._expiry = None  # type: Optional[datetime.datetime]
+        self._expiry: Optional[datetime.datetime] = None
 
     @property
     def _lock_expired(self) -> bool:
@@ -851,9 +857,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             return True
         return False
 
-    def _to_outgoing_message(self) -> ServiceBusMessage:
-        # pylint: disable=protected-access
-        return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outgoing_amqp_message())
+    #def _to_outgoing_message(self) -> ServiceBusMessage:
+    #    # pylint: disable=protected-access
+    #    return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outgoing_amqp_message())
 
     def __repr__(self) -> str:  # pylint: disable=too-many-branches,too-many-statements
         # pylint: disable=bare-except
@@ -966,7 +972,9 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
                 delivery_no=self.delivery_id,
                 delivery_tag=self._delivery_tag,
                 settler=settler,
-                encoding=self._encoding)
+                encoding=self._encoding,
+                to_outgoing_amqp_message=PyamqpTransport.to_outgoing_amqp_message
+                )
         return self._uamqp_message
 
     @property
