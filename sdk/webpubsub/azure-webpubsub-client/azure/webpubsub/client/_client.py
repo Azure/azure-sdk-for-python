@@ -487,7 +487,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         def on_close(_: Any, close_status_code: int, close_msg: str):
             if self._state == WebPubSubClientState.CONNECTED:
-                _LOGGER.info("WebSocket connection closed. Code: %d, Reason: %s", close_status_code, close_msg)
+                _LOGGER.info("WebSocket connection closed. Code: %s, Reason: %s", close_status_code, close_msg)
 
                 self._last_close_event = CloseEvent(close_status_code=close_status_code, close_reason=close_msg)
                 # clean ack cache
@@ -611,6 +611,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._thread.join()
         self._thread_seq_ack = None
         self._thread = None
+
+        _LOGGER.info("stop client successfully")
 
     def _build_default_options(self):
         if self._options.auto_reconnect is None:
