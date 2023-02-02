@@ -1021,6 +1021,31 @@ class TestStorageDirectoryAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_rename_directory_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.generate_oauth_token()
+
+        # Arrange
+        await self._setup(storage_account_name, storage_account_key)
+        share_client = self.fsc.get_share_client(self.share_name)
+
+        directory_client = ShareDirectoryClient(
+            self.account_url(storage_account_name, 'file'),
+            share_client.share_name, 'dir1',
+            credential=token_credential,
+            file_request_intent=TEST_INTENT)
+
+        # Act
+        await directory_client.create_directory()
+        new_directory = await directory_client.rename_directory('dir2')
+
+        # Assert
+        props = await new_directory.get_directory_properties()
+        assert props is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_directory_different_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
