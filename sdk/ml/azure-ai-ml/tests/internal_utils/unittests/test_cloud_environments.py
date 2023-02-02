@@ -1,8 +1,8 @@
 import os
-
 import mock
 import pytest
-from unittest.mock import patch
+from mock import MagicMock, patch
+import requests
 
 from azure.ai.ml._azure_environments import (
     AzureEnvironments,
@@ -16,12 +16,16 @@ from azure.ai.ml._azure_environments import (
     _get_all_clouds,
     _get_clouds_by_metadata_url,
 )
-from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.constants._common import  ArmConstants, AZUREML_CLOUD_ENV_NAME
+
+
+
 
 
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestCloudEnvironments:
+
     @mock.patch.dict(os.environ, {AZUREML_CLOUD_ENV_NAME: AzureEnvironments.ENV_DEFAULT}, clear=True)
     def test_set_valid_cloud_details_china(self):
         cloud_environment = AzureEnvironments.ENV_CHINA
@@ -93,42 +97,61 @@ class TestCloudEnvironments:
         base_url = _get_registry_discovery_endpoint_from_metadata(cloud_environment)
         assert "https://usgovarizona.api.ml.azure.us/" in base_url
 
-    @patch('azure.ai.ml.requests.get')
-    def test_get_cloud_from_arm(self, mock_get):
-        mock_get.return_value.status_code = 201
-        mock_get.return_value.json.return_value = [{
-            "name": "TEST_ENV", 
-            "portal": "testportal", 
-            "resourceManager": "testresourcemanager",
-            "authentication": {
-                "loginEndpoint": "testdirectoryendpoint"
+
+    
+
+    def mocked_requests_get(*args, **kwargs):
+        print("in the function")
+        class MockResponse:
+            def __init__(self, json_data):
+                self.json_data = json_data
+                self.status_code = 201
+            def __enter__(self):
+                return self;
+
+            def __exit__(self, exc_type, exc_value, traceback):
+                return
+
+            def json(self):
+                return self.json_data
+        
+        print("past the class")
+        json_data = [
+            {
+                "name": "TEST_ENV", 
+                "portal": "testportal", 
+                "resourceManager": "testresourcemanager",
+                "authentication": {
+                    "loginEndpoint": "testdirectoryendpoint"
+                },
+                "resourceManager": "testresourcemanager",
+                "suffixes": {
+                    "storage": "teststorageendpoint"
+                }
             },
-            "resourceManager": "testresourcemanager",
-            "suffixes": {
-                "storage": "teststorageendpoint"
+            {
+                "name": "MISCONFIGURED"
             }
-        }]
+        ]
+        print("past the json")
+        response = MockResponse(json_data)
+        return response
+        
+
+    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    def test_get_cloud_from_arm(self, mock_get):
+
         _set_cloud('TEST_ENV')
         cloud_details = _get_cloud_information_from_metadata("TEST_ENV")
         assert cloud_details.get("cloud") == "TEST_ENV"
+        # cloud_details = _get_clouds_by_metadata_url(ArmConstants.DEFAULT_URL)
+        # for key,values in cloud_details.items():
+        #    assert key == "TEST_ENV"
     
-    @patch('azure.ai.ml.requests.get')
+    
+    @mock.patch('requests.get', side_effect=mocked_requests_get)
     def test_arm_misconfigured(self, mock_get):
-        mock_post.return_value.status_code = 201
-        mock_post.return_value.json.return_value = [{
-            "name": "TEST_ENV", 
-            "portal": "testportal", 
-            "resourceManager": "testresourcemanager",
-            "authentication": {
-                "loginEndpoint": "testdirectoryendpoint"
-            },
-            "resourceManager": "testresourcemanager",
-            "suffixes": {
-                "storage": "teststorageendpoint"
-            }
-        },
-        {
-            "name": "MISCONFIGURED"
-        }]
+       
         _set_cloud("MISCONFIGURED")
         assert os.environ[AZUREML_CLOUD_ENV_NAME] != "MISCONFIGURED"
+    
