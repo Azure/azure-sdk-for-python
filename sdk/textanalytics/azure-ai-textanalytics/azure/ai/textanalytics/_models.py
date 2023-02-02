@@ -762,7 +762,7 @@ class CategorizedEntity(DictMixin):
             # the correct encoding was not introduced for v3.0
             offset = None
             length = None
-        entity.resolutions = entity.resolutions if hasattr(entity, "resolutions") else None
+        entity_resolutions = entity.resolutions if hasattr(entity, "resolutions") else None
         return cls(
             text=entity.text,
             category=entity.category,
@@ -770,7 +770,7 @@ class CategorizedEntity(DictMixin):
             length=length,
             offset=offset,
             confidence_score=entity.confidence_score,
-            resolutions=entity.resolutions or []
+            resolutions=entity_resolutions or []
         )
 
     def __repr__(self) -> str:
