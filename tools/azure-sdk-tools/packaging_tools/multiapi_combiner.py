@@ -256,6 +256,37 @@ class OperationGroup(VersionedObject):
             get_names_by_api_version=_get_names_by_api_version,
         )
 
+class Property(VersionedObject):
+    ...
+
+class Model(VersionedObject):
+    def __init__(self, code_model: "CodeModel", name: str) -> None:
+        super().__init__(code_model, name)
+        self.properties: List[Property] = []
+
+    def _get_model(self, api_version: str):
+        folder_api_version = self.code_model.api_version_to_folder_api_version[api_version]
+        module = importlib.import_module(
+            f"{self.code_model.module_name}.{folder_api_version}.models"
+        )
+        return getattr(module, self.name)
+
+    def combine_properties(self) -> None:
+        api_versions = [v for v in self.code_model.sorted_api_versions if v in self.api_versions]
+        def _get_names_by_api_version(api_version: str):
+            model = self._get_model(api_version)
+            return [p for p in dir(model) if p[0] != "_"]
+
+        def _get_property(code_model: "CodeModel", name: str) -> Property:
+            return Property(code_model, name)
+
+        self.properties = _combine_helper(
+            code_model=self.code_model,
+            sorted_api_versions=api_versions,
+            get_cls=_get_property,
+            get_names_by_api_version=_get_names_by_api_version,
+        )
+
 
 class Client:
     def __init__(self, code_model: "CodeModel") -> None:
@@ -297,6 +328,7 @@ class CodeModel:
         self.default_folder_api_version = self.api_version_to_folder_api_version[self.default_api_version]
         self.module_name = pkg_path.stem.replace("-", ".")
         self.operation_groups = self._combine_operation_groups()
+        self.models = self._combine_models()
         self.client = Client(self)
 
     def get_root_of_code(self, async_mode: bool) -> Path:
@@ -342,6 +374,27 @@ class CodeModel:
             for operation in operation_group.operations:
                 operation.combine_parameters()
         return ogs
+
+
+    def _combine_models(self) -> List[Model]:
+        def _get_model(code_model: "CodeModel", name: str) -> Model:
+            return Model(code_model, name)
+
+        def _get_names_by_api_version(api_version: str):
+            folder_api_version = self.api_version_to_folder_api_version[api_version]
+            module = importlib.import_module(
+                f"{self.module_name}.{folder_api_version}.models"
+            )
+            return [m for m in dir(module) if m[0] != "_"]
+        models = _combine_helper(
+            code_model=self,
+            sorted_api_versions=self.sorted_api_versions,
+            get_cls=_get_model,
+            get_names_by_api_version=_get_names_by_api_version,
+        )
+        for model in models:
+            model.combine_properties()
+        return models
 
 
 class Serializer:
