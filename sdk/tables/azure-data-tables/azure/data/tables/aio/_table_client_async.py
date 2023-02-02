@@ -331,10 +331,10 @@ class TableClient(AsyncTablesBaseClient):
             row_key = entity['RowKey']
         except (TypeError, IndexError):
             partition_key = kwargs.pop('partition_key', None)
-            if not partition_key:
+            if partition_key is None:
                 partition_key = args[0]
             row_key = kwargs.pop("row_key", None)
-            if not row_key:
+            if row_key is None:
                 row_key = args[1]
 
         match_condition = kwargs.pop("match_condition", None)

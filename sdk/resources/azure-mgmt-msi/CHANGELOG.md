@@ -1,5 +1,21 @@
 # Release History
 
+## 7.0.0 (2023-02-02)
+
+### Features Added
+
+  - Model FederatedIdentityCredential has a new parameter system_data
+  - Model Identity has a new parameter system_data
+  - Model IdentityUpdate has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model SystemAssignedIdentity has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
+### Breaking Changes
+
+  - Removed operation UserAssignedIdentitiesOperations.list_associated_resources
+
 ## 6.1.0 (2022-06-29)
 
 **Features**

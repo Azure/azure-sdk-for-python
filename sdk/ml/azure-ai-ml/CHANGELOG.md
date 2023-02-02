@@ -3,7 +3,7 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
-- Add dedicated classes for each type of job service. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
 - Added Custom Applications Support to Compute Instances.
 
 ### Bugs Fixed
