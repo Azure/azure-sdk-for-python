@@ -137,7 +137,7 @@ client = QuestionAnsweringClient(endpoint, AzureKeyCredential(key))
 output = client.get_answers(
     question="How long should my Surface battery last?",
     project_name="FAQ",
-    deployment_name="test"
+    deployment_name="production"
 )
 for candidate in output.answers:
     print("({}) {}".format(candidate.confidence, candidate.answer))
@@ -168,7 +168,7 @@ output = client.get_answers(
         previous_qna_id=previous_answer.qna_id
     ),
     project_name="FAQ",
-    deployment_name="live"
+    deployment_name="production"
 )
 for candidate in output.answers:
     print("({}) {}".format(candidate.confidence, candidate.answer))
@@ -326,7 +326,7 @@ try:
     client.get_answers(
         question="Why?",
         project_name="invalid-knowledge-base",
-        deployment_name="test"
+        deployment_name="production"
     )
 except HttpResponseError as error:
     print("Query failed: {}".format(error.message))
@@ -352,7 +352,9 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 ## Contributing
 
-See the [CONTRIBUTING.md][contributing] for details on building, testing, and contributing to this library.
+See the [CONTRIBUTING.md][contributing] for details on building, 
+
+ing, and contributing to this library.
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [cla.microsoft.com][cla].
 
