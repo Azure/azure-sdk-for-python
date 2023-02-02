@@ -90,7 +90,7 @@ class BlobStorageClient:
             msg = Fore.GREEN + f"Uploading {formatted_path}"
 
             # warn if large file (> 100 MB)
-            file_size, _ = get_directory_size(source)
+            file_size, _ = get_directory_size(source, ignore_file=ignore_file)
             file_size_in_mb = file_size / 10**6
             cloud = _get_cloud_details()
             cloud_endpoint = cloud['storage_endpoint']  # make sure proper cloud endpoint is used
