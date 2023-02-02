@@ -19,6 +19,7 @@ from azure.ai.ml.constants._common import (
     PROVIDER_RESOURCE_ID_WITH_VERSION,
     REGISTRY_URI_REGEX_FORMAT,
     REGISTRY_VERSION_PATTERN,
+    SINGULARITY_ID_FORMAT,
 )
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -321,6 +322,12 @@ def is_ARM_id_for_resource(name: Any, resource_type: str = ".*", sub_workspace_r
 
 def is_registry_id_for_resource(name: Any) -> bool:
     if isinstance(name, str) and re.match(REGISTRY_URI_REGEX_FORMAT, name, re.IGNORECASE):
+        return True
+    return False
+
+
+def is_singularity_id_for_resource(name: Any) -> bool:
+    if isinstance(name, str) and re.match(SINGULARITY_ID_FORMAT, name, re.IGNORECASE):
         return True
     return False
 
