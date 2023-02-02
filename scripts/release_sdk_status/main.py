@@ -1,6 +1,7 @@
 import requests
 import re
 import os
+import shutil
 import glob
 from lxml import etree
 import lxml.html
@@ -468,6 +469,11 @@ def sdk_info_from_swagger() -> List[Dict[str, str]]:
 
 
 def commit_to_github():
+    # remove cert created by test proxy otherwise we can't git push
+    ssl_cert = os.environ.get("SSL_CERT_DIR")
+    if ssl_cert and Path(ssl_cert).exists():
+        shutil.rmtree(ssl_cert)
+
     print_call('git add .')
     print_call('git commit -m \"update excel\"')
     print_call('git push -f origin HEAD')

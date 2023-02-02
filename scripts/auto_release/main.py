@@ -1,4 +1,5 @@
 import os
+import shutil
 import re
 import json
 import time
@@ -580,6 +581,11 @@ class CodegenTestPR:
         self.ask_check_policy()
 
     def create_pr(self):
+        # remove cert created by test proxy otherwise we can't git push
+        ssl_cert = os.environ.get("SSL_CERT_DIR")
+        if ssl_cert and Path(ssl_cert).exists():
+            shutil.rmtree(ssl_cert)
+
         # commit all code
         print_exec('git add sdk/')
         print_exec('git commit -m \"code and test\"')
