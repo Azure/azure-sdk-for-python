@@ -21,7 +21,6 @@
 # SOFTWARE.
 
 
-
 """Http Logging Policy for Azure SDK"""
 
 import os
@@ -31,18 +30,33 @@ import types
 import ast
 
 from azure.core.pipeline.policies import HttpLoggingPolicy
-
+from azure.cosmos.http_constants import HttpHeaders
 
 
 class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
 
-    def __init__(self, logger=None, **kwargs): # pylint: disable=unused-argument
+    REDACTED_PLACEHOLDER = "REDACTED"
+
+    def __init__(self, logger=None, **kwargs):  # pylint: disable=unused-argument
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", None)
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
             self.logger = logger
 
-    def on_request(self, request): # pylint: disable=too-many-return-statements, too-many-statements
+        self.default_headers_whitelist = list()
+        for k, v in HttpHeaders.__dict__.items():
+            if not k.startswith("_") and k != "Authorization":
+                self.default_headers_whitelist.append(v)
+        self.allowed_header_names = set(self.default_headers_whitelist)
+
+    def _redact_header(self, key, value):
+        print(value)
+        lower_case_allowed_header_names = [
+            header.lower() for header in self.allowed_header_names
+        ]
+        return value if key.lower() in lower_case_allowed_header_names else self.REDACTED_PLACEHOLDER
+
+    def on_request(self, request):  # pylint: disable=too-many-return-statements, too-many-statements
         # type: (PipelineRequest) -> None
         http_request = request.http_request
         options = request.context.options
@@ -72,6 +86,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                     logger.info("Request method: %r", http_request.method)
                     logger.info("Request headers:")
                     for header, value in http_request.headers.items():
+                        value = self._redact_header(header, value)
                         logger.info("    %r: %r", header, value)
                     if isinstance(http_request.body, types.GeneratorType):
                         logger.info("File upload")
@@ -114,7 +129,6 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
                 logger.warning("Failed to log request: %s", repr(err))
         else:
             super().on_request(request)
-
 
     def on_response(self, request, response):  # pylint: disable=too-many-return-statements, too-many-statements
         # type: (PipelineRequest, PipelineResponse) -> None
