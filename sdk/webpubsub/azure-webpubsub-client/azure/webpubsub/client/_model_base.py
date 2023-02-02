@@ -114,11 +114,7 @@ def _datetime_as_isostr(dt: typing.Union[datetime, date, time, timedelta]) -> st
     # First try datetime.datetime
     if hasattr(dt, "year") and hasattr(dt, "hour"):
         dt = typing.cast(datetime, dt)
-        # astimezone() fails for naive times in Python 2.7, so make make sure dt is aware (tzinfo is set)
-        if not dt.tzinfo:
-            iso_formatted = dt.replace(tzinfo=TZ_UTC).isoformat()
-        else:
-            iso_formatted = dt.astimezone(TZ_UTC).isoformat()
+        iso_formatted = dt.astimezone(TZ_UTC).isoformat()
         # Replace the trailing "+00:00" UTC offset with "Z" (RFC 3339: https://www.ietf.org/rfc/rfc3339.txt)
         return iso_formatted.replace("+00:00", "Z")
     # Next try datetime.date or datetime.time
@@ -137,11 +133,7 @@ def _serialize_bytes(o) -> str:
 
 def _serialize_datetime(o):
     if hasattr(o, "year") and hasattr(o, "hour"):
-        # astimezone() fails for naive times in Python 2.7, so make make sure o is aware (tzinfo is set)
-        if not o.tzinfo:
-            iso_formatted = o.replace(tzinfo=TZ_UTC).isoformat()
-        else:
-            iso_formatted = o.astimezone(TZ_UTC).isoformat()
+        iso_formatted = o.astimezone(TZ_UTC).isoformat()
         # Replace the trailing "+00:00" UTC offset with "Z" (RFC 3339: https://www.ietf.org/rfc/rfc3339.txt)
         return iso_formatted.replace("+00:00", "Z")
     # Next try datetime.date or datetime.time
