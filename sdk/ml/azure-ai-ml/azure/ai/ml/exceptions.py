@@ -486,10 +486,11 @@ class UserErrorException(MlException):
         message,
         no_personal_data_message=None,
         error_category=ErrorCategory.USER_ERROR,
+        target: ErrorTarget = ErrorTarget.PIPELINE
     ):
         super().__init__(
             message=message,
-            target=ErrorTarget.PIPELINE,
+            target=target,
             no_personal_data_message=no_personal_data_message,
             error_category=error_category,
         )

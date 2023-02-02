@@ -30,11 +30,9 @@ import os
 
 
 def sample_abstractive_summarization() -> None:
+    # [START abstract_summary]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.textanalytics import (
-        TextAnalyticsClient,
-        AbstractSummaryAction
-    )
+    from azure.ai.textanalytics import TextAnalyticsClient
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
@@ -63,23 +61,17 @@ def sample_abstractive_summarization() -> None:
         "component of this aspiration, if grounded with external knowledge sources in the downstream AI tasks."
     ]
 
-    poller = text_analytics_client.begin_analyze_actions(
-        document,
-        actions=[
-            AbstractSummaryAction(),
-        ],
-    )
-
-    document_results = poller.result()
-    for abstract_summary_results in document_results:
-        for result in abstract_summary_results:
-            if result.kind == "AbstractiveSummarization":
-                print("Summaries abstracted:")
-                [print(f"{summary.text}\n") for summary in result.summaries]
-            elif result.is_error is True:
-                print("...Is an error with code '{}' and message '{}'".format(
-                    result.code, result.message
-                ))
+    poller = text_analytics_client.begin_abstract_summary(document)
+    abstract_summary_results = poller.result()
+    for result in abstract_summary_results:
+        if result.kind == "AbstractiveSummarization":
+            print("Summaries abstracted:")
+            [print(f"{summary.text}\n") for summary in result.summaries]
+        elif result.is_error is True:
+            print("...Is an error with code '{}' and message '{}'".format(
+                result.code, result.message
+            ))
+    # [END abstract_summary]
 
 
 if __name__ == "__main__":
