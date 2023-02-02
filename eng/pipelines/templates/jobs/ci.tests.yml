@@ -98,7 +98,7 @@ jobs:
       displayName: Install build tooling
 
     - task: PythonScript@0
-      displayName: 'Set Tox Environment and Skips'
+      displayName: 'Set Tox Environment'
       inputs:
         scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
         arguments: >-

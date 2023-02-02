@@ -30,6 +30,7 @@ steps:
         scriptPath: 'scripts/devops_tasks/set_tox_environment.py'
         arguments: >-
           --team-project="$(System.TeamProject)"
+          --service="${{ parameters.ServiceDirectory }}"
 
   - ${{ each artifact in parameters.Artifacts }}:
     - ${{if ne(artifact.skipVerifyChangeLog, 'true')}}:
