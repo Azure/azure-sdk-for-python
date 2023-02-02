@@ -112,7 +112,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         raise ValidationException(
                             message=msg,
                             no_personal_data_message=msg,
-                            error_target=ErrorTarget.ENVIRONMENT,
+                            target=ErrorTarget.ENVIRONMENT,
                             error_category=ErrorCategory.USER_ERROR,
                         )
 
