@@ -62,25 +62,24 @@ if __name__ == "__main__":
     except CalledProcessError as src_err:
         src_code_error = src_err
 
-    if in_ci():
-        if not is_check_enabled(args.target_package, "type_check_samples", True):
+    if in_ci() and not is_check_enabled(args.target_package, "type_check_samples", True):
+        logging.info(
+            f"Package {package_name} opts-out of mypy check on samples."
+        )
+    else:
+        sample_code = [
+            *commands,
+            "--check-untyped-defs",
+            "--follow-imports=silent",
+            os.path.join(args.target_package, "samples")
+        ]
+        try:
             logging.info(
-                f"Package {package_name} opts-out of mypy check on samples."
+                f"Running mypy commands on sample code: {sample_code}"
             )
-        else:
-            sample_code = [
-                *commands,
-                "--check-untyped-defs",
-                "--follow-imports=silent",
-                os.path.join(args.target_package, "samples")
-            ]
-            try:
-                logging.info(
-                    f"Running mypy commands on sample code: {sample_code}"
-                )
-                check_call(sample_code)
-            except CalledProcessError as sample_err:
-                sample_code_error = sample_err
+            check_call(sample_code)
+        except CalledProcessError as sample_err:
+            sample_code_error = sample_err
 
     print("See https://aka.ms/python/typing-guide for information.\n\n")
     if src_code_error and sample_code_error:

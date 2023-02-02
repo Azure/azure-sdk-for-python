@@ -348,8 +348,6 @@ IGNORE_PACKAGES = [
 ]
 
 
-
-
 def is_check_enabled(package_path: str, check: str, default: bool = True) -> bool:
     """
     Single-use function to evaluate whether or not a given check should run against a package.
@@ -381,7 +379,7 @@ def is_check_enabled(package_path: str, check: str, default: bool = True) -> boo
     # now pull the new pyproject.toml configuration
     config = get_config_setting(package_path, check.strip().lower(), True)
 
-    return (config and enabled)
+    return config and enabled
 
 
 def filter_tox_environment_string(namespace_argument: str, package_path: str) -> str:
@@ -394,8 +392,6 @@ def filter_tox_environment_string(namespace_argument: str, package_path: str) ->
     """
     if package_path.endswith("setup.py"):
         package_path = os.path.dirname(package_path)
-
-    package_name = os.path.basename(package_path)
 
     if namespace_argument:
         tox_envs = namespace_argument.strip().split(",")
