@@ -11,4 +11,3 @@ def add_certificate():
     for item in result[1:]:
         name, value = item.strip().split("=", 1)
         os.environ[name] = value
-
