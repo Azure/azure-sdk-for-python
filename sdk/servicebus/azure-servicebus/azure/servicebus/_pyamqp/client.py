@@ -210,6 +210,11 @@ class AMQPClient(
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
 
+        # Keep Alive (release messages)
+        self._keep_alive_interval = int(kwargs.get("keep_alive_interval",0))
+        self._keep_alive_thread = None
+
+
     def __enter__(self):
         """Run Client in a context manager."""
         self.open()
@@ -218,6 +223,22 @@ class AMQPClient(
     def __exit__(self, *args):
         """Close and destroy Client on exiting a context manager."""
         self.close()
+
+    def _keep_alive(self):
+        print(f"Keep alive, {threading.current_thread().name}")
+        start_time = time.time()
+        try:
+            while self._connection and not self._shutdown: 
+                current_time = time.time()
+                elapsed_time = current_time - start_time
+                if elapsed_time >= self._keep_alive_interval:
+                    _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
+                    self._client_run()
+                    start_time = current_time
+                time.sleep(1)
+        except Exception as e:  # pylint: disable=broad-except
+            _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+
 
     def _client_ready(self):  # pylint: disable=no-self-use
         """Determine whether the client is ready to start sending and/or
@@ -308,6 +329,10 @@ class AMQPClient(
                 outgoing_window=self._outgoing_window,
             )
             self._session.begin()
+        if self._keep_alive_interval:
+            self._keep_alive_thread = threading.Thread(target=self._keep_alive)
+            self._keep_alive_thread.daemon = True
+            self._keep_alive_thread.start()
         if self._auth.auth_type == AUTH_TYPE_CBS:
             self._cbs_authenticator = CBSAuthenticator(
                 session=self._session, auth=self._auth, auth_timeout=self._auth_timeout
@@ -341,6 +366,12 @@ class AMQPClient(
         if not self._external_connection:
             self._connection.close()
             self._connection = None
+        if self._keep_alive_thread:
+            try:
+                self._keep_alive_thread.join()
+            except RuntimeError:  # Probably thread failed to start in .open()
+                logging.info("Keep alive thread failed to join.", exc_info=True)
+            self._keep_alive_thread = None
         self._network_trace_params["amqpConnection"] = None
         self._network_trace_params["amqpSession"] = None
 
