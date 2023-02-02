@@ -131,8 +131,6 @@ class CodegenTestPR:
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.conn_str = os.getenv('STORAGE_CONN_STR')
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
-        self.origin_ssl_cert = os.getenv("SSL_CERT_DIR")
-        self.origin_request_ca= os.getenv("REQUESTS_CA_BUNDLE")
 
         self.package_name = ''
         self.new_branch = ''
@@ -460,8 +458,6 @@ class CodegenTestPR:
     def prepare_test_env(self):
         self.install_package_locally()
         set_test_env_var()
-        log(f"origin ssl cert: {self.origin_ssl_cert}")
-        log(f"origin request ca: {self.origin_request_ca}")
         add_certificate()
         start_test_proxy()
 
