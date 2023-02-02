@@ -181,7 +181,6 @@ PYRIGHT_OPT_OUT = [
     "azure-synapse-spark",
     "azure-data-tables",
     "azure-ai-textanalytics",
-    "azure-ai-translation-document",
     "azure-messaging-webpubsubservice",
 ]
 
@@ -317,7 +316,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-synapse-managedprivateendpoints",
     "azure-synapse-monitoring",
     "azure-synapse-spark",
-    "azure-ai-translation-document",
     "azure-messaging-webpubsubservice",
 ]
 
