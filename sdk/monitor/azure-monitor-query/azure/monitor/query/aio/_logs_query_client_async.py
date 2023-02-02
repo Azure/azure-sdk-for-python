@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import Any, cast, Tuple, Union, Sequence, Dict, List
+from typing import Any, cast, Tuple, Union, Sequence, Dict, List, Optional
 
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -30,7 +30,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
     :param credential: The credential to authenticate the client
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://api.loganalytics.io/v1'.
-    :paramtype endpoint: str
+    :paramtype endpoint: Optional[str]
     """
 
     def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
@@ -53,9 +53,9 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         workspace_id: str,
         query: str,
         *,
-        timespan: Union[
+        timespan: Optional[Union[
             timedelta, Tuple[datetime, timedelta], Tuple[datetime, datetime]
-        ],
+        ]],
         **kwargs: Any
     ) -> Union[LogsQueryResult, LogsQueryPartialResult]:
         """Execute an Analytics query.
@@ -80,7 +80,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
-        :paramtype additional_workspaces: list[str]
+        :paramtype Optional[additional_workspaces: list[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
         :raises: ~azure.core.exceptions.HttpResponseError

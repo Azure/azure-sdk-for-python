@@ -36,7 +36,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
     :param credential: The credential to authenticate the client.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: The endpoint to connect to. Defaults to 'https://management.azure.com'.
-    :paramtype endpoint: str
+    :paramtype endpoint: Optional[str]
     """
 
     def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
@@ -66,21 +66,21 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         :type metric_names: list[str]
         :keyword timespan: The timespan for which to query the data. This can be a timedelta,
          a timedelta and a start datetime, or a start datetime/end datetime.
-        :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-         or tuple[~datetime.datetime, ~datetime.datetime]
+        :paramtype timespan: Optional[Union[~datetime.timedelta, tuple[~datetime.datetime, ~datetime.timedelta],
+            tuple[~datetime.datetime, ~datetime.datetime]]]
         :keyword granularity: The granularity (i.e. timegrain) of the query.
-        :paramtype granularity: ~datetime.timedelta
+        :paramtype granularity: Optional[~datetime.timedelta]
         :keyword aggregations: The list of aggregation types to retrieve. Use
          `azure.monitor.query.MetricAggregationType` enum to get each aggregation type.
-        :paramtype aggregations: list[str]
+        :paramtype aggregations: Optional[list[str]]
         :keyword max_results: The maximum number of records to retrieve.
          Valid only if $filter is specified.
          Defaults to 10.
-        :paramtype max_results: int
+        :paramtype max_results: Optional[int]
         :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
          Only one order can be specified.
          Examples: sum asc.
-        :paramtype order_by: str
+        :paramtype order_by: Optional[str]
         :keyword filter: The **$filter** is used to reduce the set of metric data returned. Example:
          Metric contains metadata A, B and C. - Return all time series of C where A = a1 and B = b1 or
          b2 **$filter=A eq 'a1' and B eq 'b1' or B eq 'b2' and C eq '*'** - Invalid variant: **$filter=A
@@ -93,9 +93,9 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
          When dimension name is **dim (test) 3** and dimension value is **dim3 (test) val**, instead of using
          **$filter= "dim (test) 3 eq 'dim3 (test) val'"** use **$filter= "dim
          %2528test%2529 3 eq 'dim3 %2528test%2529 val'"**. Default value is None.
-        :paramtype filter: str
+        :paramtype filter: Optional[str]
         :keyword metric_namespace: Metric namespace to query metric definitions for.
-        :paramtype metric_namespace: str
+        :paramtype metric_namespace: Optional[str]
         :return: A MetricsQueryResult object.
         :rtype: ~azure.monitor.query.MetricsQueryResult
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -137,7 +137,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         :type resource_uri: str
         :keyword start_time: The start time from which to query for metric
          namespaces. This should be provided as a datetime object.
-        :paramtype start_time: ~datetime.datetime
+        :paramtype start_time: Optional[~datetime.datetime]
         :return: An iterator like instance of either MetricNamespace or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricNamespace]
         :raises: ~azure.core.exceptions.HttpResponseError
@@ -166,7 +166,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
         :param resource_uri: The identifier of the resource.
         :type resource_uri: str
         :keyword namespace: Metric namespace to query metric definitions for.
-        :paramtype namespace: str
+        :paramtype namespace: Optional[str]
         :return: An iterator like instance of either MetricDefinition or the result of cls(response)
         :rtype: ~azure.core.paging.ItemPaged[~azure.monitor.query.MetricDefinition]
         :raises: ~azure.core.exceptions.HttpResponseError
