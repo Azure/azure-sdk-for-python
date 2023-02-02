@@ -132,6 +132,7 @@ class CodegenTestPR:
         self.conn_str = os.getenv('STORAGE_CONN_STR')
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
         self.origin_ssl_cert = os.getenv("SSL_CERT_DIR")
+        self.origin_request_ca= os.getenv("REQUESTS_CA_BUNDLE")
 
         self.package_name = ''
         self.new_branch = ''
@@ -460,6 +461,7 @@ class CodegenTestPR:
         self.install_package_locally()
         set_test_env_var()
         log(f"origin ssl cert: {self.origin_ssl_cert}")
+        log(f"origin request ca: {self.origin_request_ca}")
         add_certificate()
         start_test_proxy()
 
@@ -486,9 +488,17 @@ class CodegenTestPR:
             log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
 
+    @staticmethod
+    def clean_test_env():
+        for item in ("SSL_CERT_DIR", "REQUESTS_CA_BUNDLE"):
+            if os.getenv(item):
+                os.environ.pop("item")
+
     def run_test(self):
         self.prepare_test_env()
         self.run_test_proc()
+        self.clean_test_env()
+        
 
     def create_pr_proc(self):
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
@@ -583,9 +593,6 @@ class CodegenTestPR:
         self.ask_check_policy()
 
     def create_pr(self):
-        # recover ssl cert changed by test proxy otherwise we can't git push
-        os.environ["SSL_CERT_DIR"] = self.origin_ssl_cert
-
         # commit all code
         print_exec('git add sdk/')
         print_exec('git commit -m \"code and test\"')
