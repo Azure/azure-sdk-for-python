@@ -1346,18 +1346,23 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     def test_pipeline_job_with_singularity_compute(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("job_name")}]
-        pipeline_job = load_job(
+        pipeline_job: PipelineJob = load_job(
             "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_singularity_compute.yml",
             params_override=params_override,
         )
 
-        created_pipeline_job = assert_job_cancel(pipeline_job, client)
-        expected_singularity_compute = (
-            "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/"
-            "Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
+        singularity_compute_id = (
+            f"/subscriptions/{client.subscription_id}/resourceGroups/{client.resource_group_name}/"
+            f"providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
         )
-        assert created_pipeline_job.settings.default_compute == expected_singularity_compute
-        assert created_pipeline_job.jobs["hello_job"].compute == expected_singularity_compute
+        pipeline_job.settings.default_compute = singularity_compute_id
+        pipeline_job.jobs["hello_job"].compute = singularity_compute_id
+
+        assert pipeline_job._customized_validate().passed is True
+
+        created_pipeline_job: PipelineJob = assert_job_cancel(pipeline_job, client)
+        assert created_pipeline_job.settings.default_compute == singularity_compute_id
+        assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
