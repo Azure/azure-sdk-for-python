@@ -144,10 +144,7 @@ class TestCloudEnvironments:
         _set_cloud('TEST_ENV')
         cloud_details = _get_cloud_information_from_metadata("TEST_ENV")
         assert cloud_details.get("cloud") == "TEST_ENV"
-        # cloud_details = _get_clouds_by_metadata_url(ArmConstants.DEFAULT_URL)
-        # for key,values in cloud_details.items():
-        #    assert key == "TEST_ENV"
-    
+            
     
     @mock.patch('requests.get', side_effect=mocked_requests_get)
     def test_arm_misconfigured(self, mock_get):
