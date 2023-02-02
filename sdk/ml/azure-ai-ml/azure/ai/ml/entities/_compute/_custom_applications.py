@@ -22,8 +22,10 @@ from azure.ai.ml.constants._compute import (
     DUPLICATE_APPLICATION_ERROR,
     INVALID_VALUE_ERROR,
 )
+from azure.ai.ml._utils._experimental import experimental
 
 
+@experimental
 class ImageSettings:
     """Specifies an image configuration for a Custom Application.
 
@@ -42,6 +44,7 @@ class ImageSettings:
         return ImageSettings(reference=obj.reference)
 
 
+@experimental
 class EndpointsSettings:
     """Specifies an endpoint configuration for a Custom Application.
 
@@ -90,6 +93,7 @@ class EndpointsSettings:
                 )
 
 
+@experimental
 class VolumeSettings:
     """Specifies the Bind Mount settings for a Custom Application.
 
@@ -116,6 +120,7 @@ class VolumeSettings:
         return VolumeSettings(source=obj.source, target=obj.target)
 
 
+@experimental
 class CustomApplications:
     """Specifies the custom service application configuration.
 
@@ -153,18 +158,22 @@ class CustomApplications:
         self.additional_properties = kwargs
 
     def _to_rest_object(self):
-        endpoints = []
-        for endpoint in self.endpoints:
-            endpoints.append(endpoint._to_rest_object())
+        endpoints = None
+        if self.endpoints:
+            endpoints = [endpoint._to_rest_object() for endpoint in self.endpoints]
 
-        environment_variables = {}
-        for name, value in self.environment_variables.items():
-            environment_variables[name] = RestEnvironmentVariable(
-                type=RestEnvironmentVariableType.LOCAL, value=value
-            )
-        volumes = []
-        for volume in self.bind_mounts:
-            volumes.append(volume._to_rest_object())
+        environment_variables = None
+        if self.environment_variables:
+            environment_variables = {
+                name: RestEnvironmentVariable(
+                    type=RestEnvironmentVariableType.LOCAL, value=value
+                )
+                for name, value in self.environment_variables.items()
+            }
+
+        volumes = None
+        if self.bind_mounts:
+            volumes = [volume._to_rest_object() for volume in self.bind_mounts]
 
         return CustomService(
             name=self.name,
