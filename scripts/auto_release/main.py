@@ -492,7 +492,7 @@ class CodegenTestPR:
     def clean_test_env():
         for item in ("SSL_CERT_DIR", "REQUESTS_CA_BUNDLE"):
             if os.getenv(item):
-                os.environ.pop("item")
+                os.environ.pop(item)
 
     def run_test(self):
         self.prepare_test_env()
