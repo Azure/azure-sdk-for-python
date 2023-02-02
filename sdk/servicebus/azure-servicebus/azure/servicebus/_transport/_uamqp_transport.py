@@ -6,7 +6,7 @@
 import time
 import logging
 import functools
-from typing import Optional, Union, Any, Tuple
+from typing import Optional, Tuple, Callable
 
 try:
     from uamqp import (
@@ -19,9 +19,7 @@ try:
         SendClient,
         ReceiveClient,
         Source,
-        utils,
         authentication,
-        AMQPClient,
         compat,
         errors as AMQPErrors,
         Connection,
@@ -63,6 +61,7 @@ from .._common.constants import (
     ERROR_CODE_ENTITY_DISABLED,
     ERROR_CODE_ENTITY_ALREADY_EXISTS,
     ERROR_CODE_PRECONDITION_FAILED,
+    ServiceBusReceiveMode,
 )
 
 from ..exceptions import (
@@ -214,17 +213,17 @@ if uamqp_installed:
             return BatchMessage(data=data)
 
         @staticmethod
-        def get_message_delivery_tag(message, frame):  # pylint: disable=unused-argument
+        def get_message_delivery_tag(message, _):  # pylint: disable=unused-argument
             """
             Gets delivery tag of a Message.
             :param message: Message to get delivery_tag from for uamqp.Message.
             :param frame: Message to get delivery_tag from for pyamqp.Message.
             :rtype: str
             """
-            return 
+            return message.delivery_tag
 
         @staticmethod
-        def get_message_delivery_tag(message, frame):  # pylint: disable=unused-argument
+        def get_message_delivery_id(message, _):  # pylint: disable=unused-argument
             """
             Gets delivery id of a Message.
             :param message: Message to get delivery_id from for uamqp.Message.
@@ -570,12 +569,13 @@ if uamqp_installed:
             :keyword timeout: Required.
             """
 
+            source = kwargs.pop("source")
             retry_policy = kwargs.pop("retry_policy")
             network_trace = kwargs.pop("network_trace")
             link_credit = kwargs.pop("link_credit")
             receive_mode = kwargs.pop("receive_mode")
 
-            client = ReceiveClient(
+            return ReceiveClient(
                 source,
                 debug=network_trace,  # pylint:disable=protected-access
                 error_policy=retry_policy,
@@ -586,10 +586,6 @@ if uamqp_installed:
                 else None,
                 **kwargs
             )
-            # pylint:disable=protected-access
-            client._streaming_receive = streaming_receive
-            client._message_received_callback = (message_received_callback)
-            return client
 
         @staticmethod
         def open_receive_client(*, handler, client, auth):
@@ -674,21 +670,40 @@ if uamqp_installed:
             """
             handler.message_handler.reset_link_credit(link_credit)
 
+        # Executes message settlement, implementation is in _settle_message_via_receiver_link
+        # May be able to remove and just call methods in private method.
         @staticmethod
         def settle_message_via_receiver_link(
-            _: ReceiveClient,
+            handler: ReceiveClient,
             message: "ServiceBusReceivedMessage",
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
         ) -> None:  # pylint: disable=unused-argument
+            UamqpTransport._settle_message_via_receiver_link(
+                handler,
+                message,
+                settle_operation,
+                dead_letter_reason,
+                dead_letter_error_description
+            )()
+            return
+
+        @staticmethod
+        def _settle_message_via_receiver_link(
+            _: ReceiveClient,
+            message: "ServiceBusReceivedMessage",
+            settle_operation: str,
+            dead_letter_reason: Optional[str] = None,
+            dead_letter_error_description: Optional[str] = None,
+        ) -> Callable:  # pylint: disable=unused-argument
             if settle_operation == MESSAGE_COMPLETE:
-                return functools.partial(message.message.accept)
+                return functools.partial(message._message.accept)
             if settle_operation == MESSAGE_ABANDON:
-                return functools.partial(message.message.modify, True, False)
+                return functools.partial(message._message.modify, True, False)
             if settle_operation == MESSAGE_DEAD_LETTER:
                 return functools.partial(
-                    message.message.reject,
+                    message._message.reject,
                     condition=DEADLETTERNAME,
                     description=dead_letter_error_description,
                     info={
@@ -697,10 +712,35 @@ if uamqp_installed:
                     },
                 )
             if settle_operation == MESSAGE_DEFER:
-                return functools.partial(message.message.modify, True, True)
+                return functools.partial(message._message.modify, True, True)
             raise ValueError(
                 "Unsupported settle operation type: {}".format(settle_operation)
             )
+
+        @staticmethod
+        def parse_received_message(message, message_type, **kwargs):
+            """
+            Parses peek/deferred op messages into ServiceBusReceivedMessage.
+            :param Message message: Message to parse.
+            :param ServiceBusReceivedMessage message_type: Message type to pass parsed message to.
+            :keyword ServiceBusReceiver receiver: Required.
+            :keyword bool is_peeked_message: Optional. For peeked messages.
+            :keyword bool is_deferred_message: Optional. For deferred messages.
+            :keyword ServiceBusReceiveMode receive_mode: Optional.
+            """
+            parsed = []
+            for m in message.get_data()[b"messages"]:
+                wrapped = Message.decode_from_bytes(bytearray(m[b"message"]))
+                parsed.append(
+                    message_type(
+                        wrapped, **kwargs
+                    )
+                )
+            return parsed
+    
+        @staticmethod
+        def get_message_value(message):
+            return message.get_data()
 
         #@staticmethod
         #def check_link_stolen(consumer, exception):
@@ -834,7 +874,7 @@ if uamqp_installed:
                 op_type=operation_type,
                 node=node,
                 timeout=timeout * UamqpTransport.TIMEOUT_FACTOR if timeout else None,
-                callback=callback
+                callback=functools.partial(callback, amqp_transport=UamqpTransport)
             )
 
         #@staticmethod

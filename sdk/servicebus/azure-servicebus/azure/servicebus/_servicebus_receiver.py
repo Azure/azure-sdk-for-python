@@ -51,12 +51,10 @@ from ._common.constants import (
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
-from ._common.utils import utc_from_timestamp, utc_now
+from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
-from .._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
-    from ._transport._base import AmqpTransport
     try:
         from uamqp import ReceiveClient as uamqp_ReceiveClientSync
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
@@ -350,8 +348,7 @@ class ServiceBusReceiver(
             )
         return cls(**constructor_args)
 
-    def _create_handler(self, auth):
-        # type: (JWTTokenAuth) -> None
+    def _create_handler(self, auth: Union["JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
 
 
         self._handler = self._amqp_transport.create_send_client(
@@ -370,7 +367,7 @@ class ServiceBusReceiver(
             properties=self._properties,
             retry_policy=self._error_policy,
             client_name=self._name,
-            on_attach=functools.partial(self._amqp_transport.on_attach, receiver=self),
+            on_attach=self.on_attach,
             receive_mode=self._receive_mode,
             # TODO: check that this shouldn't be 1000 for both
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
@@ -386,9 +383,7 @@ class ServiceBusReceiver(
         )
         if self._prefetch_count == 1:
             # pylint: disable=protected-access
-            self._handler._message_received = functools.partial(    # type: ignore
-                self._amqp_transport.enhanced_message_received, receiver=self
-            )
+            self._handler._message_received = self.enhanced_message_received
 
     def _open(self):
         # pylint: disable=protected-access
@@ -536,7 +531,7 @@ class ServiceBusReceiver(
         try:
             if not message._is_deferred_message:
                 try:
-                    self._amqp_transport._settle_message_via_receiver_link(
+                    self._amqp_transport.settle_message_via_receiver_link(
                         self._handler,
                         message,
                         settle_operation,
@@ -603,6 +598,7 @@ class ServiceBusReceiver(
             message,
             mgmt_handlers.message_lock_renew_op,
             timeout=timeout,
+            amqp_transport=self._amqp_transport,
         )
 
     def _close_handler(self):
@@ -777,6 +773,7 @@ class ServiceBusReceiver(
             mgmt_handlers.deferred_message_op,
             receive_mode=self._receive_mode,
             receiver=self,
+            amqp_transport=self._amqp_transport,
         )
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RECEIVE_BY_SEQUENCE_NUMBER,
@@ -845,7 +842,7 @@ class ServiceBusReceiver(
         }
 
         self._populate_message_properties(message)
-        handler = functools.partial(mgmt_handlers.peek_op, receiver=self)
+        handler = functools.partial(mgmt_handlers.peek_op, receiver=self, amqp_transport=self._amqp_transport)
         messages = self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_PEEK_OPERATION, message, handler, timeout=timeout
         )

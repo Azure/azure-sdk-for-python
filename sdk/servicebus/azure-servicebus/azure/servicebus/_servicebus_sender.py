@@ -321,6 +321,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                 request_body,
                 mgmt_handlers.schedule_op,
                 timeout=timeout,
+                amqp_transport=self._amqp_transport,
             )
 
     def cancel_scheduled_messages(

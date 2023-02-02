@@ -308,22 +308,22 @@ class AutoLockRenewTimeout(ServiceBusError):
     """The time allocated to renew the message or session lock has elapsed."""
 
 
-_ERROR_CODE_TO_ERROR_MAPPING = {
-    ErrorCondition.LinkMessageSizeExceeded: MessageSizeExceededError,
-    ErrorCondition.ResourceLimitExceeded: ServiceBusQuotaExceededError,
-    ErrorCondition.UnauthorizedAccess: ServiceBusAuthorizationError,
-    ErrorCondition.NotImplemented: ServiceBusError,
-    ErrorCondition.NotAllowed: ServiceBusError,
-    ErrorCondition.LinkDetachForced: ServiceBusConnectionError,
-    ERROR_CODE_MESSAGE_LOCK_LOST: MessageLockLostError,
-    ERROR_CODE_MESSAGE_NOT_FOUND: MessageNotFoundError,
-    ERROR_CODE_AUTH_FAILED: ServiceBusAuthorizationError,
-    ERROR_CODE_ENTITY_DISABLED: MessagingEntityDisabledError,
-    ERROR_CODE_ENTITY_ALREADY_EXISTS: MessagingEntityAlreadyExistsError,
-    ERROR_CODE_SERVER_BUSY: ServiceBusServerBusyError,
-    ERROR_CODE_SESSION_CANNOT_BE_LOCKED: SessionCannotBeLockedError,
-    ERROR_CODE_SESSION_LOCK_LOST: SessionLockLostError,
-    ERROR_CODE_ARGUMENT_ERROR: ServiceBusError,
-    ERROR_CODE_OUT_OF_RANGE: ServiceBusError,
-    ERROR_CODE_TIMEOUT: OperationTimeoutError,
-}
+#_ERROR_CODE_TO_ERROR_MAPPING = {
+#    ErrorCondition.LinkMessageSizeExceeded: MessageSizeExceededError,
+#    ErrorCondition.ResourceLimitExceeded: ServiceBusQuotaExceededError,
+#    ErrorCondition.UnauthorizedAccess: ServiceBusAuthorizationError,
+#    ErrorCondition.NotImplemented: ServiceBusError,
+#    ErrorCondition.NotAllowed: ServiceBusError,
+#    ErrorCondition.LinkDetachForced: ServiceBusConnectionError,
+#    ERROR_CODE_MESSAGE_LOCK_LOST: MessageLockLostError,
+#    ERROR_CODE_MESSAGE_NOT_FOUND: MessageNotFoundError,
+#    ERROR_CODE_AUTH_FAILED: ServiceBusAuthorizationError,
+#    ERROR_CODE_ENTITY_DISABLED: MessagingEntityDisabledError,
+#    ERROR_CODE_ENTITY_ALREADY_EXISTS: MessagingEntityAlreadyExistsError,
+#    ERROR_CODE_SERVER_BUSY: ServiceBusServerBusyError,
+#    ERROR_CODE_SESSION_CANNOT_BE_LOCKED: SessionCannotBeLockedError,
+#    ERROR_CODE_SESSION_LOCK_LOST: SessionLockLostError,
+#    ERROR_CODE_ARGUMENT_ERROR: ServiceBusError,
+#    ERROR_CODE_OUT_OF_RANGE: ServiceBusError,
+#    ERROR_CODE_TIMEOUT: OperationTimeoutError,
+#}

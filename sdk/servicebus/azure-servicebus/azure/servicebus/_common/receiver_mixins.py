@@ -7,14 +7,32 @@ import uuid
 from typing import TYPE_CHECKING
 
 from .message import ServiceBusReceivedMessage
-from ..exceptions import _ServiceBusErrorPolicy, MessageAlreadySettled
+from ..exceptions import MessageAlreadySettled
 from .constants import (
     NEXT_AVAILABLE_SESSION,
-    SESSION_FILTER,
     MGMT_REQUEST_SESSION_ID,
     ServiceBusReceiveMode,
 )
 
+from .._common.utils import utc_from_timestamp, utc_now
+from .._common.constants import (
+#    NO_RETRY_ERRORS,
+#    CUSTOM_CONDITION_BACKOFF,
+    PYAMQP_LIBRARY,
+    DATETIMEOFFSET_EPOCH,
+    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    DEADLETTERNAME,
+    MAX_ABSOLUTE_EXPIRY_TIME,
+    MAX_DURATION_VALUE,
+    MAX_MESSAGE_LENGTH_BYTES,
+    MESSAGE_COMPLETE,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER,
+    MESSAGE_DEAD_LETTER,
+    SESSION_FILTER,
+    SESSION_LOCKED_UNTIL,
+)
 if TYPE_CHECKING:
     from .._transport._base import AmqpTransport
 
@@ -77,7 +95,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
                 "as they have been deleted, providing an AutoLockRenewer in this mode is invalid."
             )
 
-    # TODO: add switch
     def _build_received_message(self, received, message_type=ServiceBusReceivedMessage):
         message = message_type(
             message=received[1], receive_mode=self._receive_mode, receiver=self, frame=received[0]
@@ -89,7 +106,7 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
         # pylint: disable=protected-access
         if self._session:
             session_filter = None if self._session_id == NEXT_AVAILABLE_SESSION else self._session_id
-            return self._amqp_transport._create_source(self._entity_uri, session_filter)
+            return self._amqp_transport.create_source(self._entity_uri, session_filter)
         return self._entity_uri
 
     def _check_message_alive(self, message, action):
@@ -117,3 +134,33 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_message_properties(self, message):
         if self._session:
             message[MGMT_REQUEST_SESSION_ID] = self._session_id
+
+    def on_attach(receiver, attach_frame):
+        """
+        Receiver on_attach callback.
+        """
+        # pylint: disable=protected-access, unused-argument
+        if receiver._session and attach_frame.source.address.decode(receiver._config.encoding) == receiver._entity_uri:
+            # This has to live on the session object so that autorenew has access to it.
+            receiver._session._session_start = utc_now()
+            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
+            if expiry_in_seconds:
+                expiry_in_seconds = (
+                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
+                ) / 10000000
+                receiver._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
+            session_filter = attach_frame.source.filters[SESSION_FILTER]
+            receiver._session_id = session_filter.decode(receiver._config.encoding)
+            receiver._session._session_id = receiver._session_id
+
+    #@staticmethod
+    def enhanced_message_received(receiver, frame, message):
+        """
+        Receiver enhanced_message_received callback.
+        """
+        # pylint: disable=protected-access
+        receiver._handler._was_message_received = True
+        if receiver._receive_context.is_set():
+            receiver._handler._received_messages.put((frame, message))
+        else:
+            receiver._handler.settle_messages(frame[1], 'released')

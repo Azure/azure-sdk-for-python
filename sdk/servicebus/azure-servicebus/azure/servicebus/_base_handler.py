@@ -23,7 +23,6 @@ from .exceptions import (
     ServiceBusConnectionError,
     OperationTimeoutError,
     SessionLockLostError,
-    _create_servicebus_exception,
 )
 from ._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
 from ._common.constants import (

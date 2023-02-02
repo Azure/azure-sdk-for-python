@@ -811,7 +811,6 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             self,
             message: Union["Message", "pyamqp_Message"],
             receive_mode: Union[ServiceBusReceiveMode, str] = ServiceBusReceiveMode.PEEK_LOCK,
-            *
             frame: Optional["TransferFrame"] = None,    # TODO: are we okay with implementation specific types leaking out
             **kwargs
     ) -> None:

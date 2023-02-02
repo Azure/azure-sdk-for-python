@@ -16,7 +16,7 @@ from .._pyamqp import (
     ReceiveClient,
     __version__,
 )
-from ._pyamqp.error import (
+from .._pyamqp.error import (
     ErrorCondition,
     AMQPException,
     AMQPError,
@@ -26,6 +26,7 @@ from ._pyamqp.error import (
 )
 from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
 from .._pyamqp._encode import encode_payload
+from .._pyamqp._decode import decode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
 from .._pyamqp.endpoints import Source, ApacheFilters
@@ -73,9 +74,12 @@ from ..exceptions import (
     ServiceBusAuthorizationError,
     ServiceBusError,
     ServiceBusConnectionError,
+    ServiceBusAuthenticationError,
+    ServiceBusCommunicationError,
     MessageLockLostError,
     MessageNotFoundError,
     MessagingEntityDisabledError,
+    MessagingEntityNotFoundError,
     MessagingEntityAlreadyExistsError,
     ServiceBusServerBusyError,
     SessionCannotBeLockedError,
@@ -194,17 +198,17 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         #return BatchMessage(data=data)
     
     @staticmethod
-    def get_message_delivery_tag(message, frame):  # pylint: disable=unused-argument
+    def get_message_delivery_tag(_, frame):  # pylint: disable=unused-argument
         """
         Gets delivery tag of a Message.
         :param message: Message to get delivery_tag from for uamqp.Message.
         :param frame: Message to get delivery_tag from for pyamqp.Message.
         :rtype: str
         """
-        return message.delivery_tag
+        return frame[2] if frame else None
 
     @staticmethod
-    def get_message_delivery_id(message, frame):  # pylint: disable=unused-argument
+    def get_message_delivery_id(_, frame):  # pylint: disable=unused-argument
         """
         Gets delivery id of a Message.
         :param message: Message to get delivery_id from for uamqp.Message.
@@ -561,7 +565,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receive_settle_mode=PyamqpTransport.ServiceBusToAMQPReceiveModeMap[receive_mode],
             send_settle_mode=constants.SenderSettleMode.Settled
             if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            else SenderSettleMode.Unsettled,
+            else constants.SenderSettleMode.Unsettled,
             **kwargs
         )
 
@@ -581,7 +585,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
         )
 
-    @staticmethod
+    #@staticmethod
     def on_attach(receiver, attach_frame):
         """
         Receiver on_attach callback.
@@ -600,7 +604,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._session_id = session_filter.decode(receiver._config.encoding)
             receiver._session._session_id = receiver._session_id
 
-    @staticmethod
+    #@staticmethod
     def enhanced_message_received(receiver, frame, message):
         """
         Receiver enhanced_message_received callback.
@@ -612,7 +616,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         else:
             receiver._handler.settle_messages(frame[1], 'released')
 
-    @staticmethod
+    #@staticmethod
     def get_receive_timeout(handler):
         """
         Gets the timeout on the ReceiveClient.
@@ -691,6 +695,31 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
+    
+    @staticmethod
+    def parse_received_message(message, message_type, **kwargs):
+        """
+        Parses peek/deferred op messages into ServiceBusReceivedMessage.
+        :param Message message: Message to parse.
+        :param ServiceBusReceivedMessage message_type: Parse messages to return.
+        :keyword ServiceBusReceiver receiver: Required.
+        :keyword bool is_peeked_message: Optional. For peeked messages.
+        :keyword bool is_deferred_message: Optional. For deferred messages.
+        :keyword ServiceBusReceiveMode receive_mode: Optional.
+        """
+        parsed = []
+        for m in message.value[b"messages"]:
+            wrapped = decode_payload(memoryview(m[b"message"]))
+            parsed.append(
+                message_type(
+                    wrapped, **kwargs
+                )
+            )
+        return parsed
+    
+    @staticmethod
+    def get_message_value(message):
+        return message.value
 
     #@staticmethod
     #def check_link_stolen(consumer, exception):
@@ -819,7 +848,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             node=node,
             timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
         )
-        return callback(status, response, description)
+        return callback(status, response, description, amqp_transport=PyamqpTransport)
 
     #@staticmethod
     #def get_error(status_code, description):
@@ -929,7 +958,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             # handling AMQP Errors that have the condition field
             condition = exception.condition
             description = exception.description
-            exception = _handle_amqp_exception_with_condition(
+            exception = PyamqpTransport._handle_amqp_exception_with_condition(
                 logger, condition, description, exception=exception
             )
         elif not isinstance(exception, ServiceBusError):
