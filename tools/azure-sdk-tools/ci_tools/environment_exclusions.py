@@ -323,6 +323,10 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
 
 # --------------------------------------------------------------------------------------------------------------------
 # DO NOT add packages to the below lists. They are used to omit packages that will never run type checking.
+#
+# For CI exclusion of type checks, look into adding a pyproject.toml, as indicated in the `The pyproject.toml` section
+# of `.doc/eng_sys_checks.md`.
+
 IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
 FILTER_EXCLUSIONS = ["azure-mgmt-core"]
 IGNORE_PACKAGES = [
@@ -344,7 +348,17 @@ IGNORE_PACKAGES = [
 ]
 
 
+
+
 def is_check_enabled(package_path: str, check: str, default: bool = True) -> bool:
+    """
+    Single-use function to evaluate whether or not a given check should run against a package.
+
+    In order:
+     - Checks <CHECK>_OPT_OUT for package name.
+     - Honors override variable if one is present: <PACKAGE-NAME>_<CHECK>.
+     - Finally falls back to the pyproject.toml at package root (if one exists) for a tools setting enabling/disabling <check>.
+    """
     if package_path.endswith("setup.py"):
         package_path = os.path.dirname(package_path)
 
@@ -395,9 +409,9 @@ def filter_tox_environment_string(namespace_argument: str, package_path: str) ->
     return namespace_argument
 
 
-def is_ignored_package(package_name: str) -> bool:
+def is_typing_ignored(package_name: str) -> bool:
     """
-    Evaluates a package name and evaluates whether or not tox environments should run against it.
+    Evaluates a package name and evaluates whether or not typing should generally run against it.
     """
     if package_name in IGNORE_PACKAGES:
         return True
