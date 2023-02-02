@@ -1,7 +1,6 @@
 import requests
 import re
 import os
-import shutil
 import glob
 from lxml import etree
 import lxml.html
