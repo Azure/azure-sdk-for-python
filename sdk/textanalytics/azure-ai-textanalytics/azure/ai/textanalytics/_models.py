@@ -723,24 +723,22 @@ class CategorizedEntity(DictMixin):
         entity."""
     subcategory: Optional[str] = None
     """Entity subcategory, such as Age/Year/TimeRange etc"""
-    resolutions: Optional[
-        List[
-            Union[
-                AgeResolution,
-                AreaResolution,
-                CurrencyResolution,
-                DateTimeResolution,
-                InformationResolution,
-                LengthResolution,
-                NumberResolution,
-                NumericRangeResolution,
-                OrdinalResolution,
-                SpeedResolution,
-                TemperatureResolution,
-                TemporalSpanResolution,
-                VolumeResolution,
-                WeightResolution,
-            ]
+    resolutions: List[
+        Union[
+            AgeResolution,
+            AreaResolution,
+            CurrencyResolution,
+            DateTimeResolution,
+            InformationResolution,
+            LengthResolution,
+            NumberResolution,
+            NumericRangeResolution,
+            OrdinalResolution,
+            SpeedResolution,
+            TemperatureResolution,
+            TemporalSpanResolution,
+            VolumeResolution,
+            WeightResolution,
         ]
     ]
     """The collection of entity resolution objects. More information can be found here:
@@ -764,6 +762,7 @@ class CategorizedEntity(DictMixin):
             # the correct encoding was not introduced for v3.0
             offset = None
             length = None
+        entity.resolutions = entity.resolutions if hasattr(entity, "resolutions") else None
         return cls(
             text=entity.text,
             category=entity.category,
@@ -771,7 +770,7 @@ class CategorizedEntity(DictMixin):
             length=length,
             offset=offset,
             confidence_score=entity.confidence_score,
-            resolutions=entity.resolutions if hasattr(entity, "resolutions") else None
+            resolutions=entity.resolutions or []
         )
 
     def __repr__(self) -> str:
