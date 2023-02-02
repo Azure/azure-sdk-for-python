@@ -12,13 +12,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -132,7 +133,7 @@ class AddonProperties(_serialization.Model):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.addon_type = None  # type: Optional[str]
+        self.addon_type: Optional[str] = None
         self.provisioning_state = None
 
 
@@ -170,7 +171,7 @@ class AddonArcProperties(AddonProperties):
         :paramtype v_center: str
         """
         super().__init__(**kwargs)
-        self.addon_type = "Arc"  # type: str
+        self.addon_type: str = "Arc"
         self.v_center = v_center
 
 
@@ -209,7 +210,7 @@ class AddonHcxProperties(AddonProperties):
         :paramtype offer: str
         """
         super().__init__(**kwargs)
-        self.addon_type = "HCX"  # type: str
+        self.addon_type: str = "HCX"
         self.offer = offer
 
 
@@ -275,7 +276,7 @@ class AddonSrmProperties(AddonProperties):
         :paramtype license_key: str
         """
         super().__init__(**kwargs)
-        self.addon_type = "SRM"  # type: str
+        self.addon_type: str = "SRM"
         self.license_key = license_key
 
 
@@ -314,7 +315,7 @@ class AddonVrProperties(AddonProperties):
         :paramtype vrs_count: int
         """
         super().__init__(**kwargs)
-        self.addon_type = "VR"  # type: str
+        self.addon_type: str = "VR"
         self.vrs_count = vrs_count
 
 
@@ -1971,7 +1972,7 @@ class PlacementPolicyProperties(_serialization.Model):
         :paramtype display_name: str
         """
         super().__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
         self.state = state
         self.display_name = display_name
         self.provisioning_state = None
@@ -2705,7 +2706,7 @@ class ScriptExecutionParameter(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.name = name
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
 class PSCredentialExecutionParameter(ScriptExecutionParameter):
@@ -2746,7 +2747,7 @@ class PSCredentialExecutionParameter(ScriptExecutionParameter):
         :paramtype password: str
         """
         super().__init__(name=name, **kwargs)
-        self.type = "Credential"  # type: str
+        self.type: str = "Credential"
         self.username = username
         self.password = password
 
@@ -3176,7 +3177,7 @@ class ScriptSecureStringExecutionParameter(ScriptExecutionParameter):
         :paramtype secure_value: str
         """
         super().__init__(name=name, **kwargs)
-        self.type = "SecureValue"  # type: str
+        self.type: str = "SecureValue"
         self.secure_value = secure_value
 
 
@@ -3213,7 +3214,7 @@ class ScriptStringExecutionParameter(ScriptExecutionParameter):
         :paramtype value: str
         """
         super().__init__(name=name, **kwargs)
-        self.type = "Value"  # type: str
+        self.type: str = "Value"
         self.value = value
 
 
@@ -3493,7 +3494,7 @@ class VmHostPlacementPolicyProperties(PlacementPolicyProperties):
         :paramtype azure_hybrid_benefit_type: str or ~azure.mgmt.avs.models.AzureHybridBenefitType
         """
         super().__init__(state=state, display_name=display_name, **kwargs)
-        self.type = "VmHost"  # type: str
+        self.type: str = "VmHost"
         self.vm_members = vm_members
         self.host_members = host_members
         self.affinity_type = affinity_type
@@ -3563,7 +3564,7 @@ class VmPlacementPolicyProperties(PlacementPolicyProperties):
         :paramtype affinity_type: str or ~azure.mgmt.avs.models.AffinityType
         """
         super().__init__(state=state, display_name=display_name, **kwargs)
-        self.type = "VmVm"  # type: str
+        self.type: str = "VmVm"
         self.vm_members = vm_members
         self.affinity_type = affinity_type
 
@@ -3683,7 +3684,7 @@ class WorkloadNetworkDhcpEntity(_serialization.Model):
         :paramtype revision: int
         """
         super().__init__(**kwargs)
-        self.dhcp_type = None  # type: Optional[str]
+        self.dhcp_type: Optional[str] = None
         self.display_name = display_name
         self.segments = None
         self.provisioning_state = None
@@ -3774,7 +3775,7 @@ class WorkloadNetworkDhcpRelay(WorkloadNetworkDhcpEntity):
         :paramtype server_addresses: list[str]
         """
         super().__init__(display_name=display_name, revision=revision, **kwargs)
-        self.dhcp_type = "RELAY"  # type: str
+        self.dhcp_type: str = "RELAY"
         self.server_addresses = server_addresses
 
 
@@ -3839,7 +3840,7 @@ class WorkloadNetworkDhcpServer(WorkloadNetworkDhcpEntity):
         :paramtype lease_time: int
         """
         super().__init__(display_name=display_name, revision=revision, **kwargs)
-        self.dhcp_type = "SERVER"  # type: str
+        self.dhcp_type: str = "SERVER"
         self.server_address = server_address
         self.lease_time = lease_time
 

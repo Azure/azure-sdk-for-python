@@ -1349,6 +1349,20 @@ class TestDirectory(StorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy
+    def test_rename_directory_special_chars(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        dir_client = self._create_directory_and_get_directory_client('olddir')
+        new_client = dir_client.rename_directory(dir_client.file_system_name + '/' + '?!@#$%^&*.?test')
+        new_props = new_client.get_directory_properties()
+
+        assert new_props.name == '?!@#$%^&*.?test'
+
+    @DataLakePreparer()
+    @recorded_by_proxy
     def test_get_properties(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")

@@ -73,6 +73,15 @@ class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     WEDNESDAY = "Wednesday"
 
 
+class ExistingResourcePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the Conflict Policy property. This property sets policy during conflict of
+    resources during restore.
+    """
+
+    SKIP = "Skip"
+    PATCH = "Patch"
+
+
 class FeatureSupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """feature support status."""
 
@@ -114,6 +123,15 @@ class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NOVEMBER = "November"
     OCTOBER = "October"
     SEPTEMBER = "September"
+
+
+class PersistentVolumeRestoreMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Gets or sets the PV Restore Mode property. This property sets whether volumes needs to be
+    restored.
+    """
+
+    RESTORE_WITH_VOLUME_DATA = "RestoreWithVolumeData"
+    RESTORE_WITHOUT_VOLUME_DATA = "RestoreWithoutVolumeData"
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

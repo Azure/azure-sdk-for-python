@@ -46,7 +46,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
+    api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -61,7 +61,7 @@ def build_get_request(
         "serviceObjectiveName": _SERIALIZER.url("service_objective_name", service_objective_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -78,7 +78,7 @@ def build_list_by_server_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
+    api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -92,7 +92,7 @@ def build_list_by_server_request(
         "serverName": _SERIALIZER.url("server_name", server_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -151,8 +151,8 @@ class ServiceObjectivesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ServiceObjective]
+        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        cls: ClsType[_models.ServiceObjective] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -165,9 +165,9 @@ class ServiceObjectivesOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -184,7 +184,9 @@ class ServiceObjectivesOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/serviceObjectives/{serviceObjectiveName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/serviceObjectives/{serviceObjectiveName}"
+    }
 
     @distributed_trace
     def list_by_server(
@@ -205,8 +207,8 @@ class ServiceObjectivesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))  # type: Literal["2014-04-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ServiceObjectiveListResult]
+        api_version: Literal["2014-04-01"] = kwargs.pop("api_version", _params.pop("api-version", "2014-04-01"))
+        cls: ClsType[_models.ServiceObjectiveListResult] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -229,12 +231,12 @@ class ServiceObjectivesOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -242,13 +244,13 @@ class ServiceObjectivesOperations:
             deserialized = self._deserialize("ServiceObjectiveListResult", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -261,4 +263,6 @@ class ServiceObjectivesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_server.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/serviceObjectives"}  # type: ignore
+    list_by_server.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/serviceObjectives"
+    }

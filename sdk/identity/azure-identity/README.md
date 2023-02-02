@@ -48,6 +48,14 @@ the browser to authenticate a user.
 When no default browser is available, `az login` will use the device code
 authentication flow. This can also be selected manually by running `az login --use-device-code`.
 
+#### Authenticate via the Azure Developer CLI
+
+Developers coding outside of an IDE can also use the [Azure Developer CLI][azure_developer_cli] to authenticate. Applications using the `DefaultAzureCredential` or the `AzureDeveloperCliCredential` can then use this account to authenticate calls in their application when running locally.
+
+To authenticate with the [Azure Developer CLI][azure_developer_cli], users can run the command `azd login`. For users running on a system with a default web browser, the Azure Developer CLI will launch the browser to authenticate the user.
+
+For systems without a default web browser, the `azd login --use-device-code` command will use the device code authentication flow.
+
 ## Key concepts
 
 ### Credentials
@@ -72,7 +80,9 @@ this library's credential classes.
 ![DefaultAzureCredential authentication flow](https://raw.githubusercontent.com/Azure/azure-sdk-for-python/main/sdk/identity/azure-identity/images/mermaidjs/DefaultAzureCredentialAuthFlow.svg)
 
 1. **Environment** - `DefaultAzureCredential` will read account information specified via [environment variables](#environment-variables "environment variables") and use it to authenticate.
+1. **Workload Identity** - If the application is deployed to an Azure Kubernetes service with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
 1. **Managed Identity** - If the application is deployed to an Azure host with Managed Identity enabled, `DefaultAzureCredential` will authenticate with it.
+1. **Azure Developer CLI** - If the developer has authenticated via the Azure Developer CLI `azd login` command, the `DefaultAzureCredential` will authenticate with that account.
 1. **Azure CLI** - If a user has signed in via the Azure CLI `az login` command, `DefaultAzureCredential` will authenticate as that user.
 1. **Azure PowerShell** - If a user has signed in via Azure PowerShell's `Connect-AzAccount` command, `DefaultAzureCredential` will authenticate as that user.
 1. **Interactive browser** - If enabled, `DefaultAzureCredential` will interactively authenticate a user via the default browser. This is disabled by default.
@@ -390,6 +400,7 @@ additional questions or comments.
 [auth_code_cred_ref]: https://aka.ms/azsdk/python/identity/authorizationcodecredential
 [azure_appconfiguration]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration
 [azure_cli]: https://learn.microsoft.com/cli/azure
+[azure_developer_cli]:https://aka.ms/azure-dev
 [azure_core_transport_doc]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/CLIENT_LIBRARY_DEVELOPER.md#transport
 [azure_eventhub]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/eventhub/azure-eventhub
 [azure_keyvault_certificates]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk//keyvault/azure-keyvault-certificates
@@ -397,6 +408,7 @@ additional questions or comments.
 [azure_keyvault_secrets]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/keyvault/azure-keyvault-secrets
 [azure_storage_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-blob
 [azure_storage_queue]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/storage/azure-storage-queue
+[azd_cli]:https://aka.ms/azure-dev
 [b2c]: https://learn.microsoft.com/azure/active-directory-b2c/overview
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential

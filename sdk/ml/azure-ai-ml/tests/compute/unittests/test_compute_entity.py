@@ -59,6 +59,7 @@ class TestComputeEntity:
             self._test_loaded_compute,
             "tests/test_configs/compute/compute-aml.yaml",
         )[0]
+        assert compute.location == "eastus"
 
         rest_intermediate = compute._to_rest_object()
         assert rest_intermediate.properties.compute_type == "AmlCompute"
@@ -67,6 +68,7 @@ class TestComputeEntity:
             == "azureuser"
         )
         assert rest_intermediate.properties.properties.enable_node_public_ip
+        assert rest_intermediate.location == compute.location
 
         serializer = Serializer({"ComputeResource": ComputeResource})
         body = serializer.body(rest_intermediate, "ComputeResource")
@@ -74,6 +76,7 @@ class TestComputeEntity:
         assert body["identity"]["userAssignedIdentities"] == self._uai_list_to_dict(
             compute.identity.user_assigned_identities
         )
+        assert body["location"] == compute.location
 
     def test_compute_vm_from_yaml(self):
         resource_id = "/subscriptions/13e50845-67bc-4ac5-94db-48d493a6d9e8/resourceGroups/myrg/providers/Microsoft.Compute/virtualMachines/myvm"
@@ -146,13 +149,15 @@ class TestComputeEntity:
         compute_instance: ComputeInstance = load_compute(
             "tests/test_configs/compute/compute-ci-unit.yaml"
         )
+       
         compute_instance._set_full_subnet_name("subscription_id", "resource_group_name")
         compute_resource = compute_instance._to_rest_object()
+
         compute_instance2: ComputeInstance = ComputeInstance._load_from_rest(
             compute_resource
         )
-        assert compute_instance.last_operation == compute_instance2.last_operation
-        assert compute_instance.services == compute_instance2.services
+        assert compute_instance2.last_operation == compute_instance.last_operation
+        assert compute_instance2.services == compute_instance.services
 
     def test_compute_instance_with_image_metadata(self):
         os_image_metadata = ImageMetadata(

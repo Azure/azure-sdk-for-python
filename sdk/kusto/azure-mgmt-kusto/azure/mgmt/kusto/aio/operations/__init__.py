@@ -8,6 +8,7 @@
 
 from ._clusters_operations import ClustersOperations
 from ._cluster_principal_assignments_operations import ClusterPrincipalAssignmentsOperations
+from ._skus_operations import SkusOperations
 from ._databases_operations import DatabasesOperations
 from ._attached_database_configurations_operations import AttachedDatabaseConfigurationsOperations
 from ._managed_private_endpoints_operations import ManagedPrivateEndpointsOperations
@@ -21,12 +22,13 @@ from ._operations_results_operations import OperationsResultsOperations
 from ._operations_results_location_operations import OperationsResultsLocationOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "ClustersOperations",
     "ClusterPrincipalAssignmentsOperations",
+    "SkusOperations",
     "DatabasesOperations",
     "AttachedDatabaseConfigurationsOperations",
     "ManagedPrivateEndpointsOperations",

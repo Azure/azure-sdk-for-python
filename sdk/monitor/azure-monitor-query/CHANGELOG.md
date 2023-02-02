@@ -1,12 +1,10 @@
 # Release History
 
-## 1.1.0 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.1.0 (2023-02-07)
 
 ### Bugs Fixed
+
+* Error details are now propagated inside the `LogsQueryError` object. ([#25137](https://github.com/Azure/azure-sdk-for-python/issues/25137))
 
 ### Other Changes
 

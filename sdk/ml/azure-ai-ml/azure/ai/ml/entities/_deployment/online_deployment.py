@@ -5,8 +5,9 @@
 # pylint: disable=protected-access,no-member,arguments-renamed,unidiomatic-typecheck
 
 import logging
+import os
+import typing
 from abc import abstractmethod
-from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
@@ -47,9 +48,8 @@ from azure.ai.ml.exceptions import (
     ValidationErrorType,
     ValidationException,
 )
-
-from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
+from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 module_logger = logging.getLogger(__name__)
 
@@ -57,43 +57,46 @@ module_logger = logging.getLogger(__name__)
 class OnlineDeployment(Deployment):
     """Online endpoint deployment entity
 
-    :param name: Name of the resource.
+    :param name: Name of the deployment resource.
     :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: Dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: Dict[str, Any]
-    :param description: Description of the resource.
-    :type description: str
-    :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, ~azure.ai.ml.entities.Model]
-    :param code_configuration: Default value is None.
-    :type code_configuration: CodeConfiguration
-    :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: Union[str, Environment]
-    :param app_insights_enabled: Default value is False
-    :type app_insights_enabled: bool
-    :param scale_settings: How the online deployment will scale.
-    :type scale_settings: OnlineScaleSettings
-    :param request_settings: Default value is RequestSettings()
-    :type request_settings: OnlineRequestSettings
-    :param liveness_probe: Liveness probe settings.
-    :type liveness_probe: ProbeSettings
-    :param readiness_probe: Readiness probe settings.
-    :type readiness_probe: ProbeSettings
-    :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: Dict[str, str]
-    :param instance_count: The instance count used for this deployment.
-    :type instance_count: int
-    :param instance_type: Azure compute sku.
-    :type instance_type: str
-    :param model_mount_path: The path to mount the model in custom container..
-    :type model_mount_path: str
-    :param code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present.
-    :type code_path: Union[str, PathLike]
-    :param scoring_script: Equivalent to code_configuration.code.scoring_script
-        Will be ignored if code_configuration is present.
-    :type scoring_script: Union[str, PathLike]
+    :keyword endpoint_name: Name of the endpoint resource, defaults to None
+    :paramtype endpoint_name: typing.Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+    :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword properties: The asset property dictionary, defaults to None
+    :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword description: Description of the resource, defaults to None
+    :paramtype description: typing.Optional[str]
+    :keyword model: Model entity for the endpoint deployment, defaults to None
+    :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+    :keyword code_configuration: Code Configuration, defaults to None
+    :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
+    :keyword environment: Environment entity for the endpoint deployment, defaults to None
+    :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+    :keyword app_insights_enabled: Is appinsights enabled, defaults to False
+    :paramtype app_insights_enabled: typing.Optional[bool]
+    :keyword scale_settings: How the online deployment will scale, defaults to None
+    :paramtype scale_settings: typing.Optional[~azure.ai.ml.entities.OnlineScaleSettings]
+    :keyword request_settings: Online Request Settings, defaults to None
+    :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.OnlineRequestSettings]
+    :keyword liveness_probe: Liveness probe settings, defaults to None
+    :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :keyword readiness_probe: Readiness probe settings, defaults to None
+    :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
+    :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
+    :keyword instance_count: The instance count used for this deployment, defaults to None
+    :paramtype instance_count: typing.Optional[int]
+    :keyword instance_type: Azure compute sku, defaults to None
+    :paramtype instance_type: typing.Optional[str]
+    :keyword model_mount_path: The path to mount the model in custom container, defaults to None
+    :paramtype model_mount_path: typing.Optional[str]
+    :keyword code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present
+        , defaults to None
+    :paramtype code_path: typing.Optional[typing.Union[str, os.PathLike]]
+    :keyword scoring_script: Equivalent to code_configuration.code.scoring_script.
+        Will be ignored if code_configuration is present, defaults to None
+    :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
     """
 
     def __init__(
@@ -101,8 +104,8 @@ class OnlineDeployment(Deployment):
         name: str,
         *,
         endpoint_name: Optional[str] = None,
-        tags: Optional[Dict[str, Any]] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        tags: Optional[Dict[str, typing.Any]] = None,
+        properties: Optional[Dict[str, typing.Any]] = None,
         description: Optional[str] = None,
         model: Optional[Union[str, "Model"]] = None,
         code_configuration: Optional[CodeConfiguration] = None,
@@ -116,10 +119,56 @@ class OnlineDeployment(Deployment):
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
         model_mount_path: Optional[str] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script: Optional[Union[str, PathLike]] = None,  # promoted property code_configuration.scoring_script
-        **kwargs: Any,
+        code_path: Optional[Union[str, os.PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script: Optional[Union[str, os.PathLike]] = None,  # promoted property code_configuration.scoring_script
+        **kwargs: typing.Any,
     ):
+        """
+        Online endpoint deployment entity
+
+        Constructor for Online endpoint deployment entity
+
+        :param name: Name of the deployment resource.
+        :type name: str
+        :keyword endpoint_name: Name of the endpoint resource, defaults to None
+        :paramtype endpoint_name: typing.Optional[str]
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated, defaults to None
+        :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword properties: The asset property dictionary, defaults to None
+        :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword description: Description of the resource, defaults to None
+        :paramtype description: typing.Optional[str]
+        :keyword model: Model entity for the endpoint deployment, defaults to None
+        :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+        :keyword code_configuration: Code Configuration, defaults to None
+        :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
+        :keyword environment: Environment entity for the endpoint deployment, defaults to None
+        :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+        :keyword app_insights_enabled: Is appinsights enabled, defaults to False
+        :paramtype app_insights_enabled: typing.Optional[bool]
+        :keyword scale_settings: How the online deployment will scale, defaults to None
+        :paramtype scale_settings: typing.Optional[~azure.ai.ml.entities.OnlineScaleSettings]
+        :keyword request_settings: Online Request Settings, defaults to None
+        :paramtype request_settings: typing.Optional[OnlineRequestSettings]
+        :keyword liveness_probe: Liveness probe settings, defaults to None
+        :paramtype liveness_probe: typing.Optional[ProbeSettings]
+        :keyword readiness_probe: Readiness probe settings, defaults to None
+        :paramtype readiness_probe: typing.Optional[ProbeSettings]
+        :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
+        :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
+        :keyword instance_count: The instance count used for this deployment, defaults to None
+        :paramtype instance_count: typing.Optional[int]
+        :keyword instance_type: Azure compute sku, defaults to None
+        :paramtype instance_type: typing.Optional[str]
+        :keyword model_mount_path: The path to mount the model in custom container, defaults to None
+        :paramtype model_mount_path: typing.Optional[str]
+        :keyword code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present
+            , defaults to None
+        :paramtype code_path: typing.Optional[typing.Union[str, os.PathLike]]
+        :keyword scoring_script: Equivalent to code_configuration.code.scoring_script.
+            Will be ignored if code_configuration is present, defaults to None
+        :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
+        """
         self._provisioning_state = kwargs.pop("provisioning_state", None)
 
         super(OnlineDeployment, self).__init__(
@@ -152,11 +201,11 @@ class OnlineDeployment(Deployment):
         """Deployment provisioning state, readonly.
 
         :return: Deployment provisioning state.
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self._provisioning_state
 
-    def _generate_dependencies(self) -> Any:
+    def _generate_dependencies(self) -> typing.Any:
         """Convert dependencies into ARM id or REST wrapper."""
         code = None
 
@@ -282,7 +331,7 @@ class OnlineDeployment(Deployment):
     def _load(
         cls,
         data: Optional[Dict] = None,
-        yaml_path: Optional[Union[PathLike, str]] = None,
+        yaml_path: Optional[Union[os.PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "OnlineDeployment":
@@ -304,42 +353,47 @@ class OnlineDeployment(Deployment):
 class KubernetesOnlineDeployment(OnlineDeployment):
     """Kubernetes Online endpoint deployment entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: Dict[str, Any], optional
-    :param description: Description of the resource.
-    :type description: str, optional
-    :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model], optional
-    :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration, optional
-    :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: Union[str, Environment], optional
-    :param app_insights_enabled: defaults to False
-    :type app_insights_enabled: bool, optional
-    :param scale_settings: How the online deployment will scale.
-    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
-    :param request_settings: defaults to RequestSettings()
-    :type request_settings: OnlineRequestSettings, optional
-    :param liveness_probe: Liveness probe settings.
-    :type liveness_probe: ProbeSettings, optional
-    :param readiness_probe: Readiness probe settings.
-    :type readiness_probe: ProbeSettings, optional
-    :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
-    :param resources: defaults to None
-    :type resources: ResourceRequirementsSettings, optional
-    :param instance_type: The instance type defined by K8S cluster admin.
-    :type instance_type: str
-    :param instance_count: The instance count used for this deployment.
-    :type instance_count: int
-    :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike], optional
-    :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
+    :keyword name: Name of the deployment resource.
+    :paramtype name: str
+    :keyword endpoint_name: Name of the endpoint resource, defaults to None
+    :paramtype endpoint_name: typing.Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated., defaults to None
+    :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword properties: The asset property dictionary, defaults to None
+    :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword description: Description of the resource, defaults to None
+    :paramtype description: typing.Optional[str]
+    :keyword model: Model entity for the endpoint deployment, defaults to None
+    :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+    :keyword code_configuration: Code Configuration, defaults to None
+    :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
+    :keyword environment: Environment entity for the endpoint deployment, defaults to None
+    :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+    :keyword app_insights_enabled: Is appinsights enabled, defaults to False
+    :paramtype app_insights_enabled: bool
+    :keyword scale_settings: How the online deployment will scale, defaults to None
+    :paramtype scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings
+        , ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
+    :keyword request_settings: Online Request Settings, defaults to None
+    :paramtype request_settings: typing.Optional[OnlineRequestSettings]
+    :keyword liveness_probe: Liveness probe settings, defaults to None
+    :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :keyword readiness_probe: Readiness probe settings, defaults to None
+    :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
+    :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
+    :keyword resources: Resource requirements settings, defaults to None
+    :paramtype resources: typing.Optional[~azure.ai.ml.entities.ResourceRequirementsSettings]
+    :keyword instance_count: The instance count used for this deployment, defaults to None
+    :paramtype instance_count: typing.Optional[int]
+    :keyword instance_type: The instance type defined by K8S cluster admin, defaults to None
+    :paramtype instance_type: typing.Optional[str]
+    :keyword code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present
+        , defaults to None
+    :paramtype code_path: typing.Optional[typing.Union[str, os.PathLike]]
+    :keyword scoring_script: Equivalent to code_configuration.code.scoring_script.
+        Will be ignored if code_configuration is present, defaults to None
+    :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
     """
 
     def __init__(
@@ -347,8 +401,8 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         *,
         name: str,
         endpoint_name: Optional[str] = None,
-        tags: Optional[Dict[str, Any]] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        tags: Optional[Dict[str, typing.Any]] = None,
+        properties: Optional[Dict[str, typing.Any]] = None,
         description: Optional[str] = None,
         model: Optional[Union[str, "Model"]] = None,
         code_configuration: Optional[CodeConfiguration] = None,
@@ -362,12 +416,59 @@ class KubernetesOnlineDeployment(OnlineDeployment):
         resources: Optional[ResourceRequirementsSettings] = None,
         instance_count: Optional[int] = None,
         instance_type: Optional[str] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        code_path: Optional[Union[str, os.PathLike]] = None,  # promoted property from code_configuration.code
         scoring_script: Optional[
-            Union[str, PathLike]
+            Union[str, os.PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
         **kwargs,
     ):
+        """
+        Kubernetes Online endpoint deployment entity.
+
+        Constructor for Kubernetes Online endpoint deployment entity.
+
+        :keyword name: Name of the deployment resource.
+        :paramtype name: str
+        :keyword endpoint_name: Name of the endpoint resource, defaults to None
+        :paramtype endpoint_name: typing.Optional[str]
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated., defaults to None
+        :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword properties: The asset property dictionary, defaults to None
+        :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword description: Description of the resource, defaults to None
+        :paramtype description: typing.Optional[str]
+        :keyword model: Model entity for the endpoint deployment, defaults to None
+        :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+        :keyword code_configuration: Code Configuration, defaults to None
+        :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
+        :keyword environment: Environment entity for the endpoint deployment, defaults to None
+        :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+        :keyword app_insights_enabled: Is appinsights enabled, defaults to False
+        :paramtype app_insights_enabled: bool
+        :keyword scale_settings: How the online deployment will scale, defaults to None
+        :paramtype scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings
+            , ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
+        :keyword request_settings: Online Request Settings, defaults to None
+        :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.OnlineRequestSettings]
+        :keyword liveness_probe: Liveness probe settings, defaults to None
+        :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+        :keyword readiness_probe: Readiness probe settings, defaults to None
+        :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+        :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
+        :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
+        :keyword resources: Resource requirements settings, defaults to None
+        :paramtype resources: typing.Optional[~azure.ai.ml.entities.ResourceRequirementsSettings]
+        :keyword instance_count: The instance count used for this deployment, defaults to None
+        :paramtype instance_count: typing.Optional[int]
+        :keyword instance_type: The instance type defined by K8S cluster admin, defaults to None
+        :paramtype instance_type: typing.Optional[str]
+        :keyword code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present
+            , defaults to None
+        :paramtype code_path: typing.Optional[typing.Union[str, os.PathLike]]
+        :keyword scoring_script: Equivalent to code_configuration.code.scoring_script.
+            Will be ignored if code_configuration is present, defaults to None
+        :paramtype scoring_script: typing.Optional[typing.Union[str, os.PathLike]]
+        """
 
         kwargs["type"] = EndpointComputeType.KUBERNETES.value
         super(KubernetesOnlineDeployment, self).__init__(
@@ -490,43 +591,45 @@ class KubernetesOnlineDeployment(OnlineDeployment):
 class ManagedOnlineDeployment(OnlineDeployment):
     """Managed Online endpoint deployment entity.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: Dict[str, Any], optional
-    :param description: Description of the resource.
-    :type description: str, optional
-    :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model], optional
-    :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration, optional
-    :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: Union[str, Environment], optional
-    :param app_insights_enabled: defaults to False
-    :type app_insights_enabled: bool, optional
-    :param scale_settings: How the online deployment will scale.
-    :type scale_settings: Union[DefaultScaleSettings, TargetUtilizationScaleSettings], optional
-    :param request_settings: defaults to RequestSettings()
-    :type request_settings: OnlineRequestSettings, optional
-    :param liveness_probe: Liveness probe settings.
-    :type liveness_probe: ProbeSettings, optional
-    :param readiness_probe: Readiness probe settings.
-    :type readiness_probe: ProbeSettings, optional
-    :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
-    :param instance_type: Azure compute sku.
-    :type instance_type: str
-    :param instance_count: The instance count used for this deployment.
-    :type instance_count: int
-    :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
-    :type code_path: Union[str, PathLike], optional
-    :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
-    :type scoring_script: Union[str, PathLike], optional
-    :param egress_public_network_access: Whether to restrict communication between a deployment
-        and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
-    :type egress_public_network_access: str
+    :keyword name: Name of the deployment resource
+    :paramtype name: str
+    :keyword endpoint_name: Name of the endpoint resource, defaults to None
+    :paramtype endpoint_name: typing.Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated., defaults to None
+    :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword properties: The asset property dictionary, defaults to None
+    :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
+    :keyword description: Description of the resource, defaults to None
+    :paramtype description: typing.Optional[str]
+    :keyword model: Model entity for the endpoint deployment, defaults to None
+    :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+    :keyword code_configuration: Code Configuration, defaults to None
+    :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
+    :keyword environment: Environment entity for the endpoint deployment, defaults to None
+    :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+    :keyword app_insights_enabled: Is appinsights enabled, defaults to False
+    :paramtype app_insights_enabled: bool
+    :keyword scale_settings: How the online deployment will scale, defaults to None
+    :paramtype scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings
+        , ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
+    :keyword request_settings: Online Request Settings, defaults to None
+    :paramtype request_settings: typing.Optional[OnlineRequestSettings]
+    :keyword liveness_probe: Liveness probe settings, defaults to None
+    :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :keyword readiness_probe: Readiness probe settings, defaults to None
+    :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+    :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
+    :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
+    :keyword instance_type: Azure compute sku, defaults to None
+    :paramtype instance_type: typing.Optional[str]
+    :keyword instance_count: The instance count used for this deployment, defaults to None
+    :paramtype instance_count: typing.Optional[int]
+    :keyword egress_public_network_access: Whether to restrict communication between a deployment and the
+         Azure resources used to by the deployment. Allowed values are: "enabled", "disabled", defaults to None
+    :paramtype egress_public_network_access: typing.Optional[str]
+    :keyword code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present
+        , defaults to None
+    :paramtype code_path: typing.Optional[typing.Union[str, os.PathLike]]
     """
 
     def __init__(
@@ -534,8 +637,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
         *,
         name: str,
         endpoint_name: Optional[str] = None,
-        tags: Optional[Dict[str, Any]] = None,
-        properties: Optional[Dict[str, Any]] = None,
+        tags: Optional[Dict[str, typing.Any]] = None,
+        properties: Optional[Dict[str, typing.Any]] = None,
         description: Optional[str] = None,
         model: Optional[Union[str, "Model"]] = None,
         code_configuration: Optional[CodeConfiguration] = None,
@@ -548,14 +651,58 @@ class ManagedOnlineDeployment(OnlineDeployment):
         environment_variables: Optional[Dict[str, str]] = None,
         instance_type: Optional[str] = None,
         instance_count: Optional[int] = None,
-        code_path: Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        egress_public_network_access: Optional[str] = None,
+        code_path: Optional[Union[str, os.PathLike]] = None,  # promoted property from code_configuration.code
         scoring_script: Optional[
-            Union[str, PathLike]
+            Union[str, os.PathLike]
         ] = None,  # promoted property from code_configuration.scoring_script
-        egress_public_network_access=None,
         **kwargs,
     ):
+        """
+        Managed Online endpoint deployment entity.
 
+        Constructor for Managed Online endpoint deployment entity.
+
+        :keyword name: Name of the deployment resource
+        :paramtype name: str
+        :keyword endpoint_name: Name of the endpoint resource, defaults to None
+        :paramtype endpoint_name: typing.Optional[str]
+        :keyword tags: Tag dictionary. Tags can be added, removed, and updated., defaults to None
+        :paramtype tags: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword properties: The asset property dictionary, defaults to None
+        :paramtype properties: typing.Optional[typing.Dict[str, typing.Any]]
+        :keyword description: Description of the resource, defaults to None
+        :paramtype description: typing.Optional[str]
+        :keyword model: Model entity for the endpoint deployment, defaults to None
+        :paramtype model: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Model]]
+        :keyword code_configuration: Code Configuration, defaults to None
+        :paramtype code_configuration: typing.Optional[~azure.ai.ml.entities.CodeConfiguration]
+        :keyword environment: Environment entity for the endpoint deployment, defaults to None
+        :paramtype environment: typing.Optional[typing.Union[str, ~azure.ai.ml.entities.Environment]]
+        :keyword app_insights_enabled: Is appinsights enabled, defaults to False
+        :paramtype app_insights_enabled: bool
+        :keyword scale_settings: How the online deployment will scale, defaults to None
+        :paramtype scale_settings: typing.Optional[typing.Union[~azure.ai.ml.entities.DefaultScaleSettings
+            , ~azure.ai.ml.entities.TargetUtilizationScaleSettings]]
+        :keyword request_settings: Online Request Settings, defaults to None
+        :paramtype request_settings: typing.Optional[~azure.ai.ml.entities.OnlineRequestSettings]
+        :keyword liveness_probe: Liveness probe settings, defaults to None
+        :paramtype liveness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+        :keyword readiness_probe: Readiness probe settings, defaults to None
+        :paramtype readiness_probe: typing.Optional[~azure.ai.ml.entities.ProbeSettings]
+        :keyword environment_variables: Environment variables that will be set in deployment, defaults to None
+        :paramtype environment_variables: typing.Optional[typing.Dict[str, str]]
+        :keyword instance_type: Azure compute sku, defaults to None
+        :paramtype instance_type: typing.Optional[str]
+        :keyword instance_count: The instance count used for this deployment, defaults to None
+        :paramtype instance_count: typing.Optional[int]
+        :keyword egress_public_network_access: Whether to restrict communication between a deployment and the
+            Azure resources used to by the deployment. Allowed values are: "enabled", "disabled", defaults to None
+        :paramtype egress_public_network_access: typing.Optional[str]
+        :keyword code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present
+            , defaults to None
+        :paramtype code_path: typing.Optional[typing.Union[str, os.PathLike]]
+        """
         kwargs["type"] = EndpointComputeType.MANAGED.value
         self.private_network_connection = kwargs.pop("private_network_connection", None)
         self.data_collector = kwargs.pop("data_collector", None)

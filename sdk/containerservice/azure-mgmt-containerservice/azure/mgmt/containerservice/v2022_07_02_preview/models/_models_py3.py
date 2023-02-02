@@ -2497,7 +2497,7 @@ class ManagedCluster(TrackedResource):  # pylint: disable=too-many-instance-attr
      aka.ms/aks/azpodpolicy.
     :vartype enable_pod_security_policy: bool
     :ivar enable_namespace_resources: The default value is false. It can be enabled/disabled on
-     creation and updation of the managed cluster. See `https://aka.ms/NamespaceARMResource
+     creation and updating of the managed cluster. See `https://aka.ms/NamespaceARMResource
      <https://aka.ms/NamespaceARMResource>`_ for more details on Namespace as a ARM Resource.
     :vartype enable_namespace_resources: bool
     :ivar network_profile: The network configuration profile.
@@ -2731,7 +2731,7 @@ class ManagedCluster(TrackedResource):  # pylint: disable=too-many-instance-attr
          aka.ms/aks/azpodpolicy.
         :paramtype enable_pod_security_policy: bool
         :keyword enable_namespace_resources: The default value is false. It can be enabled/disabled on
-         creation and updation of the managed cluster. See `https://aka.ms/NamespaceARMResource
+         creation and updating of the managed cluster. See `https://aka.ms/NamespaceARMResource
          <https://aka.ms/NamespaceARMResource>`_ for more details on Namespace as a ARM Resource.
         :paramtype enable_namespace_resources: bool
         :keyword network_profile: The network configuration profile.

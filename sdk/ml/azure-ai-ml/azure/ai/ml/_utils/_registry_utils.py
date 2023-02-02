@@ -113,7 +113,8 @@ def get_sas_uri_for_registry_asset(service_client, name, version, resource_group
 def get_asset_body_for_registry_storage(
     registry_name: str, asset_type: str, asset_name: str, asset_version: str
 ) -> TemporaryDataReferenceRequestDto:
-    """
+    """Get Asset body for registry
+
     :param registry_name: Registry name.
     :type registry_name: str
     :param asset_type: Asset type.
@@ -140,7 +141,8 @@ def get_storage_details_for_registry_assets(
     reg_name: str,
     uri: str,
 ) -> str:
-    """
+    """Get storage details for registry assets.
+
     :param service_client: AzureMachineLearningWorkspaces service client.
     :type service_client: AzureMachineLearningWorkspaces
     :param asset_type: Asset type.

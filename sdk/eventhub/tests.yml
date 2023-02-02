@@ -28,3 +28,10 @@ stages:
         AZURE_CLIENT_SECRET: $(EVENTHUB_CLIENT_SECRET)
         AZURE_SUBSCRIPTION_ID: $(EVENTHUB_SUBSCRIPTION_ID)
         AZURE_COSMOS_CONN_STR: $(python-eventhub-livetest-cosmos-conn-str)
+      Clouds: 'Public,Canary'
+      CloudConfig:
+        Public:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+        Canary:
+          SubscriptionConfiguration: $(sub-config-azure-cloud-test-resources)
+          Location: 'eastus2euap'

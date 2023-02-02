@@ -6,7 +6,6 @@
 
 import os
 import logging
-import requests
 import shlex
 import sys
 import time
@@ -14,6 +13,8 @@ import signal
 
 import pytest
 import subprocess
+
+import urllib3
 
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
@@ -32,6 +33,19 @@ PROXY_CHECK_URL = PROXY_URL + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
 discovered_roots = []
+
+from urllib3 import PoolManager, Retry
+from urllib3.exceptions import HTTPError
+
+if os.getenv("REQUESTS_CA_BUNDLE"):
+    http_client = PoolManager(
+        retries=Retry(total=3, raise_on_status=False),
+        cert_reqs="CERT_REQUIRED",
+        ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
+    )
+else:
+    http_client = PoolManager(retries=Retry(total=1, raise_on_status=False))
+
 
 def get_image_tag(repo_root: str) -> str:
     """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
@@ -84,10 +98,10 @@ def delete_container() -> None:
 def check_availability() -> None:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
-        response = requests.get(PROXY_CHECK_URL, timeout=10)
-        return response.status_code
+        response = http_client.request(method="GET", url=PROXY_CHECK_URL, timeout=10)
+        return response.status
     # We get an SSLError if the container is started but the endpoint isn't available yet
-    except requests.exceptions.SSLError as sslError:
+    except urllib3.exceptions.SSLError as sslError:
         _LOGGER.debug(sslError)
         return 404
     except Exception as e:
@@ -171,7 +185,7 @@ def start_test_proxy(request) -> None:
                 proc = subprocess.Popen(
                     shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
                     stdout=log,
-                    stderr=log
+                    stderr=log,
                 )
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:

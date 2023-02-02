@@ -13,19 +13,15 @@ from .._sdk_moniker import SDK_MONIKER
 from .._generated.aio import KeyVaultClient as _KeyVaultClient
 
 if TYPE_CHECKING:
-    try:
-        # pylint:disable=unused-import
-        from typing import Any
-        from azure.core.credentials_async import AsyncTokenCredential
-        from azure.core.rest import AsyncHttpResponse, HttpRequest
-    except ImportError:
-        # AsyncTokenCredential is a typing_extensions.Protocol; we don't depend on that package
-        pass
+    # pylint:disable=unused-import
+    from typing import Any
+    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 
 class AsyncKeyVaultClientBase(object):
     # pylint:disable=protected-access
-    def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs: "Any") -> None:
+    def __init__(self, vault_url: str, credential: "AsyncTokenCredential", **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the AsyncTokenCredential protocol, "
@@ -65,8 +61,8 @@ class AsyncKeyVaultClientBase(object):
             self._models = _KeyVaultClient.models(api_version=self.api_version)
         except ValueError:
             raise NotImplementedError(
-                "This package doesn't support API version '{}'. ".format(self.api_version)
-                + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
+                f"This package doesn't support API version '{self.api_version}'. "
+                + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
             )
 
     @property
@@ -88,9 +84,7 @@ class AsyncKeyVaultClientBase(object):
         await self._client.close()
 
     @distributed_trace_async
-    async def send_request(
-        self, request: "HttpRequest", *, stream: bool = False, **kwargs: "Any"
-    ) -> "AsyncHttpResponse":
+    async def send_request(self, request: "HttpRequest", **kwargs) -> "AsyncHttpResponse":
         """Runs a network request using the client's existing pipeline.
 
         The request URL can be relative to the vault URL. The service API version used for the request is the same as
@@ -109,4 +103,4 @@ class AsyncKeyVaultClientBase(object):
             "vaultBaseUrl": _SERIALIZER.url("vault_base_url", self._vault_url, "str", skip_quote=True),
         }
         request_copy.url = self._client._client.format_url(request_copy.url, **path_format_arguments)
-        return await self._client._client.send_request(request_copy, stream=stream, **kwargs)
+        return await self._client._client.send_request(request_copy, **kwargs)
