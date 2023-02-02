@@ -2996,6 +2996,31 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_rename_file_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+        token_credential = self.generate_oauth_token()
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=token_credential,
+            file_request_intent=TEST_INTENT)
+
+        # Act
+        file_client.create_file(1024)
+        new_file = file_client.rename_file('file2')
+
+        # Assert
+        assert 'file2' == new_file.file_name
+        props = new_file.get_file_properties()
+        assert props is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_rename_file_different_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")

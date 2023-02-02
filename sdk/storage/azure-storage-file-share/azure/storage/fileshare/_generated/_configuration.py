@@ -34,6 +34,12 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
     :param file_request_intent: Valid value is backup. Known values are: "none" and "backup".
      Default value is None.
     :type file_request_intent: str or ~azure.storage.fileshare.models.ShareFileRequestIntent
+    :param allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
+     Default value is None.
+    :type allow_trailing_dot: bool
+    :param allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
+     URI. Default value is None.
+    :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2022-11-02". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
@@ -44,7 +50,12 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
     """
 
     def __init__(
-        self, url: str, file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None, **kwargs: Any
+        self,
+        url: str,
+        file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        allow_source_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
     ) -> None:
         super(AzureFileStorageConfiguration, self).__init__(**kwargs)
         version: Literal["2022-11-02"] = kwargs.pop("version", "2022-11-02")
@@ -55,6 +66,8 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
 
         self.url = url
         self.file_request_intent = file_request_intent
+        self.allow_trailing_dot = allow_trailing_dot
+        self.allow_source_trailing_dot = allow_source_trailing_dot
         self.version = version
         self.file_range_write_from_url = file_range_write_from_url
         kwargs.setdefault("sdk_moniker", "azurefilestorage/{}".format(VERSION))

@@ -57,6 +57,7 @@ def build_create_request(
     file_last_write_time: str = "now",
     file_change_time: Optional[str] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -80,6 +81,8 @@ def build_create_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     _headers["x-ms-content-length"] = _SERIALIZER.header("file_content_length", file_content_length, "int")
     _headers["x-ms-type"] = _SERIALIZER.header("file_type_constant", file_type_constant, "str")
@@ -126,6 +129,7 @@ def build_download_request(
     range: Optional[str] = None,
     range_get_content_md5: Optional[bool] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -148,6 +152,8 @@ def build_download_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if range is not None:
         _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
@@ -170,6 +176,7 @@ def build_get_properties_request(
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -194,6 +201,8 @@ def build_get_properties_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -209,6 +218,7 @@ def build_delete_request(
     *,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -231,6 +241,8 @@ def build_delete_request(
         _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
@@ -259,6 +271,7 @@ def build_set_http_headers_request(
     file_last_write_time: str = "now",
     file_change_time: Optional[str] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -313,6 +326,8 @@ def build_set_http_headers_request(
         _headers["x-ms-file-change-time"] = _SERIALIZER.header("file_change_time", file_change_time, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -326,6 +341,7 @@ def build_set_metadata_request(
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -355,6 +371,8 @@ def build_set_metadata_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -369,6 +387,7 @@ def build_acquire_lease_request(
     duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -402,6 +421,8 @@ def build_acquire_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -415,6 +436,7 @@ def build_release_lease_request(
     lease_id: str,
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -445,6 +467,8 @@ def build_release_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -459,6 +483,7 @@ def build_change_lease_request(
     timeout: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -491,6 +516,8 @@ def build_change_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -504,6 +531,7 @@ def build_break_lease_request(
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -535,6 +563,8 @@ def build_break_lease_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if request_id_parameter is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("request_id_parameter", request_id_parameter, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -553,6 +583,7 @@ def build_upload_range_request(
     lease_id: Optional[str] = None,
     file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
     content: Optional[IO] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -590,6 +621,8 @@ def build_upload_range_request(
         _headers["x-ms-file-last-write-time"] = _SERIALIZER.header(
             "file_last_written_mode", file_last_written_mode, "str"
         )
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     if content_type is not None:
@@ -613,6 +646,8 @@ def build_upload_range_from_url_request(
     lease_id: Optional[str] = None,
     copy_source_authorization: Optional[str] = None,
     file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+    allow_trailing_dot: Optional[bool] = None,
+    allow_source_trailing_dot: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -668,6 +703,12 @@ def build_upload_range_from_url_request(
         _headers["x-ms-file-last-write-time"] = _SERIALIZER.header(
             "file_last_written_mode", file_last_written_mode, "str"
         )
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
+    if allow_source_trailing_dot is not None:
+        _headers["x-ms-source-allow-trailing-dot"] = _SERIALIZER.header(
+            "allow_source_trailing_dot", allow_source_trailing_dot, "bool"
+        )
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -681,6 +722,7 @@ def build_get_range_list_request(
     timeout: Optional[int] = None,
     range: Optional[str] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -714,6 +756,8 @@ def build_get_range_list_request(
         _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -737,6 +781,8 @@ def build_start_copy_request(
     file_change_time: Optional[str] = None,
     set_archive_attribute: Optional[bool] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
+    allow_source_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -787,6 +833,12 @@ def build_start_copy_request(
         )
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
+    if allow_source_trailing_dot is not None:
+        _headers["x-ms-source-allow-trailing-dot"] = _SERIALIZER.header(
+            "allow_source_trailing_dot", allow_source_trailing_dot, "bool"
+        )
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -800,6 +852,7 @@ def build_abort_copy_request(
     copy_id: str,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -832,6 +885,8 @@ def build_abort_copy_request(
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
     if lease_id is not None:
         _headers["x-ms-lease-id"] = _SERIALIZER.header("lease_id", lease_id, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -846,6 +901,7 @@ def build_list_handles_request(
     maxresults: Optional[int] = None,
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -877,6 +933,8 @@ def build_list_handles_request(
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -891,6 +949,7 @@ def build_force_close_handles_request(
     timeout: Optional[int] = None,
     marker: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
     file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -921,6 +980,8 @@ def build_force_close_handles_request(
     # Construct headers
     _headers["x-ms-handle-id"] = _SERIALIZER.header("handle_id", handle_id, "str")
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
     if file_request_intent is not None:
         _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -945,6 +1006,9 @@ def build_rename_request(
     file_permission_key: Optional[str] = None,
     metadata: Optional[Dict[str, str]] = None,
     file_content_type: Optional[str] = None,
+    allow_trailing_dot: Optional[bool] = None,
+    allow_source_trailing_dot: Optional[bool] = None,
+    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -996,6 +1060,14 @@ def build_rename_request(
         _headers["x-ms-meta"] = _SERIALIZER.header("metadata", metadata, "{str}")
     if file_content_type is not None:
         _headers["x-ms-content-type"] = _SERIALIZER.header("file_content_type", file_content_type, "str")
+    if allow_trailing_dot is not None:
+        _headers["x-ms-allow-trailing-dot"] = _SERIALIZER.header("allow_trailing_dot", allow_trailing_dot, "bool")
+    if allow_source_trailing_dot is not None:
+        _headers["x-ms-source-allow-trailing-dot"] = _SERIALIZER.header(
+            "allow_source_trailing_dot", allow_source_trailing_dot, "bool"
+        )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1132,6 +1204,7 @@ class FileOperations:
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             file_type_constant=file_type_constant,
             version=self._config.version,
@@ -1237,6 +1310,7 @@ class FileOperations:
             range=range,
             range_get_content_md5=range_get_content_md5,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             version=self._config.version,
             template_url=self.download.metadata["url"],
@@ -1439,6 +1513,7 @@ class FileOperations:
             sharesnapshot=sharesnapshot,
             timeout=timeout,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             version=self._config.version,
             template_url=self.get_properties.metadata["url"],
@@ -1555,6 +1630,7 @@ class FileOperations:
             url=self._config.url,
             timeout=timeout,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             version=self._config.version,
             template_url=self.delete.metadata["url"],
@@ -1694,6 +1770,7 @@ class FileOperations:
             file_last_write_time=file_last_write_time,
             file_change_time=file_change_time,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
@@ -1798,6 +1875,7 @@ class FileOperations:
             timeout=timeout,
             metadata=metadata,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
@@ -1894,6 +1972,7 @@ class FileOperations:
             duration=duration,
             proposed_lease_id=proposed_lease_id,
             request_id_parameter=request_id_parameter,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
@@ -1981,6 +2060,7 @@ class FileOperations:
             lease_id=lease_id,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
@@ -2077,6 +2157,7 @@ class FileOperations:
             timeout=timeout,
             proposed_lease_id=proposed_lease_id,
             request_id_parameter=request_id_parameter,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
@@ -2172,6 +2253,7 @@ class FileOperations:
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             action=action,
@@ -2296,6 +2378,7 @@ class FileOperations:
             content_md5=content_md5,
             lease_id=_lease_id,
             file_last_written_mode=file_last_written_mode,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             content_type=content_type,
@@ -2434,6 +2517,8 @@ class FileOperations:
             lease_id=_lease_id,
             copy_source_authorization=copy_source_authorization,
             file_last_written_mode=file_last_written_mode,
+            allow_trailing_dot=self._config.allow_trailing_dot,
+            allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             comp=comp,
             file_range_write_from_url=self._config.file_range_write_from_url,
             version=self._config.version,
@@ -2537,6 +2622,7 @@ class FileOperations:
             timeout=timeout,
             range=range,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
@@ -2671,6 +2757,8 @@ class FileOperations:
             file_change_time=_file_change_time,
             set_archive_attribute=_set_archive_attribute,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
+            allow_source_trailing_dot=self._config.allow_source_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             version=self._config.version,
             template_url=self.start_copy.metadata["url"],
@@ -2763,6 +2851,7 @@ class FileOperations:
             copy_id=copy_id,
             timeout=timeout,
             lease_id=_lease_id,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             copy_action_abort_constant=copy_action_abort_constant,
@@ -2851,6 +2940,7 @@ class FileOperations:
             maxresults=maxresults,
             timeout=timeout,
             sharesnapshot=sharesnapshot,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
@@ -2942,6 +3032,7 @@ class FileOperations:
             timeout=timeout,
             marker=marker,
             sharesnapshot=sharesnapshot,
+            allow_trailing_dot=self._config.allow_trailing_dot,
             file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
@@ -3098,6 +3189,9 @@ class FileOperations:
             file_permission_key=file_permission_key,
             metadata=metadata,
             file_content_type=_file_content_type,
+            allow_trailing_dot=self._config.allow_trailing_dot,
+            allow_source_trailing_dot=self._config.allow_source_trailing_dot,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
             template_url=self.rename.metadata["url"],

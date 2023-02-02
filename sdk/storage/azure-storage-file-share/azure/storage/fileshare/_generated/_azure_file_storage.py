@@ -37,6 +37,12 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     :param file_request_intent: Valid value is backup. Known values are: "none" and "backup".
      Default value is None.
     :type file_request_intent: str or ~azure.storage.fileshare.models.ShareFileRequestIntent
+    :param allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
+     Default value is None.
+    :type allow_trailing_dot: bool
+    :param allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
+     URI. Default value is None.
+    :type allow_source_trailing_dot: bool
     :keyword version: Specifies the version of the operation to use for this request. Default value
      is "2022-11-02". Note that overriding this default value may result in unsupported behavior.
     :paramtype version: str
@@ -51,9 +57,17 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
         url: str,
         base_url: str = "",
         file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        allow_source_trailing_dot: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
-        self._config = AzureFileStorageConfiguration(url=url, file_request_intent=file_request_intent, **kwargs)
+        self._config = AzureFileStorageConfiguration(
+            url=url,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            allow_source_trailing_dot=allow_source_trailing_dot,
+            **kwargs
+        )
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}

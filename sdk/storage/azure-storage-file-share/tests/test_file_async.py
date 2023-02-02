@@ -3104,6 +3104,30 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy_async
+    async def test_rename_file_with_oauth(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        async with ShareFileClient(
+                self.account_url(storage_account_name, "file"),
+                share_name=self.share_name,
+                file_path=file_name,
+                credential=storage_account_key) as file_client:
+            # Act
+            resp = await file_client.create_file(1024)
+            new_file = await file_client.rename_file('file2')
+
+            # Assert
+            assert 'file2' == new_file.file_name
+            props = await new_file.get_file_properties()
+            assert props is not None
+
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
     async def test_rename_file_different_directory(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
