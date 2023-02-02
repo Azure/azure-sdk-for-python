@@ -1,8 +1,10 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2023-02-02)
+## 8.2.0b1 (2023-02-02)
 
+### Other Changes
 
+  - Upgraded api-version to `2022-10-01-preview`
 
 ## 8.1.0 (2022-08-10)
 
