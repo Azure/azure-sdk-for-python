@@ -131,6 +131,7 @@ class CodegenTestPR:
         self.spec_repo = os.getenv('SPEC_REPO', '')
         self.conn_str = os.getenv('STORAGE_CONN_STR')
         self.storage_endpoint = os.getenv('STORAGE_ENDPOINT').strip('/')
+        self.origin_ssl_cert = os.getenv("SSL_CERT_DIR")
 
         self.package_name = ''
         self.new_branch = ''
@@ -458,6 +459,7 @@ class CodegenTestPR:
     def prepare_test_env(self):
         self.install_package_locally()
         set_test_env_var()
+        log(f"origin ssl cert: {self.origin_ssl_cert}")
         add_certificate()
         start_test_proxy()
 
@@ -581,10 +583,8 @@ class CodegenTestPR:
         self.ask_check_policy()
 
     def create_pr(self):
-        # remove cert created by test proxy otherwise we can't git push
-        ssl_cert = os.environ.get("SSL_CERT_DIR")
-        if ssl_cert and Path(ssl_cert).exists():
-            shutil.rmtree(ssl_cert)
+        # recover ssl cert changed by test proxy otherwise we can't git push
+        os.environ["SSL_CERT_DIR"] = self.origin_ssl_cert
 
         # commit all code
         print_exec('git add sdk/')
