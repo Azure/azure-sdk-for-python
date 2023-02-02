@@ -286,6 +286,52 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_create_file_with_trailing_dot_false(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + '.',
+            credential=storage_account_key,
+            allow_trailing_dot=False)
+
+        # Act
+        resp = file_client.create_file(1024)
+
+        # create file client with dot
+        file_client_dotted = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + '.',
+            credential=storage_account_key,
+            allow_trailing_dot=False)
+
+        # create file client without dot
+        file_client_no_dot = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key,
+            allow_trailing_dot=False)
+
+        props = file_client.get_file_properties()
+        props_dotted = file_client_dotted.get_file_properties()
+        props_no_dot = file_client_no_dot.get_file_properties()
+
+        # Assert
+        assert props.name == file_name + '.'
+        assert props.path == file_name + '.'
+        assert props_dotted.name == file_name + '.'
+        assert props_dotted.path == file_name + '.'
+        assert props_no_dot.name == file_name
+        assert props_no_dot.path == file_name
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_create_file_with_metadata(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
