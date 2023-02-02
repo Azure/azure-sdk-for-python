@@ -75,7 +75,7 @@ Data collection rules (DCR) define data collected by Azure Monitor and specify h
 
 The DCR must understand the structure of the input data and the structure of the target table. If the two don't match, it can use a transformation to convert the source data to match the target table. You may also use the transform to filter source data and perform any other calculations or conversions.
 
-For more details, refer to [Data collection rules in Azure Monitor][data_collection_rule], and for information on how to retrieve a DCR ID, check out [this tutorial][data_collection_rule_tutorial].
+For more details, see [Data collection rules in Azure Monitor][data_collection_rule]. For information on how to retrieve a DCR ID, see [this tutorial][data_collection_rule_tutorial].
 
 ### Log Analytics workspace tables
 
