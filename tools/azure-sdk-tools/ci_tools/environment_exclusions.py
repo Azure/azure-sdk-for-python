@@ -407,7 +407,7 @@ def filter_tox_environment_string(namespace_argument: str, package_path: str) ->
 
 def is_typing_ignored(package_name: str) -> bool:
     """
-    Evaluates a package name and evaluates whether or not typing should generally run against it.
+    Evaluates a package name and evaluates whether or not this package should be ignored when invoking type checking.
     """
     if package_name in IGNORE_PACKAGES:
         return True
