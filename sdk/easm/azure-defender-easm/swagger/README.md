@@ -3,11 +3,11 @@
 ```yaml
 input-file:
  - https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/riskiq/data-plane/Microsoft.Easm/preview/2022-09-01-preview/easm.json
-output-folder: "../azure/easm/_generated"
+output-folder: "../"
 namespace: azure.defender.easm
 package-name: azure-defender-easm
 license-header: MICROSOFT_MIT_NO_VERSION
-title: easmClient
+title: EasmClient
 package-version: 1.0.0b1
 package-mode: dataplane
 package-pprint-name: EASM Data Plane Client
