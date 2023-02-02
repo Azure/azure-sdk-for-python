@@ -397,7 +397,7 @@ def filter_tox_environment_string(namespace_argument: str, package_path: str) ->
         tox_envs = namespace_argument.strip().split(",")
         filtered_set = []
 
-        for tox_env in tox_envs:
+        for tox_env in [env.strip().lower() for env in tox_envs]:
             if is_check_enabled(package_path, tox_env, True):
                 filtered_set.append(tox_env)
         return ",".join(filtered_set)

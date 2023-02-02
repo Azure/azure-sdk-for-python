@@ -8,7 +8,7 @@
 import argparse, os
 from typing import List
 
-from ci_tools.build_interactions import set_ci_variable
+from ci_tools.ci_interactions import set_ci_variable
 from ci_tools.build import discover_targeted_packages
 from ci_tools.environment_exclusions import is_check_enabled
 
