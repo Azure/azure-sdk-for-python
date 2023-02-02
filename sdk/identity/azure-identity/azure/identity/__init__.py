@@ -25,6 +25,7 @@ from ._credentials import (
     SharedTokenCacheCredential,
     UsernamePasswordCredential,
     VisualStudioCodeCredential,
+    WorkloadIdentityCredential,
 )
 from ._persistent_cache import TokenCachePersistenceOptions
 
@@ -53,6 +54,7 @@ __all__ = [
     "TokenCachePersistenceOptions",
     "UsernamePasswordCredential",
     "VisualStudioCodeCredential",
+    "WorkloadIdentityCredential",
 ]
 
 from ._version import VERSION

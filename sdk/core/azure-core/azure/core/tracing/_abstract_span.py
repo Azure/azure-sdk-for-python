@@ -169,7 +169,7 @@ class AbstractSpan(Protocol):
         """
 
     @classmethod
-    def set_current_tracer(cls, tracer: Any):
+    def set_current_tracer(cls, tracer: Any) -> None:
         """
         Set the given tracer as the current tracer in the execution context.
         """
