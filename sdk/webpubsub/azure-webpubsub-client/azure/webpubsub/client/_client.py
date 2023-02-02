@@ -603,8 +603,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         if self._state == WebPubSubClientState.STOPPED or self._is_stopping:
             return
         self._is_stopping = True
-        if self._ws:
-            self._ws.close()
+
+        # we can't use self._ws.close otherwise on_close may not be triggered
+        if self._ws and self._ws.sock:
+            self._ws.sock.close()
+
         if self._thread_seq_ack and self._thread_seq_ack.is_alive():
             self._thread_seq_ack.join()
         if self._thread and self._thread.is_alive():
