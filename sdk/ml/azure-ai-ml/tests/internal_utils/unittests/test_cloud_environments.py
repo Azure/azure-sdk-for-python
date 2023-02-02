@@ -100,7 +100,7 @@ class TestCloudEnvironments:
 
     
 
-    def mocked_requests_get(*args, **kwargs):
+    def mock_arm_response(*args, **kwargs):
         class MockResponse:
             def __init__(self, json_data):
                 self.json_data = json_data
@@ -133,17 +133,16 @@ class TestCloudEnvironments:
         ]
         response = MockResponse(json_data)
         return response
-        
 
-    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    @mock.patch.dict(os.environ, {}, clear=True)
+    @mock.patch('requests.get', side_effect=mock_arm_response)
     def test_get_cloud_from_arm(self, mock_get):
-
         _set_cloud('TEST_ENV')
         cloud_details = _get_cloud_information_from_metadata("TEST_ENV")
         assert cloud_details.get("cloud") == "TEST_ENV"
             
-    
-    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    @mock.patch.dict(os.environ, {}, clear=True)
+    @mock.patch('requests.get', side_effect=mock_arm_response)
     def test_arm_misconfigured(self, mock_get):
         with pytest.raises(Exception) as e_info:
             _set_cloud("MISCONFIGURED")
