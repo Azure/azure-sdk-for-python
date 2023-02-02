@@ -15,7 +15,7 @@ from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
 from ._assets.environment import BuildContext, Environment
-from ._assets.workspace_model_reference import WorkspaceModelReference
+from ._assets.workspace_asset_reference import WorkspaceAssetReference
 from ._builders import Command, Parallel, Pipeline, Spark, Sweep
 from ._component.command_component import CommandComponent
 from ._component.component import Component
@@ -246,7 +246,7 @@ __all__ = [
     "SynapseSparkCompute",
     "AutoScaleSettings",
     "AutoPauseSettings",
-    "WorkspaceModelReference",
+    "WorkspaceAssetReference",
     # builders
     "Command",
     "Parallel",
