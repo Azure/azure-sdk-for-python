@@ -35,11 +35,11 @@ from typing import (
     Tuple,
     IO,
     Any,
-    Dict,
     Iterable,
     MutableMapping,
     AsyncIterable,
     cast,
+    Dict,
 )
 import xml.etree.ElementTree as ET
 from urllib.parse import urlparse
@@ -188,7 +188,7 @@ def decode_to_text(encoding: Optional[str], content: bytes) -> str:
     return codecs.getincrementaldecoder("utf-8-sig")(errors="replace").decode(content)
 
 
-class HttpRequestBackcompatMixin(object):
+class HttpRequestBackcompatMixin:
     def __getattr__(self, attr):
         backcompat_attrs = [
             "files",

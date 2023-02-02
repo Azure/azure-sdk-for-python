@@ -15,13 +15,13 @@ from .asset import AssetSchema
 module_logger = logging.getLogger(__name__)
 
 
-class WorkspaceModelReferenceSchema(AssetSchema):
+class WorkspaceAssetReferenceSchema(AssetSchema):
     destination_name = fields.Str()
     destination_version = fields.Str()
     source_asset_id = fields.Str(required=True)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._assets import WorkspaceModelReference
+        from azure.ai.ml.entities._assets import WorkspaceAssetReference
 
-        return WorkspaceModelReference(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
+        return WorkspaceAssetReference(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
