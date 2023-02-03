@@ -327,7 +327,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
         if parsed_args.tox_env:
             filtered_tox_environment_set = filter_tox_environment_string(parsed_args.tox_env, package_dir)
-            filtered_set = set([env.strip().lower() for env in filtered_tox_environment_set.tox_env.strip().split(",")])
+            filtered_set = set([env.strip().lower() for env in filtered_tox_environment_set.strip().split(",")])
 
             if filtered_set != check_set:
                 skipped_environments = check_set - filtered_set
