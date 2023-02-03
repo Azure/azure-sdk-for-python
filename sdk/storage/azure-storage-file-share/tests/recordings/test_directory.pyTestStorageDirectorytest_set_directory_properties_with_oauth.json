@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utsharef0523c68?restype=share",
+      "RequestUri": "https://storagename.file.core.windows.net/utshare4132338d?restype=share",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -9,27 +9,23 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Wed, 25 Jan 2023 01:43:28 GMT",
-        "x-ms-version": "2021-12-02"
+        "x-ms-date": "Fri, 03 Feb 2023 00:54:16 GMT",
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": null,
-      "StatusCode": 409,
+      "StatusCode": 201,
       "ResponseHeaders": {
-        "Content-Length": "222",
-        "Content-Type": "application/xml",
-        "Date": "Wed, 25 Jan 2023 01:42:47 GMT",
+        "Content-Length": "0",
+        "Date": "Fri, 03 Feb 2023 00:53:26 GMT",
+        "ETag": "\u00220x8DB05810F4701DC\u0022",
+        "Last-Modified": "Fri, 03 Feb 2023 00:53:26 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-error-code": "ShareAlreadyExists",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
-      "ResponseBody": [
-        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EShareAlreadyExists\u003C/Code\u003E\u003CMessage\u003EThe specified share already exists.\n",
-        "RequestId:5c3f4ecc-501a-0003-4d5e-30c4cd000000\n",
-        "Time:2023-01-25T01:42:47.7751869Z\u003C/Message\u003E\u003C/Error\u003E"
-      ]
+      "ResponseBody": null
     },
     {
       "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
@@ -48,12 +44,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 25 Jan 2023 01:42:48 GMT",
+        "Date": "Fri, 03 Feb 2023 00:53:26 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.8 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14601.8 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -142,12 +138,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 25 Jan 2023 01:42:48 GMT",
+        "Date": "Fri, 03 Feb 2023 00:53:26 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14357.8 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14526.6 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -198,7 +194,7 @@
       }
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utsharef0523c68/dir1?restype=directory",
+      "RequestUri": "https://storagename.file.core.windows.net/utshare4132338d/dir1?restype=directory",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -206,74 +202,74 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Wed, 25 Jan 2023 01:43:28 GMT",
+        "x-ms-date": "Fri, 03 Feb 2023 00:54:16 GMT",
         "x-ms-file-attributes": "none",
         "x-ms-file-creation-time": "now",
         "x-ms-file-last-write-time": "now",
         "x-ms-file-permission": "inherit",
         "x-ms-file-request-intent": "backup",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 25 Jan 2023 01:42:48 GMT",
-        "ETag": "\u00220x8DAFE75770F44A4\u0022",
-        "Last-Modified": "Wed, 25 Jan 2023 01:42:48 GMT",
+        "Date": "Fri, 03 Feb 2023 00:53:27 GMT",
+        "ETag": "\u00220x8DB05811005466D\u0022",
+        "Last-Modified": "Fri, 03 Feb 2023 00:53:28 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-file-attributes": "Directory",
-        "x-ms-file-change-time": "2023-01-25T01:42:48.8464548Z",
-        "x-ms-file-creation-time": "2023-01-25T01:42:48.8464548Z",
+        "x-ms-file-change-time": "2023-02-03T00:53:28.0758381Z",
+        "x-ms-file-creation-time": "2023-02-03T00:53:28.0758381Z",
         "x-ms-file-id": "13835128424026341376",
-        "x-ms-file-last-write-time": "2023-01-25T01:42:48.8464548Z",
+        "x-ms-file-last-write-time": "2023-02-03T00:53:28.0758381Z",
         "x-ms-file-parent-id": "0",
         "x-ms-file-permission-key": "8792472798472242479*1359530181238362790",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utsharef0523c68/dir1?restype=directory",
+      "RequestUri": "https://storagename.file.core.windows.net/utshare4132338d/dir1?restype=directory",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Wed, 25 Jan 2023 01:43:29 GMT",
+        "x-ms-date": "Fri, 03 Feb 2023 00:54:18 GMT",
         "x-ms-file-request-intent": "backup",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 25 Jan 2023 01:42:48 GMT",
-        "ETag": "\u00220x8DAFE75770F44A4\u0022",
-        "Last-Modified": "Wed, 25 Jan 2023 01:42:48 GMT",
+        "Date": "Fri, 03 Feb 2023 00:53:27 GMT",
+        "ETag": "\u00220x8DB05811005466D\u0022",
+        "Last-Modified": "Fri, 03 Feb 2023 00:53:28 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-file-attributes": "Directory",
-        "x-ms-file-change-time": "2023-01-25T01:42:48.8464548Z",
-        "x-ms-file-creation-time": "2023-01-25T01:42:48.8464548Z",
+        "x-ms-file-change-time": "2023-02-03T00:53:28.0758381Z",
+        "x-ms-file-creation-time": "2023-02-03T00:53:28.0758381Z",
         "x-ms-file-id": "13835128424026341376",
-        "x-ms-file-last-write-time": "2023-01-25T01:42:48.8464548Z",
+        "x-ms-file-last-write-time": "2023-02-03T00:53:28.0758381Z",
         "x-ms-file-parent-id": "0",
         "x-ms-file-permission-key": "8792472798472242479*1359530181238362790",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utsharef0523c68/dir1?restype=directory\u0026comp=properties",
+      "RequestUri": "https://storagename.file.core.windows.net/utshare4132338d/dir1?restype=directory\u0026comp=properties",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
@@ -281,69 +277,70 @@
         "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Wed, 25 Jan 2023 01:43:29 GMT",
-        "x-ms-file-attributes": "none",
-        "x-ms-file-creation-time": "preserve",
-        "x-ms-file-last-write-time": "preserve",
+        "x-ms-date": "Fri, 03 Feb 2023 00:54:18 GMT",
+        "x-ms-file-attributes": "None",
+        "x-ms-file-change-time": "2023-02-03T01:53:28.0758380Z",
+        "x-ms-file-creation-time": "2023-02-03T01:53:28.0758380Z",
+        "x-ms-file-last-write-time": "2023-02-03T01:53:28.0758380Z",
         "x-ms-file-permission": "preserve",
         "x-ms-file-request-intent": "backup",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 25 Jan 2023 01:42:48 GMT",
-        "ETag": "\u00220x8DAFE75773257BE\u0022",
-        "Last-Modified": "Wed, 25 Jan 2023 01:42:49 GMT",
+        "Date": "Fri, 03 Feb 2023 00:53:27 GMT",
+        "ETag": "\u00220x8DB0581102C9EAF\u0022",
+        "Last-Modified": "Fri, 03 Feb 2023 00:53:28 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-file-attributes": "Directory",
-        "x-ms-file-change-time": "2023-01-25T01:42:49.0763198Z",
-        "x-ms-file-creation-time": "2023-01-25T01:42:48.8464548Z",
+        "x-ms-file-change-time": "2023-02-03T01:53:28.0758380Z",
+        "x-ms-file-creation-time": "2023-02-03T01:53:28.0758380Z",
         "x-ms-file-id": "13835128424026341376",
-        "x-ms-file-last-write-time": "2023-01-25T01:42:48.8464548Z",
+        "x-ms-file-last-write-time": "2023-02-03T01:53:28.0758380Z",
         "x-ms-file-parent-id": "0",
         "x-ms-file-permission-key": "8792472798472242479*1359530181238362790",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.file.core.windows.net/utsharef0523c68/dir1?restype=directory",
+      "RequestUri": "https://storagename.file.core.windows.net/utshare4132338d/dir1?restype=directory",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Wed, 25 Jan 2023 01:43:29 GMT",
+        "x-ms-date": "Fri, 03 Feb 2023 00:54:18 GMT",
         "x-ms-file-request-intent": "backup",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Wed, 25 Jan 2023 01:42:48 GMT",
-        "ETag": "\u00220x8DAFE75773257BE\u0022",
-        "Last-Modified": "Wed, 25 Jan 2023 01:42:49 GMT",
+        "Date": "Fri, 03 Feb 2023 00:53:28 GMT",
+        "ETag": "\u00220x8DB0581102C9EAF\u0022",
+        "Last-Modified": "Fri, 03 Feb 2023 00:53:28 GMT",
         "Server": [
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
         "x-ms-file-attributes": "Directory",
-        "x-ms-file-change-time": "2023-01-25T01:42:49.0763198Z",
-        "x-ms-file-creation-time": "2023-01-25T01:42:48.8464548Z",
+        "x-ms-file-change-time": "2023-02-03T01:53:28.0758380Z",
+        "x-ms-file-creation-time": "2023-02-03T01:53:28.0758380Z",
         "x-ms-file-id": "13835128424026341376",
-        "x-ms-file-last-write-time": "2023-01-25T01:42:48.8464548Z",
+        "x-ms-file-last-write-time": "2023-02-03T01:53:28.0758380Z",
         "x-ms-file-parent-id": "0",
         "x-ms-file-permission-key": "8792472798472242479*1359530181238362790",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2021-12-02"
+        "x-ms-version": "2022-11-02"
       },
       "ResponseBody": null
     }

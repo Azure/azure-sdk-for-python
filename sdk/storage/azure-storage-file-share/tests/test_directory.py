@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import pytest
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.fileshare import (
+    ContentSettings,
     generate_share_sas,
     NTFSAttributes,
     ShareDirectoryClient,
@@ -521,30 +522,45 @@ class TestStorageDirectory(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_set_directory_properties_with_empty_smb_properties_oauth(self, **kwargs):
+    def test_set_directory_properties_with_oauth(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
         token_credential = self.generate_oauth_token()
 
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
+
         directory_client = ShareDirectoryClient(
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1',
             credential=token_credential,
             file_request_intent=TEST_INTENT)
-        directory_client.create_directory()
-        directory_properties_on_creation = directory_client.get_directory_properties()
 
         # Act
-        directory_client.set_http_headers()
+        directory_client.create_directory()
+        directory_properties_on_creation = directory_client.get_directory_properties()
+        last_write_time = directory_properties_on_creation.last_write_time
+        creation_time = directory_properties_on_creation.creation_time
+        change_time = directory_properties_on_creation.change_time
+
+        new_last_write_time = last_write_time + timedelta(hours=1)
+        new_creation_time = creation_time + timedelta(hours=1)
+        new_change_time = change_time + timedelta(hours=1)
+
+        # Act
+        directory_client.set_http_headers(
+            file_attributes='None',
+            file_creation_time=new_creation_time,
+            file_last_write_time=new_last_write_time,
+            file_change_time=new_change_time
+        )
         directory_properties = directory_client.get_directory_properties()
 
         # Assert
-        # Make sure set empty smb_properties doesn't change smb_properties
-        assert directory_properties_on_creation.creation_time == directory_properties.creation_time
-        assert directory_properties_on_creation.last_write_time == directory_properties.last_write_time
-        assert directory_properties_on_creation.permission_key == directory_properties.permission_key
+        assert directory_properties is not None
+        assert directory_properties.creation_time == new_creation_time
+        assert directory_properties.last_write_time == new_last_write_time
+        assert directory_properties.change_time == new_change_time
 
     @FileSharePreparer()
     @recorded_by_proxy

@@ -115,7 +115,12 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             sas_token, credential, share_snapshot=self.snapshot)
         super(ShareDirectoryClient, self).__init__(parsed_url, service='file-share', credential=credential, **kwargs)
         self.file_request_intent = kwargs.pop('file_request_intent', None)
-        self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline, file_request_intent=self.file_request_intent)  # pylint: disable=line-too-long
+        self._client = AzureFileStorage(
+            url=self.url,
+            base_url=self.url,
+            pipeline=self._pipeline,
+            file_request_intent=self.file_request_intent
+        )
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @classmethod
