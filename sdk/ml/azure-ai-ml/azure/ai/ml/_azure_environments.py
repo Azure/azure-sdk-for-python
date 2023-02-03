@@ -238,6 +238,6 @@ def _convert_arm_to_cli(arm_cloud_metadata):
 
             }
         except KeyError as ex:
-            module_logger.warning("Property on cloud ot found in arm cloud metadata: {}".format(ex))
+            module_logger.warning("Property on cloud not found in arm cloud metadata: {}".format(ex))
             continue
     return cli_cloud_metadata_dict
