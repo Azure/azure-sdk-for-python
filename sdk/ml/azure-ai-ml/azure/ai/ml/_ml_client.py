@@ -159,8 +159,7 @@ class MLClient(object):
                 target=ErrorTarget.GENERAL,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if not registry_name:
-            _validate_missing_sub_or_rg_and_raise(subscription_id, resource_group_name)
+
         self._credential = credential
 
         show_progress = kwargs.pop("show_progress", True)

@@ -38,7 +38,7 @@ def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential,
 def get_virtual_clusters_from_subscriptions(credential: TokenCredential,
     subscription_list: Optional[List[str]] = None) -> List[Dict]:
 
-    # cspell:ignore
+    # cspell:ignore tolower
     strQuery = """resources
     | where type == 'microsoft.machinelearningservices/virtualclusters'
     | order by tolower(name) asc 
