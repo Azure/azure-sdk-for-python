@@ -6,8 +6,10 @@ import requests
 
 from azure.ai.ml._azure_environments import (
     AzureEnvironments,
+    EndpointURLS,
     _get_azure_portal_id_from_metadata,
     _get_base_url_from_metadata,
+    _get_cloud_details,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
     _get_registry_discovery_endpoint_from_metadata,
@@ -115,12 +117,11 @@ class TestCloudEnvironments:
         json_data = [
             {
                 "name": "TEST_ENV", 
-                "portal": "testportal", 
-                "resourceManager": "testresourcemanager",
+                "portal": "testportal.azure.com", 
+                "resourceManager": "testresourcemanager.azure.com",
                 "authentication": {
-                    "loginEndpoint": "testdirectoryendpoint"
+                    "loginEndpoint": "testdirectoryendpoint.azure.com"
                 },
-                "resourceManager": "testresourcemanager",
                 "suffixes": {
                     "storage": "teststorageendpoint"
                 }
@@ -138,6 +139,18 @@ class TestCloudEnvironments:
         _set_cloud('TEST_ENV')
         cloud_details = _get_cloud_information_from_metadata("TEST_ENV")
         assert cloud_details.get("cloud") == "TEST_ENV"
+
+    @mock.patch.dict(os.environ, {}, clear=True)
+    @mock.patch('requests.get', side_effect=mock_arm_response)
+    def test_all_endpointurls_used(self, mock_get):
+        cloud_details = _get_cloud_details("TEST_ENV")
+        endpoint_urls = [a for a in dir(EndpointURLS) if not a.startswith('__')]
+        for url in endpoint_urls:
+            try:
+                cloud_details[EndpointURLS.__dict__[url]]
+            except:
+                assert False, "Url not found: {}".format(EndpointURLS.__dict__[url])
+        assert True
             
     @mock.patch.dict(os.environ, {}, clear=True)
     @mock.patch('requests.get', side_effect=mock_arm_response)

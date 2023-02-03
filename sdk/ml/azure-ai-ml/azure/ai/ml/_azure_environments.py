@@ -229,13 +229,16 @@ def _convert_arm_to_cli(arm_cloud_metadata):
         arm_cloud_metadata = [arm_cloud_metadata]
     for cloud in arm_cloud_metadata:
         try:
-            cli_cloud_metadata_dict[cloud['name']] = {
+            portal_endpoint = cloud["portal"]
+            cloud_suffix = portal_endpoint.split('.')[2]
+            cloud_name = cloud['name']
+            cli_cloud_metadata_dict[cloud_name] = {
                 EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud["portal"],
                 EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud["resourceManager"],
                 EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"]["loginEndpoint"],
-                EndpointURLS.AML_RESOURCE_ID: cloud["resourceManager"],
-                EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"]
-
+                EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.{}".format(cloud_suffix),
+                EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"],
+                EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://{}west.api.azureml.{}/".format(cloud_name.lower(), cloud_suffix)
             }
         except KeyError as ex:
             module_logger.warning("Property on cloud not found in arm cloud metadata: {}".format(ex))
