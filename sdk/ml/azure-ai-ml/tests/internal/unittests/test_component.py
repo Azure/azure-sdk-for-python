@@ -221,7 +221,7 @@ class TestComponent:
         for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float", "integer"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x).lower() if isinstance(x, bool) else str(x), input_port["enum"]))
                 if "default" in input_port:

@@ -117,12 +117,17 @@ class InternalComponentSchema(ComponentSchema):
     @pre_load
     def add_param_overrides(self, data, **kwargs):
         source_path = self.context.pop(SOURCE_PATH_CONTEXT_KEY, None)
-        if source_path and os.path.isfile(source_path):
+        if isinstance(data, dict) and source_path and os.path.isfile(source_path):
             # do override here
             with open(source_path, "r") as f:
                 origin_data = yaml_safe_load_with_base_resolver(f)
-                for dot_key in ["version", "inputs", "outputs"]:
-                    if pydash.has(origin_data, dot_key):
+                dot_keys = ["version"]
+                for input_key in data.get("inputs", {}).keys():
+                    for attr_name in ["default", "enum"]:
+                        dot_keys.append(f"inputs.{input_key}.{attr_name}")
+
+                for dot_key in dot_keys:
+                    if pydash.has(data, dot_key) and pydash.has(origin_data, dot_key):
                         pydash.set_(data, dot_key, pydash.get(origin_data, dot_key))
         return super().add_param_overrides(data, **kwargs)
 
