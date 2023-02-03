@@ -199,6 +199,26 @@ def _resource_to_scopes(resource):
     scope = resource + "/.default"
     return [scope]
 
+def _get_registry_discovery_url(cloud, cloud_suffix):
+    """Get the registry discovery url
+        :return: string of discovery url
+    """
+    cloud_name = cloud["name"]
+    if cloud_name in _environments:
+        return _environments[cloud_name].registry_url
+    elif ArmConstants.REGISTRY_ENV_URL in os.environ:
+        return os.environ[ArmConstants.REGISTRY_ENV_URL]
+    else:
+        registry_discovery_region = os.environ.get(
+            ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
+            ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
+        )
+        return "https://{}{}.api.azureml.{}/".format(
+            cloud_name.lower(),
+            registry_discovery_region,
+            cloud_suffix
+        )
+
 def _get_clouds_by_metadata_url(metadata_url, timeout=ArmConstants.DEFAULT_TIMEOUT):
     """Get all the clouds by the specified metadata url
 
@@ -230,24 +250,17 @@ def _convert_arm_to_cli(arm_cloud_metadata):
 
     for cloud in arm_cloud_metadata:
         try:
-            registry_discovery_region = os.environ.get(
-                ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
-                ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
-            )
+            cloud_name = cloud["name"]
             portal_endpoint = cloud["portal"]
             cloud_suffix = ".".join(portal_endpoint.split('.')[2:]).replace("/", "")
-            cloud_name = cloud['name']
+            registry_discovery_url = _get_registry_discovery_url(cloud, cloud_suffix)
             cli_cloud_metadata_dict[cloud_name] = {
                 EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud["portal"],
                 EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud["resourceManager"],
                 EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"]["loginEndpoint"],
                 EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.{}".format(cloud_suffix),
                 EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"],
-                EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://{}{}.api.azureml.{}/".format(
-                    cloud_name.lower(),
-                    registry_discovery_region,
-                    cloud_suffix
-                )
+                EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: registry_discovery_url
             }
         except KeyError as ex:
             module_logger.warning("Property on cloud not found in arm cloud metadata: %s", ex)

@@ -168,7 +168,7 @@ class TestCloudEnvironments:
     def test_metadata_registry_endpoint(self, mock_get):
         cloud_details = _get_cloud_details("TEST_ENV2")
         assert cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT) == "https://test_env2west.api.azureml.windows.net/"
-            
+             
     @mock.patch.dict(os.environ, {}, clear=True)
     @mock.patch('requests.get', side_effect=mock_arm_response)
     def test_arm_misconfigured(self, mock_get):
