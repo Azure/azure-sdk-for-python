@@ -5,11 +5,11 @@ from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient
 
-@pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.virtual_cluster_test
 class TestVirtualCluster(AzureRecordedTestCase):
 
+    @pytest.mark.e2etest
     def test_get_and_list(self, client: MLClient) -> None:
         vc_list = client._virtual_clusters.list()
         assert len(vc_list) > 0

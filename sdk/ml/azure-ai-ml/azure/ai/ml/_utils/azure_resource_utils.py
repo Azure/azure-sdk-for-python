@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 
 
+from typing import List, Dict, Optional
 import azure.mgmt.resourcegraph as arg
 from azure.mgmt.resource import SubscriptionClient, ResourceManagementClient
 from azure.core.credentials import TokenCredential
-from typing import List, Dict, Optional
 
 
 def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential,
@@ -38,7 +38,7 @@ def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential,
 def get_virtual_clusters_from_subscriptions(credential: TokenCredential,
     subscription_list: Optional[List[str]] = None) -> List[Dict]:
 
-    # cspell:disable-next-line
+    # cspell:ignore
     strQuery = """resources
     | where type == 'microsoft.machinelearningservices/virtualclusters'
     | order by tolower(name) asc 
