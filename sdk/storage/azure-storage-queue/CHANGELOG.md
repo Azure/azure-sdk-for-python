@@ -1,6 +1,6 @@
 # Release History
 
-## 12.6.0b1 (Unreleased)
+## 12.6.0b1 (2023-02-02)
 
 ### Other Changes
 - Removed `msrest` dependency.
