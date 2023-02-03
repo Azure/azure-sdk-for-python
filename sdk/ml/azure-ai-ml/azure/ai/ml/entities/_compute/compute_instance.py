@@ -132,12 +132,12 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
-    :param idle_time_before_shutdown: Deprecated. Use :param: `idle_time_before_shutdown_minutes` instead.
+    :param idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
         Stops compute instance after user defined period of inactivity.
-        Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+        Time is defined in ISO8601 format. Minimum is 15 minutes, maximum is 3 days.
     :type idle_time_before_shutdown: Optional[str], optional
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
-        inactivity in minutes. Minimum is 15 min, maximum is 3 days.
+        inactivity in minutes. Minimum is 15 minutes, maximum is 3 days.
     :type idle_time_before_shutdown_minutes: Optional[int], optional
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
         True - Indicates that the compute nodes will have public IPs provisioned.
