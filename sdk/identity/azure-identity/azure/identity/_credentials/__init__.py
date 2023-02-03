@@ -19,6 +19,7 @@ from .device_code import DeviceCodeCredential
 from .user_password import UsernamePasswordCredential
 from .vscode import VisualStudioCodeCredential
 from .client_assertion import ClientAssertionCredential
+from .workload_identity import WorkloadIdentityCredential
 
 
 __all__ = [
@@ -39,5 +40,6 @@ __all__ = [
     "SharedTokenCacheCredential",
     "AzureCliCredential",
     "UsernamePasswordCredential",
+    "WorkloadIdentityCredential",
     "VisualStudioCodeCredential",
 ]
