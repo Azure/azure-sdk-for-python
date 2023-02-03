@@ -507,7 +507,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             metadata: Optional[Dict[str, str]] = None,
             public_access: Optional[Union["PublicAccess", str]] = None,
             *,
-            container_encryption_scope: Optional[Union[Dict[str, str], ContainerEncryptionScope]] = None,
+            container_encryption_scope: Optional[Union[Dict[str, str], "ContainerEncryptionScope"]] = None,
             **kwargs: Any
         ) -> ContainerClient:
         """Creates a new container under the specified account.
@@ -561,8 +561,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @distributed_trace
     def delete_container(
-            self, container: Union[ContainerProperties, str],
-            lease: Optional[Union[BlobLeaseClient, str]] = None,
+            self, container: Union["ContainerProperties", str],
+            lease: Optional[Union["BlobLeaseClient", str]] = None,
             **kwargs: Any
         ) -> None:
         """Marks the specified container for deletion.
@@ -626,7 +626,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             self, name: str,
             new_name: str,
             *,
-            lease: Optional[Union[BlobLeaseClient, str]] = None,
+            lease: Optional[Union["BlobLeaseClient", str]] = None,
             **kwargs: Any
         ) -> ContainerClient:
         """Renames a container.
@@ -698,7 +698,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def get_container_client(self, container: Union[ContainerProperties, str]) -> ContainerClient:
+    def get_container_client(self, container: Union["ContainerProperties", str]) -> ContainerClient:
         """Get a client to interact with the specified container.
 
         The container need not already exist.
@@ -735,8 +735,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             key_encryption_key=self.key_encryption_key, key_resolver_function=self.key_resolver_function)
 
     def get_blob_client(
-            self, container: Union[ContainerProperties, str],
-            blob: Union[BlobProperties, str],
+            self, container: Union["ContainerProperties", str],
+            blob: Union["BlobProperties", str],
             snapshot: Optional[Union[Dict[str, Any], str]] = None
         ) -> BlobClient:
         """Get a client to interact with the specified blob.
