@@ -225,15 +225,21 @@ class AMQPClient(
         self.close()
 
     def _keep_alive(self):
-        print(f"Keep alive, {threading.current_thread().name}")
         start_time = time.time()
         try:
             while self._connection and not self._shutdown: 
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
+                    # print("Call connection work")
                     _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
-                    self._client_run()
+                    
+
+
+                    # I'm not sure we want to keep the connection alive
+                    # with self._lock:
+                    self._connection.listen(wait=self._socket_timeout)
+
                     start_time = current_time
                 time.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -949,27 +955,31 @@ class ReceiveClient(AMQPClient):
 
         :rtype: generator[~uamqp.message.Message]
         """
-
         auto_complete = self.auto_complete
         self.auto_complete = False
+        self._timeout_reached = False
         receiving = True
         message = None
         try:
-
-            while receiving:
-
+            self._last_time = time.time()
+            while receiving and not self._timeout_reached:
                 receiving = self.do_work()
-                # while not self._received_messages.empty():
-                message = self._received_messages.get(block=True, timeout=self._timeout)
                 if not self._received_messages.empty():
+                   
+                    message = self._received_messages.get()
                     self._received_messages.task_done()
-                yield message
-                
-                self._complete_message(message, auto_complete)
-        except:
+                    yield message
+                    self._complete_message(message, auto_complete)
 
+                    self._last_activity_stamp = time.time()
+                else:
+                    if self._timeout>0:
+                        if self._last_activity_stamp - self._last_time >= self._timeout:
+                            print("Time Out")
+                            self._timeout_reached = True
+
+        finally:
             # do we want to close receiver straight out, or as below, only when we have shutdown
-      
             if self._shutdown:
                 self.close()
     
