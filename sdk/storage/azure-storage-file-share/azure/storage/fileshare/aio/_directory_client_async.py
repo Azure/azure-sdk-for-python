@@ -65,9 +65,7 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
     :keyword bool allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
-        Default value is None.
-    :keyword bool allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
-        URI. Default value is None.
+    :keyword bool allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source URI.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.
@@ -126,7 +124,8 @@ class ShareDirectoryClient(AsyncStorageAccountHostsMixin, ShareDirectoryClientBa
         return ShareFileClient(
             self.url, file_path=file_name, share_name=self.share_name, snapshot=self.snapshot,
             credential=self.credential, api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=_pipeline, _location_mode=self._location_mode, **kwargs)
+            _pipeline=_pipeline, _location_mode=self._location_mode,
+            allow_trailing_dot=self.allow_trailing_dot, allow_source_trailing_dot=self.allow_source_trailing_dot **kwargs)
 
     def get_subdirectory_client(self, directory_name, **kwargs):
         # type: (str, Any) -> ShareDirectoryClient

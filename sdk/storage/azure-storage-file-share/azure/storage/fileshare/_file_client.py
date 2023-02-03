@@ -126,9 +126,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
     :keyword bool allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
-        Default value is None.
-    :keyword bool allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source
-        URI. Default value is None.
+    :keyword bool allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source URI.
     :keyword str api_version:
         The Storage API version to use for requests. Default value is the most recent service version that is
         compatible with the current SDK. Setting to an older version may result in reduced feature compatibility.

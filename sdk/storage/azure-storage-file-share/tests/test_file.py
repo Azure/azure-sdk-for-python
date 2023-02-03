@@ -792,6 +792,37 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
+    def test_get_file_properties_trailing_dot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name + '.',
+            credential=storage_account_key,
+            allow_trailing_dot=True)
+        resp = file_client.create_file(1024)
+
+        # Ensure allow_trailing_dot=True is enforced properly by attempting to construct without trailing dot
+        file_client_no_dot = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+        with pytest.raises(HttpResponseError):
+            file_client_no_dot.get_file_properties()
+
+        # Act
+        properties = file_client.get_file_properties()
+
+        # Assert
+        assert properties is not None
+
+    @FileSharePreparer()
+    @recorded_by_proxy
     def test_get_file_properties_with_invalid_lease_fails(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
