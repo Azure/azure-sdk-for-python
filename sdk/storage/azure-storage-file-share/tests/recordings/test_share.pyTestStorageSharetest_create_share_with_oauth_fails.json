@@ -176,7 +176,7 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Wed, 01 Feb 2023 23:45:46 GMT",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "RequestBody": null,
       "StatusCode": 409,

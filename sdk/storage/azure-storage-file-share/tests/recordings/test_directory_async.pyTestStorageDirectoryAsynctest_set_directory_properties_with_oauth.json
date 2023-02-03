@@ -9,7 +9,7 @@
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Fri, 03 Feb 2023 01:00:01 GMT",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "RequestBody": null,
       "StatusCode": 201,
@@ -22,7 +22,7 @@
           "Windows-Azure-File/1.0",
           "Microsoft-HTTPAPI/2.0"
         ],
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "ResponseBody": null
     },
@@ -40,7 +40,7 @@
         "x-ms-file-last-write-time": "now",
         "x-ms-file-permission": "inherit",
         "x-ms-file-request-intent": "backup",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "RequestBody": null,
       "StatusCode": 201,
@@ -61,7 +61,7 @@
         "x-ms-file-parent-id": "0",
         "x-ms-file-permission-key": "8792472798472242479*1359530181238362790",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "ResponseBody": null
     },
@@ -74,7 +74,7 @@
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Fri, 03 Feb 2023 01:00:03 GMT",
         "x-ms-file-request-intent": "backup",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -95,7 +95,7 @@
         "x-ms-file-parent-id": "0",
         "x-ms-file-permission-key": "8792472798472242479*1359530181238362790",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "ResponseBody": null
     },
@@ -114,7 +114,7 @@
         "x-ms-file-last-write-time": "2023-02-03T01:59:13.2727840Z",
         "x-ms-file-permission": "preserve",
         "x-ms-file-request-intent": "backup",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -135,7 +135,7 @@
         "x-ms-file-parent-id": "0",
         "x-ms-file-permission-key": "8792472798472242479*1359530181238362790",
         "x-ms-request-server-encrypted": "true",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "ResponseBody": null
     },
@@ -148,7 +148,7 @@
         "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
         "x-ms-date": "Fri, 03 Feb 2023 01:00:03 GMT",
         "x-ms-file-request-intent": "backup",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -169,7 +169,7 @@
         "x-ms-file-parent-id": "0",
         "x-ms-file-permission-key": "8792472798472242479*1359530181238362790",
         "x-ms-server-encrypted": "true",
-        "x-ms-version": "2022-11-02"
+        "x-ms-version": "2021-12-02"
       },
       "ResponseBody": null
     }
