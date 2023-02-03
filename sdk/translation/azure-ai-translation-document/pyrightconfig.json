@@ -1,0 +1,12 @@
+{
+  "reportUnnecessaryCast": "warning",
+  "reportUnnecessaryTypeIgnoreComment": "warning",
+  "reportTypeCommentUsage": true,
+  "reportMissingImports": false,
+  "pythonVersion": "3.10",
+  "exclude": [
+    "**/samples/async_samples/sample_authentication_async.py",
+    "**/samples/async_samples/sample_translation_with_azure_blob_async.py",
+    "**/samples/sample_translation_with_azure_blob.py"
+  ]
+}

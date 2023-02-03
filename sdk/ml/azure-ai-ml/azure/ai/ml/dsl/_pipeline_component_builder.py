@@ -400,6 +400,8 @@ class PipelineComponentBuilder:
                     value = value._data
                 if isinstance(value, Input):
                     anno = copy.copy(value)
+                elif isinstance(value, NodeOutput):
+                    anno = Input(type=value.type)
                 else:
                     anno = _get_annotation_by_value(value)
                 anno.name = input_name

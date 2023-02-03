@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import asyncio
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Awaitable, Optional
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import (
@@ -15,7 +15,6 @@ from azure.core.pipeline.policies._authentication import (
 from .._tools_async import await_result
 
 if TYPE_CHECKING:
-    from typing import Any, Awaitable, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
     from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -30,14 +29,14 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: "Any"
+        self, credential: "AsyncTokenCredential", *scopes: str, **kwargs: Any
     ) -> None:
         # pylint:disable=unused-argument
         super().__init__()
         self._credential = credential
         self._lock = asyncio.Lock()
         self._scopes = scopes
-        self._token = None  # type: Optional[AccessToken]
+        self._token: Optional["AccessToken"] = None
 
     async def on_request(
         self, request: "PipelineRequest"
@@ -60,7 +59,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         request.http_request.headers["Authorization"] = "Bearer " + self._token.token
 
     async def authorize_request(
-        self, request: "PipelineRequest", *scopes: str, **kwargs: "Any"
+        self, request: "PipelineRequest", *scopes: str, **kwargs: Any
     ) -> None:
         """Acquire a token from the credential and authorize the request with it.
 
@@ -120,7 +119,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
     def on_response(
         self, request: "PipelineRequest", response: "PipelineResponse"
-    ) -> "Union[None, Awaitable[None]]":
+    ) -> Optional[Awaitable[None]]:
         """Executed after the request comes back from the next policy.
 
         :param request: Request to be modified after returning from the policy.

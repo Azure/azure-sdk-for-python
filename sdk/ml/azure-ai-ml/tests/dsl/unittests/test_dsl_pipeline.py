@@ -2164,6 +2164,24 @@ class TestDSLPipeline:
                            match="pipeline_with_variable_args\(\) got multiple values for argument 'key_1'\."):
             pipeline_with_variable_args(10, key_1=10)
 
+    def test_pipeline_with_output_binding_in_dynamic_args(self):
+        hello_world_func = load_component(components_dir / "helloworld_component.yml")
+        hello_world_no_inputs_func = load_component(components_dir / "helloworld_component_no_inputs.yml")
+
+        @dsl.pipeline
+        def pipeline_func_consume_dynamic_arg(**kwargs):
+            hello_world_func(component_in_number=kwargs["int_param"], component_in_path=kwargs["path_param"])
+
+        @dsl.pipeline
+        def root_pipeline_func():
+            node = hello_world_no_inputs_func()
+            kwargs = {"int_param": 0, "path_param": node.outputs.component_out_path}
+            pipeline_func_consume_dynamic_arg(**kwargs)
+
+        pipeline_job = root_pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        assert pipeline_job._customized_validate().passed is True
+
     def test_condition_node_consumption(self):
         from azure.ai.ml.dsl._condition import condition
 
