@@ -12,7 +12,7 @@ def output_ci_warning(message: str, location=None) -> None:
         else:
             source = location
 
-        print($"##vso[task.logissue type=warning;sourcepath={source}]{message}")
+        print(f"##vso[task.logissue type=warning;sourcepath={source}]{message}")
     elif ci_type == 2:
         pass
     else:
