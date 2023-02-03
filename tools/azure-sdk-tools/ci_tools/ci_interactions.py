@@ -6,7 +6,7 @@ def output_ci_warning(message: str, location=None) -> None:
     ci_type = in_ci()
 
     if ci_type == 1:
-        if not Location:
+        if not location:
             import inspect
             source = inspect.stack()[1].filename
         else:
