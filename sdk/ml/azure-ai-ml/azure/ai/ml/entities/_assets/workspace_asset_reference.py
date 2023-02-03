@@ -10,13 +10,13 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ResourceManagementAssetReferenceData,
     ResourceManagementAssetReferenceDetails,
 )
-from azure.ai.ml._schema import WorkspaceModelReferenceSchema
+from azure.ai.ml._schema import WorkspaceAssetReferenceSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._util import load_from_dict
 
 
-class WorkspaceModelReference(Asset):
+class WorkspaceAssetReference(Asset):
     """Workspace Model Reference.
 
     :param name: Model name
@@ -53,14 +53,14 @@ class WorkspaceModelReference(Asset):
         yaml_path: Optional[Union[os.PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
-    ) -> "WorkspaceModelReference":
+    ) -> "WorkspaceAssetReference":
         data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        return load_from_dict(WorkspaceModelReferenceSchema, data, context, **kwargs)
+        return load_from_dict(WorkspaceAssetReferenceSchema, data, context, **kwargs)
 
     def _to_rest_object(self) -> ResourceManagementAssetReferenceData:
         resource_management_details = ResourceManagementAssetReferenceDetails(
@@ -72,9 +72,9 @@ class WorkspaceModelReference(Asset):
         return resource_management
 
     @classmethod
-    def _from_rest_object(cls, resource_object: ResourceManagementAssetReferenceData) -> "WorkspaceModelReference":
+    def _from_rest_object(cls, resource_object: ResourceManagementAssetReferenceData) -> "WorkspaceAssetReference":
 
-        resource_management = WorkspaceModelReference(
+        resource_management = WorkspaceAssetReference(
             name=resource_object.properties.destination_name,
             version=resource_object.properties.destination_version,
             asset_id=resource_object.properties.source_asset_id,
@@ -84,4 +84,4 @@ class WorkspaceModelReference(Asset):
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
-        return WorkspaceModelReferenceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return WorkspaceAssetReferenceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

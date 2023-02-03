@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0 (Unreleased)
 
 ### Features Added
   - Added new `on_error` parameter to the `upload` method to allow users to handle errors in their own way.
