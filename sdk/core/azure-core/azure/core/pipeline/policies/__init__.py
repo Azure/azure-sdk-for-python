@@ -28,6 +28,7 @@ from ._base import HTTPPolicy, SansIOHTTPPolicy, RequestHistory
 from ._authentication import (
     BearerTokenCredentialPolicy,
     AzureKeyCredentialPolicy,
+    AzureDuoKeyCredentialPolicy,
     AzureSasCredentialPolicy,
 )
 from ._custom_hook import CustomHookPolicy
@@ -53,6 +54,7 @@ __all__ = [
     "SansIOHTTPPolicy",
     "BearerTokenCredentialPolicy",
     "AzureKeyCredentialPolicy",
+    "AzureDuoKeyCredentialPolicy",
     "AzureSasCredentialPolicy",
     "HeadersPolicy",
     "UserAgentPolicy",

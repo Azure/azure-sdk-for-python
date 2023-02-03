@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `AzureDuoKeyCredential` and its respective policy.
+
 ### Breaking Changes
 
 ### Bugs Fixed

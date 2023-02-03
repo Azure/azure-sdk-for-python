@@ -51,6 +51,7 @@ __all__ = [
     "AzureSasCredential",
     "AccessToken",
     "AzureNamedKeyCredential",
+    "AzureDuoKeyCredential",
     "TokenCredential",
 ]
 
@@ -90,6 +91,70 @@ class AzureKeyCredential:
         if not isinstance(key, str):
             raise TypeError("The key used for updating must be a string.")
         self._key = key
+
+
+class AzureDuoKeyCredential:
+    """Credential type used for authenticating to an Azure service.
+    It provides the ability to store two keys with custom headers for a client.
+
+    :param str header1: The first header value.
+    :param str key1: The first key used to authenticate to an Azure service.
+    :param str header2: The second header value.
+    :param str key2: The second key used to authenticate to an Azure service.
+    """
+
+    def __init__(self, header1: str, key1: str, header2: str, key2: str) -> None:
+        self._header1 = header1
+        self._key1 = key1
+        self._header2 = header2
+        self._key2 = key2
+
+    def get_key(self, header: str) -> str:
+        """The value of specified header. If header is not found, raise ValueError.
+
+        :param str header: The header of the key to get. It is case-insensitive.
+        :rtype: str
+        :raises: ValueError
+        """
+        if self._header1.lower() == header.lower():
+            return self._key1
+        if self._header2.lower() == header.lower():
+            return self._key2
+        raise ValueError("The header {} is not found.".format(header))
+
+    @property
+    def header1(self) -> str:
+        """The value of header1.
+
+        :rtype: str
+        """
+        return self._header1
+
+    @property
+    def header2(self) -> str:
+        """The value of header2.
+
+        :rtype: str
+        """
+        return self._header2
+
+    def update(self, header: str, key: str) -> None:
+        """Update the key with specified header. If header is not found, raise ValueError.
+
+        This can be used when you've regenerated your service key and want
+        to update long-lived clients.
+
+        :param str header: The header of the key to update. It is case-insensitive.
+        :param str key: The key used to authenticate to an Azure service
+        :raises: ValueError
+        """
+        if self._header1.lower() == header.lower():
+            self._key1 = key
+            return
+        if self._header2.lower() == header.lower():
+            self._key2 = key
+            return
+        raise ValueError("The header {} is not found.".format(header))
 
 
 class AzureSasCredential:

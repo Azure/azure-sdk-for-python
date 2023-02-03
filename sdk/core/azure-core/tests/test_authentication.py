@@ -6,7 +6,13 @@
 import time
 from itertools import product
 import azure.core
-from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureKeyCredential,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+    AzureDuoKeyCredential,
+)
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -14,6 +20,7 @@ from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     AzureKeyCredentialPolicy,
     AzureSasCredentialPolicy,
+    AzureDuoKeyCredentialPolicy,
 )
 from utils import HTTP_REQUESTS
 
@@ -320,6 +327,53 @@ def test_azure_key_credential_updates():
     api_key = "new"
     credential.update(api_key)
     assert credential.key == api_key
+
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_azure_duo_key_credential_policy(http_request):
+    """Tests to see if we can create an AzureDuoKeyCredentialPolicy"""
+
+    key_header1 = "api_key1"
+    api_key1 = "test_key1"
+    key_header2 = "api_key2"
+    api_key2 = "test_key2"
+
+    def verify_authorization_header(request):
+        assert request.headers[key_header1] == api_key1
+        assert request.headers[key_header2] == api_key2
+
+    transport = Mock(send=verify_authorization_header)
+    credential = AzureDuoKeyCredential(
+        header1=key_header1, key1=api_key1, header2=key_header2, key2=api_key2
+    )
+    credential_policy = AzureDuoKeyCredentialPolicy(credential=credential)
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(http_request("GET", "https://test_key_credential"))
+
+
+def test_azure_duo_key_credential_updates():
+    """Tests AzureKeyCredential updates"""
+    key_header1 = "api_key1"
+    api_key1 = "test_key1"
+    key_header2 = "api_key2"
+    api_key2 = "test_key2"
+
+    credential = AzureDuoKeyCredential(
+        header1=key_header1, key1=api_key1, header2=key_header2, key2=api_key2
+    )
+    assert credential.get_key(key_header1) == api_key1
+    assert credential.get_key(key_header2) == api_key2
+
+    api_key = "new"
+    credential.update(key_header1, api_key)
+    assert credential.get_key(key_header1) == api_key
+    assert credential.get_key(key_header2) == api_key2
+
+    credential.update(key_header2, api_key)
+    assert credential.get_key(key_header1) == api_key
+    assert credential.get_key(key_header2) == api_key
+
 
 combinations = [
     ("sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),

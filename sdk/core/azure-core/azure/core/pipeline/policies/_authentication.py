@@ -16,6 +16,7 @@ if TYPE_CHECKING:
         TokenCredential,
         AzureKeyCredential,
         AzureSasCredential,
+        AzureDuoKeyCredential,
     )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
 
@@ -196,6 +197,26 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def on_request(self, request):
         request.http_request.headers[self._name] = self._credential.key
+
+
+class AzureDuoKeyCredentialPolicy(SansIOHTTPPolicy):
+    """Adds two key headers for the provided credential.
+
+    :param credential: The credential used to authenticate requests.
+    :type credential: ~azure.core.credentials.AzureDuoKeyCredential
+    """
+
+    def __init__(
+        self,
+        credential: "AzureDuoKeyCredential",
+        **kwargs  # pylint: disable=unused-argument
+    ) -> None:
+        super(AzureDuoKeyCredentialPolicy, self).__init__()
+        self._credential = credential
+
+    def on_request(self, request):
+        request.http_request.headers[self._credential.header1] = self._credential.get_key(self._credential.header1)
+        request.http_request.headers[self._credential.header2] = self._credential.get_key(self._credential.header2)
 
 
 class AzureSasCredentialPolicy(SansIOHTTPPolicy):
