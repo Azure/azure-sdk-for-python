@@ -276,6 +276,8 @@ class ArmConstants(object):
     DEFAULT_TIMEOUT = 30
     DEFAULT_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
     METADATA_URL_ENV_NAME = "ARM_CLOUD_METADATA_URL"
+    REGISTRY_DISCOVERY_DEFAULT_REGION = "west"
+    REGISTRY_DISCOVERY_REGION_ENV_NAME = "REGISTRY_DISCOVERY_ENDPOINT_REGION"
 
 
 class HttpResponseStatusCode(object):

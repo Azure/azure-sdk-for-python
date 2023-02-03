@@ -227,10 +227,12 @@ def _convert_arm_to_cli(arm_cloud_metadata):
     cli_cloud_metadata_dict = {}
     if isinstance(arm_cloud_metadata, dict):
         arm_cloud_metadata = [arm_cloud_metadata]
+        
     for cloud in arm_cloud_metadata:
         try:
+            registry_discovery_region = os.environ.get(ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME, ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION)
             portal_endpoint = cloud["portal"]
-            cloud_suffix = portal_endpoint.split('.')[2]
+            cloud_suffix = ".".join(portal_endpoint.split('.')[2:]).replace("/", "")
             cloud_name = cloud['name']
             cli_cloud_metadata_dict[cloud_name] = {
                 EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud["portal"],
@@ -238,9 +240,13 @@ def _convert_arm_to_cli(arm_cloud_metadata):
                 EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud["authentication"]["loginEndpoint"],
                 EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.{}".format(cloud_suffix),
                 EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"],
-                EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://{}west.api.azureml.{}/".format(cloud_name.lower(), cloud_suffix)
+                EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://{}{}.api.azureml.{}/".format(
+                    cloud_name.lower(),
+                    registry_discovery_region,
+                    cloud_suffix
+                )
             }
         except KeyError as ex:
-            module_logger.warning("Property on cloud not found in arm cloud metadata: {}".format(ex))
+            module_logger.warning("Property on cloud not found in arm cloud metadata: %s", ex)
             continue
     return cli_cloud_metadata_dict
