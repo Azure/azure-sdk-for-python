@@ -55,10 +55,6 @@ class HTTPPolicy(abc.ABC, Generic[HTTPRequestTypeVar, HTTPResponseTypeVar]):
     """An HTTP policy ABC.
 
     Use with a synchronous pipeline.
-
-    :param next: Use to process the next policy in the pipeline. Set when pipeline is
-     instantiated and all policies chained.
-    :type next: ~azure.core.pipeline.policies.HTTPPolicy or ~azure.core.pipeline.transport.HttpTransport
     """
 
     next: "HTTPPolicy[HTTPRequestTypeVar, HTTPResponseTypeVar]"
