@@ -35,22 +35,16 @@ def main():
     logging.basicConfig(level=logging.DEBUG)
     LOG = logging.getLogger()
 
-    # Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-    # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, DEVCENTER_NAME
+    # Set the values of the dev center endpoint, client ID, and client secret of the AAD application as environment variables:
+    # DEVCENTER_ENDPOINT, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
     try:
-        tenant_id = os.environ["AZURE_TENANT_ID"]
+        endpoint = os.environ["DEVCENTER_ENDPOINT"]
     except KeyError:
-        LOG.error("Missing environment variable 'AZURE_TENANT_ID' - please set if before running the example")
-        exit()
-
-    try:
-        dev_center_name = os.environ["DEVCENTER_NAME"]
-    except KeyError:
-        LOG.error("Missing environment variable 'DEVCENTER_NAME' - please set if before running the example")
+        LOG.error("Missing environment variable 'DEVCENTER_ENDPOINT' - please set it before running the example")
         exit()
 
     # Build a client through AAD
-    client = DevCenterClient(tenant_id, dev_center_name, credential=DefaultAzureCredential())
+    client = DevCenterClient(endpoint, credential=DefaultAzureCredential())
 
     # Fetch control plane resource dependencies
     target_project_name = list(client.dev_center.list_projects(top=1))[0]['name']
@@ -64,12 +58,6 @@ def main():
     environment_result = create_response.result()
 
     LOG.info(f"Provisioned environment with status {environment_result['provisioningState']}.")
-
-    # Fetch deployment artifacts
-    artifact_response = client.environments.list_artifacts_by_environment(target_project_name, "Dev_Environment")
-
-    for artifact in artifact_response:
-        LOG.info(artifact)
 
     # Tear down the environment when finished
     delete_response = client.environments.begin_delete_environment(target_project_name, "Dev_Environment")

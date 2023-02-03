@@ -12,16 +12,14 @@ from datetime import timezone
 
 
 __all__ = ["NULL", "AzureJSONEncoder"]
-TZ_UTC = timezone.utc  # type: ignore
+TZ_UTC = timezone.utc
 
 
-class _Null(object):
+class _Null:
     """To create a Falsy object"""
 
     def __bool__(self):
         return False
-
-    __nonzero__ = __bool__  # Python2 compatibility
 
 
 NULL = _Null()
@@ -31,8 +29,7 @@ with no data. This gets serialized to `null` on the wire.
 """
 
 
-def _timedelta_as_isostr(td):
-    # type: (timedelta) -> str
+def _timedelta_as_isostr(td: timedelta) -> str:
     """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
 
     Function adapted from the Tin Can Python project: https://github.com/RusticiSoftware/TinCanPython
@@ -82,8 +79,7 @@ def _timedelta_as_isostr(td):
     return "P" + date_str + time_str
 
 
-def _datetime_as_isostr(dt):
-    # type: (Union[datetime, date, time, timedelta]) -> str
+def _datetime_as_isostr(dt: Union[datetime, date, time, timedelta]) -> str:
     """Converts a datetime.(datetime|date|time|timedelta) object into an ISO 8601 formatted string"""
     # First try datetime.datetime
     if hasattr(dt, "year") and hasattr(dt, "hour"):

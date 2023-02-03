@@ -7,7 +7,6 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._schema.pipeline import pipeline_job
 from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
@@ -25,25 +24,12 @@ omit_fields = [
 ]
 
 
-@pytest.fixture()
-def update_pipeline_schema():
-    # Update the job type that the pipeline is supported.
-    schema = pipeline_job.PipelineJobSchema
-    original_jobs = schema._declared_fields["jobs"]
-    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
-
-    try:
-        yield
-    finally:
-        schema._declared_fields["jobs"] = original_jobs
-
-
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_code_hash",
     "enable_pipeline_private_preview_features",
     "enable_private_preview_schema_features",
-    "update_pipeline_schema",
+    "enable_private_preview_pipeline_node_types",
     "mock_asset_name",
     "mock_component_hash",
 )
@@ -138,7 +124,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
         pipeline_job = load_job(
-            "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
@@ -152,7 +138,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
     def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
         pipeline_job = load_job(
-            "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline_with_primitive_inputs.yml",
+            "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline_with_primitive_inputs.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
@@ -222,3 +208,42 @@ class TestParallelFor(TestConditionalNodeInPipeline):
             'type': 'parallel_for'
         }
         assert_foreach(client, randstr("job_name"), source, expected_node)
+
+
+def assert_control_flow_in_pipeline_component(client, component_path, pipeline_path):
+    params_override = [{"component": component_path}]
+    pipeline_job = load_job(
+        pipeline_path,
+        params_override=params_override,
+    )
+    created_pipeline = assert_job_cancel(pipeline_job, client)
+    pipeline_job_dict = created_pipeline._to_rest_object().as_dict()
+
+    pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+    assert pipeline_job_dict["properties"]["jobs"] == {}
+
+
+class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
+    def test_if_else(self, client: MLClient, randstr: Callable[[], str]):
+        assert_control_flow_in_pipeline_component(
+            client=client,
+            component_path="./if_else/simple_pipeline.yml",
+            pipeline_path="./tests/test_configs/pipeline_jobs/control_flow/control_flow_with_pipeline_component.yml"
+        )
+
+    @pytest.mark.skip(
+        reason="TODO(2177353): check why recorded tests failure."
+    )
+    def test_do_while(self, client: MLClient, randstr: Callable[[], str]):
+        assert_control_flow_in_pipeline_component(
+            client=client,
+            component_path="./do_while/pipeline_component.yml",
+            pipeline_path="./tests/test_configs/pipeline_jobs/control_flow/control_flow_with_pipeline_component.yml"
+        )
+
+    def test_foreach(self, client: MLClient, randstr: Callable[[], str]):
+        assert_control_flow_in_pipeline_component(
+            client=client,
+            component_path="./parallel_for/simple_pipeline.yml",
+            pipeline_path="./tests/test_configs/pipeline_jobs/control_flow/control_flow_with_pipeline_component.yml"
+        )
