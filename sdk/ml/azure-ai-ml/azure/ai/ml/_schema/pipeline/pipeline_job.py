@@ -8,7 +8,6 @@ import logging
 
 from marshmallow import INCLUDE, ValidationError, post_load, pre_dump, pre_load
 
-from azure.ai.ml._schema._utils.data_binding_expression import _add_data_binding_to_field
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     ComputeField,
@@ -36,7 +35,8 @@ class PipelineJobSchema(BaseJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.PIPELINE])
     compute = ComputeField()
     settings = NestedField(PipelineJobSettingsSchema, unknown=INCLUDE)
-    inputs = InputsField()
+    # Support databinding in inputs as we support macro like ${{name}}
+    inputs = InputsField(support_databinding=True)
     outputs = OutputsField()
     jobs = PipelineJobsField()
     component = UnionField(
@@ -49,11 +49,6 @@ class PipelineJobSchema(BaseJobSchema):
             PipelineComponentFileRefField(),
         ],
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Support databinding in inputs as we support macro like ${{name}}
-        _add_data_binding_to_field(self.load_fields["inputs"], [], [])
 
     @pre_dump()
     def backup_jobs_and_remove_component(self, job, **kwargs):

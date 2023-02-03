@@ -7,6 +7,8 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+
+from azure.ai.ml.constants._job import PipelineConstants
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
@@ -2162,6 +2164,24 @@ class TestDSLPipeline:
                            match="pipeline_with_variable_args\(\) got multiple values for argument 'key_1'\."):
             pipeline_with_variable_args(10, key_1=10)
 
+    def test_pipeline_with_output_binding_in_dynamic_args(self):
+        hello_world_func = load_component(components_dir / "helloworld_component.yml")
+        hello_world_no_inputs_func = load_component(components_dir / "helloworld_component_no_inputs.yml")
+
+        @dsl.pipeline
+        def pipeline_func_consume_dynamic_arg(**kwargs):
+            hello_world_func(component_in_number=kwargs["int_param"], component_in_path=kwargs["path_param"])
+
+        @dsl.pipeline
+        def root_pipeline_func():
+            node = hello_world_no_inputs_func()
+            kwargs = {"int_param": 0, "path_param": node.outputs.component_out_path}
+            pipeline_func_consume_dynamic_arg(**kwargs)
+
+        pipeline_job = root_pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        assert pipeline_job._customized_validate().passed is True
+
     def test_condition_node_consumption(self):
         from azure.ai.ml.dsl._condition import condition
 
@@ -2596,3 +2616,25 @@ class TestDSLPipeline:
             'description': 'new description', 'job_output_type': 'uri_folder', 'mode': 'Upload'
         }}
         assert pipeline_job._to_rest_object().as_dict()["properties"]["outputs"] == expected_outputs
+
+    def test_dsl_pipeline_run_settings(self) -> None:
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline() -> Output(type="uri_folder", description="new description", mode="upload"):
+            node = hello_world_component_func(component_in_path=Input(path="path/on/ds"), component_in_number=10)
+            return {"output": node.outputs.component_out_path}
+
+        pipeline_job: PipelineJob = my_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job.settings.continue_on_step_failure = True
+        pipeline_job.settings.continue_run_on_failed_optional_input = False
+
+        assert pipeline_job._to_rest_object().properties.settings == {
+            PipelineConstants.DEFAULT_COMPUTE: "cpu-cluster",
+            PipelineConstants.CONTINUE_ON_STEP_FAILURE: True,
+            PipelineConstants.CONTINUE_RUN_ON_FAILED_OPTIONAL_INPUT: False,
+            "_source": "DSL"
+        }
+

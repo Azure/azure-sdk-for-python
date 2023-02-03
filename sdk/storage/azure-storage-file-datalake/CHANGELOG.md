@@ -13,6 +13,10 @@
 - Added ability to perform leasing actions on file append and flush. See new keyword `lease_action` for details.
 - Added support for `AsyncIterable` as data type for async file upload.
 
+### Bugs Fixed
+- Fixed an issue where `rename_file` and `rename_directory` would not work correctly if the new file/directory name
+contained a `?` character.
+
 ### Other Changes
 - Removed `msrest` dependency.
 - Added `typing-extensions>=4.0.1` as a dependency.

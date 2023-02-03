@@ -24,8 +24,10 @@ from azure.storage.filedatalake import (
     ContentSettings,
     EncryptionScopeOptions,
     FileSasPermissions,
+    FileSystemSasPermissions,
     generate_account_sas,
     generate_file_sas,
+    generate_file_system_sas,
     ResourceTypes
 )
 from azure.storage.filedatalake.aio import DataLakeDirectoryClient, DataLakeFileClient, DataLakeServiceClient, FileSystemClient
@@ -1264,6 +1266,67 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
+    async def test_rename_file_different_filesystem_with_sas(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        # Use filesystem SAS without access to new filesystem
+        existing_sas = self.generate_sas(
+            generate_file_system_sas,
+            self.dsc.account_name,
+            self.file_system_name,
+            self.dsc.credential.account_key,
+            FileSystemSasPermissions(write=True, read=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        file_client = DataLakeFileClient(self.dsc.url, self.file_system_name, "oldfile", credential=existing_sas)
+        await file_client.create_file()
+        await file_client.append_data(b"abc", 0, 3, flush=True)
+
+        # Create another filesystem to rename to
+        new_file_system = self.dsc.get_file_system_client(self.file_system_name + '2')
+        await new_file_system.create_file_system()
+
+        # Get different SAS to new file system
+        new_sas = self.generate_sas(
+            generate_file_system_sas,
+            self.dsc.account_name,
+            new_file_system.file_system_name,
+            self.dsc.credential.account_key,
+            FileSystemSasPermissions(write=True, read=True, delete=True),
+            datetime.utcnow() + timedelta(hours=1),
+        )
+
+        # ? in new name to test parsing
+        new_name = new_file_system.file_system_name + '/' + 'new?file' + '?' + new_sas
+        new_client = await file_client.rename_file(new_name)
+        new_props = await new_client.get_file_properties()
+
+        assert new_props.name == 'new?file'
+
+        await new_file_system.delete_file_system()
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_rename_file_special_chars(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        file_client = await self._create_file_and_return_client(file="oldfile")
+        await file_client.append_data(b"abc", 0, 3, flush=True)
+
+        new_client = await file_client.rename_file(file_client.file_system_name + '/' + '?!@#$%^&*.?test')
+        new_props = await new_client.get_file_properties()
+
+        assert new_props.name == '?!@#$%^&*.?test'
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_read_file_read(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
@@ -1291,6 +1354,46 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert result == data
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_create_and_read_file_encryption_context(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        # Arrange
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+        url = self.account_url(datalake_storage_account_name, 'dfs')
+        self.dsc = DataLakeServiceClient(url, credential=datalake_storage_account_key)
+        self.file_system_name = self.get_resource_name('filesystem')
+        file_name = 'testfile'
+        file_system = self.dsc.get_file_system_client(self.file_system_name)
+        try:
+            await file_system.create_file_system()
+        except:
+            pass
+        file_client = file_system.get_file_client(file_name)
+
+        # Act
+        await file_client.create_file(encryption_context='encryptionContext')
+
+        properties = await file_client.get_file_properties()
+        read_response = await file_client.download_file()
+        path_response = []
+        async for path in file_system.get_paths():
+            path_response.append(path)
+
+        assert properties
+        assert properties['encryption_context'] is not None
+        assert properties['encryption_context'] == 'encryptionContext'
+
+        assert read_response.properties
+        assert read_response.properties['encryption_context'] is not None
+        assert read_response.properties['encryption_context'] == 'encryptionContext'
+
+        assert path_response[0]['encryption_context']
+        assert path_response[0]['encryption_context'] is not None
+        assert path_response[0]['encryption_context'] == 'encryptionContext'
 
 
 # ------------------------------------------------------------------------------

@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import sys
 from typing import Any, Callable, Dict, IO, Iterator, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -27,6 +28,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -39,9 +44,9 @@ def build_create_request(
     *,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
-    resource: Optional[Union[str, "_models.PathResourceType"]] = None,
+    resource: Optional[Union[str, _models.PathResourceType]] = None,
     continuation: Optional[str] = None,
-    mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
+    mode: Optional[Union[str, _models.PathRenameMode]] = None,
     cache_control: Optional[str] = None,
     content_encoding: Optional[str] = None,
     content_language: Optional[str] = None,
@@ -63,20 +68,21 @@ def build_create_request(
     source_if_unmodified_since: Optional[datetime.datetime] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: str = "AES256",
+    encryption_algorithm: Literal["AES256"] = "AES256",
     owner: Optional[str] = None,
     group: Optional[str] = None,
     acl: Optional[str] = None,
     proposed_lease_id: Optional[str] = None,
     lease_duration: Optional[int] = None,
-    expiry_options: Optional[Union[str, "_models.PathExpiryOptions"]] = None,
+    expiry_options: Optional[Union[str, _models.PathExpiryOptions]] = None,
     expires_on: Optional[str] = None,
+    encryption_context: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -85,7 +91,7 @@ def build_create_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -165,6 +171,8 @@ def build_create_request(
         _headers["x-ms-expiry-option"] = _SERIALIZER.header("expiry_options", expiry_options, "str")
     if expires_on is not None:
         _headers["x-ms-expiry-time"] = _SERIALIZER.header("expires_on", expires_on, "str")
+    if encryption_context is not None:
+        _headers["x-ms-encryption-context"] = _SERIALIZER.header("encryption_context", encryption_context, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -173,8 +181,8 @@ def build_create_request(
 def build_update_request(
     url: str,
     *,
-    action: Union[str, "_models.PathUpdateAction"],
-    mode: Union[str, "_models.PathSetAccessControlRecursiveMode"],
+    action: Union[str, _models.PathUpdateAction],
+    mode: Union[str, _models.PathSetAccessControlRecursiveMode],
     content: IO,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
@@ -206,8 +214,8 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -216,7 +224,7 @@ def build_update_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -284,7 +292,7 @@ def build_update_request(
 def build_lease_request(
     url: str,
     *,
-    x_ms_lease_action: Union[str, "_models.PathLeaseAction"],
+    x_ms_lease_action: Union[str, _models.PathLeaseAction],
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
     x_ms_lease_break_period: Optional[int] = None,
@@ -300,7 +308,7 @@ def build_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -309,7 +317,7 @@ def build_lease_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -357,13 +365,13 @@ def build_read_request(
     if_unmodified_since: Optional[datetime.datetime] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: str = "AES256",
+    encryption_algorithm: Literal["AES256"] = "AES256",
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -372,7 +380,7 @@ def build_read_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -416,7 +424,7 @@ def build_get_properties_request(
     *,
     request_id_parameter: Optional[str] = None,
     timeout: Optional[int] = None,
-    action: Optional[Union[str, "_models.PathGetPropertiesAction"]] = None,
+    action: Optional[Union[str, _models.PathGetPropertiesAction]] = None,
     upn: Optional[bool] = None,
     lease_id: Optional[str] = None,
     if_match: Optional[str] = None,
@@ -428,7 +436,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -437,7 +445,7 @@ def build_get_properties_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -483,7 +491,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -492,7 +500,7 @@ def build_delete_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -540,8 +548,8 @@ def build_set_access_control_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    action = kwargs.pop("action", _params.pop("action", "setAccessControl"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    action: Literal["setAccessControl"] = kwargs.pop("action", _params.pop("action", "setAccessControl"))
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -550,7 +558,7 @@ def build_set_access_control_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["action"] = _SERIALIZER.query("action", action, "str")
@@ -587,7 +595,7 @@ def build_set_access_control_request(
 def build_set_access_control_recursive_request(
     url: str,
     *,
-    mode: Union[str, "_models.PathSetAccessControlRecursiveMode"],
+    mode: Union[str, _models.PathSetAccessControlRecursiveMode],
     timeout: Optional[int] = None,
     continuation: Optional[str] = None,
     force_flag: Optional[bool] = None,
@@ -599,8 +607,10 @@ def build_set_access_control_recursive_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    action = kwargs.pop("action", _params.pop("action", "setAccessControlRecursive"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    action: Literal["setAccessControlRecursive"] = kwargs.pop(
+        "action", _params.pop("action", "setAccessControlRecursive")
+    )
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -609,7 +619,7 @@ def build_set_access_control_recursive_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["action"] = _SERIALIZER.query("action", action, "str")
@@ -644,7 +654,7 @@ def build_flush_data_request(
     content_length: Optional[int] = None,
     content_md5: Optional[bytes] = None,
     lease_id: Optional[str] = None,
-    lease_action: Optional[Union[str, "_models.LeaseAction"]] = None,
+    lease_action: Optional[Union[str, _models.LeaseAction]] = None,
     lease_duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
     cache_control: Optional[str] = None,
@@ -659,14 +669,14 @@ def build_flush_data_request(
     request_id_parameter: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: str = "AES256",
+    encryption_algorithm: Literal["AES256"] = "AES256",
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    action = kwargs.pop("action", _params.pop("action", "flush"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    action: Literal["flush"] = kwargs.pop("action", _params.pop("action", "flush"))
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -675,7 +685,7 @@ def build_flush_data_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["action"] = _SERIALIZER.query("action", action, "str")
@@ -745,22 +755,22 @@ def build_append_data_request(
     transactional_content_hash: Optional[bytes] = None,
     transactional_content_crc64: Optional[bytes] = None,
     lease_id: Optional[str] = None,
-    lease_action: Optional[Union[str, "_models.LeaseAction"]] = None,
+    lease_action: Optional[Union[str, _models.LeaseAction]] = None,
     lease_duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: str = "AES256",
+    encryption_algorithm: Literal["AES256"] = "AES256",
     flush: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    action = kwargs.pop("action", _params.pop("action", "append"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    action: Literal["append"] = kwargs.pop("action", _params.pop("action", "append"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -769,7 +779,7 @@ def build_append_data_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["action"] = _SERIALIZER.query("action", action, "str")
@@ -820,7 +830,7 @@ def build_append_data_request(
 def build_set_expiry_request(
     url: str,
     *,
-    expiry_options: Union[str, "_models.PathExpiryOptions"],
+    expiry_options: Union[str, _models.PathExpiryOptions],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     expires_on: Optional[str] = None,
@@ -829,8 +839,8 @@ def build_set_expiry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "expiry"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -839,7 +849,7 @@ def build_set_expiry_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -869,8 +879,8 @@ def build_undelete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "undelete"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))  # type: str
+    comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
+    version: Literal["2021-06-08"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-06-08"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -879,7 +889,7 @@ def build_undelete_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -921,9 +931,9 @@ class PathOperations:
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
-        resource: Optional[Union[str, "_models.PathResourceType"]] = None,
+        resource: Optional[Union[str, _models.PathResourceType]] = None,
         continuation: Optional[str] = None,
-        mode: Optional[Union[str, "_models.PathRenameMode"]] = None,
+        mode: Optional[Union[str, _models.PathRenameMode]] = None,
         rename_source: Optional[str] = None,
         source_lease_id: Optional[str] = None,
         properties: Optional[str] = None,
@@ -934,8 +944,9 @@ class PathOperations:
         acl: Optional[str] = None,
         proposed_lease_id: Optional[str] = None,
         lease_duration: Optional[int] = None,
-        expiry_options: Optional[Union[str, "_models.PathExpiryOptions"]] = None,
+        expiry_options: Optional[Union[str, _models.PathExpiryOptions]] = None,
         expires_on: Optional[str] = None,
+        encryption_context: Optional[str] = None,
         path_http_headers: Optional[_models.PathHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -1028,6 +1039,9 @@ class PathOperations:
         :type expiry_options: str or ~azure.storage.filedatalake.models.PathExpiryOptions
         :param expires_on: The time to set the blob to expiry. Default value is None.
         :type expires_on: str
+        :param encryption_context: Specifies the encryption context to set on the file. Default value
+         is None.
+        :type encryption_context: str
         :param path_http_headers: Parameter group. Default value is None.
         :type path_http_headers: ~azure.storage.filedatalake.models.PathHTTPHeaders
         :param lease_access_conditions: Parameter group. Default value is None.
@@ -1055,7 +1069,7 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _cache_control = None
         _content_encoding = None
@@ -1125,7 +1139,7 @@ class PathOperations:
             source_if_unmodified_since=_source_if_unmodified_since,
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
-            encryption_algorithm=_encryption_algorithm,
+            encryption_algorithm=_encryption_algorithm,  # type: ignore
             owner=owner,
             group=group,
             acl=acl,
@@ -1133,15 +1147,16 @@ class PathOperations:
             lease_duration=lease_duration,
             expiry_options=expiry_options,
             expires_on=expires_on,
+            encryption_context=encryption_context,
             version=self._config.version,
             template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1170,13 +1185,13 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    create.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def update(
         self,
-        action: Union[str, "_models.PathUpdateAction"],
-        mode: Union[str, "_models.PathSetAccessControlRecursiveMode"],
+        action: Union[str, _models.PathUpdateAction],
+        mode: Union[str, _models.PathSetAccessControlRecursiveMode],
         body: IO,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
@@ -1324,8 +1339,8 @@ class PathOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.SetAccessControlRecursiveResponse]]
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        cls: ClsType[Optional[_models.SetAccessControlRecursiveResponse]] = kwargs.pop("cls", None)
 
         _content_md5 = None
         _lease_id = None
@@ -1391,9 +1406,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1439,12 +1454,12 @@ class PathOperations:
 
         return deserialized
 
-    update.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    update.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def lease(  # pylint: disable=inconsistent-return-statements
         self,
-        x_ms_lease_action: Union[str, "_models.PathLeaseAction"],
+        x_ms_lease_action: Union[str, _models.PathLeaseAction],
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
         x_ms_lease_break_period: Optional[int] = None,
@@ -1508,7 +1523,7 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_match = None
@@ -1542,9 +1557,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1582,7 +1597,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    lease.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    lease.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def read(
@@ -1644,7 +1659,7 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Iterator[bytes]]
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_match = None
@@ -1679,16 +1694,16 @@ class PathOperations:
             if_unmodified_since=_if_unmodified_since,
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
-            encryption_algorithm=_encryption_algorithm,
+            encryption_algorithm=_encryption_algorithm,  # type: ignore
             version=self._config.version,
             template_url=self.read.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=True, **kwargs
         )
 
@@ -1772,18 +1787,18 @@ class PathOperations:
             deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    read.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    read.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
         self,
         request_id_parameter: Optional[str] = None,
         timeout: Optional[int] = None,
-        action: Optional[Union[str, "_models.PathGetPropertiesAction"]] = None,
+        action: Optional[Union[str, _models.PathGetPropertiesAction]] = None,
         upn: Optional[bool] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -1839,7 +1854,7 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_match = None
@@ -1871,9 +1886,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1912,7 +1927,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    get_properties.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1968,7 +1983,7 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_match = None
@@ -2000,9 +2015,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2023,7 +2038,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    delete.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def set_access_control(  # pylint: disable=inconsistent-return-statements
@@ -2087,8 +2102,8 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        action = kwargs.pop("action", _params.pop("action", "setAccessControl"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        action: Literal["setAccessControl"] = kwargs.pop("action", _params.pop("action", "setAccessControl"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_match = None
@@ -2123,9 +2138,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2149,12 +2164,12 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_access_control.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    set_access_control.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def set_access_control_recursive(
         self,
-        mode: Union[str, "_models.PathSetAccessControlRecursiveMode"],
+        mode: Union[str, _models.PathSetAccessControlRecursiveMode],
         timeout: Optional[int] = None,
         continuation: Optional[str] = None,
         force_flag: Optional[bool] = None,
@@ -2219,8 +2234,10 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        action = kwargs.pop("action", _params.pop("action", "setAccessControlRecursive"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SetAccessControlRecursiveResponse]
+        action: Literal["setAccessControlRecursive"] = kwargs.pop(
+            "action", _params.pop("action", "setAccessControlRecursive")
+        )
+        cls: ClsType[_models.SetAccessControlRecursiveResponse] = kwargs.pop("cls", None)
 
         request = build_set_access_control_recursive_request(
             url=self._config.url,
@@ -2238,9 +2255,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2267,7 +2284,7 @@ class PathOperations:
 
         return deserialized
 
-    set_access_control_recursive.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    set_access_control_recursive.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def flush_data(  # pylint: disable=inconsistent-return-statements
@@ -2277,7 +2294,7 @@ class PathOperations:
         retain_uncommitted_data: Optional[bool] = None,
         close: Optional[bool] = None,
         content_length: Optional[int] = None,
-        lease_action: Optional[Union[str, "_models.LeaseAction"]] = None,
+        lease_action: Optional[Union[str, _models.LeaseAction]] = None,
         lease_duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
@@ -2368,8 +2385,8 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        action = kwargs.pop("action", _params.pop("action", "flush"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        action: Literal["flush"] = kwargs.pop("action", _params.pop("action", "flush"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content_md5 = None
         _lease_id = None
@@ -2428,7 +2445,7 @@ class PathOperations:
             request_id_parameter=request_id_parameter,
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
-            encryption_algorithm=_encryption_algorithm,
+            encryption_algorithm=_encryption_algorithm,  # type: ignore
             action=action,
             version=self._config.version,
             template_url=self.flush_data.metadata["url"],
@@ -2436,9 +2453,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2470,7 +2487,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    flush_data.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    flush_data.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def append_data(  # pylint: disable=inconsistent-return-statements
@@ -2480,7 +2497,7 @@ class PathOperations:
         timeout: Optional[int] = None,
         content_length: Optional[int] = None,
         transactional_content_crc64: Optional[bytes] = None,
-        lease_action: Optional[Union[str, "_models.LeaseAction"]] = None,
+        lease_action: Optional[Union[str, _models.LeaseAction]] = None,
         lease_duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
         request_id_parameter: Optional[str] = None,
@@ -2559,9 +2576,9 @@ class PathOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        action = kwargs.pop("action", _params.pop("action", "append"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        action: Literal["append"] = kwargs.pop("action", _params.pop("action", "append"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _transactional_content_hash = None
         _lease_id = None
@@ -2592,7 +2609,7 @@ class PathOperations:
             request_id_parameter=request_id_parameter,
             encryption_key=_encryption_key,
             encryption_key_sha256=_encryption_key_sha256,
-            encryption_algorithm=_encryption_algorithm,
+            encryption_algorithm=_encryption_algorithm,  # type: ignore
             flush=flush,
             action=action,
             content_type=content_type,
@@ -2603,9 +2620,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2639,12 +2656,12 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_data.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    append_data.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def set_expiry(  # pylint: disable=inconsistent-return-statements
         self,
-        expiry_options: Union[str, "_models.PathExpiryOptions"],
+        expiry_options: Union[str, _models.PathExpiryOptions],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         expires_on: Optional[str] = None,
@@ -2685,8 +2702,8 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "expiry"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_set_expiry_request(
             url=self._config.url,
@@ -2701,9 +2718,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2727,7 +2744,7 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    set_expiry.metadata = {"url": "{url}/{filesystem}/{path}"}
 
     @distributed_trace
     def undelete(  # pylint: disable=inconsistent-return-statements
@@ -2770,8 +2787,8 @@ class PathOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "undelete"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_undelete_request(
             url=self._config.url,
@@ -2785,9 +2802,9 @@ class PathOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2810,4 +2827,4 @@ class PathOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {"url": "{url}/{filesystem}/{path}"}  # type: ignore
+    undelete.metadata = {"url": "{url}/{filesystem}/{path}"}

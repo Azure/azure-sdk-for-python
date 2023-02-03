@@ -7,7 +7,6 @@
 import datetime
 from typing import (
     Any,
-    Dict,
     Iterable,
     Iterator,
     Mapping,
@@ -15,10 +14,11 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    Dict,
 )
 from datetime import timezone
 
-TZ_UTC = timezone.utc  # type: ignore
+TZ_UTC = timezone.utc
 
 
 class _FixedOffset(datetime.tzinfo):

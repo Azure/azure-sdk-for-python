@@ -1344,6 +1344,26 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
+    def test_pipeline_job_with_singularity_compute(self, client: MLClient, randstr: Callable[[str], str]):
+        params_override = [{"name": randstr("job_name")}]
+        pipeline_job: PipelineJob = load_job(
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_singularity_compute.yml",
+            params_override=params_override,
+        )
+
+        singularity_compute_id = (
+            f"/subscriptions/{client.subscription_id}/resourceGroups/{client.resource_group_name}/"
+            f"providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
+        )
+        pipeline_job.settings.default_compute = singularity_compute_id
+        pipeline_job.jobs["hello_job"].compute = singularity_compute_id
+
+        assert pipeline_job._customized_validate().passed is True
+
+        created_pipeline_job: PipelineJob = assert_job_cancel(pipeline_job, client)
+        assert created_pipeline_job.settings.default_compute == singularity_compute_id
+        assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
+
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
