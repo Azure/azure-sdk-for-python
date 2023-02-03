@@ -227,10 +227,13 @@ def _convert_arm_to_cli(arm_cloud_metadata):
     cli_cloud_metadata_dict = {}
     if isinstance(arm_cloud_metadata, dict):
         arm_cloud_metadata = [arm_cloud_metadata]
-        
+
     for cloud in arm_cloud_metadata:
         try:
-            registry_discovery_region = os.environ.get(ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME, ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION)
+            registry_discovery_region = os.environ.get(
+                ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
+                ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
+            )
             portal_endpoint = cloud["portal"]
             cloud_suffix = ".".join(portal_endpoint.split('.')[2:]).replace("/", "")
             cloud_name = cloud['name']
