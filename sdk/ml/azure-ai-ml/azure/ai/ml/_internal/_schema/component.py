@@ -5,13 +5,13 @@ import os.path
 
 import pydash
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
-import strictyaml
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
 from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType, SOURCE_PATH_CONTEXT_KEY
 
+from .._utils import yaml_safe_load_with_base_resolver
 from ..._utils._arm_id_utils import parse_name_label
 from .environment import InternalEnvironmentSchema
 from .input_output import (
@@ -44,15 +44,6 @@ class NodeType:
             if not key.startswith("_") and isinstance(value, str):
                 all_values.append(value)
         return all_values
-
-
-class _SafeLoaderWithBaseLoader(strictyaml.ruamel.SafeLoader):
-    def fetch_comment(self, comment):
-        pass
-
-    def add_version_implicit_resolver(self, version, tag, regexp, first):
-        """Overwrite the method to use base resolver instead of version default resolver."""
-        self._version_implicit_resolver.setdefault(version, {})
 
 
 class InternalComponentSchema(ComponentSchema):
@@ -129,7 +120,7 @@ class InternalComponentSchema(ComponentSchema):
         if source_path and os.path.isfile(source_path):
             # do override here
             with open(source_path, "r") as f:
-                origin_data = strictyaml.ruamel.load(f, Loader=_SafeLoaderWithBaseLoader)
+                origin_data = yaml_safe_load_with_base_resolver(f)
                 for dot_key in ["version", "inputs", "outputs"]:
                     if pydash.has(origin_data, dot_key):
                         pydash.set_(data, dot_key, pydash.get(origin_data, dot_key))

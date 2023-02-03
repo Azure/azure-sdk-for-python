@@ -14,6 +14,8 @@ import pydash
 import pytest
 import yaml
 from pytest_mock import MockFixture
+
+from azure.ai.ml._internal._utils import yaml_safe_load_with_base_resolver
 from test_utilities.utils import parse_local_path, build_temp_folder
 
 from azure.ai.ml import load_component
@@ -706,8 +708,8 @@ class TestComponent:
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
-                # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
-                "param_string_with_yes_value": {"default": "true", "type": "string"},
+                # yes will be converted to true in YAML 1.2, but we will load it as "yes" for backward compatibility
+                "param_string_with_yes_value": {"default": "yes", "type": "string"},
                 "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
             },
             "outputs": {
