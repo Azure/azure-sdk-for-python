@@ -1,5 +1,14 @@
 # Release History
 
+## 23.0.0 (2023-02-03)
+
+### Features Added
+
+  - Model NspAccessRule has a new parameter email_addresses
+  - Model NspAccessRule has a new parameter phone_numbers
+  - Model NspLink has a new parameter remote_perimeter_location
+  - Model NspLinkReference has a new parameter remote_perimeter_location
+
 ## 23.0.0b1 (2022-12-19)
 
 ### Other Changes
