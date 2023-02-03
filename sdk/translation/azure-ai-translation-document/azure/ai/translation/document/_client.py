@@ -12,6 +12,7 @@ from azure.core.credentials import AzureKeyCredential
 from ._generated import (
     BatchDocumentTranslationClient as _BatchDocumentTranslationClient,
 )
+from ._generated.models import StartTranslationDetails
 from ._models import (
     TranslationStatus,
     DocumentStatus,
@@ -31,6 +32,7 @@ from ._helpers import (
     get_translation_input,
     POLLING_INTERVAL,
 )
+from ._api_version import DocumentTranslationApiVersion
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
@@ -81,6 +83,7 @@ class DocumentTranslationClient:
         self._credential = credential
         self._api_version = kwargs.pop("api_version", None)
         if hasattr(self._api_version, "value"):
+            self._api_version = cast(DocumentTranslationApiVersion, self._api_version)
             self._api_version = self._api_version.value
         authentication_policy = get_authentication_policy(credential)
         polling_interval = kwargs.pop("polling_interval", POLLING_INTERVAL)
@@ -276,7 +279,7 @@ class DocumentTranslationClient:
         callback = kwargs.pop("cls", deserialization_callback)
         return cast(DocumentTranslationLROPoller[ItemPaged[DocumentStatus]],
             self._client.document_translation.begin_start_translation(
-                inputs=inputs if not continuation_token else None,
+                body=StartTranslationDetails(inputs=inputs),
                 polling=DocumentTranslationLROPollingMethod(
                     timeout=polling_interval,
                     lro_algorithms=[TranslationPolling()],
@@ -398,7 +401,7 @@ class DocumentTranslationClient:
                 order_by=order_by,
                 statuses=statuses,
                 top=top,
-                skip=skip,
+                skip=skip,  # type: ignore
                 **kwargs
             )
         )
@@ -481,7 +484,7 @@ class DocumentTranslationClient:
                 order_by=order_by,
                 statuses=statuses,
                 top=top,
-                skip=skip,
+                skip=skip,  # type: ignore
                 **kwargs
             )
         )
