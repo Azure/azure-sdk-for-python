@@ -205,11 +205,11 @@ def _get_clouds_by_metadata_url(metadata_url, timeout=ArmConstants.DEFAULT_TIMEO
     import requests
 
     try:
-        module_logger.debug('Start : Loading cloud metadata from the url specified by {0}'.format(metadata_url))
+        module_logger.debug('Start : Loading cloud metadata from the url specified by %s', metadata_url)
         with requests.get(metadata_url, timeout=timeout) as meta_response:
             arm_cloud_dict = meta_response.json()
             cli_cloud_dict = _convert_arm_to_cli(arm_cloud_dict)
-            module_logger.debug('Finish : Loading cloud metadata from the url specified by {0}'.format(metadata_url))
+            module_logger.debug('Finish : Loading cloud metadata from the url specified by %s', metadata_url)
             return cli_cloud_dict
     except Exception as ex:  # pylint: disable=broad-except
         module_logger.warning("Error: Azure ML was unable to load cloud metadata from the url specified by %s. %s. "
