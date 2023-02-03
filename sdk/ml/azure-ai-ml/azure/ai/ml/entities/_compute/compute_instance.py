@@ -132,21 +132,22 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
-    :param idle_time_before_shutdown: Deprecated. Use :param: `idle_time_before_shutdown_minutes` instead.
+    :param idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
         Stops compute instance after user defined period of inactivity.
-        Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+        Time is defined in ISO8601 format. Minimum is 15 minutes, maximum is 3 days.
     :type idle_time_before_shutdown: Optional[str], optional
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
-        inactivity in minutes. Minimum is 15 min, maximum is 3 days.
+        inactivity in minutes. Minimum is 15 minutes, maximum is 3 days.
     :type idle_time_before_shutdown_minutes: Optional[int], optional
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
         True - Indicates that the compute nodes will have public IPs provisioned.
         False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Default Value: True.
     :type enable_node_public_ip: Optional[bool], optional
-    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
+    :param setup_scripts: Experimental. Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[SetupScripts], optional
-    :param custom_applications: Describes available applications and their endpoints on this ComputeInstance.
+    :param custom_applications: Experimental. List of custom applications and their endpoints
+        for the compute instance.
     :type custom_applications: Optional[List[CustomApplications]], optional
     """
 
@@ -166,6 +167,7 @@ class ComputeInstance(Compute):
         idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
         enable_node_public_ip: bool = True,
+        custom_applications: Optional[List[CustomApplications]] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -173,7 +175,6 @@ class ComputeInstance(Compute):
         self._last_operation = kwargs.pop("last_operation", None)
         self._os_image_metadata = kwargs.pop("os_image_metadata", None)
         self._services = kwargs.pop("services", None)
-        self.custom_applications = kwargs.pop("custom_applications", None)
         super().__init__(
             name=name,
             location=kwargs.pop("location", None),
@@ -192,6 +193,7 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
         self.enable_node_public_ip = enable_node_public_ip
+        self.custom_applications = custom_applications
         self.subnet = None
 
     @property
