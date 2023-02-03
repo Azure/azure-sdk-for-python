@@ -1,14 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import os.path
+
 import pydash
-import yaml
 from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
+import strictyaml
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
-from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType
+from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType, SOURCE_PATH_CONTEXT_KEY
 
 from ..._utils._arm_id_utils import parse_name_label
 from .environment import InternalEnvironmentSchema
@@ -42,6 +44,15 @@ class NodeType:
             if not key.startswith("_") and isinstance(value, str):
                 all_values.append(value)
         return all_values
+
+
+class _SafeLoaderWithBaseLoader(strictyaml.ruamel.SafeLoader):
+    def fetch_comment(self, comment):
+        pass
+
+    def add_version_implicit_resolver(self, version, tag, regexp, first):
+        """Overwrite the method to use base resolver instead of version default resolver."""
+        self._version_implicit_resolver.setdefault(version, {})
 
 
 class InternalComponentSchema(ComponentSchema):
@@ -111,29 +122,18 @@ class InternalComponentSchema(ComponentSchema):
                 ret[attr_name] = self.get_attribute(obj, attr_name, None)
         return ret
 
-    @pre_load()
-    def convert_input_value_to_str(self, data: dict, **kwargs) -> dict:
-        """
-        Convert the non-str value in input to str.
-
-        When load the v1.5 component yaml, true/false will be converted to bool type and yyyy-mm-dd will be
-        converted to date type. In order to be consistent with before, it needs to be converted to str type.
-        """
-        def convert_to_str(value):
-            if isinstance(value, bool):
-                return str(value).lower()
-            return str(value)
-
-        if "inputs" in data and isinstance(data["inputs"], dict):
-            for input_port in data["inputs"].values():
-                input_type = input_port["type"]
-                # input type can be a list for internal component
-                if isinstance(input_type, str) and input_type.lower() in ["string", "enum"]:
-                    if not isinstance(input_port.get("default", ""), str):
-                        input_port["default"] = convert_to_str(input_port["default"])
-                    if "enum" in input_port and any([not isinstance(item, str) for item in input_port["enum"]]):
-                        input_port["enum"] = [convert_to_str(item) for item in input_port["enum"]]
-        return data
+    # override param_override to ensure that param override happens after reloading the yaml
+    @pre_load
+    def add_param_overrides(self, data, **kwargs):
+        source_path = self.context.pop(SOURCE_PATH_CONTEXT_KEY, None)
+        if source_path and os.path.isfile(source_path):
+            # do override here
+            with open(source_path, "r") as f:
+                origin_data = strictyaml.ruamel.load(f, Loader=_SafeLoaderWithBaseLoader)
+                for dot_key in ["version", "inputs", "outputs"]:
+                    if pydash.has(origin_data, dot_key):
+                        pydash.set_(data, dot_key, pydash.get(origin_data, dot_key))
+        return super().add_param_overrides(data, **kwargs)
 
     @post_dump(pass_original=True)
     def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
@@ -154,25 +154,4 @@ class InternalComponentSchema(ComponentSchema):
         type_label = original._type_label  # pylint:disable=protected-access
         if type_label:
             data["type"] = LABELLED_RESOURCE_NAME.format(data["type"], type_label)
-        return data
-
-    @post_dump(pass_original=True)
-    def load_original_string_value(self, data: dict, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
-        if not original._source_path:  # pylint:disable=protected-access
-            return data
-        with open(original._source_path, "r") as f:  # pylint:disable=protected-access
-            # TODO: this is not safe. We'd better use a customized yaml loader to load the original string value.
-            # TODO: it will ignore params override. need to handle it somewhere
-            origin_data = yaml.load(f, Loader=yaml.BaseLoader)  # pylint:disable=protected-access
-        # safe loader will load version 0.10 as 0.1, so need to convert it back
-        data["version"] = origin_data["version"]
-
-        for port_name, port_definition in data["inputs"].items():
-            input_type = port_definition.get("type", None)
-            is_float_type = isinstance(input_type, str) and input_type.lower() == "float"
-            for key in ["default", "min", "max"]:
-                if key in port_definition:
-                    value = pydash.get(origin_data, f"inputs.{port_name}.{key}")
-                    # Keep value in float input as string to avoid precision issue.
-                    data["inputs"][port_name][key] = str(value) if is_float_type else value
         return data
