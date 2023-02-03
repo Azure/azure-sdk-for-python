@@ -88,6 +88,7 @@ from ..exceptions import (
 )
 
 if TYPE_CHECKING:
+    from .._servicebus_receiver import ServiceBusReceiver
     from .._common.message import ServiceBusReceivedMessage
 
 _LOGGER = logging.getLogger(__name__)
@@ -585,7 +586,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
         )
 
-    #@staticmethod
+    # TODO: ask why this is a callable.
+    @staticmethod
     def on_attach(receiver, attach_frame):
         """
         Receiver on_attach callback.
@@ -604,7 +606,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             receiver._session_id = session_filter.decode(receiver._config.encoding)
             receiver._session._session_id = receiver._session_id
 
-    #@staticmethod
+    @staticmethod
     def enhanced_message_received(receiver, frame, message):
         """
         Receiver enhanced_message_received callback.
@@ -616,7 +618,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         else:
             receiver._handler.settle_messages(frame[1], 'released')
 
-    #@staticmethod
+    @staticmethod
+    def build_received_message(
+        receiver: "ServiceBusReceiver",
+        message_type: "ServiceBusReceivedMessage",
+        received: "Message"
+    ):
+        message = message_type(
+            message=received[1], receive_mode=receiver._receive_mode, receiver=receiver, frame=received[0]
+        )
+        receiver._last_received_sequenced_number = message.sequence_number
+        return message
+
+    @staticmethod
     def get_receive_timeout(handler):
         """
         Gets the timeout on the ReceiveClient.

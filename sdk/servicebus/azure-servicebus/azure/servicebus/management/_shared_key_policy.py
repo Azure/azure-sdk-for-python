@@ -38,7 +38,7 @@ class ServiceBusSharedKeyCredentialPolicy(SansIOHTTPPolicy):
             access_token, self._token_expiry_on = self._credential.get_token(
                 self._endpoint
             )
-            self._token = access_token.decode("utf-8")
+            self._token = access_token
 
     def on_request(self, request):
         # type: (PipelineRequest) -> None

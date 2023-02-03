@@ -95,13 +95,6 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
                 "as they have been deleted, providing an AutoLockRenewer in this mode is invalid."
             )
 
-    def _build_received_message(self, received, message_type=ServiceBusReceivedMessage):
-        message = message_type(
-            message=received[1], receive_mode=self._receive_mode, receiver=self, frame=received[0]
-        )
-        self._last_received_sequenced_number = message.sequence_number
-        return message
-
     def _get_source(self):
         # pylint: disable=protected-access
         if self._session:
@@ -134,33 +127,3 @@ class ReceiverMixin(object):  # pylint: disable=too-many-instance-attributes
     def _populate_message_properties(self, message):
         if self._session:
             message[MGMT_REQUEST_SESSION_ID] = self._session_id
-
-    def on_attach(receiver, attach_frame):
-        """
-        Receiver on_attach callback.
-        """
-        # pylint: disable=protected-access, unused-argument
-        if receiver._session and attach_frame.source.address.decode(receiver._config.encoding) == receiver._entity_uri:
-            # This has to live on the session object so that autorenew has access to it.
-            receiver._session._session_start = utc_now()
-            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (
-                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
-                ) / 10000000
-                receiver._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
-            session_filter = attach_frame.source.filters[SESSION_FILTER]
-            receiver._session_id = session_filter.decode(receiver._config.encoding)
-            receiver._session._session_id = receiver._session_id
-
-    #@staticmethod
-    def enhanced_message_received(receiver, frame, message):
-        """
-        Receiver enhanced_message_received callback.
-        """
-        # pylint: disable=protected-access
-        receiver._handler._was_message_received = True
-        if receiver._receive_context.is_set():
-            receiver._handler._received_messages.put((frame, message))
-        else:
-            receiver._handler.settle_messages(frame[1], 'released')

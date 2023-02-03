@@ -6,7 +6,7 @@
 import time
 import logging
 import functools
-from typing import Optional, Tuple, Callable
+from typing import Optional, Tuple, Callable, TYPE_CHECKING
 
 try:
     from uamqp import (
@@ -79,6 +79,9 @@ from ..exceptions import (
     SessionLockLostError,
     OperationTimeoutError
 )
+if TYPE_CHECKING:
+    from .._servicebus_receiver import ServiceBusReceiver
+    from .._common.message import ServiceBusReceivedMessage
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -602,11 +605,11 @@ if uamqp_installed:
             ))
         
         @staticmethod
-        def on_attach(receiver, source, target, properties, error):
+        def on_attach(receiver, source, target, properties, error): # pylint: disable=unused-argument
             """
             Receiver on_attach callback.
             """
-            # pylint: disable=protected-access, unused-argument
+            # pylint: disable=protected-access
             if receiver._session and str(source) == receiver._entity_uri:
                 # This has to live on the session object so that autorenew has access to it.
                 receiver._session._session_start = utc_now()
@@ -631,6 +634,18 @@ if uamqp_installed:
                 reciever._handler._received_messages.put(message)
             else:
                 message.release()
+
+        @staticmethod
+        def build_received_message(
+            receiver: "ServiceBusReceiver",
+            message_type: "ServiceBusReceivedMessage",
+            received: "Message"
+        ):
+            message = message_type(
+                message=received, receive_mode=receiver._receive_mode, receiver=receiver
+            )
+            receiver._last_received_sequenced_number = message.sequence_number
+            return message
 
         @staticmethod
         def get_receive_timeout(handler):

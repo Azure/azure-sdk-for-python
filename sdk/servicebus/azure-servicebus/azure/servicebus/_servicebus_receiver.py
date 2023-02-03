@@ -213,6 +213,11 @@ class ServiceBusReceiver(
         )
         self._receive_context = threading.Event()
         self._handler: Union["ReceiveClientSync", "uamqp_ReceiveClientSync"]
+        self._build_received_message = functools.partial(
+            self._amqp_transport.build_received_message,
+            self,
+            ServiceBusReceivedMessage
+        )
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -351,14 +356,14 @@ class ServiceBusReceiver(
     def _create_handler(self, auth: Union["JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
 
 
-        self._handler = self._amqp_transport.create_send_client(
-            config=self._config,
-            target=self._entity_uri,
-            auth=auth,
-            properties=self._properties,
-            retry_policy=self._error_policy,
-            client_name=self._name,
-        )
+        #self._handler = self._amqp_transport.create_send_client(
+        #    config=self._config,
+        #    target=self._entity_uri,
+        #    auth=auth,
+        #    properties=self._properties,
+        #    retry_policy=self._error_policy,
+        #    client_name=self._name,
+        #)
         self._handler = self._amqp_transport.create_receive_client(
             config=self._config,
             source=self._get_source(),
@@ -367,7 +372,10 @@ class ServiceBusReceiver(
             properties=self._properties,
             retry_policy=self._error_policy,
             client_name=self._name,
-            on_attach=self.on_attach,
+            on_attach=functools.partial(
+                self._amqp_transport.on_attach,
+                self
+            ),
             receive_mode=self._receive_mode,
             # TODO: check that this shouldn't be 1000 for both
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR
@@ -383,7 +391,10 @@ class ServiceBusReceiver(
         )
         if self._prefetch_count == 1:
             # pylint: disable=protected-access
-            self._handler._message_received = self.enhanced_message_received
+            self._handler._message_received = functools.partial(
+                self._amqp_transport.enhanced_message_received,
+                self
+            )
 
     def _open(self):
         # pylint: disable=protected-access
