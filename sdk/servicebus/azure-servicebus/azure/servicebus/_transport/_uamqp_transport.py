@@ -6,8 +6,10 @@
 import time
 import logging
 import functools
+import datetime
 from typing import Optional, Tuple, Callable, TYPE_CHECKING
 
+from azure.core.serialization import TZ_UTC
 try:
     from uamqp import (
         c_uamqp,
@@ -43,6 +45,7 @@ from .._common.constants import (
     RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
     RECEIVER_LINK_DEAD_LETTER_REASON,
     DEADLETTERNAME,
+    MAX_ABSOLUTE_EXPIRY_TIME,
     MESSAGE_COMPLETE,
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
@@ -70,9 +73,11 @@ from ..exceptions import (
     ServiceBusAuthorizationError,
     ServiceBusError,
     ServiceBusConnectionError,
+    ServiceBusCommunicationError,
     MessageLockLostError,
     MessageNotFoundError,
     MessagingEntityDisabledError,
+    MessagingEntityNotFoundError,
     MessagingEntityAlreadyExistsError,
     ServiceBusServerBusyError,
     SessionCannotBeLockedError,
@@ -113,6 +118,26 @@ if uamqp_installed:
         ERROR_CODE_ARGUMENT_ERROR,
         ERROR_CODE_PRECONDITION_FAILED,
     )
+
+    _ERROR_CODE_TO_ERROR_MAPPING = {
+        constants.ErrorCodes.LinkMessageSizeExceeded: MessageSizeExceededError,
+        constants.ErrorCodes.ResourceLimitExceeded: ServiceBusQuotaExceededError,
+        constants.ErrorCodes.UnauthorizedAccess: ServiceBusAuthorizationError,
+        constants.ErrorCodes.NotImplemented: ServiceBusError,
+        constants.ErrorCodes.NotAllowed: ServiceBusError,
+        constants.ErrorCodes.LinkDetachForced: ServiceBusConnectionError,
+        ERROR_CODE_MESSAGE_LOCK_LOST: MessageLockLostError,
+        ERROR_CODE_MESSAGE_NOT_FOUND: MessageNotFoundError,
+        ERROR_CODE_AUTH_FAILED: ServiceBusAuthorizationError,
+        ERROR_CODE_ENTITY_DISABLED: MessagingEntityDisabledError,
+        ERROR_CODE_ENTITY_ALREADY_EXISTS: MessagingEntityAlreadyExistsError,
+        ERROR_CODE_SERVER_BUSY: ServiceBusServerBusyError,
+        ERROR_CODE_SESSION_CANNOT_BE_LOCKED: SessionCannotBeLockedError,
+        ERROR_CODE_SESSION_LOCK_LOST: SessionLockLostError,
+        ERROR_CODE_ARGUMENT_ERROR: ServiceBusError,
+        ERROR_CODE_OUT_OF_RANGE: ServiceBusError,
+        ERROR_CODE_TIMEOUT: OperationTimeoutError,
+    }
 
     def _error_handler(error):
         """Handle connection and service errors.
@@ -255,7 +280,9 @@ if uamqp_installed:
                 message_header.priority = annotated_message.header.priority
                 if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
                     ttl_set = True
-                    creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * UamqpTransport.TIMEOUT_FACTOR)
+                    creation_time_from_ttl = int(time.mktime(
+                        datetime.datetime.now(TZ_UTC).timetuple()) * UamqpTransport.TIMEOUT_FACTOR
+                    )
                     absolute_expiry_time_from_ttl = int(min(
                         MAX_ABSOLUTE_EXPIRY_TIME,
                         creation_time_from_ttl + annotated_message.header.time_to_live
@@ -402,7 +429,7 @@ if uamqp_installed:
             return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
 
         @staticmethod
-        def create_connection(host, auth, network_trace):
+        def create_connection(host, auth, network_trace, **kwargs):
             """
             Creates and returns the uamqp Connection object.
             :param str host: The hostname, used by uamqp.
@@ -414,7 +441,7 @@ if uamqp_installed:
             transport_type = kwargs.pop("transport_type") # pylint:disable=unused-variable
             http_proxy = kwargs.pop("http_proxy") # pylint:disable=unused-variable
             return Connection(
-                hostname=endpoint,
+                hostname=host,
                 sasl=auth,
                 debug=network_trace,
             )
@@ -468,14 +495,14 @@ if uamqp_installed:
             if not timeout:
                 sender._handler._msg_timeout = 0
                 return
-            if remaining_time <= 0.0:
+            if timeout <= 0.0:
                 if last_exception:
                     error = last_exception
                 else:
-                    error = OperationTimeoutError("Send operation timed out")
+                    error = OperationTimeoutError(message="Send operation timed out")
                 logger.info("%r send operation timed out. (%r)", sender._name, error) # pylint: disable=protected-access
                 raise error
-            sender._handler._msg_timeout = remaining_time * UamqpTransport.TIMEOUT_FACTOR # type: ignore  # pylint: disable=protected-access
+            sender._handler._msg_timeout = timeout * UamqpTransport.TIMEOUT_FACTOR # type: ignore  # pylint: disable=protected-access
 
         @staticmethod
         def send_messages(sender, message, logger, timeout, last_exception):

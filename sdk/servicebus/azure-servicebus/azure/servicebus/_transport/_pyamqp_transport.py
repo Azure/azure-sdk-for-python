@@ -5,8 +5,10 @@
 
 import logging
 import time
+import datetime
 from typing import Optional, Union, Any, Tuple, cast, List, TYPE_CHECKING
 
+from azure.core.serialization import TZ_UTC
 from .._pyamqp import (
     error as AMQPErrors,
     utils,
@@ -23,6 +25,7 @@ from .._pyamqp.error import (
     RetryPolicy,
     AMQPConnectionError,
     AuthenticationException,
+    MessageException,
 )
 from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
 from .._pyamqp._encode import encode_payload
@@ -239,7 +242,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
             if annotated_message.header.time_to_live and annotated_message.header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
-                creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * 1000)
+                creation_time_from_ttl = int(
+                    time.mktime(datetime.datetime.now(TZ_UTC).timetuple()) * 1000   # TODO: should this be * 1?
+                )
                 absolute_expiry_time_from_ttl = int(min(
                     MAX_ABSOLUTE_EXPIRY_TIME,
                     creation_time_from_ttl + annotated_message.header.time_to_live
@@ -406,7 +411,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param bool network_trace: Debug setting.
         """
         return Connection(
-            endpoint=endpoint,
+            endpoint=host,
             sasl_credential=auth.sasl,
             network_trace=network_trace,
             **kwargs
@@ -476,7 +481,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException as e:
-            raise _create_servicebus_exception(_LOGGER, e)
+            raise PyamqpTransport._create_servicebus_exception(_LOGGER, e)
 
     #@staticmethod
     #def set_message_partition_key(message, partition_key, **kwargs):

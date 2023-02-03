@@ -609,7 +609,6 @@ class ServiceBusReceiver(
             message,
             mgmt_handlers.message_lock_renew_op,
             timeout=timeout,
-            amqp_transport=self._amqp_transport,
         )
 
     def _close_handler(self):
