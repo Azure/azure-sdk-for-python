@@ -393,7 +393,7 @@ class PrivateLinkAssociationOperations:
         :param pla_id: The ID of the PLA. Required.
         :type pla_id: str
         :param parameters: Parameters supplied to create the private link association. Is either a
-         model type or a IO type. Required.
+         PrivateLinkAssociationObject type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.resource.privatelinks.v2020_05_01.models.PrivateLinkAssociationObject or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -730,8 +730,8 @@ class ResourceManagementPrivateLinkOperations:
         :type resource_group_name: str
         :param rmpl_name: The name of the resource management private link. Required.
         :type rmpl_name: str
-        :param parameters: The region to create the Resource Management private link. Is either a model
-         type or a IO type. Required.
+        :param parameters: The region to create the Resource Management private link. Is either a
+         ResourceManagementPrivateLinkLocation type or a IO type. Required.
         :type parameters:
          ~azure.mgmt.resource.privatelinks.v2020_05_01.models.ResourceManagementPrivateLinkLocation or
          IO

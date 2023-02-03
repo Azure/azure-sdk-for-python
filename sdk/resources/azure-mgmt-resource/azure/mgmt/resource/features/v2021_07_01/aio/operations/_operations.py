@@ -664,7 +664,7 @@ class SubscriptionFeatureRegistrationsOperations:
         :param feature_name: The feature name. Required.
         :type feature_name: str
         :param subscription_feature_registration_type: Subscription Feature Registration Type details.
-         Is either a model type or a IO type. Default value is None.
+         Is either a SubscriptionFeatureRegistration type or a IO type. Default value is None.
         :type subscription_feature_registration_type:
          ~azure.mgmt.resource.features.v2021_07_01.models.SubscriptionFeatureRegistration or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
