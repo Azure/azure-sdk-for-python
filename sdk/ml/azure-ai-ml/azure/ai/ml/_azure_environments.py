@@ -4,10 +4,8 @@
 
 """Metadata to interact with different Azure clouds."""
 
-import configparser
 import logging
 import os
-import sys
 from typing import Dict, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
@@ -62,13 +60,12 @@ _environments = {
 def _get_cloud(cloud: str):
     if cloud in _environments:
         return _environments[cloud]
-    else:
-        arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME,ArmConstants.DEFAULT_URL)
-        arm_clouds = _get_clouds_by_metadata_url(arm_url)
-        try:
-            return arm_clouds[cloud]
-        except KeyError:
-            raise Exception('Unknown cloud environment "{0}".'.format(cloud))
+    arm_url = os.environ.get(ArmConstants.METADATA_URL_ENV_NAME,ArmConstants.DEFAULT_URL)
+    arm_clouds = _get_clouds_by_metadata_url(arm_url)
+    try:
+        return arm_clouds[cloud]
+    except KeyError:
+        raise Exception('Unknown cloud environment "{0}".'.format(cloud))
 
 def _get_default_cloud_name():
     """Return AzureCloud as the default cloud."""
@@ -92,7 +89,7 @@ def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT):
 
 def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
     if cloud is not None:
-        try: 
+        try:
             _get_cloud(cloud)
         except Exception:
             raise Exception('Unknown cloud environment supplied: "{0}".'.format(cloud))
@@ -215,13 +212,13 @@ def _get_clouds_by_metadata_url(metadata_url, timeout=ArmConstants.DEFAULT_TIMEO
             module_logger.debug('Finish : Loading cloud metadata from the url specified by {0}'.format(metadata_url))
             return cli_cloud_dict
     except Exception as ex:  # pylint: disable=broad-except
-        module_logger.warning("Error: Azure ML was unable to load cloud metadata from the url specified by {0}. {1}. "
+        module_logger.warning("Error: Azure ML was unable to load cloud metadata from the url specified by %s. %s. "
                         "This may be due to a misconfiguration of networking controls. Azure Machine Learning Python "
                         "SDK requires outbound access to Azure Resource Manager. Please contact your networking team "
                         "to configure outbound access to Azure Resource Manager on both Network Security Group and "
                         "Firewall. For more details on required configurations, see "
-                        "https://docs.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall."
-                        .format(metadata_url, ex))
+                        "https://docs.microsoft.com/azure/machine-learning/how-to-access-azureml-behind-firewall.",
+                        metadata_url, ex)
         return {}
 
 def _convert_arm_to_cli(arm_cloud_metadata):
@@ -238,6 +235,6 @@ def _convert_arm_to_cli(arm_cloud_metadata):
                 EndpointURLS.STORAGE_ENDPOINT: cloud["suffixes"]["storage"]
 
             }
-        except KeyError as ex:
+        except KeyError:
             continue
     return cli_cloud_metadata_dict
