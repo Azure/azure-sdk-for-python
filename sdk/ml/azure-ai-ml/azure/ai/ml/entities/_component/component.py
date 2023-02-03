@@ -324,8 +324,6 @@ class Component(
         new_instance = create_instance_func()
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
-            source_path=yaml_path,
-            base_path=base_path,
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
             **(
                 create_schema_func(
@@ -337,6 +335,12 @@ class Component(
                 ).load(data, unknown=INCLUDE, **kwargs)
             ),
         )
+        # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
+        # could be object or dict.
+        # base_path in context can be changed in loading, so we use original base_path here.
+        new_instance._base_path = base_path
+        if yaml_path:
+            new_instance._source_path = yaml_path
         return new_instance
 
     @classmethod
