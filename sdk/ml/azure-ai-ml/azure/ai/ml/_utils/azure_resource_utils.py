@@ -9,7 +9,9 @@ from azure.core.credentials import TokenCredential
 from typing import List, Dict, Optional
 
 
-def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential, subscription_list: Optional[List[str]] = None):
+def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential,
+    subscription_list: Optional[List[str]] = None):
+
     # If a subscription list is passed in, use it. Otherwise, get all subscriptions
     subsList = []
     if subscription_list is not None:
@@ -26,23 +28,40 @@ def get_resources_from_subscriptions(strQuery: str, credential: TokenCredential,
     # Create query
     argQuery = arg.models.QueryRequest(subscriptions=subsList, query=strQuery, options=argQueryOptions)
 
-    # Allowing API version to be set is yet to be released by azure-mgmt-resourcegraph
-    # return argClient.resources(argQuery, api_version="2021-03-01") # This is the API version Studio UX is using, but why does it matter
+    # Allowing API version to be set is yet to be released by azure-mgmt-resourcegraph,
+    # hence the commented out code below. This is the API version Studio UX is using.
+    # return argClient.resources(argQuery, api_version="2021-03-01")
+
     return argClient.resources(argQuery)
 
 
-def get_virtual_clusters_from_subscriptions(credential: TokenCredential, subscription_list: Optional[List[str]] = None) -> List[Dict]:
-    strQuery = "resources | where type == 'microsoft.machinelearningservices/virtualclusters' | order by tolower(name) asc | project id, subscriptionId, resourceGroup, name, location, tags, type"
+def get_virtual_clusters_from_subscriptions(credential: TokenCredential,
+    subscription_list: Optional[List[str]] = None) -> List[Dict]:
+
+    # cspell:disable-next-line
+    strQuery = """resources
+    | where type == 'microsoft.machinelearningservices/virtualclusters'
+    | order by tolower(name) asc 
+    | project id, subscriptionId, resourceGroup, name, location, tags, type"""
+
     return get_resources_from_subscriptions(strQuery, credential, subscription_list).data
 
 
-def get_generic_resource_by_id(arm_id: str, credential:  TokenCredential, subscription_id: str, api_version: Optional[str] = None) -> Dict:
+def get_generic_resource_by_id(arm_id: str, credential: TokenCredential,
+    subscription_id: str, api_version: Optional[str] = None) -> Dict:
+
     resource_client = ResourceManagementClient(credential, subscription_id)
     generic_resource = resource_client.resources.get_by_id(arm_id, api_version)
 
     return generic_resource.as_dict()
 
-def get_virtual_cluster_by_id(name: str, resource_group: str, subscription_id: str, credential: TokenCredential) -> Dict:
-    arm_id = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/virtualClusters/{name}"
-    
-    return get_generic_resource_by_id(arm_id, credential, subscription_id, api_version="2021-03-01-preview") # This is the API version Studio UX is using.
+def get_virtual_cluster_by_id(name: str, resource_group: str,
+    subscription_id: str, credential: TokenCredential) -> Dict:
+
+    arm_id = (
+        f"/subscriptions/{subscription_id}/resourceGroups/{resource_group}"
+        f"/providers/Microsoft.MachineLearningServices/virtualClusters/{name}"
+    )
+
+    # This is the API version Studio UX is using.
+    return get_generic_resource_by_id(arm_id, credential, subscription_id, api_version="2021-03-01-preview")
