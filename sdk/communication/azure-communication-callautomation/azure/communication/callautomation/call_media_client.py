@@ -5,9 +5,25 @@
 # --------------------------------------------------------------------------
 
 class CallMediaClient(object):
-    def __init__(self):
-        # TODO
-        return True
+    def __init__(self,
+                 endpoint,
+                 **kwargs
+    ):
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Host URL must be a string")
+
+        parsed_url = urlparse(endpoint.rstrip('/'))
+        if not parsed_url.netloc:
+            raise ValueError("Invalid URL: {}".format(endpoint))
+
+        self._endpoint = endpoint
+
+        self._client = CallMediaService(
+            
+        )
 
     def play(PlaySource play):
         # TODO
