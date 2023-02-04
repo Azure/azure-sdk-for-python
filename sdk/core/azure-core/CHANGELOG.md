@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `StaticTokenCredential` and `AsyncStaticTokenCredential` support.
+
 ### Breaking Changes
 
 ### Bugs Fixed
