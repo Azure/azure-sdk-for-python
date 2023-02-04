@@ -82,10 +82,11 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     outbound_rules = fields.Dict(
         keys=fields.Str(required=True), values=NestedField(OutboundRuleSchema, allow_none=False), allow_none=True
     )
+    network_id = fields.Str(required=False)
 
     @post_load
     def make(self, data, **kwargs):
         if data.get("outbound_rules", False):
-            return ManagedNetwork(data["isolation_mode"], data["outbound_rules"])
+            return ManagedNetwork(data["isolation_mode"], data["outbound_rules"], data["network_id"])
         else:
             return ManagedNetwork(data["isolation_mode"])
