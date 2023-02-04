@@ -65,7 +65,8 @@ class _AttrDict(Generic[K, V], dict, ABC):
         def remove_empty_values(data):
             if not isinstance(data, dict):
                 return data
-            return {k: remove_empty_values(v) for k, v in data.items() if v}
+            # skip empty dicts as default value of _AttrDict is empty dict
+            return {k: remove_empty_values(v) for k, v in data.items() if v or not isinstance(v, dict)}
 
         return remove_empty_values(self)
 

@@ -1150,6 +1150,22 @@ class TestTableEntityCosmos(AzureRecordedTestCase, TableTestCase):
 
     @cosmos_decorator
     @recorded_by_proxy
+    def test_delete_entity_with_empty_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
+        try:
+            with pytest.raises(HttpResponseError) as exc:
+                entity, _ = self._insert_random_entity(pk="")
+            assert "PartitionKey/RowKey cannot be empty" in str(exc.value)
+            # self.table.delete_entity(entity)
+            with pytest.raises(HttpResponseError) as exc:
+                entity, _ = self._insert_random_entity(rk="")
+            assert "PartitionKey/RowKey cannot be empty" in str(exc.value)
+            # self.table.delete_entity(partition_key=entity['PartitionKey'], row_key="")
+        finally:
+            self._tear_down()
+
+    @cosmos_decorator
+    @recorded_by_proxy
     def test_unicode_property_value(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Arrange
         self._set_up(tables_cosmos_account_name, tables_primary_cosmos_account_key, url="cosmos")
