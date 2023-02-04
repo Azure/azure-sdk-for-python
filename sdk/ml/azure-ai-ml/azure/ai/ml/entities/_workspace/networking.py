@@ -117,9 +117,13 @@ class ServiceTagDestination(OutboundRule):
 
 class ManagedNetwork:
     def __init__(
-        self, isolation_mode: str = IsolationMode.DISABLED, outbound_rules: Optional[Dict[str, OutboundRule]] = None
+        self,
+        isolation_mode: str = IsolationMode.DISABLED,
+        outbound_rules: Optional[Dict[str, OutboundRule]] = None,
+        network_id: Optional[str] = None
     ) -> None:
         self.isolation_mode = isolation_mode
+        self.network_id = network_id
         self.outbound_rules = outbound_rules
 
     def _to_rest_object(self) -> RestManagedNetwork:
@@ -144,4 +148,4 @@ class ManagedNetwork:
             if obj.outbound_rules
             else {}
         )
-        return ManagedNetwork(isolation_mode=obj.isolation_mode, outbound_rules=from_rest_outbound_rules)
+        return ManagedNetwork(isolation_mode=obj.isolation_mode, outbound_rules=from_rest_outbound_rules, network_id=obj.network_id)
