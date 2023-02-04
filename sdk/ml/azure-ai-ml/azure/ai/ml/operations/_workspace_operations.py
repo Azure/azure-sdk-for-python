@@ -32,7 +32,6 @@ from azure.ai.ml._utils._appinsights_utils import (
     get_default_resource_group_deployment,
     get_default_log_analytics_deployment,
     get_default_log_analytics_arm_id,
-    clean_up_rg_deployments_on_subscription,
 )
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
@@ -488,21 +487,19 @@ class WorkspaceOperations:
             )
             # if default resource group does not exist yet, create rg and log analytics
             if not rg_is_existing:
-                # if need to create default resource group, delete past default rg deployments in case close to 10
-                clean_up_rg_deployments_on_subscription(self._credentials, self._subscription_id)
                 # add resource group and log analytics deployments to resources
                 deployment_string = get_deployment_name("")
-                app_insights_resource_group_deploy_name = f"AzureMLDefaultResourceGroupDeployment{deployment_string}"
+                app_insights_resource_group_deployment_name = f"DeployResourceGroup{deployment_string}"
                 app_insights_log_workspace_deployment_name = f"DeployLogWorkspace{deployment_string}"
                 template["resources"].append(
                     get_default_resource_group_deployment(
-                        app_insights_resource_group_deploy_name, app_insights_location, self._subscription_id
+                        app_insights_resource_group_deployment_name , app_insights_location, self._subscription_id
                     )
                 )
                 log_analytics_deployment = get_default_log_analytics_deployment(
                     app_insights_log_workspace_deployment_name, app_insights_location, self._subscription_id
                 )
-                log_analytics_deployment["dependsOn"] = [app_insights_resource_group_deploy_name]
+                log_analytics_deployment["dependsOn"] = [app_insights_resource_group_deployment_name]
                 template["resources"].append(log_analytics_deployment)
                 for resource in template["resources"]:
                     if resource["type"] == "Microsoft.Insights/components":

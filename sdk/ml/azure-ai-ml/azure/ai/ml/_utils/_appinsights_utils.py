@@ -31,28 +31,6 @@ def default_resource_group_for_app_insights_exists(
         return False
 
 
-def clean_up_rg_deployments_on_subscription(
-    credentials: TokenCredential, subscription_id: str
-):
-    client = ResourceManagementClient(
-        credential=credentials,
-        subscription_id=subscription_id,
-        base_url=_get_base_url_from_metadata(),
-        api_version=ArmConstants.AZURE_MGMT_RESOURCE_API_VERSION,
-    )
-    # get all deployments that are succeeded with AzureMLDefaultResourceGroupDeployment pattern
-    deployments = client.deployments.list_at_subscription_scope(filter="provisioningState eq 'Succeeded'")
-    rg_deployments = [d.name for d in list(deployments) if "AzureMLDefaultResourceGroupDeployment" in d.name]
-    if len(rg_deployments) > 0:
-        module_logger.info("Clean up past default Resource Group Deployments on the subscription, avoid limit of 10")
-    for name in rg_deployments:
-        try:
-            module_logger.info("Deleting past Resource Group Deployment with name: %s\n", name)
-            client.deployments.begin_delete_at_subscription_scope(deployment_name=name)
-        except Exception: # pylint: disable=broad-except
-            module_logger.info("Failed to delete past Resource Group Deployment with name: %s\n", name)
-
-
 def default_log_analytics_workspace_exists(credentials: TokenCredential, subscription_id: str, location: str) -> bool:
     client = ResourceManagementClient(
         credential=credentials,
