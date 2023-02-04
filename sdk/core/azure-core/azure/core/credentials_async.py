@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import time
 from typing import Any, Optional, Union
 from typing_extensions import Protocol, runtime_checkable
 from .credentials import AccessToken as _AccessToken
-import time
 
 
 @runtime_checkable
@@ -56,7 +56,7 @@ class AsyncStaticTokenCredential:
         if isinstance(access_token, _AccessToken):
             self._token = access_token
         else:
-            self._token = _AccessToken(token=access_token, expires_on=time.time()+expire_in)
+            self._token = _AccessToken(token=access_token, expires_on=int(time.time()+expire_in))
 
     async def close(self):
         pass

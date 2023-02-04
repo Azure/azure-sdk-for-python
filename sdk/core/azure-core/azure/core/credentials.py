@@ -3,11 +3,11 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import abc
+import time
 from collections import namedtuple
 from typing import Any, NamedTuple, Optional, Union
 from typing_extensions import Protocol, runtime_checkable
-import time
-import abc
 
 
 class AccessToken(NamedTuple):
@@ -183,7 +183,7 @@ class StaticTokenCredential(abc.ABC):
         if isinstance(access_token, AccessToken):
             self._token = access_token
         else:
-            self._token = AccessToken(token=access_token, expires_on=time.time()+expire_in)
+            self._token = AccessToken(token=access_token, expires_on=int(time.time()+expire_in))
 
     def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:    # pylint:disable=unused-argument
         """get_token is the only method a credential must implement"""

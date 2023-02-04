@@ -6,7 +6,13 @@
 import time
 from itertools import product
 import azure.core
-from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureKeyCredential,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+    StaticTokenCredential,
+)
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -385,3 +391,18 @@ def test_azure_named_key_credential_raises():
 
     with pytest.raises(TypeError, match="Both name and key must be strings."):
         cred.update(1234, "newkey")
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_static_token_credential(http_request):
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    static_token = AccessToken("expected_token", 2524608000)
+
+    def verify_authorization_header(request):
+        assert request.http_request.headers["Authorization"] == "Bearer {}".format(static_token.token)
+        return Mock()
+
+    credential = StaticTokenCredential(static_token)
+    policies = [BearerTokenCredentialPolicy(credential, "scope"), Mock(send=verify_authorization_header)]
+
+    pipeline = Pipeline(transport=Mock(), policies=policies)
+    pipeline.run(http_request("GET", "https://spam.eggs"))

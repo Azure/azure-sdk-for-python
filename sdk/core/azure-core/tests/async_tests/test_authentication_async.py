@@ -9,6 +9,7 @@ import time
 from unittest.mock import Mock
 
 from azure.core.credentials import AccessToken
+from azure.core.credentials_async import AsyncStaticTokenCredential
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncBearerTokenCredentialPolicy, SansIOHTTPPolicy
@@ -226,3 +227,19 @@ def get_completed_future(result=None):
     fut = asyncio.Future()
     fut.set_result(result)
     return fut
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_static_token_credential(http_request):
+    """The bearer token policy should add a header containing a token from its credential"""
+    # 2524608000 == 01/01/2050 @ 12:00am (UTC)
+    static_token = AccessToken("expected_token", 2524608000)
+
+    async def verify_authorization_header(request):
+        assert request.http_request.headers["Authorization"] == "Bearer {}".format(static_token.token)
+        return Mock()
+
+    credential = AsyncStaticTokenCredential(static_token)
+    policies = [AsyncBearerTokenCredentialPolicy(credential, "scope"), Mock(send=verify_authorization_header)]
+    pipeline = AsyncPipeline(transport=Mock(), policies=policies)
+
+    await pipeline.run(http_request("GET", "https://spam.eggs"), context=None)
