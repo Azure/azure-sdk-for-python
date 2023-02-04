@@ -9,9 +9,12 @@
 from devtools_testutils import AzureMgmtTestCase
 from azure.communication.callautomation import CallAutomationClient
 
-class TemplateTest(AzureMgmtTestCase):
+class CallAutomationTest(AzureMgmtTestCase):
     def setUp(self):
-        super(TemplateTest, self).setUp()
+        super(CallAutomationTest, self).setUp()
 
-    def test_case_default(self):
-        self.assertEqual(CallAutomationClient.todo_main(), True)
+    def test_temp(self):
+        call_automation_client = CallAutomationClient.from_connection_string("endpoint=https://<ResourceUrl>/;accesskey=<KeyValue>")
+        call_connection = call_automation_client.get_call_connection("<callconnid>")
+        call_media = call_connection.get_call_media()
+        call_recording = call_automation_client.get_call_recording()
