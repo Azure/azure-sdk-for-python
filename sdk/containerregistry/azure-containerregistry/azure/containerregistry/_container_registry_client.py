@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast
+from typing import TYPE_CHECKING, Any, IO, Optional, overload, Union, cast
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -13,10 +13,11 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
-from ._generated.models import AcrErrors, OCIManifest
+from ._generated.models import AcrErrors, OCIManifest, ManifestWrapper
 from ._helpers import (
     _compute_digest,
     _is_tag,
@@ -39,14 +40,14 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from typing import Dict
 
-def _return_response_and_deserialized(pipeline_response, deserialized, response_headers):
-    return pipeline_response, deserialized
+def _return_response_and_deserialized(pipeline_response, deserialized, _):
+    return cast(PipelineResponse, pipeline_response), cast(ManifestWrapper, deserialized)
 
-def _return_deserialized(pipeline_response, deserialized, response_headers):
+def _return_deserialized(_, deserialized, __):
     return deserialized
 
-def _return_response_headers(pipeline_response, deserialized, response_headers):
-    return response_headers
+def _return_response_headers(_, __, response_headers):
+    return cast(Dict[str, str], response_headers)
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -823,9 +824,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or data is None.
         """
         try:
-            start_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.start_upload(
+            start_upload_response_headers = self._client.container_registry_blob.start_upload(
                 repository, cls=_return_response_headers, **kwargs
-            ))
+            )
             upload_chunk_response_headers = self._client.container_registry_blob.upload_chunk(
                 start_upload_response_headers['Location'],
                 data,

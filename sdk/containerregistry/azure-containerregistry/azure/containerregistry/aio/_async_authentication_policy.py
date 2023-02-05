@@ -67,7 +67,8 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         # pylint:disable=unused-argument,no-self-use
 
         access_token = await self._exchange_client.get_acr_access_token(challenge)
-        request.http_request.headers["Authorization"] = "Bearer " + access_token
+        if access_token is not None:
+            request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None
 
     async def __aenter__(self):

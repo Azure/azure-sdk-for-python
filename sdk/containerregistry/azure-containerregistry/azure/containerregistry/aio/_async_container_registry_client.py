@@ -685,7 +685,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def update_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> "ArtifactTagProperties":
         ...
 
-    @distributed_trace_async # type: ignore
+    @distributed_trace_async
     async def update_tag_properties(
         self, *args: Union[str, "ArtifactTagProperties"], **kwargs: Any
     ) -> "ArtifactTagProperties":
