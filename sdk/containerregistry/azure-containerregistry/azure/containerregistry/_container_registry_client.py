@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, IO, Optional, overload, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -38,7 +38,6 @@ from ._models import (
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from typing import Dict
 
 def _return_response_and_deserialized(pipeline_response, deserialized, _):
     return cast(PipelineResponse, pipeline_response), cast(ManifestWrapper, deserialized)
