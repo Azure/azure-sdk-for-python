@@ -229,6 +229,7 @@ class ServiceBusReceiver(
         # pylint: disable=protected-access
         original_timeout = None
         while True:
+            print("In iter")
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
             if max_wait_time:
@@ -241,6 +242,7 @@ class ServiceBusReceiver(
                 with receive_trace_context_manager(self, links=links):
                     yield message
             except StopIteration:
+                print("Stop Iteration")
                 break
             finally:
                 if original_timeout:
@@ -419,6 +421,7 @@ class ServiceBusReceiver(
 
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
+            amqp_receive_client._running_iter = False
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
                 timeout or self._max_wait_time
