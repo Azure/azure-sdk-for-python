@@ -40,7 +40,7 @@ class UploadDownloadManifest(object):
 
     def upload_download_manifest(self):
         repository_name = "library/hello-world"
-        layer = BytesIO("Sample layer".encode())
+        layer = BytesIO(b"Sample layer")
         config = BytesIO(json.dumps(
             {
                 "sample config": "content",

@@ -38,11 +38,11 @@ class UploadDownloadBlob(object):
     def upload_download_blob(self):
         load_registry()
         repository_name = "library/hello-world"
-        blob_content = BytesIO("Hello world!".encode())
+        blob_content = BytesIO(b"Hello world!")
         with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             digest = client.upload_blob(repository_name, blob_content)
             download_result = client.download_blob(repository_name, digest)
-            print(download_result.data.getvalue().decode())
+            print(download_result.data.read())
 
 
 if __name__ == "__main__":
