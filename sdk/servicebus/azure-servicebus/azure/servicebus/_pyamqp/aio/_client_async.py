@@ -142,12 +142,15 @@ class AMQPClientAsync(AMQPClientSync):
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
+                    print("Keeping connection alive")
                     _logger.debug(
                         "Keeping %r connection alive.",
                         self.__class__.__name__,
                         extra=self._network_trace_params
                     )
-                    await asyncio.shield(self._connection.listen())
+                    await asyncio.shield(self._connection.listen(wait=self._socket_timeout))
+                    print("Finished listening")
+                    # await self._connection.listen()
                     start_time = current_time
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -707,7 +710,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
-                on_transfer=self._message_received_async,
+                on_transfer=self._message_received,
                 properties=self._link_properties,
                 desired_capabilities=self._desired_capabilities,
                 on_attach=self._on_attach
@@ -857,6 +860,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         try:
             # I think if it is just this one loop then when we close the connection we still might have items in queue
             while receiving and not self._timeout_reached:
+                print("In generator")
                 if not self._running_iter:
                     self._last_activity_stamp = time.time()
                 self._running_iter = True
