@@ -32,7 +32,7 @@ class DataTransferImportJobSchema(BaseJobSchema):
 
     @validates("outputs")
     def outputs_key(self, value):  # pylint: no-self-use
-        if len(value) != 1 or value and list(value.keys())[0] != "sink":
+        if len(value) != 1 or list(value.keys())[0] != "sink":
             raise ValidationError(f"outputs field only support one output called sink in task type "
                                   f"{DataTransferTaskType.IMPORT_DATA}.")
 
@@ -46,6 +46,6 @@ class DataTransferExportJobSchema(BaseJobSchema):
 
     @validates("inputs")
     def inputs_key(self, value):  # pylint: no-self-use
-        if len(value) != 1 or value and list(value.keys())[0] != "source":
+        if len(value) != 1 or list(value.keys())[0] != "source":
             raise ValidationError(f"inputs field only support one input called source in task type "
                                   f"{DataTransferTaskType.EXPORT_DATA}.")

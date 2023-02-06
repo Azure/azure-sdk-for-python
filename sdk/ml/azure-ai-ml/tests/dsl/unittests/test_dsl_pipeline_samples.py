@@ -502,7 +502,7 @@ class TestDSLPipelineSamples:
         )
 
         pipeline = data_transfer_job_in_pipeline()
-        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_database/pipeline_inline.yml")
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_stored_database/pipeline_inline.yml")
         omit_fields = [
             "properties.display_name",
         ]

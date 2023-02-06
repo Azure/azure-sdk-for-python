@@ -8,6 +8,7 @@ from typing import Callable, Mapping
 
 from azure.ai.ml.dsl._dynamic import KwParameter, create_kw_function_from_parameters
 from azure.ai.ml.entities import Component as ComponentEntity
+from azure.ai.ml.entities._component.datatransfer_component import DataTransferImportComponent
 from azure.ai.ml.entities._builders import Command
 
 
@@ -43,7 +44,7 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
     if entity.description is not None:
         func_docstring_lines.append(entity.description.strip())
 
-    if hasattr(entity, "source"):
+    if isinstance(entity, DataTransferImportComponent):
         all_params = get_dynamic_source_parameter(entity.source)
     else:
         all_params = get_dynamic_input_parameter(entity.inputs)

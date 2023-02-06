@@ -15,7 +15,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     stored_procedure_params = [{'name': 'job', 'value': 'Engineer', 'type': 'String'},
                                {'name': 'department', 'value': 'Engineering', 'type': 'String'}]
     outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
-    source = {'type': 'database', 'stored_procedure': stored_procedure,
+    source = {'type': 'database', 'connection': 'azureml:my_sql_connection', 'stored_procedure': stored_procedure,
               'stored_procedure_params': stored_procedure_params}
 
     # DataTransferImport from import_data() function

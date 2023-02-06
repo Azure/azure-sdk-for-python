@@ -1074,7 +1074,7 @@ class TestPipelineJobEntity:
                                            'outputs': {'sink': {'job_output_type': 'uri_folder',
                                                                 'uri': 'azureml://datastores/managed/paths/some_path'}},
                                            'source': {'connection': 'azureml:my_s3_connection',
-                                                      'path': 'azureml:s3://my_bucket/my_folder',
+                                                      'path': 's3://my_bucket/my_folder',
                                                       'type': 'file_system'},
                                            'task': 'import_data',
                                            'type': 'data_transfer'}},

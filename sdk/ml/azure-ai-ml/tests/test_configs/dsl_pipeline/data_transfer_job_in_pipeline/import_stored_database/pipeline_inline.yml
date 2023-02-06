@@ -4,9 +4,6 @@ type: pipeline
 description: 'submit a pipeline with data transfer import stored database job'
 settings:
   default_compute: azureml:adf_compute
-inputs:
-  query_source_snowflake: 'SELECT * FROM my_table'
-  connection_target_azuresql: 'azureml:my_azuresql_connection'
 
 jobs:
   snowflake_blob:

@@ -345,6 +345,20 @@ class DataTransferImport(DataTransfer):
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
         return ["type", "task", "source"]
 
+    def _customized_validate(self):
+        result = super()._customized_validate()
+        if self.source is None:
+            result.append_error(
+                yaml_path="source",
+                message="Source is a required field for import data task in DataTransfer job",
+            )
+        if len(self.outputs) != 1 or list(self.outputs.keys())[0] != "sink":
+            result.append_error(
+                yaml_path="outputs.sink",
+                message="Outputs field only support one output called sink in import task",
+            )
+        return result
+
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         for key, value in {
@@ -474,6 +488,11 @@ class DataTransferExport(DataTransfer):
             result.append_error(
                 yaml_path="sink",
                 message="Sink is a required field for export data task in DataTransfer job",
+            )
+        if len(self.inputs) != 1 or list(self.outputs.keys())[0] != "source":
+            result.append_error(
+                yaml_path="inputs.source",
+                message="Inputs field only support one input called source in export task",
             )
         return result
 

@@ -4,7 +4,6 @@
 
 # pylint: disable=protected-access
 
-import copy
 import logging
 from pathlib import Path
 from typing import Dict, Optional, Union
@@ -13,17 +12,10 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._schema.job.data_transfer_job import DataTransferCopyJobSchema, DataTransferImportJobSchema, \
     DataTransferExportJobSchema
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, LOCAL_COMPUTE_PROPERTY, LOCAL_COMPUTE_TARGET, TYPE
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._component import ExternalDataType, DataTransferBuiltinComponentUri, ComponentSource, \
     DataTransferTaskType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job._input_output_helpers import (
-    from_rest_data_outputs,
-    from_rest_inputs_to_dataset_literal,
-    to_rest_data_outputs,
-    to_rest_dataset_literal_inputs,
-    validate_inputs_for_command,
-)
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -240,9 +232,9 @@ class DataTransferImportJob(DataTransferJob):
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 
         if self.source.type == ExternalDataType.DATABASE:
-            id = DataTransferBuiltinComponentUri.IMPORT_DATABASE
+            component_id = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
-            id = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
+            component_id = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
 
         # Create anonymous command component with default version as 1
         component = DataTransferImportComponent(
@@ -253,7 +245,7 @@ class DataTransferImportJob(DataTransferJob):
             source=self.source,
             outputs=self._to_outputs(outputs=self.outputs, pipeline_job_dict=pipeline_job_dict),
             task=self.task,
-            id=id,
+            id=component_id,
         )
         component._source = ComponentSource.BUIlTIN
         return component
