@@ -40,7 +40,7 @@ from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import RegistryDiscovery
-from azure.ai.ml._utils.utils import _is_https_url, _validate_missing_sub_or_rg_and_raise
+from azure.ai.ml._utils.utils import _is_https_url
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -74,6 +74,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    VirtualClusterOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -158,8 +159,7 @@ class MLClient(object):
                 target=ErrorTarget.GENERAL,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if not registry_name:
-            _validate_missing_sub_or_rg_and_raise(subscription_id, resource_group_name)
+
         self._credential = credential
 
         show_progress = kwargs.pop("show_progress", True)
@@ -410,7 +410,7 @@ class MLClient(object):
         self._jobs = JobOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2022_preview,
+            self._service_client_12_2022_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
@@ -428,6 +428,8 @@ class MLClient(object):
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
+
+        self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
     @classmethod
     def from_config(

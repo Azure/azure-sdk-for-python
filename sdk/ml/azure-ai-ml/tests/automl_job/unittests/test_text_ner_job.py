@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TaskType,
     TextNer,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
