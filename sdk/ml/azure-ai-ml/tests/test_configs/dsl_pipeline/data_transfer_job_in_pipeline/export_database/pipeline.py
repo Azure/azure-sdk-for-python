@@ -13,7 +13,7 @@ parent_dir = str(Path(__file__).parent)
 def generate_dsl_pipeline_from_builder() -> PipelineJob:
     connection_target_azuresql = 'azureml:my_azuresql_connection'
     table_name = "merged_table"
-    my_cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+    my_cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
     inputs = {"source": my_cosmos_folder}
     sink = {'type': 'database', 'connection': connection_target_azuresql, 'table_name': table_name}
 

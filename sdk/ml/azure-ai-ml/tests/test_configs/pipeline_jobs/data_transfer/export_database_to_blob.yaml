@@ -8,7 +8,7 @@ inputs:
   connection_target_azuresql: azureml:my_azuresql_connection
   table_name: merged_table
   cosmos_folder:
-    type: uri_folder
+    type: uri_file
     path: azureml://datastores/my_cosmos/paths/source_cosmos
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
     task: export_data
     inputs:
       source:
-        type: uri_folder
+        type: uri_file
         path: azureml://datastores/my_cosmos/paths/source_cosmos
     sink:
       type: database

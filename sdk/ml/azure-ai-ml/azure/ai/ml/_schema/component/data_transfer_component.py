@@ -11,7 +11,7 @@ from marshmallow import INCLUDE, fields, post_load, validates, ValidationError
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
-from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema
+from azure.ai.ml._schema.component.input_output import InputPortSchema
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import FileRefField, StringTransformedEnum, NestedField
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
@@ -37,7 +37,18 @@ class SinkSourceSchema(metaclass=PatchedSchemaMeta):
                                  required=True)
 
 
-class InputsOutputsSchema(metaclass=PatchedSchemaMeta):
+class SourceInputsSchema(metaclass=PatchedSchemaMeta):
+    """
+    For export task in DataTransfer, inputs type only support uri_file for database and uri_folder for filesystem.
+    """
+    type = StringTransformedEnum(allowed_values=[AssetTypes.URI_FOLDER, AssetTypes.URI_FILE],
+                                 required=True)
+
+
+class SinkOutputsSchema(metaclass=PatchedSchemaMeta):
+    """
+    For import task in DataTransfer, outputs type only support mltable for database and uri_folder for filesystem;
+    """
     type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE, AssetTypes.URI_FOLDER],
                                  required=True)
 
@@ -47,7 +58,7 @@ class DataTransferImportComponentSchema(DataTransferComponentSchemaMixin):
     source = NestedField(SinkSourceSchema, required=True)
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=NestedField(InputsOutputsSchema),
+        values=NestedField(SinkOutputsSchema),
     )
 
     @validates("inputs")
@@ -66,7 +77,7 @@ class DataTransferExportComponentSchema(DataTransferComponentSchemaMixin):
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA], required=True)
     inputs = fields.Dict(
         keys=fields.Str(),
-        values=NestedField(InputsOutputsSchema),
+        values=NestedField(SourceInputsSchema),
     )
     sink = NestedField(SinkSourceSchema(), required=True)
 

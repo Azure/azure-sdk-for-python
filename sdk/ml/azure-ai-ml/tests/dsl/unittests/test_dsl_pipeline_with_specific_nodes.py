@@ -851,7 +851,7 @@ class TestDSLPipelineWithSpecificNodes:
     def test_pipeline_with_data_transfer_export_database_function(self):
         connection_target_azuresql = 'azureml:my_azuresql_connection'
         table_name = "merged_table"
-        cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+        cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
         inputs = {"source": cosmos_folder}
         sink = {'type': 'database', 'connection': connection_target_azuresql, 'table_name': table_name}
         data_transfer_job = DataTransferExportJob(
@@ -897,7 +897,7 @@ class TestDSLPipelineWithSpecificNodes:
                 'is_archived': False,
                 'job_type': 'Pipeline',
                 'jobs': {'node1': {'_source': 'BUILTIN',
-                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                   'inputs': {'source': {'job_input_type': 'uri_file',
                                                          'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
                                    'name': 'node1',
                                    'sink': {'connection': 'azureml:my_azuresql_connection',
@@ -906,7 +906,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'task': 'export_data',
                                    'type': 'data_transfer'},
                          'node2': {'_source': 'BUILTIN',
-                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                   'inputs': {'source': {'job_input_type': 'uri_file',
                                                          'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
                                    'name': 'node2',
                                    'sink': {'connection': 'azureml:my_azuresql_connection',
@@ -915,7 +915,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'task': 'export_data',
                                    'type': 'data_transfer'},
                          'node3': {'_source': 'BUILTIN',
-                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                   'inputs': {'source': {'job_input_type': 'uri_file',
                                                          'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
                                    'name': 'node3',
                                    'sink': {'connection': '${{parent.inputs.connection_target_azuresql}}',
@@ -924,7 +924,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'task': 'export_data',
                                    'type': 'data_transfer'},
                          'node4': {'_source': 'BUILTIN',
-                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                   'inputs': {'source': {'job_input_type': 'uri_file',
                                                          'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
                                    'name': 'node4',
                                    'sink': {'connection': '${{parent.inputs.connection_target_azuresql}}',
@@ -1773,7 +1773,7 @@ class TestDSLPipelineWithSpecificNodes:
     def test_pipeline_with_data_transfer_export_database_job(self):
         connection_target_azuresql = 'azureml:my_azuresql_connection'
         table_name = "merged_table"
-        cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+        cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
         inputs = {"source": cosmos_folder}
         sink = {'type': 'database', 'connection': connection_target_azuresql, 'table_name': table_name}
         data_transfer_job = DataTransferExportJob(
@@ -1821,7 +1821,7 @@ class TestDSLPipelineWithSpecificNodes:
                 'is_archived': False,
                 'job_type': 'Pipeline',
                 'jobs': {'node1': {'_source': 'BUILTIN',
-                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                   'inputs': {'source': {'job_input_type': 'uri_file',
                                                          'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
                                    'name': 'node1',
                                    'sink': {'connection': 'azureml:my_azuresql_connection',
@@ -1830,7 +1830,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'task': 'export_data',
                                    'type': 'data_transfer'},
                          'node2': {'_source': 'BUILTIN',
-                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                   'inputs': {'source': {'job_input_type': 'uri_file',
                                                          'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
                                    'name': 'node2',
                                    'sink': {'connection': '${{parent.inputs.connection_target_azuresql}}',
