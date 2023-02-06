@@ -382,7 +382,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=self._max_wait_time * 1 if self._max_wait_time else 0, # TODO: This is not working
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
-            keep_alive_interval=self._config.keep_alive if self._prefetch_count != 1 else 5,
+            keep_alive_interval=self._config.keep_alive,
             shutdown_after_timeout=False,
             link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
