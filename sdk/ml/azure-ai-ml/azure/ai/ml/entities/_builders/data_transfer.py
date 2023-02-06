@@ -4,38 +4,63 @@
 
 # pylint: disable=protected-access
 
-import copy
 import logging
-import os
 from enum import Enum
-from os import PathLike
 from typing import Dict, List, Optional, Union
 
-from marshmallow import INCLUDE, Schema
+from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
-from azure.ai.ml._schema.job.data_transfer_job import DataTransferJobSchema
-from azure.ai.ml.constants._component import ComponentSource, NodeType
-from azure.ai.ml.entities._component.datatransfer_component import DataTransferComponent, DataTransferCopyComponent
+from azure.ai.ml._schema.job.data_transfer_job import DataTransferCopyJobSchema, DataTransferImportJobSchema, \
+    DataTransferExportJobSchema
+from azure.ai.ml.constants._component import  NodeType, ExternalDataType, DataTransferTaskType
+from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
+    DataTransferImportComponent, DataTransferExportComponent, DataTransferComponent
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, from_rest_inputs_to_dataset_literal
-from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob
+from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob, DataTransferImportJob, \
+    DataTransferExportJob
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
+
 
 from ..._schema import PathAwareSchema
 from .._util import (
     convert_ordered_dict_to_dict,
-    from_rest_dict_to_dummy_rest_object,
-    get_rest_dict_for_node_attrs,
     load_from_dict,
     validate_attribute_type,
 )
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
+
+
+def _build_source_sink(io_dict: Union[Dict, Database, FileSystem]):
+    if not io_dict:
+        return io_dict
+    io_dict = io_dict or {}
+    if isinstance(io_dict, (Database, FileSystem)):
+        component_io = io_dict
+    else:
+        data_type = io_dict.get("type", None)
+        if data_type == ExternalDataType.DATABASE:
+            component_io = Database(**io_dict)
+        elif data_type == ExternalDataType.FILE_SYSTEM:
+            component_io = FileSystem(**io_dict)
+        else:
+            msg = "Source or sink only support type {} and {}, currently got {}."
+            raise ValidationException(
+                message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
+                no_personal_data_message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM,
+                                                    "data_type"),
+                target=ErrorTarget.COMPONENT,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+
+    return component_io
 
 
 class DataTransfer(BaseNode):
@@ -47,7 +72,7 @@ class DataTransfer(BaseNode):
     def __init__(
         self,
         *,
-        component: Union[str, DataTransferComponent],
+        component: Union[str, DataTransferCopyComponent],
         compute: Optional[str] = None,
         inputs: Optional[Dict[str, Union[Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
@@ -74,11 +99,60 @@ class DataTransfer(BaseNode):
         """
         return self._parameters
 
-    @classmethod
-    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
-        from azure.ai.ml._schema.pipeline import DataTransferSchema
+    @property
+    def component(self) -> Union[str, DataTransferComponent]:
+        return self._component
 
-        return DataTransferSchema(context=context)
+    @classmethod
+    def _load_from_rest_job(cls, obj: JobBase) -> "DataTransfer":
+        # Todo: need update rest api
+        raise NotImplementedError("Not support submit standalone job for now")
+
+    @classmethod
+    def _get_supported_outputs_types(cls):
+        return str, Output
+
+    def _build_inputs(self):
+        inputs = super(DataTransfer, self)._build_inputs()
+        built_inputs = {}
+        # Validate and remove non-specified inputs
+        for key, value in inputs.items():
+            if value is not None:
+                built_inputs[key] = value
+
+        return built_inputs
+
+    def __call__(self, *args, **kwargs) -> "DataTransfer":
+        """Call Command as a function will return a new instance each time."""
+        if isinstance(self._component, Component):
+            # call this to validate inputs
+            node = self._component(*args, **kwargs)
+            # merge inputs
+            for name, original_input in self.inputs.items():
+                if name not in kwargs.keys():
+                    # use setattr here to make sure owner of input won't change
+                    setattr(node.inputs, name, original_input._data)
+                    node._job_inputs[name] = original_input._data
+                # get outputs
+            for name, original_output in self.outputs.items():
+                # use setattr here to make sure owner of input won't change
+                setattr(node.outputs, name, original_output._data)
+            self._refine_optional_inputs_with_no_value(node, kwargs)
+            # set default values: compute, environment_variables, outputs
+            node._name = self.name
+            node.compute = self.compute
+            node.tags = self.tags
+            # Pass through the display name only if the display name is not system generated.
+            node.display_name = self.display_name if self.display_name != self.name else None
+            return node
+        msg = "copy_data/import_data/export_data can be called as a function only when referenced component is {}, " \
+              "currently got {}."
+        raise ValidationException(
+            message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
+            target=ErrorTarget.DATA_TRANSFER_JOB,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
 
 
 class DataTransferCopy(DataTransfer):
@@ -88,7 +162,7 @@ class DataTransferCopy(DataTransfer):
     create from builder function: copy_data.
 
     :param component: Id or instance of the data transfer component/job to be run for the step
-    :type component: DataTransferComponent
+    :type component: DataTransferCopyComponent
     :param inputs: Inputs to the data transfer.
     :type inputs: Dict[str, Union[Input, str, bool, int, float, Enum, dict]]
     :param outputs: Mapping of output data bindings used in the job.
@@ -122,7 +196,7 @@ class DataTransferCopy(DataTransfer):
         compute: Optional[str] = None,
         inputs: Optional[Dict[str, Union[Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
-        task: Optional[str] = None,
+        task: Optional[str] = DataTransferTaskType.COPY_DATA,
         data_copy_mode: Optional[str] = None,
         **kwargs,
     ):
@@ -146,26 +220,16 @@ class DataTransferCopy(DataTransfer):
         self._init = False
 
     @classmethod
-    def _get_supported_inputs_types(cls):
-        # Todo: update input types for data transfer
-        supported_types = super()._get_supported_inputs_types() or ()
-        return (
-            *supported_types,
-        )
-
-    @classmethod
-    def _get_supported_outputs_types(cls):
-        return str, Output
-
-    @property
-    def component(self) -> Union[str, DataTransferCopyComponent]:
-        return self._component
-
-    @classmethod
     def _attr_type_map(cls) -> dict:
         return {
             "component": (str, DataTransferCopyComponent),
         }
+
+    @classmethod
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+        from azure.ai.ml._schema.pipeline import DataTransferCopySchema
+
+        return DataTransferCopySchema(context=context)
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
@@ -182,49 +246,10 @@ class DataTransferCopy(DataTransfer):
         return convert_ordered_dict_to_dict(rest_obj)
 
     @classmethod
-    def _load_from_rest_job(cls, obj: JobBase) -> "DataTransferCopy":
-        from .data_transfer_func import copy_data
-
-        rest_data_transfer_job = obj.properties
-
-        data_transfer_job = copy_data(
-            name=obj.name,
-            display_name=rest_data_transfer_job.display_name,
-            description=rest_data_transfer_job.description,
-            tags=rest_data_transfer_job.tags,
-            properties=rest_data_transfer_job.properties,
-            experiment_name=rest_data_transfer_job.experiment_name,
-            status=rest_data_transfer_job.status,
-            creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
-            compute=rest_data_transfer_job.compute_id,
-            parameters=rest_data_transfer_job.parameters,
-            inputs=from_rest_inputs_to_dataset_literal(rest_data_transfer_job.inputs),
-            outputs=from_rest_data_outputs(rest_data_transfer_job.outputs),
-            task=rest_data_transfer_job.task,
-            data_copy_mode=rest_data_transfer_job.rest_data_transfer_job
-        )
-        data_transfer_job._id = obj.id
-        data_transfer_job.component._source = (
-            ComponentSource.REMOTE_WORKSPACE_JOB
-        )  # This is used by pipeline job telemetries.
-
-        return data_transfer_job
-
-    def _build_inputs(self):
-        inputs = super(DataTransferCopy, self)._build_inputs()
-        built_inputs = {}
-        # Validate and remove non-specified inputs
-        for key, value in inputs.items():
-            if value is not None:
-                built_inputs[key] = value
-
-        return built_inputs
-
-    @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Spark":
         from .data_transfer_func import copy_data
 
-        loaded_data = load_from_dict(DataTransferJobSchema, data, context, additional_message, **kwargs)
+        loaded_data = load_from_dict(DataTransferCopyJobSchema, data, context, additional_message, **kwargs)
         data_transfer_job = copy_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
 
         return data_transfer_job
@@ -246,33 +271,244 @@ class DataTransferCopy(DataTransfer):
             data_copy_mode=self.data_copy_mode
         )
 
-    def __call__(self, *args, **kwargs) -> "DataTransferCopy":
-        """Call Command as a function will return a new instance each time."""
-        if isinstance(self._component, Component):
-            # call this to validate inputs
-            node = self._component(*args, **kwargs)
-            # merge inputs
-            for name, original_input in self.inputs.items():
-                if name not in kwargs.keys():
-                    # use setattr here to make sure owner of input won't change
-                    setattr(node.inputs, name, original_input._data)
-                    node._job_inputs[name] = original_input._data
-                # get outputs
-            for name, original_output in self.outputs.items():
-                # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
-            self._refine_optional_inputs_with_no_value(node, kwargs)
-            # set default values: compute, environment_variables, outputs
-            node._name = self.name
-            node.compute = self.compute
-            node.tags = self.tags
-            # Pass through the display name only if the display name is not system generated.
-            node.display_name = self.display_name if self.display_name != self.name else None
-            return node
-        msg = "Command can be called as a function only when referenced component is {}, currently got {}."
-        raise ValidationException(
-            message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), "self._component"),
-            target=ErrorTarget.DATA_TRANSFER_JOB,
-            error_type=ValidationErrorType.INVALID_VALUE,
+
+class DataTransferImport(DataTransfer):
+    """Base class for data transfer import node.
+
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: import_data.
+
+    :param component: Id of the data transfer built in componentto be run for the step
+    :type component: str
+    :param source: The data source of file system or database
+    :type source: Union[Dict, Database, FileSystem]
+    :param outputs: Mapping of output data bindings used in the job.
+    :type outputs: Dict[str, Union[str, Output, dict]]
+    :param name: Name of the data transfer.
+    :type name: str
+    :param description: Description of the data transfer.
+    :type description: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict[str, str]
+    :param display_name: Display name of the job.
+    :type display_name: str
+    :param experiment_name:  Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name.
+    :type experiment_name: str
+    :param compute: The compute target the job runs on.
+    :type compute: str
+    :param task: task type in data transfer component, possible value is "import_data".
+    :type task: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferImport cannot be successfully validated.
+        Details will be provided in the error message.
+    """
+
+    # pylint: disable=too-many-instance-attributes
+    def __init__(
+        self,
+        *,
+        component: Union[str, DataTransferImportComponent],
+        compute: Optional[str] = None,
+        source: Optional[Union[Dict, Database, FileSystem]] = None,
+        outputs: Optional[Dict[str, Union[str, Output]]] = None,
+        task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
+        **kwargs,
+    ):
+        # validate init params are valid type
+        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        super(DataTransferImport, self).__init__(
+            component=component,
+            outputs=outputs,
+            compute=compute,
+            **kwargs,
+        )
+        # init mark for _AttrDict
+        self._init = True
+        self.task = task
+        is_component = isinstance(component, DataTransferImportComponent)
+        if is_component:
+            self.task = component.task or self.task
+        self.source = _build_source_sink(source)
+        self._init = False
+
+    @classmethod
+    def _attr_type_map(cls) -> dict:
+        return {
+            "component": (str, DataTransferImportComponent),
+        }
+
+    @classmethod
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+        from azure.ai.ml._schema.pipeline import DataTransferImportSchema
+
+        return DataTransferImportSchema(context=context)
+
+    @classmethod
+    def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
+        return ["type", "task", "source"]
+
+    def _to_rest_object(self, **kwargs) -> dict:
+        rest_obj = super()._to_rest_object(**kwargs)
+        for key, value in {
+            "componentId": self._get_component_id(),
+        }.items():
+            if value is not None:
+                rest_obj[key] = value
+        return convert_ordered_dict_to_dict(rest_obj)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferImport":
+        from .data_transfer_func import import_data
+
+        loaded_data = load_from_dict(DataTransferImportJobSchema, data, context, additional_message, **kwargs)
+        data_transfer_job = import_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+
+        return data_transfer_job
+
+    def _to_job(self) -> DataTransferImportJob:
+
+        return DataTransferImportJob(
+            experiment_name=self.experiment_name,
+            name=self.name,
+            display_name=self.display_name,
+            description=self.description,
+            tags=self.tags,
+            status=self.status,
+            source=self.source,
+            outputs=self._job_outputs,
+            services=self.services,
+            compute=self.compute,
+            task=self.task,
+        )
+
+
+class DataTransferExport(DataTransfer):
+    """Base class for data transfer export node.
+
+    You should not instantiate this class directly. Instead, you should
+    create from builder function: export_data.
+
+    :param component: Id of the data transfer built in componentto be run for the step
+    :type component: str
+    :param sink: The sink of external data and databases.
+    :type sink: Union[Dict, Database, FileSystem]
+    :param inputs: Mapping of input data bindings used in the job.
+    :type inputs: Dict[str, Union[str, Input, dict]]
+    :param name: Name of the data transfer.
+    :type name: str
+    :param description: Description of the data transfer.
+    :type description: str
+    :param tags: Tag dictionary. Tags can be added, removed, and updated.
+    :type tags: dict[str, str]
+    :param display_name: Display name of the job.
+    :type display_name: str
+    :param experiment_name:  Name of the experiment the job will be created under,
+        if None is provided, default will be set to current directory name.
+    :type experiment_name: str
+    :param compute: The compute target the job runs on.
+    :type compute: str
+    :param task: task type in data transfer component, possible value is "export_data".
+    :type task: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataTransferExport cannot be successfully validated.
+        Details will be provided in the error message.
+    """
+
+    # pylint: disable=too-many-instance-attributes
+    def __init__(
+        self,
+        *,
+        component: Union[str, DataTransferExportComponent],
+        compute: Optional[str] = None,
+        sink: Optional[Union[Dict, Database, FileSystem]] = None,
+        inputs: Optional[Dict[str, Union[str, Input]]] = None,
+        task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
+        **kwargs,
+    ):
+        # validate init params are valid type
+        validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
+        super(DataTransferExport, self).__init__(
+            component=component,
+            inputs=inputs,
+            compute=compute,
+            **kwargs,
+        )
+        # init mark for _AttrDict
+        self._init = True
+        self.task = task
+        is_component = isinstance(component, DataTransferExportComponent)
+        if is_component:
+            self.task = component.task or self.task
+        self.sink = sink
+        self._init = False
+
+    @property
+    def sink(self) -> Union[None, Database, FileSystem]:
+        """The sink of external data and databases.
+
+        :return: The sink of external data and databases.
+        :rtype: Union[None, Database, FileSystem]
+        """
+        return self._sink
+
+    @sink.setter
+    def sink(self, value):
+        self._sink = _build_source_sink(value)
+
+    @classmethod
+    def _attr_type_map(cls) -> dict:
+        return {
+            "component": (str, DataTransferExportComponent),
+        }
+
+    @classmethod
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
+        from azure.ai.ml._schema.pipeline import DataTransferExportSchema
+
+        return DataTransferExportSchema(context=context)
+
+    @classmethod
+    def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
+        return ["type", "task", "sink"]
+
+    def _customized_validate(self):
+        result = super()._customized_validate()
+        if self.sink is None:
+            result.append_error(
+                yaml_path="sink",
+                message="Sink is a required field for export data task in DataTransfer job",
+            )
+        return result
+
+    def _to_rest_object(self, **kwargs) -> dict:
+        rest_obj = super()._to_rest_object(**kwargs)
+        for key, value in {
+            "componentId": self._get_component_id(),
+        }.items():
+            if value is not None:
+                rest_obj[key] = value
+        return convert_ordered_dict_to_dict(rest_obj)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "DataTransferExport":
+        from .data_transfer_func import export_data
+
+        loaded_data = load_from_dict(DataTransferExportJobSchema, data, context, additional_message, **kwargs)
+        data_transfer_job = export_data(base_path=context[BASE_PATH_CONTEXT_KEY], **loaded_data)
+
+        return data_transfer_job
+
+    def _to_job(self) -> DataTransferExportJob:
+
+        return DataTransferExportJob(
+            experiment_name=self.experiment_name,
+            name=self.name,
+            display_name=self.display_name,
+            description=self.description,
+            tags=self.tags,
+            status=self.status,
+            sink=self.sink,
+            inputs=self._job_inputs,
+            services=self.services,
+            compute=self.compute,
+            task=self.task,
         )

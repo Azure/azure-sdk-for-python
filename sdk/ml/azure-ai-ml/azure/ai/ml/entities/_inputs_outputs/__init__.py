@@ -59,8 +59,7 @@ from .group_input import GroupInput
 from .input import Input
 from .output import Output
 from .utils import _get_param_with_standard_annotation, is_group
-from .source import Source
-from .sink import Sink
+from .external_data import Database, FileSystem
 
 __all__ = ["Input", "Output", "EnumInput", "GroupInput", "is_group", "_get_param_with_standard_annotation",
-           "Source", "Sink"]
+           "Database", "FileSystem"]

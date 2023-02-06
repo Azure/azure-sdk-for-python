@@ -11,13 +11,13 @@ from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.input_output_entry import OutputSchema
-from azure.ai.ml._schema.job.data_transfer_job import DataTransferJobSchema
-from azure.ai.ml.constants._component import DataTransferTaskType
+from azure.ai.ml._schema.job.data_transfer_job import DataTransferCopyJobSchema, DataTransferImportJobSchema, \
+    DataTransferExportJobSchema
 
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineDataTransferJobSchema(DataTransferJobSchema):
+class PipelineDataTransferCopyJobSchema(DataTransferCopyJobSchema):
     outputs = fields.Dict(
         keys=fields.Str(),
         values=UnionField([NestedField(OutputSchema), fields.Str()], allow_none=True),
@@ -25,12 +25,28 @@ class PipelineDataTransferJobSchema(DataTransferJobSchema):
 
     @post_load
     def make(self, data: Any, **kwargs: Any):
-        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob, \
-            DataTransferImportJob, DataTransferExportJob
-        task = data.get("task", None)
-        if task == DataTransferTaskType.COPY_DATA:
-            return DataTransferCopyJob(**data)
-        elif task == DataTransferTaskType.IMPORT_DATA:
-            return DataTransferImportJob(**data)
-        else:
-            return DataTransferExportJob(**data)
+        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob
+
+        return DataTransferCopyJob(**data)
+
+
+class PipelineDataTransferImportJobSchema(DataTransferImportJobSchema):
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField([NestedField(OutputSchema)], allow_none=True),
+    )
+
+    @post_load
+    def make(self, data: Any, **kwargs: Any):
+        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferImportJob
+
+        return DataTransferImportJob(**data)
+
+
+class PipelineDataTransferExportJobSchema(DataTransferExportJobSchema):
+
+    @post_load
+    def make(self, data: Any, **kwargs: Any):
+        from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferExportJob
+
+        return DataTransferExportJob(**data)

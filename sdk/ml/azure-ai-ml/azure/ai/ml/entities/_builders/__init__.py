@@ -9,7 +9,7 @@ from .parallel import Parallel
 from .pipeline import Pipeline
 from .spark import Spark
 from .sweep import Sweep
-from .data_transfer import DataTransfer, DataTransferCopy
+from .data_transfer import DataTransfer, DataTransferCopy, DataTransferImport, DataTransferExport
 
 __all__ = ["BaseNode", "Sweep", "Parallel", "Command", "Import", "Spark", "Pipeline", "parse_inputs_outputs",
-           "DoWhile", "DataTransfer", "DataTransferCopy"]
+           "DoWhile", "DataTransfer", "DataTransferCopy", "DataTransferImport", "DataTransferExport"]

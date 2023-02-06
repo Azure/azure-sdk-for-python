@@ -9,12 +9,14 @@ from azure.ai.ml.automl import classification, regression
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._component import DataTransferTaskType, DataCopyMode
 from azure.ai.ml.dsl._load_import import to_component
-from azure.ai.ml.data_transfer import copy_data
+from azure.ai.ml.data_transfer import copy_data, import_data, export_data
+from azure.ai.ml.data_transfer import Database, FileSystem
 from azure.ai.ml.entities import CommandComponent, CommandJob, Data, ParallelTask, PipelineJob, SparkJob
-from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep
+from azure.ai.ml.entities._builders import Command, Parallel, Spark, Sweep, DataTransferImport
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
-from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob
+from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob, DataTransferImportJob, \
+    DataTransferExportJob
 from azure.ai.ml.entities._job.job_service import (
     JobService,
     JupyterLabJobService,
@@ -570,6 +572,492 @@ class TestDSLPipelineWithSpecificNodes:
                 'properties': {},
                 'settings': {'_source': 'DSL'},
                 'tags': {}}}
+
+    def test_pipeline_with_data_transfer_import_database_function(self):
+        query_source_snowflake = 'SELECT * FROM my_table'
+        connection_target_azuresql = 'azureml:my_azuresql_connection'
+        outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
+        source = {'type': 'database', 'connection': 'azureml:my_snowflake_connection',
+                  'query': query_source_snowflake}
+        data_transfer_job = DataTransferImportJob(
+            source=source,
+            outputs=outputs,
+            task=DataTransferTaskType.IMPORT_DATA,
+            compute='adf_compute1',
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        # DataTransferImport from import_data() function
+        data_transfer_function = import_data(
+            source=source,
+            outputs=outputs,
+            task=DataTransferTaskType.IMPORT_DATA,
+        )
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_database_function")
+        def pipeline(query_source_snowflake, connection_target_azuresql):
+            node1 = data_transfer_job_func(source=Database(**source))
+            node2 = data_transfer_function(source=Database(**source))
+
+            source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
+            node3 = data_transfer_job_func(source=source_snowflake)
+            node4 = data_transfer_function(source=source_snowflake)
+
+        omit_fields = ["properties.jobs.*.componentId"]
+
+        pipeline1 = pipeline(query_source_snowflake, connection_target_azuresql)
+        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_import_database_function',
+                'inputs': {'connection_target_azuresql': {'job_input_type': 'literal',
+                                                          'value': 'azureml:my_azuresql_connection'},
+                           'query_source_snowflake': {'job_input_type': 'literal',
+                                                      'value': 'SELECT * FROM '
+                                                               'my_table'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'name': 'node1',
+                                   'source': {'connection': 'azureml:my_snowflake_connection',
+                                              'query': 'SELECT * FROM my_table',
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'name': 'node2',
+                                   'outputs': {'sink': {'job_output_type': 'mltable'}},
+                                   'source': {'connection': 'azureml:my_snowflake_connection',
+                                              'query': 'SELECT * FROM my_table',
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node3': {'_source': 'BUILTIN',
+                                   'name': 'node3',
+                                   'source': {'connection': '${{parent.inputs.connection_target_azuresql}}',
+                                              'query': '${{parent.inputs.query_source_snowflake}}',
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node4': {'_source': 'BUILTIN',
+                                   'name': 'node4',
+                                   'outputs': {'sink': {'job_output_type': 'mltable'}},
+                                   'source': {'connection': '${{parent.inputs.connection_target_azuresql}}',
+                                              'query': '${{parent.inputs.query_source_snowflake}}',
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+        for key, _ in pipeline1.jobs.items():
+            data_transfer_import_node = pipeline1.jobs[key]
+            data_transfer_import_node_dict = data_transfer_import_node._to_dict()
+
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
+
+            # data_transfer_import_node_dict will dump to component dict according to schema, but
+            # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
+            omit_fields = ["component"]
+
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == \
+                   pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
+
+    def test_pipeline_with_data_transfer_import_stored_database_function(self):
+        stored_procedure = 'SelectEmployeeByJobAndDepartment'
+        stored_procedure_params = [{'name': 'job', 'value': 'Engineer', 'type': 'String'},
+                                   {'name': 'department', 'value': 'Engineering', 'type': 'String'}]
+        outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
+        source = {'type': 'database', 'stored_procedure': stored_procedure,
+                  'stored_procedure_params': stored_procedure_params}
+        data_transfer_job = DataTransferImportJob(
+            source=source,
+            outputs=outputs,
+            task=DataTransferTaskType.IMPORT_DATA,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        # DataTransferImport from import_data() function
+        data_transfer_function = import_data(
+            source=source,
+            outputs=outputs,
+            task=DataTransferTaskType.IMPORT_DATA,
+        )
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_stored_database_function")
+        def pipeline():
+            node1 = data_transfer_job_func(source=Database(**source))
+            node2 = data_transfer_function(source=Database(**source))
+
+        omit_fields = ["properties.jobs.*.componentId"]
+        pipeline1 = pipeline()
+        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_import_stored_database_function',
+                'inputs': {},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'name': 'node1',
+                                   'source': {'stored_procedure': 'SelectEmployeeByJobAndDepartment',
+                                              'stored_procedure_params': [{'name': 'job',
+                                                                           'type': 'String',
+                                                                           'value': 'Engineer'},
+                                                                          {'name': 'department',
+                                                                           'type': 'String',
+                                                                           'value': 'Engineering'}],
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'name': 'node2',
+                                   'outputs': {'sink': {'job_output_type': 'mltable'}},
+                                   'source': {'stored_procedure': 'SelectEmployeeByJobAndDepartment',
+                                              'stored_procedure_params': [{'name': 'job',
+                                                                           'type': 'String',
+                                                                           'value': 'Engineer'},
+                                                                          {'name': 'department',
+                                                                           'type': 'String',
+                                                                           'value': 'Engineering'}],
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+        for key, _ in pipeline1.jobs.items():
+            data_transfer_import_node = pipeline1.jobs[key]
+            data_transfer_import_node_dict = data_transfer_import_node._to_dict()
+
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
+
+            # data_transfer_import_node_dict will dump to component dict according to schema, but
+            # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
+            omit_fields = ["component"]
+
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == \
+                   pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
+
+    def test_pipeline_with_data_transfer_import_file_system_function(self):
+        path_source_s3 = 's3://my_bucket/my_folder'
+        connection_target = 'azureml:my_s3_connection'
+        outputs = {"sink": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/managed/paths/some_path")}
+        source = {'type': 'file_system', 'connection': connection_target, 'path': path_source_s3}
+        data_transfer_job = DataTransferImportJob(
+            source=source,
+            outputs=outputs,
+            task=DataTransferTaskType.IMPORT_DATA,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        # DataTransferImport from import_data() function
+        data_transfer_function = import_data(
+            source=source,
+            outputs=outputs,
+            task=DataTransferTaskType.IMPORT_DATA,
+        )
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_file_system_function")
+        def pipeline(path_source_s3, connection_target):
+            node1 = data_transfer_job_func(source=FileSystem(**source))
+            node2 = data_transfer_function(source=FileSystem(**source))
+
+            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
+            node3 = data_transfer_job_func(source=source_snowflake)
+            node4 = data_transfer_function(source=source_snowflake)
+
+        omit_fields = ["properties.jobs.*.componentId"]
+
+        pipeline1 = pipeline(path_source_s3, connection_target)
+        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_import_file_system_function',
+                'inputs': {'connection_target': {'job_input_type': 'literal',
+                                                 'value': 'azureml:my_s3_connection'},
+                           'path_source_s3': {'job_input_type': 'literal',
+                                              'value': 's3://my_bucket/my_folder'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'name': 'node1',
+                                   'source': {'connection': 'azureml:my_s3_connection',
+                                              'path': 'azureml:s3://my_bucket/my_folder',
+                                              'type': 'file_system'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'name': 'node2',
+                                   'outputs': {'sink': {'job_output_type': 'uri_folder',
+                                                        'uri': 'azureml://datastores/managed/paths/some_path'}},
+                                   'source': {'connection': 'azureml:my_s3_connection',
+                                              'path': 'azureml:s3://my_bucket/my_folder',
+                                              'type': 'file_system'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node3': {'_source': 'BUILTIN',
+                                   'name': 'node3',
+                                   'source': {'connection': '${{parent.inputs.connection_target}}',
+                                              'path': '${{parent.inputs.path_source_s3}}',
+                                              'type': 'file_system'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node4': {'_source': 'BUILTIN',
+                                   'name': 'node4',
+                                   'outputs': {'sink': {'job_output_type': 'uri_folder',
+                                                        'uri': 'azureml://datastores/managed/paths/some_path'}},
+                                   'source': {'connection': '${{parent.inputs.connection_target}}',
+                                              'path': '${{parent.inputs.path_source_s3}}',
+                                              'type': 'file_system'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+        for key, _ in pipeline1.jobs.items():
+            data_transfer_import_node = pipeline1.jobs[key]
+            data_transfer_import_node_dict = data_transfer_import_node._to_dict()
+
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
+
+            # data_transfer_import_node_dict will dump to component dict according to schema, but
+            # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
+            omit_fields = ["component"]
+
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == \
+                   pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
+
+    def test_pipeline_with_data_transfer_export_database_function(self):
+        connection_target_azuresql = 'azureml:my_azuresql_connection'
+        table_name = "merged_table"
+        cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+        inputs = {"source": cosmos_folder}
+        sink = {'type': 'database', 'connection': connection_target_azuresql, 'table_name': table_name}
+        data_transfer_job = DataTransferExportJob(
+            inputs=inputs,
+            sink=sink,
+            task=DataTransferTaskType.EXPORT_DATA,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        # DataTransferImport from export_data() function
+        data_transfer_function = export_data(
+            inputs=inputs,
+            sink=sink,
+            task=DataTransferTaskType.EXPORT_DATA,
+        )
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_database_function")
+        def pipeline(table_name, connection_target_azuresql):
+            node1 = data_transfer_job_func(source=cosmos_folder)
+            node1.sink = sink
+            node2 = data_transfer_function(source=cosmos_folder)
+            node2.sink = sink
+
+            source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
+            node3 = data_transfer_job_func(source=cosmos_folder)
+            node3.sink = source_snowflake
+            node4 = data_transfer_function(source=cosmos_folder)
+            node4.sink = source_snowflake
+
+        omit_fields = ["properties.jobs.*.componentId"]
+
+        pipeline1 = pipeline(table_name, connection_target_azuresql)
+        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_export_database_function',
+                'inputs': {'connection_target_azuresql': {'job_input_type': 'literal',
+                                                          'value': 'azureml:my_azuresql_connection'},
+                           'table_name': {'job_input_type': 'literal',
+                                          'value': 'merged_table'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node1',
+                                   'sink': {'connection': 'azureml:my_azuresql_connection',
+                                            'table_name': 'merged_table',
+                                            'type': 'database'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node2',
+                                   'sink': {'connection': 'azureml:my_azuresql_connection',
+                                            'table_name': 'merged_table',
+                                            'type': 'database'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'},
+                         'node3': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node3',
+                                   'sink': {'connection': '${{parent.inputs.connection_target_azuresql}}',
+                                            'table_name': '${{parent.inputs.table_name}}',
+                                            'type': 'database'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'},
+                         'node4': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node4',
+                                   'sink': {'connection': '${{parent.inputs.connection_target_azuresql}}',
+                                            'table_name': '${{parent.inputs.table_name}}',
+                                            'type': 'database'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+        for key, _ in pipeline1.jobs.items():
+            data_transfer_import_node = pipeline1.jobs[key]
+            data_transfer_import_node_dict = data_transfer_import_node._to_dict()
+
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
+
+            # data_transfer_import_node_dict will dump to component dict according to schema, but
+            # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
+            omit_fields = ["component"]
+
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == \
+                   pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
+
+    def test_pipeline_with_data_transfer_export_file_system_function(self):
+        path_source_s3 = 's3://my_bucket/my_folder'
+        connection_target = 'azureml:my_s3_connection'
+
+        my_cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+        inputs = {"source": my_cosmos_folder}
+        sink = {'type': 'file_system', 'connection': connection_target, 'path': path_source_s3}
+        data_transfer_job = DataTransferExportJob(
+            inputs=inputs,
+            sink=sink,
+            task=DataTransferTaskType.EXPORT_DATA,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        # DataTransferImport from export_data() function
+        data_transfer_function = export_data(
+            inputs=inputs,
+            sink=sink,
+            task=DataTransferTaskType.EXPORT_DATA,
+        )
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_file_system_function")
+        def pipeline(path_source_s3, connection_target, cosmos_folder):
+            node1 = data_transfer_job_func(source=my_cosmos_folder)
+            node1.sink = sink
+            node2 = data_transfer_function(source=my_cosmos_folder)
+            node2.sink = sink
+
+            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
+            node3 = data_transfer_job_func(source=cosmos_folder)
+            node3.sink = source_snowflake
+            node4 = data_transfer_function(source=cosmos_folder)
+            node4.sink = source_snowflake
+
+        omit_fields = ["properties.jobs.*.componentId"]
+
+        pipeline1 = pipeline(path_source_s3, connection_target)
+        pipeline_job1 = pipeline1._to_rest_object().as_dict()
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_export_file_system_function',
+                'inputs': {'connection_target': {'job_input_type': 'literal',
+                                                 'value': 'azureml:my_s3_connection'},
+                           'path_source_s3': {'job_input_type': 'literal',
+                                              'value': 's3://my_bucket/my_folder'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node1',
+                                   'sink': {'connection': 'azureml:my_s3_connection',
+                                            'path': 's3://my_bucket/my_folder',
+                                            'type': 'file_system'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node2',
+                                   'sink': {'connection': 'azureml:my_s3_connection',
+                                            'path': 's3://my_bucket/my_folder',
+                                            'type': 'file_system'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'},
+                         'node3': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.cosmos_folder}}'}},
+                                   'name': 'node3',
+                                   'sink': {'connection': '${{parent.inputs.connection_target}}',
+                                            'path': '${{parent.inputs.path_source_s3}}',
+                                            'type': 'file_system'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'},
+                         'node4': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.cosmos_folder}}'}},
+                                   'name': 'node4',
+                                   'sink': {'connection': '${{parent.inputs.connection_target}}',
+                                            'path': '${{parent.inputs.path_source_s3}}',
+                                            'type': 'file_system'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+        for key, _ in pipeline1.jobs.items():
+            data_transfer_import_node = pipeline1.jobs[key]
+            data_transfer_import_node_dict = data_transfer_import_node._to_dict()
+
+            data_transfer_import_node_rest_obj = data_transfer_import_node._to_rest_object()
+            regenerated_data_transfer_import_node = DataTransferImport._from_rest_object(data_transfer_import_node_rest_obj)
+
+            data_transfer_import_node_dict_from_rest = regenerated_data_transfer_import_node._to_dict()
+
+            # data_transfer_import_node_dict will dump to component dict according to schema, but
+            # regenerated_data_transfer_import_node will only keep component id when call _to_rest_object()
+            omit_fields = ["component"]
+
+            assert pydash.omit(data_transfer_import_node_dict, *omit_fields) == \
+                   pydash.omit(data_transfer_import_node_dict_from_rest, *omit_fields)
 
     def test_pipeline_with_spark_function(self):
         # component func
@@ -1141,6 +1629,370 @@ class TestDSLPipelineWithSpecificNodes:
                 'properties': {},
                 'settings': {'_source': 'DSL'},
                 'tags': {}}}
+
+    def test_pipeline_with_data_transfer_import_database_job(self):
+        query_source_snowflake = 'SELECT * FROM my_table'
+        connection_target_azuresql = 'azureml:my_azuresql_connection'
+        # outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
+        source = {'type': 'database', 'connection': 'azureml:my_snowflake_connection',
+                  'query': query_source_snowflake}
+        data_transfer_job = DataTransferImportJob(
+            source=source,
+            task=DataTransferTaskType.IMPORT_DATA,
+            compute='adf_compute1',
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_database_job")
+        def pipeline(query_source_snowflake, connection_target_azuresql):
+            node1 = data_transfer_job_func(source=Database(**source))
+            source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
+            node2 = data_transfer_job_func(source=source_snowflake)
+
+            return {
+                "pipeline_output": node2.outputs.sink,
+            }
+
+        pipeline1 = pipeline(query_source_snowflake, connection_target_azuresql)
+        pipeline_rest_obj = pipeline1._to_rest_object()
+        pipeline_job1 = pipeline_rest_obj.as_dict()
+
+        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
+
+        # pipeline1_dict will dump to component dict according to schema, but
+        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
+        omit_fields = ["jobs.*.component"]
+        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
+        pipeline_regenerated_from_rest_dict = omit_with_wildcard(pipeline_regenerated_from_rest._to_dict(), *omit_fields)
+
+        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
+
+        omit_fields = [
+            "properties.jobs.*.componentId",
+        ]
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_import_job',
+                'inputs': {'connection_target_azuresql': {'job_input_type': 'literal',
+                                                          'value': 'azureml:my_azuresql_connection'},
+                           'query_source_snowflake': {'job_input_type': 'literal',
+                                                      'value': 'SELECT * FROM '
+                                                               'my_table'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'name': 'node1',
+                                   'source': {'connection': 'azureml:my_snowflake_connection',
+                                              'query': 'SELECT * FROM my_table',
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'name': 'node2',
+                                   'outputs': {'sink': {'type': 'literal',
+                                                        'value': '${{parent.outputs.pipeline_output}}'}},
+                                   'source': {'connection': '${{parent.inputs.connection_target_azuresql}}',
+                                              'query': '${{parent.inputs.query_source_snowflake}}',
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {'pipeline_output': {'job_output_type': 'mltable'}},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+
+    def test_pipeline_with_data_transfer_import_stored_database_job(self):
+        stored_procedure = 'SelectEmployeeByJobAndDepartment'
+        stored_procedure_params = [{'name': 'job', 'value': 'Engineer', 'type': 'String'},
+                                   {'name': 'department', 'value': 'Engineering', 'type': 'String'}]
+        outputs = {"sink": Output(type=AssetTypes.MLTABLE)}
+        source = {'type': 'database', 'stored_procedure': stored_procedure,
+                  'stored_procedure_params': stored_procedure_params}
+        data_transfer_job = DataTransferImportJob(
+            source=source,
+            outputs=outputs,
+            task=DataTransferTaskType.IMPORT_DATA,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_stored_database_job")
+        def pipeline(query_source_snowflake, connection_target_azuresql):
+            node1 = data_transfer_job_func(source=Database(**source))
+
+            return {
+                "pipeline_output": node1.outputs.sink,
+            }
+
+        pipeline1 = pipeline()
+        pipeline_rest_obj = pipeline1._to_rest_object()
+        pipeline_job1 = pipeline_rest_obj.as_dict()
+
+        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
+
+        # pipeline1_dict will dump to component dict according to schema, but
+        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
+        omit_fields = ["jobs.*.component"]
+        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
+        pipeline_regenerated_from_rest_dict = omit_with_wildcard(pipeline_regenerated_from_rest._to_dict(), *omit_fields)
+
+        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
+
+        omit_fields = [
+            "properties.jobs.*.componentId",
+        ]
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_import_stored_database_job',
+                'inputs': {},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'name': 'node1',
+                                   'outputs': {'sink': {'type': 'literal',
+                                                        'value': '${{parent.outputs.pipeline_output}}'}},
+                                   'source': {'stored_procedure': 'SelectEmployeeByJobAndDepartment',
+                                              'stored_procedure_params': [{'name': 'job',
+                                                                           'type': 'String',
+                                                                           'value': 'Engineer'},
+                                                                          {'name': 'department',
+                                                                           'type': 'String',
+                                                                           'value': 'Engineering'}],
+                                              'type': 'database'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {'pipeline_output': {'job_output_type': 'mltable'}},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+
+    def test_pipeline_with_data_transfer_export_database_job(self):
+        connection_target_azuresql = 'azureml:my_azuresql_connection'
+        table_name = "merged_table"
+        cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+        inputs = {"source": cosmos_folder}
+        sink = {'type': 'database', 'connection': connection_target_azuresql, 'table_name': table_name}
+        data_transfer_job = DataTransferExportJob(
+            inputs=inputs,
+            sink=sink,
+            task=DataTransferTaskType.EXPORT_DATA,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_database_job")
+        def pipeline(table_name, connection_target_azuresql):
+            node1 = data_transfer_job_func(source=cosmos_folder)
+            node1.sink = sink
+
+            source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
+            node2 = data_transfer_job_func(source=cosmos_folder)
+            node2.sink = source_snowflake
+
+        pipeline1 = pipeline(table_name, connection_target_azuresql)
+        pipeline_rest_obj = pipeline1._to_rest_object()
+        pipeline_job1 = pipeline_rest_obj.as_dict()
+
+        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
+
+        # pipeline1_dict will dump to component dict according to schema, but
+        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
+        omit_fields = ["jobs.*.component"]
+        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
+        pipeline_regenerated_from_rest_dict = omit_with_wildcard(pipeline_regenerated_from_rest._to_dict(), *omit_fields)
+
+        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
+
+        omit_fields = [
+            "properties.jobs.*.componentId",
+        ]
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_export_database_job',
+                'inputs': {'connection_target_azuresql': {'job_input_type': 'literal',
+                                                          'value': 'azureml:my_azuresql_connection'},
+                           'table_name': {'job_input_type': 'literal',
+                                          'value': 'merged_table'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node1',
+                                   'sink': {'connection': 'azureml:my_azuresql_connection',
+                                            'table_name': 'merged_table',
+                                            'type': 'database'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node2',
+                                   'sink': {'connection': '${{parent.inputs.connection_target_azuresql}}',
+                                            'table_name': '${{parent.inputs.table_name}}',
+                                            'type': 'database'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+
+    def test_pipeline_with_data_transfer_import_file_system_job(self):
+        path_source_s3 = 's3://my_bucket/my_folder'
+        connection_target = 'azureml:my_s3_connection'
+        outputs = {"sink": Output(type=AssetTypes.URI_FOLDER, path="azureml://datastores/managed/paths/some_path")}
+        source = {'type': 'file_system', 'connection': connection_target, 'path': path_source_s3}
+        data_transfer_job = DataTransferImportJob(
+            source=source,
+            outputs=outputs,
+            task=DataTransferTaskType.IMPORT_DATA,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_file_system_job")
+        def pipeline(path_source_s3, connection_target):
+            node1 = data_transfer_job_func(source=FileSystem(**source))
+            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
+            node2 = data_transfer_job_func(source=source_snowflake)
+            return {
+                "pipeline_output": node2.outputs.sink,
+            }
+
+        pipeline1 = pipeline(path_source_s3, connection_target)
+        pipeline_rest_obj = pipeline1._to_rest_object()
+        pipeline_job1 = pipeline_rest_obj.as_dict()
+
+        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
+
+        # pipeline1_dict will dump to component dict according to schema, but
+        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
+        omit_fields = ["jobs.*.component"]
+        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
+        pipeline_regenerated_from_rest_dict = omit_with_wildcard(pipeline_regenerated_from_rest._to_dict(), *omit_fields)
+
+        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
+
+        omit_fields = [
+            # "properties.jobs.*.componentId",
+        ]
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_import_file_system_job',
+                'inputs': {'connection_target': {'job_input_type': 'literal',
+                                                 'value': 'azureml:my_s3_connection'},
+                           'path_source_s3': {'job_input_type': 'literal',
+                                              'value': 's3://my_bucket/my_folder'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'componentId': 'azureml://registries/import_file_system',
+                                   'name': 'node1',
+                                   'source': {'connection': 'azureml:my_s3_connection',
+                                              'path': 'azureml:s3://my_bucket/my_folder',
+                                              'type': 'file_system'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'componentId': 'azureml://registries/import_file_system',
+                                   'name': 'node2',
+                                   'outputs': {'sink': {'type': 'literal',
+                                                        'value': '${{parent.outputs.pipeline_output}}'}},
+                                   'source': {'connection': '${{parent.inputs.connection_target}}',
+                                              'path': '${{parent.inputs.path_source_s3}}',
+                                              'type': 'file_system'},
+                                   'task': 'import_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {'pipeline_output': {'job_output_type': 'uri_folder'}},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
+
+    def test_pipeline_with_data_transfer_export_file_system_job(self):
+        path_source_s3 = 's3://my_bucket/my_folder'
+        connection_target = 'azureml:my_s3_connection'
+        my_cosmos_folder = Input(type=AssetTypes.URI_FOLDER, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+        inputs = {"source": my_cosmos_folder}
+        sink = {'type': 'file_system', 'connection': connection_target, 'path': path_source_s3}
+
+        data_transfer_job = DataTransferExportJob(
+            inputs=inputs,
+            sink=sink,
+            task=DataTransferTaskType.EXPORT_DATA,
+        )
+        data_transfer_job_func = to_component(job=data_transfer_job)
+
+        @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_file_system_job")
+        def pipeline(path_source_s3, connection_target, cosmos_folder):
+            node1 = data_transfer_job_func(source=my_cosmos_folder)
+            node1.sink = sink
+
+            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
+            node2 = data_transfer_job_func(source=cosmos_folder)
+            node2.sink = source_snowflake
+
+        pipeline1 = pipeline(path_source_s3, connection_target, my_cosmos_folder)
+        pipeline_rest_obj = pipeline1._to_rest_object()
+        pipeline_job1 = pipeline_rest_obj.as_dict()
+
+        pipeline_regenerated_from_rest = PipelineJob._load_from_rest(pipeline_rest_obj)
+
+        # pipeline1_dict will dump to component dict according to schema, but
+        # pipeline_regenerated_from_rest will only keep component id after call _to_rest_object()
+        omit_fields = ["jobs.*.component"]
+        pipeline1_dict = omit_with_wildcard(pipeline1._to_dict(), *omit_fields)
+        pipeline_regenerated_from_rest_dict = omit_with_wildcard(pipeline_regenerated_from_rest._to_dict(), *omit_fields)
+
+        assert pipeline1_dict == pipeline_regenerated_from_rest_dict
+
+        omit_fields = [
+            "properties.jobs.*.componentId",
+        ]
+        pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
+                'experiment_name': 'test_pipeline_with_data_transfer_export_file_system_job',
+                'inputs': {'connection_target': {'job_input_type': 'literal',
+                                                 'value': 'azureml:my_s3_connection'},
+                           'cosmos_folder': {'job_input_type': 'uri_folder',
+                                             'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'},
+                           'path_source_s3': {'job_input_type': 'literal',
+                                              'value': 's3://my_bucket/my_folder'}},
+                'is_archived': False,
+                'job_type': 'Pipeline',
+                'jobs': {'node1': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'uri_folder',
+                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'name': 'node1',
+                                   'sink': {'connection': 'azureml:my_s3_connection',
+                                            'path': 's3://my_bucket/my_folder',
+                                            'type': 'file_system'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'},
+                         'node2': {'_source': 'BUILTIN',
+                                   'inputs': {'source': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.cosmos_folder}}'}},
+                                   'name': 'node2',
+                                   'sink': {'connection': '${{parent.inputs.connection_target}}',
+                                            'path': '${{parent.inputs.path_source_s3}}',
+                                            'type': 'file_system'},
+                                   'task': 'export_data',
+                                   'type': 'data_transfer'}},
+                'outputs': {},
+                'properties': {},
+                'settings': {'_source': 'DSL'},
+                'tags': {}}
+        }
 
     def test_pipeline_with_parallel_job(self):
         # command job with dict distribution

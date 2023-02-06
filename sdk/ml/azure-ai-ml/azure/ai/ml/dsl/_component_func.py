@@ -24,6 +24,18 @@ def get_dynamic_input_parameter(inputs: Mapping):
     ]
 
 
+def get_dynamic_source_parameter(source):
+    """Return the dynamic parameter of the definition's source port."""
+    return [
+        KwParameter(
+            name="source",
+            annotation=source.type,
+            default=None,
+            _type=source.type,
+        )
+    ]
+
+
 def to_component_func(entity: ComponentEntity, component_creation_func) -> Callable[..., Command]:
     func_name = "[component] {}".format(entity.display_name)
 
@@ -31,7 +43,10 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
     if entity.description is not None:
         func_docstring_lines.append(entity.description.strip())
 
-    all_params = get_dynamic_input_parameter(entity.inputs)
+    if hasattr(entity, "source"):
+        all_params = get_dynamic_source_parameter(entity.source)
+    else:
+        all_params = get_dynamic_input_parameter(entity.inputs)
 
     flattened_group_keys = []
     # Flatten all group parameters, for function parameter validation.

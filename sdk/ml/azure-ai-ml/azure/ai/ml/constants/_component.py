@@ -49,10 +49,13 @@ class ExternalDataType(object):
     FILE_SYSTEM = "file_system"
     DATABASE = "database"
 
-    EXTERNAL_DATA_TYPE_COMBINATION = {
-        "file_system": ["path", "connection"],
-        "database": ["query", "stored_procedure", "stored_procedure_params", "connection"]
-    }
+
+class DataTransferBuiltinComponentUri(object):
+    # todo: need update
+    IMPORT_DATABASE = "azureml://registries/import_database"
+    IMPORT_FILE_SYSTEM = "azureml://registries/import_file_system"
+    EXPORT_DATABASE = "azureml://registries/export_database"
+    EXPORT_FILE_SYSTEM = "azureml://registries/export_file_system"
 
 
 class ComponentSource:
@@ -66,6 +69,7 @@ class ComponentSource:
     REMOTE_REGISTRY = "REMOTE.REGISTRY"
     YAML_JOB = "YAML.JOB"
     YAML_COMPONENT = "YAML.COMPONENT"
+    BUIlTIN = "BUILTIN"
 
 
 class ParallelTaskType:

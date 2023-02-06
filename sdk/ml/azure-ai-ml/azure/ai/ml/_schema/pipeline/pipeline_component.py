@@ -30,7 +30,9 @@ from azure.ai.ml._schema.pipeline.component_job import (
     ParallelSchema,
     SparkSchema,
     SweepSchema,
-    DataTransferSchema,
+    DataTransferCopySchema,
+    DataTransferImportSchema,
+    DataTransferExportSchema,
     _resolve_inputs_outputs,
 )
 from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
@@ -39,10 +41,11 @@ from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJob
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_spark_job import PipelineSparkJobSchema
-from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import PipelineDataTransferJobSchema
+from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import PipelineDataTransferCopyJobSchema, \
+    PipelineDataTransferImportJobSchema, PipelineDataTransferExportJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
-from azure.ai.ml.constants._component import ComponentSource, ControlFlowType, NodeType
+from azure.ai.ml.constants._component import ComponentSource, ControlFlowType, NodeType, DataTransferTaskType
 
 
 class NodeNameStr(PipelineNodeNameStr):
@@ -73,8 +76,12 @@ def PipelineJobsField():
             NestedField(PipelineSparkJobSchema),
         ],
         NodeType.DATATRANSFER: [
-            NestedField(DataTransferSchema, unknown=INCLUDE),
-            NestedField(PipelineDataTransferJobSchema),
+            NestedField(DataTransferCopySchema, unknown=INCLUDE),
+            NestedField(DataTransferImportSchema, unknown=INCLUDE),
+            NestedField(DataTransferExportSchema, unknown=INCLUDE),
+            NestedField(PipelineDataTransferCopyJobSchema),
+            NestedField(PipelineDataTransferImportJobSchema),
+            NestedField(PipelineDataTransferExportJobSchema),
         ],
     }
 
@@ -134,7 +141,8 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 context=context,
                 pipeline_job_dict=data,
             )
-            job_instance.component._source = ComponentSource.YAML_JOB
+            if not (job_instance.type == NodeType.DATATRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA):
+                job_instance.component._source = ComponentSource.YAML_JOB
             job_instance._source = job_instance.component._source
             jobs[key] = job_instance
         # update job instance name to key

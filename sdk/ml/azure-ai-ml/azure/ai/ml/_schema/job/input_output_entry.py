@@ -178,15 +178,22 @@ class StoredProcedureParamsSchema(metaclass=PatchedSchemaMeta):
     value = fields.Str()
     type = fields.Str()
 
+    @pre_dump
+    def check_dict(self, data, **kwargs):
+        for key in self.dump_fields.keys():
+            if data.get(key, None) is None:
+                raise ValidationError(f"StoredProcedureParams must have a {key} value")
+        return data
 
-class SourceSchema(metaclass=PatchedSchemaMeta):
+
+class DatabaseSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=[
-            ExternalDataType.FILE_SYSTEM,
             ExternalDataType.DATABASE
         ],
+        required=True
     )
-    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
+    table_name = fields.Str()
     query = fields.Str(
         metadata={
             "description": "The sql query command."
@@ -195,59 +202,43 @@ class SourceSchema(metaclass=PatchedSchemaMeta):
     stored_procedure = fields.Str()
     stored_procedure_params = fields.List(NestedField(StoredProcedureParamsSchema))
 
-    connection = UnionField(
-        [
-            NestedField(InputLiteralValueSchema),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION)
-        ],
-        is_strict=True,
-    )
+    connection = fields.Str(required=True)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._inputs_outputs import Source
+        from azure.ai.ml.data_transfer import Database
 
-        return Source(**data)
+        return Database(**data)
 
-    # Todo: need add check when node level source is ready
-    # @pre_dump
-    # def check_dict(self, data, **kwargs):
-    #     from azure.ai.ml.entities._inputs_outputs import Source
-    #
-    #     if isinstance(data, Source):
-    #         return data
-    #     raise ValidationError("InputSchema needs type Source to dump")
+    @pre_dump
+    def check_dict(self, data, **kwargs):
+        from azure.ai.ml.data_transfer import Database
+
+        if isinstance(data, Database):
+            return data
+        raise ValidationError("DatabaseSchema needs type Database to dump")
 
 
-class SinkSchema(PathAwareSchema):
+class FileSystemSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=[
             ExternalDataType.FILE_SYSTEM,
-            ExternalDataType.DATABASE
         ],
     )
-    path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
-    table_name = fields.Str()
-    connection = UnionField(
-        [
-            NestedField(InputLiteralValueSchema),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.WORKSPACE_CONNECTION)
-        ],
-        is_strict=True,
-    )
+    path = fields.Str()
+
+    connection = fields.Str(required=True)
 
     @post_load
     def make(self, data, **kwargs):
-        from azure.ai.ml.entities._inputs_outputs import Sink
+        from azure.ai.ml.data_transfer import FileSystem
 
-        return Sink(**data)
+        return FileSystem(**data)
 
-    # Todo: need add check when node level sink is ready
-    # @pre_dump
-    # def check_dict(self, data, **kwargs):
-    #     from azure.ai.ml.entities._inputs_outputs import Sink
-    #
-    #     if isinstance(data, Sink):
-    #         return data
-    #     # Assists with union schema
-    #     raise ValidationError("OutputSchema needs type Sink to dump")
+    @pre_dump
+    def check_dict(self, data, **kwargs):
+        from azure.ai.ml.data_transfer import FileSystem
+
+        if isinstance(data, FileSystem):
+            return data
+        raise ValidationError("FileSystemSchema needs type FileSystem to dump")

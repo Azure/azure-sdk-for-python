@@ -1,19 +1,18 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import os
 from pathlib import Path
-from typing import Dict, List, Optional, Union
+from typing import Dict, Optional, Union
 
 from marshmallow import Schema
 
 from azure.ai.ml._schema.component.data_transfer_component import DataTransferCopyComponentSchema, \
     DataTransferImportComponentSchema, DataTransferExportComponentSchema
 from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes, BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._component import NodeType, DataTransferTaskType, DataCopyMode
-from azure.ai.ml.entities._inputs_outputs import Source, Sink
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-
+from azure.ai.ml.constants._component import NodeType, DataTransferTaskType, DataCopyMode, ExternalDataType
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException, ValidationErrorType
+from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
+from azure.ai.ml.entities._inputs_outputs.output import Output
 from ..._schema import PathAwareSchema
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .component import Component
@@ -26,7 +25,7 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
     :type task: str
     :param inputs: Mapping of inputs data bindings used in the job.
     :type inputs: dict
-    :param outputs: Mapping of outputs data bindings used in the job.
+    :param outputs: Mapping of outputs data bindings used in the job,
     :type outputs: dict
     """
 
@@ -77,11 +76,28 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
             return super(DataTransferComponent, self).__str__()
 
     @classmethod
-    def _build_source_sink(cls, io_dict: Union[Dict, Source, Sink], is_source: bool):
-        if is_source:
-            component_io = io_dict if isinstance(io_dict, Source) else Source(**io_dict)
+    def _build_source_sink(cls, io_dict: Union[Dict, Database, FileSystem]):
+        if isinstance(io_dict, Database):
+            component_io = Database()
+        elif isinstance(io_dict, FileSystem):
+            component_io = FileSystem()
         else:
-            component_io = io_dict if isinstance(io_dict, Sink) else Sink(**io_dict)
+            data_type = io_dict.get("type", None)
+            if data_type == ExternalDataType.DATABASE:
+                component_io = Database()
+            elif data_type == ExternalDataType.FILE_SYSTEM:
+                component_io = FileSystem()
+            else:
+                msg = "Source or sink only support type {} and {}, currently got {}."
+                raise ValidationException(
+                    message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
+                    no_personal_data_message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM,
+                                                        "data_type"),
+                    target=ErrorTarget.COMPONENT,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
+
         return component_io
 
 
@@ -102,7 +118,7 @@ class DataTransferCopyComponent(DataTransferComponent):
     def __init__(
         self,
         *,
-        task: str = None,
+        task: str = DataTransferTaskType.COPY_DATA,
         data_copy_mode: str = None,
         inputs: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
@@ -182,28 +198,29 @@ class DataTransferImportComponent(DataTransferComponent):
     :type task: str
     :param source: The data source of file system or database
     :type source: dict
-    :param outputs: Mapping of outputs data bindings used in the job.
+    :param outputs: Mapping of outputs data bindings used in the job, default will be an output port with key "sink"
+    and type "mltable".
     :type outputs: dict
     """
 
     def __init__(
         self,
         *,
-        task: str = None,
+        task: str = DataTransferTaskType.IMPORT_DATA,
         source: Optional[Dict] = None,
         outputs: Optional[Dict] = None,
         **kwargs,
     ):
 
+        outputs = outputs or {'sink': Output(type=AssetTypes.MLTABLE)}
         super().__init__(
             task=task,
             outputs=outputs,
             **kwargs,
         )
 
-        self._task = task
         source = source if source else {}
-        self.source = self._build_source_sink(source, is_source=True)
+        self.source = self._build_source_sink(source)
 
     @classmethod
     def _create_schema_for_validation(cls, context, task_type=None) -> Union[PathAwareSchema, Schema]:
@@ -216,16 +233,16 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
 
     :param task: task type in data transfer component, possible value is "copy_data", "import_data" and "export_data".
     :type task: str
-    :param source: The data source of file system or database
-    :type source: dict
-    :param outputs: Mapping of outputs data bindings used in the job.
-    :type outputs: dict
+    :param sink: The sink of external data and databases.
+    :type sink: Union[Dict, Database, FileSystem]
+    :param inputs: Mapping of inputs data bindings used in the job.
+    :type inputs: dict
     """
 
     def __init__(
         self,
         *,
-        task: str = None,
+        task: str = DataTransferTaskType.EXPORT_DATA,
         inputs: Optional[Dict] = None,
         sink: Optional[Dict] = None,
         **kwargs,
@@ -238,7 +255,7 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
         )
 
         sink = sink if sink else {}
-        self.sink = self._build_source_sink(sink, is_source=False)
+        self.sink = self._build_source_sink(sink)
 
     @classmethod
     def _create_schema_for_validation(cls, context, task_type=None) -> Union[PathAwareSchema, Schema]:

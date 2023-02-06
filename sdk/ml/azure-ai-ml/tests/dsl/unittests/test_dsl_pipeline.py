@@ -2330,14 +2330,14 @@ class TestDSLPipeline:
         data_transfer_copy_node = dsl_pipeline.jobs["merge_files_node"]
         job_data_path_input = data_transfer_copy_node.inputs["folder1"]._meta
         assert job_data_path_input
-        spark_node_dict = data_transfer_copy_node._to_dict()
+        data_transfer_copy_node_dict = data_transfer_copy_node._to_dict()
 
-        spark_node_rest_obj = data_transfer_copy_node._to_rest_object()
-        regenerated_spark_node = DataTransferCopy._from_rest_object(spark_node_rest_obj)
+        data_transfer_copy_node_rest_obj = data_transfer_copy_node._to_rest_object()
+        regenerated_data_transfer_copy_node = DataTransferCopy._from_rest_object(data_transfer_copy_node_rest_obj)
 
-        spark_node_dict_from_rest = regenerated_spark_node._to_dict()
+        data_transfer_copy_node_dict_from_rest = regenerated_data_transfer_copy_node._to_dict()
         omit_fields = []
-        assert pydash.omit(spark_node_dict, *omit_fields) == pydash.omit(spark_node_dict_from_rest, *omit_fields)
+        assert pydash.omit(data_transfer_copy_node_dict, *omit_fields) == pydash.omit(data_transfer_copy_node_dict_from_rest, *omit_fields)
         omit_fields = [
             "jobs.merge_files_node.componentId",
         ]

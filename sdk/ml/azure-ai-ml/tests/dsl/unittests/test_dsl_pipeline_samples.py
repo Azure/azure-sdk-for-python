@@ -483,3 +483,63 @@ class TestDSLPipelineSamples:
             "properties.jobs.merge_files.componentId",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_import_database_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_database.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_database/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_import_stored_database_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_stored_database.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_database/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_import_file_system_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_file_system.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/import_file_system/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_export_database_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.export_database.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_database/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_export_file_system_job_builder_with_inline_job(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.export_file_system.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_file_system/pipeline_inline.yml")
+        omit_fields = [
+            "properties.display_name",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)
