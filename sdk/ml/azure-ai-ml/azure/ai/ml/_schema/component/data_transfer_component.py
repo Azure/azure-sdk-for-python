@@ -15,7 +15,8 @@ from azure.ai.ml._schema.component.input_output import InputPortSchema
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._schema.core.fields import FileRefField, StringTransformedEnum, NestedField
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
-from azure.ai.ml.constants._component import ComponentSource, NodeType, DataTransferTaskType, DataCopyMode, ExternalDataType
+from azure.ai.ml.constants._component import ComponentSource, NodeType, DataTransferTaskType, DataCopyMode, \
+    ExternalDataType
 
 
 class DataTransferComponentSchemaMixin(ComponentSchema):

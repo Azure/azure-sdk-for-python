@@ -21,7 +21,6 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.data_transfer.data_transfer_job import DataTransferCopyJob, DataTransferImportJob, \
     DataTransferExportJob
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 

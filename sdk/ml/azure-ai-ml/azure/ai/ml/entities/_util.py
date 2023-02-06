@@ -51,7 +51,7 @@ from azure.ai.ml.constants._common import (
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
 )
-from azure.ai.ml.constants._component import NodeType, DataTransferTaskType
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException

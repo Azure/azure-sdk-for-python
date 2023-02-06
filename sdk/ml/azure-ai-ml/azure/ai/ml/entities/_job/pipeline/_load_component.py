@@ -268,7 +268,7 @@ def _generate_component_function(
         _type = component_entity.type
         if _type == NodeType.DATA_TRANSFER:
             _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])
-            if component_entity.task in (DataTransferTaskType.IMPORT_DATA):
+            if component_entity.task == DataTransferTaskType.IMPORT_DATA:
                 return pipeline_node_factory.load_from_dict(
                     data=dict(component=component_entity, **kwargs, _from_component_func=True),
                     _type=_type,

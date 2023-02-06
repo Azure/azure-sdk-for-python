@@ -8,8 +8,8 @@ from marshmallow import Schema
 
 from azure.ai.ml._schema.component.data_transfer_component import DataTransferCopyComponentSchema, \
     DataTransferImportComponentSchema, DataTransferExportComponentSchema
-from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes, BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._component import NodeType, DataTransferTaskType, DataCopyMode, ExternalDataType
+from azure.ai.ml.constants._common import COMPONENT_TYPE, AssetTypes
+from azure.ai.ml.constants._component import NodeType, DataTransferTaskType, ExternalDataType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException, ValidationErrorType
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs.output import Output
@@ -162,9 +162,9 @@ class DataTransferCopyComponent(DataTransferComponent):
         inputs_count = len(self.inputs)
         outputs_count = len(self.outputs)
         if outputs_count != 1:
-            msg = f"Only support single output in {DataTransferTaskType.COPY_DATA}, but there're " \
-                  f"{outputs_count} outputs."
-            validation_result.append_error(message=msg, yaml_path=f"outputs")
+            msg = "Only support single output in {}, but there're {} outputs."
+            validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count),
+                                           yaml_path=f"outputs")
         else:
             input_type = None
             output_type = None
@@ -174,19 +174,22 @@ class DataTransferCopyComponent(DataTransferComponent):
                 for _, output_data in self.outputs.items():
                     output_type = output_data.type
                 if input_type is None or output_type is None or input_type != output_type:
-                    msg = f"Input type {input_type} doesn't exactly match with output type {output_type} in task " \
-                          f"{DataTransferTaskType.COPY_DATA}"
-                    validation_result.append_error(message=msg, yaml_path=f"outputs")
+                    msg = "Input type {} doesn't exactly match with output type {} in task {}"
+                    validation_result.append_error(message=msg.format(input_type, output_type,
+                                                                      DataTransferTaskType.COPY_DATA),
+                                                   yaml_path=f"outputs")
             elif inputs_count > 1:
                 for _, output_data in self.outputs.items():
                     output_type = output_data.type
                 if output_type is None or output_type != AssetTypes.URI_FOLDER:
-                    msg = f"output type {output_type} need to be {AssetTypes.URI_FOLDER} in task " \
-                          f"{DataTransferTaskType.COPY_DATA}"
-                    validation_result.append_error(message=msg, yaml_path=f"outputs")
+                    msg = "output type {} need to be {} in task {}"
+                    validation_result.append_error(message=msg.format(output_type,
+                                                                      AssetTypes.URI_FOLDER,
+                                                                      DataTransferTaskType.COPY_DATA),
+                                                   yaml_path=f"outputs")
             else:
-                msg = f"Inputs must be set in task {DataTransferTaskType.COPY_DATA}."
-                validation_result.append_error(message=msg, yaml_path=f"outputs")
+                msg = "Inputs must be set in task {}."
+                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path=f"outputs")
         return validation_result
 
 
@@ -223,7 +226,7 @@ class DataTransferImportComponent(DataTransferComponent):
         self.source = self._build_source_sink(source)
 
     @classmethod
-    def _create_schema_for_validation(cls, context, task_type=None) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferImportComponentSchema(context=context)
 
 
@@ -258,5 +261,5 @@ class DataTransferExportComponent(DataTransferComponent):  # pylint: disable=too
         self.sink = self._build_source_sink(sink)
 
     @classmethod
-    def _create_schema_for_validation(cls, context, task_type=None) -> Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return DataTransferExportComponentSchema(context=context)

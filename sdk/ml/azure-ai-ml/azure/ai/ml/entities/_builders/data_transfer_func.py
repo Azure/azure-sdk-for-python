@@ -147,9 +147,9 @@ def import_data(
     component = kwargs.pop("component", None)
     if component is None:
         if source.type == ExternalDataType.DATABASE:
-            id = DataTransferBuiltinComponentUri.IMPORT_DATABASE
+            component_id = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
-            id = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
+            component_id = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
         component = DataTransferImportComponent(
             name=name,
             tags=tags,
@@ -160,7 +160,7 @@ def import_data(
             task=task,
             _source=ComponentSource.BUILDER,
             is_deterministic=is_deterministic,
-            id=id,
+            id=component_id,
             **kwargs,
         )
         component._source = ComponentSource.BUIlTIN
@@ -261,5 +261,3 @@ def export_data(
         **kwargs,
     )
     return data_transfer_export_obj
-
-
