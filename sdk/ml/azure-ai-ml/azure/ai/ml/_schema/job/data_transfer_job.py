@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import validates, ValidationError
+from marshmallow import validates, ValidationError, fields
 from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.job.input_output_entry import DatabaseSchema, FileSystemSchema
+from azure.ai.ml._schema.job.input_output_entry import DatabaseSchema, FileSystemSchema, OutputSchema
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._component import DataTransferTaskType, DataCopyMode
 
@@ -27,7 +27,11 @@ class DataTransferImportJobSchema(BaseJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.DATA_TRANSFER)
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA],  required=True)
     compute = ComputeField()
-    outputs = OutputsField()
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=NestedField(nested=OutputSchema, allow_none=False),
+        metadata={"description": "Outputs of a data transfer job."},
+    )
     source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
 
     @validates("outputs")
@@ -41,7 +45,7 @@ class DataTransferExportJobSchema(BaseJobSchema):
     type = StringTransformedEnum(required=True, allowed_values=JobType.DATA_TRANSFER)
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA],  required=True)
     compute = ComputeField()
-    inputs = InputsField()
+    inputs = InputsField(allow_none=False)
     sink = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
 
     @validates("inputs")

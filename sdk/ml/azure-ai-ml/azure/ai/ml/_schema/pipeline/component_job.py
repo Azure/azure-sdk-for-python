@@ -439,6 +439,11 @@ class DataTransferImportSchema(BaseNodeSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
     compute = ComputeField()
     source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField([OutputBindingStr, NestedField(OutputSchema)]),
+        allow_none=False
+    )
 
     @validates("inputs")
     def inputs_key(self, value):
@@ -493,6 +498,7 @@ class DataTransferExportSchema(BaseNodeSchema):
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA])
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
     compute = ComputeField()
+    inputs = InputsField(support_databinding=True, allow_none=False)
     sink = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
 
     @validates("inputs")

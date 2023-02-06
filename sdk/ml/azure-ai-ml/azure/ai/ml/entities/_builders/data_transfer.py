@@ -489,7 +489,7 @@ class DataTransferExport(DataTransfer):
                 yaml_path="sink",
                 message="Sink is a required field for export data task in DataTransfer job",
             )
-        if len(self.inputs) != 1 or list(self.outputs.keys())[0] != "source":
+        if len(self.inputs) != 1 or list(self.inputs.keys())[0] != "source":
             result.append_error(
                 yaml_path="inputs.source",
                 message="Inputs field only support one input called source in export task",
