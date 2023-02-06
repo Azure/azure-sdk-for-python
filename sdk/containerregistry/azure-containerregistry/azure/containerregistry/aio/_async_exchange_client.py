@@ -65,9 +65,9 @@ class ACRExchangeClient(object):
 
     async def get_refresh_token(self, service: str, **kwargs: Any) -> str:
         if not self._refresh_token or self._expiration_time - time.time() > 300:
-            self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs)
-            self._expiration_time = _parse_exp_time(self._refresh_token)
-        return self._refresh_token
+            self._refresh_token = await self.exchange_aad_token_for_refresh_token(service, **kwargs) # type: ignore
+            self._expiration_time = _parse_exp_time(self._refresh_token) # type: ignore
+        return self._refresh_token # type: ignore
 
     async def exchange_aad_token_for_refresh_token(self, service: str, **kwargs: Any) -> str:
         token = await self._credential.get_token(*self.credential_scopes)
@@ -77,7 +77,7 @@ class ACRExchangeClient(object):
         return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
     async def exchange_refresh_token_for_access_token(
-        self, refresh_token: Optional[str], service: str, scope: str, **kwargs: Any
+        self, refresh_token: str, service: str, scope: str, **kwargs: Any
     ) -> Optional[str]:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service, scope, refresh_token, **kwargs
