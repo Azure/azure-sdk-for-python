@@ -71,7 +71,7 @@ class TestDoWhilePipelineJobUT(TestControlFlowPipelineJobUT):
         with pytest.raises(ValidationException) as e:
             job._validate(raise_error=True)
         error_message = str(e.value)
-        assert "The condition cannot be False." in error_message
+        assert "Negative value is not allowed." in error_message
         assert "jobs.do_while_true_job_with_pipeline_job.condition" in error_message
 
 
