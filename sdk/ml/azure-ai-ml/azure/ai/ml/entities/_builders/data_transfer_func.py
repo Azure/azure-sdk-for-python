@@ -230,9 +230,9 @@ def export_data(
 
     if component is None:
         if sink.type == ExternalDataType.DATABASE:
-            id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
+            component_id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
-            id = DataTransferBuiltinComponentUri.EXPORT_FILE_SYSTEM
+            component_id = DataTransferBuiltinComponentUri.EXPORT_FILE_SYSTEM
         component = DataTransferExportComponent(
             name=name,
             tags=tags,
@@ -243,7 +243,7 @@ def export_data(
             task=task,
             _source=ComponentSource.BUILDER,
             is_deterministic=is_deterministic,
-            id=id,
+            id=component_id,
             **kwargs,
         )
         component._source = ComponentSource.BUIlTIN

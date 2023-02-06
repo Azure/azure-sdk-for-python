@@ -27,7 +27,7 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
         *,
         name: Optional[str] = None,
         value: Optional[str] = None,
-        type: Optional[str] = None,
+        type: Optional[str] = None, # pylint: disable=redefined-builtin
     ):
         self.type = type
         self.name = name
@@ -60,7 +60,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     def __init__(
         self,
         *,
-        type: Optional[str] = ExternalDataType.DATABASE,
+        type: Optional[str] = ExternalDataType.DATABASE,  # pylint: disable=redefined-builtin
         query: Optional[str] = None,
         table_name: Optional[str] = None,
         stored_procedure: Optional[str] = None,
@@ -77,9 +77,9 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         self.stored_procedure = stored_procedure
         self.stored_procedure_params = stored_procedure_params
 
-    def _to_data_binding(self, value):
+    def _to_data_binding(self, value):  # pylint: disable=no-self-use
         if "_data_binding" in type(value).__dict__:
-            return value._data_binding()
+            return value._data_binding()  # pylint: disable=protected-access
         return value
 
     def _to_dict(self, remove_name=True):
@@ -141,7 +141,7 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
     def __init__(
         self,
         *,
-        type: Optional[str] = ExternalDataType.FILE_SYSTEM,
+        type: Optional[str] = ExternalDataType.FILE_SYSTEM,  # pylint: disable=redefined-builtin
         path: Optional[str] = None,
         connection: Optional[str] = None,
     ):
@@ -156,9 +156,9 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
         else:
             self.path = self._to_data_binding(path)
 
-    def _to_data_binding(self, value):
+    def _to_data_binding(self, value):  # pylint: disable=no-self-use
         if "_data_binding" in type(value).__dict__:
-            return value._data_binding()
+            return value._data_binding()   # pylint: disable=protected-access
         return value
 
     def _to_dict(self, remove_name=True):

@@ -164,7 +164,7 @@ class DataTransferCopyComponent(DataTransferComponent):
         if outputs_count != 1:
             msg = "Only support single output in {}, but there're {} outputs."
             validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count),
-                                           yaml_path=f"outputs")
+                                           yaml_path="outputs")
         else:
             input_type = None
             output_type = None
@@ -177,7 +177,7 @@ class DataTransferCopyComponent(DataTransferComponent):
                     msg = "Input type {} doesn't exactly match with output type {} in task {}"
                     validation_result.append_error(message=msg.format(input_type, output_type,
                                                                       DataTransferTaskType.COPY_DATA),
-                                                   yaml_path=f"outputs")
+                                                   yaml_path="outputs")
             elif inputs_count > 1:
                 for _, output_data in self.outputs.items():
                     output_type = output_data.type
@@ -186,10 +186,10 @@ class DataTransferCopyComponent(DataTransferComponent):
                     validation_result.append_error(message=msg.format(output_type,
                                                                       AssetTypes.URI_FOLDER,
                                                                       DataTransferTaskType.COPY_DATA),
-                                                   yaml_path=f"outputs")
+                                                   yaml_path="outputs")
             else:
                 msg = "Inputs must be set in task {}."
-                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path=f"outputs")
+                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path="outputs")
         return validation_result
 
 

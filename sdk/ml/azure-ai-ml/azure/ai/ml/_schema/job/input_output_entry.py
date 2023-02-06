@@ -183,7 +183,7 @@ class StoredProcedureParamsSchema(metaclass=PatchedSchemaMeta):
 
     @pre_dump
     def check_dict(self, data, **kwargs):
-        for key in self.dump_fields.keys():
+        for key in self.dump_fields.keys(): # pylint: no-member
             if data.get(key, None) is None:
                 raise ValidationError(f"StoredProcedureParams must have a {key} value")
         return data

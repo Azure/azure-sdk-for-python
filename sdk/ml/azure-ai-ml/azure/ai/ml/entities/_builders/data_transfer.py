@@ -5,7 +5,6 @@
 # pylint: disable=protected-access
 
 import logging
-from enum import Enum
 from typing import Dict, List, Optional, Union
 
 from marshmallow import Schema
