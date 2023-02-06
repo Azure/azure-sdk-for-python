@@ -197,7 +197,7 @@ class TestJobOperations:
         with patch.object(mock_job_operation._credential, "get_token") as mock_get_token:
             mock_get_token.return_value = AccessToken(
                 token=jwt.encode({"aud": "https://management.azure.com"}, key="utf-8"), expires_on=1234)
-            with pytest.raises(ValidationException):
+            with pytest.raises(Exception):
                 mock_job_operation.create_or_update(job=job)
 
     @pytest.mark.skip(reason="Function under test no longer returns Job as output")

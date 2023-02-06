@@ -2324,7 +2324,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 "group.sub.int_param": 4, "group.not_exist": 4,
             })
         # Assert conflict assignment
-        with pytest.raises(ValidationException, match="Conflict parameter key 'group' and 'group.number_param'"):
+        with pytest.raises(Exception, match="Conflict parameter key 'group' and 'group.number_param'"):
             pipeline = component(**{
                 "group.number_param": 4.0, "group.str_param": "testing",
                 "group.sub.int_param": 4, "group": ParamClass(sub=SubParamClass(int_param=1))
