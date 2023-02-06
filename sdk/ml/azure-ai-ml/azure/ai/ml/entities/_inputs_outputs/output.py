@@ -107,7 +107,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self, remove_name=True):
         """Convert the Output object to a dict."""
-        keys = ["port_name", "path", "type", "mode", "description", "is_control", "early_available"]
+        keys = ["port_name", "name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
         if remove_name:
             keys.remove("port_name")
         result = {key: getattr(self, key) for key in keys}
