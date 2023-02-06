@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add sdkVersion prefix during App Service attach
+    ([#28637](https://github.com/Azure/azure-sdk-for-python/pull/28637))
+
 ### Breaking Changes
 
 ### Bugs Fixed
