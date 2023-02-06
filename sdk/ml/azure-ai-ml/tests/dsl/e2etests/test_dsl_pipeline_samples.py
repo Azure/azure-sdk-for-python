@@ -341,7 +341,7 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
             created_job = client.jobs.create_or_update(pipeline)
 
         assert '{\n  "result": "Failed",\n  "errors": [\n    {\n      "message": "Missing data for required field.",' \
-               '\n      "path": "jobs.add_greeting_column.component.entry",\n      "value": null\n    }\n  ]\n}' in ex.value.message
+               '\n      "path": "jobs.add_greeting_column.component.entry",\n      "value": null\n    }\n  ]\n}' == str(ex.value)
         
         validation_result = client.jobs.validate(pipeline)
         assert validation_result.passed is False
