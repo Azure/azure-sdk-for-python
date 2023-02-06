@@ -430,9 +430,10 @@
       ]
     },
     {
-      "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
+      "filename": "sdk/translation/azure-ai-translation-document/**",
       "words": [
-        "essai"
+        "essai",
+        "myfoldername"
       ]
     },
     {
@@ -736,7 +737,8 @@
         "cpksubdirectory",
         "thead",
         "tbody",
-        "racwdlmeop"
+        "racwdlmeop",
+        "newfs"
       ]
     },
     {
@@ -1184,6 +1186,18 @@
         "wday",
         "mday",
         "deseralize",
+        "wday",
+        "mday",
+        "deseralize",
+        "astimezone"
+      ]
+    },
+    {
+      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/receipt/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
         "wday",
         "mday",
         "deseralize",

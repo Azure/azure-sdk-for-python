@@ -28,7 +28,7 @@ import asyncio
 import abc
 from collections.abc import AsyncIterator
 from typing import AsyncIterator as AsyncIteratorType, TypeVar, Generic
-from contextlib import AbstractAsyncContextManager  # type: ignore
+from contextlib import AbstractAsyncContextManager
 
 from ._base import (
     _HttpResponseBase,

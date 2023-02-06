@@ -12,7 +12,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -237,13 +237,15 @@ def convert_ordered_dict_to_dict(
     return target_object
 
 
-def _general_copy(src, dst):
+def _general_copy(src, dst, make_dirs=True):
     """Wrapped `shutil.copy2` function for possible "Function not implemented"
     exception raised by it.
 
     Background: `shutil.copy2` will throw OSError when dealing with Azure File.
     See https://stackoverflow.com/questions/51616058 for more information.
     """
+    if make_dirs:
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
     if hasattr(os, "listxattr"):
         with mock.patch("shutil._copyxattr", return_value=[]):
             shutil.copy2(src, dst)

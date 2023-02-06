@@ -125,7 +125,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
         pipeline_job = load_job(
-            "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
@@ -139,7 +139,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
     def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
         pipeline_job = load_job(
-            "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline_with_primitive_inputs.yml",
+            "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline_with_primitive_inputs.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
@@ -224,3 +224,41 @@ class TestParallelFor(TestConditionalNodeInPipeline):
             'type': 'parallel_for'
         }
         assert_foreach(client, randstr("job_name"), source, expected_node)
+
+def assert_control_flow_in_pipeline_component(client, component_path, pipeline_path):
+    params_override = [{"component": component_path}]
+    pipeline_job = load_job(
+        pipeline_path,
+        params_override=params_override,
+    )
+    created_pipeline = assert_job_cancel(pipeline_job, client)
+    pipeline_job_dict = created_pipeline._to_rest_object().as_dict()
+
+    pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
+    assert pipeline_job_dict["properties"]["jobs"] == {}
+
+
+class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
+    def test_if_else(self, client: MLClient, randstr: Callable[[], str]):
+        assert_control_flow_in_pipeline_component(
+            client=client,
+            component_path="./if_else/simple_pipeline.yml",
+            pipeline_path="./tests/test_configs/pipeline_jobs/control_flow/control_flow_with_pipeline_component.yml"
+        )
+
+    @pytest.mark.skip(
+        reason="TODO(2177353): check why recorded tests failure."
+    )
+    def test_do_while(self, client: MLClient, randstr: Callable[[], str]):
+        assert_control_flow_in_pipeline_component(
+            client=client,
+            component_path="./do_while/pipeline_component.yml",
+            pipeline_path="./tests/test_configs/pipeline_jobs/control_flow/control_flow_with_pipeline_component.yml"
+        )
+
+    def test_foreach(self, client: MLClient, randstr: Callable[[], str]):
+        assert_control_flow_in_pipeline_component(
+            client=client,
+            component_path="./parallel_for/simple_pipeline.yml",
+            pipeline_path="./tests/test_configs/pipeline_jobs/control_flow/control_flow_with_pipeline_component.yml"
+        )

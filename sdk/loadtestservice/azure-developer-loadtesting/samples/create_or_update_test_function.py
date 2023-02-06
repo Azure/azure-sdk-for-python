@@ -38,7 +38,7 @@ client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTES
 TEST_ID = "my-sdk-test-id"
 
 result = client.administration.create_or_update_test(
-    "my-loadtest",
+    TEST_ID,
     {
         "description": "",
         "displayName": "My New Load Test",
@@ -48,11 +48,35 @@ result = client.administration.create_or_update_test(
         },
         "passFailCriteria": {
             "passFailMetrics": {
+                "condition1": {
+                    "clientmetric": "response_time_ms",
+                    "aggregate": "avg",
+                    "condition": ">",
+                    "value": 300
+                },
+                "condition2": {
+                    "clientmetric": "error",
+                    "aggregate": "percentage",
+                    "condition": ">",
+                    "value": 50
+                },
+                "condition3": {
+                    "clientmetric": "latency",
+                    "aggregate": "avg",
+                    "condition": ">",
+                    "value": 200,
+                    "requestName": "GetCustomerDetails"
+                }
             }
         },
         "secrets": {
+            "secret1": {
+                "value": "https://sdk-testing-keyvault.vault.azure.net/secrets/sdk-secret",
+                "type": "AKV_SECRET_URI"
+            }
         },
         "environmentVariables": {
+            "my-varaible": "value"
         }
     }
 )

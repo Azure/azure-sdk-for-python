@@ -49,7 +49,7 @@ Unfortunately, the command `tox -l` only returns the _default_ test builds. The 
 
 Basic usage of `tox` within this monorepo is:
 
-1. `pip install tox tox-monorepo`
+1. `pip install tox<4 tox-monorepo`
 2. `cd` to target package folder
 3. run `tox -c path/to/tox.ini`
 

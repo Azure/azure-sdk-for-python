@@ -11,7 +11,7 @@ from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import ValidationException, UserErrorException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
@@ -247,6 +247,27 @@ class TestPipelineJobValidate:
             "result": "Failed",
         }
 
+    @pytest.mark.parametrize(
+        "pipeline_output_path, error_message",
+        [
+            (
+                "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_without_name.yaml",
+                "Output name is required when output version is specified."
+            ),
+            (
+                "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_without_name.yaml",
+                "Output name is required when output version is specified."
+            ),
+            (
+                "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_with_invalid_name.yaml",
+                "The output name pipeline_output@ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters."
+            ),
+        ],
+    )
+    def test_register_output_without_name_yaml(self, pipeline_output_path, error_message):
+        with pytest.raises(UserErrorException) as e:
+            pipeline = load_job(source=pipeline_output_path)
+        assert error_message in str(e.value)
 
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -654,7 +675,7 @@ class TestDSLPipelineJobValidate:
     def test_pipeline_with_invalid_do_while_node(self) -> None:
         with pytest.raises(ValidationError) as exception:
             load_job(
-                "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
+                "./tests/test_configs/pipeline_jobs/control_flow/do_while/invalid_pipeline.yml",
             )
         error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
         error_messages = json.loads(error_message_str)
