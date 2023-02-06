@@ -291,8 +291,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if lower_val not in {"true", "false"}:
                 msg = "Boolean parameter '{}' only accept True/False, got {}."
                 raise ValidationException(
-                    message=msg.format(self.name, val),
-                    no_personal_data_message=msg.format("[self.name]", "[val]"),
+                    message=msg.format(self._arg_name, val),
+                    no_personal_data_message=msg.format("[self._arg_name]", "[val]"),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -360,8 +360,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         if not self.optional and value is None:
             msg = "Parameter {} cannot be None since it is not optional."
             raise ValidationException(
-                message=msg.format(self.name),
-                no_personal_data_message=msg.format("[self.name]"),
+                message=msg.format(self._arg_name),
+                no_personal_data_message=msg.format("[self._arg_name]"),
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.PIPELINE,
                 error_type=ValidationErrorType.INVALID_VALUE,
@@ -370,8 +370,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if not isinstance(value, self._allowed_types):
                 msg = "Unexpected data type for parameter '{}'. Expected {} but got {}."
                 raise ValidationException(
-                    message=msg.format(self.name, self._allowed_types, type(value)),
-                    no_personal_data_message=msg.format("[name]", self._allowed_types, type(value)),
+                    message=msg.format(self._arg_name, self._allowed_types, type(value)),
+                    no_personal_data_message=msg.format("[_arg_name]", self._allowed_types, type(value)),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -381,8 +381,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if self.min is not None and value < self.min:
                 msg = "Parameter '{}' should not be less than {}."
                 raise ValidationException(
-                    message=msg.format(self.name, self.min),
-                    no_personal_data_message=msg.format("[name]", self.min),
+                    message=msg.format(self._arg_name, self.min),
+                    no_personal_data_message=msg.format("[_arg_name]", self.min),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -390,8 +390,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
             if self.max is not None and value > self.max:
                 msg = "Parameter '{}' should not be greater than {}."
                 raise ValidationException(
-                    message=msg.format(self.name, self.max),
-                    no_personal_data_message=msg.format("[name]", self.max),
+                    message=msg.format(self._arg_name, self.max),
+                    no_personal_data_message=msg.format("[_arg_name]", self.max),
                     error_category=ErrorCategory.USER_ERROR,
                     target=ErrorTarget.PIPELINE,
                     error_type=ValidationErrorType.INVALID_VALUE,
