@@ -86,9 +86,9 @@ class Output(_InputOutputBase):
 
     def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs):
         super(Output, self).__init__(type=type)
-        # As an annotation, it is not allowed to initialize the _arg_name.
-        # The _arg_name will be updated by the annotated variable _arg_name.
-        self._arg_name = None
+        # As an annotation, it is not allowed to initialize the port_name.
+        # The port_name will be updated by the annotated variable port_name.
+        self.port_name = None
         self.name = kwargs.pop('name', None)
         self.version = kwargs.pop('version', None)
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
@@ -105,10 +105,11 @@ class Output(_InputOutputBase):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
         return '"""%s"""' % comment_str if comment_str and new_line_style else comment_str
 
-    def _to_dict(self):
+    def _to_dict(self, remove_name=True):
         """Convert the Output object to a dict."""
-        keys = ["name", "version", "path", "type", "mode",
-                "description", "is_control", "early_available"]
+        keys = ["port_name", "path", "type", "mode", "description", "is_control", "early_available"]
+        if remove_name:
+            keys.remove("port_name")
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
