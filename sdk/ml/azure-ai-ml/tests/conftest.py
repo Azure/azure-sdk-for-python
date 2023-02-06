@@ -219,6 +219,9 @@ def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
 def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
 
+@pytest.fixture
+def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
 
 @pytest.fixture
 def mock_aml_services_run_history(mocker: MockFixture) -> Mock:
@@ -854,7 +857,7 @@ def disable_internal_components():
     and enable_private_preview_features, as the execution order of fixtures is not guaranteed.
     """
     from azure.ai.ml._internal._schema.component import NodeType
-    from azure.ai.ml._internal._util import _set_registered
+    from azure.ai.ml._internal._setup import _set_registered
     from azure.ai.ml.entities._component.component_factory import component_factory
     from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
