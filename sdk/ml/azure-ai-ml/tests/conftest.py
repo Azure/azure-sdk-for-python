@@ -82,7 +82,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
     add_body_key_sanitizer(json_path="$.properties.sdkTelemetryAppInsightsKey", value="0000000-0000-0000-0000-000000000000")
-    add_body_key_sanitizer(json_path="$.properties.workspaceId", value="0000000-0000-0000-0000-000000000000")
     add_body_key_sanitizer(json_path="$.properties.notebookInfo.resourceId", value="0000000-0000-0000-0000-000000000000")
     add_body_key_sanitizer(json_path="$.identity.principalId", value="0000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(value="0000000-0000-0000-0000-000000000000", regex=os.environ.get('ML_TENANT_ID'))
