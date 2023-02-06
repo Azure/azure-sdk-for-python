@@ -9,8 +9,11 @@ import os
 from typing import Dict, Optional
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
+from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.constants._common import ArmConstants
+from azure.core.rest import HttpRequest
+from azure.mgmt.core import ARMPipelineClient
 
 
 module_logger = logging.getLogger(__name__)
@@ -57,6 +60,8 @@ _environments = {
         EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://usgovarizona.api.ml.azure.us/",
     },
 }
+
+_requests_pipeline = None
 
 def _get_cloud(cloud: str):
     if cloud in _environments:
@@ -204,11 +209,11 @@ def _resource_to_scopes(resource):
     scope = resource + "/.default"
     return [scope]
 
-def _get_registry_discovery_url(cloud, cloud_suffix):
-    """Get the registry discovery url
+def _get_registry_discovery_url(cloud, cloud_suffix=""):
+    """Get or generate the registry discovery url
 
-        :param cloud: The cloud to retrieve from
-        :param cloud_suffix:  the url suffix of the cloud
+        :param cloud: configuration of the cloud to get the registry_discovery_url from
+        :param cloud_suffix: the suffix to use for the cloud, in the case that the registry_discovery_url must be generated
         :return: string of discovery url
     """
     cloud_name = cloud["name"]
@@ -233,12 +238,12 @@ def _get_clouds_by_metadata_url(metadata_url, timeout=ArmConstants.DEFAULT_TIMEO
 
         :return: list of the clouds
     """
-    import requests
-
     try:
         module_logger.debug('Start : Loading cloud metadata from the url specified by %s', metadata_url)
-        with requests.get(metadata_url, timeout=timeout) as meta_response:
+        client = ARMPipelineClient(base_url=metadata_url, policies=[])
+        with client.send_request(HttpRequest("GET", metadata_url)) as meta_response:
             arm_cloud_dict = meta_response.json()
+            print("arm_cloud_dict", arm_cloud_dict)
             cli_cloud_dict = _convert_arm_to_cli(arm_cloud_dict)
             module_logger.debug('Finish : Loading cloud metadata from the url specified by %s', metadata_url)
             return cli_cloud_dict
