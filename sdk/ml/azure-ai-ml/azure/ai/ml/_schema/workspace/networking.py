@@ -87,6 +87,6 @@ class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     @post_load
     def make(self, data, **kwargs):
         if data.get("outbound_rules", False):
-            return ManagedNetwork(data["isolation_mode"], data["outbound_rules"], data["network_id"])
+            return ManagedNetwork(data["isolation_mode"], data["outbound_rules"])
         else:
             return ManagedNetwork(data["isolation_mode"])
