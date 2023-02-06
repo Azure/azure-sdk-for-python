@@ -96,6 +96,7 @@ class InternalComponent(Component):
         starlite: Optional[Dict] = None,
         ae365exepool: Optional[Dict] = None,
         launcher: Optional[Dict] = None,
+        datatransfer: Optional[Dict] = None,
         **kwargs,
     ):
         type, self._type_label = parse_name_label(type)
@@ -135,6 +136,7 @@ class InternalComponent(Component):
         self.starlite = starlite
         self.ae365exepool = ae365exepool
         self.launcher = launcher
+        self.datatransfer = datatransfer
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
