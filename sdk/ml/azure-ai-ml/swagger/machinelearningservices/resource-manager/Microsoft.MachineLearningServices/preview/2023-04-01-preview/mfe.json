@@ -8779,7 +8779,7 @@
             "description": "Package operation request body.",
             "required": true,
             "schema": {
-              "description": "Model package operation request properties."
+              "$ref": "#/definitions/PackageRequest"
             }
           }
         ],

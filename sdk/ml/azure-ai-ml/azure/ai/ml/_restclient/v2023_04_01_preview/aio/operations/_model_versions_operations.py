@@ -392,7 +392,13 @@ class ModelVersionsOperations:
     create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/{name}/versions/{version}"}  # type: ignore
 
     async def _package_initial(
-        self, resource_group_name: str, workspace_name: str, name: str, version: str, body: Any, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        name: str,
+        version: str,
+        body: "_models.PackageRequest",
+        **kwargs: Any
     ) -> Optional["_models.PackageResponse"]:
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional["_models.PackageResponse"]]
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -401,7 +407,7 @@ class ModelVersionsOperations:
         api_version = kwargs.pop("api_version", "2023-04-01-preview")  # type: str
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "object")
+        _json = self._serialize.body(body, "PackageRequest")
 
         request = build_package_request_initial(
             subscription_id=self._config.subscription_id,
@@ -444,7 +450,13 @@ class ModelVersionsOperations:
 
     @distributed_trace_async
     async def begin_package(
-        self, resource_group_name: str, workspace_name: str, name: str, version: str, body: Any, **kwargs: Any
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        name: str,
+        version: str,
+        body: "_models.PackageRequest",
+        **kwargs: Any
     ) -> AsyncLROPoller["_models.PackageResponse"]:
         """Model Version Package operation.
 
@@ -459,7 +471,7 @@ class ModelVersionsOperations:
         :param version: Version identifier. This is case-sensitive.
         :type version: str
         :param body: Package operation request body.
-        :type body: any
+        :type body: ~azure.mgmt.machinelearningservices.models.PackageRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for

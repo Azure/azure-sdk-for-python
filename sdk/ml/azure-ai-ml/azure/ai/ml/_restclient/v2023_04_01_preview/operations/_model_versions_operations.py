@@ -654,7 +654,7 @@ class ModelVersionsOperations(object):
         workspace_name,  # type: str
         name,  # type: str
         version,  # type: str
-        body,  # type: Any
+        body,  # type: "_models.PackageRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> Optional["_models.PackageResponse"]
@@ -665,7 +665,7 @@ class ModelVersionsOperations(object):
         api_version = kwargs.pop("api_version", "2023-04-01-preview")  # type: str
         content_type = kwargs.pop("content_type", "application/json")  # type: Optional[str]
 
-        _json = self._serialize.body(body, "object")
+        _json = self._serialize.body(body, "PackageRequest")
 
         request = build_package_request_initial(
             subscription_id=self._config.subscription_id,
@@ -713,7 +713,7 @@ class ModelVersionsOperations(object):
         workspace_name,  # type: str
         name,  # type: str
         version,  # type: str
-        body,  # type: Any
+        body,  # type: "_models.PackageRequest"
         **kwargs  # type: Any
     ):
         # type: (...) -> LROPoller["_models.PackageResponse"]
@@ -730,7 +730,7 @@ class ModelVersionsOperations(object):
         :param version: Version identifier. This is case-sensitive.
         :type version: str
         :param body: Package operation request body.
-        :type body: any
+        :type body: ~azure.mgmt.machinelearningservices.models.PackageRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
