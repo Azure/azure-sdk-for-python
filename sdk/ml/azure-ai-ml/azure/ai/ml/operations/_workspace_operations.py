@@ -270,8 +270,10 @@ class WorkspaceOperations:
                 identity.user_assigned_identities = rest_user_assigned_identities
 
         managed_network = kwargs.get("managed_network", workspace.managed_network)
-        if managed_network:
-            managed_network = managed_network._to_rest_object()
+        if isinstance(managed_network, str):
+            managed_network = ManagedNetwork(managed_network)._to_rest_object()
+        else:
+            managed_network = workspace.managed_network._to_rest_object()
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value

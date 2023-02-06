@@ -120,7 +120,7 @@ class ManagedNetwork:
         self,
         isolation_mode: str = IsolationMode.DISABLED,
         outbound_rules: Optional[Dict[str, OutboundRule]] = None,
-        network_id: Optional[str] = None
+        network_id: Optional[str] = None,
     ) -> None:
         self.isolation_mode = isolation_mode
         self.network_id = network_id
@@ -129,8 +129,9 @@ class ManagedNetwork:
     def _to_rest_object(self) -> RestManagedNetwork:
         rest_outbound_rules = (
             {
-                rule_name: self.outbound_rules[rule_name]._to_rest_object() for rule_name in self.outbound_rules
-            }  # pylint: disable=protected-access
+                rule_name: self.outbound_rules[rule_name]._to_rest_object()  # pylint: disable=protected-access
+                for rule_name in self.outbound_rules
+            }
             if self.outbound_rules
             else None
         )
@@ -140,12 +141,14 @@ class ManagedNetwork:
     def _from_rest_object(cls, obj: RestManagedNetwork) -> "ManagedNetwork":
         from_rest_outbound_rules = (
             {
-                rule_name: OutboundRule._from_rest_object(
+                rule_name: OutboundRule._from_rest_object(  # pylint: disable=protected-access
                     obj.outbound_rules[rule_name]
-                )  # pylint: disable=protected-access
+                )
                 for rule_name in obj.outbound_rules
             }
             if obj.outbound_rules
             else {}
         )
-        return ManagedNetwork(isolation_mode=obj.isolation_mode, outbound_rules=from_rest_outbound_rules, network_id=obj.network_id)
+        return ManagedNetwork(
+            isolation_mode=obj.isolation_mode, outbound_rules=from_rest_outbound_rules, network_id=obj.network_id
+        )

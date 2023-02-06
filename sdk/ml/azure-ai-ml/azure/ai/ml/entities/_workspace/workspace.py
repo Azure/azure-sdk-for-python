@@ -243,7 +243,7 @@ class Workspace(Resource):
             image_build_compute=self.image_build_compute,
             public_network_access=self.public_network_access,
             primary_user_assigned_identity=self.primary_user_assigned_identity,
-            managed_network=self.managed_network._to_rest_object()
+            managed_network=self.managed_network._to_rest_object()  # pylint: disable=protected-access
             if self.managed_network
             else None,  # pylint: disable=protected-access
         )

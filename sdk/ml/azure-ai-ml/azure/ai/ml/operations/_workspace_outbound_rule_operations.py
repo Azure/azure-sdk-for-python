@@ -9,7 +9,7 @@ from typing import Dict, Iterable, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
@@ -43,7 +43,7 @@ class WorkspaceOutboundRuleOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient122022Preview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
@@ -52,23 +52,28 @@ class WorkspaceOutboundRuleOperations:
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
         self._all_operations = all_operations
-        # operations for workspaces from ServiceClient102022Preview, need managednetwork api instead
-        self._operation = service_client.workspaces
+        self._operation = service_client.managed_network_settings_rule
         self._credentials = credentials
         self._init_kwargs = kwargs
 
     def show(self, name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
-
         print("SDK outbound rule show method called")
+
+        workspace_name = self._check_workspace_name(name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+
+        obj = self._operation.get(resource_group, workspace_name, outbound_rule_name)
+        return OutboundRule._from_rest_object(obj)
+
+        # obj = self._operation.get(resource_group, workspace_name)
+        # return Workspace._from_rest_object(obj)
+        """def get(
+        self,
+        resource_group_name,  # type: str
+        workspace_name,  # type: str
+        **kwargs  # type: Any):"""
+
         raise NotImplementedError("workspace outbound rule operations show")
-        # return OutboundRule()
-        """obj = self._operation.get(
-            workspace_name=self._workspace_name,
-            outbound_rule_name=outbound_rule_name,
-            **self._scope_kwargs,
-            **kwargs,
-        )
-        return OutboundRule._from_rest_object(rest_obj=obj)"""
 
     def list(self, name: str, **kwargs) -> OutboundRule:
 
@@ -87,3 +92,15 @@ class WorkspaceOutboundRuleOperations:
         print("SDK outbound rule remove method called")
         raise NotImplementedError("workspace outbound rule operations remove")
         # return OutboundRule()
+
+    def _check_workspace_name(self, name) -> str:
+        workspace_name = name or self._default_workspace_name
+        if not workspace_name:
+            msg = "Please provide a workspace name or use a MLClient with a workspace name set."
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.WORKSPACE,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+        return workspace_name
