@@ -40,13 +40,13 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 def _return_response_and_deserialized(pipeline_response, deserialized, _):
-    return cast(PipelineResponse, pipeline_response), cast(ManifestWrapper, deserialized)
+    return pipeline_response, deserialized
 
 def _return_deserialized(_, deserialized, __):
     return deserialized
 
 def _return_response_headers(_, __, response_headers):
-    return cast(Dict[str, str], response_headers)
+    return response_headers
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -823,22 +823,22 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or data is None.
         """
         try:
-            start_upload_response_headers = self._client.container_registry_blob.start_upload(
+            start_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.start_upload(
                 repository, cls=_return_response_headers, **kwargs
-            )
-            upload_chunk_response_headers = self._client.container_registry_blob.upload_chunk(
+            ))
+            upload_chunk_response_headers = cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
                 start_upload_response_headers['Location'],
                 data,
                 cls=_return_response_headers,
                 **kwargs
-            )
+            ))
             digest = _compute_digest(data)
-            complete_upload_response_headers = self._client.container_registry_blob.complete_upload(
+            complete_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.complete_upload(
                 digest=digest,
                 next_link=upload_chunk_response_headers['Location'],
                 cls=_return_response_headers,
                 **kwargs
-            )
+            ))
         except ValueError:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")
@@ -866,8 +866,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 cls=_return_response_and_deserialized,
                 **kwargs
             )
-            digest = response.http_response.headers['Docker-Content-Digest']
-            manifest = OCIManifest.deserialize(manifest_wrapper.serialize())
+            digest = cast(PipelineResponse, response).http_response.headers['Docker-Content-Digest']
+            manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
             manifest_stream = _serialize_manifest(manifest)
         except ValueError:
             if repository is None or tag_or_digest is None:
