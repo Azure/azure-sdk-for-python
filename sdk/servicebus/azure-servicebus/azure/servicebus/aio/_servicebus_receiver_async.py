@@ -387,7 +387,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
         if self._prefetch_count == 1:
-            self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
+            self._handler._message_received_async = self._enhanced_message_received_async  # pylint: disable=protected-access
 
     async def _open(self):
         # pylint: disable=protected-access

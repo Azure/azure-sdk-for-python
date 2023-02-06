@@ -277,12 +277,10 @@ class AMQPClientAsync(AMQPClientSync):
         If the client was opened using an external Connection,
         this will be left intact.
         """
+        print("Closing")
         self._shutdown = True
         if not self._session:
             return  # already closed.
-        if self._keep_alive_thread:
-            await self._keep_alive_thread
-            self._keep_alive_thread = None
         await self._close_link_async()
         if self._cbs_authenticator:
             await self._cbs_authenticator.close()
@@ -292,6 +290,9 @@ class AMQPClientAsync(AMQPClientSync):
         if not self._external_connection:
             await self._connection.close()
             self._connection = None
+        if self._keep_alive_thread:
+            await self._keep_alive_thread
+            self._keep_alive_thread = None
         self._network_trace_params["amqpConnection"] = None
         self._network_trace_params["amqpSession"] = None
 
@@ -333,7 +334,7 @@ class AMQPClientAsync(AMQPClientSync):
         :rtype: bool
         :raises: TimeoutError if CBS authentication timeout reached.
         """
-
+        print("Do work")
         if self._shutdown:
             return False
         if not await self.client_ready_async():
@@ -709,7 +710,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                 send_settle_mode=self._send_settle_mode,
                 rcv_settle_mode=self._receive_settle_mode,
                 max_message_size=self._max_message_size,
-                on_transfer=self._message_received,
+                on_transfer=self._message_received_async,
                 properties=self._link_properties,
                 desired_capabilities=self._desired_capabilities,
                 on_attach=self._on_attach
@@ -883,7 +884,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             #Check what self._received_messages is 
             # what happens to queue when Empty exception thrown, do we need to reset it?
             if self._shutdown:
-                self.close()
+                await self.close_async()
 
     async def _complete_message_async(self, message, auto):
         if not message or not auto:
