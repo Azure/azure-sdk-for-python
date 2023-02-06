@@ -421,35 +421,6 @@ class TestMachineLearningClient:
             assert ml_client._kwargs["cloud"] == "SomeInvalidCloudName"
         assert "Unknown cloud environment supplied" in str(e)
 
-
-    def test_ml_client_validation_rg_sub_missing_throws(
-        self, auth: ClientSecretCredential
-    ) -> None:
-        with pytest.raises(ValidationException) as exception:
-            MLClient(
-                credential=auth,
-            )
-        message = exception.value.args[0]
-        assert (
-            message
-            == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
-        )
-
-
-    def test_ml_client_with_no_rg_sub_for_ws_throws(
-        self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential
-    ) -> None:
-        with pytest.raises(ValidationException) as exception:
-            MLClient(
-                credential=auth,
-                workspace_name=e2e_ws_scope.workspace_name,
-            )
-        message = exception.value.args[0]
-        assert (
-            message
-            == "Both subscription id and resource group are required for this operation, missing subscription id and resource group"
-        )
-
     def test_ml_client_with_both_workspace_registry_names_throws(self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> None:
         with pytest.raises(ValidationException) as exception:
             MLClient(

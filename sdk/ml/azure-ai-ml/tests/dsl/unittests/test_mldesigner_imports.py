@@ -53,7 +53,7 @@ class TestMldesignerImports:
         assert hasattr(input_obj, "_get_python_builtin_type_str")
         assert hasattr(input_obj, "_get_param_with_standard_annotation")
 
-        node_input_obj = NodeInput(name="sdk", meta=input_obj)
+        node_input_obj = NodeInput(port_name="sdk", meta=input_obj)
         assert hasattr(node_input_obj, "_meta")
         assert hasattr(node_input_obj, "_data")
 
