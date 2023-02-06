@@ -24,9 +24,9 @@
 #
 # --------------------------------------------------------------------------
 import logging
-from typing import Iterator, Optional, Any, Union, TypeVar, overload, TYPE_CHECKING
-import urllib3  # type: ignore
-from urllib3.util.retry import Retry  # type: ignore
+from typing import Iterator, Optional, Union, TypeVar, overload, TYPE_CHECKING
+import urllib3
+from urllib3.util.retry import Retry
 from urllib3.exceptions import (
     DecodeError as CoreDecodeError,
     ReadTimeoutError,
@@ -139,7 +139,7 @@ class _RequestsTransportResponseBase(_HttpResponseBase):
         return self.internal_response.text
 
 
-class StreamDownloadGenerator(object):
+class StreamDownloadGenerator:
     """Generator for streaming response data.
 
     :param pipeline: The pipeline object
@@ -207,8 +207,7 @@ class StreamDownloadGenerator(object):
 class RequestsTransportResponse(HttpResponse, _RequestsTransportResponseBase):
     """Streaming of data from the response."""
 
-    def stream_download(self, pipeline, **kwargs):
-        # type: (PipelineType, **Any) -> Iterator[bytes]
+    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
         """Generator for streaming request body data."""
         return StreamDownloadGenerator(pipeline, self, **kwargs)
 
@@ -240,23 +239,20 @@ class RequestsTransport(HttpTransport):
 
     _protocols = ["http://", "https://"]
 
-    def __init__(self, **kwargs):
-        # type: (Any) -> None
+    def __init__(self, **kwargs) -> None:
         self.session = kwargs.get("session", None)
         self._session_owner = kwargs.get("session_owner", True)
         self.connection_config = ConnectionConfiguration(**kwargs)
         self._use_env_settings = kwargs.pop("use_env_settings", True)
 
-    def __enter__(self):
-        # type: () -> RequestsTransport
+    def __enter__(self) -> "RequestsTransport":
         self.open()
         return self
 
     def __exit__(self, *args):  # pylint: disable=arguments-differ
         self.close()
 
-    def _init_session(self, session):
-        # type: (requests.Session) -> None
+    def _init_session(self, session: requests.Session) -> None:
         """Init session level configuration of requests.
 
         This is initialization I want to do once only on a session.
@@ -279,8 +275,7 @@ class RequestsTransport(HttpTransport):
             self.session = None
 
     @overload
-    def send(self, request, **kwargs):
-        # type: (HttpRequest, Any) -> HttpResponse
+    def send(self, request: HttpRequest, **kwargs) -> HttpResponse:
         """Send a rest request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -294,8 +289,7 @@ class RequestsTransport(HttpTransport):
         """
 
     @overload
-    def send(self, request, **kwargs):
-        # type: (RestHttpRequest, Any) -> RestHttpResponse
+    def send(self, request: "RestHttpRequest", **kwargs) -> "RestHttpResponse":
         """Send an `azure.core.rest` request and get back a rest response.
 
         :param request: The request object to be sent.
@@ -308,7 +302,7 @@ class RequestsTransport(HttpTransport):
         :keyword dict proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
 
-    def send(self, request, **kwargs):  # type: ignore
+    def send(self, request, **kwargs):
         """Send request object according to configuration.
 
         :param request: The request object to be sent.
@@ -322,7 +316,7 @@ class RequestsTransport(HttpTransport):
         """
         self.open()
         response = None
-        error = None  # type: Optional[AzureErrorUnion]
+        error: Optional[AzureErrorUnion] = None
 
         try:
             connection_timeout = kwargs.pop(

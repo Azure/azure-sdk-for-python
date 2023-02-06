@@ -1,0 +1,82 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+
+description: 'submit a pipeline with spark job'
+
+inputs:
+  iris_data:
+    type: uri_file
+    path: ./dataset/iris.csv
+    mode: direct
+
+outputs:
+  output:
+    type: uri_folder
+    mode: direct
+
+jobs:
+  add_greeting_column:
+    type: spark
+
+    inputs:
+      file_input: ${{parent.inputs.iris_data}}
+
+    code: ./src
+    entry:
+      file: add_greeting_column.py # file path of the entry file relative to the code root folder
+
+    py_files:
+      - utils.zip
+
+    files:
+      - my_files.txt
+
+    args: >-
+      --file_input ${{inputs.file_input}}
+
+    resources:
+      instance_type: standard_e4s_v3
+      runtime_version: 3.1.0
+    conf:
+      spark.driver.cores: 2
+      spark.driver.memory: "1g"
+      spark.executor.cores: 1
+      spark.executor.memory: "1g"
+      spark.executor.instances: 1
+
+  count_by_row:
+    type: spark
+
+    inputs:
+      file_input: ${{parent.inputs.iris_data}}
+
+    outputs:
+      output:
+        path: ${{parent.outputs.output}}
+        name: spark_output
+        version: 12
+
+    code: ./src
+
+    entry:
+      file: count_by_row.py # file path of the entry file relative to the code root folder
+
+    jars:
+      - scalaproj.jar
+
+    files:
+      - my_files.txt
+
+    args: >-
+      --file_input ${{inputs.file_input}}
+      --output ${{outputs.output}}
+
+    resources:
+      instance_type: standard_e4s_v3
+      runtime_version: 3.1.0
+    conf:
+      spark.driver.cores: 2
+      spark.driver.memory: "1g"
+      spark.executor.cores: 1
+      spark.executor.memory: "1g"
+      spark.executor.instances: 1

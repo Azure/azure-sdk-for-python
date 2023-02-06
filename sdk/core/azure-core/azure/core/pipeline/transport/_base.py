@@ -24,37 +24,34 @@
 #
 # --------------------------------------------------------------------------
 import abc
+from collections.abc import MutableMapping
+from contextlib import AbstractContextManager
 from email.message import Message
 import json
 import logging
 import time
 import copy
-from urllib.parse import urlparse  # type: ignore
+from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
 from typing import (
-    TYPE_CHECKING,
     Generic,
     TypeVar,
     IO,
-    List,
     Union,
     Any,
     Mapping,
-    Dict,
     Optional,
     Tuple,
     Iterator,
     Type,
+    Dict,
+    List,
 )
 
 from http.client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
-from azure.core.pipeline import (
-    ABC,
-    AbstractContextManager,
-)
 from ...utils._utils import case_insensitive_dict
 from ...utils._pipeline_transport_rest_shared import (
     _format_parameters_helper,
@@ -68,12 +65,10 @@ from ...utils._pipeline_transport_rest_shared import (
 )
 
 
-if TYPE_CHECKING:
-    from collections.abc import MutableMapping
-
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 PipelineType = TypeVar("PipelineType")
+DataType = Optional[Union[bytes, Dict[str, Union[str, int]]]]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -106,8 +101,7 @@ def _format_url_section(template, **kwargs):
     # No URL sections left - returning None
 
 
-def _urljoin(base_url, stub_url):
-    # type: (str, str) -> str
+def _urljoin(base_url: str, stub_url: str) -> str:
     """Append to end of base URL without losing query parameters.
 
     :param str base_url: The base URL.
@@ -121,13 +115,12 @@ def _urljoin(base_url, stub_url):
 
 
 class HttpTransport(
-    AbstractContextManager, ABC, Generic[HTTPRequestType, HTTPResponseType]
-):  # type: ignore
+    AbstractContextManager, abc.ABC, Generic[HTTPRequestType, HTTPResponseType]
+):
     """An http sender ABC."""
 
     @abc.abstractmethod
-    def send(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> HTTPResponseType
+    def send(self, request: HTTPRequestType, **kwargs) -> HTTPResponseType:
         """Send the request using this HTTP sender.
 
         :param request: The pipeline request object
@@ -148,7 +141,7 @@ class HttpTransport(
         time.sleep(duration)
 
 
-class HttpRequest(object):
+class HttpRequest:
     """Represents a HTTP request.
 
     URL can be given without query parameters, to be added later using "format_parameters".
@@ -158,17 +151,23 @@ class HttpRequest(object):
     :param dict[str,str] headers: HTTP headers
     :param files: Files list.
     :param data: Body to be sent.
-    :type data: bytes or str.
+    :type data: bytes or dict (for form)
     """
 
-    def __init__(self, method, url, headers=None, files=None, data=None):
-        # type: (str, str, Mapping[str, str], Any, Any) -> None
+    def __init__(
+        self,
+        method: str,
+        url: str,
+        headers: Optional[Mapping[str, str]] = None,
+        files: Optional[Any] = None,
+        data: Optional[DataType] = None,
+    ) -> None:
         self.method = method
         self.url = url
         self.headers = case_insensitive_dict(headers)
         self.files = files
         self.data = data
-        self.multipart_mixed_info = None  # type: Optional[Tuple]
+        self.multipart_mixed_info: Optional[Tuple] = None
 
     def __repr__(self):
         return "<HttpRequest [{}], url: '{}'>".format(self.method, self.url)
@@ -184,7 +183,7 @@ class HttpRequest(object):
             return copy.copy(self)
 
     @property
-    def query(self):
+    def query(self) -> Dict[str, str]:
         """The query parameters of the request as a dict.
 
         :rtype: dict[str, str]
@@ -195,20 +194,21 @@ class HttpRequest(object):
         return {}
 
     @property
-    def body(self):
+    def body(self) -> DataType:
         """Alias to data.
 
-        :rtype: bytes
+        :rtype: bytes or dict
         """
         return self.data
 
     @body.setter
-    def body(self, value):
+    def body(self, value: DataType):
         self.data = value
 
     @staticmethod
-    def _format_data(data):
-        # type: (Union[str, IO]) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]
+    def _format_data(
+        data: Union[str, IO]
+    ) -> Union[Tuple[None, str], Tuple[Optional[str], IO, str]]:
         """Format field data according to whether it is a stream or
         a string for a form-data request.
 
@@ -217,8 +217,7 @@ class HttpRequest(object):
         """
         return _format_data_helper(data)
 
-    def format_parameters(self, params):
-        # type: (Dict[str, str]) -> None
+    def format_parameters(self, params: Dict[str, str]) -> None:
         """Format parameters into a valid query string.
         It's assumed all parameters have already been quoted as
         valid URL strings.
@@ -313,8 +312,7 @@ class HttpRequest(object):
         self.data = data
         self.files = None
 
-    def set_multipart_mixed(self, *requests, **kwargs):
-        # type: (HttpRequest, Any) -> None
+    def set_multipart_mixed(self, *requests: "HttpRequest", **kwargs) -> None:
         """Set the part of a multipart/mixed.
 
         Only supported args for now are HttpRequest objects.
@@ -337,8 +335,7 @@ class HttpRequest(object):
             kwargs,
         )
 
-    def prepare_multipart_body(self, content_index=0):
-        # type: (int) -> int
+    def prepare_multipart_body(self, content_index: int = 0) -> int:
         """Will prepare the body of this request according to the multipart information.
 
         This call assumes the on_request policies have been applied already in their
@@ -352,8 +349,7 @@ class HttpRequest(object):
         """
         return _prepare_multipart_body_helper(self, content_index)
 
-    def serialize(self):
-        # type: () -> bytes
+    def serialize(self) -> bytes:
         """Serialize this request using application/http spec.
 
         :rtype: bytes
@@ -361,7 +357,7 @@ class HttpRequest(object):
         return _serialize_request(self)
 
 
-class _HttpResponseBase(object):
+class _HttpResponseBase:
     """Represent a HTTP response.
 
     No body is defined here on purpose, since async pipeline
@@ -374,23 +370,25 @@ class _HttpResponseBase(object):
     :param int block_size: Defaults to 4096 bytes.
     """
 
-    def __init__(self, request, internal_response, block_size=None):
-        # type: (HttpRequest, Any, Optional[int]) -> None
+    def __init__(
+        self,
+        request: HttpRequest,
+        internal_response: Any,
+        block_size: Optional[int] = None,
+    ) -> None:
         self.request = request
         self.internal_response = internal_response
-        self.status_code = None  # type: Optional[int]
-        self.headers = {}  # type: MutableMapping[str, str]
-        self.reason = None  # type: Optional[str]
-        self.content_type = None  # type: Optional[str]
-        self.block_size = block_size or 4096  # Default to same as Requests
+        self.status_code: Optional[int] = None
+        self.headers: MutableMapping[str, str] = {}
+        self.reason: Optional[str] = None
+        self.content_type: Optional[str] = None
+        self.block_size: int = block_size or 4096  # Default to same as Requests
 
-    def body(self):
-        # type: () -> bytes
+    def body(self) -> bytes:
         """Return the whole body as bytes in memory."""
         raise NotImplementedError()
 
-    def text(self, encoding=None):
-        # type: (str) -> str
+    def text(self, encoding: Optional[str] = None) -> str:
         """Return the whole body as a string.
 
         :param str encoding: The encoding to apply. If None, use "utf-8" with BOM parsing (utf-8-sig).
@@ -400,15 +398,20 @@ class _HttpResponseBase(object):
             encoding = "utf-8-sig"
         return self.body().decode(encoding)
 
-    def _decode_parts(self, message, http_response_type, requests):
-        # type: (Message, Type[_HttpResponseBase], List[HttpRequest]) -> List[HttpResponse]
+    def _decode_parts(
+        self,
+        message: Message,
+        http_response_type: Type["_HttpResponseBase"],
+        requests: List[HttpRequest],
+    ) -> List["HttpResponse"]:
         """Rebuild an HTTP response from pure string."""
         return _decode_parts_helper(
             self, message, http_response_type, requests, _deserialize_response
         )
 
-    def _get_raw_parts(self, http_response_type=None):
-        # type (Optional[Type[_HttpResponseBase]]) -> Iterator[HttpResponse]
+    def _get_raw_parts(
+        self, http_response_type: Optional[Type["_HttpResponseBase"]] = None
+    ) -> Iterator["HttpResponse"]:
         """Assuming this body is multipart, return the iterator or parts.
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
@@ -418,12 +421,11 @@ class _HttpResponseBase(object):
             self, http_response_type or HttpClientTransportResponse
         )
 
-    def raise_for_status(self):
-        # type () -> None
+    def raise_for_status(self) -> None:
         """Raises an HttpResponseError if the response has an error status code.
         If response is good, does nothing.
         """
-        if self.status_code >= 400:
+        if not self.status_code or self.status_code >= 400:
             raise HttpResponseError(response=self)
 
     def __repr__(self):
@@ -437,8 +439,7 @@ class _HttpResponseBase(object):
 
 
 class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
-    def stream_download(self, pipeline, **kwargs):
-        # type: (PipelineType, **Any) -> Iterator[bytes]
+    def stream_download(self, pipeline: PipelineType, **kwargs) -> Iterator[bytes]:
         """Generator for streaming request body data.
 
         Should be implemented by sub-classes if streaming download
@@ -447,8 +448,7 @@ class HttpResponse(_HttpResponseBase):  # pylint: disable=abstract-method
         :rtype: iterator[bytes]
         """
 
-    def parts(self):
-        # type: () -> Iterator[HttpResponse]
+    def parts(self) -> Iterator["HttpResponse"]:
         """Assuming the content-type is multipart/mixed, will return the parts as an iterator.
 
         :rtype: iterator[HttpResponse]
@@ -496,7 +496,7 @@ def _deserialize_response(
     return http_response_type(http_request, response)
 
 
-class PipelineClientBase(object):
+class PipelineClientBase:
     """Base class for pipeline clients.
 
     :param str base_url: URL for the request.
@@ -507,15 +507,14 @@ class PipelineClientBase(object):
 
     def _request(
         self,
-        method,  # type: str
-        url,  # type: str
-        params,  # type: Optional[Dict[str, str]]
-        headers,  # type: Optional[Dict[str, str]]
-        content,  # type: Any
-        form_content,  # type: Optional[Dict[str, Any]]
-        stream_content,  # type: Any
-    ):
-        # type: (...) -> HttpRequest
+        method: str,
+        url: str,
+        params: Optional[Dict[str, str]],
+        headers: Optional[Dict[str, str]],
+        content: Any,
+        form_content: Optional[Dict[str, Any]],
+        stream_content: Any,
+    ) -> HttpRequest:
         """Create HttpRequest object.
 
         If content is not None, guesses will be used to set the right body:
@@ -563,8 +562,7 @@ class PipelineClientBase(object):
 
         return request
 
-    def format_url(self, url_template, **kwargs):
-        # type: (str, Any) -> str
+    def format_url(self, url_template: str, **kwargs) -> str:
         """Format request URL with the client base URL, unless the
         supplied URL is already absolute.
 
@@ -588,13 +586,12 @@ class PipelineClientBase(object):
 
     def get(
         self,
-        url,  # type: str
-        params=None,  # type: Optional[Dict[str, str]]
-        headers=None,  # type: Optional[Dict[str, str]]
-        content=None,  # type: Any
-        form_content=None,  # type: Optional[Dict[str, Any]]
-    ):
-        # type: (...) -> HttpRequest
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+    ) -> HttpRequest:
         """Create a GET request object.
 
         :param str url: The request URL.
@@ -613,14 +610,13 @@ class PipelineClientBase(object):
 
     def put(
         self,
-        url,  # type: str
-        params=None,  # type: Optional[Dict[str, str]]
-        headers=None,  # type: Optional[Dict[str, str]]
-        content=None,  # type: Any
-        form_content=None,  # type: Optional[Dict[str, Any]]
-        stream_content=None,  # type: Any
-    ):
-        # type: (...) -> HttpRequest
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+        stream_content: Any = None,
+    ) -> HttpRequest:
         """Create a PUT request object.
 
         :param str url: The request URL.
@@ -638,14 +634,13 @@ class PipelineClientBase(object):
 
     def post(
         self,
-        url,  # type: str
-        params=None,  # type: Optional[Dict[str, str]]
-        headers=None,  # type: Optional[Dict[str, str]]
-        content=None,  # type: Any
-        form_content=None,  # type: Optional[Dict[str, Any]]
-        stream_content=None,  # type: Any
-    ):
-        # type: (...) -> HttpRequest
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+        stream_content: Any = None,
+    ) -> HttpRequest:
         """Create a POST request object.
 
         :param str url: The request URL.
@@ -663,14 +658,13 @@ class PipelineClientBase(object):
 
     def head(
         self,
-        url,  # type: str
-        params=None,  # type: Optional[Dict[str, str]]
-        headers=None,  # type: Optional[Dict[str, str]]
-        content=None,  # type: Any
-        form_content=None,  # type: Optional[Dict[str, Any]]
-        stream_content=None,  # type: Any
-    ):
-        # type: (...) -> HttpRequest
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+        stream_content: Any = None,
+    ) -> HttpRequest:
         """Create a HEAD request object.
 
         :param str url: The request URL.
@@ -688,14 +682,13 @@ class PipelineClientBase(object):
 
     def patch(
         self,
-        url,  # type: str
-        params=None,  # type: Optional[Dict[str, str]]
-        headers=None,  # type: Optional[Dict[str, str]]
-        content=None,  # type: Any
-        form_content=None,  # type: Optional[Dict[str, Any]]
-        stream_content=None,  # type: Any
-    ):
-        # type: (...) -> HttpRequest
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+        stream_content: Any = None,
+    ) -> HttpRequest:
         """Create a PATCH request object.
 
         :param str url: The request URL.
@@ -711,8 +704,14 @@ class PipelineClientBase(object):
         )
         return request
 
-    def delete(self, url, params=None, headers=None, content=None, form_content=None):
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+    def delete(
+        self,
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+    ) -> HttpRequest:
         """Create a DELETE request object.
 
         :param str url: The request URL.
@@ -728,8 +727,14 @@ class PipelineClientBase(object):
         )
         return request
 
-    def merge(self, url, params=None, headers=None, content=None, form_content=None):
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any, Optional[Dict[str, Any]]) -> HttpRequest
+    def merge(
+        self,
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        content: Any = None,
+        form_content: Optional[Dict[str, Any]] = None,
+    ) -> HttpRequest:
         """Create a MERGE request object.
 
         :param str url: The request URL.
@@ -745,8 +750,13 @@ class PipelineClientBase(object):
         )
         return request
 
-    def options(self, url, params=None, headers=None, **kwargs):
-        # type: (str, Optional[Dict[str, str]], Optional[Dict[str, str]], Any) -> HttpRequest
+    def options(
+        self,
+        url: str,
+        params: Optional[Dict[str, str]] = None,
+        headers: Optional[Dict[str, str]] = None,
+        **kwargs
+    ) -> HttpRequest:
         """Create a OPTIONS request object.
 
         :param str url: The request URL.
