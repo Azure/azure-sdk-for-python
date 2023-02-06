@@ -41,7 +41,7 @@ class CosmosHttpLoggingPolicy(HttpLoggingPolicy):
         self._enable_diagnostics_logging = kwargs.pop("enable_diagnostics_logging", False)
         super().__init__(logger, **kwargs)
         if self._enable_diagnostics_logging:
-            cosmos_disallow_list = ["Authorization"]
+            cosmos_disallow_list = ["Authorization", "ProxyAuthorization"]
             cosmos_allow_list = [
                 v for k, v in HttpHeaders.__dict__.items() if not k.startswith("_") and k not in cosmos_disallow_list
             ]
