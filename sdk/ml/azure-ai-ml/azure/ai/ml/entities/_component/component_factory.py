@@ -62,19 +62,19 @@ class _ComponentFactory:
             create_schema_func=SparkComponent._create_schema_for_validation,
         )
         self.register_type(
-            _type="_".join([NodeType.DATATRANSFER, DataTransferTaskType.COPY_DATA]),
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.COPY_DATA]),
             create_instance_func=lambda: DataTransferCopyComponent.__new__(DataTransferCopyComponent),
             create_schema_func=DataTransferCopyComponent._create_schema_for_validation,
         )
 
         self.register_type(
-            _type="_".join([NodeType.DATATRANSFER, DataTransferTaskType.IMPORT_DATA]),
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.IMPORT_DATA]),
             create_instance_func=lambda: DataTransferImportComponent.__new__(DataTransferImportComponent),
             create_schema_func=DataTransferImportComponent._create_schema_for_validation,
         )
 
         self.register_type(
-            _type="_".join([NodeType.DATATRANSFER, DataTransferTaskType.EXPORT_DATA]),
+            _type="_".join([NodeType.DATA_TRANSFER, DataTransferTaskType.EXPORT_DATA]),
             create_instance_func=lambda: DataTransferExportComponent.__new__(DataTransferExportComponent),
             create_schema_func=DataTransferExportComponent._create_schema_for_validation,
         )

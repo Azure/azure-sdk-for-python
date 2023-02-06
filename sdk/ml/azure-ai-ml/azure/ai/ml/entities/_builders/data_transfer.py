@@ -82,7 +82,7 @@ class DataTransfer(BaseNode):
         kwargs.pop("type", None)
         self._parameters = kwargs.pop("parameters", {})
         super().__init__(
-            type=NodeType.DATATRANSFER,
+            type=NodeType.DATA_TRANSFER,
             inputs=inputs,
             outputs=outputs,
             component=component,

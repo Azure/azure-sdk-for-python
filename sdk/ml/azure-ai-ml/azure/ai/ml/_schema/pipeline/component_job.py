@@ -377,7 +377,7 @@ class DataTransferCopySchema(BaseNodeSchema):
     # pylint: disable=unused-argument
     component = TypeSensitiveUnionField(
         {
-            NodeType.DATATRANSFER: [
+            NodeType.DATA_TRANSFER: [
                 # inline component or component file reference starting with FILE prefix
                 NestedField(AnonymousDataTransferCopyComponentSchema, unknown=INCLUDE),
                 # component file reference
@@ -393,7 +393,7 @@ class DataTransferCopySchema(BaseNodeSchema):
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.COPY_DATA], required=True)
-    type = StringTransformedEnum(allowed_values=[NodeType.DATATRANSFER], required=True)
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
     compute = ComputeField()
 
     @post_load
@@ -420,7 +420,7 @@ class DataTransferImportSchema(BaseNodeSchema):
     # pylint: disable=unused-argument
     component = TypeSensitiveUnionField(
         {
-            NodeType.DATATRANSFER: [
+            NodeType.DATA_TRANSFER: [
                 # inline component or component file reference starting with FILE prefix
                 NestedField(AnonymousDataTransferImportComponentSchema, unknown=INCLUDE),
                 # component file reference
@@ -436,7 +436,7 @@ class DataTransferImportSchema(BaseNodeSchema):
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.IMPORT_DATA], required=True)
-    type = StringTransformedEnum(allowed_values=[NodeType.DATATRANSFER], required=True)
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER], required=True)
     compute = ComputeField()
     source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
 
@@ -475,7 +475,7 @@ class DataTransferExportSchema(BaseNodeSchema):
     # pylint: disable=unused-argument
     component = TypeSensitiveUnionField(
         {
-            NodeType.DATATRANSFER: [
+            NodeType.DATA_TRANSFER: [
                 # inline component or component file reference starting with FILE prefix
                 NestedField(AnonymousDataTransferExportComponentSchema, unknown=INCLUDE),
                 # component file reference
@@ -491,7 +491,7 @@ class DataTransferExportSchema(BaseNodeSchema):
         required=True,
     )
     task = StringTransformedEnum(allowed_values=[DataTransferTaskType.EXPORT_DATA])
-    type = StringTransformedEnum(allowed_values=[NodeType.DATATRANSFER])
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
     compute = ComputeField()
     sink = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
 

@@ -75,7 +75,7 @@ def PipelineJobsField():
             NestedField(SparkSchema, unknown=INCLUDE),
             NestedField(PipelineSparkJobSchema),
         ],
-        NodeType.DATATRANSFER: [
+        NodeType.DATA_TRANSFER: [
             NestedField(DataTransferCopySchema, unknown=INCLUDE),
             NestedField(DataTransferImportSchema, unknown=INCLUDE),
             NestedField(DataTransferExportSchema, unknown=INCLUDE),
@@ -141,7 +141,7 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 context=context,
                 pipeline_job_dict=data,
             )
-            if not (job_instance.type == NodeType.DATATRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA):
+            if not (job_instance.type == NodeType.DATA_TRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA):
                 job_instance.component._source = ComponentSource.YAML_JOB
             job_instance._source = job_instance.component._source
             jobs[key] = job_instance

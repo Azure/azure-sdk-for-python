@@ -19,7 +19,7 @@ from azure.ai.ml.constants._component import ComponentSource, NodeType, DataTran
 
 
 class DataTransferComponentSchemaMixin(ComponentSchema):
-    type = StringTransformedEnum(allowed_values=[NodeType.DATATRANSFER])
+    type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
 
 
 class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):

@@ -40,7 +40,7 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         # validate init params are valid type
         validate_attribute_type(attrs_to_check=locals(), attr_type_map=self._attr_type_map())
 
-        kwargs[COMPONENT_TYPE] = NodeType.DATATRANSFER
+        kwargs[COMPONENT_TYPE] = NodeType.DATA_TRANSFER
         # Set default base path
         if "base_path" not in kwargs:
             kwargs["base_path"] = Path(".")

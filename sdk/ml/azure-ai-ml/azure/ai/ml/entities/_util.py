@@ -436,8 +436,8 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     # and this is the only place
     try_enable_internal_components()
     # todo: refine Hard code for now to support different task type for DataTransfer component
-    if _type == NodeType.DATATRANSFER:
-        _type = "_".join([NodeType.DATATRANSFER, data.get("task", "")])
+    if _type == NodeType.DATA_TRANSFER:
+        _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", "")])
     if _type not in valid_keys:
         if (
             schema
