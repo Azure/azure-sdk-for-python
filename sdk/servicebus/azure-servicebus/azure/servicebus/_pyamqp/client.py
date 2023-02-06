@@ -227,22 +227,24 @@ class AMQPClient(
     def _keep_alive(self):
         start_time = time.time()
         try:
+            print("In keep alive function")
             while self._connection and not self._shutdown: 
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
-                    print("Call connection work")
                     _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
                     # I'm not sure we want to keep the connection alive
                     # with self._lock:
+                    print("Call connection work")
+                    # self.client_ready()
                     self._connection.listen(wait=self._socket_timeout)
+                    print("Finished listening")
                     # self._client_ready()
 
                     start_time = current_time
                 time.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
             _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
-
 
     def _client_ready(self):  # pylint: disable=no-self-use
         """Determine whether the client is ready to start sending and/or
@@ -447,6 +449,7 @@ class AMQPClient(
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop("timeout", 0)
         with self._lock:
+            print("In the lock statement for mgmt request")
             try: 
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
@@ -977,7 +980,7 @@ class ReceiveClient(AMQPClient):
                 if not self._running_iter:
                     self._last_activity_stamp = time.time()
                 self._running_iter = True
-                # print("In this")
+                print("In this")
                 if self._timeout > 0:
                     # print(time.time() - self._last_activity_stamp)
                     if time.time() - self._last_activity_stamp >= self._timeout:
@@ -988,7 +991,7 @@ class ReceiveClient(AMQPClient):
                     receiving = self.do_work()
                     # print("Last activity stamp")
                         
-                if not self._received_messages.empty():
+                while not self._received_messages.empty():
                     print("Messages not empty")
                     message = self._received_messages.get()
                     self._last_activity_stamp = time.time()
