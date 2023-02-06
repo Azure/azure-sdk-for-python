@@ -12,6 +12,7 @@ from azure.ai.ml._utils.utils import _get_mfe_url_override
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.constants._common import ArmConstants
 
+
 module_logger = logging.getLogger(__name__)
 
 
@@ -90,6 +91,10 @@ def _get_cloud_details(cloud: str = AzureEnvironments.ENV_DEFAULT):
 
 
 def _set_cloud(cloud: str = AzureEnvironments.ENV_DEFAULT):
+    """Sets the current cloud
+    
+    :param cloud: cloud name
+    """
     if cloud is not None:
         try:
             _get_cloud(cloud)
@@ -201,22 +206,27 @@ def _resource_to_scopes(resource):
 
 def _get_registry_discovery_url(cloud, cloud_suffix):
     """Get the registry discovery url
+
+        :param cloud: The cloud to retrieve from
+        :param cloud_suffix:  the url suffix of the cloud
         :return: string of discovery url
     """
     cloud_name = cloud["name"]
     if cloud_name in _environments:
         return _environments[cloud_name].registry_url
-    if ArmConstants.REGISTRY_ENV_URL in os.environ:
-        return os.environ[ArmConstants.REGISTRY_ENV_URL]
+    
     registry_discovery_region = os.environ.get(
         ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
         ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
     )
-    return "https://{}{}.api.azureml.{}/".format(
+    registry_discovery_region_default = "https://{}{}.api.azureml.{}/".format(
         cloud_name.lower(),
         registry_discovery_region,
         cloud_suffix
     )
+    return os.environ.get(ArmConstants.REGISTRY_ENV_URL, registry_discovery_region_default)
+    
+    
 
 def _get_clouds_by_metadata_url(metadata_url, timeout=ArmConstants.DEFAULT_TIMEOUT):
     """Get all the clouds by the specified metadata url
