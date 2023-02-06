@@ -854,7 +854,7 @@ def disable_internal_components():
     and enable_private_preview_features, as the execution order of fixtures is not guaranteed.
     """
     from azure.ai.ml._internal._schema.component import NodeType
-    from azure.ai.ml._internal._util import _set_registered
+    from azure.ai.ml._internal._setup import _set_registered
     from azure.ai.ml.entities._component.component_factory import component_factory
     from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 

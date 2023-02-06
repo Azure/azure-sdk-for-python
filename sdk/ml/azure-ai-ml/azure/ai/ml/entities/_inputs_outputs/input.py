@@ -486,4 +486,4 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     def _from_rest_object(cls, obj: Dict) -> "Input":
         obj["type"] = cls._map_from_rest_type(obj["type"])
 
-        return Input(**obj)
+        return cls(**obj)
