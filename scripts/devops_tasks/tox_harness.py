@@ -277,6 +277,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
     tox_command_tuples = []
     check_set = set([env.strip().lower() for env in parsed_args.tox_env.strip().split(",")])
+    skipped_package_environments = {}
 
     for index, package_dir in enumerate(targeted_packages):
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
@@ -332,11 +333,14 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
             if filtered_set != check_set:
                 skipped_environments = check_set - filtered_set
                 if in_ci() and skipped_environments:
-                    output_ci_warning(f"{package_name} is skipping {skipped_environments}.", )
+                    if package_name not in skipped_package_environments:
+                        skipped_package_environments[package_name] = []
+
+                    skipped_package_environments[package_name].extend(skipped_environments)
 
             if not filtered_tox_environment_set:
                 logging.info(
-                    f"All requested tox environments \"{parsed_args.tox_env}\" for package {package_name} have been excluded as indicated by is_check_enabled()."
+                    f'All requested tox environments "{parsed_args.tox_env}" for package {package_name} have been excluded as indicated by is_check_enabled().'
                     + " Check file /tools/azure-sdk-tools/ci_tools/environment_exclusions.py and the pyproject.toml."
                 )
 
@@ -356,6 +360,13 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
             tox_execution_array.extend(["--"] + local_options_array)
 
         tox_command_tuples.append((tox_execution_array, package_dir))
+
+    if in_ci() and skipped_package_environments:
+        for package in skipped_package_environments:
+            output_ci_warning(
+                f"{package} is skipping {skipped_environments}.",
+                "setup_execute_tests.py -> tox_harness.py::prep_and_run_tox()",
+            )
 
     return_code = execute_tox_serial(tox_command_tuples)
 
