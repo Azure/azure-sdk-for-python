@@ -5,7 +5,7 @@ from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.exceptions import UserErrorException
 
 
-def do_while(body, condition, mapping, max_iteration_count: int):
+def do_while(body, mapping, max_iteration_count: int, condition=True):
     """Build a do_while node by specifying the loop body, output-input mapping and termination condition.
 
     .. remarks::
@@ -39,13 +39,14 @@ def do_while(body, condition, mapping, max_iteration_count: int):
 
     :param body: Pipeline job for the do-while loop body.
     :type body: Pipeline
-    :param condition: Either name of boolean output of body or simply True as do-while loop condition.
-    :type condition: Union[Output, bool]
     :param mapping: Output-Input mapping for reach round of the do-while loop.
                     Key is the last round output of the body. Value is the input port for current body.
     :type mapping: Dict[Union[str, Output], Union[str, Input, List]]
     :param max_iteration_count: limits in running the do-while node.
     :type max_iteration_count: int
+    :param condition: Either name of boolean output of body or simply True as do-while loop condition.
+                      Default value is True.
+    :type condition: Union[Output, bool]
     """
     # while False is meaningless, ban this behaviour.
     if isinstance(condition, bool) and condition is False:
