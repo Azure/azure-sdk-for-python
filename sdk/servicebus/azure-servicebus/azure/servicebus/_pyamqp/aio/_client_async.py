@@ -147,7 +147,7 @@ class AMQPClientAsync(AMQPClientSync):
                         self.__class__.__name__,
                         extra=self._network_trace_params
                     )
-                    await asyncio.shield(self._connection.work_async())
+                    await asyncio.shield(self._connection.listen())
                     start_time = current_time
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -265,8 +265,8 @@ class AMQPClientAsync(AMQPClientSync):
         self._shutdown = False
         # TODO: Looks like this is broken - should re-enable later and test
         # correct empty frame behaviour
-        # if self._keep_alive_interval:
-        #    self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
+        if self._keep_alive_interval:
+           self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
     async def close_async(self):
         """Close the client asynchronously. This includes closing the Session
@@ -316,6 +316,7 @@ class AMQPClientAsync(AMQPClientSync):
         if not await self._client_ready_async():
             try:
                 await self._connection.listen(wait=self._socket_timeout)
+                self._timeout_reached = False
             except ValueError:
                 return True
             return False
@@ -360,15 +361,16 @@ class AMQPClientAsync(AMQPClientSync):
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop('timeout', 0)
-        try:
-            mgmt_link = self._mgmt_links[node]
-        except KeyError:
-            mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
-            self._mgmt_links[node] = mgmt_link
-            await mgmt_link.open()
+        with self._lock:
+            try:
+                mgmt_link = self._mgmt_links[node]
+            except KeyError:
+                mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
+                self._mgmt_links[node] = mgmt_link
+                await mgmt_link.open()
 
-            while not await mgmt_link.ready():
-                await self._connection.listen(wait=False)
+                while not await mgmt_link.ready():
+                    await self._connection.listen(wait=False)
 
         operation_type = operation_type or b'empty'
         status, description, response = await mgmt_link.execute(
@@ -851,16 +853,26 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         self.auto_complete = False
         receiving = True
         message = None
+        self._last_activity_stamp = time.time()
         try:
             # I think if it is just this one loop then when we close the connection we still might have items in queue
-            while receiving:
-                receiving = await self.do_work_async()
-                # while not self._received_messages.empty():
-                message = self._received_messages.get(block=True, timeout=self._timeout)
-                self._received_messages.task_done()
-                yield message
-                await self._complete_message_async(message, auto_complete)
-        except:
+            while receiving and not self._timeout_reached:
+                if not self._running_iter:
+                    self._last_activity_stamp = time.time()
+                self._running_iter = True
+                if self._timeout > 0:
+                    # print(time.time() - self._last_activity_stamp)
+                    if time.time() - self._last_activity_stamp >= self._timeout:
+                        print("Time Out")
+                        self._timeout_reached = True
+                if not self._timeout_reached:
+                    receiving = await self.do_work_async()
+                while not self._received_messages.empty():
+                    message = self._received_messages.get()
+                    self._received_messages.task_done()
+                    yield message
+                    await self._complete_message_async(message, auto_complete)
+        finally:
             #Check what self._received_messages is 
             # what happens to queue when Empty exception thrown, do we need to reset it?
             if self._shutdown:

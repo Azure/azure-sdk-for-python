@@ -457,8 +457,8 @@ class AMQPClient(
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
                 
-            while not mgmt_link.ready():
-                self._connection.listen(wait=False)
+                while not mgmt_link.ready():
+                    self._connection.listen(wait=False)
         operation_type = operation_type or b"empty"
         status, description, response = mgmt_link.execute(
             message, operation=operation, operation_type=operation_type, timeout=timeout
