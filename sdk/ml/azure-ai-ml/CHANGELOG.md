@@ -3,11 +3,15 @@
 ## 1.4.0 (Unreleased)
 
 ### Features Added
--Add dedicated classes for each type of job service. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Added dedicated classes for each type of job service and updated the docstrings. The classes added are `JupyterLabJobService, SshJobService, TensorBoardJobService, VsCodeJobService` with a few properties specific to the type.
+- Added Custom Applications Support to Compute Instances.
 
 ### Bugs Fixed
-- Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected
-- Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected
+- Fixed an issue where the ordering of `.amlignore` and `.gitignore` files are not respected.
+- Fixed an issue that attributes with a value of `False` in `PipelineJobSettings` are not respected.
+- Fixed an issue where ignore files weren't considered during upload directory size calculations.
+- Fixed an issue where symlinks crashed upload directory size calculations.
+- Fixes a bug where enable_node_public_ip returned an improper value when fetching a Compute.
 
 ### Other Changes
 - Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights.
