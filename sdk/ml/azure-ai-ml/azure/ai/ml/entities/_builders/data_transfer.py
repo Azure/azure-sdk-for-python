@@ -278,7 +278,7 @@ class DataTransferImport(DataTransfer):
     You should not instantiate this class directly. Instead, you should
     create from builder function: import_data.
 
-    :param component: Id of the data transfer built in componentto be run for the step
+    :param component: Id of the data transfer built in component to be run for the step
     :type component: str
     :param source: The data source of file system or database
     :type source: Union[Dict, Database, FileSystem]
@@ -388,7 +388,7 @@ class DataTransferExport(DataTransfer):
     You should not instantiate this class directly. Instead, you should
     create from builder function: export_data.
 
-    :param component: Id of the data transfer built in componentto be run for the step
+    :param component: Id of the data transfer built in component to be run for the step
     :type component: str
     :param sink: The sink of external data and databases.
     :type sink: Union[Dict, Database, FileSystem]
