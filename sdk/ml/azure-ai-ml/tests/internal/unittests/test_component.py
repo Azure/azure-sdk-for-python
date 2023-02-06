@@ -14,6 +14,8 @@ import pydash
 import pytest
 import yaml
 from pytest_mock import MockFixture
+
+from azure.ai.ml._internal._utils import yaml_safe_load_with_base_resolver
 from test_utilities.utils import parse_local_path, build_temp_folder
 
 from azure.ai.ml import load_component
@@ -219,7 +221,7 @@ class TestComponent:
         for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float", "integer"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x).lower() if isinstance(x, bool) else str(x), input_port["enum"]))
                 if "default" in input_port:
@@ -706,8 +708,8 @@ class TestComponent:
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
-                # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
-                "param_string_with_yes_value": {"default": "true", "type": "string"},
+                # yes will be converted to true in YAML 1.2, but we will load it as "yes" for backward compatibility
+                "param_string_with_yes_value": {"default": "yes", "type": "string"},
                 "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
             },
             "outputs": {
@@ -808,4 +810,36 @@ class TestComponent:
             with component._resolve_local_code() as code:
                 # ANONYMOUS_COMPONENT_TEST_PARAMS[0] is the test params for simple-command
                 assert code.name == ANONYMOUS_COMPONENT_TEST_PARAMS[0][1]
+
+    def test_component_serialization_corner_case(self):
+        yaml_path = "./tests/test_configs/internal/command-component-serialization-core-case/component_spec.yaml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component
+        rest_object = component._to_rest_object()
+        assert rest_object.properties.component_spec == {
+            '$schema': 'https://componentsdk.azureedge.net/jsonschema/CommandComponent.json',
+            '_source': 'YAML.COMPONENT',
+            'command': 'echo {inputs.input_float} && echo {inputs.delimiter}',
+            'display_name': 'Hello Command',
+            'environment': {'name': 'AzureML-Designer', 'os': 'Linux'},
+            'inputs': {
+                'input_float': {
+                    'default': '1',  # previously this is 1.0
+                    'optional': False,
+                    'type': 'Float'
+                },
+                'delimiter': {
+                    'default': '\t',
+                    'optional': True,
+                    'type': 'String'
+                },
+            },
+            'is_deterministic': True,
+            'name': 'hello_command',
+            'type': 'CommandComponent',
+            'version': '0.10',  # previously this is 0.1
+            "datatransfer": {
+                "cloud_type": "aether"
+            }
+        }
 
