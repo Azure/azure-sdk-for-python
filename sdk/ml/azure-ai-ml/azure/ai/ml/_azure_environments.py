@@ -206,18 +206,17 @@ def _get_registry_discovery_url(cloud, cloud_suffix):
     cloud_name = cloud["name"]
     if cloud_name in _environments:
         return _environments[cloud_name].registry_url
-    elif ArmConstants.REGISTRY_ENV_URL in os.environ:
+    if ArmConstants.REGISTRY_ENV_URL in os.environ:
         return os.environ[ArmConstants.REGISTRY_ENV_URL]
-    else:
-        registry_discovery_region = os.environ.get(
-            ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
-            ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
-        )
-        return "https://{}{}.api.azureml.{}/".format(
-            cloud_name.lower(),
-            registry_discovery_region,
-            cloud_suffix
-        )
+    registry_discovery_region = os.environ.get(
+        ArmConstants.REGISTRY_DISCOVERY_REGION_ENV_NAME,
+        ArmConstants.REGISTRY_DISCOVERY_DEFAULT_REGION
+    )
+    return "https://{}{}.api.azureml.{}/".format(
+        cloud_name.lower(),
+        registry_discovery_region,
+        cloud_suffix
+    )
 
 def _get_clouds_by_metadata_url(metadata_url, timeout=ArmConstants.DEFAULT_TIMEOUT):
     """Get all the clouds by the specified metadata url
