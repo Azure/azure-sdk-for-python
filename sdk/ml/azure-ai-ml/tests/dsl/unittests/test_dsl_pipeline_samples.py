@@ -543,3 +543,16 @@ class TestDSLPipelineSamples:
             "properties.display_name",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
+
+    def test_data_transfer_multi_job_in_pipeline(self) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.pipeline import (
+            generate_dsl_pipeline as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/pipeline.yml")
+        omit_fields = [
+            "properties.display_name",
+            "properties.jobs.merge_files.componentId",
+        ]
+        assert_dsl_curated(pipeline, job_yaml, omit_fields)

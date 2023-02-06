@@ -628,6 +628,15 @@ class TestPipelineJobSchema:
         )
         self.assert_inline_component(spark_component, component_dict)
 
+        test_path = "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
+        job = load_job(test_path)
+        # make sure inline component is parsed into component entity
+        spark_component = job.jobs["copy_files"]
+        component_dict = load_yaml(
+            "./tests/test_configs/components/data_transfer/copy_files.yaml"
+        )
+        self.assert_inline_component(spark_component, component_dict)
+
     def test_pipeline_job_inline_component_file_with_complex_path(self):
         # parallel component
         test_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_file_parallel.yml"
