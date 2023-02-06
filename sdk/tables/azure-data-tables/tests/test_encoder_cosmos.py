@@ -21,7 +21,7 @@ from azure.data.tables._common_conversion import _encode_base64, _to_utc_datetim
 from _shared.testcase import TableTestCase
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from preparers import tables_decorator
+from preparers import cosmos_decorator
 
 
 class MyEncoder(TableEntityEncoder):
@@ -93,13 +93,13 @@ class EncoderVerificationTransport(HttpTransport):
         self.close()
 
 
-class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
-    @tables_decorator
+class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
+    @cosmos_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_encoder_create_entity_keys(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         # Test basic string, int32, float and bool type in PartitionKey or RowKey.
         table_name = self.get_resource_name("uttable")
-        url = self.account_url(tables_storage_account_name, "table")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # TableEntity keys in basic type string, int32, float and bool.
         entity1 = {
             "PartitionKey": "PK",
@@ -160,7 +160,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         encoded_entity6 = encoder.encode_entity(entity6)
         assert json.dumps(encoded_entity6, sort_keys=True) == json.dumps(expected_entity6, sort_keys=True)
 
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
 
             client.create_entity(entity1)
@@ -189,11 +189,11 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
 
             client.delete_table()
 
-    @tables_decorator
+    @cosmos_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_type_conversion(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_encoder_create_entity_type_conversion(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable")
-        url = self.account_url(tables_storage_account_name, "table")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # All automatically detected data types
         entity = {
             "PartitionKey": "PK",
@@ -225,17 +225,17 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         entity = encoder.encode_entity(entity)
         assert json.dumps(entity, sort_keys=True) == json.dumps(expected_entity, sort_keys=True)
 
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             client.create_entity(entity, encoder=encoder)            
             client.delete_entity(entity, encoder=encoder)
             client.delete_table()
 
-    @tables_decorator
+    @cosmos_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_tuples(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_encoder_create_entity_tuples(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable")
-        url = self.account_url(tables_storage_account_name, "table")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Explicit datatypes using Tuple definition
         entity1 = {
             "PartitionKey": "PK",
@@ -300,7 +300,7 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity, sort_keys=True)
         encoded_entity = encoder.encode_entity(entity2)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity2, sort_keys=True)
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             client.create_entity(entity1)
             client.delete_entity(entity1)
@@ -308,11 +308,11 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
             client.delete_entity(entity2)
             client.delete_table()
 
-    @tables_decorator
+    @cosmos_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_raw(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_encoder_create_entity_raw(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable")
-        url = self.account_url(tables_storage_account_name, "table")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Raw payload with existing EdmTypes
         entity = {
             "PartitionKey": "PK",
@@ -356,17 +356,17 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         encoder = TableEntityEncoder()
         encoded_entity = encoder.encode_entity(entity)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity, sort_keys=True)
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             client.create_entity(entity)
             client.delete_entity(entity)
             client.delete_table()
 
-    @tables_decorator
+    @cosmos_decorator
     @recorded_by_proxy
-    def test_encoder_create_entity_atypical_values(self, tables_storage_account_name, tables_primary_storage_account_key):
+    def test_encoder_create_entity_atypical_values(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
         table_name = self.get_resource_name("uttable")
-        url = self.account_url(tables_storage_account_name, "table")
+        url = self.account_url(tables_cosmos_account_name, "cosmos")
         # Non-UTF8 characters in both keys and properties
         entity1 = {
             "PartitionKey": "PK1",
@@ -375,10 +375,11 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         }
         # Invalid int32 and int64 values
         # TODO: This will likely change if we move to post-request validation.
+        max_int32 = 2 ** 31 - 1
         entity2 = {
             "PartitionKey": "PK2",
             "RowKey": "RK",
-            "Data":  2 ** 65 # 2 ** 70 also works
+            "Data":  max_int32 # fail with max_int64 and 2 ** 65
         }
         max_int64 = 9223372036854775807
         entity3 = {
@@ -483,12 +484,12 @@ class TestTableEncoder(AzureRecordedTestCase, TableTestCase):
         encoded_entity = MyEncoder().encode_entity(entity9)
         assert json.dumps(encoded_entity, sort_keys=True) == json.dumps(expected_entity9, sort_keys=True)
 
-        with TableClient(url, table_name, credential=tables_primary_storage_account_key) as client:
+        with TableClient(url, table_name, credential=tables_primary_cosmos_account_key) as client:
             client.create_table()
             client.create_entity(entity1) # no edm type in get and list results
             client.delete_entity(entity1)
             client.create_entity(entity2)
-            client.delete_entity(entity2)
+            client.delete_entity(entity2) # fail, "One of the input value is invalid."
             client.create_entity(entity3)
             client.delete_entity(entity3)
             with pytest.raises(HttpResponseError) as exc:
