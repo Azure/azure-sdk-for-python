@@ -175,6 +175,26 @@ sepal_length,sepal_width,petal_length,petal_width,species
         assert data_version.id == generate_data_arm_id(client._operation_scope, name, version)
         assert data_version.path.endswith("/tmp_folder/")
 
+    def test_create_data_asset_in_registry(self, registry_client: MLClient,
+                                           randstr: Callable[[], str]) -> None:
+        name = randstr("name")
+        version = "1"
+        data_asset = load_data(
+            source="./tests/test_configs/dataset/data_file.yaml",
+            params_override=[{
+                "name": name
+            }, {
+                "version": version
+            }],
+        )
+        sleep_if_live(3)
+        obj = registry_client.data.create_or_update(data_asset)
+        assert obj is not None
+        assert name == obj.name
+        data_version = registry_client.data.get(name, version)
+
+        assert data_version.name == obj.name
+
     def test_list(self, client: MLClient, data_with_2_versions: str) -> None:
         data_iterator = client.data.list(name=data_with_2_versions)
         assert isinstance(data_iterator, ItemPaged)
@@ -186,7 +206,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
         assert all(data.name == data_with_2_versions for data in data_list)
         # use a set since ordering of elements returned from list isn't guaranteed
         assert {"1", "2"} == {data.version for data in data_list}
-    
+
     def test_list_data_in_registry(self, registry_client: MLClient) -> None:
         data_iterator = registry_client.data.list()
         assert data_iterator
@@ -206,6 +226,24 @@ sepal_length,sepal_width,petal_length,petal_width,species
             sleep_if_live(3)
             assert client.data.get(name, label="latest").version == version
 
+    def test_data_get_latest_label_in_registry(
+            self, registry_client: MLClient, randstr: Callable[[],
+                                                               str]) -> None:
+        name = randstr("name")
+        versions = ["foo", "bar", "baz", "foobar"]
+        for version in versions:
+            registry_client.data.create_or_update(
+                load_data(
+                    source="./tests/test_configs/dataset/data_file.yaml",
+                    params_override=[{
+                        "name": name
+                    }, {
+                        "version": version
+                    }],
+                ))
+            sleep_if_live(3)
+            assert registry_client.data.get(name,
+                                            label="latest").version == version
     @pytest.mark.e2etest
     def test_data_archive_restore_version(self, client: MLClient, randstr: Callable[[], str]) -> None:
         name = randstr("name")

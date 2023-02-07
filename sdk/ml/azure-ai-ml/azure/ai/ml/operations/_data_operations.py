@@ -242,7 +242,7 @@ class DataOperations(_ScopeDependentOperations):
                     resource_group=self._resource_group_name,
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(
-                        self._registry_name, "dat", name, version),
+                        self._registry_name, "data", name, version),
                 )
                 if not sas_uri:
                     module_logger.debug(
