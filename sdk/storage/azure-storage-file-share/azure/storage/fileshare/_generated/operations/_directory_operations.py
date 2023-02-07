@@ -458,6 +458,7 @@ def build_rename_request(
     metadata: Optional[Dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
+    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -515,6 +516,8 @@ def build_rename_request(
         _headers["x-ms-source-allow-trailing-dot"] = _SERIALIZER.header(
             "allow_source_trailing_dot", allow_source_trailing_dot, "bool"
         )
+    if file_request_intent is not None:
+        _headers["x-ms-file-request-intent"] = _SERIALIZER.header("file_request_intent", file_request_intent, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
@@ -1477,6 +1480,7 @@ class DirectoryOperations:
             metadata=metadata,
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,

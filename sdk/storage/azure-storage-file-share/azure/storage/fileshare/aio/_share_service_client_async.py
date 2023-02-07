@@ -59,6 +59,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         - except in the case of AzureSasCredential, where the conflicting SAS tokens will raise a ValueError.
         If using an instance of AzureNamedKeyCredential, "name" should be the storage account name, and "key"
         should be the storage account key.
+    :keyword str file_request_intent: File request intent. Only needed for OAuth.
     :keyword bool allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
     :keyword bool allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the source URI.
     :keyword str api_version:
@@ -96,9 +97,11 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
+        self.file_request_intent = kwargs.pop('file_request_intent', None)
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
-                                        allow_source_trailing_dot=self.allow_source_trailing_dot)
+                                        allow_source_trailing_dot=self.allow_source_trailing_dot,
+                                        file_request_intent=self.file_request_intent)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
 
     @distributed_trace_async
@@ -399,4 +402,4 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             self.url, share_name=share_name, snapshot=snapshot, credential=self.credential,
             api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot)
+            allow_source_trailing_dot=self.allow_source_trailing_dot, file_request_intent=self.file_request_intent)

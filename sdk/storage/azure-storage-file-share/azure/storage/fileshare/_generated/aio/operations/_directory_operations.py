@@ -1002,6 +1002,7 @@ class DirectoryOperations:
             metadata=metadata,
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
+            file_request_intent=self._config.file_request_intent,
             restype=restype,
             comp=comp,
             version=self._config.version,

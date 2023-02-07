@@ -2172,6 +2172,7 @@ class FileOperations:
             file_content_type=_file_content_type,
             allow_trailing_dot=self._config.allow_trailing_dot,
             allow_source_trailing_dot=self._config.allow_source_trailing_dot,
+            file_request_intent=self._config.file_request_intent,
             comp=comp,
             version=self._config.version,
             template_url=self.rename.metadata["url"],
