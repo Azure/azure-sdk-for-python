@@ -25,6 +25,8 @@ from ._component.spark_component import SparkComponent
 from ._compute._aml_compute_node_info import AmlComputeNodeInfo
 from ._compute._image_metadata import ImageMetadata
 from ._compute._schedule import ComputePowerAction, ComputeSchedules, ComputeStartStopSchedule, ScheduleState
+from ._compute._custom_applications import CustomApplications, ImageSettings, EndpointsSettings, VolumeSettings
+from ._compute._setup_scripts import SetupScripts, ScriptReference
 from ._compute._usage import Usage, UsageName
 from ._compute._vm_size import VmSize
 from ._compute.aml_compute import AmlCompute, AmlComputeSshSettings
@@ -238,6 +240,12 @@ __all__ = [
     "AmlComputeSshSettings",
     "AmlComputeNodeInfo",
     "ImageMetadata",
+    "CustomApplications",
+    "ImageSettings",
+    "EndpointsSettings",
+    "VolumeSettings",
+    "SetupScripts",
+    "ScriptReference",
     "SystemCreatedAcrAccount",
     "SystemCreatedStorageAccount",
     "ValidationResult",

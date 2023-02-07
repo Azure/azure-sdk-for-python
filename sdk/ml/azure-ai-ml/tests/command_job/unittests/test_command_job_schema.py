@@ -5,13 +5,13 @@ import yaml
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     InputDeliveryMode,
     JobInputType,
     JobOutputType,
     OutputDeliveryMode,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._utils.utils import is_valid_uuid, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes

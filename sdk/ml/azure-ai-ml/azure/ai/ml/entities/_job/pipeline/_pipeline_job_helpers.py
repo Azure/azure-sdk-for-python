@@ -55,6 +55,10 @@ def process_sdk_component_job_io(
                         io_bindings[io_name].update({"mode": INPUT_MOUNT_MAPPING_TO_REST[mode]})
                     else:
                         io_bindings[io_name].update({"mode": OUTPUT_MOUNT_MAPPING_TO_REST[mode]})
+                if isinstance(io_value, Output) and io_value.name is not None:
+                    # when the output should be registered,
+                    # we add io_value to dataset_literal_io for further to_rest_data_outputs
+                    dataset_literal_io[io_name] = io_value
             elif any([re.match(item, path) for item in legacy_io_binding_regex_list]):
                 new_format = path.replace("{{", "{{parent.")
                 msg = "{} has changed to {}, please change to use new format."
