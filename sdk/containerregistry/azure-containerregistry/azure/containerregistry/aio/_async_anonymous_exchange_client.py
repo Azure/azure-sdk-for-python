@@ -38,7 +38,6 @@ class AnonymousACRExchangeClient(object):
 
     async def get_acr_access_token(self, challenge: str, **kwargs: Any) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
-        parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return await self.exchange_refresh_token_for_access_token(
             "",
             service=parsed_challenge["service"],
