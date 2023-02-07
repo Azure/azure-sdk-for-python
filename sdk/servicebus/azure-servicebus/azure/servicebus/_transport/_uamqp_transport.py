@@ -46,6 +46,7 @@ from .._common.constants import (
     RECEIVER_LINK_DEAD_LETTER_REASON,
     DEADLETTERNAME,
     MAX_ABSOLUTE_EXPIRY_TIME,
+    MAX_DURATION_VALUE,
     MESSAGE_COMPLETE,
     MESSAGE_ABANDON,
     MESSAGE_DEFER,
@@ -273,7 +274,7 @@ if uamqp_installed:
             # If header and non-None header values, create outgoing header.
             if annotated_message.header and header_vals.count(None) != len(header_vals):
                 message_header = MessageHeader()
-                message_header.delivery_count = annotated_message.header.delivery_count if annotated_message.header.delivery_count is not None else 0
+                message_header.delivery_count = annotated_message.header.delivery_count
                 message_header.time_to_live = annotated_message.header.time_to_live
                 message_header.first_acquirer = annotated_message.header.first_acquirer
                 message_header.durable = annotated_message.header.durable
@@ -312,17 +313,15 @@ if uamqp_installed:
                     correlation_id=annotated_message.properties.correlation_id,
                     content_type=annotated_message.properties.content_type,
                     content_encoding=annotated_message.properties.content_encoding,
-                    creation_time=int(annotated_message.properties.creation_time)
-                        if annotated_message.properties.creation_time else None,
-                    absolute_expiry_time=int(annotated_message.properties.absolute_expiry_time)
-                    if annotated_message.properties.absolute_expiry_time else None,
+                    creation_time=creation_time,
+                    absolute_expiry_time=absolute_expiry_time,
                     group_id=annotated_message.properties.group_id,
                     group_sequence=annotated_message.properties.group_sequence,
                     reply_to_group_id=annotated_message.properties.reply_to_group_id,
                     encoding=annotated_message._encoding    # pylint: disable=protected-access
                 )
             elif ttl_set:
-                message_properties = Properties(
+                message_properties = MessageProperties(
                     creation_time=creation_time_from_ttl if ttl_set else None,
                     absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
                 )

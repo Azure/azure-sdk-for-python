@@ -234,7 +234,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # If header and non-None header values, create outgoing header.
         if annotated_message.header and header_vals.count(None) != len(header_vals):
             message_header = Header(
-                delivery_count=annotated_message.header.delivery_count if annotated_message.header.delivery_count is not None else 0,
+                delivery_count=annotated_message.header.delivery_count,
                 ttl=annotated_message.header.time_to_live,
                 first_acquirer=annotated_message.header.first_acquirer,
                 durable=annotated_message.header.durable,
@@ -274,14 +274,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 correlation_id=annotated_message.properties.correlation_id,
                 content_type=annotated_message.properties.content_type,
                 content_encoding=annotated_message.properties.content_encoding,
-                creation_time=int(annotated_message.properties.creation_time)
-                if annotated_message.properties.creation_time
-                else None,
-                absolute_expiry_time=int(
-                    annotated_message.properties.absolute_expiry_time
-                )
-                if annotated_message.properties.absolute_expiry_time
-                else None,
+                creation_time=creation_time,
+                absolute_expiry_time=absolute_expiry_time,
                 group_id=annotated_message.properties.group_id,
                 group_sequence=annotated_message.properties.group_sequence,
                 reply_to_group_id=annotated_message.properties.reply_to_group_id,

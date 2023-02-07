@@ -1,7 +1,10 @@
 # from __future__ import annotations
 import os
-import uamqp
 import pytest
+try:
+    import uamqp
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
 from datetime import datetime, timedelta
 from azure.servicebus import (
     ServiceBusClient,
@@ -53,9 +56,20 @@ def test_servicebus_message_repr_with_props():
     assert "content_type=content type, correlation_id=correlation, to=forward to, reply_to=reply to, reply_to_session_id=reply to session, subject=github, time_to_live=0:00:30, partition_key=id_session, scheduled_enqueue_time_utc" in message.__repr__()
 
 
-def test_servicebus_received_message_repr():
+def test_servicebus_received_message_repr(uamqp_transport):
     my_frame = [0,0,0]
-    received_message = Message(
+    if uamqp_transport:
+        received_message = uamqp.message.Message(
+            body=[b'data'],
+            annotations={
+                _X_OPT_PARTITION_KEY: b'r_key',
+                _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
+                _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
+            },
+            properties={}
+        )
+    else:
+        received_message = Message(
         data=[b'data'],
         message_annotations={
             _X_OPT_PARTITION_KEY: b'r_key',
@@ -70,73 +84,123 @@ def test_servicebus_received_message_repr():
     assert "content_type=None, correlation_id=None, to=None, reply_to=None, reply_to_session_id=None, subject=None," in repr_str
     assert "partition_key=r_key, scheduled_enqueue_time_utc" in repr_str
 
-def test_servicebus_received_state():
+def test_servicebus_received_state(uamqp_transport):
     my_frame = [0,0,0]
-    amqp_received_message = Message(
-        data=[b'data'],
-        message_annotations={
-            b"x-opt-message-state": 3
-        },
-    )
+    if uamqp_transport:
+        amqp_received_message = uamqp.message.Message(
+            body=[b'data'],
+            annotations={
+                b"x-opt-message-state": 3
+            },
+        )
+    else:
+        amqp_received_message = Message(
+            data=[b'data'],
+            message_annotations={
+                b"x-opt-message-state": 3
+            },
+        )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None, frame=my_frame)
     assert received_message.state == 3
 
-    amqp_received_message = Message(
-        data=[b'data'],
-        message_annotations={
-            b"x-opt-message-state": 1
-        },
-        properties={}
-    )
+    if uamqp_transport:
+        amqp_received_message = uamqp.message.Message(
+            body=[b'data'],
+            annotations={
+                b"x-opt-message-state": 1
+            },
+            properties={}
+        )
+    else:
+        amqp_received_message = Message(
+            data=[b'data'],
+            message_annotations={
+                b"x-opt-message-state": 1
+            },
+            properties={}
+        )
     received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
     assert received_message.state == ServiceBusMessageState.DEFERRED
 
-    amqp_received_message = Message(
-        data=[b'data'],
-        message_annotations={
-        },
-        properties={}
-    )
-    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
-    assert received_message.state == ServiceBusMessageState.ACTIVE
-
-    amqp_received_message = Message(
-        data=[b'data'],
-        properties={}
-    )
-    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
-    assert received_message.state == ServiceBusMessageState.ACTIVE
-
-    amqp_received_message = Message(
-        data=[b'data'],
-        message_annotations={
-            b"x-opt-message-state": 0
-        },
-        properties={}
-    )
-    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
-    assert received_message.state == ServiceBusMessageState.ACTIVE
-
-def test_servicebus_received_message_repr_with_props():
-    my_frame = [0,0,0]
-    amqp_received_message = Message(
-        data=[b'data'],
-        message_annotations={
-            _X_OPT_PARTITION_KEY: b'r_key',
-            _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
-            _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
-        },
-        properties=AmqpMessageProperties(
-            message_id="id_message",
-            absolute_expiry_time=100,
-            content_type="content type",
-            correlation_id="correlation",
-            subject="github",
-            group_id="id_session",
-            reply_to="reply to",
-            reply_to_group_id="reply to group"
+    if uamqp_transport:
+        amqp_received_message = uamqp.message.Message(
+            body=[b'data'],
+            annotations={
+            },
+            properties={}
         )
+    else:
+        amqp_received_message = Message(
+            data=[b'data'],
+            message_annotations={
+            },
+            properties={}
+        )
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
+    assert received_message.state == ServiceBusMessageState.ACTIVE
+
+    if uamqp_transport:
+        amqp_received_message = uamqp.message.Message(
+            body=[b'data'],
+            properties={}
+        )
+    else:
+        amqp_received_message = Message(
+            data=[b'data'],
+            properties={}
+        )
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
+    assert received_message.state == ServiceBusMessageState.ACTIVE
+
+    if uamqp_transport:
+        amqp_received_message = uamqp.message.Message(
+            body=[b'data'],
+            annotations={
+                b"x-opt-message-state": 0
+            },
+            properties={}
+        )
+    else:
+        amqp_received_message = Message(
+            data=[b'data'],
+            message_annotations={
+                b"x-opt-message-state": 0
+            },
+            properties={}
+        )
+    received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None)
+    assert received_message.state == ServiceBusMessageState.ACTIVE
+
+def test_servicebus_received_message_repr_with_props(uamqp_transport):
+    my_frame = [0,0,0]
+    properties = AmqpMessageProperties(
+        message_id="id_message",
+        absolute_expiry_time=100,
+        content_type="content type",
+        correlation_id="correlation",
+        subject="github",
+        group_id="id_session",
+        reply_to="reply to",
+        reply_to_group_id="reply to group"
     )
+    message_annotations = {
+        _X_OPT_PARTITION_KEY: b'r_key',
+        _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
+        _X_OPT_SCHEDULED_ENQUEUE_TIME: 123424566,
+    }
+    data = [b'data']
+    if uamqp_transport:
+        amqp_received_message = uamqp.message.Message(
+            body=data,
+            annotations= message_annotations,
+            properties=properties
+        )
+    else:
+        amqp_received_message = Message(
+            data=data,
+            message_annotations= message_annotations,
+            properties=properties
+        )
     received_message = ServiceBusReceivedMessage(
         message=amqp_received_message,
         receiver=None,
@@ -269,7 +333,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_message_backcompat_receive_and_delete_databody(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_message_backcompat_receive_and_delete_databody(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = ServiceBusMessage(
             body="hello",
@@ -291,7 +355,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
         #     outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=True)
+        servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -304,7 +368,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             outgoing_message.message.reject()
         with pytest.raises(TypeError):
             outgoing_message.message.modify(True, True)
-        assert outgoing_message.message.state == uamqp.constants.MessageState.SendComplete
+        try:
+            assert outgoing_message.message.state == uamqp.constants.MessageState.SendComplete
+        except AttributeError:  # uamqp not installed
+            pass
         assert outgoing_message.message.settled
         assert outgoing_message.message.delivery_annotations is None
         assert outgoing_message.message.delivery_no is None
@@ -346,7 +413,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            try:
+                assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            except AttributeError:  # uamqp not installed
+                pass
             assert incoming_message.message.settled
             assert incoming_message.message.delivery_annotations == {}
             assert incoming_message.message.delivery_no >= 1
@@ -397,7 +467,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_message_backcompat_peek_lock_databody(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_message_backcompat_peek_lock_databody(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = ServiceBusMessage(
             body="hello",
@@ -419,7 +489,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
         #     outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=True)
+        servicebus_namespace_connection_string, logging_enable=True, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -432,7 +502,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             outgoing_message.message.reject()
         with pytest.raises(TypeError):
             outgoing_message.message.modify(True, True)
-        assert outgoing_message.message.state == uamqp.constants.MessageState.SendComplete
+        try:
+            assert outgoing_message.message.state == uamqp.constants.MessageState.SendComplete
+        except AttributeError:  # uamqp not installed
+            pass
         assert outgoing_message.message.settled
         assert outgoing_message.message.delivery_annotations is None
         assert outgoing_message.message.delivery_no is None
@@ -473,7 +546,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()       
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
+            try:
+                assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
+            except AttributeError:  # uamqp not installed
+                pass
             assert not incoming_message.message.settled
             assert incoming_message.message.delivery_annotations[b'x-opt-lock-token']
             assert incoming_message.message.delivery_no >= 1
@@ -515,7 +591,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             assert incoming_message.message.properties.get_properties_obj().message_id
             assert incoming_message.message.accept()
             # TODO: State isn't updated if settled correctly via the receiver.
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            try:
+                assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            except AttributeError:  # uamqp not installed
+                pass
             assert incoming_message.message.settled
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()
@@ -527,7 +606,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_message_backcompat_receive_and_delete_valuebody(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_message_backcompat_receive_and_delete_valuebody(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(value_body={b"key": b"value"})
 
@@ -535,7 +614,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=False)
+        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -548,7 +627,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            try:
+                assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            except AttributeError:  # uamqp not installed
+                pass
             assert incoming_message.message.settled
             with pytest.raises(Exception):
                 incoming_message.message.gather()
@@ -606,7 +688,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_message_backcompat_receive_and_delete_sequencebody(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_message_backcompat_receive_and_delete_sequencebody(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
 
@@ -614,7 +696,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=False)
+        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -627,7 +709,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            try:
+                assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            except AttributeError:  # uamqp not installed
+                pass
             assert incoming_message.message.settled
             with pytest.raises(Exception):
                 incoming_message.message.gather()
@@ -643,7 +728,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_message_backcompat_peek_lock_sequencebody(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_message_backcompat_peek_lock_sequencebody(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         queue_name = servicebus_queue.name
         outgoing_message = AmqpAnnotatedMessage(sequence_body=[1, 2, 3])
 
@@ -651,7 +736,7 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             outgoing_message.message
 
         sb_client = ServiceBusClient.from_connection_string(
-        servicebus_namespace_connection_string, logging_enable=False)
+        servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
         with sb_client.get_queue_sender(queue_name) as sender:
             sender.send_messages(outgoing_message)
 
@@ -664,7 +749,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
             batch = receiver.receive_messages()       
             incoming_message = batch[0]
             assert incoming_message.message
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
+            try:
+                assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedUnsettled
+            except AttributeError:  # uamqp not installed
+                pass
             assert not incoming_message.message.settled
             assert incoming_message.message.delivery_annotations[b'x-opt-lock-token']
             assert incoming_message.message.delivery_no >= 1
@@ -673,7 +761,10 @@ class ServiceBusMessageBackcompatTests(AzureMgmtTestCase):
                 incoming_message.message.gather()
             assert list(incoming_message.message.get_data()) == [[1, 2, 3]]
             assert incoming_message.message.accept()
-            assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            try:
+                assert incoming_message.message.state == uamqp.constants.MessageState.ReceivedSettled
+            except AttributeError:  # uamqp not installed
+                pass
             assert incoming_message.message.settled
             assert not incoming_message.message.release()
             assert not incoming_message.message.reject()

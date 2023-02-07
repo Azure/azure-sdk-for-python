@@ -88,9 +88,9 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             self.primary_key = 'ZmFrZV9hY29jdW50X2tleQ=='
         return {
             self.parameter_name: self.resource,
-            '{}_connection_string'.format(self.parameter_name): self.connection_string,
-            '{}_key_name'.format(self.parameter_name): self.key_name,
-            '{}_primary_key'.format(self.parameter_name): self.primary_key,
+            f'{self.parameter_name}_connection_string': self.connection_string,
+            f'{self.parameter_name}_key_name': self.key_name,
+            f'{self.parameter_name}_primary_key': self.primary_key,
         }
 
     def remove_resource(self, name, **kwargs):

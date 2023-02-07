@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 
 from __future__ import annotations
+import warnings
 from typing import Optional, Any, cast, Mapping, Dict, Union, List, Iterable, Tuple
 
 from ._amqp_utils import normalized_data_body, normalized_sequence_body
@@ -207,10 +208,10 @@ class AmqpAnnotatedMessage(object):
             durable=message.header.durable,
             priority=message.header.priority
         ) if message.header else None
-        self._footer = message.footer if message.footer else {}
-        self._annotations = message.message_annotations if message.message_annotations else {}
-        self._delivery_annotations = message.delivery_annotations if message.delivery_annotations else {}
-        self._application_properties = message.application_properties if message.application_properties else {}
+        self._footer = message.footer
+        self._annotations = message.message_annotations
+        self._delivery_annotations = message.delivery_annotations
+        self._application_properties = message.application_properties
         if message.data:
             self._data_body = cast(Iterable, list(message.data))
             self._body_type = AmqpMessageBodyType.DATA

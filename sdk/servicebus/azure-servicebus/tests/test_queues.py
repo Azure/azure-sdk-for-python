@@ -16,6 +16,10 @@ from datetime import datetime, timedelta
 import calendar
 import unittest
 
+try:
+    import uamqp
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
 from azure.servicebus._pyamqp.message import Message
 from azure.servicebus._pyamqp import error, client, management_operation
 from azure.servicebus import (
@@ -74,10 +78,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_receive_and_delete_reconnect_interaction(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_receive_and_delete_reconnect_interaction(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         # Note: This test was to guard against github issue 7079
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False)
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport)
 
         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
             for i in range(5):
@@ -100,9 +104,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5S')
-    def test_github_issue_6178(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_github_issue_6178(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(3):
@@ -123,9 +127,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
-    def test_queue_by_queue_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_queue_client_conn_str_receive_handler_peeklock(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             for i in range(10):
@@ -213,9 +217,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
-    def test_queue_by_queue_client_conn_str_receive_handler_release_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_queue_client_conn_str_receive_handler_release_messages(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             def sub_test_releasing_messages():
                 # test releasing messages when prefetch is 1 and link credits are issue dynamically
@@ -374,9 +378,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_queue_client_send_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_queue_client_send_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             with sender:
@@ -439,10 +443,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
-    def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_queue_client_conn_str_receive_handler_receiveanddelete(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
@@ -490,11 +494,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_queue_client_conn_str_receive_handler_with_stop(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_queue_client_conn_str_receive_handler_with_stop(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
@@ -527,10 +531,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_iter_messages_simple(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_iter_messages_simple(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               max_wait_time=10,
@@ -561,10 +565,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_conn_str_client_iter_messages_with_abandon(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_conn_str_client_iter_messages_with_abandon(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5, receive_mode=ServiceBusReceiveMode.PEEK_LOCK) as receiver:
             
@@ -599,10 +603,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_iter_messages_with_defer(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_iter_messages_with_defer(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             deferred_messages = []
             with sb_client.get_queue_receiver(
@@ -637,10 +641,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_client(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_client(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
     
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             deferred_messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
@@ -675,10 +679,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_complete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_complete(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
     
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 deferred_messages = []
@@ -717,9 +721,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 deferred_messages = []
                 for i in range(10):
@@ -766,9 +770,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deletemode(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_receiver_deletemode(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
@@ -802,9 +806,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_not_found(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_iter_messages_with_retrieve_deferred_not_found(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             deferred_messages = []
             with sb_client.get_queue_receiver(servicebus_queue.name, 
@@ -837,10 +841,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_receive_batch_with_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_receive_batch_with_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
 
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                            max_wait_time=5, 
@@ -895,10 +899,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_receive_batch_with_retrieve_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_receive_batch_with_retrieve_deadletter(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
     
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                            max_wait_time=5,
@@ -946,10 +950,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_session_fail(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_session_fail(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
     
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with pytest.raises(ServiceBusError):
                 sb_client.get_queue_receiver(servicebus_queue.name, session_id="test")._open_with_retry()
@@ -963,10 +967,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_browse_messages_client(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_browse_messages_client(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
     
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(5):
@@ -988,10 +992,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_browse_messages_with_receiver(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_browse_messages_with_receiver(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
     
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             receiver = sb_client.get_queue_receiver(servicebus_queue.name,
                                            max_wait_time=5,
@@ -1051,10 +1055,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_browse_empty_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_browse_empty_messages(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_receiver(servicebus_queue.name,
                                                  max_wait_time=5, 
@@ -1069,10 +1073,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_fail_send_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_fail_send_messages(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             too_large = "A" * 256 * 1024
     
@@ -1089,10 +1093,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_by_servicebus_client_renew_message_locks(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_renew_message_locks(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             messages = []
             locks = 3
@@ -1132,10 +1136,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
-    def test_queue_by_queue_client_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_queue_client_conn_str_receive_handler_with_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 for i in range(10):
@@ -1250,10 +1254,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
-    def test_queue_by_queue_client_conn_str_receive_handler_with_auto_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_queue_client_conn_str_receive_handler_with_auto_autolockrenew(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 # The 10 iterations is "important" because it gives time for the timed out message to be received again.
@@ -1305,10 +1309,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_message_time_to_live(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_time_to_live(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
                
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
@@ -1340,10 +1344,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', requires_duplicate_detection=True, dead_lettering_on_message_expiration=True)
-    def test_queue_message_duplicate_detection(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_duplicate_detection(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
     
             message_id = uuid.uuid4()
             
@@ -1369,10 +1373,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_message_connection_closed(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_connection_closed(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
                 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
@@ -1392,10 +1396,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_message_expiry(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_expiry(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
                        
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
@@ -1425,10 +1429,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_message_lock_renew(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_lock_renew(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 content = str(uuid.uuid4())
@@ -1456,10 +1460,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT10S')
-    def test_queue_message_receive_and_delete(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_receive_and_delete(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
                 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("Receive and delete test")
@@ -1496,10 +1500,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_message_batch(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_batch(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
 
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
                             
             def message_content():
                 for i in range(5):
@@ -1554,10 +1558,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_schedule_message(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_schedule_message(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
 
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             scheduled_enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
@@ -1590,10 +1594,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_schedule_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_schedule_multiple_messages(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
 
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             scheduled_enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             sender = sb_client.get_queue_sender(servicebus_queue.name)
@@ -1658,10 +1662,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_cancel_scheduled_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_cancel_scheduled_messages(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             enqueue_time = (utc_now() + timedelta(minutes=2)).replace(microsecond=0)
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
@@ -1688,11 +1692,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_message_amqp_over_websocket(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_amqp_over_websocket(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
                 transport_type=TransportType.AmqpOverWebsocket,
-                logging_enable=False) as sb_client:
+                logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 assert sender._config.transport_type == TransportType.AmqpOverWebsocket
@@ -1704,7 +1708,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 messages = receiver.receive_messages(max_wait_time=5)
                 assert len(messages) == 1
 
-    def test_queue_message_http_proxy_setting(self):
+    def test_queue_message_http_proxy_setting(self, uamqp_transport):
         mock_conn_str = "Endpoint=sb://mock.servicebus.windows.net/;SharedAccessKeyName=mock;SharedAccessKey=mock"
         http_proxy = {
             'proxy_hostname': '127.0.0.1',
@@ -1713,7 +1717,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             'password': '123456'
         }
 
-        sb_client = ServiceBusClient.from_connection_string(mock_conn_str, http_proxy=http_proxy)
+        sb_client = ServiceBusClient.from_connection_string(mock_conn_str, http_proxy=http_proxy, uamqp_transport=uamqp_transport)
         assert sb_client._config.http_proxy == http_proxy
         assert sb_client._config.transport_type == TransportType.AmqpOverWebsocket
 
@@ -1730,10 +1734,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_message_settle_through_mgmt_link_due_to_broken_receiver_link(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_message_settle_through_mgmt_link_due_to_broken_receiver_link(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
-                logging_enable=False) as sb_client:
+                logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("Test")
@@ -1932,9 +1936,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_receive_batch_without_setting_prefetch(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receive_batch_without_setting_prefetch(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             def message_content():
                 for i in range(20):
@@ -1999,10 +2003,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_receiver_alive_after_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receiver_alive_after_timeout(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
-                logging_enable=False) as sb_client:
+                logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("0")
@@ -2051,9 +2055,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True, lock_duration='PT5M')
-    def test_queue_receive_keep_conn_alive(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receive_keep_conn_alive(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10)
@@ -2087,10 +2091,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_receiver_sender_resume_after_link_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receiver_sender_resume_after_link_timeout(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
-                logging_enable=False) as sb_client:
+                logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("0")
@@ -2114,10 +2118,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_receiver_respects_max_wait_time_overrides(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receiver_respects_max_wait_time_overrides(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string,
-                logging_enable=False) as sb_client:
+                logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("0")
@@ -2162,9 +2166,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_send_twice(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_send_twice(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 message = ServiceBusMessage("ServiceBusMessage")
@@ -2196,10 +2200,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_receiver_invalid_mode(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receiver_invalid_mode(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             with pytest.raises(ValueError):
                 with sb_client.get_queue_receiver(servicebus_queue.name, 
                                                   receive_mode=2) as receiver:
@@ -2211,10 +2215,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_receiver_invalid_autolockrenew_mode(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receiver_invalid_autolockrenew_mode(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             with pytest.raises(ValueError):
                 with sb_client.get_queue_receiver(servicebus_queue.name, 
                                                   receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE,
@@ -2227,7 +2231,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_message_inner_amqp_properties(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_message_inner_amqp_properties(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         message = ServiceBusMessage("body")
 
@@ -2239,7 +2243,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         message.raw_amqp_message.footer = {b"footer":6}
 
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(message)
@@ -2264,8 +2268,8 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_send_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
-        def _hack_amqp_sender_run(self, **kwargs):
+    def test_queue_send_timeout(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
+        def _hack_amqp_sender_run(self, uamqp_transport, **kwargs):
             time.sleep(6)  # sleep until timeout
             try:
                 self._link.update_pending_deliveries()
@@ -2276,7 +2280,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             return True
 
         with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 # this one doesn't need to reset the method, as it's hacking the method on the instance
                 sender._handler._client_run = types.MethodType(_hack_amqp_sender_run, sender._handler)
@@ -2288,7 +2292,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_mgmt_operation_timeout(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_mgmt_operation_timeout(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         def hack_mgmt_execute(self, message, operation=None, operation_type=None, timeout=0):
             start_time = time.time()
             operation_id = str(uuid.uuid4())
@@ -2315,7 +2319,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
         try:
             management_operation.ManagementOperation.execute = hack_mgmt_execute
             with ServiceBusClient.from_connection_string(
-                    servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                    servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                     with pytest.raises(OperationTimeoutError):
                         scheduled_time_utc = utc_now() + timedelta(seconds=30)
@@ -2329,7 +2333,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', lock_duration='PT5S')
-    def test_queue_operation_negative(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_operation_negative(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         def _hack_amqp_message_complete(cls, _, settlement):
                 if settlement == 'completed':
                     raise RuntimeError()
@@ -2341,7 +2345,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             raise error.AMQPException(error.ErrorCondition.ClientError)
 
         with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
             original_settlement = client.ReceiveClient.settle_messages
@@ -2382,9 +2386,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_send_message_no_body(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_send_message_no_body(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         sb_client = ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string)
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
 
         with sb_client.get_queue_sender(servicebus_queue.name) as sender:
             sender.send_messages(ServiceBusMessage(body=None))
@@ -2395,7 +2399,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
             assert message.body is None
             receiver.complete_message(message)
 
-    def test_send_message_alternate_body_types(self, **kwargs):
+    def test_send_message_alternate_body_types(self, uamqp_transport, **kwargs):
         with pytest.raises(TypeError):
             message = ServiceBusMessage(body=['1','2'])
         with pytest.raises(TypeError):
@@ -2414,11 +2418,11 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_by_servicebus_client_enum_case_sensitivity(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_by_servicebus_client_enum_case_sensitivity(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         # Note: This test is currently intended to enforce case-sensitivity.  If we eventually upgrade to the Fancy Enums being used with new autorest,
         # we may want to tweak this.
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             with sb_client.get_queue_receiver(servicebus_queue.name, 
                                               receive_mode=ServiceBusReceiveMode.RECEIVE_AND_DELETE.value, 
                                               max_wait_time=5) as receiver:
@@ -2444,9 +2448,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_send_dict_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_send_dict_messages(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
 
@@ -2478,7 +2482,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_send_mapping_messages(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_send_mapping_messages(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         class MappingMessage(DictMixin):
             def __init__(self, content):
                 self.body = content
@@ -2489,7 +2493,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 self.message_id = 'foo'
 
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
 
@@ -2525,9 +2529,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest')
-    def test_queue_send_dict_messages_error_badly_formatted_dicts(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_send_dict_messages_error_badly_formatted_dicts(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
 
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
 
@@ -2553,10 +2557,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_send_dict_messages_scheduled(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_send_dict_messages_scheduled(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             content = "Test scheduled message"
             message_id = uuid.uuid4()
             message_id2 = uuid.uuid4()
@@ -2614,10 +2618,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_send_dict_messages_scheduled_error_badly_formatted_dicts(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_send_dict_messages_scheduled_error_badly_formatted_dicts(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+            servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             content = "Test scheduled message"
             message_id = uuid.uuid4()
             message_id2 = uuid.uuid4()
@@ -2638,7 +2642,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_receive_iterator_resume_after_link_detach(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_receive_iterator_resume_after_link_detach(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
 
         def hack_iter_next_mock_error(self):
             try:
@@ -2646,6 +2650,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 self._open()
                 # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
                 if self.execution_times == 1:
+                    # TODO: update uamqp errors to pyamqp
                     from uamqp.errors import LinkDetach
                     from uamqp.constants import ErrorCodes
                     self.execution_times += 1
@@ -2662,7 +2667,7 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
                 self._receive_context.clear()
 
         with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
                 sender.send_messages(
                     [ServiceBusMessage("test1"), ServiceBusMessage("test2"), ServiceBusMessage("test3")]
@@ -2685,10 +2690,10 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_queue_send_amqp_annotated_message(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_queue_send_amqp_annotated_message(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
 
         with ServiceBusClient.from_connection_string(
-                servicebus_namespace_connection_string, logging_enable=False) as sb_client:
+                servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             sequence_body = [b'message', 123.456, True]
             footer = {'footer_key': 'footer_value'}
             prop = {"subject": "sequence"}
@@ -2789,9 +2794,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_state_scheduled(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_state_scheduled(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string) as sb_client:
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             for i in range(10):
@@ -2810,9 +2815,9 @@ class ServiceBusQueueTests(AzureMgmtTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @ServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    def test_state_deferred(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
+    def test_state_deferred(self, servicebus_namespace_connection_string, servicebus_queue, uamqp_transport, **kwargs):
         with ServiceBusClient.from_connection_string(
-            servicebus_namespace_connection_string) as sb_client:
+            servicebus_namespace_connection_string, uamqp_transport=uamqp_transport) as sb_client:
 
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             for i in range(10):
