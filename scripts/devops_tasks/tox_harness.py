@@ -277,7 +277,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
     tox_command_tuples = []
     check_set = set([env.strip().lower() for env in parsed_args.tox_env.strip().split(",")])
-    skipped_environments = {}
+    skipped_tox_checks = {}
 
     for index, package_dir in enumerate(targeted_packages):
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
@@ -333,12 +333,11 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
             if filtered_set != check_set:
                 skipped_environments = check_set - filtered_set
                 if in_ci() and skipped_environments:
-                    
                     for check in skipped_environments:
-                        if check not in skipped_environments:
-                            skipped_environments[check] = []
-                    
-                    skipped_environments[check].append(package_name)
+                        if check not in skipped_tox_checks:
+                            skipped_tox_checks[check] = []
+
+                    skipped_tox_checks[check].append(package_name)
 
             if not filtered_tox_environment_set:
                 logging.info(
@@ -363,9 +362,9 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
         tox_command_tuples.append((tox_execution_array, package_dir))
 
-    if in_ci() and skipped_environments:
-        for check in skipped_environments:
-            warning_content += f"{check} is skipped by packages: {sorted(set(skipped_environments[check]))}. \n"
+    if in_ci() and skipped_tox_checks:
+        for check in skipped_tox_checks:
+            warning_content += f"{check} is skipped by packages: {sorted(set(skipped_tox_checks[check]))}. \n"
 
         if warning_content:
             output_ci_warning(
