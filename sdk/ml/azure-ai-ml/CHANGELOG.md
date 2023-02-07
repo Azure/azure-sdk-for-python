@@ -12,6 +12,7 @@
 - Fixed an issue where ignore files weren't considered during upload directory size calculations.
 - Fixed an issue where symlinks crashed upload directory size calculations.
 - Fixes a bug where enable_node_public_ip returned an improper value when fetching a Compute.
+- Added validation check in MLClient constructor to ensure at least one of `workspace_name` or `registry_name` is supplied
 
 ### Other Changes
 - Update workspace creation to use Log Analytics-Based Application Insights when the user does not specify/bring their own App Insights.

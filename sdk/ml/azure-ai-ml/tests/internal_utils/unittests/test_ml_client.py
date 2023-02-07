@@ -433,3 +433,14 @@ class TestMachineLearningClient:
             message
             == "Both workspace_name and registry_name cannot be used together, for the ml_client."
         )
+    
+    def test_ml_client_with_no_workspace_registry_names_throws(self, e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> None:
+        with pytest.raises(ValidationException) as exception:
+            MLClient(
+                credential=auth
+            )
+        message = exception.value.args[0]
+        assert (
+            message
+            == "Either one of workspace_name or registry_name is required, for the ml_client."
+        )
