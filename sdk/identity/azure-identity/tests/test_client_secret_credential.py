@@ -8,6 +8,7 @@ from azure.identity._enums import RegionalAuthority
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal.user_agent import USER_AGENT
 from msal import TokenCache
+import msal
 import pytest
 from six.moves.urllib_parse import urlparse
 
@@ -136,7 +137,10 @@ def test_regional_authority():
 
         assert mock_confidential_client.call_count == 1
         _, kwargs = mock_confidential_client.call_args
-        assert kwargs["azure_region"] == region.value
+        if region == RegionalAuthority.AUTO_DISCOVER_REGION:
+            assert kwargs["azure_region"] == msal.ConfidentialClientApplication.ATTEMPT_REGION_DISCOVERY
+        else:
+            assert kwargs["azure_region"] == region.value
 
 
 def test_token_cache():

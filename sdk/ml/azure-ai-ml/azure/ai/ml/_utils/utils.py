@@ -908,50 +908,19 @@ def get_all_enum_values_iter(enum_type):
             yield getattr(enum_type, key)
 
 
-def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resource_group: Optional[str]):
-    """Determine if subscription or resource group is missing and raise exception
-    as appropriate."""
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
-
-    msg = "Both subscription id and resource group are required for this operation, missing {}"
-    sub_msg = None
-    if not subscription_id and not resource_group:
-        sub_msg = "subscription id and resource group"
-    elif not subscription_id and resource_group:
-        sub_msg = "subscription id"
-    elif subscription_id and not resource_group:
-        sub_msg = "resource group"
-
-    if sub_msg:
-        raise ValidationException(
-            message=msg.format(sub_msg),
-            no_personal_data_message=msg.format(sub_msg),
-            target=ErrorTarget.GENERAL,
-            error_category=ErrorCategory.USER_ERROR,
-        )
-
-
-@contextmanager
-def open_file_with_int_mode(file: Union[str, PathLike], mode: str = 'r', int_mode: int = 0o666, **kwargs) -> IO:
+def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     """Open file with specific mode and return the file object.
 
-    :param file: Path to the file.
-    :param mode: Mode to open the file.
-    :param int_mode: Mode for opener in integer. Default value is 0o666, which means
-    w+r for owner, group and others.
-    :param int_mode: Mode for the opener.
-    :return: The file object.
+    :param file_path: Path to the file.
+    :param content: Content to write to the file.
     """
-    origin_mask = os.umask(0)
-    try:
-        def opener(path, flags):
-            # w+r for owner, group and others
-            return os.open(path, flags, int_mode)
+    with open(file_path, "w") as f:
+        f.write(content)
 
-        with open(file=file, mode=mode, **kwargs, opener=opener) as f:
-            yield f
-    finally:
-        os.umask(origin_mask)
+    # share_mode means read/write for owner, group and others
+    share_mode, mode_mask = 0o666, 0o777
+    if os.stat(file_path).st_mode & mode_mask != share_mode:
+        try:
+            os.chmod(file_path, share_mode)
+        except PermissionError:
+            pass
