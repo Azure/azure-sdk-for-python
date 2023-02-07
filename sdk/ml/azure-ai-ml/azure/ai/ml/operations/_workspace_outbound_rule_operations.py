@@ -2,41 +2,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# for now disable all warnings
-# pylint: disable-all
-
-from typing import Dict, Iterable, Tuple
-
-from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
-from azure.ai.ml._arm_deployments.arm_helper import get_template
+from typing import Dict
 from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    EncryptionKeyVaultUpdateProperties,
-    EncryptionUpdateProperties,
-    WorkspaceUpdateParameters,
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+    FqdnOutboundRule,
+    PrivateEndpointOutboundRule,
+    PrivateEndpointOutboundRuleDestination,
+    ServiceTagOutboundRule,
+    ServiceTagOutboundRuleDestination,
 )
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._workspace_utils import (
-    delete_resource_by_arm_id,
-    get_deployment_name,
-    get_name_for_dependent_resource,
-    get_resource_and_group_name,
-    get_resource_group_location,
-)
-from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
-from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._version import VERSION
-from azure.ai.ml.constants import ManagedServiceIdentityType
-from azure.ai.ml.constants._common import ArmConstants, LROConfigurations, WorkspaceResourceConstants, Scope
-from azure.ai.ml.entities._credentials import IdentityConfiguration
-from azure.ai.ml.entities._workspace.networking import ManagedNetwork, OutboundRule
+from azure.ai.ml.entities._workspace.networking import OutboundRule, OutboundRuleType, OutboundRuleCategory
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
-from azure.core.polling import LROPoller, PollingMethod
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.polling import LROPoller
+
+ops_logger = OpsLogger(__name__)
+module_logger = ops_logger.module_logger
 
 
 class WorkspaceOutboundRuleOperations:
@@ -52,46 +37,86 @@ class WorkspaceOutboundRuleOperations:
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
         self._all_operations = all_operations
-        self._operation = service_client.managed_network_settings_rule
+        self._rule_operation = service_client.managed_network_settings_rule
+        self._network_operation = service_client.managed_network_settings
         self._credentials = credentials
         self._init_kwargs = kwargs
 
-    def show(self, name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
-        print("SDK outbound rule show method called")
-
-        workspace_name = self._check_workspace_name(name)
+    def show(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
+        workspace_name = self._check_workspace_name(ws_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        obj = self._operation.get(resource_group, workspace_name, outbound_rule_name)
-        return OutboundRule._from_rest_object(obj)
+        obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
+        return OutboundRule._from_rest_object(obj)  # pylint: disable=protected-access
 
-        # obj = self._operation.get(resource_group, workspace_name)
-        # return Workspace._from_rest_object(obj)
-        """def get(
-        self,
-        resource_group_name,  # type: str
-        workspace_name,  # type: str
-        **kwargs  # type: Any):"""
+    def list(self, resource_group: str, ws_name: str, **kwargs) -> OutboundRule:
+        workspace_name = self._check_workspace_name(ws_name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        raise NotImplementedError("workspace outbound rule operations show")
+        return self._rule_operation.list(resource_group, workspace_name)
 
-    def list(self, name: str, **kwargs) -> OutboundRule:
+    def remove(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> LROPoller:
+        workspace_name = self._check_workspace_name(ws_name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        print("SDK outbound rule list method called")
-        raise NotImplementedError("workspace outbound rule operations list")
-        # return OutboundRule()
+        poller = self._rule_operation.begin_delete(
+            resource_group_name=resource_group,
+            workspace_name=workspace_name,
+            rule_name=outbound_rule_name,
+        )
+        module_logger.info("Delete request initiated for outbound rule: %s\n", outbound_rule_name)
+        return poller
 
-    def set(self, name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
+    def set(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> LROPoller:
+        workspace_name = self._check_workspace_name(ws_name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        print("SDK outbound rule set method called")
-        raise NotImplementedError("workspace outbound rule operations set")
-        # return OutboundRule()
+        networkDto = self._network_operation.get(resource_group, workspace_name)
 
-    def remove(self, name: str, outbound_rule_name: str, **kwargs) -> OutboundRule:
+        if outbound_rule_name in networkDto.outbound_rules.keys():
+            module_logger.info("Updating the existing rule: %s\n", outbound_rule_name)
 
-        print("SDK outbound rule remove method called")
-        raise NotImplementedError("workspace outbound rule operations remove")
-        # return OutboundRule()
+        networkDto.outbound_rules = {}
+
+        type = kwargs.get("type", None)  # pylint: disable=redefined-builtin
+        destination = kwargs.get("destination", None)
+        service_tag = kwargs.get("service_tag", None)
+        protocol = kwargs.get("protocol", None)
+        port_ranges = kwargs.get("port_ranges", None)
+        service_resource_id = kwargs.get("service_resource_id", None)
+        subresource_target = kwargs.get("subresource_target", None)
+        spark_jobs_enabled = kwargs.get("spark_jobs_enabled", None)
+
+        rule = None
+
+        if type == OutboundRuleType.FQDN:
+            rule = FqdnOutboundRule(type=type, category=OutboundRuleCategory.USER_DEFINED, destination=destination)
+        if type == OutboundRuleType.SERVICE_TAG:
+            destination = ServiceTagOutboundRuleDestination(
+                service_tag=service_tag, protocol=protocol, port_ranges=port_ranges
+            )
+            rule = ServiceTagOutboundRule(
+                type=type, category=OutboundRuleCategory.USER_DEFINED, destination=destination
+            )
+        if type == OutboundRuleType.PRIVATE_ENDPOINT:
+            destination = PrivateEndpointOutboundRuleDestination(
+                service_resource_id=service_resource_id,
+                subresource_target=subresource_target,
+                spark_jobs_enabled=spark_jobs_enabled,
+            )
+            rule = PrivateEndpointOutboundRule(
+                type=type, category=OutboundRuleCategory.USER_DEFINED, destination=destination
+            )
+
+        networkDto.outbound_rules[outbound_rule_name] = rule
+
+        poller = self._network_operation.begin_update(
+            resource_group_name=resource_group,
+            workspace_name=workspace_name,
+            body=networkDto,
+        )
+        module_logger.info("Set (create or update) request initiated for outbound rule: %s\n", outbound_rule_name)
+        return poller
 
     def _check_workspace_name(self, name) -> str:
         workspace_name = name or self._default_workspace_name

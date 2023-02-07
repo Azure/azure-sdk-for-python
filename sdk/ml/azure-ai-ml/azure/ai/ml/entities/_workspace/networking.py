@@ -78,6 +78,9 @@ class FqdnDestination(OutboundRule):
     def _to_rest_object(self) -> RestFqdnOutboundRule:
         return RestFqdnOutboundRule(type=self.type, category=self.category, destination=self.destination)
 
+    def _to_dict(self) -> Dict:
+        return {"type": OutboundRuleType.FQDN, "category": self.category, "destination": self.destination}
+
 
 class PrivateEndpointDestination(OutboundRule):
     def __init__(self, service_resource_id: str, subresource_target: str, spark_jobs_enabled: bool = False) -> None:
@@ -97,6 +100,17 @@ class PrivateEndpointDestination(OutboundRule):
             ),
         )
 
+    def _to_dict(self) -> Dict:
+        return {
+            "type": OutboundRuleType.PRIVATE_ENDPOINT,
+            "category": self.category,
+            "destination": {
+                "service_resource_id": self.service_resource_id,
+                "subresource_target": self.subresource_target,
+                "spark_jobs_enabled": self.spark_jobs_enabled,
+            },
+        }
+
 
 class ServiceTagDestination(OutboundRule):
     def __init__(self, service_tag: str, protocol: str, port_ranges: str) -> None:
@@ -113,6 +127,17 @@ class ServiceTagDestination(OutboundRule):
                 service_tag=self.service_tag, protocol=self.protocol, port_ranges=self.port_ranges
             ),
         )
+
+    def _to_dict(self) -> Dict:
+        return {
+            "type": OutboundRuleType.SERVICE_TAG,
+            "category": self.category,
+            "destination": {
+                "service_tag": self.service_tag,
+                "protocol": self.protocol,
+                "port_ranges": self.port_ranges,
+            },
+        }
 
 
 class ManagedNetwork:
