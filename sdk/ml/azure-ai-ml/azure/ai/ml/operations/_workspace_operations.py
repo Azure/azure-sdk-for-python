@@ -272,7 +272,7 @@ class WorkspaceOperations:
         managed_network = kwargs.get("managed_network", workspace.managed_network)
         if isinstance(managed_network, str):
             managed_network = ManagedNetwork(managed_network)._to_rest_object()
-        else:
+        elif isinstance(managed_network, ManagedNetwork):
             managed_network = workspace.managed_network._to_rest_object()
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
