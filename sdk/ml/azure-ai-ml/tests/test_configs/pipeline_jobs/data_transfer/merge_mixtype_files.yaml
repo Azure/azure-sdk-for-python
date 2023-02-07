@@ -1,0 +1,35 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'pipeline with data transfer components'
+settings:
+  default_compute: azureml:adftest
+inputs:
+  input1:
+    type: uri_file
+    path: azureml://locations/centraluseuap/workspaces/80eaba04-c6ec-4775-8ddc-d538e9642c2d/data/dtv2_test_adlsgen1_folder/versions/1
+  input2:
+    type: uri_file
+    path: azureml://locations/centraluseuap/workspaces/80eaba04-c6ec-4775-8ddc-d538e9642c2d/data/dtv2_test_file/versions/1
+  input3:
+    type: uri_file
+    path: azureml://locations/centraluseuap/workspaces/80eaba04-c6ec-4775-8ddc-d538e9642c2d/data/dtv2_mltable/versions/1
+
+outputs:
+  merged_blob:
+    type: uri_folder
+    path: azureml://datastores/workspaceblobstore/paths/azureml/dtv2_merge_dest2/
+
+jobs:
+    merge_files:
+      type: data_transfer
+      task: copy_data
+      component: ../../components/data_transfer/merge_mixtype_files.yaml
+      inputs:
+        input1: ${{parent.inputs.input1}}
+        input2: ${{parent.inputs.input2}}
+        input3: ${{parent.inputs.input3}}
+      outputs:
+        output_folder: ${{parent.outputs.merged_blob}}
+      # use default compute
+

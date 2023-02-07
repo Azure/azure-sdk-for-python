@@ -3,19 +3,19 @@ type: pipeline
 
 description: 'pipeline with data transfer components'
 settings:
-  default_compute: azureml:adf_compute
+  default_compute: azureml:adftest
 inputs:
   cosmos_folder:
     type: uri_folder
-    path: azureml://datastores/my_cosmos/paths/source_cosmos
+    path: azureml://locations/centraluseuap/workspaces/80eaba04-c6ec-4775-8ddc-d538e9642c2d/data/dtv2_test_adlsgen1_folder/versions/1
   cosmos_folder_dup:
     type: uri_folder
-    path: azureml://datastores/my_cosmos/paths/source_cosmos
+    path: azureml://locations/centraluseuap/workspaces/80eaba04-c6ec-4775-8ddc-d538e9642c2d/data/dtv2_test_gen2_folder/versions/1
 
 outputs:
   merged_blob:
     type: uri_folder
-    path: azureml://datastores/my_blob/paths/merged_blob
+    path: azureml://datastores/workspaceblobstore/paths/azureml/dtv2_merge_dest/
 
 jobs:
     merge_files_job:

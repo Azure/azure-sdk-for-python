@@ -1432,6 +1432,154 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.name == 'convert_data_node_output'
         assert node_output.version == '1'
 
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    def test_pipeline_job_with_data_transfer_copy_urifolder(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/copy_files.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["copy_files"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+             'data_copy_mode': 'merge_with_overwrite',
+             'inputs': {'folder1': {'job_input_type': 'literal',
+                                    'value': '${{parent.inputs.cosmos_folder}}'}},
+             'outputs': {'output_folder': {'type': 'literal',
+                                           'value': '${{parent.outputs.merged_blob}}'}},
+             'task': 'copy_data',
+             'type': 'data_transfer'
+        }
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    def test_pipeline_job_with_data_transfer_copy_urifile(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/copy_uri_files.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["copy_files"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+             'data_copy_mode': 'fail_if_conflict',
+             'inputs': {'folder1': {'job_input_type': 'literal',
+                                    'value': '${{parent.inputs.cosmos_folder}}'}},
+             'outputs': {'output_folder': {'type': 'literal',
+                                           'value': '${{parent.outputs.merged_blob}}'}},
+             'task': 'copy_data',
+             'type': 'data_transfer'
+        }
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    def test_pipeline_job_with_data_transfer_copy_2urifolder(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/merge_files.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["merge_files"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+             'data_copy_mode': 'merge_with_overwrite',
+             'inputs': {'folder1': {'job_input_type': 'literal',
+                                    'value': '${{parent.inputs.cosmos_folder}}'},
+                        'folder2': {'job_input_type': 'literal',
+                                    'value': '${{parent.inputs.cosmos_folder_dup}}'}
+                        },
+             'outputs': {'output_folder': {'type': 'literal',
+                                           'value': '${{parent.outputs.merged_blob}}'}},
+             'task': 'copy_data',
+             'type': 'data_transfer'
+        }
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    def test_pipeline_job_with_inline_data_transfer_copy_2urifolder(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/merge_files_job.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["merge_files_job"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+             'data_copy_mode': 'merge_with_overwrite',
+             'inputs': {'folder1': {'job_input_type': 'literal',
+                                    'value': '${{parent.inputs.cosmos_folder}}'},
+                        'folder2': {'job_input_type': 'literal',
+                                    'value': '${{parent.inputs.cosmos_folder_dup}}'}
+                        },
+             'outputs': {'output_folder': {'type': 'literal',
+                                           'value': '${{parent.outputs.merged_blob}}'}},
+             'task': 'copy_data',
+             'type': 'data_transfer'
+        }
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    def test_pipeline_job_with_inline_data_transfer_copy_mixtype_file(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/merge_mixtype_files.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["merge_files"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+             'data_copy_mode': 'merge_with_overwrite',
+             'inputs': {'input1': {'job_input_type': 'literal',
+                                    'value': '${{parent.inputs.input1}}'},
+                        'input2': {'job_input_type': 'literal',
+                                   'value': '${{parent.inputs.input2}}'},
+                        'input3': {'job_input_type': 'literal',
+                                   'value': '${{parent.inputs.input3}}'}
+                        },
+             'outputs': {'output_folder': {'type': 'literal',
+                                           'value': '${{parent.outputs.merged_blob}}'}},
+             'task': 'copy_data',
+             'type': 'data_transfer'
+        }
+
+
+
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test

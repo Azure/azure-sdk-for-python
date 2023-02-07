@@ -19,9 +19,9 @@ class TestDataTransferComponentEntity:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client,
                                                            _type="data_transfer")
         assert isinstance(component_entity, DataTransferCopyComponent)
-        # Todo: Add rest when e2e
-        # rest_path = "./tests/test_configs/components/automl/copy_files_rest.json"
-        # rest_entity = load_component_entity_from_rest_json(rest_path)
+
+        rest_path = "./tests/test_configs/components/data_transfer/copy_files.json"
+        rest_entity = load_component_entity_from_rest_json(rest_path)
         data_transfer_copy_component = DataTransferCopyComponent(
             task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_copy_files",
@@ -32,11 +32,13 @@ class TestDataTransferComponentEntity:
             base_path="./tests/test_configs/components/data_transfer",
         )
 
-        omit_fields = ["name", "id", "$schema"]
+        # data_copy_mode is a run time config, cannot be decided in registering progress. So won't be returned from
+        # backend.
+        omit_fields = ["name", "id", "$schema", "data_copy_mode", "inputs.folder1.optional", "version"]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
-        # rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
+        rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
         sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
-        # assert yaml_dict == rest_dict
+        assert yaml_dict == rest_dict
         assert sdk_dict == yaml_dict
 
     def test_serialize_deserialize_merge_task_component(self, mock_machinelearning_client: MLClient):
@@ -44,9 +46,8 @@ class TestDataTransferComponentEntity:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client,
                                                            _type="data_transfer")
         assert isinstance(component_entity, DataTransferCopyComponent)
-        # Todo: Add rest when e2e
-        # rest_path = "./tests/test_configs/components/automl/merge_files_rest.json"
-        # rest_entity = load_component_entity_from_rest_json(rest_path)
+        rest_path = "./tests/test_configs/components/data_transfer/merge_files.json"
+        rest_entity = load_component_entity_from_rest_json(rest_path)
         data_transfer_copy_component = DataTransferCopyComponent(
             task=DataTransferTaskType.COPY_DATA,
             name="datatransfer_merge_files",
@@ -57,11 +58,14 @@ class TestDataTransferComponentEntity:
             base_path="./tests/test_configs/components/data_transfer",
         )
 
-        omit_fields = ["name", "id", "$schema"]
+        # data_copy_mode is a run time config, cannot be decided in registering progress. So won't be returned from
+        # backend.
+        omit_fields = ["name", "id", "$schema", "data_copy_mode", "inputs.folder1.optional", "version",
+                       "inputs.folder2.optional", "inputs.folder3.optional"]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
-        # rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
+        rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
         sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
-        # assert yaml_dict == rest_dict
+        assert yaml_dict == rest_dict
         assert sdk_dict == yaml_dict
 
     def test_serialize_deserialize_import_task_component(self, mock_machinelearning_client: MLClient):
@@ -69,9 +73,7 @@ class TestDataTransferComponentEntity:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client,
                                                            _type="data_transfer")
         assert isinstance(component_entity, DataTransferImportComponent)
-        # Todo: Add rest when e2e
-        # rest_path = "./tests/test_configs/components/automl/import_file_to_blob.json"
-        # rest_entity = load_component_entity_from_rest_json(rest_path)
+
         data_transfer_copy_component = DataTransferImportComponent(
             task=DataTransferTaskType.IMPORT_DATA,
             name="datatransfer_s3_blob",
@@ -83,9 +85,7 @@ class TestDataTransferComponentEntity:
 
         omit_fields = ["name", "id", "$schema"]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
-        # rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
         sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
-        # assert yaml_dict == rest_dict
         assert sdk_dict == yaml_dict
 
     def test_serialize_deserialize_export_task_component(self, mock_machinelearning_client: MLClient):
@@ -93,9 +93,7 @@ class TestDataTransferComponentEntity:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client,
                                                            _type="data_transfer")
         assert isinstance(component_entity, DataTransferExportComponent)
-        # Todo: Add rest when e2e
-        # rest_path = "./tests/test_configs/components/automl/export_blob_to_database.json"
-        # rest_entity = load_component_entity_from_rest_json(rest_path)
+
         data_transfer_copy_component = DataTransferExportComponent(
             task=DataTransferTaskType.EXPORT_DATA,
             name="datatransfer_blob_azuresql",
@@ -107,9 +105,7 @@ class TestDataTransferComponentEntity:
 
         omit_fields = ["name", "id", "$schema"]
         yaml_dict = pydash.omit(dict(component_entity._to_dict()), *omit_fields)
-        # rest_dict = pydash.omit(dict(rest_entity._to_dict()), *omit_fields)
         sdk_dict = pydash.omit(dict(data_transfer_copy_component._to_dict()), *omit_fields)
-        # assert yaml_dict == rest_dict
         assert sdk_dict == yaml_dict
 
     def test_copy_task_component_entity(self):

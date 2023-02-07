@@ -24,7 +24,7 @@ from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, Pi
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters, camel_to_snake
 from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
@@ -368,7 +368,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # todo: refine Hard code for now to support different task type for DataTransfer node
         _type = obj[CommonYamlFields.TYPE]
         if _type == NodeType.DATA_TRANSFER:
-            _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", "")])
+            _type = "_".join([NodeType.DATA_TRANSFER, camel_to_snake(obj.get("task", ""))])
         instance: BaseNode = pipeline_node_factory.get_create_instance_func(_type)()
         init_kwargs = instance._from_rest_object_to_init_params(obj)
         instance.__init__(**init_kwargs)

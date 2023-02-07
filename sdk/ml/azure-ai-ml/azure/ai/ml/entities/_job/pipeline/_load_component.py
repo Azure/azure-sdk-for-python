@@ -24,7 +24,7 @@ from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._util import get_type_from_spec
+from azure.ai.ml.entities._util import get_type_from_spec, camel_to_snake
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
@@ -197,7 +197,7 @@ class _PipelineNodeFactory:
             _type = data[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in data else NodeType.COMMAND
             # todo: refine Hard code for now to support different task type for DataTransfer node
             if _type == NodeType.DATA_TRANSFER:
-                _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", "")])
+                _type = "_".join([NodeType.DATA_TRANSFER, camel_to_snake(data.get("task", " "))])
         else:
             data[CommonYamlFields.TYPE] = _type
 
@@ -233,7 +233,7 @@ class _PipelineNodeFactory:
             _type = obj[CommonYamlFields.TYPE] if CommonYamlFields.TYPE in obj else NodeType.COMMAND
             # todo: refine Hard code for now to support different task type for DataTransfer node
             if _type == NodeType.DATA_TRANSFER:
-                _type = "_".join([NodeType.DATA_TRANSFER, obj.get("task", "")])
+                _type = "_".join([NodeType.DATA_TRANSFER, camel_to_snake(obj.get("task", " "))])
         else:
             obj[CommonYamlFields.TYPE] = _type
 
@@ -267,7 +267,7 @@ def _generate_component_function(
         # todo: refine Hard code for now to support different task type for DataTransfer node
         _type = component_entity.type
         if _type == NodeType.DATA_TRANSFER:
-            _type = "_".join([NodeType.DATA_TRANSFER, component_entity.task])
+            _type = "_".join([NodeType.DATA_TRANSFER, camel_to_snake(component_entity.task)])
             if component_entity.task == DataTransferTaskType.IMPORT_DATA:
                 return pipeline_node_factory.load_from_dict(
                     data=dict(component=component_entity, **kwargs, _from_component_func=True),

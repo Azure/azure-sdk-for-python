@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pydash
 import pytest
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import MLClient, load_job
@@ -348,3 +348,52 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         assert validation_result.error_messages == {
             "jobs.add_greeting_column.component.entry": 'Missing data for required field.',
         }
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_2urifolder_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_2urifolder_job_with_builder_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
+        )
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_mixtype_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_copy_mixtype_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_urifile_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_copy_urifile_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    @pytest.mark.e2etest
+    def test_data_transfer_copy_urifolder_job_in_pipeline(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_copy_urifolder_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+        assert_job_cancel(pipeline, client)
