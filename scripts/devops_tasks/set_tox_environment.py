@@ -8,7 +8,7 @@
 import argparse, os
 from typing import List
 
-from ci_tools.ci_interactions import set_ci_variable
+from ci_tools.ci_interactions import set_ci_variable, output_ci_warning
 from ci_tools.build import discover_targeted_packages
 from ci_tools.environment_exclusions import is_check_enabled
 
@@ -62,7 +62,13 @@ def process_ci_skips(service: str) -> None:
                 packages_running_check.append(pkg)
 
         if len(packages_running_check) == 0:
+            all_packages = set([os.path.basename(pkg) for pkg in targeted_packages])
             set_ci_variable(f"Skip.{check[0].upper()}{check[1:]}", "true")
+            output_ci_warning(
+                    "All targeted packages {all_packages} skip the {check} check. Omitting step from build.",
+                    "set_tox_environment.py()",
+            )
+
 
 
 if __name__ == "__main__":
