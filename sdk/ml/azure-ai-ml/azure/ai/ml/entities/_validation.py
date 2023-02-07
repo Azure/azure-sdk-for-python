@@ -392,12 +392,7 @@ class SchemaValidatableMixin:
 
     def _dump_for_validation(self) -> typing.Dict:
         """Convert the resource to a dictionary."""
-        return convert_ordered_dict_to_dict(
-            self._schema_for_validation.dump(self),
-            remove_empty=True,
-            # parallel_for items may have empty dict value, e.g. silo1: {}, silo2: {}
-            reserved_keys=["items"]
-        )
+        return convert_ordered_dict_to_dict(self._schema_for_validation.dump(self))
 
     def _validate(self, raise_error=False) -> MutableValidationResult:
         """Validate the resource. If raise_error is True, raise ValidationError

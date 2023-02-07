@@ -74,6 +74,11 @@ class DoWhileSchema(BaseLoopSchema):
 
         return result
 
+    @pre_dump
+    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+
+        return super(DoWhileSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
+
 
 class ParallelForSchema(BaseLoopSchema):
     type = StringTransformedEnum(allowed_values=[ControlFlowType.PARALLEL_FOR])
@@ -106,8 +111,29 @@ class ParallelForSchema(BaseLoopSchema):
         return data
 
     @pre_dump
+    def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+
+        return super(ParallelForSchema, self).convert_control_flow_body_to_binding_str(data, **kwargs)
+
+    @pre_dump
     def resolve_outputs(self, job, **kwargs):  # pylint: disable=unused-argument
 
         result = copy.copy(job)
         _resolve_outputs(result, job)
+        return result
+
+    @pre_dump
+    def serialize_items(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
+        # serialize items to json string to avoid being removed by _dump_for_validation
+        from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
+
+        def _binding_handler(obj):
+            if isinstance(obj, InputOutputBase):
+                return str(obj)
+            return repr(obj)
+
+        result = copy.copy(data)
+        if isinstance(result.items, (dict, list)):
+            # use str to serialize input/output builder
+            result._items = json.dumps(result.items, default=_binding_handler)
         return result
