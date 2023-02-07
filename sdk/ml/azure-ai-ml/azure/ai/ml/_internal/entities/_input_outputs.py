@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from typing import Dict, Optional, Union
+from enum import Enum
 
 from azure.ai.ml import Input, Output
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
@@ -10,6 +11,22 @@ _INPUT_TYPE_ENUM = "enum"
 _INPUT_TYPE_ENUM_CAP = "Enum"
 _INPUT_TYPE_FLOAT = "float"
 _INPUT_TYPE_FLOAT_CAP = "Float"
+
+
+class UIWidgetTypeEnum(Enum):
+    DEFAULT = "Default"
+    MODE = "Mode"
+    COLUMN_PICKER = "ColumnPicker"
+    CREDENTIAL = "Credential"
+    SCRIPT = "Script"
+    COMPUTE_SELECTION = "ComputeSelection"
+    JSON_EDITOR = "JsonEditor"
+    SEARCH_SPACE_PARAMETER = "SearchSpaceParameter"
+    SECTION_TOGGLE = "SectionToggle"
+    YAML_EDITOR = "YamlEditor"
+    ENABLE_RUNTIME_SWEEP = "EnableRuntimeSweep"
+    DATA_STORE_SELECTION = "DataStoreSelection"
+    INSTANCE_TYPE_SELECTION = "InstanceTypeSelection"
 
 
 class InternalInput(Input):
@@ -26,6 +43,8 @@ class InternalInput(Input):
     def __init__(self, *, datastore_mode=None, is_resource=None, **kwargs):
         self.datastore_mode = datastore_mode
         self.is_resource = is_resource
+        if "type" in kwargs:
+            kwargs["type"] = self.convert_input_type(kwargs["type"])
         super().__init__(**kwargs)
 
     @property
@@ -51,6 +70,13 @@ class InternalInput(Input):
         if self._lower_type in IOConstants.PRIMITIVE_STR_2_TYPE:
             return True
         return super()._is_primitive_type
+
+    def _convert_ui_widget_type(self, type):
+        try:
+            UIWidgetTypeEnum(type)
+            return "string"
+        except ValueError:
+            return type
 
     def _simple_parse(self, value, _type=None):
         # simple parse is used to parse min, max & optional only, so we don't need to handle enum
