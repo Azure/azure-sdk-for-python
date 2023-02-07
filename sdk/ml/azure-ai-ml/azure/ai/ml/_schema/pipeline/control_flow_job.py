@@ -46,40 +46,31 @@ class DoWhileConditionSchema(fields.Field):
     def _deserialize(self, value, attr, data, **kwargs):
         if value is None:
             return None
+        # Try to parse as string first, otherwise string will become True.
         errors = []
-        obj = None
-        # Try to parse as boolean first, if so, check False or return True;
-        # else, append error message and deal with it as `UnionField`.
-        try:
-            obj = fields.Boolean()._deserialize(value, attr, data, **kwargs)
-        except ValidationError as e:
-            errors.append(e.normalized_messages())
-        if obj is not None:
-            if obj is False:
-                raise ValidationError(self.ERROR_MESSAGE_FOR_FALSE)
-            return obj
         for schema in self.UNION_FIELDS:
+            # Note that as condition won't be a job, so no need to add finally here as `UnionField`.
             try:
                 return schema.deserialize(value, attr, data, **kwargs)
             except ValidationError as e:
                 errors.append(e.normalized_messages())
             except (ValidationException, FileNotFoundError, TypeError) as e:
                 errors.append([str(e)])
-            # Note that as condition won't be a job, so no need to add finally here as `UnionField`.
+        # Parse as boolean and check False.
+        try:
+            obj = fields.Boolean()._deserialize(value, attr, data, **kwargs)
+            if obj is True:
+                return obj
+            errors.append(self.ERROR_MESSAGE_FOR_FALSE)
+        except ValidationError as e:
+            errors.append(e.normalized_messages())
         raise ValidationError(errors, field_name=attr)
 
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return None
+        # Same as _deserialize, parse as string first.
         errors = []
-        data = None
-        try:
-            data = fields.Boolean()._serialize(value, attr, obj, **kwargs)
-        except ValidationError as e:
-            errors.append(e.normalized_messages())
-        if data is not None:
-            # Not check False during serialization.
-            return data
         for field in self.UNION_FIELDS:
             try:
                 return field._serialize(value, attr, obj, **kwargs)
@@ -87,6 +78,10 @@ class DoWhileConditionSchema(fields.Field):
                 errors.extend(e.messages)
             except (TypeError, ValueError, AttributeError, ValidationException) as e:
                 errors.extend([str(e)])
+        try:
+            return fields.Boolean()._serialize(value, attr, obj, **kwargs)
+        except ValidationError as e:
+            errors.append(e.normalized_messages())
         raise ValidationError(message=errors, field_name=attr)
 
 

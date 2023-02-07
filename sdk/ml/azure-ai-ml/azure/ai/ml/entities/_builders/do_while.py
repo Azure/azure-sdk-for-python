@@ -131,7 +131,8 @@ class DoWhile(LoopNode):
 
         limits = loaded_data.pop("limits", None)
 
-        condition_in_loaded_data = loaded_data.pop("condition")
+        # If condition not in data, treat it as True
+        condition_in_loaded_data = loaded_data.pop("condition", True)
         if isinstance(condition_in_loaded_data, bool):
             # condition is True, no need to extra process
             condition_value = condition_in_loaded_data
@@ -231,9 +232,8 @@ class DoWhile(LoopNode):
         if self.condition is None:
             validation_result.append_error(yaml_path="condition", message="The condition cannot be empty.")
         elif isinstance(self.condition, bool):
-            # No need to check False here as `_validate()` will call `__schema_validate()`,
-            # where condition=False has already been validated.
-            pass
+            if self.condition is False:
+                validation_result.append_error(yaml_path="condition", message="The condition cannot be False.")
         else:
             # Check condition exists in dowhile body.
             validation_result.merge_with(

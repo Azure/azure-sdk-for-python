@@ -129,7 +129,7 @@ class TestDoWhile(TestConditionalNodeInPipeline):
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
-        assert len(created_pipeline.jobs) == 5
+        assert len(created_pipeline.jobs) == 7
         assert isinstance(created_pipeline.jobs["pipeline_body_node"], Pipeline)
         assert isinstance(created_pipeline.jobs["do_while_job_with_pipeline_job"], DoWhile)
         assert isinstance(created_pipeline.jobs["do_while_true_job_with_pipeline_job"], DoWhile)
