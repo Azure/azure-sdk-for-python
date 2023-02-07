@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
@@ -833,12 +833,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 **kwargs
             ))
             digest = _compute_digest(data)
-            complete_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.complete_upload(
-                digest=digest,
-                next_link=upload_chunk_response_headers['Location'],
-                cls=_return_response_headers,
-                **kwargs
-            ))
+            complete_upload_response_headers = cast(
+                Dict[str, str],
+                self._client.container_registry_blob.complete_upload(
+                    digest=digest,
+                    next_link=upload_chunk_response_headers['Location'],
+                    cls=_return_response_headers,
+                    **kwargs
+                )
+            )
         except ValueError:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")
@@ -859,14 +862,14 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             If the requested digest does not match the digest of the received manifest.
         """
         try:
-            response, manifest_wrapper = self._client.container_registry.get_manifest(
+            response, manifest_wrapper = cast(Tuple[PipelineResponse, ManifestWrapper], self._client.container_registry.get_manifest(
                 name=repository,
                 reference=tag_or_digest,
                 headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
                 cls=_return_response_and_deserialized,
                 **kwargs
-            )
-            digest = cast(PipelineResponse, response).http_response.headers['Docker-Content-Digest']
+            ))
+            digest = response.http_response.headers['Docker-Content-Digest']
             manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
             manifest_stream = _serialize_manifest(manifest)
         except ValueError:

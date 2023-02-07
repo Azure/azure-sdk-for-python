@@ -56,7 +56,7 @@ class ACRExchangeClient(object):
             **kwargs
         )
         self._credential = credential
-        self._refresh_token = None
+        self._refresh_token = None # type: Optional[str]
         self._expiration_time = 0 # type: float
 
     def get_acr_access_token(self, challenge, **kwargs):
@@ -70,9 +70,9 @@ class ACRExchangeClient(object):
     def get_refresh_token(self, service, **kwargs):
         # type: (str, Any) -> str
         if not self._refresh_token or self._expiration_time - time.time() > 300:
-            self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs) # type: ignore
-            self._expiration_time = _parse_exp_time(self._refresh_token) # type: ignore
-        return self._refresh_token # type: ignore
+            self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
+            self._expiration_time = _parse_exp_time(self._refresh_token)
+        return self._refresh_token
 
     def exchange_aad_token_for_refresh_token(self, service, **kwargs):
         # type: (str, Any) -> str

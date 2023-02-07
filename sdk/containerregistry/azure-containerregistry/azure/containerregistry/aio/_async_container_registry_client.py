@@ -599,13 +599,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @overload
-    def update_manifest_properties(
+    async def update_manifest_properties(
         self, repository: str, tag_or_digest: str, properties: "ArtifactManifestProperties", **kwargs: Any
     ) -> "ArtifactManifestProperties":
         ...
 
     @overload
-    def update_manifest_properties(
+    async def update_manifest_properties(
         self, repository: str, tag_or_digest: str, **kwargs: Any
     ) -> "ArtifactManifestProperties":
         ...
@@ -676,13 +676,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @overload
-    def update_tag_properties(
+    async def update_tag_properties(
         self, repository: str, tag: str, properties: "ArtifactTagProperties", **kwargs: Any
     ) -> "ArtifactTagProperties":
         ...
 
     @overload
-    def update_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> "ArtifactTagProperties":
+    async def update_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> "ArtifactTagProperties":
         ...
 
     @distributed_trace_async
