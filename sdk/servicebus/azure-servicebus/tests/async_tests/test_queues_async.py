@@ -2253,8 +2253,8 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             else:
                 self.execution_times += 1
             if not self._message_iter:
-                self._message_iter = self._handler.receive_messages_iter_async()
-            pyamqp_message = await self._message_iter()
+                self._message_iter = await self._handler.receive_messages_iter_async()
+            pyamqp_message = await self._message_iter.__anext__()
             message = self._build_message(pyamqp_message)
             return message
 

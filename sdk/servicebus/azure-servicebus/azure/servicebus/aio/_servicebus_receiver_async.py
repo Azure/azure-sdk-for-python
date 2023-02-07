@@ -223,7 +223,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 original_timeout = self._handler._timeout
                 self._handler._timeout = max_wait_time * 1
             try:
-                # self.receiver._receive_context.set()
+                self._receive_context.set()
                 message = await self._inner_anext()
                 links = get_receive_links(message)
                 with receive_trace_context_manager(self, links=links):
@@ -231,7 +231,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             except StopAsyncIteration:
                 break
             finally:
-                # self.receiver._receive_context.clear()
+                self._receive_context.clear()
                 if original_timeout:
                     try:
                         self._handler._timeout = original_timeout
