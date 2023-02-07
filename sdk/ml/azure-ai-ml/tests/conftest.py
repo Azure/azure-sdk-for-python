@@ -36,7 +36,7 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, ANONYMOUS_COMPONENT_NAME
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -103,9 +103,22 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     # masks signature in SAS uri 
     add_general_regex_sanitizer(
         value="000000000000000000000000000000000000",
-        regex='sig=([^/\\s"]{48})',
+        regex='sig=([^/\\s"]{46,52})',
         group_for_replace="1",
     )
+
+    # masks blob storage account name in SAS uris
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='.blob.core.windows.net:443\\/([^/\\s"]{47})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='.blob.core.windows.net\\/([^/\\s"]{47})',
+        group_for_replace="1",
+    )
+
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
@@ -525,6 +538,25 @@ def mock_asset_name(mocker: MockFixture):
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", side_effect=generate_uuid)
     else:
         mocker.patch("azure.ai.ml.entities._assets.asset._get_random_name", return_value=fake_uuid)
+
+
+@pytest.fixture
+def mock_anon_component_version(mocker: MockFixture):
+
+    fake_uuid = "000000000000000000000"
+
+    def generate_name_version(*args, **kwargs):
+        real_uuid = str(uuid.uuid4())
+        add_general_string_sanitizer(value=fake_uuid, target=real_uuid)
+        return ANONYMOUS_COMPONENT_NAME, real_uuid
+
+    def fake_name_version(*args, **kwargs):
+        return ANONYMOUS_COMPONENT_NAME, fake_uuid
+
+    if is_live():
+        mocker.patch("azure.ai.ml.entities._component.component.Component._get_rest_name_version", side_effect=generate_name_version)
+    else:
+        mocker.patch("azure.ai.ml.entities._component.component.Component._get_rest_name_version", side_effect=fake_name_version)
 
 
 def normalized_arm_id_in_object(items):
