@@ -107,15 +107,14 @@ class MLClient(object):
     :type show_progress: typing.Optional[bool]
     :keyword str cloud: The cloud name to use, defaults to AzureCloud.
 
-    .. admonition:: Example
+    .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_authentication_sovereign_cloud.py
+        .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
             :start-after: [START create_ml_client_default_credential]
             :end-before: [END create_ml_client_default_credential]
             :language: python
             :dedent: 8
             :caption: Creating the MLClient with Azure Identity credentials.
-
     """
 
     # pylint: disable=client-method-missing-type-annotations
