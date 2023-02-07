@@ -1,0 +1,62 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare5e2d3763?restype=share",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Fri, 27 Jan 2023 04:00:39 GMT",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Fri, 27 Jan 2023 03:59:57 GMT",
+        "ETag": "\u00220x8DB001AF4D01D5B\u0022",
+        "Last-Modified": "Fri, 27 Jan 2023 03:59:57 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.file.core.windows.net/utshare5e2d3763/dir1.?restype=directory",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-file-share/12.12.0b1 Python/3.11.1 (Windows-10-10.0.22621-SP0)",
+        "x-ms-allow-trailing-dot": "true",
+        "x-ms-date": "Fri, 27 Jan 2023 04:00:41 GMT",
+        "x-ms-file-attributes": "none",
+        "x-ms-file-creation-time": "now",
+        "x-ms-file-last-write-time": "now",
+        "x-ms-file-permission": "inherit",
+        "x-ms-version": "2022-11-02"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Date": "Fri, 27 Jan 2023 03:59:57 GMT",
+        "ETag": "\u00220x8DB001AF4EEF1C7\u0022",
+        "Last-Modified": "Fri, 27 Jan 2023 03:59:58 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-file-attributes": "Directory",
+        "x-ms-file-change-time": "2023-01-27T03:59:58.1507015Z",
+        "x-ms-file-creation-time": "2023-01-27T03:59:58.1507015Z",
+        "x-ms-file-id": "13835128424026341376",
+        "x-ms-file-last-write-time": "2023-01-27T03:59:58.1507015Z",
+        "x-ms-file-parent-id": "0",
+        "x-ms-file-permission-key": "4282235038938884634*13244350442060319835",
+        "x-ms-request-server-encrypted": "true",
+        "x-ms-version": "2022-11-02"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}
