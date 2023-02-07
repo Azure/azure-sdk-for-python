@@ -159,6 +159,14 @@ class MLClient(object):
                 target=ErrorTarget.GENERAL,
                 error_category=ErrorCategory.USER_ERROR,
             )
+        
+        if not registry_name and not workspace_name:
+            raise ValidationException(
+                message="Either one of workspace_name or registry_name is required, for the ml_client.",
+                no_personal_data_message="Neither workspace_name nor registry_name are provided for ml_client.",
+                target=ErrorTarget.GENERAL,
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
         self._credential = credential
 
