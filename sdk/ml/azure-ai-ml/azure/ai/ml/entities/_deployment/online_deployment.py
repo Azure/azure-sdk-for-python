@@ -49,7 +49,7 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from .deployment import Deployment
-from ..._vendor.azure_resources.flatten_json import flatten, unflatten
+from ..._vendor.flatten_json import flatten, unflatten
 
 module_logger = logging.getLogger(__name__)
 

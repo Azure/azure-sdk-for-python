@@ -26,7 +26,7 @@ from azure.ai.ml.entities._job.resource_configuration import ResourceConfigurati
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-from ..._vendor.azure_resources.flatten_json import flatten, unflatten
+from ..._vendor.flatten_json import flatten, unflatten
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
 

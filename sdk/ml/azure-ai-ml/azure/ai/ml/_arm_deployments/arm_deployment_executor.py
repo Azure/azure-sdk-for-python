@@ -18,8 +18,7 @@ from azure.ai.ml._azure_environments import (
 from azure.ai.ml._utils._arm_id_utils import get_arm_id_object_from_id
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
 from azure.ai.ml._utils.utils import from_iso_duration_format_min_sec
-from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
-from azure.ai.ml._vendor.azure_resources.models import Deployment, DeploymentProperties
+from azure.mgmt.resource import ResourceManagementClient
 from azure.ai.ml.constants._common import (
     ENDPOINT_DEPLOYMENT_START_MSG,
     ArmConstants,
@@ -133,11 +132,12 @@ class ArmDeploymentExecutor(object):
 
     def _get_poller(self, template: str, parameters: Optional[Dict] = None, wait: bool = True) -> None:
         # deploy the template
-        properties = DeploymentProperties(template=template, parameters=parameters, mode="incremental")
+        models_module = self._client.models(ArmConstants.AZURE_MGMT_RESOURCE_API_VERSION)
+        properties = models_module.DeploymentProperties(template=template, parameters=parameters, mode="incremental")
         return self._deployments_client.begin_create_or_update(
             resource_group_name=self._resource_group_name,
             deployment_name=self._deployment_name,
-            parameters=Deployment(properties=properties),
+            parameters=models_module.Deployment(properties=properties),
             polling=wait,
             polling_interval=LROConfigurations.POLL_INTERVAL,
         )

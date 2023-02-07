@@ -8,11 +8,16 @@ from marshmallow.decorators import post_load
 
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml._vendor.azure_resources.models._resource_management_client_enums import ResourceIdentityType
+from azure.ai.ml.constants._common import ArmConstants
 from azure.ai.ml.entities._credentials import ManagedIdentityConfiguration
+from azure.mgmt.resource import ResourceManagementClient
 
 from ..core.schema import PathAwareSchema
 
+# azure-mgmt-resource exposes versioned models modules through the `.models` classmethod
+ResourceIdentityType = ResourceManagementClient.models(
+    api_version=ArmConstants.AZURE_MGMT_RESOURCE_API_VERSION
+).ResourceIdentityType
 
 class ComputeSchema(PathAwareSchema):
     name = fields.Str(required=True)
