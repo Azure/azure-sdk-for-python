@@ -272,7 +272,8 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
 
     def _to_dict(self, remove_name=True):
         """Convert the Input object to a dict."""
-        keys = ["port_name", "path", "type", "mode", "description", "default", "min", "max", "enum", "optional", "datastore"]
+        keys = ["port_name", "path", "type", "mode", "description",
+                "default", "min", "max", "enum", "optional", "datastore"]
         if remove_name:
             keys.remove("port_name")
         result = {key: getattr(self, key) for key in keys}
