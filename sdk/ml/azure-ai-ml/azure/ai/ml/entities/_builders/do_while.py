@@ -166,7 +166,8 @@ class DoWhile(LoopNode):
 
     def _to_rest_object(self, **kwargs) -> dict:
         # Feature 2154655: support while True in do-while
-        # if directly pass True to server, they cannot identify it is literal True or output port name;
+        # user may specify concrete value True for condition, if directly pass True to server,
+        # they cannot identify it is literal True or output port name;
         # so use None condition to express while True and here we replace during convert to REST object.
         condition = self.condition
         if isinstance(condition, bool):
