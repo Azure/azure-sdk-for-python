@@ -2,7 +2,6 @@ import os
 import mock
 import pytest
 from mock import MagicMock, patch
-import requests
 
 from azure.ai.ml._azure_environments import (
     AzureEnvironments,
@@ -113,7 +112,6 @@ class TestCloudEnvironments:
         with mock.patch("os.environ", {AZUREML_CLOUD_ENV_NAME: "yadadada"}):
             cloud_name = _get_default_cloud_name()
             assert cloud_name == "yadadada"
-
     
     def test_get_registry_endpoint_from_public(self):
         cloud_environment = AzureEnvironments.ENV_DEFAULT
