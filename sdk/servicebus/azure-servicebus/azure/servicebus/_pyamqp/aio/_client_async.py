@@ -363,7 +363,7 @@ class AMQPClientAsync(AMQPClientSync):
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop('timeout', 0)
-        with self._lock_async:
+        async with self._lock_async:
             try:
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
