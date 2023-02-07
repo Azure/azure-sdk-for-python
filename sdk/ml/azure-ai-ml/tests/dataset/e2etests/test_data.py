@@ -206,7 +206,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
         assert all(data.name == data_with_2_versions for data in data_list)
         # use a set since ordering of elements returned from list isn't guaranteed
         assert {"1", "2"} == {data.version for data in data_list}
-    
+
     def test_list_data_in_registry(self,  data_asset_registry_client: MLClient) -> None:
         data_iterator =  data_asset_registry_client.data.list()
         assert data_iterator
@@ -232,7 +232,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
         name = randstr("name")
         versions = ["foo", "bar", "baz", "foobar"]
         for version in versions:
-             data_asset_registry_client.data.create_or_update(
+            data_asset_registry_client.data.create_or_update(
                 load_data(
                     source="./tests/test_configs/dataset/data_file.yaml",
                     params_override=[{
