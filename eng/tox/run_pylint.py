@@ -47,7 +47,6 @@ if __name__ == "__main__":
     pkg_dir = os.path.abspath(args.target_package)
     pkg_details = ParsedSetup.from_path(pkg_dir)
     rcFileLocation = os.path.join(root_dir, "eng/pylintrc") if args.next else os.path.join(root_dir, "pylintrc")
-    python_version = "3.7.0"
 
     top_level_module = pkg_details.namespace.split('.')[0]
 
@@ -58,7 +57,6 @@ if __name__ == "__main__":
                     sys.executable,
                     "-m",
                     "pylint",
-                    "--py-version={}".format(python_version),
                     "--rcfile={}".format(rcFileLocation),
                     "--output-format=parseable",
                     os.path.join(args.target_package, top_level_module),
