@@ -8,8 +8,10 @@
 
 """
 FILE: ml_samples_authentication_sovereign_cloud.py
+
 DESCRIPTION:
     These samples demonstrate authenticating a client for multiple clouds.
+    
 USAGE:
     python ml_samples_authentication_sovereign_cloud.py
 

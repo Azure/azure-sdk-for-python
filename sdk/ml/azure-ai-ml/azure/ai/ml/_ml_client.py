@@ -92,20 +92,21 @@ class MLClient(object):
 
     :param credential: Credential to use for authentication.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None
+    :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None.
     :type subscription_id: typing.Optional[str]
-    :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None
+    :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None.
     :type resource_group_name: typing.Optional[str]
     :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only,
-            defaults to None
+            defaults to None.
     :type workspace_name: typing.Optional[str]
     :param registry_name: Registry to use in the client, optional for non registry dependent operations only,
-            defaults to None
+            defaults to None.
     :type registry_name: typing.Optional[str]
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
             setting this to False if not using this SDK in an interactive setup. defaults to True.
     :type show_progress: typing.Optional[bool]
-    :keyword str cloud: The cloud name to use, defaults to AzureCloud.
+    :keyword cloud: The cloud name to use, defaults to AzureCloud.
+    :paramtype cloud: str
 
     .. admonition:: Example:
 
