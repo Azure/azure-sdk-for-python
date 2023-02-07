@@ -24,10 +24,12 @@ class DataAsset:
         self,
         name: Optional[str] = None,
         path: Optional[str] = None,
+        version: Optional[int] = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
         self.name = name
         self.path = path
+        self.version = version
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

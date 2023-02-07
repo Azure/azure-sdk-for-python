@@ -17,6 +17,7 @@ module_logger = logging.getLogger(__name__)
 class DataAssetSchema(metaclass=PatchedSchemaMeta):
     name = fields.Str()
     path = fields.Str()
+    version = fields.Int()
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
