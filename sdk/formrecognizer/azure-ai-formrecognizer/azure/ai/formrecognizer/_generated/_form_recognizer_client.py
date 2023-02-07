@@ -91,7 +91,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '2022-08-31' or api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             base_url = '{endpoint}/formrecognizer'
         elif api_version == '2.0':
             base_url = '{endpoint}/formrecognizer/v2.0'
@@ -114,15 +114,11 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2022-08-31: :mod:`v2022_08_31.models<azure.ai.formrecognizer.v2022_08_31.models>`
            * 2022-10-31-preview: :mod:`v2023_02_28.models<azure.ai.formrecognizer.v2023_02_28.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
            * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
         """
-        if api_version == '2022-08-31':
-            from .v2022_08_31 import models
-            return models
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from .v2023_02_28 import models
             return models
         elif api_version == '2.0':

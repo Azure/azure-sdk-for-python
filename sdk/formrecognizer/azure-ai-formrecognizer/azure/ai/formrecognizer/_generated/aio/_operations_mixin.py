@@ -32,16 +32,14 @@ class FormRecognizerClientOperationsMixin(object):
         optional description.
 
         :param authorize_copy_request: Authorize copy request parameters.
-        :type authorize_copy_request: ~azure.ai.formrecognizer.v2022_08_31.models.AuthorizeCopyRequest
+        :type authorize_copy_request: ~azure.ai.formrecognizer.v2023_02_28.models.AuthorizeCopyRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: CopyAuthorization, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.CopyAuthorization
+        :rtype: ~azure.ai.formrecognizer.v2023_02_28.models.CopyAuthorization
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('authorize_copy_document_model')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'authorize_copy_document_model'".format(api_version))
@@ -118,7 +116,9 @@ class FormRecognizerClientOperationsMixin(object):
         pages: Optional[str] = None,
         locale: Optional[str] = None,
         string_index_type: Optional[Union[str, "_models.StringIndexType"]] = None,
-        analyze_request: Optional[Union[IO, _models.AnalyzeDocumentRequest]] = None,
+        features: Optional[List[Union[str, "_models.DocumentAnalysisFeature"]]] = None,
+        custom_fields: Optional[List[str]] = None,
+        analyze_request: Optional[Union[IO, str, _models.AnalyzeDocumentRequest]] = None,
         *,
         content_type: Optional[Union[str, "_models.ContentType"]] = "application/json",
         **kwargs: Any
@@ -136,13 +136,25 @@ class FormRecognizerClientOperationsMixin(object):
         :type locale: str
         :param string_index_type: Method used to compute string offset and length. Default value is
          None.
-        :type string_index_type: str or ~azure.ai.formrecognizer.v2022_08_31.models.StringIndexType
+        :type string_index_type: str or ~azure.ai.formrecognizer.v2023_02_28.models.StringIndexType
+        :param features: List of optional analysis features.  Ex. "highResolution,formula". Default
+         value is None.
+        :type features: list[str or
+         ~azure.ai.formrecognizer.v2023_02_28.models.DocumentAnalysisFeature]
+        :param custom_fields: List of custom fields to extract.  Ex. "NumberOfGuests,StoreNumber".
+         Default value is None.
+        :type custom_fields: list[str]
         :param analyze_request: Analyze request parameters. Default value is None.
-        :type analyze_request: IO or ~azure.ai.formrecognizer.v2022_08_31.models.AnalyzeDocumentRequest
+        :type analyze_request: IO or str or
+         ~azure.ai.formrecognizer.v2023_02_28.models.AnalyzeDocumentRequest
         :keyword content_type: Media type of the body sent to the API. Known values are:
-         "application/octet-stream", "application/pdf", "image/bmp", "image/heif", "image/jpeg",
-         "image/png", "image/tiff", and "application/json". Default value is "application/json".
-        :paramtype content_type: str or ~azure.ai.formrecognizer.v2022_08_31.models.ContentType
+         "application/octet-stream", "application/pdf",
+         "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+         "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "image/bmp",
+         "image/heif", "image/jpeg", "image/png", "image/tiff", "text/html", and "application/json".
+         Default value is "application/json".
+        :paramtype content_type: str or ~azure.ai.formrecognizer.v2023_02_28.models.ContentType
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -156,9 +168,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_analyze_document')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_analyze_document'".format(api_version))
@@ -168,7 +178,7 @@ class FormRecognizerClientOperationsMixin(object):
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return await mixin_instance.begin_analyze_document(model_id, pages, locale, string_index_type, analyze_request, content_type=content_type, **kwargs)
+        return await mixin_instance.begin_analyze_document(model_id, pages, locale, string_index_type, features, custom_fields, analyze_request, content_type=content_type, **kwargs)
 
     async def begin_analyze_id_document_async(  # pylint: disable=inconsistent-return-statements
         self,
@@ -540,7 +550,7 @@ class FormRecognizerClientOperationsMixin(object):
         Builds a custom document analysis model.
 
         :param build_request: Building request parameters.
-        :type build_request: ~azure.ai.formrecognizer.v2022_08_31.models.BuildDocumentModelRequest
+        :type build_request: ~azure.ai.formrecognizer.v2023_02_28.models.BuildDocumentModelRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -555,9 +565,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_build_document_model')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_build_document_model'".format(api_version))
@@ -667,7 +675,7 @@ class FormRecognizerClientOperationsMixin(object):
         Creates a new document model from document types of existing document models.
 
         :param compose_request: Compose request parameters.
-        :type compose_request: ~azure.ai.formrecognizer.v2022_08_31.models.ComposeDocumentModelRequest
+        :type compose_request: ~azure.ai.formrecognizer.v2023_02_28.models.ComposeDocumentModelRequest
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -682,9 +690,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_compose_document_model')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_compose_document_model'".format(api_version))
@@ -751,7 +757,7 @@ class FormRecognizerClientOperationsMixin(object):
         :param model_id: Unique document model name.
         :type model_id: str
         :param copy_to_request: Copy to request parameters.
-        :type copy_to_request: ~azure.ai.formrecognizer.v2022_08_31.models.CopyAuthorization
+        :type copy_to_request: ~azure.ai.formrecognizer.v2023_02_28.models.CopyAuthorization
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -766,9 +772,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('begin_copy_document_model_to')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_copy_document_model_to'".format(api_version))
@@ -902,9 +906,7 @@ class FormRecognizerClientOperationsMixin(object):
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('delete_document_model')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'delete_document_model'".format(api_version))
@@ -989,13 +991,11 @@ class FormRecognizerClientOperationsMixin(object):
         :type result_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: AnalyzeResultOperation, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.AnalyzeResultOperation
+        :rtype: ~azure.ai.formrecognizer.v2023_02_28.models.AnalyzeResultOperation
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_analyze_document_result')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_analyze_document_result'".format(api_version))
@@ -1363,13 +1363,11 @@ class FormRecognizerClientOperationsMixin(object):
         :type model_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: DocumentModelDetails, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.DocumentModelDetails
+        :rtype: ~azure.ai.formrecognizer.v2023_02_28.models.DocumentModelDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_document_model')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_document_model'".format(api_version))
@@ -1393,13 +1391,11 @@ class FormRecognizerClientOperationsMixin(object):
         :return: An iterator like instance of either GetDocumentModelsResponse or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2022_08_31.models.GetDocumentModelsResponse]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2023_02_28.models.GetDocumentModelsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_document_models')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_document_models'".format(api_version))
@@ -1424,13 +1420,11 @@ class FormRecognizerClientOperationsMixin(object):
         :type operation_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationDetails, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.OperationDetails
+        :rtype: ~azure.ai.formrecognizer.v2023_02_28.models.OperationDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_operation')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_operation'".format(api_version))
@@ -1454,13 +1448,11 @@ class FormRecognizerClientOperationsMixin(object):
         :return: An iterator like instance of either GetOperationsResponse or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2022_08_31.models.GetOperationsResponse]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.ai.formrecognizer.v2023_02_28.models.GetOperationsResponse]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_operations')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_operations'".format(api_version))
@@ -1482,13 +1474,11 @@ class FormRecognizerClientOperationsMixin(object):
 
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ResourceDetails, or the result of cls(response)
-        :rtype: ~azure.ai.formrecognizer.v2022_08_31.models.ResourceDetails
+        :rtype: ~azure.ai.formrecognizer.v2023_02_28.models.ResourceDetails
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         api_version = self._get_api_version('get_resource_details')
-        if api_version == '2022-08-31':
-            from ..v2022_08_31.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
-        elif api_version == '2022-10-31-preview':
+        if api_version == '2022-10-31-preview':
             from ..v2023_02_28.aio.operations import FormRecognizerClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_resource_details'".format(api_version))
