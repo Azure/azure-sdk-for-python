@@ -1,10 +1,6 @@
 # Release History
 
-## 12.4.2 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 12.4.2 (2023-02-07)
 
 ### Bugs Fixed
 * Fixed a bug when deleting an entity with partition key or row key in empty string.([#24480](https://github.com/Azure/azure-sdk-for-python/issues/24480))
