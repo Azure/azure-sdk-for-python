@@ -110,7 +110,7 @@ class TestDSLGroup:
 
         values = list(getattr(MixedGroup, IOConstants.GROUP_ATTR_NAME).values.values())
         assert len(values) == 5
-        values = sorted(values, key=lambda item: item["port_name"])
+        values = sorted(values, key=lambda item: item["_port_name"])
         for idx, val in enumerate(values):
             assert val.type == "integer"
             if idx < 4:
@@ -238,10 +238,10 @@ class TestDSLGroup:
             "int_param7",
         ]
         for _id, (expected_key, value) in enumerate(zip(expected_keys, list(params.values()))):
-            assert value.port_name == expected_key
+            assert value._port_name == expected_key
             if _id > 4:
                 assert value.default is not None
-                assert value.port_name == f"int_param{value.default}"
+                assert value._port_name == f"int_param{value.default}"
 
     def test_pipeline_with_group(self):
         class EnumOps(PyEnum):
@@ -411,9 +411,9 @@ class TestDSLGroup:
                 "int_param:int=None,"
                 "str_default_param:str='test',"
                 "str_param:str=None,"
-                "input_folder:{'type':'uri_folder','port_name':'input_folder'}=None,"
+                "input_folder:{'type':'uri_folder'}=None,"
                 "optional_int_param:int=5,"
-                "output_folder:{'type':'uri_folder','port_name':'output_folder'}=None)"
+                "output_folder:{'type':'uri_folder'}=None)"
                 "->None" in stdout_str_IO.getvalue().replace(" ", "")
         )
         sys.stdout = original_out

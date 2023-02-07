@@ -264,7 +264,7 @@ class PipelineComponent(Component):
                 else:
                     # Raise exception if pipeline input is optional set by user but link to required inputs.
                     validation_result.append_error(
-                        yaml_path="inputs.{}".format(pipeline_input.port_name),
+                        yaml_path="inputs.{}".format(pipeline_input._port_name),
                         message=f"Pipeline optional Input binding to required inputs: {required_bindings}",
                     )
         return validation_result
