@@ -149,7 +149,6 @@ class AMQPClientAsync(AMQPClientSync):
                         extra=self._network_trace_params
                     )
                     await asyncio.shield(self._connection.listen(wait=self._socket_timeout))
-                    print("Finished listening")
                     # await self._connection.listen()
                     start_time = current_time
                 await asyncio.sleep(1)
@@ -229,6 +228,9 @@ class AMQPClientAsync(AMQPClientSync):
         :type connection: ~pyamqp.aio.Connection
         """
         # pylint: disable=protected-access
+
+        self._lock_async = asyncio.Lock()
+
         if self._session:
             return  # already open.
         if connection:
@@ -266,8 +268,7 @@ class AMQPClientAsync(AMQPClientSync):
         self._network_trace_params["amqpConnection"] = self._connection._container_id
         self._network_trace_params["amqpSession"] = self._session.name
         self._shutdown = False
-        # TODO: Looks like this is broken - should re-enable later and test
-        # correct empty frame behaviour
+ 
         if self._keep_alive_interval:
            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
@@ -277,7 +278,6 @@ class AMQPClientAsync(AMQPClientSync):
         If the client was opened using an external Connection,
         this will be left intact.
         """
-        print("Closing")
         self._shutdown = True
         if not self._session:
             return  # already closed.
@@ -334,7 +334,6 @@ class AMQPClientAsync(AMQPClientSync):
         :rtype: bool
         :raises: TimeoutError if CBS authentication timeout reached.
         """
-        print("Do work")
         if self._shutdown:
             return False
         if not await self.client_ready_async():
@@ -364,7 +363,7 @@ class AMQPClientAsync(AMQPClientSync):
         operation_type = kwargs.pop("operation_type", None)
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop('timeout', 0)
-        with self._lock:
+        with self._lock_async:
             try:
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
@@ -852,38 +851,39 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
         :rtype: generator[~uamqp.message.Message]
         """
-  
         auto_complete = self.auto_complete
         self.auto_complete = False
         receiving = True
         message = None
         self._last_activity_stamp = time.time()
+        self._timeout_reached = False
         try:
-            # I think if it is just this one loop then when we close the connection we still might have items in queue
             while receiving and not self._timeout_reached:
                 print("In generator")
                 if not self._running_iter:
+                    print("Update iter")
                     self._last_activity_stamp = time.time()
                 self._running_iter = True
                 if self._timeout > 0:
-                    print(time.time() - self._last_activity_stamp)
                     if time.time() - self._last_activity_stamp >= self._timeout:
                         print("Time Out")
                         self._timeout_reached = True
 
                 if not self._timeout_reached:
                     receiving = await self.do_work_async()
-
+                    
                 while not self._received_messages.empty():
+                    # print("Messages not empty")
                     message = self._received_messages.get()
-                    self._received_messages.task_done()
                     self._last_activity_stamp = time.time()
+                    self._received_messages.task_done()
                     yield message
                     await self._complete_message_async(message, auto_complete)
         finally:
             #Check what self._received_messages is 
             # what happens to queue when Empty exception thrown, do we need to reset it?
             if self._shutdown:
+                print("Calling close async")
                 await self.close_async()
 
     async def _complete_message_async(self, message, auto):

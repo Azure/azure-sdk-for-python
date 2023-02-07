@@ -217,6 +217,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         # pylint: disable=protected-access
         original_timeout = None
         while True:
+            print("In iter")
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
             if max_wait_time:
@@ -228,10 +229,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 links = get_receive_links(message)
                 with receive_trace_context_manager(self, links=links):
                     yield message
+                    # print("Yielded")
             except StopAsyncIteration:
+                print("Stop Iteration")
                 break
             finally:
-                self._receive_context.clear()
+                # print("Clear")
+                # self._receive_context.clear()
                 if original_timeout:
                     try:
                         self._handler._timeout = original_timeout
@@ -263,13 +267,14 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
     async def _iter_next(self):
         try:
-            self._receive_context.set()
             await self._open()
+            self._receive_context.set()
             # TODO: Add in Recieve Message Iterator
             if not self._message_iter:
                 self._message_iter = await self._handler.receive_messages_iter_async()
             pyamqp_message = await self._message_iter.__anext__()
             message = self._build_message(pyamqp_message)
+            # print("message")
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -278,6 +283,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 self._auto_lock_renewer.register(self, message)
             return message
         finally:
+            # print("CLEAR")
             self._receive_context.clear()
 
     @classmethod
@@ -382,7 +388,9 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             timeout=self._max_wait_time * 1 if self._max_wait_time else 0, # TODO: This is not working
             link_credit=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
-            keep_alive_interval=self._config.keep_alive,
+            keep_alive_interval=self._config.keep_alive
+            if self._prefetch_count != 1
+            else 5,
             shutdown_after_timeout=False,
             link_properties = {CONSUMER_IDENTIFIER:self._name}
         )
@@ -417,6 +425,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self._open()
 
             amqp_receive_client = self._handler
+            amqp_receive_client._running_iter = False
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
