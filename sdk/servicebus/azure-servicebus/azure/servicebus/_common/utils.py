@@ -152,8 +152,9 @@ def get_renewable_start_time(renewable):
         )
 
 
-def get_renewable_lock_duration(renewable):
-    # type: (Union[ServiceBusReceivedMessage, BaseSession]) -> datetime.timedelta
+def get_renewable_lock_duration(
+    renewable: Union["ServiceBusReceivedMessage", "BaseSession"]
+) -> datetime.timedelta:
     # pylint: disable=protected-access
     try:
         return max(
@@ -198,12 +199,7 @@ def generate_dead_letter_entity_name(
         if queue_name
         else (topic_name + "/Subscriptions/" + subscription_name)
     )
-    entity_name = "{}{}".format(
-        entity_name,
-        TRANSFER_DEAD_LETTER_QUEUE_SUFFIX
-        if transfer_deadletter
-        else DEAD_LETTER_QUEUE_SUFFIX,
-    )
+    entity_name = f"{entity_name}{TRANSFER_DEAD_LETTER_QUEUE_SUFFIX if transfer_deadletter else DEAD_LETTER_QUEUE_SUFFIX}"
 
     return entity_name
 
@@ -236,8 +232,8 @@ def _convert_to_single_service_bus_message(
         return message
     except TypeError:
         raise TypeError(
-            "Only AmqpAnnotatedMessage, ServiceBusMessage instances or Mappings representing messages are supported. "
-            "Received instead: {}".format(message.__class__.__name__)
+            f"Only AmqpAnnotatedMessage, ServiceBusMessage instances or Mappings representing messages are supported. "
+            f"Received instead: {message.__class__.__name__}"
         )
 
 
@@ -265,8 +261,7 @@ def transform_outbound_messages(
     return _convert_to_single_service_bus_message(messages, message_type, to_outgoing_amqp_message)
 
 
-def strip_protocol_from_uri(uri):
-    # type: (str) -> str
+def strip_protocol_from_uri(uri: str) -> str:
     """Removes the protocol (e.g. http:// or sb://) from a URI, such as the FQDN."""
     left_slash_pos = uri.find("//")
     if left_slash_pos != -1:
@@ -276,7 +271,7 @@ def strip_protocol_from_uri(uri):
 
 @contextmanager
 def send_trace_context_manager(span_name=SPAN_NAME_SEND):
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
 
     if span_impl_type is not None:
         with span_impl_type(name=span_name, kind=SpanKind.CLIENT) as child:
@@ -292,7 +287,7 @@ def receive_trace_context_manager(
     links: List["Link"] = None
 ) -> Iterator[None]:
     """Tracing"""
-    span_impl_type = settings.tracing_implementation()  # type: Type[AbstractSpan]
+    span_impl_type: Type[AbstractSpan] = settings.tracing_implementation()
     if span_impl_type is None:
         yield
     else:
@@ -330,7 +325,7 @@ def trace_message(
                 )
     except Exception as exp:  # pylint:disable=broad-except
         _log.warning("trace_message had an exception %r", exp)
-    
+
     return message
 
 
@@ -359,8 +354,7 @@ def get_receive_links(messages):
     return links
 
 
-def parse_sas_credential(credential):
-    # type: (AzureSasCredential) -> Tuple
+def parse_sas_credential(credential: "AzureSasCredential") -> Tuple:
     sas = credential.signature
     parsed_sas = sas.split('&')
     expiry = None
