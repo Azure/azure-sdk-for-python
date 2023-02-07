@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
 import json
 from typing import overload, List, Tuple
 from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretReferenceConfigurationSetting
@@ -11,7 +12,7 @@ from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
 from azure.core.credentials_async import AsyncTokenCredential
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from .._constants import FEATURE_MANAGEMENT_KEY
+from .._constants import *
 from .._azureappconfigurationprovider import __is_json_content_type
 from .._user_agent import USER_AGENT
 
@@ -125,6 +126,22 @@ def __buildprovider(connection_string:str, endpoint:str, credential,
         key_vault_options.credential or key_vault_options.secret_clients or key_vault_options.secret_resolver
     ):
         correlation_context += ",UsesKeyVault"
+
+        host_type = ""
+
+    if (os.environ.get(AzureFunctionEnvironmentVariable) is not None):
+        host_type = "AzureFunctions"
+    elif (os.environ.get(AzureWebAppEnvironmentVariable) is not None):
+        host_type = "AzureWebApps"
+    elif (os.environ.get(ContainerAppEnvironmentVariable) is not None):
+        host_type = "ContainerApps"
+    elif (os.environ.get(KubernetesEnvironmentVariable) is not None):
+        host_type = "Kubernetes"
+    elif (os.environ.get(ServiceFabricEnvironmentVariable) is not None):
+        host_type = "ServiceFabric"
+    
+    if host_type is not "":
+        correlation_context += ",Host=" + host_type
 
     headers["Correlation-Context"] = correlation_context
     useragent = USER_AGENT

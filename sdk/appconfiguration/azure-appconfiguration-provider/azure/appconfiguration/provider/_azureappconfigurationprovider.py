@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import os
 import json
 from typing import Any, Dict, Iterable, Mapping, Optional, Union, overload, List, Tuple, TYPE_CHECKING
 from azure.appconfiguration import (
@@ -12,7 +13,7 @@ from azure.appconfiguration import (
 )
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from ._constants import FEATURE_MANAGEMENT_KEY
+from ._constants import *
 
 from ._user_agent import USER_AGENT
 
@@ -91,9 +92,7 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
             raise TypeError("Received multiple values for parameter 'credential'.")
         endpoint, credential = args
 
-    if not (endpoint and credential) or not connection_string:
-        raise ValueError("Please pass either endpoint and credential, or a connection string.")
-    elif endpoint and connection_string:
+    if (endpoint or credential) and connection_string:
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
 
@@ -150,6 +149,22 @@ def __buildprovider(
         key_vault_options.credential or key_vault_options.secret_clients or key_vault_options.secret_resolver
     ):
         correlation_context += ",UsesKeyVault"
+
+    host_type = ""
+
+    if (os.environ.get(AzureFunctionEnvironmentVariable) is not None):
+        host_type = "AzureFunctions"
+    elif (os.environ.get(AzureWebAppEnvironmentVariable) is not None):
+        host_type = "AzureWebApps"
+    elif (os.environ.get(ContainerAppEnvironmentVariable) is not None):
+        host_type = "ContainerApps"
+    elif (os.environ.get(KubernetesEnvironmentVariable) is not None):
+        host_type = "Kubernetes"
+    elif (os.environ.get(ServiceFabricEnvironmentVariable) is not None):
+        host_type = "ServiceFabric"
+    
+    if host_type is not "":
+        correlation_context += ",Host=" + host_type
 
     headers["Correlation-Context"] = correlation_context
     useragent = USER_AGENT
