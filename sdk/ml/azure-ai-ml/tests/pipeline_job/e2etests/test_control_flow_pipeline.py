@@ -225,6 +225,22 @@ class TestParallelFor(TestConditionalNodeInPipeline):
         }
         assert_foreach(client, randstr("job_name"), source, expected_node)
 
+    def test_path_on_datastore_in_items(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/control_flow/parallel_for/path_on_ds_items.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_path": {"uri": '
+                     '"azureml://datastores/workspaceblobstore/paths/path/on/datastore/1", '
+                     '"job_input_type": "uri_folder"}}, {"component_in_path": {"uri": '
+                     '"azureml://datastores/workspaceblobstore/paths/path/on/datastore/2", '
+                     '"job_input_type": "uri_folder"}}]',
+            'outputs': {'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'}},
+            'type': 'parallel_for'
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node)
+
+
 def assert_control_flow_in_pipeline_component(client, component_path, pipeline_path):
     params_override = [{"component": component_path}]
     pipeline_job = load_job(

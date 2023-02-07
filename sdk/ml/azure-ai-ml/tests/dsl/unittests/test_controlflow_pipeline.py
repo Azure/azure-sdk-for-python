@@ -311,3 +311,51 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         pipeline_component = my_job.component
         rest_component = pipeline_component._to_rest_object().as_dict()
         assert rest_component["properties"]["component_spec"]["outputs"] == {'output': component_out_dict}
+
+    @pytest.mark.parametrize(
+        "component_in_path, error_message",
+        [
+            (
+                # local file input
+                Input(path="./tests/test_configs/components/helloworld_component.yml"),
+                "Local file input"
+            ),
+            (
+                # empty path
+                Input(path=None),
+                "Input path not provided"
+            ),
+            (
+                # dict Input
+                {"job_input_path": "azureml://path/to/file"},
+                "Unsupported type"
+            ),
+        ]
+    )
+    def test_invalid_parallel_for_asset_items(self, component_in_path, error_message):
+        basic_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml",
+        )
+
+        @pipeline
+        def my_pipeline():
+            body = basic_component(component_in_path=Input(path="test_path1"))
+
+            foreach_node = parallel_for(
+                body=body,
+                items={
+                    "iter1": {
+                        "component_in_number": 1,
+                        "component_in_path": component_in_path
+                    },
+                }
+            )
+            return {
+                "output": foreach_node.outputs.component_out_path
+            }
+
+        with pytest.raises(ValidationException) as e:
+            pipeline_job = my_pipeline()
+            pipeline_job.settings.default_compute_target = "test"
+            pipeline_job._validate(raise_error=True)
+        assert error_message in str(e.value)

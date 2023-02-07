@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import json
+import os
 from typing import Dict, Union
 
 from azure.ai.ml import Output, Input
@@ -13,7 +14,7 @@ from azure.ai.ml.constants._component import ComponentParameterTypes, ControlFlo
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
-from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, InputOutputBase
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, validate_attribute_type
 from azure.ai.ml.exceptions import UserErrorException
@@ -28,7 +29,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
     :param body: Pipeline job for the parallel for loop body.
     :type body: Pipeline
     :param items: The loop body's input which will bind to the loop node.
-    :type items: Union[list, dict, str, PipelineInput, NodeOutput]
+    :type items: typing.Union[list, dict, str, NodeOutput, PipelineInput]
     :param max_concurrency: Maximum number of concurrent iterations to run. All loop body nodes will be executed
         in parallel if not specified.
     :type max_concurrency: int
@@ -105,9 +106,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
             "items": (dict, list, str, PipelineInput, NodeOutput),
         }
 
-    def _to_rest_item(self, item: Dict[str, Union[Input, InputOutputBase]]) -> dict:
+    @classmethod
+    def _to_rest_item(cls, item: dict) -> dict:
         """Convert item to rest object."""
-        # TODO: convert primitive type input to RestJobInput
         primitive_inputs, asset_inputs = {}, {}
         # validate item
         for key, val in item.items():
@@ -118,34 +119,37 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return {
             # asset type inputs will be converted to JobInput dict:
             # {"asset_param": {"uri": "xxx", "job_input_type": "uri_file"}}
-            **self._input_entity_to_rest_inputs(input_entity=asset_inputs),
+            **cls._input_entity_to_rest_inputs(input_entity=asset_inputs),
             # primitive inputs has primitive type value like this
             # {"int_param": 1}
             **primitive_inputs
         }
 
-    def _to_rest_items(self):
+    @classmethod
+    def _to_rest_items(cls, items: Union[list, dict, str, NodeOutput, PipelineInput]) -> str:
         """Convert items to rest object."""
-        self._validate_items(raise_error=True)
-
-        if isinstance(self.items, list):
-            rest_items = [self._to_rest_item(item=i) for i in self.items]
-        elif isinstance(self.items, dict):
-            rest_items = {k: self._to_rest_item(item=v) for k, v in self.items.items()}
-        elif isinstance(self.items, InputOutputBase):
-            # TODO: only support output or pipeline input
-            rest_items = str(self.items)
-        elif isinstance(self.items, str):
-            rest_items = self.items
+        # validate items.
+        cls._validate_items(items=items, raise_error=True, body_component=None)
+        # convert items to rest object
+        if isinstance(items, list):
+            rest_items = [cls._to_rest_item(item=i) for i in items]
+        elif isinstance(items, dict):
+            rest_items = {k: cls._to_rest_item(item=v) for k, v in items.items()}
+        elif isinstance(items, (NodeOutput, PipelineInput)):
+            rest_items = str(items)
+        elif isinstance(items, str):
+            rest_items = items
         else:
-            raise UserErrorException("Unsupported items type: {}".format(type(self.items)))
+            raise UserErrorException("Unsupported items type: {}".format(type(items)))
         return json.dumps(rest_items)
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
+        # convert items to rest object
+        rest_items = self._to_rest_items(items=self.items)
         rest_node.update(dict(
-            items=self._to_rest_items(),
+            items=rest_items,
             outputs=self._to_rest_outputs()
         ))
         return convert_ordered_dict_to_dict(rest_node)
@@ -153,7 +157,6 @@ class ParallelFor(LoopNode, NodeIOMixin):
     @classmethod
     def _from_rest_item(cls, rest_item):
         """Convert rest item to item."""
-        # TODO: convert primitive inputs to RestJobInput
         primitive_inputs, asset_inputs = {}, {}
         for key, val in rest_item.items():
             if isinstance(val, dict) and val.get("job_input_type"):
@@ -219,15 +222,19 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
     def _customized_validate(self):
         """Customized validation for parallel for node."""
+        # pylint: disable=protected-access
         validation_result = self._validate_body(raise_error=False)
-        validation_result.merge_with(self._validate_items(raise_error=False))
+        validation_result.merge_with(
+            self._validate_items(items=self.items, raise_error=False, body_component=self.body._component)
+        )
         return validation_result
 
-    def _validate_items(self, raise_error=True):
-        validation_result = self._create_empty_validation_result()
-        if self.items is not None:
-            items = self.items
+    @classmethod
+    def _validate_items(cls, items, raise_error=True, body_component=None):
+        validation_result = cls._create_empty_validation_result()
+        if items is not None:
             if isinstance(items, str):
+                # TODO: remove the validation
                 # try to deserialize str if it's a json string
                 try:
                     items = json.loads(items)
@@ -242,7 +249,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 items = list(items.values())
             if isinstance(items, list):
                 if len(items) > 0:
-                    self._validate_items_list(items, validation_result)
+                    cls._validate_items_list(items, validation_result, body_component=body_component)
                 else:
                     validation_result.append_error(
                         yaml_path="items",
@@ -253,11 +260,12 @@ class ParallelFor(LoopNode, NodeIOMixin):
                 message="Items is required for parallel_for node",
             )
         return validation_result.try_raise(
-            self._get_validation_error_target(),
+            cls._get_validation_error_target(),
             raise_error=raise_error,
         )
 
-    def _validate_items_list(self, items: list, validation_result):
+    @classmethod
+    def _validate_items_list(cls, items: list, validation_result, body_component=None):
         # pylint: disable=protected-access
         meta = {}
         # all items have to be dict and have matched meta
@@ -281,7 +289,6 @@ class ParallelFor(LoopNode, NodeIOMixin):
                             message=msg
                         )
                 # items' keys should appear in body's inputs
-                body_component = self.body._component
                 if isinstance(body_component, Component) and (not item.keys() <= body_component.inputs.keys()):
                     msg = f"Item {item} got unmatched inputs with loop body component inputs {body_component.inputs}."
                     validation_result.append_error(
@@ -289,7 +296,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
                         message=msg
                     )
                 # validate item value type
-                self._validate_item_value_type(item=item, validation_result=validation_result)
+                cls._validate_item_value_type(item=item, validation_result=validation_result)
 
     @classmethod
     def _validate_item_value_type(cls, item: dict, validation_result):
@@ -303,3 +310,20 @@ class ParallelFor(LoopNode, NodeIOMixin):
                         type(val), supported_types
                     )
                 )
+            if isinstance(val, Input):
+                cls._validate_input_item_value(entry=val, validation_result=validation_result)
+
+    @classmethod
+    def _validate_input_item_value(cls, entry: Input, validation_result):
+        if not isinstance(entry, Input):
+            return
+        if not entry.path:
+            validation_result.append_error(
+                yaml_path="items",
+                message=f"Input path not provided for {entry}.",
+            )
+        if isinstance(entry.path, str) and os.path.exists(entry.path):
+            validation_result.append_error(
+                yaml_path="items",
+                message=f"Local file input {entry} is not supported, please create it as a dataset.",
+            )

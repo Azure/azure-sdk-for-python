@@ -664,7 +664,6 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             after_node = hello_world_component(
                 component_in_path=parallel_node.outputs.component_out_path,
             )
-            after_node.compute = "cpu-cluster"
 
         pipeline_job = parallel_for_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
