@@ -83,9 +83,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          <https://docs.microsoft.com/azure/data-explorer/kusto/query/>`_.
         :type query: str
         :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
-         a timedelta and a start datetime, or a start datetime/end datetime.
+         a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+         the query to a timespan.
         :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-         or tuple[~datetime.datetime, ~datetime.datetime]
+         or tuple[~datetime.datetime, ~datetime.datetime] or None
         :keyword int server_timeout: the server timeout in seconds. The default timeout is 3 minutes,
          and the maximum timeout is 10 minutes.
         :keyword bool include_statistics: To get information about query statistics.

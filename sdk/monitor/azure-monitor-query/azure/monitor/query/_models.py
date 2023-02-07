@@ -294,9 +294,10 @@ class LogsBatchQuery:
      <https://azure.microsoft.com/documentation/articles/app-insights-analytics-reference/>`_.
     :type query: str
     :keyword timespan: Required. The timespan for which to query the data. This can be a timedelta,
-     a timedelta and a start datetime, or a start datetime/end datetime.
+     a timedelta and a start datetime, or a start datetime/end datetime. Set to None to not constrain
+     the query to a timespan.
     :paramtype timespan: ~datetime.timedelta or tuple[~datetime.datetime, ~datetime.timedelta]
-     or tuple[~datetime.datetime, ~datetime.datetime]
+     or tuple[~datetime.datetime, ~datetime.datetime] or None
     :keyword additional_workspaces: A list of workspaces that are included in the query.
      These can be qualified workspace names, workspace IDs, or Azure resource IDs.
     :paramtype additional_workspaces: Optional[list[str]]
