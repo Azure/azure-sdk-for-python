@@ -196,7 +196,7 @@ class TestComponentFunc:
         assert component._build_outputs() == {"component_out_path": output_data}
 
         # set output via output binding
-        component.outputs.component_out_path._data = PipelineOutput(name="pipeline_output", owner="pipeline", meta=None)
+        component.outputs.component_out_path._data = PipelineOutput(port_name="pipeline_output", owner="pipeline", meta=None)
         assert component._build_outputs() == {
             "component_out_path": Output(path="${{parent.outputs.pipeline_output}}", type="uri_folder", mode=None)
         }
