@@ -2,6 +2,15 @@
 
 ## 1.5.0 (Unreleased)
 
+### Features Added
+
+### Bugs Fixed
+
+### Other Changes
+
+- Added dependency on `azure-mgmt-resource`
+- Added dependency on `azure-mgmt-resourcegraph`
+
 ## 1.4.0 (2023-02-07)
 
 ### Features Added
