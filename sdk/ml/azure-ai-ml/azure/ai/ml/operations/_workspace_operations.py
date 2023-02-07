@@ -15,7 +15,8 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
 )
-from azure.ai.ml.entities._workspace.networking import ManagedNetwork, IsolationMode
+from azure.ai.ml.entities._workspace.networking import ManagedNetwork
+from azure.ai.ml.constants._workspace import IsolationMode
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity

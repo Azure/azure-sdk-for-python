@@ -124,8 +124,8 @@ from ._workspace.diagnose import (
     DiagnoseWorkspaceParameters,
 )
 from ._workspace.networking import (
-    OutboundRule, ManagedNetwork, IsolationMode, FqdnDestination, ServiceTagDestination,
-    PrivateEndpointDestination, Protocol
+    OutboundRule, ManagedNetwork, FqdnDestination, ServiceTagDestination,
+    PrivateEndpointDestination
 )
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
@@ -196,8 +196,6 @@ __all__ = [
     "PrivateEndpoint",
     "OutboundRule",
     "ManagedNetwork",
-    "IsolationMode",
-    "Protocol",
     "FqdnDestination",
     "ServiceTagDestination",
     "PrivateEndpointDestination",
