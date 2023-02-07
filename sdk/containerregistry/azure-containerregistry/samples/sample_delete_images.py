@@ -46,7 +46,7 @@ class DeleteImages(object):
     def delete_images(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
-        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client: # type: ignore[arg-type]
+        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             for repository in client.list_repository_names():
                 print(repository)
 

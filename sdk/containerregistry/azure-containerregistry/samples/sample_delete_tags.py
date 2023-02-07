@@ -46,7 +46,7 @@ class DeleteTags(object):
 
     def delete_tags(self):
         load_registry()
-        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client: # type: ignore[arg-type]
+        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # [START list_repository_names]
             for repository in client.list_repository_names():
                 print(repository)

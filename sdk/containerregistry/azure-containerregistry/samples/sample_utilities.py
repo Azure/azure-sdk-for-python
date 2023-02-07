@@ -49,9 +49,9 @@ def load_registry():
 
 def _import_image(authority, repository, tags):
     credential = ClientSecretCredential(
-        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"), # type: ignore[arg-type]
-        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"), # type: ignore[arg-type]
-        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"), # type: ignore[arg-type]
+        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
+        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
+        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
         authority=authority
     )
     sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
@@ -59,7 +59,7 @@ def _import_image(authority, repository, tags):
     scope = [audience + "/.default"]
     mgmt_client = ContainerRegistryManagementClient(
         credential,
-        sub_id, # type: ignore[arg-type]
+        sub_id,
         api_version="2019-05-01",
         base_url=audience,
         credential_scopes=scope
@@ -100,9 +100,9 @@ def get_audience(authority):
 def get_credential(authority, **kwargs):
     if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         return ClientSecretCredential(
-            tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"), # type: ignore[arg-type]
-            client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"), # type: ignore[arg-type]
-            client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"), # type: ignore[arg-type]
+            tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
+            client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
+            client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
             authority=authority
         )
     is_async = kwargs.pop("is_async", False)

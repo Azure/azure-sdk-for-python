@@ -48,7 +48,7 @@ class ListTags(object):
     def list_tags(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
-        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client: # type: ignore[arg-type]
+        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             manifest = client.get_manifest_properties("library/hello-world", "latest")
             print("Tags of " + manifest.repository_name + ": ")
             # Iterate through all the tags

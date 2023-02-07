@@ -49,7 +49,7 @@ class ListTagsAsync(object):
     async def list_tags(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient    
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client: # type: ignore[arg-type]
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             manifest = await client.get_manifest_properties("library/hello-world", "latest")
             print("Tags of " + manifest.repository_name + ": ")
             # Iterate through all the tags

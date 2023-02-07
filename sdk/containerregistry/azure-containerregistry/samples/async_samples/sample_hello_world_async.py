@@ -49,7 +49,7 @@ class HelloWorldAsync(object):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
         # [START create_registry_client]
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client: # type: ignore[arg-type]
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
         # [END create_registry_client]
             # Iterate through all the repositories
             async for repository_name in client.list_repository_names():

@@ -48,7 +48,7 @@ class DeleteImagesAsync(object):
     async def delete_images(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client: # type: ignore[arg-type]
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             async for repository in client.list_repository_names():
                 print(repository)
 

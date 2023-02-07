@@ -49,7 +49,7 @@ class SetImagePropertiesAsync(object):
     async def set_image_properties(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
-        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client: # type: ignore[arg-type]
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # Set permissions on the v1 image's "latest" tag
             await client.update_manifest_properties(
                 "library/hello-world",
