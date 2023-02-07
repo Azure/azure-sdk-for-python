@@ -44,7 +44,7 @@ class InternalInput(Input):
         self.datastore_mode = datastore_mode
         self.is_resource = is_resource
         if "type" in kwargs:
-            kwargs["type"] = self.convert_input_type(kwargs["type"])
+            kwargs["type"] = self._convert_ui_widget_type(kwargs["type"])
         super().__init__(**kwargs)
 
     @property
