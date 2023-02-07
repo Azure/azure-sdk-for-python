@@ -363,6 +363,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         tox_command_tuples.append((tox_execution_array, package_dir))
 
     if in_ci() and skipped_tox_checks:
+        warning_content = ""
         for check in skipped_tox_checks:
             warning_content += f"{check} is skipped by packages: {sorted(set(skipped_tox_checks[check]))}. \n"
 
