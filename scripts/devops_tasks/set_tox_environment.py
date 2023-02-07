@@ -65,7 +65,7 @@ def process_ci_skips(service: str) -> None:
             all_packages = set([os.path.basename(pkg) for pkg in targeted_packages])
             set_ci_variable(f"Skip.{check[0].upper()}{check[1:]}", "true")
             output_ci_warning(
-                    "All targeted packages {all_packages} skip the {check} check. Omitting step from build.",
+                    f"All targeted packages {all_packages} skip the {check} check. Omitting step from build.",
                     "set_tox_environment.py()",
             )
 
