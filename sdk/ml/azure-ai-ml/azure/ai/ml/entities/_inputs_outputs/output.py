@@ -86,9 +86,9 @@ class Output(_InputOutputBase):
 
     def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs):
         super(Output, self).__init__(type=type)
-        # As an annotation, it is not allowed to initialize the _arg_name.
-        # The _arg_name will be updated by the annotated variable _arg_name.
-        self._arg_name = None
+        # As an annotation, it is not allowed to initialize the _port_name.
+        # The _port_name will be updated by the annotated variable _port_name.
+        self._port_name = None
         self.name = kwargs.pop('name', None)
         self.version = kwargs.pop('version', None)
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
