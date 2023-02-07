@@ -19,41 +19,45 @@ from azure.ai.ml._azure_environments import (
 from azure.ai.ml.constants._common import  ArmConstants, AZUREML_CLOUD_ENV_NAME
 from azure.mgmt.core import ARMPipelineClient
 
-class MockResponse:
-    def __init__(self):
-        self.status_code = 201
-    def __enter__(self):
-        return self
-    def __exit__(self, exc_type, exc_value, traceback):
-        return
-    def json(self):
-        return [
-            {
-                "name": "TEST_ENV", 
-                "portal": "testportal.azure.com", 
-                "resourceManager": "testresourcemanager.azure.com",
-                "authentication": {
-                    "loginEndpoint": "testdirectoryendpoint.azure.com"
+def mocked_send_request_get(*args, **kwargs):
+    class MockResponse:
+        def __init__(self):
+            self.status_code = 201
+        def __enter__(self):
+            return self
+        def __exit__(self, exc_type, exc_value, traceback):
+            return
+        def json(self):
+            return [
+                {
+                    "name": "TEST_ENV", 
+                    "portal": "testportal.azure.com", 
+                    "resourceManager": "testresourcemanager.azure.com",
+                    "authentication": {
+                        "loginEndpoint": "testdirectoryendpoint.azure.com"
+                    },
+                    "suffixes": {
+                        "storage": "teststorageendpoint"
+                    }
                 },
-                "suffixes": {
-                    "storage": "teststorageendpoint"
-                }
-            },
-            {
-                "name": "TEST_ENV2", 
-                "portal": "testportal.azure.windows.net", 
-                "resourceManager": "testresourcemanager.azure.com",
-                "authentication": {
-                    "loginEndpoint": "testdirectoryendpoint.azure.com"
+                {
+                    "name": "TEST_ENV2", 
+                    "portal": "testportal.azure.windows.net", 
+                    "resourceManager": "testresourcemanager.azure.com",
+                    "authentication": {
+                        "loginEndpoint": "testdirectoryendpoint.azure.com"
+                    },
+                    "suffixes": {
+                        "storage": "teststorageendpoint"
+                    }
                 },
-                "suffixes": {
-                    "storage": "teststorageendpoint"
+                {
+                    "name": "MISCONFIGURED"
                 }
-            },
-            {
-                "name": "MISCONFIGURED"
-            }
-        ]
+            ]
+    return MockResponse()
+
+
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestCloudEnvironments:
@@ -130,14 +134,15 @@ class TestCloudEnvironments:
         assert "https://usgovarizona.api.ml.azure.us/" in base_url
 
     @mock.patch.dict(os.environ, {}, clear=True)
-    @mock.patch("azure.mgmt.core.ARMPipelineClient", "send_request", return_value=MockResponse())
-    def test_get_cloud_from_arm(self, mock_arm_pipeline_client):
-        print("mock_client base_url", mock_arm_pipeline_client._base_url)
+    @mock.patch("azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get)
+    def test_get_cloud_from_arm(self, mock_arm_pipeline_client_send_request):
+        
         _set_cloud('TEST_ENV')
         cloud_details = _get_cloud_information_from_metadata("TEST_ENV")
         assert cloud_details.get("cloud") == "TEST_ENV"
 
     @mock.patch.dict(os.environ, {}, clear=True)
+    @mock.patch("azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get)
     def test_all_endpointurls_used(self, mock_get):
         cloud_details = _get_cloud_details("TEST_ENV")
         endpoint_urls = [a for a in dir(EndpointURLS) if not a.startswith('__')]
@@ -149,11 +154,13 @@ class TestCloudEnvironments:
         assert True
 
     @mock.patch.dict(os.environ, {}, clear=True)
+    @mock.patch("azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get)
     def test_metadata_registry_endpoint(self, mock_get):
         cloud_details = _get_cloud_details("TEST_ENV2")
         assert cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT) == "https://test_env2west.api.azureml.windows.net/"
              
     @mock.patch.dict(os.environ, {}, clear=True)
+    @mock.patch("azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get)
     def test_arm_misconfigured(self, mock_get):
         with pytest.raises(Exception) as e_info:
             _set_cloud("MISCONFIGURED")

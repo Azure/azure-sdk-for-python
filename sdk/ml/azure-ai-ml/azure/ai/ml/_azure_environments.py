@@ -15,6 +15,9 @@ from azure.ai.ml.constants._common import ArmConstants
 from azure.core.rest import HttpRequest
 from azure.mgmt.core import ARMPipelineClient
 
+from pprint import pformat
+
+
 
 module_logger = logging.getLogger(__name__)
 
@@ -241,9 +244,9 @@ def _get_clouds_by_metadata_url(metadata_url, timeout=ArmConstants.DEFAULT_TIMEO
     try:
         module_logger.debug('Start : Loading cloud metadata from the url specified by %s', metadata_url)
         client = ARMPipelineClient(base_url=metadata_url, policies=[])
+        HttpRequest("GET", metadata_url)
         with client.send_request(HttpRequest("GET", metadata_url)) as meta_response:
             arm_cloud_dict = meta_response.json()
-            print("arm_cloud_dict", arm_cloud_dict)
             cli_cloud_dict = _convert_arm_to_cli(arm_cloud_dict)
             module_logger.debug('Finish : Loading cloud metadata from the url specified by %s', metadata_url)
             return cli_cloud_dict
