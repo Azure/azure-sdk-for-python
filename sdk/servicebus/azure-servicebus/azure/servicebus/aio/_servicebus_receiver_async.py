@@ -235,7 +235,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 break
             finally:
                 # print("Clear")
-                # self._receive_context.clear()
+                self._receive_context.clear()
                 if original_timeout:
                     try:
                         self._handler._timeout = original_timeout
@@ -267,8 +267,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
 
     async def _iter_next(self):
         try:
-            await self._open()
             self._receive_context.set()
+            await self._open()
             # TODO: Add in Recieve Message Iterator
             if not self._message_iter:
                 self._message_iter = await self._handler.receive_messages_iter_async()
