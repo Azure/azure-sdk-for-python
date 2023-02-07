@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:11:05 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 18 Nov 2022 19:11:08 GMT
+      - Wed, 01 Feb 2023 00:18:00 GMT
       ms-cv:
-      - /lrZddDKgEuMf+CMiD+9Kg.2.0
+      - fiRZND4DOk+fL1ofsx7+Iw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 45ms
+      - 83ms
     status:
       code: 201
       message: Created
@@ -62,7 +62,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:11:06 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -79,9 +79,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 18 Nov 2022 19:11:08 GMT
+      - Wed, 01 Feb 2023 00:18:00 GMT
       ms-cv:
-      - I4o06GHaP0uFEFqNqChKVg.2.0
+      - jZswoqO6IUWXmIBm2lqx2A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,7 +89,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 42ms
+      - 89ms
     status:
       code: 201
       message: Created
@@ -109,7 +109,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:11:06 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -126,9 +126,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Fri, 18 Nov 2022 19:11:09 GMT
+      - Wed, 01 Feb 2023 00:18:00 GMT
       ms-cv:
-      - zBAKY+9hoUuDJcNkHLmQhw.2.0
+      - 9W+r/yVUOUCQLMmF//wo/g.0
       request-context:
       - appId=
       strict-transport-security:
@@ -136,7 +136,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 49ms
+      - 85ms
     status:
       code: 201
       message: Created
@@ -152,7 +152,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-rooms/1.0.0b3 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:11:07 GMT
+      - Wed, 01 Feb 2023 00:18:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -161,10 +161,10 @@ interactions:
     body:
       string: '{"error":{"code":"ResourceNotFound","message":"Resource not found"}}'
     headers:
-      api-supported-versions: 2021-04-07, 2022-02-01
+      api-supported-versions: 2021-04-07, 2022-02-01, 2023-01-10
       content-type: application/json; charset=utf-8
-      date: Fri, 18 Nov 2022 19:11:10 GMT
-      ms-cv: vEH2pWAWxEy+ODJSOrC6fw.0
+      date: Wed, 01 Feb 2023 00:18:01 GMT
+      ms-cv: vwj8bfDX6EKVco9Rrlk1nA.0
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
       x-ms-error-code: ResourceNotFound
@@ -186,7 +186,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:11:08 GMT
+      - Wed, 01 Feb 2023 00:18:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -199,9 +199,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Fri, 18 Nov 2022 19:11:11 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       ms-cv:
-      - WJtsLCj4YkemZ01Wk/xWjg.2.0
+      - UEJ76hrI00KerFBDU/CgRA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -209,7 +209,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 125ms
+      - 304ms
     status:
       code: 204
       message: No Content
@@ -227,7 +227,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:11:09 GMT
+      - Wed, 01 Feb 2023 00:18:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -240,9 +240,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Fri, 18 Nov 2022 19:11:12 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       ms-cv:
-      - /uRPejK6sEWbQCm5LIC4Dg.2.0
+      - GqY4qSwY6ESO09tHVmzimA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -250,7 +250,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 104ms
+      - 300ms
     status:
       code: 204
       message: No Content
@@ -268,7 +268,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 18 Nov 2022 19:11:10 GMT
+      - Wed, 01 Feb 2023 00:18:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -281,9 +281,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Fri, 18 Nov 2022 19:11:13 GMT
+      - Wed, 01 Feb 2023 00:18:02 GMT
       ms-cv:
-      - u+nN2VsKWEO4Rs3Q0HLB6A.2.0
+      - 2IugXcTF9kqv6oEKqS1HSA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -291,7 +291,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 115ms
+      - 283ms
     status:
       code: 204
       message: No Content

@@ -27,7 +27,7 @@ from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
+from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.exceptions import (
     ErrorCategory,
@@ -125,6 +125,13 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 return self._local_deployment_helper.create_or_update(
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
+                )
+            if (deployment and deployment.instance_type and deployment.instance_type.lower() in SmallSKUs):
+                module_logger.warning(
+                    "Instance type %s may be too small for compute resources. " # pylint: disable=line-too-long
+                    "Minimum recommended compute SKU is Standard_DS3_v2 for general purpose endpoints. Learn more about SKUs here: " # pylint: disable=line-too-long
+                    "https://learn.microsoft.com/en-us/azure/machine-learning/referencemanaged-online-endpoints-vm-sku-list",
+                    deployment.instance_type # pylint: disable=line-too-long
                 )
             if (
                 not skip_script_validation
