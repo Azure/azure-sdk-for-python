@@ -14,8 +14,11 @@ from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._workspace.diagnose import DiagnoseResponseResultValue
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._workspace.networking import IsolationMode, FqdnDestination, PrivateEndpointDestination, ServiceTagDestination
+from azure.ai.ml.entities._workspace.networking import FqdnDestination, PrivateEndpointDestination, ServiceTagDestination
 from azure.core.paging import ItemPaged
+from azure.ai.ml.constants._workspace import (
+    IsolationMode, OutboundRuleCategory, OutboundRuleType
+)
 from azure.core.polling import LROPoller
 from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
 
@@ -338,7 +341,7 @@ class TestWorkspace(AzureRecordedTestCase):
         condition=not is_live(),
         reason="ARM template makes playback complex, so the test is flaky when run against recording",
     )
-    def test_workspace_create_with_managed_network(
+    def test_workspace_create_update_delete_with_managed_network(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
     # resource name key word
