@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from azure.ai.ml.entities._builders.do_while import DoWhile
-from azure.ai.ml.exceptions import UserErrorException
 
 
 def do_while(body, mapping, max_iteration_count: int, condition=None):
@@ -44,15 +43,9 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
     :type mapping: Dict[Union[str, Output], Union[str, Input, List]]
     :param max_iteration_count: limits in running the do-while node.
     :type max_iteration_count: int
-    :param condition: Either name of boolean output of body or simply True as do-while loop condition.
-                      Default value is None, equivalent to True in following logic.
-    :type condition: Union[Output, bool]
+    :param condition: Name of boolean output of body as do-while loop condition; handle as while true when omitted.
+    :type condition: Output
     """
-    # while False is meaningless, ban this behaviour.
-    if isinstance(condition, bool) and condition is False:
-        error_message = f"Invalid condition value, only {True!r} is acceptable."
-        raise UserErrorException(message=error_message, no_personal_data_message=error_message)
-
     do_while_node = DoWhile(
         body=body,
         condition=condition,

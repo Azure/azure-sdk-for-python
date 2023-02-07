@@ -131,17 +131,14 @@ class DoWhile(LoopNode):
 
         limits = loaded_data.pop("limits", None)
 
-        # If condition not in data, treat it as True
-        condition_in_loaded_data = loaded_data.pop("condition", True)
-        if isinstance(condition_in_loaded_data, bool):
-            # condition is True, no need to extra process
-            condition_value = condition_in_loaded_data
-        else:
+        if "condition" in loaded_data:
             # Convert condition to output object
             condition_name = cls._get_data_binding_expression_value(
-                condition_in_loaded_data, regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
+                loaded_data.pop("condition"), regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
             )
             condition_value = get_port_obj(body, condition_name, is_input=False, validate_port=validate_port)
+        else:
+            condition_value = None
 
         do_while_instance = DoWhile(
             body=body,
@@ -163,19 +160,6 @@ class DoWhile(LoopNode):
 
         obj = BaseNode._from_rest_object_to_init_params(obj)
         return cls._create_instance_from_schema_dict(pipeline_jobs, obj, validate_port=False)
-
-    def _to_rest_object(self, **kwargs) -> dict:
-        # Feature 2154655: support while True in do-while
-        # user may specify concrete value True for condition, if directly pass True to server,
-        # they cannot identify it is literal True or output port name;
-        # so use None condition to express while True and here we replace during convert to REST object.
-        condition = self.condition
-        if isinstance(condition, bool):
-            self._condition = None
-        rest_obj = super(DoWhile, self)._to_rest_object(**kwargs)
-        if isinstance(condition, bool):
-            self._condition = condition
-        return rest_obj
 
     def set_limits(
         self,
@@ -228,14 +212,8 @@ class DoWhile(LoopNode):
 
     def _validate_loop_condition(self, raise_error=True):
         # pylint: disable=protected-access
-
         validation_result = self._create_empty_validation_result()
-        if self.condition is None:
-            validation_result.append_error(yaml_path="condition", message="The condition cannot be empty.")
-        elif isinstance(self.condition, bool):
-            if self.condition is False:
-                validation_result.append_error(yaml_path="condition", message="The condition cannot be False.")
-        else:
+        if self.condition is not None:
             # Check condition exists in dowhile body.
             validation_result.merge_with(
                 self._validate_port(self.condition, self.body.outputs, port_type="output", yaml_path="condition")

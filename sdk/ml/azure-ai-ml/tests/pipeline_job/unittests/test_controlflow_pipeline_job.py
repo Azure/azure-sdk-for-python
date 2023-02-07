@@ -29,11 +29,11 @@ class TestDoWhilePipelineJobUT(TestControlFlowPipelineJobUT):
         assert "condition" not in rest_job_resource.properties.jobs["do_while_true_job_with_pipeline_job"]
 
     def test_do_while_pipeline_illegal_cases(self):
-        # ValidationError - error during load YAML
         yaml_path = "./tests/test_configs/pipeline_jobs/control_flow/do_while/invalid_pipeline.yml"
         expected_validation_result = [
+            # bool type is illegal for field condition
             (
-                "Negative value is not allowed.",
+                "Not a valid string.; Not a valid string.",
                 "jobs.invalid_condition.condition",
             ),
             (
@@ -61,18 +61,6 @@ class TestDoWhilePipelineJobUT(TestControlFlowPipelineJobUT):
         for msg, location in expected_validation_result:
             assert msg in error_message
             assert location in error_message
-
-        # ValidationException - error during validate pipeline job
-        # load valid pipeline job, override condition value in memory to make it invalid
-        yaml_path = "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml"
-        job: PipelineJob = load_job(yaml_path)
-        # replace condition value to test pipeline job validation on while False
-        job.jobs["do_while_true_job_with_pipeline_job"]._condition = False
-        with pytest.raises(ValidationException) as e:
-            job._validate(raise_error=True)
-        error_message = str(e.value)
-        assert "The condition cannot be False." in error_message
-        assert "jobs.do_while_true_job_with_pipeline_job.condition" in error_message
 
 
 class TestParallelForPipelineJobUT(TestControlFlowPipelineJobUT):

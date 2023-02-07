@@ -122,6 +122,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
 
 
 class TestDoWhile(TestConditionalNodeInPipeline):
+    @pytest.mark.disable_mock_code_hash
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(

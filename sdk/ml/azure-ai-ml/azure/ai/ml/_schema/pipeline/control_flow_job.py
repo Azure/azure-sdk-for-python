@@ -5,12 +5,10 @@ import copy
 import json
 
 from marshmallow import INCLUDE, fields, pre_dump
-from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._schema.core.fields import DataBindingStr, NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml.constants._component import ControlFlowType
-from azure.ai.ml.exceptions import ValidationException
 
 from ..job.input_output_entry import OutputSchema
 from ..job.job_limits import DoWhileLimitsSchema
@@ -37,58 +35,15 @@ class BaseLoopSchema(ControlFlowSchema):
         return result
 
 
-# Almost same logic as `UnionField`, separately wrap only for better error message for False condition.
-class DoWhileConditionSchema(fields.Field):
-
-    ERROR_MESSAGE_FOR_FALSE = "Negative value is not allowed."
-    UNION_FIELDS = [DataBindingStr(), fields.Str()]
-
-    def _deserialize(self, value, attr, data, **kwargs):
-        if value is None:
-            return None
-        # Try to parse as string first, otherwise string will become True.
-        errors = []
-        for schema in self.UNION_FIELDS:
-            # Note that as condition won't be a job, so no need to add finally here as `UnionField`.
-            try:
-                return schema.deserialize(value, attr, data, **kwargs)
-            except ValidationError as e:
-                errors.append(e.normalized_messages())
-            except (ValidationException, FileNotFoundError, TypeError) as e:
-                errors.append([str(e)])
-        # Parse as boolean and check False.
-        try:
-            obj = fields.Boolean()._deserialize(value, attr, data, **kwargs)
-            if obj is True:
-                return obj
-            errors.append(self.ERROR_MESSAGE_FOR_FALSE)
-        except ValidationError as e:
-            errors.append(e.normalized_messages())
-        raise ValidationError(errors, field_name=attr)
-
-    def _serialize(self, value, attr, obj, **kwargs):
-        if value is None:
-            return None
-        # Same as _deserialize, parse as string first.
-        errors = []
-        for field in self.UNION_FIELDS:
-            try:
-                return field._serialize(value, attr, obj, **kwargs)
-            except ValidationError as e:
-                errors.extend(e.messages)
-            except (TypeError, ValueError, AttributeError, ValidationException) as e:
-                errors.extend([str(e)])
-        try:
-            return fields.Boolean()._serialize(value, attr, obj, **kwargs)
-        except ValidationError as e:
-            errors.append(e.normalized_messages())
-        raise ValidationError(message=errors, field_name=attr)
-
-
 class DoWhileSchema(BaseLoopSchema):
     # pylint: disable=unused-argument
     type = StringTransformedEnum(allowed_values=[ControlFlowType.DO_WHILE])
-    condition = DoWhileConditionSchema()
+    condition = UnionField(
+        [
+            DataBindingStr(),
+            fields.Str(),
+        ]
+    )
     mapping = fields.Dict(
         keys=fields.Str(),
         values=UnionField(

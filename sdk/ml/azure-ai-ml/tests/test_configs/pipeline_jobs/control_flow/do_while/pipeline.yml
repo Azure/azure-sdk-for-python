@@ -49,7 +49,6 @@ jobs:
     body: ${{parent.jobs.pipeline_body_node_for_while_true}}
     limits:
       max_iteration_count: 5
-    condition: true
     mapping:
       output_in_path: component_in_path
 
