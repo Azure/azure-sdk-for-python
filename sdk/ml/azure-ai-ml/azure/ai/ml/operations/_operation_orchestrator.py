@@ -18,6 +18,7 @@ from azure.ai.ml._utils._arm_id_utils import (
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
+    is_singularity_id_for_resource,
     parse_name_label,
     parse_prefixed_name_version,
 )
@@ -49,7 +50,7 @@ from azure.ai.ml.exceptions import (
     EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
-    MLException,
+    MlException,
     ModelException,
     ValidationErrorType,
     ValidationException,
@@ -124,6 +125,7 @@ class OperationOrchestrator(object):
             asset is None
             or is_ARM_id_for_resource(asset, azureml_type, sub_workspace_resource)
             or is_registry_id_for_resource(asset)
+            or is_singularity_id_for_resource(asset)
         ):
             return asset
         if isinstance(asset, str):
@@ -269,7 +271,7 @@ class OperationOrchestrator(object):
                 code_asset.version,
             )
             return uploaded_code_asset
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise AssetException(
@@ -318,7 +320,7 @@ class OperationOrchestrator(object):
                 model.version,
             )
             return uploaded_model
-        except (MLException, HttpResponseError) as e:
+        except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ModelException(

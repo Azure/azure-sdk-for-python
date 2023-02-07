@@ -1,14 +1,10 @@
 # Release History
 
-## 11.4.0b3 (Unreleased)
+## 11.4.0b3 (2023-02-07)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added the semantic reranker score and captions on `SearchResult`.(thanks to @LucasVascovici for the contribution)
 
 ## 11.4.0b2 (2022-11-08)
 

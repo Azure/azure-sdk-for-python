@@ -7,25 +7,25 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.19045-SP0)"
+        "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 26 Dec 2022 05:05:33 GMT",
+        "Date": "Thu, 05 Jan 2023 10:05:25 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d88d7d16-b3b8-408e-a5eb-88c0cab08f0f",
-        "x-ms-ratelimit-remaining-subscription-reads": "11606",
+        "x-ms-correlation-request-id": "cce786b3-7128-4560-b6f3-383d5f753ca2",
+        "x-ms-ratelimit-remaining-subscription-reads": "11959",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20221226T050534Z:d88d7d16-b3b8-408e-a5eb-88c0cab08f0f",
-        "x-request-time": "0.033"
+        "x-ms-routing-request-id": "JAPANEAST:20230105T100526Z:cce786b3-7128-4560-b6f3-383d5f753ca2",
+        "x-request-time": "0.036"
       },
       "ResponseBody": null
     },
@@ -36,7 +36,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.9.13 (Windows-10-10.0.19045-SP0)"
+        "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -44,24 +44,24 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 26 Dec 2022 05:05:34 GMT",
+        "Date": "Thu, 05 Jan 2023 10:05:26 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-084664f31a083a573c190c3ba2f70ee6-92971586deab9eae-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-426454d77aea8abfbf11d3d71baedfc3-853ee9d38bcc8af4-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "efb09182-7010-4201-9d73-d0eb5d6dc84a",
-        "x-ms-ratelimit-remaining-subscription-reads": "11605",
+        "x-ms-correlation-request-id": "a975a0e9-85ef-4af0-8e54-8a5693a14e9e",
+        "x-ms-ratelimit-remaining-subscription-reads": "11958",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20221226T050534Z:efb09182-7010-4201-9d73-d0eb5d6dc84a",
-        "x-request-time": "0.223"
+        "x-ms-routing-request-id": "JAPANEAST:20230105T100527Z:a975a0e9-85ef-4af0-8e54-8a5693a14e9e",
+        "x-request-time": "0.281"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/cpu-cluster",
@@ -90,17 +90,17 @@
             },
             "subnet": null,
             "currentNodeCount": 5,
-            "targetNodeCount": 5,
+            "targetNodeCount": 3,
             "nodeStateCounts": {
               "preparingNodeCount": 0,
-              "runningNodeCount": 4,
+              "runningNodeCount": 2,
               "idleNodeCount": 1,
               "unusableNodeCount": 0,
-              "leavingNodeCount": 0,
+              "leavingNodeCount": 2,
               "preemptedNodeCount": 0
             },
-            "allocationState": "Steady",
-            "allocationStateTransitionTime": "2022-12-26T05:01:39.803\u002B00:00",
+            "allocationState": "Resizing",
+            "allocationStateTransitionTime": "2023-01-05T10:03:14.984\u002B00:00",
             "errors": null,
             "remoteLoginPortPublicAccess": "Enabled",
             "osType": "Linux",
@@ -113,6 +113,6 @@
     }
   ],
   "Variables": {
-    "name": "test_824740628158"
+    "name": "test_713554961002"
   }
 }

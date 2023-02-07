@@ -21,26 +21,26 @@ from ._models_py3 import Resource
 from ._models_py3 import SystemAssignedIdentity
 from ._models_py3 import TrackedResource
 from ._models_py3 import UserAssignedIdentitiesListResult
-
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AssociatedResourcesListResult',
-    'AzureResource',
-    'CloudErrorBody',
-    'FederatedIdentityCredential',
-    'FederatedIdentityCredentialsListResult',
-    'Identity',
-    'IdentityUpdate',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'ProxyResource',
-    'Resource',
-    'SystemAssignedIdentity',
-    'TrackedResource',
-    'UserAssignedIdentitiesListResult',
+    "AssociatedResourcesListResult",
+    "AzureResource",
+    "CloudErrorBody",
+    "FederatedIdentityCredential",
+    "FederatedIdentityCredentialsListResult",
+    "Identity",
+    "IdentityUpdate",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "ProxyResource",
+    "Resource",
+    "SystemAssignedIdentity",
+    "TrackedResource",
+    "UserAssignedIdentitiesListResult",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

@@ -32,6 +32,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 
 # from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
@@ -39,7 +40,7 @@ from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import RegistryDiscovery
-from azure.ai.ml._utils.utils import _is_https_url, _validate_missing_sub_or_rg_and_raise
+from azure.ai.ml._utils.utils import _is_https_url
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities import (
     BatchDeployment,
@@ -56,7 +57,7 @@ from azure.ai.ml.entities import (
     Registry,
     Workspace,
 )
-from azure.ai.ml.entities._assets import WorkspaceModelReference
+from azure.ai.ml.entities._assets import WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.operations import (
     BatchDeploymentOperations,
@@ -73,6 +74,7 @@ from azure.ai.ml.operations import (
     RegistryOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
+    VirtualClusterOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -157,8 +159,7 @@ class MLClient(object):
                 target=ErrorTarget.GENERAL,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        if not registry_name:
-            _validate_missing_sub_or_rg_and_raise(subscription_id, resource_group_name)
+
         self._credential = credential
 
         show_progress = kwargs.pop("show_progress", True)
@@ -273,6 +274,13 @@ class MLClient(object):
             **kwargs,
         )
 
+        self._service_client_12_2022_preview = ServiceClient122022Preview(
+            credential=self._credential,
+            subscription_id=self._operation_scope._subscription_id,
+            base_url=base_url,
+            **kwargs,
+        )
+
         self._workspaces = WorkspaceOperations(
             self._operation_scope,
             self._rp_service_client,
@@ -309,7 +317,7 @@ class MLClient(object):
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
-            serviceclient_2022_05_01=self._service_client_05_2022,
+            serviceclient_2022_10_01=self._service_client_10_2022,
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
@@ -385,7 +393,7 @@ class MLClient(object):
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_05_2022,
+            self._service_client_10_2022,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
@@ -394,7 +402,7 @@ class MLClient(object):
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_05_2022,
+            self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_10_2022,
             self._operation_container,
             **ops_kwargs,
         )
@@ -402,7 +410,7 @@ class MLClient(object):
         self._jobs = JobOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2022_preview,
+            self._service_client_12_2022_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
@@ -420,6 +428,8 @@ class MLClient(object):
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.SCHEDULE, self._schedules)
+
+        self._virtual_clusters = VirtualClusterOperations(self._operation_scope, self._credential, **ops_kwargs)
 
     @classmethod
     def from_config(
@@ -750,7 +760,7 @@ class MLClient(object):
 
     # T = valid inputs/outputs for create_or_update
     # Each entry here requires a registered _create_or_update function below
-    T = TypeVar("T", Job, Model, Environment, Component, Datastore, WorkspaceModelReference)
+    T = TypeVar("T", Job, Model, Environment, Component, Datastore, WorkspaceAssetReference)
 
     def create_or_update(
         self,
@@ -760,12 +770,12 @@ class MLClient(object):
         """Creates or updates an Azure ML resource.
 
         :param entity: The resource to create or update.
-        :type entity: typing.Union[~azure.ai.ml.entities.Job,
-            ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component,
-            ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceModelReference]
+        :type entity: typing.Union[~azure.ai.ml.entities.Job
+            , ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component
+            , ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceAssetReference]
         :return: The created or updated resource.
-        :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model,
-            ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
+        :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
+            , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
         """
 
         return _create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -784,15 +794,15 @@ class MLClient(object):
         """Creates or updates an Azure ML resource asynchronously.
 
         :param entity: The resource to create or update.
-        :type entity: typing.Union[~azure.ai.ml.entities.Workspace,
-            ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment,
-            ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment,
-            ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]
+        :type entity: typing.Union[~azure.ai.ml.entities.Workspace
+            , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
+            , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
+            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]
         :return: The resource after create/update operation.
-        :rtype: azure.core.polling.LROPoller[typing.Union[~azure.ai.ml.entities.Workspace,
-            ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment,
-            ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment,
-            ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]]
+        :rtype: azure.core.polling.LROPoller[typing.Union[~azure.ai.ml.entities.Workspace
+            , ~azure.ai.ml.entities.Registry, ~azure.ai.ml.entities.Compute, ~azure.ai.ml.entities.OnlineDeployment
+            , ~azure.ai.ml.entities.OnlineEndpoint, ~azure.ai.ml.entities.BatchDeployment
+            , ~azure.ai.ml.entities.BatchEndpoint, ~azure.ai.ml.entities.JobSchedule]]
         """
 
         return _begin_create_or_update(entity, self._operation_container.all_operations, **kwargs)
@@ -827,8 +837,8 @@ def _(entity: Model, operations):
     return operations[AzureMLResourceType.MODEL].create_or_update(entity)
 
 
-@_create_or_update.register(WorkspaceModelReference)
-def _(entity: WorkspaceModelReference, operations):
+@_create_or_update.register(WorkspaceAssetReference)
+def _(entity: WorkspaceAssetReference, operations):
     module_logger.debug("Promoting model to registry")
     return operations[AzureMLResourceType.MODEL].create_or_update(entity)
 
@@ -836,6 +846,12 @@ def _(entity: WorkspaceModelReference, operations):
 @_create_or_update.register(Environment)
 def _(entity: Environment, operations):
     module_logger.debug("Creating or updating environment")
+    return operations[AzureMLResourceType.ENVIRONMENT].create_or_update(entity)
+
+
+@_create_or_update.register(WorkspaceAssetReference)
+def _(entity: WorkspaceAssetReference, operations):
+    module_logger.debug("Promoting environment to registry")
     return operations[AzureMLResourceType.ENVIRONMENT].create_or_update(entity)
 
 

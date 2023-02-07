@@ -7,21 +7,23 @@ logging library are tracked and telemetry is exported to application insights wi
 import os
 import logging
 
-from opentelemetry.sdk._logs import (
-    LogEmitterProvider,
-    LoggingHandler,
-    get_log_emitter_provider,
-    set_log_emitter_provider,
+from opentelemetry._logs import (
+    get_logger_provider,
+    set_logger_provider,
 )
-from opentelemetry.sdk._logs.export import BatchLogProcessor
+from opentelemetry.sdk._logs import (
+    LoggerProvider,
+    LoggingHandler,
+)
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 
 from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
 
-set_log_emitter_provider(LogEmitterProvider())
+set_logger_provider(LoggerProvider())
 exporter = AzureMonitorLogExporter.from_connection_string(
     os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
 )
-get_log_emitter_provider().add_log_processor(BatchLogProcessor(exporter))
+get_logger_provider().add_log_record_processor(BatchLogRecordProcessor(exporter))
 
 # Attach LoggingHandler to namespaced logger
 handler = LoggingHandler()

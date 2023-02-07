@@ -43,4 +43,4 @@ TEST_ID = "my-new-sdk-test-id"
 # Build a client through AAD and resource endpoint
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-client.load_test_administration.delete_load_test(TEST_ID)
+client.administration.delete_test(TEST_ID)

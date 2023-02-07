@@ -6,26 +6,27 @@ import collections.abc
 import re
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import InputDeliveryMode
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutputType, LiteralJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobInput as RestMLTableJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import OutputDeliveryMode
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFileJobInput as RestUriFileJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import CustomModelJobInput as RestCustomModelJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import CustomModelJobOutput as RestCustomModelJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import InputDeliveryMode
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInputType
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutputType, LiteralJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import MLFlowModelJobInput as RestMLFlowModelJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import MLFlowModelJobOutput as RestMLFlowModelJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import MLTableJobInput as RestMLTableJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import MLTableJobOutput as RestMLTableJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import OutputDeliveryMode
+from azure.ai.ml._restclient.v2022_12_01_preview.models import TritonModelJobInput as RestTritonModelJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import TritonModelJobOutput as RestTritonModelJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFileJobInput as RestUriFileJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFileJobOutput as RestUriFileJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFolderJobInput as RestUriFolderJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes, InputOutputModes, JobType
+from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.input_output_entry import InputOutputEntry
 from azure.ai.ml.entities._util import normalize_job_input_output_type
@@ -77,28 +78,28 @@ def get_output_type_mapping_from_rest():
     }
 
 
-def get_input_rest_init_func_dict():
+def get_input_rest_cls_dict():
     """Get input rest init func dict."""
     return {
-        AssetTypes.URI_FILE: lambda uri, mode: RestUriFileJobInput(uri=uri, mode=mode),
-        AssetTypes.URI_FOLDER: lambda uri, mode: RestUriFolderJobInput(uri=uri, mode=mode),
-        AssetTypes.MLTABLE: lambda uri, mode: RestMLTableJobInput(uri=uri, mode=mode),
-        AssetTypes.MLFLOW_MODEL: lambda uri, mode: RestMLFlowModelJobInput(uri=uri, mode=mode),
-        AssetTypes.CUSTOM_MODEL: lambda uri, mode: RestCustomModelJobInput(uri=uri, mode=mode),
-        AssetTypes.TRITON_MODEL: lambda uri, mode: RestTritonModelJobInput(uri=uri, mode=mode),
+        AssetTypes.URI_FILE: RestUriFileJobInput,
+        AssetTypes.URI_FOLDER: RestUriFolderJobInput,
+        AssetTypes.MLTABLE: RestMLTableJobInput,
+        AssetTypes.MLFLOW_MODEL: RestMLFlowModelJobInput,
+        AssetTypes.CUSTOM_MODEL: RestCustomModelJobInput,
+        AssetTypes.TRITON_MODEL: RestTritonModelJobInput,
     }
 
 
-def get_output_rest_init_func_dict():
-    """Get output rest init func dict."""
+def get_output_rest_cls_dict():
+    """Get output rest init cls dict."""
 
     return {
-        AssetTypes.URI_FILE: lambda uri, mode: RestUriFileJobOutput(uri=uri, mode=mode),
-        AssetTypes.URI_FOLDER: lambda uri, mode: RestUriFolderJobOutput(uri=uri, mode=mode),
-        AssetTypes.MLTABLE: lambda uri, mode: RestMLTableJobOutput(uri=uri, mode=mode),
-        AssetTypes.MLFLOW_MODEL: lambda uri, mode: RestMLFlowModelJobOutput(uri=uri, mode=mode),
-        AssetTypes.CUSTOM_MODEL: lambda uri, mode: RestCustomModelJobOutput(uri=uri, mode=mode),
-        AssetTypes.TRITON_MODEL: lambda uri, mode: RestTritonModelJobOutput(uri=uri, mode=mode),
+        AssetTypes.URI_FILE: RestUriFileJobOutput,
+        AssetTypes.URI_FOLDER: RestUriFolderJobOutput,
+        AssetTypes.MLTABLE: RestMLTableJobOutput,
+        AssetTypes.MLFLOW_MODEL: RestMLFlowModelJobOutput,
+        AssetTypes.CUSTOM_MODEL: RestCustomModelJobOutput,
+        AssetTypes.TRITON_MODEL: RestTritonModelJobOutput,
     }
 
 
@@ -159,7 +160,7 @@ def validate_pipeline_input_key_contains_allowed_characters(key: str) -> None:
     # Pipeline input allow '.' to support parameter group in key.
     # Note: ([a-zA-Z_]+[a-zA-Z0-9_]*) is a valid single key,
     # so a valid pipeline key is: ^{single_key}([.]{single_key})*$
-    if re.match(r"^([a-zA-Z_]+[a-zA-Z0-9_]*)([.]([a-zA-Z_]+[a-zA-Z0-9_]*))*$", key) is None:
+    if re.match(IOConstants.VALID_KEY_PATTERN, key) is None:
         msg = (
             "Pipeline input key name {} must be composed letters, numbers, and underscores with optional split by dots."
         )
@@ -202,12 +203,12 @@ def to_rest_dataset_literal_inputs(
                     input_data.mode = INPUT_MOUNT_MAPPING_TO_REST[input_value.mode]
                 input_data.job_input_type = JobInputType.LITERAL
             else:
-                target_init_func_dict = get_input_rest_init_func_dict()
+                target_cls_dict = get_input_rest_cls_dict()
 
-                if input_value.type in target_init_func_dict:
-                    input_data = target_init_func_dict[input_value.type](
-                        input_value.path,
-                        INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
+                if input_value.type in target_cls_dict:
+                    input_data = target_cls_dict[input_value.type](
+                        uri=input_value.path,
+                        mode=INPUT_MOUNT_MAPPING_TO_REST[input_value.mode.lower()] if input_value.mode else None,
                     )
 
                 else:
@@ -304,13 +305,16 @@ def to_rest_data_outputs(outputs: Dict[str, Output]) -> Dict[str, RestJobOutput]
             output_cls = RestUriFolderJobOutput
             rest_outputs[output_name] = output_cls(mode=None)
         else:
-            target_init_func_dict = get_output_rest_init_func_dict()
+            target_cls_dict = get_output_rest_cls_dict()
 
             output_value_type = output_value.type if output_value.type else AssetTypes.URI_FOLDER
-            if output_value_type in target_init_func_dict:
-                output = target_init_func_dict[output_value_type](
-                    output_value.path,
-                    OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+            if output_value_type in target_cls_dict:
+                output = target_cls_dict[output_value_type](
+                    asset_name=output_value.name,
+                    asset_version=output_value.version,
+                    uri=output_value.path,
+                    mode=OUTPUT_MOUNT_MAPPING_TO_REST[output_value.mode.lower()] if output_value.mode else None,
+                    description=output_value.description,
                 )
             else:
                 msg = "unsupported JobOutput type: {}".format(output_value.type)
@@ -349,6 +353,9 @@ def from_rest_data_outputs(outputs: Dict[str, RestJobOutput]) -> Dict[str, Outpu
                 type=output_type_mapping[output_value.job_output_type],
                 path=output_value.uri,
                 mode=OUTPUT_MOUNT_MAPPING_FROM_REST[output_value.mode] if output_value.mode else None,
+                description=output_value.description,
+                name=output_value.asset_name,
+                version=output_value.asset_version,
             )
         else:
             msg = "unsupported JobOutput type: {}".format(output_value.job_output_type)

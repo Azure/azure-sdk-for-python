@@ -3,7 +3,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any
+
+from typing import Union, Optional
 from io import SEEK_SET, UnsupportedOperation
 
 from azure.core.credentials import TokenCredential
@@ -18,11 +19,11 @@ from ._helpers import _enforce_https
 class ContainerRegistryChallengePolicy(HTTPPolicy):
     """Authentication policy for ACR which accepts a challenge"""
 
-    def __init__(self, credential: TokenCredential, endpoint: str, **kwargs: Any) -> None:
+    def __init__(self, credential: Optional[TokenCredential], endpoint: str, **kwargs) -> None:
         super(ContainerRegistryChallengePolicy, self).__init__()
         self._credential = credential
         if self._credential is None:
-            self._exchange_client = AnonymousACRExchangeClient(endpoint, **kwargs)
+            self._exchange_client = AnonymousACRExchangeClient(endpoint, **kwargs) # type: Union[AnonymousACRExchangeClient, ACRExchangeClient] # pylint: disable=line-too-long
         else:
             self._exchange_client = ACRExchangeClient(endpoint, self._credential, **kwargs)
 
@@ -70,7 +71,8 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
         # pylint:disable=unused-argument, no-self-use
 
         access_token = self._exchange_client.get_acr_access_token(challenge)
-        request.http_request.headers["Authorization"] = "Bearer " + access_token
+        if access_token is not None:
+            request.http_request.headers["Authorization"] = "Bearer " + access_token
         return access_token is not None
 
     def __enter__(self):

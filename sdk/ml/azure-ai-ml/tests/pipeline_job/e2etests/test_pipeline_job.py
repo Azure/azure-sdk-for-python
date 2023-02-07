@@ -76,26 +76,22 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
-    @pytest.mark.skip("skip as registries not work in canary region for now")
+    @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
     def test_pipeline_job_create_with_registries(
-        self,
-        client: MLClient,
-        randstr: Callable[[str], str],
+        self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/hello_pipeline_job_with_registries.yml",
             params_override=params_override,
         )
-        assert (
-            pipeline_job.jobs.get("a").environment
-            == "azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6"
-        )
-        job = client.jobs.create_or_update(pipeline_job)
+        # registry sdk-test may be sanitized as other name, so use two assertions to avoid this issue
+        assert str(pipeline_job.jobs["a"].environment).startswith("azureml://registries/")
+        assert str(pipeline_job.jobs["a"].environment).endswith("/environments/openMPIUbuntu/versions/1")
+        job = assert_job_cancel(pipeline_job, client)
         assert job.name == params_override[0]["name"]
-        assert (
-            job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
-        )
+        assert str(job.jobs["a"].component).startswith("azureml://registries/")
+        assert str(job.jobs["a"].component).endswith("/components/hello_world_asset/versions/1")
 
     @pytest.mark.parametrize(
         "pipeline_job_path",
@@ -981,6 +977,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                 "sampling_algorithm": "random",
                 "early_termination": {
                     "evaluation_interval": 10,
+                    "evaluation_interval": 10,
                     "delay_evaluation": 0,
                     "type": "bandit",
                     "slack_factor": 0.2,
@@ -1324,22 +1321,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
-    @pytest.mark.skip(
-        reason="request body still exits when re-record and will raise error "
-        "'Unable to find a record for the request' in playback mode"
-    )
-    def test_pipeline_job_create_with_registry_model_as_input(
-        self,
-        client: MLClient,
-        registry_client: MLClient,
-        randstr: Callable[[str], str],
-    ) -> None:
+    @pytest.mark.skipif(condition=not is_live(), reason="registry test, may fail in playback mode")
+    def test_pipeline_job_create_with_registry_model_as_input(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source="./tests/test_configs/pipeline_jobs/job_with_registry_model_as_input/pipeline.yml",
             params_override=params_override,
         )
-        job = client.jobs.create_or_update(pipeline_job)
+        job = assert_job_cancel(pipeline_job, client)
         assert job.name == params_override[0]["name"]
 
     def test_pipeline_node_with_default_component(self, client: MLClient, randstr: Callable[[str], str]):
@@ -1355,6 +1344,93 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
+    def test_pipeline_job_with_singularity_compute(self, client: MLClient, randstr: Callable[[str], str]):
+        params_override = [{"name": randstr("job_name")}]
+        pipeline_job: PipelineJob = load_job(
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_singularity_compute.yml",
+            params_override=params_override,
+        )
+
+        singularity_compute_id = (
+            f"/subscriptions/{client.subscription_id}/resourceGroups/{client.resource_group_name}/"
+            f"providers/Microsoft.MachineLearningServices/virtualclusters/SingularityTestVC"
+        )
+        pipeline_job.settings.default_compute = singularity_compute_id
+        pipeline_job.jobs["hello_job"].compute = singularity_compute_id
+
+        assert pipeline_job._customized_validate().passed is True
+
+        created_pipeline_job: PipelineJob = assert_job_cancel(pipeline_job, client)
+        assert created_pipeline_job.settings.default_compute == singularity_compute_id
+        assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
+
+    def test_register_output_yaml(self, client: MLClient, randstr: Callable[[str], str],):
+        # only register pipeline output
+        register_pipeline_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_name_version.yaml"
+        pipeline = load_job(source=register_pipeline_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.outputs.component_out_path
+        assert output.name == 'pipeline_output'
+        assert output.version == '1'
+
+        # only register node output
+        register_node_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_name_version.yaml"
+        pipeline = load_job(source=register_node_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
+        assert output.name == 'node_output'
+        assert output.version == '1'
+
+        # register node output and pipeline output while the node output isn't binding to pipeline output
+        register_both_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_and_node_output.yaml"
+        pipeline = load_job(source=register_both_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        pipeline_output = pipeline_job.outputs.pipeline_out_path
+        assert pipeline_output.name == 'pipeline_output'
+        assert pipeline_output.version == '2'
+        node_output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
+        assert node_output.name == 'node_output'
+        assert node_output.version == '1'
+
+        # register node output and pipeline output while the node output is binding to pipeline output
+        register_both_output_binding_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_and_node_binding_output.yaml"
+        pipeline = load_job(source=register_both_output_binding_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        pipeline_output = pipeline_job.outputs.pipeline_out_path
+        assert pipeline_output.name == 'pipeline_output'
+        assert pipeline_output.version == '2'
+        node_output = pipeline_job.jobs['parallel_body'].outputs.component_out_path
+        assert node_output.name == 'node_output'
+        assert node_output.version == '1'
+
+        # register spark node output
+        register_spark_output_path = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job_register_output.yml"
+        pipeline = load_job(source=register_spark_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs['count_by_row'].outputs.output
+        assert node_output.name == 'spark_output'
+        assert node_output.version == '12'
+
+        # register sweep node output
+        register_sweep_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_sweep_node_register_output.yml"
+        pipeline = load_job(source=register_sweep_output_path, params_override=[{'name': randstr("job_name")}])
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs['hello_sweep_inline_file_trial'].outputs.trained_model_dir
+        assert node_output.name == 'sweep_output'
+        assert node_output.version == '123_sweep'
+
+        # register parallel node output
+        register_parallel_output_path ="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/pipeline_register_output.yml"
+        pipeline = load_job(source=register_parallel_output_path)
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        node_output = pipeline_job.jobs['convert_data_node'].outputs.file_output_data
+        assert node_output.name == 'convert_data_node_output'
+        assert node_output.version == '1'
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest

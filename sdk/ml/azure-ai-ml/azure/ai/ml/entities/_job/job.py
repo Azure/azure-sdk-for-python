@@ -14,8 +14,8 @@ from pathlib import Path
 from typing import IO, AnyStr, Dict, Optional, Type, Union
 
 from azure.ai.ml._restclient.runhistory.models import Run
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, JobService
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobType as RestJobType
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobBase, JobService
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobType as RestJobType
 from azure.ai.ml._utils._html_utils import make_link, to_html
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
@@ -157,7 +157,7 @@ class Job(Resource, ComponentTranslatableMixin, TelemetryMixin):
         if self.services and (JobServices.STUDIO in self.services.keys()):
             return self.services[JobServices.STUDIO].endpoint
 
-        return studio_url_from_job_id(self.id)
+        return studio_url_from_job_id(self.id) if self.id else None
 
     def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the job content into a file in yaml format.

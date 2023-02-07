@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import re
 import tempfile
 from contextlib import contextmanager
 from os import PathLike
@@ -25,8 +26,9 @@ from azure.ai.ml.constants._common import (
     REGISTRY_URI_FORMAT,
     CommonYamlFields,
     AzureMLResourceType,
+    SOURCE_PATH_CONTEXT_KEY,
 )
-from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.constants._component import ComponentSource, NodeType, IOConstants
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
@@ -116,6 +118,13 @@ class Component(
         self._source = (
             self._resolve_component_source_from_id(id) if id else kwargs.pop("_source", ComponentSource.CLASS)
         )
+        # use ANONYMOUS_COMPONENT_NAME instead of guid
+        is_anonymous = kwargs.pop("is_anonymous", False)
+        if not name and version is None:
+            name = ANONYMOUS_COMPONENT_NAME
+            version = "1"
+            is_anonymous = True
+
         super().__init__(
             name=name,
             version=version,
@@ -124,16 +133,12 @@ class Component(
             tags=tags,
             properties=properties,
             creation_context=creation_context,
-            is_anonymous=kwargs.pop("is_anonymous", False),
+            is_anonymous=is_anonymous,
             base_path=kwargs.pop("base_path", None),
             source_path=kwargs.pop("source_path", None),
         )
         # store kwargs to self._other_parameter instead of pop to super class to allow component have extra
         # fields not defined in current schema.
-
-        # update component name to ANONYMOUS_COMPONENT_NAME if it is anonymous
-        if hasattr(self, "_is_anonymous"):
-            self._set_is_anonymous(self._is_anonymous)
 
         inputs = inputs if inputs else {}
         outputs = outputs if outputs else {}
@@ -262,11 +267,9 @@ class Component(
         lower2original_kwargs = {}
 
         for name in io_dict.keys():
-            # validate name format
-            if not name.isidentifier():
+            if re.match(IOConstants.VALID_KEY_PATTERN, name) is None:
                 msg = "{!r} is not a valid parameter name, must be composed letters, numbers, and underscores."
                 validation_result.append_error(message=msg.format(name), yaml_path=f"inputs.{name}")
-
             # validate name conflict
             lower_key = name.lower()
             if lower_key in lower2original_kwargs:
@@ -326,6 +329,7 @@ class Component(
                 create_schema_func(
                     {
                         BASE_PATH_CONTEXT_KEY: base_path,
+                        SOURCE_PATH_CONTEXT_KEY: yaml_path,
                         PARAMS_OVERRIDE_KEY: params_override,
                     }
                 ).load(data, unknown=INCLUDE, **kwargs)
@@ -411,25 +415,6 @@ class Component(
         # remove empty values, because some property only works for specific component, eg: distribution for command
         return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
 
-    def _set_is_anonymous(self, is_anonymous: bool):
-        """Mark this component as anonymous and overwrite component name to
-        ANONYMOUS_COMPONENT_NAME."""
-        if is_anonymous is True:
-            self._is_anonymous = True
-            self.name = ANONYMOUS_COMPONENT_NAME
-        else:
-            self._is_anonymous = False
-
-    def _update_anonymous_hash(self):
-        """For anonymous component, we use code hash + yaml hash as component
-        version so the same anonymous component(same interface and same code)
-        won't be created again.
-
-        Should be called before _to_rest_object.
-        """
-        if self._is_anonymous:
-            self.version = self._get_anonymous_hash()
-
     def _get_anonymous_hash(self) -> str:
         """Return the name of anonymous component.
 
@@ -440,6 +425,16 @@ class Component(
         # omit version since anonymous component's version is random guid
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
+
+    def _validate(self, raise_error=False) -> MutableValidationResult:
+        origin_name = self.name
+        # skip name validation for anonymous component as ANONYMOUS_COMPONENT_NAME will be used in component creation
+        if self._is_anonymous:
+            self.name = ANONYMOUS_COMPONENT_NAME
+        try:
+            return super()._validate(raise_error)
+        finally:
+            self.name = origin_name
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
@@ -463,6 +458,11 @@ class Component(
         validation_result.merge_with(self._validate_io_names(self.outputs, raise_error=False))
 
         return validation_result
+
+    def _get_rest_name_version(self):
+        if self._is_anonymous:
+            return ANONYMOUS_COMPONENT_NAME, self._get_anonymous_hash()
+        return self.name, self.version
 
     def _to_rest_object(self) -> ComponentVersionData:
         component = self._to_dict()
@@ -489,7 +489,10 @@ class Component(
             tags=self.tags,
         )
         result = ComponentVersionData(properties=properties)
-        result.name = self.name
+        if self._is_anonymous:
+            result.name = ANONYMOUS_COMPONENT_NAME
+        else:
+            result.name = self.name
         return result
 
     def _to_dict(self) -> Dict:
@@ -509,6 +512,20 @@ class Component(
 
     def __call__(self, *args, **kwargs) -> [..., Union["Command", "Parallel"]]:
         """Call ComponentVersion as a function and get a Component object."""
+        if args:
+            # raise clear error message for unsupported positional args
+            if self._func._has_parameters:
+                msg = f"Component function doesn't support positional arguments, got {args} for {self.name}. " \
+                      f"Please use keyword arguments like: {self._func._func_calling_example}."
+            else:
+                msg = "Component function doesn't has any parameters, " \
+                      f"please make sure component {self.name} has inputs. "
+            raise ValidationException(
+                message=msg,
+                target=ErrorTarget.COMPONENT,
+                no_personal_data_message=msg,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         return self._func(*args, **kwargs)  # pylint: disable=not-callable
 
     @contextmanager

@@ -1,14 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import os.path
 
-from marshmallow import EXCLUDE, INCLUDE, fields, post_dump
+import pydash
+from marshmallow import EXCLUDE, INCLUDE, fields, post_dump, pre_load
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
-from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType
+from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourceType, SOURCE_PATH_CONTEXT_KEY
 
+from .._utils import yaml_safe_load_with_base_resolver
 from ..._utils._arm_id_utils import parse_name_label
 from .environment import InternalEnvironmentSchema
 from .input_output import (
@@ -110,6 +113,25 @@ class InternalComponentSchema(ComponentSchema):
                 ret[attr_name] = self.get_attribute(obj, attr_name, None)
         return ret
 
+    # override param_override to ensure that param override happens after reloading the yaml
+    @pre_load
+    def add_param_overrides(self, data, **kwargs):
+        source_path = self.context.pop(SOURCE_PATH_CONTEXT_KEY, None)
+        if isinstance(data, dict) and source_path and os.path.isfile(source_path):
+            # do override here
+            with open(source_path, "r") as f:
+                origin_data = yaml_safe_load_with_base_resolver(f)
+                dot_keys = ["version"]
+                for input_key in data.get("inputs", {}).keys():
+                    # Keep value in float input as string to avoid precision issue.
+                    for attr_name in ["default", "enum", "min", "max"]:
+                        dot_keys.append(f"inputs.{input_key}.{attr_name}")
+
+                for dot_key in dot_keys:
+                    if pydash.has(data, dot_key) and pydash.has(origin_data, dot_key):
+                        pydash.set_(data, dot_key, pydash.get(origin_data, dot_key))
+        return super().add_param_overrides(data, **kwargs)
+
     @post_dump(pass_original=True)
     def simplify_input_output_port(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
         # remove None in input & output
@@ -119,13 +141,6 @@ class InternalComponentSchema(ComponentSchema):
 
         # hack, to match current serialization match expectation
         for port_name, port_definition in data["inputs"].items():
-            input_type = port_definition.get("type", None)
-            is_float_type = isinstance(input_type, str) and input_type.lower() == "float"
-            for key in ["default", "min", "max"]:
-                if key in port_definition:
-                    value = getattr(original.inputs[port_name], key)
-                    # Keep value in float input as string to avoid precision issue.
-                    data["inputs"][port_name][key] = str(value) if is_float_type else value
             if "mode" in port_definition:
                 del port_definition["mode"]
 

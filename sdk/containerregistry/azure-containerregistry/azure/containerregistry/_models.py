@@ -6,20 +6,22 @@
 import warnings
 from datetime import datetime
 from enum import Enum
-from typing import Dict, Any, List
+from typing import List
+
+from azure.core import CaseInsensitiveEnumMeta
 
 from ._generated.models import (
     ArtifactTagProperties as GeneratedArtifactTagProperties,
+    ArtifactManifestProperties as GeneratedArtifactManifestProperties,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
     ManifestWriteableProperties,
-    ManifestAttributesBase,
 )
 from ._helpers import _host_only, _is_tag, _strip_alg
 
 
-class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class ArtifactArchitecture(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AMD64 = "amd64"
     ARM = "arm"
     ARM64 = "arm64"
@@ -35,7 +37,7 @@ class ArtifactArchitecture(str, Enum): # pylint: disable=enum-must-inherit-case-
     WASM = "wasm"
 
 
-class ArtifactOperatingSystem(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class ArtifactOperatingSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AIX = "aix"
     ANDROID = "android"
     DARWIN = "darwin"
@@ -93,9 +95,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(
-        cls, generated: ManifestAttributesBase, **kwargs: Dict[str, Any]
-    ) -> "ArtifactManifestProperties":
+    def _from_generated(cls, generated: GeneratedArtifactManifestProperties, **kwargs) -> "ArtifactManifestProperties":
         return cls(
             cpu_architecture=generated.architecture,
             created_on=generated.created_on,
@@ -154,20 +154,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
 
     @property
     def fully_qualified_reference(self) -> str:
-        return "{}/{}{}{}".format(
-            _host_only(self._registry),
-            self._repository_name,
-            ":" if _is_tag(self._digest) else "@",
-            _strip_alg(self._digest)
-        )
-
-    def _to_generated(self) -> ManifestWriteableProperties:
-        return ManifestWriteableProperties(
-            can_delete=self.can_delete,
-            can_read=self.can_read,
-            can_write=self.can_write,
-            can_list=self.can_list,
-        )
+        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
 
 
 class RepositoryProperties(object):
@@ -276,9 +263,7 @@ class ArtifactTagProperties(object):
         self.can_write = kwargs.get("can_write")
 
     @classmethod
-    def _from_generated(
-        cls, generated: GeneratedArtifactTagProperties, **kwargs: Dict[str, Any]
-    ) -> "ArtifactTagProperties":
+    def _from_generated(cls, generated: GeneratedArtifactTagProperties, **kwargs) -> "ArtifactTagProperties":
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,

@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, Any, Optional
+from typing import Optional
 
 from ._async_exchange_client import ExchangeClientAuthenticationPolicy
 from .._generated.aio import ContainerRegistry
@@ -12,15 +12,18 @@ from .._helpers import _parse_challenge
 from .._user_agent import USER_AGENT
 
 
-class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
+class AnonymousACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
+    :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, endpoint: str, **kwargs: Dict[str, Any]
+        self, endpoint: str, **kwargs
     ) -> None:
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
@@ -33,11 +36,10 @@ class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-v
             **kwargs
         )
 
-    async def get_acr_access_token(self, challenge: str, **kwargs: Dict[str, Any]) -> str:
+    async def get_acr_access_token(self, challenge: str, **kwargs) -> Optional[str]:
         parsed_challenge = _parse_challenge(challenge)
-        parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return await self.exchange_refresh_token_for_access_token(
-            None,
+            "",
             service=parsed_challenge["service"],
             scope=parsed_challenge["scope"],
             grant_type=TokenGrantType.PASSWORD,
@@ -45,13 +47,8 @@ class AnonymousACRExchangeClient(object): # pylint: disable=client-accepts-api-v
         )
 
     async def exchange_refresh_token_for_access_token(
-        self,
-        refresh_token: Optional[str] = None,
-        service: Optional[str] = None,
-        scope: Optional[str] = None,
-        grant_type: Optional[str] = TokenGrantType.PASSWORD,
-        **kwargs: Any
-    ) -> str:
+        self, refresh_token: str, service: str, scope: str, grant_type: str, **kwargs
+    ) -> Optional[str]:
         access_token = await self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )

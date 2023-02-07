@@ -1,10 +1,37 @@
+# -------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for
+# license information.
+# --------------------------------------------------------------------------
+
 """
-Usage: python sample_send_small_logs.py
+FILE: sample_send_small_logs.py
+
+DESCRIPTION:
+    This sample demonstrates how to send a small number of logs to a Log Analytics workspace.
+
+    Note: This sample requires the azure-identity library.
+
+USAGE:
+    python sample_send_small_logs.py
+
+    Set the environment variables with your own values before running the sample:
+    1) DATA_COLLECTION_ENDPOINT - your data collection endpoint
+    2) LOGS_DCR_RULE_ID - your data collection rule immutable ID
+    3) LOGS_DCR_STREAM_NAME - your data collection rule stream name
+
+    If using an application service principal for authentication, set the following:
+    1) AZURE_TENANT_ID - your Azure AD tenant (directory) ID
+    2) AZURE_CLIENT_ID - your Azure AD client (application) ID
+    3) AZURE_CLIENT_SECRET - your Azure AD client secret
 """
 
 import os
-from azure.monitor.ingestion import LogsIngestionClient, UploadLogsStatus
+
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.ingestion import LogsIngestionClient
+
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()
@@ -25,9 +52,7 @@ body = [
       }
     ]
 
-response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-
-## iterates directly over Tuple[HttpResponseError, JSON]:
-for error, failed_logs in response:
-    # prints nothing if there are no failed_logs (i/e the status is success)
-    print(failed_logs, error)
+try:
+    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+except HttpResponseError as e:
+    print(f"Upload failed: {e}")

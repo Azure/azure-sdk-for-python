@@ -5,6 +5,7 @@
 from enum import Enum
 from typing import Optional
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.transport import AsyncHttpTransport
 
@@ -13,13 +14,13 @@ from .._generated.aio import ContainerRegistry
 from .._user_agent import USER_AGENT
 
 
-class ContainerRegistryApiVersion(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class ContainerRegistryApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Container Registry API version supported by this package"""
 
     V0_PREVIEW = ""
 
 
-class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ContainerRegistryBaseClient(object):
     """Base class for ContainerRegistryClient
 
     :param endpoint: Azure Container Registry endpoint
@@ -28,9 +29,12 @@ class ContainerRegistryBaseClient(object): # pylint: disable=client-accepts-api-
     :type credential: ~azure.identity.DefaultTokenCredential
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
+    :keyword api_version: Api Version. Default value is "2021-07-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential] = None, **kwargs) -> None:
+    def __init__(self, endpoint: str, credential: Optional[AsyncTokenCredential], **kwargs) -> None:
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
             credential=credential,

@@ -23,6 +23,7 @@ from ._registry_operations import RegistryOperations
 from ._schedule_operations import ScheduleOperations
 from ._workspace_connections_operations import WorkspaceConnectionsOperations
 from ._workspace_operations import WorkspaceOperations
+from ._virtual_cluster_operations import VirtualClusterOperations
 
 __all__ = [
     "ComputeOperations",
@@ -41,4 +42,5 @@ __all__ = [
     "WorkspaceConnectionsOperations",
     "RegistryOperations",
     "ScheduleOperations",
+    "VirtualClusterOperations",
 ]

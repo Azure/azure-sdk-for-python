@@ -1,6 +1,8 @@
 import os
+import shutil
+import tempfile
 from pathlib import Path
-from typing import Callable
+from typing import Tuple
 
 import pytest
 
@@ -10,24 +12,28 @@ from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     get_ignore_file,
     get_object_hash,
+    get_directory_size,
     traverse_directory,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 
 
 @pytest.fixture
-def gitignore_file_directory() -> str:
-    return "./tests/test_configs/storage/gitignore_only/"
-
-
-@pytest.fixture
 def storage_test_directory() -> str:
-    return "./tests/test_configs/storage/"
+    with tempfile.TemporaryDirectory() as temp_dir:
+        shutil.rmtree(temp_dir)
+        shutil.copytree("./tests/test_configs/storage/", temp_dir)
+        yield temp_dir
 
 
 @pytest.fixture
-def no_ignore_file_directory() -> str:
-    return "./tests/test_configs/storage/dont_include_us/"
+def gitignore_file_directory(storage_test_directory: str) -> str:
+    return os.path.join(storage_test_directory, "gitignore_only")
+
+
+@pytest.fixture
+def no_ignore_file_directory(storage_test_directory: str) -> str:
+    return os.path.join(storage_test_directory, "dont_include_us")
 
 
 @pytest.fixture
@@ -45,36 +51,18 @@ def no_ignore_file(no_ignore_file_directory: str) -> IgnoreFile:
     return IgnoreFile(None)
 
 
-@pytest.fixture
-def target_file_path(storage_test_directory: str) -> os.PathLike:
+def generate_link_file(base_dir: str) -> Tuple[os.PathLike, os.PathLike]:
     target_file_name = "target_file_rand_name.txt"
-    target_file = Path(os.path.join(os.path.abspath(storage_test_directory), target_file_name))
+    target_file = Path(os.path.join(os.path.abspath(base_dir), target_file_name))
     target_file.write_text("some text")
-    target_file = convert_windows_path_to_unix(target_file)
-    yield target_file
 
-    if os.path.exists(target_file):
-        os.remove(target_file)
-
-
-@pytest.fixture
-def link_file_path(
-    storage_test_directory: str, target_file_path: os.PathLike
-) -> os.PathLike:
     link_file_name = "link_file_rand_name.txt"
-    link_file = Path(os.path.join(os.path.abspath(storage_test_directory), link_file_name))
+    link_file = Path(os.path.join(os.path.abspath(base_dir), link_file_name))
 
-    try:
-        os.symlink(target_file_path, link_file)
-    except FileExistsError:
-        pass
+    os.symlink(target_file, link_file)
 
     assert os.path.islink(link_file)
-    link_file = convert_windows_path_to_unix(link_file)
-    yield link_file
-
-    if os.path.exists(link_file):
-        os.remove(link_file)
+    return convert_windows_path_to_unix(target_file), convert_windows_path_to_unix(link_file)
 
 
 @pytest.mark.unittest
@@ -149,8 +137,9 @@ class TestAssetUtils:
                 continue
             assert remote_path in local_path
 
-    def test_symlinks_included_in_hash(self, target_file_path: os.PathLike, link_file_path: os.PathLike) -> None:
+    def test_symlinks_included_in_hash(self, storage_test_directory: str) -> None:
         """Confirm that changes in the original file are respected when the symlink is hashed"""
+        target_file_path, link_file_path = generate_link_file(storage_test_directory)
 
         # hash symlink, update original file, hash symlink again and compare hashes
         original_hash = get_object_hash(path=link_file_path, ignore_file=no_ignore_file)
@@ -158,15 +147,15 @@ class TestAssetUtils:
         updated_hash = get_object_hash(path=link_file_path, ignore_file=no_ignore_file)
         assert original_hash != updated_hash
 
-    def test_symlink_upload_paths(
-        self, storage_test_directory: str, target_file_path: os.PathLike, link_file_path: os.PathLike
-    ) -> None:
+    def test_symlink_upload_paths(self, storage_test_directory: str) -> None:
         """Confirm that symlink name is preserved for upload to storage, but that target file's path is uploaded
 
         e.g given a file ./dir/foo/bar.txt with a symlink ./other_dir/bar_link.txt, we want to upload the contents of ./dir/food/bar.txt at path ./other_dir/bar_link.txt in the remote storage.
         """
+        target_file_path, link_file_path = generate_link_file(storage_test_directory)
+
         source_path = Path(storage_test_directory).resolve()
-        prefix = source_path.name + "/"
+        prefix = "random_prefix/"
         upload_paths_list = []
 
         for root, _, files in os.walk(source_path, followlinks=True):
@@ -175,5 +164,24 @@ class TestAssetUtils:
         local_paths = [i for i, _ in upload_paths_list]
         remote_paths = [j for _, j in upload_paths_list]
 
-        assert target_file_path in local_paths
-        assert any([rp in link_file_path for rp in remote_paths])  # remote file names are relative
+        # When username is too long, temp folder path will be truncated, e.g. longusername -> LONGUS~
+        # so resolve target_file_path to get the full path
+        assert Path(target_file_path).resolve().as_posix() in local_paths
+        # remote file names are relative to root and include the prefix
+        assert prefix + Path(link_file_path).relative_to(storage_test_directory).as_posix() in remote_paths
+
+    def test_directory_size_with_ignore_file(self, storage_test_directory: str, amlignore_file: AmlIgnoreFile) -> None:
+        base_size = get_directory_size(storage_test_directory)
+        with_ignore_size = get_directory_size(storage_test_directory, ignore_file=amlignore_file)
+
+        # Note, the [1] index is the number of files counted in the directory size calculation.
+        # The [0] index is the sum file size, which we don't check here due to how instable that
+        # value is across systems/builds.
+        # Directory size calculated with ignore file should include less files
+        assert len(with_ignore_size[1]) < len(base_size[1])
+
+        # Directory size calculated after symlink creation should correctly include linked file size,
+        # and count symlink file itself towards file count.
+        _, _ = generate_link_file(storage_test_directory)
+        with_symlink_size = get_directory_size(storage_test_directory)
+        assert len(with_symlink_size[1]) == len(base_size[1]) + 2

@@ -1,16 +1,16 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import re
 from datetime import datetime
 from typing import ( # pylint: disable=unused-import
-    Any, Dict, Optional, Union,
+    Any, Dict, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote
-
-import six
 
 from azure.core.exceptions import AzureError, HttpResponseError
 from azure.storage.blob import BlobClient
@@ -129,7 +129,7 @@ class PathClient(StorageAccountHostsMixin):
 
     def _format_url(self, hostname):
         file_system_name = self.file_system_name
-        if isinstance(file_system_name, six.text_type):
+        if isinstance(file_system_name, str):
             file_system_name = file_system_name.encode('UTF-8')
         return "{}://{}/{}/{}{}".format(
             self.scheme,
@@ -263,7 +263,11 @@ class PathClient(StorageAccountHostsMixin):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: A dictionary of response headers.
         :rtype: Dict[str, Union[str, datetime]]
         """
@@ -325,7 +329,11 @@ class PathClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :param int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         options = self._delete_path_options(**kwargs)
@@ -407,7 +415,11 @@ class PathClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :keyword: response dict (Etag and last modified).
         """
         if not any([owner, group, permissions, acl]):
@@ -472,7 +484,11 @@ class PathClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :keyword: response dict.
         """
         options = self._get_access_control_options(upn=upn, **kwargs)
@@ -531,7 +547,11 @@ class PathClient(StorageAccountHostsMixin):
             Continuation token will only be returned when continue_on_failure is True in case of user errors.
             If not set the default value is False for this.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
@@ -582,7 +602,11 @@ class PathClient(StorageAccountHostsMixin):
             Continuation token will only be returned when continue_on_failure is True in case of user errors.
             If not set the default value is False for this.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
@@ -632,7 +656,11 @@ class PathClient(StorageAccountHostsMixin):
             Continuation token will only be returned when continue_on_failure is True in case of user errors.
             If not set the default value is False for this.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: A summary of the recursive operations, including the count of successes and failures,
             as well as a continuation token in case the operation was terminated prematurely.
         :rtype: :class:`~azure.storage.filedatalake.AccessControlChangeResult`
@@ -709,6 +737,30 @@ class PathClient(StorageAccountHostsMixin):
         except AzureError as error:
             error.continuation_token = last_continuation_token
             raise error
+
+    def _parse_rename_path(self, new_name: str) -> Tuple[str, str, Optional[str]]:
+        new_name = new_name.strip('/')
+        new_file_system = new_name.split('/')[0]
+        new_path = new_name[len(new_file_system):].strip('/')
+
+        new_sas = None
+        sas_split = new_path.split('?')
+        # If there is a ?, there could be a SAS token
+        if len(sas_split) > 0:
+            # Check last element for SAS by looking for sv= and sig=
+            potential_sas = sas_split[-1]
+            if re.search(r'sv=\d{4}-\d{2}-\d{2}', potential_sas) and 'sig=' in potential_sas:
+                new_sas = potential_sas
+                # Remove SAS from new path
+                new_path = new_path[:-(len(new_sas) + 1)]
+
+        if not new_sas:
+            if not self._raw_credential and new_file_system != self.file_system_name:
+                raise ValueError("please provide the sas token for the new file")
+            if not self._raw_credential and new_file_system == self.file_system_name:
+                new_sas = self._query_str.strip('?')
+
+        return new_file_system, new_path, new_sas
 
     def _rename_path_options(self,  # pylint: disable=no-self-use
                              rename_source,  # type: str
@@ -795,7 +847,11 @@ class PathClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions source_match_condition:
             The source match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         """
         options = self._rename_path_options(
             rename_source,
@@ -836,7 +892,11 @@ class PathClient(StorageAccountHostsMixin):
             Use of customer-provided keys must be done over HTTPS.
             Required if the file/directory was created with a customer-provided key.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: DirectoryProperties or FileProperties
 
         .. admonition:: Example:
@@ -857,7 +917,11 @@ class PathClient(StorageAccountHostsMixin):
         Returns True if a path exists and returns False otherwise.
 
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: boolean
         """
         return self._blob_client.exists(**kwargs)
@@ -899,7 +963,11 @@ class PathClient(StorageAccountHostsMixin):
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: file system-updated property dict (Etag and last modified).
         """
         return self._blob_client.set_blob_metadata(metadata=metadata, **kwargs)
@@ -935,7 +1003,11 @@ class PathClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: file/directory-updated property dict (Etag and last modified)
         :rtype: Dict[str, Any]
         """
@@ -976,7 +1048,11 @@ class PathClient(StorageAccountHostsMixin):
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :returns: A DataLakeLeaseClient object, that can be run in a context manager.
         :rtype: ~azure.storage.filedatalake.DataLakeLeaseClient
         """

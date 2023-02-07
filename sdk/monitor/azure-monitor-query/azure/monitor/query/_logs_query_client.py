@@ -52,9 +52,10 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
+        auth_policy = kwargs.pop("authentication_policy", None)
         self._client = MonitorQueryClient(
             credential=credential,
-            authentication_policy=get_authentication_policy(credential, endpoint),
+            authentication_policy=auth_policy or get_authentication_policy(credential, endpoint),
             endpoint=self._endpoint.rstrip('/') + "/v1",
             **kwargs
         )
@@ -107,7 +108,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             :dedent: 0
             :caption: Get a response for a single Log Query
         """
-        timespan = construct_iso8601(timespan)
+        timespan_iso = construct_iso8601(timespan)
         include_statistics = kwargs.pop("include_statistics", False)
         include_visualization = kwargs.pop("include_visualization", False)
         server_timeout = kwargs.pop("server_timeout", None)
@@ -119,7 +120,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
 
         body = {
             "query": query,
-            "timespan": timespan,
+            "timespan": timespan_iso,
             "workspaces": additional_workspaces
         }
 
@@ -131,7 +132,8 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             )
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
-        response = None
+
+        response: Union[LogsQueryResult, LogsQueryPartialResult]
         if not generated_response.get("error"):
             response = LogsQueryResult._from_generated( # pylint: disable=protected-access
                 generated_response
@@ -140,7 +142,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             response = LogsQueryPartialResult._from_generated( # pylint: disable=protected-access
                 generated_response, LogsQueryError
             )
-        return cast(Union[LogsQueryResult, LogsQueryPartialResult], response)
+        return response
 
     @distributed_trace
     def query_batch(
@@ -200,5 +202,5 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         self._client.__enter__()  # pylint:disable=no-member
         return self
 
-    def __exit__(self, *args) -> None:
+    def __exit__(self, *args: Any) -> None:
         self._client.__exit__(*args)  # pylint:disable=no-member

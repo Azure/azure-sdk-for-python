@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from io import BytesIO
-from typing import Any, Dict, IO, Optional, overload, Union
+from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -14,10 +14,11 @@ from azure.core.exceptions import (
     map_error,
 )
 from azure.core.paging import ItemPaged
+from azure.core.pipeline import PipelineResponse
 from azure.core.tracing.decorator import distributed_trace
 
 from ._base_client import ContainerRegistryBaseClient
-from ._generated.models import AcrErrors, OCIManifest
+from ._generated.models import AcrErrors, OCIManifest, ManifestWrapper
 from ._helpers import (
     _compute_digest,
     _is_tag,
@@ -36,9 +37,14 @@ from ._models import (
     DownloadManifestResult,
 )
 
+def _return_response_and_deserialized(pipeline_response, deserialized, _):
+    return pipeline_response, deserialized
 
-def _return_response(pipeline_response, deserialized, response_headers):
-    return pipeline_response, deserialized, response_headers
+def _return_deserialized(_, deserialized, __):
+    return deserialized
+
+def _return_response_headers(_, __, response_headers):
+    return response_headers
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
@@ -46,7 +52,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self,
         endpoint: str,
         credential: Optional[TokenCredential] = None,
-        **kwargs: Any
+        **kwargs
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
@@ -77,9 +83,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         if api_version and api_version not in SUPPORTED_API_VERSIONS:
             supported_versions = "\n".join(SUPPORTED_API_VERSIONS)
             raise ValueError(
-                "Unsupported API version '{}'. Please select from:\n{}".format(
-                    api_version, supported_versions
-                )
+                f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}"
             )
         audience = kwargs.pop("audience", None)
         if not audience:
@@ -97,7 +101,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return tag_props.digest
 
     @distributed_trace
-    def delete_repository(self, repository: str, **kwargs: Any) -> None:
+    def delete_repository(self, repository: str, **kwargs) -> None:
         """Delete a repository. If the repository cannot be found or a response status code of
         404 is returned an error will not be raised.
 
@@ -118,7 +122,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._client.container_registry.delete_repository(repository, **kwargs)
 
     @distributed_trace
-    def list_repository_names(self, **kwargs: Any) -> ItemPaged[str]:
+    def list_repository_names(self, **kwargs) -> ItemPaged[str]:
         """List all repositories
 
         :keyword results_per_page: Number of repositories to return per page
@@ -138,7 +142,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         """
         n = kwargs.pop("results_per_page", None)
         last = kwargs.pop("last", None)
-        cls = kwargs.pop("cls", None)  # type: ClsType["_models.Repositories"]
+        cls = kwargs.pop("cls", None)
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}))
         accept = "application/json"
@@ -225,7 +229,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_repository_properties(self, repository: str, **kwargs: Any) -> RepositoryProperties:
+    def get_repository_properties(self, repository: str, **kwargs) -> RepositoryProperties:
         """Get the properties of a repository
 
         :param str repository: Name of the repository
@@ -237,7 +241,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_manifest_properties(self, repository: str, **kwargs: Any) -> ItemPaged[ArtifactManifestProperties]:
+    def list_manifest_properties(self, repository: str, **kwargs) -> ItemPaged[ArtifactManifestProperties]:
         """List the artifacts for a repository
 
         :param str repository: Name of the repository
@@ -355,7 +359,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def delete_tag(self, repository: str, tag: str, **kwargs: Any) -> None:
+    def delete_tag(self, repository: str, tag: str, **kwargs) -> None:
         """Delete a tag from a repository. If the tag cannot be found or a response status code of
         404 is returned an error will not be raised.
 
@@ -379,7 +383,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._client.container_registry.delete_tag(repository, tag, **kwargs)
 
     @distributed_trace
-    def get_manifest_properties(self, repository: str, tag_or_digest: str, **kwargs: Any) -> ArtifactManifestProperties:
+    def get_manifest_properties(self, repository: str, tag_or_digest: str, **kwargs) -> ArtifactManifestProperties:
         """Get the properties of a registry artifact
 
         :param str repository: Name of the repository
@@ -408,7 +412,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def get_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
+    def get_tag_properties(self, repository: str, tag: str, **kwargs) -> ArtifactTagProperties:
         """Get the properties for a tag
 
         :param str repository: Name of the repository
@@ -433,7 +437,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         )
 
     @distributed_trace
-    def list_tag_properties(self, repository: str, **kwargs: Any) -> ItemPaged[ArtifactTagProperties]:
+    def list_tag_properties(self, repository: str, **kwargs) -> ItemPaged[ArtifactTagProperties]:
         """List the tags for a repository
 
         :param str repository: Name of the repository
@@ -564,19 +568,17 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs: Any
+        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs
     ) -> ArtifactManifestProperties:
         pass
 
     @overload
-    def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, **kwargs: Any
-    ) -> ArtifactManifestProperties:
+    def update_manifest_properties(self, repository: str, tag_or_digest: str, **kwargs) -> ArtifactManifestProperties:
         pass
 
     @distributed_trace
     def update_manifest_properties(
-        self, *args: Union[str, ArtifactManifestProperties], **kwargs: Any
+        self, *args: Union[str, ArtifactManifestProperties], **kwargs
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -612,11 +614,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     can_write=False,
                 )
         """
-        repository = args[0]
-        tag_or_digest = args[1]
+        repository = str(args[0])
+        tag_or_digest = str(args[1])
         properties = None
         if len(args) == 3:
-            properties = args[2]
+            properties = cast(ArtifactManifestProperties, args[2])
         else:
             properties = ArtifactManifestProperties()
 
@@ -641,16 +643,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_tag_properties(
-        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs: Any
+        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs
     ) -> ArtifactTagProperties:
         pass
 
     @overload
-    def update_tag_properties(self, repository: str, tag: str, **kwargs: Any) -> ArtifactTagProperties:
+    def update_tag_properties(self, repository: str, tag: str, **kwargs) -> ArtifactTagProperties:
         pass
 
     @distributed_trace
-    def update_tag_properties(self, *args: Union[str, ArtifactTagProperties], **kwargs: Any) -> ArtifactTagProperties:
+    def update_tag_properties(self, *args: Union[str, ArtifactTagProperties], **kwargs) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
         The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
@@ -685,11 +687,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 can_write=False,
             )
         """
-        repository = args[0]
-        tag = args[1]
+        repository = str(args[0])
+        tag = str(args[1])
         properties = None
         if len(args) == 3:
-            properties = args[2]
+            properties = cast(ArtifactTagProperties, args[2])
         else:
             properties = ArtifactTagProperties()
 
@@ -702,22 +704,22 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             self._client.container_registry.update_tag_attributes(
                 repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ),
-            repository=repository,
+            repository=repository
         )
 
     @overload
     def update_repository_properties(
-        self, repository: str, properties: RepositoryProperties, **kwargs: Any
+        self, repository: str, properties: RepositoryProperties, **kwargs
     ) -> RepositoryProperties:
         pass
 
     @overload
-    def update_repository_properties(self, repository: str, **kwargs: Any) -> RepositoryProperties:
+    def update_repository_properties(self, repository: str, **kwargs) -> RepositoryProperties:
         pass
 
     @distributed_trace
     def update_repository_properties(
-        self, *args: Union[str, RepositoryProperties], **kwargs: Any
+        self, *args: Union[str, RepositoryProperties], **kwargs
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
@@ -734,12 +736,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
-        repository, properties = None, None
+        repository = str(args[0])
+        properties = None
         if len(args) == 2:
-            repository = args[0]
-            properties = args[1]
+            properties = cast(RepositoryProperties, args[1])
         else:
-            repository = args[0]
             properties = RepositoryProperties()
 
         properties.can_delete = kwargs.pop("can_delete", properties.can_delete)
@@ -755,7 +756,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def upload_manifest(
-        self, repository: str, manifest: Union[OCIManifest, IO], *, tag: Optional[str] = None, **kwargs: Any
+        self, repository: str, manifest: Union[OCIManifest, IO], *, tag: Optional[str] = None, **kwargs
     ) -> str:
         """Upload a manifest for an OCI artifact.
 
@@ -771,20 +772,21 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             If the digest in the response does not match the digest of the uploaded manifest.
         """
         try:
-            data = manifest
             if isinstance(manifest, OCIManifest):
                 data = _serialize_manifest(manifest)
+            else:
+                data = manifest
             tag_or_digest = tag
-            if tag is None:
+            if tag_or_digest is None:
                 tag_or_digest = _compute_digest(data)
 
-            _, _, response_headers = self._client.container_registry.create_manifest(
+            response_headers = self._client.container_registry.create_manifest(
                 name=repository,
                 reference=tag_or_digest,
                 payload=data,
                 content_type=OCI_MANIFEST_MEDIA_TYPE,
                 headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
-                cls=_return_response,
+                cls=_return_response_headers,
                 **kwargs
             )
 
@@ -799,7 +801,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return digest
 
     @distributed_trace
-    def upload_blob(self, repository: str, data: IO, **kwargs: Any) -> str:
+    def upload_blob(self, repository: str, data: IO, **kwargs) -> str:
         """Upload an artifact blob.
 
         :param str repository: Name of the repository
@@ -810,15 +812,24 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or data is None.
         """
         try:
-            _, _, start_upload_response_headers = self._client.container_registry_blob.start_upload(
-                repository, cls=_return_response, **kwargs
-            )
-            _, _, upload_chunk_response_headers = self._client.container_registry_blob.upload_chunk(
-                start_upload_response_headers['Location'], data, cls=_return_response, **kwargs
-            )
+            start_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.start_upload(
+                repository, cls=_return_response_headers, **kwargs
+            ))
+            upload_chunk_response_headers = cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
+                start_upload_response_headers['Location'],
+                data,
+                cls=_return_response_headers,
+                **kwargs
+            ))
             digest = _compute_digest(data)
-            _, _, complete_upload_response_headers = self._client.container_registry_blob.complete_upload(
-                digest=digest, next_link=upload_chunk_response_headers['Location'], cls=_return_response, **kwargs
+            complete_upload_response_headers = cast(
+                Dict[str, str],
+                self._client.container_registry_blob.complete_upload(
+                    digest=digest,
+                    next_link=upload_chunk_response_headers['Location'],
+                    cls=_return_response_headers,
+                    **kwargs
+                )
             )
         except ValueError:
             if repository is None or data is None:
@@ -827,7 +838,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return complete_upload_response_headers['Docker-Content-Digest']
 
     @distributed_trace
-    def download_manifest(self, repository: str, tag_or_digest: str, **kwargs: Any) -> DownloadManifestResult:
+    def download_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> DownloadManifestResult:
         """Download the manifest for an OCI artifact.
 
         :param str repository: Name of the repository
@@ -839,15 +850,18 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             If the requested digest does not match the digest of the received manifest.
         """
         try:
-            response, manifest_wrapper, _ = self._client.container_registry.get_manifest(
-                name=repository,
-                reference=tag_or_digest,
-                headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
-                cls=_return_response,
-                **kwargs
+            response, manifest_wrapper = cast(
+                Tuple[PipelineResponse, ManifestWrapper],
+                self._client.container_registry.get_manifest(
+                    name=repository,
+                    reference=tag_or_digest,
+                    headers={"Accept": OCI_MANIFEST_MEDIA_TYPE},
+                    cls=_return_response_and_deserialized,
+                    **kwargs
+                )
             )
             digest = response.http_response.headers['Docker-Content-Digest']
-            manifest = OCIManifest.deserialize(manifest_wrapper.serialize())
+            manifest = OCIManifest.deserialize(cast(ManifestWrapper, manifest_wrapper).serialize())
             manifest_stream = _serialize_manifest(manifest)
         except ValueError:
             if repository is None or tag_or_digest is None:
@@ -859,7 +873,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs: Any) -> Union[DownloadBlobResult, None]:
+    def download_blob(self, repository: str, digest: str, **kwargs) -> Optional[DownloadBlobResult]:
         """Download a blob that is part of an artifact.
 
         :param str repository: Name of the repository
@@ -869,8 +883,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :raises ValueError: If the parameter repository or digest is None.
         """
         try:
-            _, deserialized, _ = self._client.container_registry_blob.get_blob(
-                repository, digest, cls=_return_response, **kwargs
+            deserialized = self._client.container_registry_blob.get_blob( # type: ignore
+                repository, digest, cls=_return_deserialized, **kwargs
             )
         except ValueError:
             if repository is None or digest is None:
@@ -886,7 +900,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return None
 
     @distributed_trace
-    def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs: Any) -> None:
+    def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> None:
         """Delete a manifest. If the manifest cannot be found or a response status code of
         404 is returned an error will not be raised.
 
@@ -911,7 +925,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self._client.container_registry.delete_manifest(repository, tag_or_digest, **kwargs)
 
     @distributed_trace
-    def delete_blob(self, repository: str, tag_or_digest: str, **kwargs: Any) -> None:
+    def delete_blob(self, repository: str, tag_or_digest: str, **kwargs) -> None:
         """Delete a blob. If the blob cannot be found or a response status code of
         404 is returned an error will not be raised.
 

@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, List, Generic, TypeVar, Dict
+from typing import Any, Union, Generic, TypeVar, List, Dict
 from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
@@ -38,6 +38,7 @@ ImplPoliciesType = List[
     ]
 ]
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
+
 
 class _SansIOAsyncHTTPPolicyRunner(
     AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]
@@ -149,13 +150,13 @@ class AsyncPipeline(
 
         Does nothing if "set_multipart_mixed" was never called.
         """
-        multipart_mixed_info = request.multipart_mixed_info # type: ignore
+        multipart_mixed_info = request.multipart_mixed_info  # type: ignore
         if not multipart_mixed_info:
             return
 
-        requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
-        policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
-        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
+        requests: List[HTTPRequestType] = multipart_mixed_info[0]
+        policies: List[SansIOHTTPPolicy] = multipart_mixed_info[1]
+        pipeline_options: Dict[str, Any] = multipart_mixed_info[3]
 
         async def prepare_requests(req):
             if req.multipart_mixed_info:

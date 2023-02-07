@@ -264,10 +264,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 version=deployment.job_definition.component.version,
                 **self._init_kwargs,
             )
-            deployment.job_definition.component = None
-            deployment.job_definition.component_id = component.id
-            if not deployment.job_definition.name and component.name:
-                deployment.job_definition.name = component.name
             if not deployment.job_definition.description and component.description:
                 deployment.job_definition.description = component.description
             if not deployment.job_definition.tags and component.tags:
@@ -280,3 +276,24 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 name, _ = parse_prefixed_name_version(deployment.job_definition.component)
                 deployment.job_definition.name = name
             deployment.job_definition.component_id = component_id
+        elif isinstance(deployment.job_definition.job, str):
+            job_component = PipelineComponent(source_job_id= deployment.job_definition.job)
+            component = self._component_operations.create_or_update(
+                name = job_component.name,
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                body = job_component._to_rest_object(),
+                version= job_component.version,
+                **self._init_kwargs
+            )
+            if not deployment.job_definition.description and component.properties.description:
+                deployment.job_definition.description = component.properties.description
+            if not deployment.job_definition.tags and component.properties.tags:
+                deployment.job_definition.tags = component.properties.tags
+        # pylint: disable=line-too-long
+        if isinstance(deployment.job_definition.job, str) or isinstance(deployment.job_definition.component, PipelineComponent):
+            deployment.job_definition.component = None
+            deployment.job_definition.job = None
+            deployment.job_definition.component_id = component.id
+            if not deployment.job_definition.name and component.name:
+                deployment.job_definition.name = component.name

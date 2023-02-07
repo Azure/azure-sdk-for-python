@@ -36,6 +36,7 @@ from azure.ai.ml.constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR,
+    AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -772,8 +773,11 @@ def is_private_preview_enabled():
 
 
 def is_on_disk_cache_enabled():
-    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True] \
-        and is_private_preview_enabled()
+    return os.getenv(AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR) not in ["True", "true", True]
+
+
+def is_concurrent_component_registration_enabled():
+    return os.getenv(AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION) not in ["True", "true", True]
 
 
 def is_internal_components_enabled():
@@ -904,27 +908,19 @@ def get_all_enum_values_iter(enum_type):
             yield getattr(enum_type, key)
 
 
-def _validate_missing_sub_or_rg_and_raise(subscription_id: Optional[str], resource_group: Optional[str]):
-    """Determine if subscription or resource group is missing and raise exception
-    as appropriate."""
-    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+def write_to_shared_file(file_path: Union[str, PathLike], content: str):
+    """Open file with specific mode and return the file object.
 
-    # These imports can't be placed in at top file level because it will cause a circular import in
-    # exceptions.py via _get_mfe_url_override
+    :param file_path: Path to the file.
+    :param content: Content to write to the file.
+    """
+    with open(file_path, "w") as f:
+        f.write(content)
 
-    msg = "Both subscription id and resource group are required for this operation, missing {}"
-    sub_msg = None
-    if not subscription_id and not resource_group:
-        sub_msg = "subscription id and resource group"
-    elif not subscription_id and resource_group:
-        sub_msg = "subscription id"
-    elif subscription_id and not resource_group:
-        sub_msg = "resource group"
-
-    if sub_msg:
-        raise ValidationException(
-            message=msg.format(sub_msg),
-            no_personal_data_message=msg.format(sub_msg),
-            target=ErrorTarget.GENERAL,
-            error_category=ErrorCategory.USER_ERROR,
-        )
+    # share_mode means read/write for owner, group and others
+    share_mode, mode_mask = 0o666, 0o777
+    if os.stat(file_path).st_mode & mode_mask != share_mode:
+        try:
+            os.chmod(file_path, share_mode)
+        except PermissionError:
+            pass
