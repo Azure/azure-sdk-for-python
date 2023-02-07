@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://eastus.api.azureml.ms/registrymanagement/v1.0/registries/val-test-registry/discovery",
+      "RequestUri": "https://eastus.api.azureml.ms/registrymanagement/v1.0/registries/UnsecureTest-testFeed/discovery",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json, text/json",
@@ -15,7 +15,7 @@
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Feb 2023 19:08:06 GMT",
+        "Date": "Tue, 07 Feb 2023 21:02:29 GMT",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
@@ -23,63 +23,23 @@
         "x-aml-cluster": "vienna-eastus-01",
         "X-Content-Type-Options": "nosniff",
         "x-ms-response-type": "standard",
-        "x-request-time": "0.057"
+        "x-request-time": "0.058"
       },
       "ResponseBody": {
-        "registryId": "d3e89f10-fe24-4e54-9a01-d89db82f741a",
-        "registryName": "val-test-registry",
+        "registryId": "04dd0c97-2930-46ea-ad45-a918b68b4071",
+        "registryName": "UnsecureTest-testFeed",
         "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
-        "primaryRegion": "centralus",
+        "primaryRegion": "centraluseuap",
         "regions": [
-          "centralus",
-          "eastus",
-          "eastus2",
-          "northcentralus",
-          "southcentralus",
-          "westcentralus",
-          "westus",
-          "westus2",
-          "westus3",
-          "eastus2euap",
           "centraluseuap"
         ],
-        "subscriptionId": "00000000-0000-0000-0000-000000000",
-        "resourceGroup": "00000",
+        "subscriptionId": "4f26493f-21d2-4726-92ea-1ddd550b1d27",
+        "resourceGroup": "test-registries",
         "workspaceName": null,
-        "primaryRegionResourceProviderUri": "https://cert-centralus.experiments.azureml.net/",
+        "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
         "registryFqdns": {
-          "centralus": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.centralus.privatelink.api.azureml.ms"
-          },
-          "eastus": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.eastus.privatelink.api.azureml.ms"
-          },
-          "eastus2": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.eastus2.privatelink.api.azureml.ms"
-          },
-          "northcentralus": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.northcentralus.privatelink.api.azureml.ms"
-          },
-          "southcentralus": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.southcentralus.privatelink.api.azureml.ms"
-          },
-          "westcentralus": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.westcentralus.privatelink.api.azureml.ms"
-          },
-          "westus": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.westus.privatelink.api.azureml.ms"
-          },
-          "westus2": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.westus2.privatelink.api.azureml.ms"
-          },
-          "westus3": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.westus3.privatelink.api.azureml.ms"
-          },
-          "eastus2euap": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.eastus2euap.privatelink.api.azureml.ms"
-          },
           "centraluseuap": {
-            "uri": "https://d3e89f10-fe24-4e54-9a01-d89db82f741a.registry.master.privatelink.api.azureml-test.ms"
+            "uri": "https://04dd0c97-2930-46ea-ad45-a918b68b4071.registry.master.privatelink.api.azureml-test.ms"
           }
         }
       }
