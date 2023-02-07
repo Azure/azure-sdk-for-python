@@ -52,11 +52,17 @@ class WorkspaceOutboundRuleOperations:
         obj = self._rule_operation.get(resource_group, workspace_name, outbound_rule_name)
         return OutboundRule._from_rest_object(obj)  # pylint: disable=protected-access
 
-    def list(self, resource_group: str, ws_name: str, **kwargs) -> OutboundRule:
+    def list(self, resource_group: str, ws_name: str, **kwargs) -> Dict[str, OutboundRule]:
         workspace_name = self._check_workspace_name(ws_name)
         resource_group = kwargs.get("resource_group") or self._resource_group_name
 
-        return self._rule_operation.list(resource_group, workspace_name)
+        rest_rules = self._rule_operation.list(resource_group, workspace_name)
+
+        result = {
+            rule_name: OutboundRule._from_rest_object(rest_rules[rule_name])  # pylint: disable=protected-access
+            for rule_name in rest_rules.keys()
+        }
+        return result
 
     def remove(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> LROPoller:
         workspace_name = self._check_workspace_name(ws_name)
