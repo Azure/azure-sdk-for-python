@@ -327,7 +327,7 @@ class CodeModel:
         self.default_api_version = self.sorted_api_versions[-1]
         self.default_folder_api_version = self.api_version_to_folder_api_version[self.default_api_version]
         self.module_name = pkg_path.stem.replace("-", ".")
-        self.operation_groups = self._combine_operation_groups()
+        # self.operation_groups = self._combine_operation_groups()
         self.models = self._combine_models()
         self.client = Client(self)
 
