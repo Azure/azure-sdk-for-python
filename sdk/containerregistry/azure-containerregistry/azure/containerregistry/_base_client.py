@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from typing import Dict, Any, Optional
+from typing import Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.credentials import TokenCredential

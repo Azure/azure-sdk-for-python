@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import Any, Optional
+from typing import Optional
 
 from azure.core.credentials import TokenCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse
