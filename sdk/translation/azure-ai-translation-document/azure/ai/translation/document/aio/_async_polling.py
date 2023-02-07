@@ -49,12 +49,12 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
         return TranslationStatus(id=self._polling_method._get_id_from_headers())  # type: ignore # pylint: disable=protected-access
 
     @classmethod
-    def from_continuation_token(  # type: ignore
+    def from_continuation_token(
         cls,
-        polling_method: "AsyncDocumentTranslationLROPollingMethod",
-        continuation_token: str,
-        **kwargs: Any
-    ) -> "AsyncDocumentTranslationLROPoller":
+        polling_method,
+        continuation_token,
+        **kwargs
+    ):
         """
         :meta private:
         """
@@ -64,7 +64,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType]):
             deserialization_callback,
         ) = polling_method.from_continuation_token(continuation_token, **kwargs)
 
-        return cls(client, initial_response, deserialization_callback, polling_method)  # type: ignore
+        return cls(client, initial_response, deserialization_callback, polling_method)
 
 
 class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
@@ -79,7 +79,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         return _TranslationStatus.deserialize(self._pipeline_response)
 
     def _get_id_from_headers(self) -> str:
-        return self._initial_response.http_response.headers[
+        return self._initial_response.http_response.headers[  # type: ignore
             "Operation-Location"
         ].split("/batches/")[1]
 
@@ -131,7 +131,8 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         :raises: BadStatus if response status invalid.
         :raises: BadResponse if response invalid.
         """
-
+        while not self.finished():
+            await self.update_status()
         while not self.finished():
             await self._delay()
             await self.update_status()
@@ -139,7 +140,7 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
         if self._failed(self.status()):
             raise OperationFailed("Operation failed or canceled")
 
-        final_get_url = self._operation.get_final_get_url(self._pipeline_response)
+        final_get_url = self._operation.get_final_get_url(self._pipeline_response)  # type: ignore
         if final_get_url:
             self._pipeline_response = await self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)

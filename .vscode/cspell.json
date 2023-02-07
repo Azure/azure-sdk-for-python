@@ -430,9 +430,10 @@
       ]
     },
     {
-      "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
+      "filename": "sdk/translation/azure-ai-translation-document/**",
       "words": [
-        "essai"
+        "essai",
+        "myfoldername"
       ]
     },
     {
@@ -736,7 +737,8 @@
         "cpksubdirectory",
         "thead",
         "tbody",
-        "racwdlmeop"
+        "racwdlmeop",
+        "newfs"
       ]
     },
     {

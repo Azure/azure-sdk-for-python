@@ -250,7 +250,8 @@ class WorkspaceOperations:
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         identity = kwargs.get("identity", workspace.identity)
-        existing_workspace = self.get(workspace.name, **kwargs)
+        workspace_name = kwargs.get("workspace_name", workspace.name)
+        existing_workspace = self.get(workspace_name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
             rest_user_assigned_identities = identity.user_assigned_identities
@@ -306,7 +307,7 @@ class WorkspaceOperations:
             )
 
         update_param = WorkspaceUpdateParameters(
-            tags=workspace.tags,
+            tags=kwargs.get("tags", workspace.tags),
             description=kwargs.get("description", workspace.description),
             friendly_name=kwargs.get("display_name", workspace.display_name),
             public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
@@ -335,7 +336,7 @@ class WorkspaceOperations:
         def callback(_, deserialized, args):
             return Workspace._from_rest_object(deserialized)
 
-        poller = self._operation.begin_update(resource_group, workspace.name, update_param, polling=True, cls=callback)
+        poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
 
     # @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
