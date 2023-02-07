@@ -81,7 +81,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
          visualization to show. If your client requires this information, specify the preference
         :keyword additional_workspaces: A list of workspaces that are included in the query.
          These can be qualified workspace names, workspace Ids, or Azure resource Ids.
-        :paramtype Optional[additional_workspaces: list[str]]
+        :paramtype additional_workspaces: Optional[List[str]]
         :return: LogsQueryResult if there is a success or LogsQueryPartialResult when there is a partial success.
         :rtype: ~azure.monitor.query.LogsQueryResult or ~azure.monitor.query.LogsQueryPartialResult
         :raises: ~azure.core.exceptions.HttpResponseError
