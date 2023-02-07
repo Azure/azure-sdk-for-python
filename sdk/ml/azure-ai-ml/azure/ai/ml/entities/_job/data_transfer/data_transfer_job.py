@@ -16,7 +16,6 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._component import ExternalDataType, DataTransferBuiltinComponentUri, ComponentSource, \
     DataTransferTaskType
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
@@ -310,9 +309,9 @@ class DataTransferExportJob(DataTransferJob):
         context = context or {BASE_PATH_CONTEXT_KEY: Path("./")}
 
         if self.sink.type == ExternalDataType.DATABASE:
-            id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
+            component_id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
-            id = DataTransferBuiltinComponentUri.EXPORT_FILE_SYSTEM
+            component_id = DataTransferBuiltinComponentUri.EXPORT_FILE_SYSTEM
 
         # Create anonymous command component with default version as 1
         component = DataTransferExportComponent(
@@ -323,7 +322,7 @@ class DataTransferExportJob(DataTransferJob):
             sink=self.sink,
             inputs=self._to_inputs(inputs=self.inputs, pipeline_job_dict=pipeline_job_dict),
             task=self.task,
-            id=id,
+            id=component_id,
         )
         component._source = ComponentSource.BUIlTIN
         return component
