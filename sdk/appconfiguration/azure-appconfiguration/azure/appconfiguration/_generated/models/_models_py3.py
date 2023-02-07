@@ -8,9 +8,13 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 class Error(_serialization.Model):
@@ -44,8 +48,8 @@ class Error(_serialization.Model):
         name: Optional[str] = None,
         detail: Optional[str] = None,
         status: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: The type of the error.
         :paramtype type: str
@@ -71,7 +75,7 @@ class Key(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name:
+    :ivar name: The name of the key.
     :vartype name: str
     """
 
@@ -83,7 +87,7 @@ class Key(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -103,7 +107,9 @@ class KeyListResult(_serialization.Model):
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(self, *, items: Optional[List["_models.Key"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, items: Optional[List["_models.Key"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword items: The collection value.
         :paramtype items: list[~azure.appconfiguration.models.Key]
@@ -118,21 +124,21 @@ class KeyListResult(_serialization.Model):
 class KeyValue(_serialization.Model):
     """KeyValue.
 
-    :ivar key:
+    :ivar key: The key of the key-value.
     :vartype key: str
-    :ivar label:
+    :ivar label: The label the key-value belongs to.
     :vartype label: str
-    :ivar content_type:
+    :ivar content_type: The content type of the value stored within the key-value.
     :vartype content_type: str
-    :ivar value:
+    :ivar value: The value of the key-value.
     :vartype value: str
-    :ivar last_modified:
+    :ivar last_modified: A date representing the last time the key-value was modified.
     :vartype last_modified: ~datetime.datetime
-    :ivar tags: Dictionary of :code:`<string>`.
+    :ivar tags: The tags of the key-value.
     :vartype tags: dict[str, str]
-    :ivar locked:
+    :ivar locked: Indicates whether the key-value is locked.
     :vartype locked: bool
-    :ivar etag:
+    :ivar etag: A value representing the current state of the resource.
     :vartype etag: str
     """
 
@@ -158,24 +164,24 @@ class KeyValue(_serialization.Model):
         tags: Optional[Dict[str, str]] = None,
         locked: Optional[bool] = None,
         etag: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword key:
+        :keyword key: The key of the key-value.
         :paramtype key: str
-        :keyword label:
+        :keyword label: The label the key-value belongs to.
         :paramtype label: str
-        :keyword content_type:
+        :keyword content_type: The content type of the value stored within the key-value.
         :paramtype content_type: str
-        :keyword value:
+        :keyword value: The value of the key-value.
         :paramtype value: str
-        :keyword last_modified:
+        :keyword last_modified: A date representing the last time the key-value was modified.
         :paramtype last_modified: ~datetime.datetime
-        :keyword tags: Dictionary of :code:`<string>`.
+        :keyword tags: The tags of the key-value.
         :paramtype tags: dict[str, str]
-        :keyword locked:
+        :keyword locked: Indicates whether the key-value is locked.
         :paramtype locked: bool
-        :keyword etag:
+        :keyword etag: A value representing the current state of the resource.
         :paramtype etag: str
         """
         super().__init__(**kwargs)
@@ -187,6 +193,38 @@ class KeyValue(_serialization.Model):
         self.tags = tags
         self.locked = locked
         self.etag = etag
+
+
+class KeyValueFilter(_serialization.Model):
+    """Enables filtering of key-values.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar key: Filters key-values by their key field. Required.
+    :vartype key: str
+    :ivar label: Filters key-values by their label field.
+    :vartype label: str
+    """
+
+    _validation = {
+        "key": {"required": True},
+    }
+
+    _attribute_map = {
+        "key": {"key": "key", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+    }
+
+    def __init__(self, *, key: str, label: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: Filters key-values by their key field. Required.
+        :paramtype key: str
+        :keyword label: Filters key-values by their label field.
+        :paramtype label: str
+        """
+        super().__init__(**kwargs)
+        self.key = key
+        self.label = label
 
 
 class KeyValueListResult(_serialization.Model):
@@ -203,7 +241,9 @@ class KeyValueListResult(_serialization.Model):
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(self, *, items: Optional[List["_models.KeyValue"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, items: Optional[List["_models.KeyValue"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword items: The collection value.
         :paramtype items: list[~azure.appconfiguration.models.KeyValue]
@@ -220,7 +260,7 @@ class Label(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name:
+    :ivar name: The name of the label.
     :vartype name: str
     """
 
@@ -232,7 +272,7 @@ class Label(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.name = None
@@ -252,7 +292,9 @@ class LabelListResult(_serialization.Model):
         "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(self, *, items: Optional[List["_models.Label"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, items: Optional[List["_models.Label"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword items: The collection value.
         :paramtype items: list[~azure.appconfiguration.models.Label]
@@ -262,3 +304,162 @@ class LabelListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.items = items
         self.next_link = next_link
+
+
+class Snapshot(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """Snapshot.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The name of the snapshot.
+    :vartype name: str
+    :ivar status: The current status of the snapshot. Known values are: "provisioning", "ready",
+     "archived", and "failed".
+    :vartype status: str or ~azure.appconfiguration.models.SnapshotStatus
+    :ivar status_code: Provides additional information about the status of the snapshot. The status
+     code values are modeled after HTTP status codes.
+    :vartype status_code: int
+    :ivar filters: A list of filters used to filter the key-values included in the snapshot.
+     Required.
+    :vartype filters: list[~azure.appconfiguration.models.KeyValueFilter]
+    :ivar composition_type: The composition type describes how the key-values within the snapshot
+     are composed. The 'all' composition type includes all key-values. The 'group_by_key'
+     composition type ensures there are no two key-values containing the same key. Known values are:
+     "all" and "group_by_key".
+    :vartype composition_type: str or ~azure.appconfiguration.models.CompositionType
+    :ivar created: The time that the snapshot was created.
+    :vartype created: ~datetime.datetime
+    :ivar expires: The time that the snapshot will expire.
+    :vartype expires: ~datetime.datetime
+    :ivar retention_period: The amount of time, in seconds, that a snapshot will remain in the
+     archived state before expiring. This property is only writable during the creation of a
+     snapshot. If not specified, the default lifetime of key-value revisions will be used.
+    :vartype retention_period: int
+    :ivar size: The size in bytes of the snapshot.
+    :vartype size: int
+    :ivar items_count: The amount of key-values in the snapshot.
+    :vartype items_count: int
+    :ivar tags: The tags of the snapshot.
+    :vartype tags: dict[str, str]
+    :ivar etag: A value representing the current state of the snapshot.
+    :vartype etag: str
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "status_code": {"readonly": True},
+        "filters": {"required": True, "max_items": 3, "min_items": 1},
+        "created": {"readonly": True},
+        "expires": {"readonly": True},
+        "retention_period": {"maximum": 7776000, "minimum": 0},
+        "size": {"readonly": True},
+        "items_count": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "status_code": {"key": "status_code", "type": "int"},
+        "filters": {"key": "filters", "type": "[KeyValueFilter]"},
+        "composition_type": {"key": "composition_type", "type": "str"},
+        "created": {"key": "created", "type": "iso-8601"},
+        "expires": {"key": "expires", "type": "iso-8601"},
+        "retention_period": {"key": "retention_period", "type": "int"},
+        "size": {"key": "size", "type": "int"},
+        "items_count": {"key": "items_count", "type": "int"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        filters: List["_models.KeyValueFilter"],
+        composition_type: Optional[Union[str, "_models.CompositionType"]] = None,
+        retention_period: Optional[int] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword filters: A list of filters used to filter the key-values included in the snapshot.
+         Required.
+        :paramtype filters: list[~azure.appconfiguration.models.KeyValueFilter]
+        :keyword composition_type: The composition type describes how the key-values within the
+         snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
+         composition type ensures there are no two key-values containing the same key. Known values are:
+         "all" and "group_by_key".
+        :paramtype composition_type: str or ~azure.appconfiguration.models.CompositionType
+        :keyword retention_period: The amount of time, in seconds, that a snapshot will remain in the
+         archived state before expiring. This property is only writable during the creation of a
+         snapshot. If not specified, the default lifetime of key-value revisions will be used.
+        :paramtype retention_period: int
+        :keyword tags: The tags of the snapshot.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.name = None
+        self.status = None
+        self.status_code = None
+        self.filters = filters
+        self.composition_type = composition_type
+        self.created = None
+        self.expires = None
+        self.retention_period = retention_period
+        self.size = None
+        self.items_count = None
+        self.tags = tags
+        self.etag = None
+
+
+class SnapshotListResult(_serialization.Model):
+    """The result of a snapshot list request.
+
+    :ivar items: The collection value.
+    :vartype items: list[~azure.appconfiguration.models.Snapshot]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "items": {"key": "items", "type": "[Snapshot]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self, *, items: Optional[List["_models.Snapshot"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword items: The collection value.
+        :paramtype items: list[~azure.appconfiguration.models.Snapshot]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.items = items
+        self.next_link = next_link
+
+
+class SnapshotUpdateParameters(_serialization.Model):
+    """Parameters used to update a snapshot.
+
+    :ivar status: The desired status of the snapshot. Known values are: "provisioning", "ready",
+     "archived", and "failed".
+    :vartype status: str or ~azure.appconfiguration.models.SnapshotStatus
+    """
+
+    _attribute_map = {
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(self, *, status: Optional[Union[str, "_models.SnapshotStatus"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword status: The desired status of the snapshot. Known values are: "provisioning", "ready",
+         "archived", and "failed".
+        :paramtype status: str or ~azure.appconfiguration.models.SnapshotStatus
+        """
+        super().__init__(**kwargs)
+        self.status = status
