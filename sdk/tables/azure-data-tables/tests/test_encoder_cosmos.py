@@ -334,7 +334,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             "Data7": "3.14",
             "Data7@odata.type": "Edm.Double",
             "Data8": "1152921504606846976",
-            "Data8@odata.type": "Edm.Int64",
+            "Data8@odata.type": "Edm.Int64"
         }
         expected_entity = {
             "PartitionKey": "PK",
@@ -351,7 +351,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             "Data7": "3.14",
             "Data7@odata.type": "Edm.Double",
             "Data8": "1152921504606846976",
-            "Data8@odata.type": "Edm.Int64",
+            "Data8@odata.type": "Edm.Int64"
         }
         encoder = TableEntityEncoder()
         encoded_entity = encoder.encode_entity(entity)
@@ -400,13 +400,12 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             "Data": (max_int64 + 1, "Edm.Int64") # Bad request, InvalidInput
         }
         # Infinite float values
-        # TODO: update encoder to convert float value to string
         entity5 = {
             "PartitionKey": "PK5",
             "RowKey": "RK",
-            "Data1":  float('nan'), # Bad request, InvalidInput
-            "Data2": float('inf'), # Bad request, InvalidInput
-            "Data3": float('-inf'), # Bad request, InvalidInput
+            "Data1":  float('nan'),
+            "Data2": float('inf'),
+            "Data3": float('-inf')
         }
         expected_entity5 = {
             "PartitionKey": "PK5",
@@ -416,7 +415,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             "Data2": "Infinity",
             "Data2@odata.type": "Edm.Double",
             "Data3": "-Infinity",
-            "Data3@odata.type": "Edm.Double",
+            "Data3@odata.type": "Edm.Double"
         }
         # Non-string keys
         entity6 = {
@@ -424,12 +423,10 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             "RowKey": "RK",
             123:  456
         }
-        # TODO: test update the entity with property name "123" in cosmos
-        # Will get HttpResponseError with code PropertyNameInvalid
         expected_entity6 = {
             "PartitionKey": "PK6",
             "RowKey": "RK",
-            "123":  456  # key values should always be string?
+            "123":  456 # HttpResponseError, code: PropertyNameInvalid
         }
         # Test enums
         # TBD: support it in default encoder?
@@ -442,7 +439,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         expected_entity7 = {
             "PartitionKey": "PK7",
             "RowKey": "One",
-            "Data": "Two",
+            "Data": "Two"
         }
         entity8 = {
             "PartitionKey": "PK8",
@@ -454,7 +451,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         expected_entity8 = {
             "PartitionKey": "PK8",
             "RowKey": "1",
-            "Data": 2,
+            "Data": 2
         }
         entity9 = {
             "PartitionKey": "PK9",
@@ -464,7 +461,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
         expected_entity9 = {
             "PartitionKey": "PK9",
             "RowKey": "One",
-            "Data": "Two",
+            "Data": "Two"
         }
         encoder = TableEntityEncoder()
         encoded_entity = encoder.encode_entity(entity1)
@@ -489,7 +486,7 @@ class TestTableEncoderCosmos(AzureRecordedTestCase, TableTestCase):
             client.create_entity(entity1) # no edm type in get and list results
             client.delete_entity(entity1)
             client.create_entity(entity2)
-            client.delete_entity(entity2) # fail, "One of the input value is invalid."
+            client.delete_entity(entity2)
             client.create_entity(entity3)
             client.delete_entity(entity3)
             with pytest.raises(HttpResponseError) as exc:
