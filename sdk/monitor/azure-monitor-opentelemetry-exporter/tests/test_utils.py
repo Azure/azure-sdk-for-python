@@ -6,7 +6,27 @@ import platform
 import unittest
 
 from azure.monitor.opentelemetry.exporter import _utils
+from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
 from opentelemetry.sdk.resources import Resource
+from unittest.mock import patch
+
+
+TEST_AI_DEVICE_ID = "TEST_AI_DEVICE_ID"
+TEST_AI_DEVICE_LOCALE = "TEST_AI_DEVICE_LOCALE"
+TEST_OS_VERSION = "TEST_OS_VERSION"
+TEST_SDK_VERSION_PREFIX = "TEST_AZURE_SDK_VERSION_PREFIX"
+TEST_AZURE_MONITOR_CONTEXT = {
+    "ai.device.id": TEST_AI_DEVICE_ID,
+    "ai.device.locale": TEST_AI_DEVICE_LOCALE,
+    "ai.device.osVersion": TEST_OS_VERSION,
+    "ai.device.type": "Other",
+    "ai.internal.sdkVersion": "{}py1.2.3:otel4.5.6:ext7.8.9".format(
+        TEST_SDK_VERSION_PREFIX,
+    ),
+}
+TEST_TIMESTAMP = "TEST_TIMESTAMP"
+TEST_TIME = "TEST_TIME"
+TEST_WEBSITE_SITE_NAME = "TEST_WEBSITE_SITE_NAME"
 
 class TestUtils(unittest.TestCase):
     def setUp(self):
@@ -43,3 +63,49 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(tags.get("ai.cloud.role"), "testServiceName")
         self.assertEqual(tags.get("ai.cloud.roleInstance"), platform.node())
         self.assertEqual(tags.get("ai.internal.nodeName"), tags.get("ai.cloud.roleInstance"))
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.ns_to_iso_str", return_value=TEST_TIME)
+    @patch("azure.monitor.opentelemetry.exporter._utils.azure_monitor_context", TEST_AZURE_MONITOR_CONTEXT)
+    def test_create_telemetry_item(self, mock_ns_to_iso_str):
+        result = _utils._create_telemetry_item(TEST_TIMESTAMP)
+        expected_tags = dict(TEST_AZURE_MONITOR_CONTEXT)
+        expected = TelemetryItem(
+            name="",
+            instrumentation_key="",
+            tags=expected_tags,
+            time=TEST_TIME,
+        )
+        self.assertEqual(result, expected)
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.getenv", return_value="~3")
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    def test_get_sdk_version_prefix_off_app_service(self, mock_system, mock_getenv):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    def test_get_sdk_version_prefix_app_service_without_attach(self, mock_system):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch("azure.monitor.opentelemetry.exporter._utils.getenv", return_value="disabled")
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    def test_get_sdk_version_prefix_app_service_disabled_attach(self, mock_system, mock_getenv):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch("azure.monitor.opentelemetry.exporter._utils.getenv", return_value="~3")
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    def test_get_sdk_version_prefix_linux_attach(self, mock_system, mock_getenv):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "ald_")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.environ", {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME})
+    @patch("azure.monitor.opentelemetry.exporter._utils.getenv", return_value="~3")
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    def test_get_sdk_version_prefix_windows_attach(self, mock_system, mock_getenv):
+        result = _utils._get_sdk_version_prefix()
+        self.assertEqual(result, "awd_")

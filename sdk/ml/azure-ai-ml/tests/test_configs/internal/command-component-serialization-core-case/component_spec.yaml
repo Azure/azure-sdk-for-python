@@ -1,0 +1,21 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: hello_command
+display_name: Hello Command
+version: 0.10
+type: CommandComponent
+is_deterministic: true
+inputs:
+  input_float:
+    type: Float
+    optional: False
+    default: 1
+  delimiter:
+    type: String
+    optional: true
+    default: "\t"
+command: >-
+  echo {inputs.input_float} && echo {inputs.delimiter}
+environment:
+  name: AzureML-Designer
+datatransfer:
+  cloud_type: aether

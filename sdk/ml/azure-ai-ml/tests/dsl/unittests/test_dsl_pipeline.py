@@ -10,7 +10,7 @@ import pytest
 
 from azure.ai.ml.constants._job import PipelineConstants
 from test_configs.dsl_pipeline import data_binding_expression
-from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
+from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated, assert_job_cancel
 
 from azure.ai.ml import (
     AmlTokenConfiguration,
@@ -2168,6 +2168,24 @@ class TestDSLPipeline:
                            match="pipeline_with_variable_args\(\) got multiple values for argument 'key_1'\."):
             pipeline_with_variable_args(10, key_1=10)
 
+    def test_pipeline_with_output_binding_in_dynamic_args(self):
+        hello_world_func = load_component(components_dir / "helloworld_component.yml")
+        hello_world_no_inputs_func = load_component(components_dir / "helloworld_component_no_inputs.yml")
+
+        @dsl.pipeline
+        def pipeline_func_consume_dynamic_arg(**kwargs):
+            hello_world_func(component_in_number=kwargs["int_param"], component_in_path=kwargs["path_param"])
+
+        @dsl.pipeline
+        def root_pipeline_func():
+            node = hello_world_no_inputs_func()
+            kwargs = {"int_param": 0, "path_param": node.outputs.component_out_path}
+            pipeline_func_consume_dynamic_arg(**kwargs)
+
+        pipeline_job = root_pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        assert pipeline_job._customized_validate().passed is True
+
     def test_condition_node_consumption(self):
         from azure.ai.ml.dsl._condition import condition
 
@@ -2624,3 +2642,48 @@ class TestDSLPipeline:
             "_source": "DSL"
         }
 
+
+    def test_register_output_without_name_sdk(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+
+        @dsl.pipeline()
+        def register_node_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.version = 1
+        
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:   
+            assert_job_cancel(pipeline, client)
+        assert "Output name is required when output version is specified." in str(e.value)
+
+        @dsl.pipeline()
+        def register_pipeline_output():
+            node = component(component_in_path=component_input)
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_pipeline_output()
+        pipeline.outputs.pipeine_a_output.version = 1
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:
+            assert_job_cancel(pipeline, client)
+        assert "Output name is required when output version is specified." in str(e.value)
+
+    def test_register_output_with_invalid_name_sdk(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+
+        @dsl.pipeline()
+        def register_node_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = '@'
+            node.outputs.component_out_path.version = '1'
+
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        with pytest.raises(UserErrorException) as e:
+            assert_job_cancel(pipeline, client)
+        assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)

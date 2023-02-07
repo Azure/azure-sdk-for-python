@@ -58,7 +58,11 @@ def _import_image(authority, repository, tags):
     audience = get_audience(authority)
     scope = [audience + "/.default"]
     mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=audience, credential_scopes=scope
+        credential,
+        sub_id,
+        api_version="2019-05-01",
+        base_url=audience,
+        credential_scopes=scope
     )
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ.get("CONTAINERREGISTRY_RESOURCE_GROUP")

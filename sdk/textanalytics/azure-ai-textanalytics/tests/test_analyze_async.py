@@ -2205,8 +2205,8 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         poller = await client.begin_analyze_actions(
             docs,
             actions,
-            language="auto",
-            autodetect_default_language="es",
+            auto_detect_language=True,
+            language="es",
             polling_interval=self._interval(),
         )
 
