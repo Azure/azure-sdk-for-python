@@ -56,8 +56,29 @@ def fl_scatter_gather(
     aggregation_kwargs: Dict = None,
     **kwargs,
 ):
+    """
+    param silo_configs: A list of FederatedLearningSilo objects, which contain the necessary data
+        to find and locally use data spread out across different datastores, as well as the inputs
+        located therein.
+    type silo_configs: List[FederatedLearningSilo]
+    param aggregation_config: A dictionary containing configuration values for the aggregation component.
+    type aggregation_config: Dict
+    param silo_component: The component that will be duplicated across silos to perform model training
+        on local datasets. These components are run on separate computes from rest of the pipeline,
+        as specified by each silo's FederatedLearningSilo. 
+    type silo_component: PipelineComponent
+    param aggregation_component: The component that receives trained models from each silo and aggregates
+        them into single model. Run on the 'main' compute of this node's job.
+    type aggregation_component: PipelineComponent
+    param max_iterations: The maximum number of scatter gather iterations that should be performed.
+    type max_iterations: int
+    param shared_silo_kwargs: A dictionary of kwargs to be injected into each duplicated silo component.
+    type shared_silo_kwargs: Dict
+    param aggregation_kwargs: A dictionary of kwargs to be injected into the aggregation component.
+    type aggregation_kwargs: Dict
+    """
+    # Like most nodes, this is just a wrapper around a node builder entity initializer.
     return FLScatterGather(
-        initial_model=initial_model,
         silo_configs=silo_configs,
         aggregation_config=aggregation_config,
         silo_component=silo_component,
@@ -67,3 +88,4 @@ def fl_scatter_gather(
         shared_silo_kwargs=shared_silo_kwargs,
         aggregation_kwargs=aggregation_kwargs,
     )
+        

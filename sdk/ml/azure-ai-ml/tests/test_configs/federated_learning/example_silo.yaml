@@ -1,0 +1,7 @@
+compute: "some_compute"
+datastore: "some_datastore"
+inputs: 
+  - path: "path_1"
+    type: mltable
+  - path: "path_2"
+    type: "uri_folder"

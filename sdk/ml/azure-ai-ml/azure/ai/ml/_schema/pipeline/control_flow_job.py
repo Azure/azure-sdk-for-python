@@ -109,7 +109,7 @@ class ParallelForSchema(BaseLoopSchema):
 
 # Schema of a federated learning scatter-gather node.
 class FLScatterGatherSchema(ControlFlowSchema):
-    # TODO determine serialization once inputs are determined.
+    # TODO determine serialization.
 
     #@pre_dump
     def serialize_items(self, data, **kwargs): 

@@ -325,6 +325,7 @@ class TestDSLPipeline:
         assert pipeline_job._build_outputs() == actual_outputs
 
         component_job = next(iter(pipeline_job.jobs.values()))._to_rest_object()
+        import pdb; pdb.set_trace()
         component = next(iter(pipeline.jobs.values()))._to_rest_object()
 
         omit_fields = ["componentId", "_source"]
@@ -358,6 +359,7 @@ class TestDSLPipeline:
         pipeline.inputs.job_in_path.mode = "mount"
 
         dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()
+        import pdb; pdb.set_trace()
 
         job_yaml = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job.yml"
         pipeline_job_dict = load_job(source=job_yaml)._to_rest_object().as_dict()
@@ -407,6 +409,7 @@ class TestDSLPipeline:
         pipeline_job = pipeline
 
         dsl_pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        import pdb; pdb.set_trace()
 
         job_yaml = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_no_paths.yml"
         pipeline_job_dict = load_job(source=job_yaml)._to_rest_object().as_dict()
@@ -617,6 +620,7 @@ class TestDSLPipeline:
         pipeline.outputs.job_out_path_1.mode = "mount"
         pipeline.outputs.job_out_path_2.mode = "Upload"
         dsl_pipeline_job = pipeline._to_rest_object().as_dict()
+        import pdb; pdb.set_trace()
 
         yaml_job_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_component_output.yml"
         yaml_pipeline_job = (
