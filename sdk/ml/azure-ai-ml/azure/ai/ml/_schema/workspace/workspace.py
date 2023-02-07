@@ -13,6 +13,7 @@ from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml.constants._common import PublicNetworkAccess
 from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
 
+from azure.ai.ml._schema import ExperimentalField
 
 class WorkspaceSchema(PathAwareSchema):
     name = fields.Str(required=True)
@@ -37,4 +38,4 @@ class WorkspaceSchema(PathAwareSchema):
     )
     identity = NestedField(IdentitySchema)
     primary_user_assigned_identity = fields.Str()
-    managed_network = NestedField(ManagedNetworkSchema)
+    managed_network = ExperimentalField(NestedField(ManagedNetworkSchema))

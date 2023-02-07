@@ -16,7 +16,10 @@ from azure.ai.ml.constants._workspace import (
     IsolationMode, OutboundRuleCategory, OutboundRuleType
 )
 
+from azure.ai.ml._utils._experimental import experimental
 
+
+@experimental
 class OutboundRule:
     def __init__(
         self, type: str = None, category: str = OutboundRuleCategory.USER_DEFINED  # pylint: disable=redefined-builtin
@@ -48,6 +51,7 @@ class OutboundRule:
             return rule
 
 
+@experimental
 class FqdnDestination(OutboundRule):
     def __init__(self, destination: str) -> None:
         self.destination = destination
@@ -60,6 +64,7 @@ class FqdnDestination(OutboundRule):
         return {"type": OutboundRuleType.FQDN, "category": self.category, "destination": self.destination}
 
 
+@experimental
 class PrivateEndpointDestination(OutboundRule):
     def __init__(self, service_resource_id: str, subresource_target: str, spark_jobs_enabled: bool = False) -> None:
         self.service_resource_id = service_resource_id
@@ -90,6 +95,7 @@ class PrivateEndpointDestination(OutboundRule):
         }
 
 
+@experimental
 class ServiceTagDestination(OutboundRule):
     def __init__(self, service_tag: str, protocol: str, port_ranges: str) -> None:
         self.service_tag = service_tag
@@ -118,6 +124,7 @@ class ServiceTagDestination(OutboundRule):
         }
 
 
+@experimental
 class ManagedNetwork:
     def __init__(
         self,
