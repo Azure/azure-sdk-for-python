@@ -370,7 +370,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         if warning_content:
             output_ci_warning(
                     warning_content,
-                    "setup_execute_tests.py -> tox_harness.py::prep_and_run_tox()",
+                    "setup_execute_tests.py -> tox_harness.py::prep_and_run_tox",
             )
 
     return_code = execute_tox_serial(tox_command_tuples)
