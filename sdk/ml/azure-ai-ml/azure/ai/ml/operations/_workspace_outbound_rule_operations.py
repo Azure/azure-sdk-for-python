@@ -15,7 +15,10 @@ from azure.ai.ml._scope_dependent_operations import OperationsContainer, Operati
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.entities._workspace.networking import OutboundRule, OutboundRuleType, OutboundRuleCategory
+from azure.ai.ml.entities._workspace.networking import OutboundRule
+from azure.ai.ml.constants._workspace import (
+    OutboundRuleCategory, OutboundRuleType
+)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller

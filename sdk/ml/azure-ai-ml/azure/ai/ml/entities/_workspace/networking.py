@@ -12,31 +12,9 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     ServiceTagOutboundRule as RestServiceTagOutboundRule,
     ServiceTagOutboundRuleDestination as RestServiceTagOutboundRuleDestination,
 )
-
-
-class IsolationMode:
-    DISABLED = "Disabled"
-    ALLOW_INTERNET_OUTBOUND = "AllowInternetOutbound"
-    ALLOW_ONLY_APPROVED_OUTBOUND = "AllowOnlyApprovedOutbound"
-
-
-class Protocol:
-    TCP = "TCP"
-    UDP = "UDP"
-    ICMP = "ICMP"
-    ALL = "*"
-
-
-class OutboundRuleCategory:
-    REQUIRED = "Required"
-    RECOMMENDED = "Recommended"
-    USER_DEFINED = "UserDefined"
-
-
-class OutboundRuleType:
-    FQDN = "FQDN"
-    PRIVATE_ENDPOINT = "PrivateEndpoint"
-    SERVICE_TAG = "ServiceTag"
+from azure.ai.ml.constants._workspace import (
+    IsolationMode, OutboundRuleCategory, OutboundRuleType
+)
 
 
 class OutboundRule:
