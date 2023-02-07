@@ -16,7 +16,10 @@ from azure.ai.ml.entities._workspace.networking import (
     PrivateEndpointDestination,
 )
 
+from azure.ai.ml._utils._experimental import experimental
 
+
+@experimental
 class DestinationSchema(metaclass=PatchedSchemaMeta):
     service_resource_id = fields.Str()
     subresource_target = fields.Str()
@@ -26,6 +29,7 @@ class DestinationSchema(metaclass=PatchedSchemaMeta):
     port_ranges = fields.Str()
 
 
+@experimental
 class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str(required=False)
     destination = fields.Raw(required=True)
@@ -77,6 +81,7 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         return service_tag_dest
 
 
+@experimental
 class ManagedNetworkSchema(metaclass=PatchedSchemaMeta):
     isolation_mode = fields.Str(required=True)
     outbound_rules = fields.Dict(
