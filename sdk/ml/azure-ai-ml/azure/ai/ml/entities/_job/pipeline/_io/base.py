@@ -383,6 +383,8 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         self._owner = owner
         self._name = data.name if isinstance(data, Output) else None
         self._version = data.version if isinstance(data, Output) else None
+        # use _uri to store builder level path configuration
+        self._uri = None
 
         self._assert_name_and_version()
 

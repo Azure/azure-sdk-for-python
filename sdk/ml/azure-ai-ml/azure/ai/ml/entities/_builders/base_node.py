@@ -361,6 +361,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "BaseNode":
+        rest_object = obj.copy()
         if CommonYamlFields.TYPE not in obj:
             obj[CommonYamlFields.TYPE] = NodeType.COMMAND
 
@@ -369,6 +370,12 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         instance: BaseNode = pipeline_node_factory.get_create_instance_func(obj[CommonYamlFields.TYPE])()
         init_kwargs = instance._from_rest_object_to_init_params(obj)
         instance.__init__(**init_kwargs)
+        # For output binding with path configured, reconfigure it in Output builder.
+        for name, output in rest_object.get("outputs", {}).items():
+            if "uri" in output:
+                output_builder = instance.outputs.get(name, None)
+                if output_builder:
+                    output_builder._uri = output["uri"]
         return instance
 
     @classmethod

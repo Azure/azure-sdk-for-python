@@ -2628,3 +2628,32 @@ class TestDSLPipeline(AzureRecordedTestCase):
         node_output = pipeline_job.jobs['node'].outputs.component_out_path
         assert node_output.name == 'a_output'
         assert node_output.version == '1'
+
+    def test_output_setting_path(self, client: MLClient) -> None:
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        # case 1: only node level has setting
+        @dsl.pipeline()
+        def pipeline():
+            node1 = component_func1(component_in_number=1, component_in_path=job_input)
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        pipeline_job = pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline_job, client)
+        job_dict = pipeline_job._to_dict()
+        expected_node_output_dict = {
+            'component_out_path': {'path': '${{parent.outputs.component_out_path}}',
+                                   'uri': 'azureml://datastores/workspaceblobstore/paths/outputs/1'}
+        }
+        expected_pipeline_output_dict = {
+            # default mode added by mt, default type added by SDK
+            'component_out_path': {'mode': 'rw_mount', 'type': 'uri_folder'}
+        }
+        assert job_dict["jobs"]["node1"]["outputs"] == expected_node_output_dict
+        assert job_dict["outputs"] == expected_pipeline_output_dict
+
+        # case 2: only pipeline level has setting
+        # case 3: both has setting

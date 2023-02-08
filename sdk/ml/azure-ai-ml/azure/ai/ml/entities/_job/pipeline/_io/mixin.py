@@ -196,6 +196,11 @@ class NodeIOMixin:
             rest_output_bindings[key] = {"value": binding["value"], "type": "literal"}
             if "mode" in binding:
                 rest_output_bindings[key].update({"mode": binding["mode"].value})
+            output_builder = self.outputs[key]
+            # if configured path for output binding, add it to "uri"
+            if output_builder.path:
+                rest_output_bindings[key].update({"uri": output_builder.path})
+
         updated_rest_data_outputs = {}
         for name, val in rest_data_outputs.items():
             # rest_data_outputs consist of two part:
