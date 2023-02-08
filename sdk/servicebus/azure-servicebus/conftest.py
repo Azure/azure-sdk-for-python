@@ -33,13 +33,6 @@ def add_sanitizers(test_proxy):
 if not any([arg.startswith('test_stress') or arg.endswith('StressTest') for arg in sys.argv]):
     collect_ignore.append("stress/scripts")
 
-collect_ignore.append("tests/test_message.py")
-collect_ignore.append("tests/test_queues.py")
-collect_ignore.append("tests/test_sb_client.py")
-collect_ignore.append("tests/test_sessions.py")
-collect_ignore.append("tests/test_subscriptions.py")
-collect_ignore.append("tests/test_topic.py")
-
 # Allow us to pass stress_test_duration from the command line.
 def pytest_addoption(parser):
     parser.addoption('--stress_test_duration_seconds', action="store", default=None)
