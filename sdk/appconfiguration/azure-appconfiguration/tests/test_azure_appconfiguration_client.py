@@ -35,7 +35,6 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
-from typing import Any
 from uuid import uuid4
 from preparers import app_config_decorator
 from devtools_testutils import recorded_by_proxy
@@ -981,7 +980,7 @@ class TestAppConfigurationClientUnitTest:
             def open(self):
                 pass
 
-            def send(self, request: PipelineRequest, **kwargs: Any) -> PipelineResponse:
+            def send(self, request: PipelineRequest, **kwargs) -> PipelineResponse:
                 assert request.headers['Authorization'] != self.auth_headers
                 self.auth_headers.append(request.headers['Authorization'])
                 response = HttpResponse(request, None)

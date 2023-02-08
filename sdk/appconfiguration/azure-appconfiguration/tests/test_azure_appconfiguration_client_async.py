@@ -38,7 +38,6 @@ from consts import (
 )
 from devtools_testutils.aio import recorded_by_proxy_async
 from async_preparers import app_config_decorator_async
-from typing import Any
 from uuid import uuid4
 
 

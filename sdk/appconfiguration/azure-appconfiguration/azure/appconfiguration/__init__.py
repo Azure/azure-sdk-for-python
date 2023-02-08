@@ -13,7 +13,6 @@ from ._azure_appconfiguration_client import AzureAppConfigurationClient
 from ._constants import FILTER_PERCENTAGE, FILTER_TARGETING, FILTER_TIME_WINDOW
 from ._models import (
     ConfigurationSetting,
-    ConfigurationSettingSnapshot,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
 )
@@ -27,7 +26,6 @@ __all__ = [
     "ResourceReadOnlyError",
     "FeatureFlagConfigurationSetting",
     "SecretReferenceConfigurationSetting",
-    "ConfigurationSettingSnapshot",
     "FILTER_PERCENTAGE",
     "FILTER_TARGETING",
     "FILTER_TIME_WINDOW",
