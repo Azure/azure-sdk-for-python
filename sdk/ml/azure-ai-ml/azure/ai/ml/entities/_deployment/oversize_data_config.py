@@ -18,7 +18,7 @@ class OversizeDataConfig:
 
     # pylint: disable=unused-argument,no-self-use
     def __init__(self, path: Optional[str] = None, **kwargs):
-        self.path = (path,)
+        self.path = path
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

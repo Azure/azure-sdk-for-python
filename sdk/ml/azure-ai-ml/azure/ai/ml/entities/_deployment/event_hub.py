@@ -26,7 +26,7 @@ class EventHub:
         oversize_data_config: Optional[OversizeDataConfig] = None,
         **kwargs
     ):
-        self.namespace = (namespace,)
+        self.namespace = namespace
         self.oversize_data_config = oversize_data_config
 
     def _to_dict(self) -> Dict:
