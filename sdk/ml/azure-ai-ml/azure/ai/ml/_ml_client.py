@@ -72,9 +72,9 @@ from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
+    VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    VirtualClusterOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -85,7 +85,7 @@ module_logger = logging.getLogger(__name__)
 
 
 # pylint: disable=too-many-public-methods
-class MLClient(object):
+class MLClient:
     """A client class to interact with Azure ML services.
 
     Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
@@ -128,8 +128,7 @@ class MLClient(object):
         registry_name: Optional[str] = None,
         **kwargs: Any,
     ):
-        """
-        A client class to interact with Azure ML services.
+        """A client class to interact with Azure ML services.
 
         Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
 
@@ -471,7 +470,6 @@ class MLClient(object):
         if path.is_file():
             found_path = path
         else:
-
             # Based on priority
             # Look in config dirs like .azureml, aml_config or plain directory
             # with None
@@ -484,9 +482,11 @@ class MLClient(object):
             found_path = None
             for curr_dir, curr_file in product(directories_to_look, files_to_look):
                 module_logger.debug(
-                    "No config file directly found, starting search from %s "
-                    "directory, for %s file name to be present in "
-                    "%s subdirectory",
+                    (
+                        "No config file directly found, starting search from %s "
+                        "directory, for %s file name to be present in "
+                        "%s subdirectory"
+                    ),
                     path,
                     curr_file,
                     curr_dir,
@@ -528,8 +528,9 @@ class MLClient(object):
     @classmethod
     def _ml_client_cli(cls, credentials, subscription_id, **kwargs):
         """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
-        With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage).
-        The credentials are passed by cli get_mgmt_service_client when it created a object of this class.
+
+        With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
+        credentials are passed by cli get_mgmt_service_client when it created a object of this class.
         """
 
         ml_client = cls(credential=credentials, subscription_id=subscription_id, **kwargs)
@@ -715,7 +716,7 @@ class MLClient(object):
 
     @classmethod
     def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
-        with open(found_path, "r") as config_file:
+        with open(found_path) as config_file:
             config = json.load(config_file)
 
         # Checking the keys in the config.json file to check for required parameters.
