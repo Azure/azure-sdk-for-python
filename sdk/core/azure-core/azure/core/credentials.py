@@ -71,20 +71,20 @@ class AzureKeyCredential:
         self._key = key
 
     @property
-    def key(self) -> Union[str, Tuple[str, ...]]:
+    def key(self) -> TKeys:
         """The value of the configured key.
 
-        :rtype: Union[str, Tuple[str, ...]]
+        :rtype: TKeys
         """
         return self._key
 
-    def update(self, key: Union[str, Tuple[str, ...]]) -> None:
+    def update(self, key: TKeys) -> None:
         """Update the key.
 
         This can be used when you've regenerated your service key and want
         to update long-lived clients.
 
-        :param Union[str, Tuple[str, ...]] key: The key used to authenticate to an Azure service
+        :param TKeys key: The key used to authenticate to an Azure service
         :raises: ValueError or TypeError
         """
         if not key:
