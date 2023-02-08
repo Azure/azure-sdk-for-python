@@ -43,7 +43,7 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
     :type mapping: Dict[Union[str, Output], Union[str, Input, List]]
     :param max_iteration_count: limits in running the do-while node.
     :type max_iteration_count: int
-    :param condition: Name of a boolean output of body, do-while loop stops if it's value is evaluated to be false;
+    :param condition: Name of a boolean output of body, do-while loop stops if its value is evaluated to be negative;
                       If not specified, handle as while true.
     :type condition: Output
     """
