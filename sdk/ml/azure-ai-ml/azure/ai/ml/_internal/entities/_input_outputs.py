@@ -71,12 +71,12 @@ class InternalInput(Input):
             return True
         return super()._is_primitive_type
 
-    def _convert_ui_widget_type(self, type):
+    def _convert_ui_widget_type(self, input_type):
         try:
-            UIWidgetTypeEnum(type)
-            return "string"
+            UIWidgetTypeEnum(input_type)
+            return ComponentParameterTypes.STRING
         except ValueError:
-            return type
+            return input_type
 
     def _simple_parse(self, value, _type=None):
         # simple parse is used to parse min, max & optional only, so we don't need to handle enum
