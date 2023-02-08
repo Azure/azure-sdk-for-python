@@ -228,11 +228,9 @@ class ServiceBusReceiver(
         # pylint: disable=protected-access
         original_timeout = None
         while True:
-            print("In iter")
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
             if max_wait_time:
-                # _timeout to _idle_timeout
                 original_timeout = self._handler._timeout
                 self._handler._timeout = max_wait_time * 1
             try:
@@ -242,7 +240,6 @@ class ServiceBusReceiver(
                 with receive_trace_context_manager(self, links=links):
                     yield message
             except StopIteration:
-                print("Stop Iteration")
                 break
             finally:
                 self._receive_context.clear()

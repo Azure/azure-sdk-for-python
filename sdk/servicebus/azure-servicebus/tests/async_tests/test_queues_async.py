@@ -2243,20 +2243,24 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
     async def test_queue_async_receive_iterator_resume_after_link_detach(self, servicebus_namespace_connection_string, servicebus_queue, **kwargs):
 
         async def hack_iter_next_mock_error(self):
-            await self._open()
-            # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
-            if self.execution_times == 1:
-                from azure.servicebus._pyamqp.error import ErrorCondition, AMQPConnectionError
-                self.execution_times += 1
-                self.error_raised = True
-                raise AMQPConnectionError(condition=ErrorCondition.LinkDetachForced)
-            else:
-                self.execution_times += 1
-            if not self._message_iter:
-                self._message_iter = await self._handler.receive_messages_iter_async()
-            pyamqp_message = await self._message_iter.__anext__()
-            message = self._build_message(pyamqp_message)
-            return message
+            try:
+                self._receive_context.set()
+                await self._open()
+                # when trying to receive the second message (execution_times is 1), raising LinkDetach error to mock 10 mins idle timeout
+                if self.execution_times == 1:
+                    from azure.servicebus._pyamqp.error import ErrorCondition, AMQPConnectionError
+                    self.execution_times += 1
+                    self.error_raised = True
+                    raise AMQPConnectionError(condition=ErrorCondition.LinkDetachForced)
+                else:
+                    self.execution_times += 1
+                if not self._message_iter:
+                    self._message_iter = await self._handler.receive_messages_iter_async()
+                pyamqp_message = await self._message_iter.__anext__()
+                message = self._build_message(pyamqp_message)
+                return message
+            finally:
+                self._receive_context.clear()
 
         async with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False) as sb_client:

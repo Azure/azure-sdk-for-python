@@ -217,25 +217,19 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
         # pylint: disable=protected-access
         original_timeout = None
         while True:
-            print("In iter")
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
             if max_wait_time:
                 original_timeout = self._handler._timeout
                 self._handler._timeout = max_wait_time * 1
             try:
-                # self._receive_context.set()
                 message = await self._inner_anext()
                 links = get_receive_links(message)
                 with receive_trace_context_manager(self, links=links):
                     yield message
-                    # print("Yielded")
             except StopAsyncIteration:
-                print("Stop Iteration")
                 break
             finally:
-                # print("Clear")
-                # self._receive_context.clear()
                 if original_timeout:
                     try:
                         self._handler._timeout = original_timeout
@@ -274,7 +268,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 self._message_iter = await self._handler.receive_messages_iter_async()
             pyamqp_message = await self._message_iter.__anext__()
             message = self._build_message(pyamqp_message)
-            # print("message")
             if (
                 self._auto_lock_renewer
                 and not self._session
@@ -283,7 +276,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 self._auto_lock_renewer.register(self, message)
             return message
         finally:
-            # print("CLEAR")
             self._receive_context.clear()
 
     @classmethod

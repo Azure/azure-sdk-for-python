@@ -142,14 +142,12 @@ class AMQPClientAsync(AMQPClientSync):
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
-                    print("Keeping connection alive")
                     _logger.debug(
                         "Keeping %r connection alive.",
                         self.__class__.__name__,
                         extra=self._network_trace_params
                     )
                     await asyncio.shield(self._connection.listen(wait=self._socket_timeout))
-                    # await self._connection.listen()
                     start_time = current_time
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -859,31 +857,24 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         self._timeout_reached = False
         try:
             while receiving and not self._timeout_reached:
-                print("In generator")
                 if not self._running_iter:
-                    print("Update iter")
                     self._last_activity_stamp = time.time()
                 self._running_iter = True
                 if self._timeout > 0:
                     if time.time() - self._last_activity_stamp >= self._timeout:
-                        print("Time Out")
                         self._timeout_reached = True
 
                 if not self._timeout_reached:
                     receiving = await self.do_work_async()
                     
                 while not self._received_messages.empty():
-                    # print("Messages not empty")
                     message = self._received_messages.get()
                     self._last_activity_stamp = time.time()
                     self._received_messages.task_done()
                     yield message
                     await self._complete_message_async(message, auto_complete)
         finally:
-            #Check what self._received_messages is 
-            # what happens to queue when Empty exception thrown, do we need to reset it?
             if self._shutdown:
-                print("Calling close async")
                 await self.close_async()
 
     async def _complete_message_async(self, message, auto):

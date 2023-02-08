@@ -227,20 +227,12 @@ class AMQPClient(
     def _keep_alive(self):
         start_time = time.time()
         try:
-            print("In keep alive function")
             while self._connection and not self._shutdown: 
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
                     _logger.debug("Keeping %r connection alive.", self.__class__.__name__)
-                    # I'm not sure we want to keep the connection alive
-                    # with self._lock:
-                    print("Call connection work")
-                    # self.client_ready()
                     self._connection.listen(wait=self._socket_timeout)
-                    print("Finished listening")
-                    # self._client_ready()
-
                     start_time = current_time
                 time.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
@@ -449,7 +441,6 @@ class AMQPClient(
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop("timeout", 0)
         with self._lock:
-            print("In the lock statement for mgmt request")
             try: 
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
@@ -845,14 +836,6 @@ class ReceiveClient(AMQPClient):
         :rtype: bool
         """
         try:
-            # print("In Client run")
-            # Added in
-            # if self._timeout > 0:
-            #     print(time.time() - self._last_activity_stamp)
-            #     if time.time() - self._last_activity_stamp >= self._timeout:
-            #         print("Time Out")
-            #         self._timeout_reached = True
-            
             self._link.flow()
             self._connection.listen(wait=self._socket_timeout, **kwargs)
             self._timeout_reached = False
@@ -973,36 +956,27 @@ class ReceiveClient(AMQPClient):
         self._timeout_reached = False
         receiving = True
         message = None
-        print("HERE")
         self._last_activity_stamp = time.time()
         try:
             while receiving and not self._timeout_reached:
                 if not self._running_iter:
                     self._last_activity_stamp = time.time()
                 self._running_iter = True
-                print("In this")
                 if self._timeout > 0:
-                    # print(time.time() - self._last_activity_stamp)
                     if time.time() - self._last_activity_stamp >= self._timeout:
-                        print("Time Out")
                         self._timeout_reached = True
-                
+
                 if not self._timeout_reached:
                     receiving = self.do_work()
-                    # print("Last activity stamp")
-                        
+
                 while not self._received_messages.empty():
-                    print("Messages not empty")
                     message = self._received_messages.get()
                     self._last_activity_stamp = time.time()
                     self._received_messages.task_done()
                     yield message
-                    # self._timeout_reached = False # added this
                     self._complete_message(message, auto_complete)
 
         finally:
-            # self.close()
-            # do we want to close receiver straight out, or as below, only when we have shutdown
             if self._shutdown:
                 self.close()
     
