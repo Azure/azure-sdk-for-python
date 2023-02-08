@@ -41,7 +41,7 @@ from ...operations._operations import (
     build_discovery_templates_list_request,
     build_reports_billable_request,
     build_reports_snapshot_request,
-    build_reports_summarize_request,
+    build_reports_summary_request,
     build_saved_filters_delete_request,
     build_saved_filters_get_request,
     build_saved_filters_list_request,
@@ -2291,10 +2291,17 @@ class AssetsOperations:
                                     }
                                 ],
                                 "value": {
+                                    "areaCode": 0,  # Optional. Required.
                                     "city": "str",  # Optional. Required.
+                                    "countryCode": "str",  # Optional. Required.
+                                    "countryName": "str",  # Optional. Required.
+                                    "dmaCode": 0,  # Optional. Required.
                                     "latitude": 0.0,  # Optional. Required.
                                     "longitude": 0.0,  # Optional. Required.
-                                    "region": "str"  # Optional. Required.
+                                    "metroCodeId": 0,  # Optional. Required.
+                                    "postalCode": "str",  # Optional. Required.
+                                    "region": "str",  # Optional. Required.
+                                    "regionName": "str"  # Optional. Required.
                                 }
                             }
                         ],
@@ -2727,6 +2734,9 @@ class AssetsOperations:
                                         ],
                                         "recent": bool,  # Optional.
                                           Required.
+                                        "ruleId": [
+                                            "str"  # Optional. Required.
+                                        ],
                                         "service": "str",  # Optional.
                                           Required.
                                         "sources": [
@@ -2941,6 +2951,9 @@ class AssetsOperations:
                                     }
                                 ],
                                 "recent": bool,  # Optional. Required.
+                                "ruleId": [
+                                    "str"  # Optional. Required.
+                                ],
                                 "service": "str",  # Optional. Required.
                                 "sources": [
                                     {
@@ -3206,10 +3219,17 @@ class AssetsOperations:
                                     }
                                 ],
                                 "value": {
+                                    "areaCode": 0,  # Optional. Required.
                                     "city": "str",  # Optional. Required.
+                                    "countryCode": "str",  # Optional. Required.
+                                    "countryName": "str",  # Optional. Required.
+                                    "dmaCode": 0,  # Optional. Required.
                                     "latitude": 0.0,  # Optional. Required.
                                     "longitude": 0.0,  # Optional. Required.
-                                    "region": "str"  # Optional. Required.
+                                    "metroCodeId": 0,  # Optional. Required.
+                                    "postalCode": "str",  # Optional. Required.
+                                    "region": "str",  # Optional. Required.
+                                    "regionName": "str"  # Optional. Required.
                                 }
                             }
                         ],
@@ -3553,6 +3573,9 @@ class AssetsOperations:
                                         ],
                                         "recent": bool,  # Optional.
                                           Required.
+                                        "ruleId": [
+                                            "str"  # Optional. Required.
+                                        ],
                                         "service": "str",  # Optional.
                                           Required.
                                         "sources": [
@@ -3767,6 +3790,9 @@ class AssetsOperations:
                                     }
                                 ],
                                 "recent": bool,  # Optional. Required.
+                                "ruleId": [
+                                    "str"  # Optional. Required.
+                                ],
                                 "service": "str",  # Optional. Required.
                                 "sources": [
                                     {
@@ -3907,12 +3933,7 @@ class AssetsOperations:
 
     @overload
     async def update(
-        self,
-        body: JSON,
-        *,
-        filter: Optional[str] = None,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, body: JSON, *, filter: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Update labels on assets matching the provided filter.
 
@@ -3924,7 +3945,7 @@ class AssetsOperations:
          Default value is None.
         :paramtype filter: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
@@ -3950,26 +3971,29 @@ class AssetsOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "completedAt": "2020-02-20 00:00:00",  # Optional.
-                    "id": "str",  # Optional.
-                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional.
-                    "phase": "str",  # Optional. Known values are: "running", "polling", and
-                      "complete".
-                    "reason": "str",  # Optional.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional.
-                    "state": "str"  # Optional. Known values are: "pending", "running", "paused",
-                      "complete", "incomplete", "failed", and "warning".
+                    "completedAt": "2020-02-20 00:00:00",  # Optional. The time the task
+                      completed.
+                    "id": "str",  # Optional. The unique identifier of the task.
+                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional. The last time the status
+                      of the task was updated.
+                    "metadata": {
+                        "str": {}  # Optional. Attributes unique to the task.  This differs
+                          by task type.
+                    },
+                    "phase": "str",  # Optional. The phase the task is in. Known values are:
+                      "running", "polling", and "complete".
+                    "reason": "str",  # Optional. The reason the task was moved into its current
+                      state, if the task wasn't completed.
+                    "startedAt": "2020-02-20 00:00:00",  # Optional. The time the task started.
+                    "state": "str"  # Optional. The state the task is in. Known values are:
+                      "pending", "running", "paused", "complete", "incomplete", "failed", and
+                      "warning".
                 }
         """
 
     @overload
     async def update(
-        self,
-        body: IO,
-        *,
-        filter: Optional[str] = None,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
+        self, body: IO, *, filter: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
         """Update labels on assets matching the provided filter.
 
@@ -3981,7 +4005,7 @@ class AssetsOperations:
          Default value is None.
         :paramtype filter: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
@@ -3992,15 +4016,23 @@ class AssetsOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "completedAt": "2020-02-20 00:00:00",  # Optional.
-                    "id": "str",  # Optional.
-                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional.
-                    "phase": "str",  # Optional. Known values are: "running", "polling", and
-                      "complete".
-                    "reason": "str",  # Optional.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional.
-                    "state": "str"  # Optional. Known values are: "pending", "running", "paused",
-                      "complete", "incomplete", "failed", and "warning".
+                    "completedAt": "2020-02-20 00:00:00",  # Optional. The time the task
+                      completed.
+                    "id": "str",  # Optional. The unique identifier of the task.
+                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional. The last time the status
+                      of the task was updated.
+                    "metadata": {
+                        "str": {}  # Optional. Attributes unique to the task.  This differs
+                          by task type.
+                    },
+                    "phase": "str",  # Optional. The phase the task is in. Known values are:
+                      "running", "polling", and "complete".
+                    "reason": "str",  # Optional. The reason the task was moved into its current
+                      state, if the task wasn't completed.
+                    "startedAt": "2020-02-20 00:00:00",  # Optional. The time the task started.
+                    "state": "str"  # Optional. The state the task is in. Known values are:
+                      "pending", "running", "paused", "complete", "incomplete", "failed", and
+                      "warning".
                 }
         """
 
@@ -4015,8 +4047,8 @@ class AssetsOperations:
         :keyword filter: An expression on the resource type that selects the resources to be returned.
          Default value is None.
         :paramtype filter: str
-        :keyword content_type: Body Parameter content-type. Known values are:
-         'application/merge-patch+json'. Default value is None.
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
         :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
@@ -4027,15 +4059,23 @@ class AssetsOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "completedAt": "2020-02-20 00:00:00",  # Optional.
-                    "id": "str",  # Optional.
-                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional.
-                    "phase": "str",  # Optional. Known values are: "running", "polling", and
-                      "complete".
-                    "reason": "str",  # Optional.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional.
-                    "state": "str"  # Optional. Known values are: "pending", "running", "paused",
-                      "complete", "incomplete", "failed", and "warning".
+                    "completedAt": "2020-02-20 00:00:00",  # Optional. The time the task
+                      completed.
+                    "id": "str",  # Optional. The unique identifier of the task.
+                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional. The last time the status
+                      of the task was updated.
+                    "metadata": {
+                        "str": {}  # Optional. Attributes unique to the task.  This differs
+                          by task type.
+                    },
+                    "phase": "str",  # Optional. The phase the task is in. Known values are:
+                      "running", "polling", and "complete".
+                    "reason": "str",  # Optional. The reason the task was moved into its current
+                      state, if the task wasn't completed.
+                    "startedAt": "2020-02-20 00:00:00",  # Optional. The time the task started.
+                    "state": "str"  # Optional. The state the task is in. Known values are:
+                      "pending", "running", "paused", "complete", "incomplete", "failed", and
+                      "warning".
                 }
         """
         error_map = {
@@ -4052,7 +4092,7 @@ class AssetsOperations:
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
-        content_type = content_type or "application/merge-patch+json"
+        content_type = content_type or "application/json"
         _json = None
         _content = None
         if isinstance(body, (IO, bytes)):
@@ -6295,10 +6335,17 @@ class AssetsOperations:
                                     }
                                 ],
                                 "value": {
+                                    "areaCode": 0,  # Optional. Required.
                                     "city": "str",  # Optional. Required.
+                                    "countryCode": "str",  # Optional. Required.
+                                    "countryName": "str",  # Optional. Required.
+                                    "dmaCode": 0,  # Optional. Required.
                                     "latitude": 0.0,  # Optional. Required.
                                     "longitude": 0.0,  # Optional. Required.
-                                    "region": "str"  # Optional. Required.
+                                    "metroCodeId": 0,  # Optional. Required.
+                                    "postalCode": "str",  # Optional. Required.
+                                    "region": "str",  # Optional. Required.
+                                    "regionName": "str"  # Optional. Required.
                                 }
                             }
                         ],
@@ -6731,6 +6778,9 @@ class AssetsOperations:
                                         ],
                                         "recent": bool,  # Optional.
                                           Required.
+                                        "ruleId": [
+                                            "str"  # Optional. Required.
+                                        ],
                                         "service": "str",  # Optional.
                                           Required.
                                         "sources": [
@@ -6945,6 +6995,9 @@ class AssetsOperations:
                                     }
                                 ],
                                 "recent": bool,  # Optional. Required.
+                                "ruleId": [
+                                    "str"  # Optional. Required.
+                                ],
                                 "service": "str",  # Optional. Required.
                                 "sources": [
                                     {
@@ -7210,10 +7263,17 @@ class AssetsOperations:
                                     }
                                 ],
                                 "value": {
+                                    "areaCode": 0,  # Optional. Required.
                                     "city": "str",  # Optional. Required.
+                                    "countryCode": "str",  # Optional. Required.
+                                    "countryName": "str",  # Optional. Required.
+                                    "dmaCode": 0,  # Optional. Required.
                                     "latitude": 0.0,  # Optional. Required.
                                     "longitude": 0.0,  # Optional. Required.
-                                    "region": "str"  # Optional. Required.
+                                    "metroCodeId": 0,  # Optional. Required.
+                                    "postalCode": "str",  # Optional. Required.
+                                    "region": "str",  # Optional. Required.
+                                    "regionName": "str"  # Optional. Required.
                                 }
                             }
                         ],
@@ -7557,6 +7617,9 @@ class AssetsOperations:
                                         ],
                                         "recent": bool,  # Optional.
                                           Required.
+                                        "ruleId": [
+                                            "str"  # Optional. Required.
+                                        ],
                                         "service": "str",  # Optional.
                                           Required.
                                         "sources": [
@@ -7771,6 +7834,9 @@ class AssetsOperations:
                                     }
                                 ],
                                 "recent": bool,  # Optional. Required.
+                                "ruleId": [
+                                    "str"  # Optional. Required.
+                                ],
                                 "service": "str",  # Optional. Required.
                                 "sources": [
                                     {
@@ -8063,15 +8129,13 @@ class DiscoveryGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, disco_group_name: str, **kwargs: Any
-    ) -> None:
-        """Delete a discovery group with a given discoveryGroupName.
+    async def delete(self, group_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete a discovery group with a given groupName.
 
-        Delete a discovery group with a given discoveryGroupName.
+        Delete a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8090,7 +8154,7 @@ class DiscoveryGroupsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_discovery_groups_delete_request(
-            disco_group_name=disco_group_name,
+            group_name=group_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -8117,13 +8181,13 @@ class DiscoveryGroupsOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def get(self, disco_group_name: str, **kwargs: Any) -> JSON:
-        """Retrieve a discovery group with a given discoveryGroupName.
+    async def get(self, group_name: str, **kwargs: Any) -> JSON:
+        """Retrieve a discovery group with a given groupName.
 
-        Retrieve a discovery group with a given discoveryGroupName.
+        Retrieve a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8216,7 +8280,7 @@ class DiscoveryGroupsOperations:
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_discovery_groups_get_request(
-            disco_group_name=disco_group_name,
+            group_name=group_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -8250,15 +8314,13 @@ class DiscoveryGroupsOperations:
         return cast(JSON, deserialized)
 
     @overload
-    async def put(
-        self, disco_group_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
-        """Create a discovery group with a given discoveryGroupName.
+    async def put(self, group_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        """Create a discovery group with a given groupName.
 
-        Create a discovery group with a given discoveryGroupName.
+        Create a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8374,15 +8436,13 @@ class DiscoveryGroupsOperations:
         """
 
     @overload
-    async def put(
-        self, disco_group_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
-        """Create a discovery group with a given discoveryGroupName.
+    async def put(self, group_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        """Create a discovery group with a given groupName.
 
-        Create a discovery group with a given discoveryGroupName.
+        Create a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :param body: Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -8468,13 +8528,13 @@ class DiscoveryGroupsOperations:
         """
 
     @distributed_trace_async
-    async def put(self, disco_group_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Create a discovery group with a given discoveryGroupName.
+    async def put(self, group_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+        """Create a discovery group with a given groupName.
 
-        Create a discovery group with a given discoveryGroupName.
+        Create a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :param body: Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -8581,7 +8641,7 @@ class DiscoveryGroupsOperations:
             _json = body
 
         request = build_discovery_groups_put_request(
-            disco_group_name=disco_group_name,
+            group_name=group_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -8619,16 +8679,14 @@ class DiscoveryGroupsOperations:
 
     @distributed_trace
     def list_runs(
-        self, disco_group_name: str, *, filter: Optional[str] = None, skip: int = 0, **kwargs: Any
+        self, group_name: str, *, filter: Optional[str] = None, skip: int = 0, **kwargs: Any
     ) -> AsyncIterable[JSON]:
-        """Retrieve a collection of discovery run results for a discovery group with a given
-        discoveryGroupName.
+        """Retrieve a collection of discovery run results for a discovery group with a given groupName.
 
-        Retrieve a collection of discovery run results for a discovery group with a given
-        discoveryGroupName.
+        Retrieve a collection of discovery run results for a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :keyword filter: An expression on the resource type that selects the resources to be returned.
          Default value is None.
         :paramtype filter: str
@@ -8694,7 +8752,7 @@ class DiscoveryGroupsOperations:
             if not next_link:
 
                 request = build_discovery_groups_list_runs_request(
-                    disco_group_name=disco_group_name,
+                    group_name=group_name,
                     subscription_id=self._config.subscription_id,
                     resource_group_name=self._config.resource_group_name,
                     workspace_name=self._config.workspace_name,
@@ -8753,13 +8811,13 @@ class DiscoveryGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def run(self, disco_group_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Run a discovery group with a given discoveryGroupName.
+    async def run(self, group_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Run a discovery group with a given groupName.
 
-        Run a discovery group with a given discoveryGroupName.
+        Run a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8778,7 +8836,7 @@ class DiscoveryGroupsOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_discovery_groups_run_request(
-            disco_group_name=disco_group_name,
+            group_name=group_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -8806,14 +8864,14 @@ class DiscoveryGroupsOperations:
 
     @overload
     async def validate(
-        self, disco_group_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, group_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
-        """Validate a discovery group with a given discoveryGroupName.
+        """Validate a discovery group with a given groupName.
 
-        Validate a discovery group with a given discoveryGroupName.
+        Validate a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8879,14 +8937,14 @@ class DiscoveryGroupsOperations:
 
     @overload
     async def validate(
-        self, disco_group_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+        self, group_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> JSON:
-        """Validate a discovery group with a given discoveryGroupName.
+        """Validate a discovery group with a given groupName.
 
-        Validate a discovery group with a given discoveryGroupName.
+        Validate a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :param body: Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -8921,13 +8979,13 @@ class DiscoveryGroupsOperations:
         """
 
     @distributed_trace_async
-    async def validate(self, disco_group_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Validate a discovery group with a given discoveryGroupName.
+    async def validate(self, group_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+        """Validate a discovery group with a given groupName.
 
-        Validate a discovery group with a given discoveryGroupName.
+        Validate a discovery group with a given groupName.
 
-        :param disco_group_name: The unique identifier for the discovery group. Required.
-        :type disco_group_name: str
+        :param group_name: The unique identifier for the discovery group. Required.
+        :type group_name: str
         :param body: Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -8983,7 +9041,7 @@ class DiscoveryGroupsOperations:
             _json = body
 
         request = build_discovery_groups_validate_request(
-            disco_group_name=disco_group_name,
+            group_name=group_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -9155,13 +9213,13 @@ class DiscoveryTemplatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get(self, disco_template_id: str, **kwargs: Any) -> JSON:
-        """Retrieve a disco template with a given discoTemplateId.
+    async def get(self, template_id: str, **kwargs: Any) -> JSON:
+        """Retrieve a disco template with a given templateId.
 
-        Retrieve a disco template with a given discoTemplateId.
+        Retrieve a disco template with a given templateId.
 
-        :param disco_template_id: The unique identifier for the disco template. Required.
-        :type disco_template_id: str
+        :param template_id: The unique identifier for the disco template. Required.
+        :type template_id: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9207,7 +9265,7 @@ class DiscoveryTemplatesOperations:
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_discovery_templates_get_request(
-            disco_template_id=disco_template_id,
+            template_id=template_id,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -9260,9 +9318,9 @@ class ReportsOperations:
 
     @distributed_trace_async
     async def billable(self, **kwargs: Any) -> JSON:
-        """Retrieve billable assets summary for the workspace.
+        """Get billable assets summary for the workspace.
 
-        Retrieve billable assets summary for the workspace.
+        Get billable assets summary for the workspace.
 
         :return: JSON object
         :rtype: JSON
@@ -9284,8 +9342,8 @@ class ReportsOperations:
                                       "ipAddress".
                                 }
                             ],
-                            "date": "2020-02-20 00:00:00",  # Optional. The date these
-                              assets were billed on.
+                            "date": "2020-02-20",  # Optional. The date these assets were
+                              billed on.
                             "total": 0  # Optional. The total number of billable assets
                               for this date.
                         }
@@ -9340,9 +9398,9 @@ class ReportsOperations:
 
     @overload
     async def snapshot(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
-        """Retrieve the most recent snapshot of asset summary values for the snapshot request.
+        """Get the most recent snapshot of asset summary values for the snapshot request.
 
-        Retrieve the most recent snapshot of asset summary values for the snapshot request.
+        Get the most recent snapshot of asset summary values for the snapshot request.
 
         :param body: Required.
         :type body: JSON
@@ -9402,9 +9460,9 @@ class ReportsOperations:
 
     @overload
     async def snapshot(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
-        """Retrieve the most recent snapshot of asset summary values for the snapshot request.
+        """Get the most recent snapshot of asset summary values for the snapshot request.
 
-        Retrieve the most recent snapshot of asset summary values for the snapshot request.
+        Get the most recent snapshot of asset summary values for the snapshot request.
 
         :param body: Required.
         :type body: IO
@@ -9455,9 +9513,9 @@ class ReportsOperations:
 
     @distributed_trace_async
     async def snapshot(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Retrieve the most recent snapshot of asset summary values for the snapshot request.
+        """Get the most recent snapshot of asset summary values for the snapshot request.
 
-        Retrieve the most recent snapshot of asset summary values for the snapshot request.
+        Get the most recent snapshot of asset summary values for the snapshot request.
 
         :param body: Is either a model type or a IO type. Required.
         :type body: JSON or IO
@@ -9564,10 +9622,10 @@ class ReportsOperations:
         return cast(JSON, deserialized)
 
     @overload
-    async def summarize(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
-        """Retrieve asset summary details for the summary request.
+    async def summary(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        """Get asset summary details for the summary request.
 
-        Retrieve asset summary details for the summary request.
+        Get asset summary details for the summary request.
 
         :param body: Required.
         :type body: JSON
@@ -9584,7 +9642,7 @@ class ReportsOperations:
                 # JSON input template you can fill out and use as your body input.
                 body = {
                     "filters": [
-                        "str"  # Optional. RIQL query filters to apply to the asset summary.
+                        "str"  # Optional. Query filters to apply to the asset summary.
                     ],
                     "groupBy": "str",  # Optional. A parameter to group the assets by (first
                       level facet field), only used when the chosen summary identifier is filters.
@@ -9632,10 +9690,10 @@ class ReportsOperations:
         """
 
     @overload
-    async def summarize(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
-        """Retrieve asset summary details for the summary request.
+    async def summary(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        """Get asset summary details for the summary request.
 
-        Retrieve asset summary details for the summary request.
+        Get asset summary details for the summary request.
 
         :param body: Required.
         :type body: IO
@@ -9682,10 +9740,10 @@ class ReportsOperations:
         """
 
     @distributed_trace_async
-    async def summarize(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Retrieve asset summary details for the summary request.
+    async def summary(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+        """Get asset summary details for the summary request.
 
-        Retrieve asset summary details for the summary request.
+        Get asset summary details for the summary request.
 
         :param body: Is either a model type or a IO type. Required.
         :type body: JSON or IO
@@ -9752,7 +9810,7 @@ class ReportsOperations:
         else:
             _json = body
 
-        request = build_reports_summarize_request(
+        request = build_reports_summary_request(
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -9910,15 +9968,13 @@ class SavedFiltersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, saved_filter_name: str, **kwargs: Any
-    ) -> None:
-        """Delete a saved filter with a given savedFilterName.
+    async def delete(self, filter_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete a saved filter with a given filterName.
 
-        Delete a saved filter with a given savedFilterName.
+        Delete a saved filter with a given filterName.
 
-        :param saved_filter_name: The unique identifier for the saved filter. Required.
-        :type saved_filter_name: str
+        :param filter_name: The unique identifier for the saved filter. Required.
+        :type filter_name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9937,7 +9993,7 @@ class SavedFiltersOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_saved_filters_delete_request(
-            saved_filter_name=saved_filter_name,
+            filter_name=filter_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -9964,13 +10020,13 @@ class SavedFiltersOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def get(self, saved_filter_name: str, **kwargs: Any) -> JSON:
-        """Retrieve a saved filter by savedFilterName.
+    async def get(self, filter_name: str, **kwargs: Any) -> JSON:
+        """Retrieve a saved filter by filterName.
 
-        Retrieve a saved filter by savedFilterName.
+        Retrieve a saved filter by filterName.
 
-        :param saved_filter_name: The unique identifier for the saved filter. Required.
-        :type saved_filter_name: str
+        :param filter_name: The unique identifier for the saved filter. Required.
+        :type filter_name: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10002,7 +10058,7 @@ class SavedFiltersOperations:
         cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         request = build_saved_filters_get_request(
-            saved_filter_name=saved_filter_name,
+            filter_name=filter_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -10036,15 +10092,13 @@ class SavedFiltersOperations:
         return cast(JSON, deserialized)
 
     @overload
-    async def put(
-        self, saved_filter_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
-        """Create or update a saved filter with a given savedFilterName.
+    async def put(self, filter_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        """Create or update a saved filter with a given filterName.
 
-        Create or update a saved filter with a given savedFilterName.
+        Create or update a saved filter with a given filterName.
 
-        :param saved_filter_name: The unique identifier for the saved filter. Required.
-        :type saved_filter_name: str
+        :param filter_name: The unique identifier for the saved filter. Required.
+        :type filter_name: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -10077,15 +10131,13 @@ class SavedFiltersOperations:
         """
 
     @overload
-    async def put(
-        self, saved_filter_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
-        """Create or update a saved filter with a given savedFilterName.
+    async def put(self, filter_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+        """Create or update a saved filter with a given filterName.
 
-        Create or update a saved filter with a given savedFilterName.
+        Create or update a saved filter with a given filterName.
 
-        :param saved_filter_name: The unique identifier for the saved filter. Required.
-        :type saved_filter_name: str
+        :param filter_name: The unique identifier for the saved filter. Required.
+        :type filter_name: str
         :param body: Required.
         :type body: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -10110,13 +10162,13 @@ class SavedFiltersOperations:
         """
 
     @distributed_trace_async
-    async def put(self, saved_filter_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Create or update a saved filter with a given savedFilterName.
+    async def put(self, filter_name: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+        """Create or update a saved filter with a given filterName.
 
-        Create or update a saved filter with a given savedFilterName.
+        Create or update a saved filter with a given filterName.
 
-        :param saved_filter_name: The unique identifier for the saved filter. Required.
-        :type saved_filter_name: str
+        :param filter_name: The unique identifier for the saved filter. Required.
+        :type filter_name: str
         :param body: Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
@@ -10162,7 +10214,7 @@ class SavedFiltersOperations:
             _json = body
 
         request = build_saved_filters_put_request(
-            saved_filter_name=saved_filter_name,
+            filter_name=filter_name,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
@@ -10237,15 +10289,23 @@ class TasksOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "completedAt": "2020-02-20 00:00:00",  # Optional.
-                    "id": "str",  # Optional.
-                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional.
-                    "phase": "str",  # Optional. Known values are: "running", "polling", and
-                      "complete".
-                    "reason": "str",  # Optional.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional.
-                    "state": "str"  # Optional. Known values are: "pending", "running", "paused",
-                      "complete", "incomplete", "failed", and "warning".
+                    "completedAt": "2020-02-20 00:00:00",  # Optional. The time the task
+                      completed.
+                    "id": "str",  # Optional. The unique identifier of the task.
+                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional. The last time the status
+                      of the task was updated.
+                    "metadata": {
+                        "str": {}  # Optional. Attributes unique to the task.  This differs
+                          by task type.
+                    },
+                    "phase": "str",  # Optional. The phase the task is in. Known values are:
+                      "running", "polling", and "complete".
+                    "reason": "str",  # Optional. The reason the task was moved into its current
+                      state, if the task wasn't completed.
+                    "startedAt": "2020-02-20 00:00:00",  # Optional. The time the task started.
+                    "state": "str"  # Optional. The state the task is in. Known values are:
+                      "pending", "running", "paused", "complete", "incomplete", "failed", and
+                      "warning".
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -10339,15 +10399,23 @@ class TasksOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "completedAt": "2020-02-20 00:00:00",  # Optional.
-                    "id": "str",  # Optional.
-                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional.
-                    "phase": "str",  # Optional. Known values are: "running", "polling", and
-                      "complete".
-                    "reason": "str",  # Optional.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional.
-                    "state": "str"  # Optional. Known values are: "pending", "running", "paused",
-                      "complete", "incomplete", "failed", and "warning".
+                    "completedAt": "2020-02-20 00:00:00",  # Optional. The time the task
+                      completed.
+                    "id": "str",  # Optional. The unique identifier of the task.
+                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional. The last time the status
+                      of the task was updated.
+                    "metadata": {
+                        "str": {}  # Optional. Attributes unique to the task.  This differs
+                          by task type.
+                    },
+                    "phase": "str",  # Optional. The phase the task is in. Known values are:
+                      "running", "polling", and "complete".
+                    "reason": "str",  # Optional. The reason the task was moved into its current
+                      state, if the task wasn't completed.
+                    "startedAt": "2020-02-20 00:00:00",  # Optional. The time the task started.
+                    "state": "str"  # Optional. The state the task is in. Known values are:
+                      "pending", "running", "paused", "complete", "incomplete", "failed", and
+                      "warning".
                 }
         """
         error_map = {
@@ -10414,15 +10482,23 @@ class TasksOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "completedAt": "2020-02-20 00:00:00",  # Optional.
-                    "id": "str",  # Optional.
-                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional.
-                    "phase": "str",  # Optional. Known values are: "running", "polling", and
-                      "complete".
-                    "reason": "str",  # Optional.
-                    "startedAt": "2020-02-20 00:00:00",  # Optional.
-                    "state": "str"  # Optional. Known values are: "pending", "running", "paused",
-                      "complete", "incomplete", "failed", and "warning".
+                    "completedAt": "2020-02-20 00:00:00",  # Optional. The time the task
+                      completed.
+                    "id": "str",  # Optional. The unique identifier of the task.
+                    "lastPolledAt": "2020-02-20 00:00:00",  # Optional. The last time the status
+                      of the task was updated.
+                    "metadata": {
+                        "str": {}  # Optional. Attributes unique to the task.  This differs
+                          by task type.
+                    },
+                    "phase": "str",  # Optional. The phase the task is in. Known values are:
+                      "running", "polling", and "complete".
+                    "reason": "str",  # Optional. The reason the task was moved into its current
+                      state, if the task wasn't completed.
+                    "startedAt": "2020-02-20 00:00:00",  # Optional. The time the task started.
+                    "state": "str"  # Optional. The state the task is in. Known values are:
+                      "pending", "running", "paused", "complete", "incomplete", "failed", and
+                      "warning".
                 }
         """
         error_map = {
