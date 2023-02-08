@@ -274,16 +274,16 @@ class ServiceBusSender(BaseHandler, SenderMixin):
             self._close_handler()
             raise
 
-    def _send(self, message, timeout=None, last_exception=None):
+    def _send(self, message, timeout=None, last_exception=None): # pylint: disable=unused-argument
         # type: (Union[ServiceBusMessage, ServiceBusMessageBatch], Optional[float], Optional[Exception]) -> None
         self._open()
         try:
             # TODO This is not batch message sending?
             if isinstance(message, ServiceBusMessageBatch):
                 for batch_message in message._messages: # pylint:disable=protected-access
-                    self._handler.send_message(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=line-too-long, protected-access
+                    self._handler.send_message(batch_message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # type: ignore[attr-defined] # pylint:disable=line-too-long, protected-access
             else:
-                self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # pylint:disable=protected-access
+                self._handler.send_message(message.raw_amqp_message._to_outgoing_amqp_message(), timeout=timeout) # type: ignore[attr-defined] # pylint:disable=protected-access,line-too-long
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException as e:

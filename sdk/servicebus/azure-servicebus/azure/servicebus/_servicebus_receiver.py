@@ -418,8 +418,8 @@ class ServiceBusReceiver(
             self._open()
 
             amqp_receive_client = self._handler
-            received_messages_queue = amqp_receive_client._received_messages
-            amqp_receive_client._running_iter = False
+            received_messages_queue = amqp_receive_client._received_messages # type: ignore[attr-defined]
+            amqp_receive_client._running_iter = False # type: ignore[attr-defined]
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
                 timeout or self._max_wait_time
@@ -610,16 +610,16 @@ class ServiceBusReceiver(
     ):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         if settle_operation == MESSAGE_COMPLETE:
-            return self._handler.settle_messages(message.delivery_id, 'accepted')
+            return self._handler.settle_messages(message.delivery_id, 'accepted') # type: ignore[attr-defined]
         if settle_operation == MESSAGE_ABANDON:
-            return self._handler.settle_messages(
+            return self._handler.settle_messages( # type: ignore[attr-defined]
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=False
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
-            return self._handler.settle_messages(
+            return self._handler.settle_messages( # type: ignore[attr-defined]
                 message.delivery_id,
                 'rejected',
                 error=AMQPError(
@@ -632,7 +632,7 @@ class ServiceBusReceiver(
                 )
             )
         if settle_operation == MESSAGE_DEFER:
-            return self._handler.settle_messages(
+            return self._handler.settle_messages( # type: ignore[attr-defined]
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,

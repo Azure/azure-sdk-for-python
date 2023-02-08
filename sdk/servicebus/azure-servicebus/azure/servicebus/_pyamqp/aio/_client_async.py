@@ -135,6 +135,7 @@ class AMQPClientAsync(AMQPClientSync):
      Default is None in which case `certifi.where()` will be used.
     :paramtype connection_verify: str
     """
+
     async def _keep_alive_async(self):
         start_time = time.time()
         try:
@@ -227,7 +228,7 @@ class AMQPClientAsync(AMQPClientSync):
         """
         # pylint: disable=protected-access
 
-        self._lock_async = asyncio.Lock()
+        self._lock_async = asyncio.Lock() # pylint:disable=attribute-defined-outside-init
 
         if self._session:
             return  # already open.
@@ -266,9 +267,9 @@ class AMQPClientAsync(AMQPClientSync):
         self._network_trace_params["amqpConnection"] = self._connection._container_id
         self._network_trace_params["amqpSession"] = self._session.name
         self._shutdown = False
- 
+
         if self._keep_alive_interval:
-           self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
+            self._keep_alive_thread = asyncio.ensure_future(self._keep_alive_async())
 
     async def close_async(self):
         """Close the client asynchronously. This includes closing the Session
@@ -866,7 +867,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
 
                 if not self._timeout_reached:
                     receiving = await self.do_work_async()
-                    
+
                 while not self._received_messages.empty():
                     message = self._received_messages.get()
                     self._last_activity_stamp = time.time()

@@ -417,8 +417,8 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             await self._open()
 
             amqp_receive_client = self._handler
-            amqp_receive_client._running_iter = False
-            received_messages_queue = amqp_receive_client._received_messages
+            amqp_receive_client._running_iter = False # type: ignore[attr-defined]
+            received_messages_queue = amqp_receive_client._received_messages # type: ignore[attr-defined]
             max_message_count = max_message_count or self._prefetch_count
             timeout_seconds = (
                 timeout or self._max_wait_time
@@ -517,16 +517,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     ):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         if settle_operation == MESSAGE_COMPLETE:
-            return await self._handler.settle_messages_async(message.delivery_id, 'accepted')
+            return await self._handler.settle_messages_async(message.delivery_id, 'accepted') # type: ignore[attr-defined] # pylint:disable=line-too-long
         if settle_operation == MESSAGE_ABANDON:
-            return await self._handler.settle_messages_async(
+            return await self._handler.settle_messages_async( # type: ignore[attr-defined]
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=False
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
-            return await self._handler.settle_messages_async(
+            return await self._handler.settle_messages_async( # type: ignore[attr-defined]
                 message.delivery_id,
                 'rejected',
                 error=AMQPError(
@@ -539,7 +539,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 )
             )
         if settle_operation == MESSAGE_DEFER:
-            return await self._handler.settle_messages_async(
+            return await self._handler.settle_messages_async( # type: ignore[attr-defined]
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,

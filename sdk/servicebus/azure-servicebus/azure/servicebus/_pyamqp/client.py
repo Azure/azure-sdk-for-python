@@ -227,7 +227,7 @@ class AMQPClient(
     def _keep_alive(self):
         start_time = time.time()
         try:
-            while self._connection and not self._shutdown: 
+            while self._connection and not self._shutdown:
                 current_time = time.time()
                 elapsed_time = current_time - start_time
                 if elapsed_time >= self._keep_alive_interval:
@@ -441,13 +441,13 @@ class AMQPClient(
         node = kwargs.pop("node", "$management")
         timeout = kwargs.pop("timeout", 0)
         with self._lock:
-            try: 
+            try:
                 mgmt_link = self._mgmt_links[node]
             except KeyError:
                 mgmt_link = ManagementOperation(self._session, endpoint=node, **kwargs)
                 self._mgmt_links[node] = mgmt_link
                 mgmt_link.open()
-                
+
                 while not mgmt_link.ready():
                     self._connection.listen(wait=False)
         operation_type = operation_type or b"empty"
@@ -691,7 +691,7 @@ class SendClient(AMQPClient):
         self._do_retryable_operation(self._send_message_impl, message=message, **kwargs)
 
 
-class ReceiveClient(AMQPClient):
+class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     """
     An AMQP client for receiving messages.
     :param source: The source AMQP service endpoint. This can either be the URI as
@@ -979,8 +979,8 @@ class ReceiveClient(AMQPClient):
         finally:
             if self._shutdown:
                 self.close()
-    
-    def _complete_message(self, message, auto):
+
+    def _complete_message(self, message, auto): # pylint:disable=no-self-use
         if not message or not auto:
             return
         # TODO: this is off here, message delivery id?
