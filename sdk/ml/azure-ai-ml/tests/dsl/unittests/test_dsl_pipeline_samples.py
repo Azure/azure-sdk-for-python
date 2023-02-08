@@ -455,6 +455,8 @@ class TestDSLPipelineSamples:
         omit_fields = [
             "properties.display_name",
             "properties.jobs.merge_files.componentId",
+            "properties.inputs.cosmos_folder.uri",
+            "properties.inputs.cosmos_folder_dup.uri",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
@@ -468,6 +470,8 @@ class TestDSLPipelineSamples:
         omit_fields = [
             "properties.display_name",
             "properties.jobs.merge_files.componentId",
+            "properties.inputs.cosmos_folder.uri",
+            "properties.inputs.cosmos_folder_dup.uri",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
@@ -481,6 +485,8 @@ class TestDSLPipelineSamples:
         omit_fields = [
             "properties.display_name",
             "properties.jobs.merge_files.componentId",
+            "properties.inputs.cosmos_folder.uri",
+            "properties.inputs.cosmos_folder_dup.uri",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 

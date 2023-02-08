@@ -2660,8 +2660,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                                       'task': 'copy_data',
                                       'type': 'data_transfer'}},
              'outputs': {'merged_blob': {'job_output_type': 'uri_folder',
-                                         'mode': 'ReadWriteMount',
-                                         'uri': 'azureml://datastores/workspaceblobstore/paths/azureml/dtv2_merge_dest/'}},
+                                         'mode': 'ReadWriteMount'}},
              'settings': {'default_compute': 'adftest'},
              'tags': {}
         }
