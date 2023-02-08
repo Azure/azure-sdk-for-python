@@ -75,10 +75,10 @@ class OperationsDiscoveryOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop(
+        api_version: Literal["2022-08-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2021-08-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationsDiscoveryCollection]
+        )
+        cls: ClsType[_models.OperationsDiscoveryCollection] = kwargs.pop("cls", None)
 
         request = build_get_request(
             api_version=api_version,
@@ -87,9 +87,9 @@ class OperationsDiscoveryOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -106,4 +106,4 @@ class OperationsDiscoveryOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/providers/Microsoft.Migrate/operations"}  # type: ignore
+    get.metadata = {"url": "/providers/Microsoft.Migrate/operations"}
