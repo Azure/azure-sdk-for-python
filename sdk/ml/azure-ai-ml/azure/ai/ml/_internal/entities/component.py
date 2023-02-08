@@ -193,7 +193,7 @@ class InternalComponent(Component):
 
     def _to_rest_object(self) -> ComponentVersionData:
         component = convert_ordered_dict_to_dict(self._to_dict())
-        component["_source"] = self._source
+        # component["_source"] = self._source
 
         properties = ComponentVersionDetails(
             component_spec=component,
