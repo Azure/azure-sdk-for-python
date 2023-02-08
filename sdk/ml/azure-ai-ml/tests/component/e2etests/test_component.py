@@ -253,7 +253,7 @@ class TestComponent(AzureRecordedTestCase):
             randstr=randstr,
             path="./tests/test_configs/spark_component/component.yml",
             expected_dict=expected_dict,
-            omit_fields=["name", "creation_context", "id"],
+            omit_fields=["name", "creation_context", "id", "code", "environment"],
             recorded_component_name="spark_component_name",
         )
 

@@ -50,20 +50,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "1448",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Feb 2023 11:02:37 GMT",
+        "Date": "Wed, 08 Feb 2023 03:52:44 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/ad5acff5-b0c8-a50a-bf93-ec60e6765313?api-version=2022-10-01",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-1d9e501fea8867261efb268cab4140dd-a083dae6f7a6c32e-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-eb07ec629b810a97f1db4371e610c3c4-2fc07cb598a09390-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1684c1d8-dabb-41e7-8cba-37008a7ac3c2",
-        "x-ms-ratelimit-remaining-subscription-writes": "1197",
+        "x-ms-correlation-request-id": "051f5793-64c4-4b4b-9c13-128e7abf40a0",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230207T110237Z:1684c1d8-dabb-41e7-8cba-37008a7ac3c2",
-        "x-request-time": "0.462"
+        "x-ms-routing-request-id": "JAPANEAST:20230208T035244Z:051f5793-64c4-4b4b-9c13-128e7abf40a0",
+        "x-request-time": "0.417"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/components/azureml_anonymous/versions/b7e95cf7-990c-4a66-8a2f-8fd9f8197d7e",
@@ -194,20 +194,20 @@
         "Cache-Control": "no-cache",
         "Content-Length": "4359",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Feb 2023 11:02:41 GMT",
+        "Date": "Wed, 08 Feb 2023 03:52:48 GMT",
         "Expires": "-1",
         "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000?api-version=2022-12-01-preview",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-bb653d4ac6f6090d5a3c57d8f24f10f3-c4e778dc9da2d871-01\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-cd3ca5ba240b923ba2d9d4ec7925c5c1-30b60ce24922e3e4-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "dbf74c75-3276-45a5-9d81-e754478c3323",
-        "x-ms-ratelimit-remaining-subscription-writes": "1196",
+        "x-ms-correlation-request-id": "f3cb6c2b-289c-445b-8100-5eb287bf88b9",
+        "x-ms-ratelimit-remaining-subscription-writes": "1198",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230207T110242Z:dbf74c75-3276-45a5-9d81-e754478c3323",
-        "x-request-time": "2.487"
+        "x-ms-routing-request-id": "JAPANEAST:20230208T035249Z:f3cb6c2b-289c-445b-8100-5eb287bf88b9",
+        "x-request-time": "2.152"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000",
@@ -323,7 +323,7 @@
           "sourceJobId": null
         },
         "systemData": {
-          "createdAt": "2023-02-07T11:02:41.3115934\u002B00:00",
+          "createdAt": "2023-02-08T03:52:48.4786792\u002B00:00",
           "createdBy": "Ying Chen",
           "createdByType": "User"
         }
@@ -340,88 +340,120 @@
         "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 202,
+      "StatusCode": 504,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "4",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Feb 2023 11:02:45 GMT",
+        "Connection": "close",
+        "Content-Length": "160",
+        "Content-Type": "text/html",
+        "Date": "Wed, 08 Feb 2023 03:53:51 GMT",
         "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:80eaba04-c6ec-4775-8ddc-d538e9642c2d:000000000000000000000?api-version=2022-12-01-preview",
         "Pragma": "no-cache",
-        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-test-westus2-02",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-async-operation-timeout": "PT1H",
-        "x-ms-correlation-request-id": "6d204606-6451-49ed-b8ea-8783f123d533",
+        "x-ms-correlation-request-id": "8ab83df9-d130-4593-af4e-54f219afd65d",
+        "x-ms-failure-cause": "service",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230207T110245Z:6d204606-6451-49ed-b8ea-8783f123d533",
-        "x-request-time": "1.147"
+        "x-ms-routing-request-id": "JAPANEAST:20230208T035352Z:8ab83df9-d130-4593-af4e-54f219afd65d",
+        "x-request-time": "60.005"
       },
-      "ResponseBody": "null"
+      "ResponseBody": [
+        "\u003Chtml\u003E\r\n",
+        "\u003Chead\u003E\u003Ctitle\u003E504 Gateway Time-out\u003C/title\u003E\u003C/head\u003E\r\n",
+        "\u003Cbody\u003E\r\n",
+        "\u003Ccenter\u003E\u003Ch1\u003E504 Gateway Time-out\u003C/h1\u003E\u003C/center\u003E\r\n",
+        "\u003Chr\u003E\u003Ccenter\u003Enginx\u003C/center\u003E\r\n",
+        "\u003C/body\u003E\r\n",
+        "\u003C/html\u003E\r\n"
+      ]
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:80eaba04-c6ec-4775-8ddc-d538e9642c2d:000000000000000000000?api-version=2022-12-01-preview",
-      "RequestMethod": "GET",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/jobs/000000000000000000000/cancel?api-version=2022-12-01-preview",
+      "RequestMethod": "POST",
       "RequestHeaders": {
-        "Accept": "*/*",
+        "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 202,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
-        "Content-Length": "2",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 07 Feb 2023 11:02:45 GMT",
-        "Expires": "-1",
-        "Location": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:80eaba04-c6ec-4775-8ddc-d538e9642c2d:000000000000000000000?api-version=2022-12-01-preview",
-        "Pragma": "no-cache",
-        "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-02",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "5e84b129-1c52-437a-8a11-54107e15c60c",
-        "x-ms-ratelimit-remaining-subscription-reads": "11994",
-        "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230207T110246Z:5e84b129-1c52-437a-8a11-54107e15c60c",
-        "x-request-time": "0.110"
-      },
-      "ResponseBody": {}
-    },
-    {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/centraluseuap/mfeOperationResults/jc:80eaba04-c6ec-4775-8ddc-d538e9642c2d:000000000000000000000?api-version=2022-12-01-preview",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 07 Feb 2023 11:03:15 GMT",
+        "User-Agent": "azure-ai-ml/1.4.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.8.13 (Windows-10-10.0.22000-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "1223",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 08 Feb 2023 03:54:09 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:512cc15a-13b5-415b-bfd0-dce7accb6bb1",
-        "Server-Timing": "traceparent;desc=\u002200-e010b8f44f1bbc45e32cdade7eb906f2-79988b138bb3fcae-01\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "x-aml-cluster": "vienna-test-westus2-02",
+        "x-aml-cluster": "vienna-test-westus2-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1c529c27-121b-4369-b503-b96fbda1d3e7",
-        "x-ms-ratelimit-remaining-subscription-reads": "11993",
-        "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "JAPANEAST:20230207T110316Z:1c529c27-121b-4369-b503-b96fbda1d3e7",
-        "x-request-time": "0.030"
+        "x-ms-correlation-request-id": "b4b083d8-7ca0-4bb1-82cc-19dec1c99c47",
+        "x-ms-ratelimit-remaining-subscription-writes": "1199",
+        "x-ms-response-type": "error",
+        "x-ms-routing-request-id": "JAPANEAST:20230208T035409Z:b4b083d8-7ca0-4bb1-82cc-19dec1c99c47",
+        "x-request-time": "15.973"
       },
-      "ResponseBody": null
+      "ResponseBody": {
+        "error": {
+          "code": "UserError",
+          "message": "The pipeline run 000000000000000000000 is in terminal status, it can\u0027t be canceled.",
+          "details": [],
+          "additionalInfo": [
+            {
+              "type": "ComponentName",
+              "info": {
+                "value": "managementfrontend"
+              }
+            },
+            {
+              "type": "Correlation",
+              "info": {
+                "value": {
+                  "operation": "ed0e3250b68f2ebd295524060092caf5",
+                  "request": "3c3a26531215e78b"
+                }
+              }
+            },
+            {
+              "type": "Environment",
+              "info": {
+                "value": "master"
+              }
+            },
+            {
+              "type": "Location",
+              "info": {
+                "value": "westus2"
+              }
+            },
+            {
+              "type": "Time",
+              "info": {
+                "value": "2023-02-08T03:54:09.4641357\u002B00:00"
+              }
+            },
+            {
+              "type": "InnerError",
+              "info": {
+                "value": {
+                  "code": "BadArgument",
+                  "innerError": {
+                    "code": "ArgumentInvalid",
+                    "innerError": {
+                      "code": "CancelPipelineRunInTerminalStatus",
+                      "innerError": null
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "Variables": {}
