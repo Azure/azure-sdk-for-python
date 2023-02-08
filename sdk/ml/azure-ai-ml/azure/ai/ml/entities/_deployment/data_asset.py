@@ -15,7 +15,7 @@ class DataAsset:
 
     :param name: Name of data asset
     :type name: str
-    :param path: Path where the data asset is stored. 
+    :param path: Path where the data asset is stored.
     :type path: str
 
     """

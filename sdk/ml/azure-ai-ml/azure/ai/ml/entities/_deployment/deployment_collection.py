@@ -14,7 +14,7 @@ class DeploymentCollection:
 
     :param enabled: Is logging for this collection enabled.
     :type enabled: str, optional
-    :param data: Data asset associated with collection logging. 
+    :param data: Data asset associated with collection logging.
     :type data: DataAsset, optional
 
     """

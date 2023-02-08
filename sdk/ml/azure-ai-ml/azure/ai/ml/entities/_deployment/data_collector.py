@@ -13,18 +13,16 @@ from azure.ai.ml.entities._deployment.request_logging import RequestLogging
 class DataCollector:
     """Data Capture deployment entity
 
-    :param request: Entity responsible for enabling payload logging requests.
-    :type request: Request
-    :param response: Entity responsible for enabling payload logging response.
-    :type response: Response
+    :param collections: Mapping dictionary of strings mapped to DeploymentCollection entities.
+    :type collections: Mapping[str, DeploymentCollection], optional
     :param rolling_rate: The rolling rate of mdc files, possible values: ["minute", "hour", "day"].
-    :type rolling_rate: str
+    :type rolling_rate: str, optional
     :param destination: Must be blob store.
-    :type destination: Destination
+    :type destination: Destination, optional
     :param sampling_strategy: Sample percent of traffic.
     :type sampling_strategy: SamplingStrategy, optional
     :param request_logging: Logging of request payload parameters.
-    :type request_logging: RequestLogging
+    :type request_logging: RequestLogging, optional
     """
 
     def __init__(
