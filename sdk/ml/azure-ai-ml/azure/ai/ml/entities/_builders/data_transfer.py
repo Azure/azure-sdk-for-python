@@ -31,6 +31,7 @@ from .._util import (
     validate_attribute_type,
 )
 from .base_node import BaseNode
+from .._job.pipeline._io import NodeOutput
 
 module_logger = logging.getLogger(__name__)
 
@@ -72,13 +73,12 @@ class DataTransfer(BaseNode):
         *,
         component: Union[str, DataTransferCopyComponent],
         compute: Optional[str] = None,
-        inputs: Optional[Dict[str, Union[Input, str]]] = None,
+        inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         **kwargs,
     ):
         # resolve normal dict to dict[str, JobService]
         kwargs.pop("type", None)
-        self._parameters = kwargs.pop("parameters", {})
         super().__init__(
             type=NodeType.DATA_TRANSFER,
             inputs=inputs,
@@ -87,15 +87,6 @@ class DataTransfer(BaseNode):
             compute=compute,
             **kwargs,
         )
-
-    @property
-    def parameters(self) -> Dict[str, str]:
-        """MLFlow parameters.
-
-        :return: MLFlow parameters logged in job.
-        :rtype: Dict[str, str]
-        """
-        return self._parameters
 
     @property
     def component(self) -> Union[str, DataTransferComponent]:

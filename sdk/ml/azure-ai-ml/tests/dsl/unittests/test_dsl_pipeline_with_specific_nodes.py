@@ -526,13 +526,15 @@ class TestDSLPipelineWithSpecificNodes:
 
         omit_fields = [
             "properties.jobs.*.componentId",
+            "properties.experiment_name",
         ]
 
         pipeline1 = pipeline(folder1, folder2)
         pipeline_job1 = pipeline1._to_rest_object().as_dict()
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
-        assert pipeline_job1 == {'properties': {'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_copy_function',
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
                 'inputs': {'folder1': {'job_input_type': 'uri_folder',
                                        'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'},
                            'folder2': {'job_input_type': 'uri_folder',
@@ -603,14 +605,14 @@ class TestDSLPipelineWithSpecificNodes:
             node3 = data_transfer_job_func(source=source_snowflake)
             node4 = data_transfer_function(source=source_snowflake)
 
-        omit_fields = ["properties.jobs.*.componentId"]
+        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
         pipeline1 = pipeline(query_source_snowflake, connection_target_azuresql)
         pipeline_job1 = pipeline1._to_rest_object().as_dict()
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
-            'properties': {'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_import_database_function',
+            'properties': {
+                'display_name': 'pipeline',
                 'inputs': {'connection_target_azuresql': {'job_input_type': 'literal',
                                                           'value': 'azureml:my_azuresql_connection'},
                            'query_source_snowflake': {'job_input_type': 'literal',
@@ -695,14 +697,13 @@ class TestDSLPipelineWithSpecificNodes:
             node1 = data_transfer_job_func(source=Database(**source))
             node2 = data_transfer_function(source=Database(**source))
 
-        omit_fields = ["properties.jobs.*.componentId"]
+        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
         pipeline1 = pipeline()
         pipeline_job1 = pipeline1._to_rest_object().as_dict()
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             'properties': {
                 'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_import_stored_database_function',
                 'inputs': {},
                 'is_archived': False,
                 'job_type': 'Pipeline',
@@ -780,7 +781,7 @@ class TestDSLPipelineWithSpecificNodes:
             node3 = data_transfer_job_func(source=source_snowflake)
             node4 = data_transfer_function(source=source_snowflake)
 
-        omit_fields = ["properties.jobs.*.componentId"]
+        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
         pipeline1 = pipeline(path_source_s3, connection_target)
         pipeline_job1 = pipeline1._to_rest_object().as_dict()
@@ -788,7 +789,6 @@ class TestDSLPipelineWithSpecificNodes:
         assert pipeline_job1 == {
             'properties': {
                 'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_import_file_system_function',
                 'inputs': {'connection_target': {'job_input_type': 'literal',
                                                  'value': 'azureml:my_s3_connection'},
                            'path_source_s3': {'job_input_type': 'literal',
@@ -881,7 +881,7 @@ class TestDSLPipelineWithSpecificNodes:
             node4 = data_transfer_function(source=cosmos_folder)
             node4.sink = source_snowflake
 
-        omit_fields = ["properties.jobs.*.componentId"]
+        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
         pipeline1 = pipeline(table_name, connection_target_azuresql)
         pipeline_job1 = pipeline1._to_rest_object().as_dict()
@@ -889,7 +889,6 @@ class TestDSLPipelineWithSpecificNodes:
         assert pipeline_job1 == {
             'properties': {
                 'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_export_database_function',
                 'inputs': {'connection_target_azuresql': {'job_input_type': 'literal',
                                                           'value': 'azureml:my_azuresql_connection'},
                            'table_name': {'job_input_type': 'literal',
@@ -987,7 +986,7 @@ class TestDSLPipelineWithSpecificNodes:
             node4 = data_transfer_function(source=cosmos_folder)
             node4.sink = source_snowflake
 
-        omit_fields = ["properties.jobs.*.componentId"]
+        omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
         pipeline1 = pipeline(path_source_s3, connection_target)
         pipeline_job1 = pipeline1._to_rest_object().as_dict()
@@ -995,7 +994,6 @@ class TestDSLPipelineWithSpecificNodes:
         assert pipeline_job1 == {
             'properties': {
                 'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_export_file_system_function',
                 'inputs': {'connection_target': {'job_input_type': 'literal',
                                                  'value': 'azureml:my_s3_connection'},
                            'path_source_s3': {'job_input_type': 'literal',
@@ -1604,10 +1602,12 @@ class TestDSLPipelineWithSpecificNodes:
         assert pipeline1_dict == pipeline_regenerated_from_rest._to_dict()
         omit_fields = [
             "properties.jobs.data_transfer_node.componentId",
+            "properties.experiment_name"
         ]
         pipeline_job1 = pydash.omit(pipeline_job1, *omit_fields)
-        assert pipeline_job1 == {'properties': {'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_copy_job',
+        assert pipeline_job1 == {
+            'properties': {
+                'display_name': 'pipeline',
                 'inputs': {'folder1': {'job_input_type': 'uri_folder',
                                        'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'},
                            'folder2': {'job_input_type': 'uri_folder',
@@ -1669,11 +1669,12 @@ class TestDSLPipelineWithSpecificNodes:
 
         omit_fields = [
             "properties.jobs.*.componentId",
+            "properties.experiment_name"
         ]
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
-            'properties': {'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_import_database_job',
+            'properties': {
+                'display_name': 'pipeline',
                 'inputs': {'connection_target_azuresql': {'job_input_type': 'literal',
                                                           'value': 'azureml:my_azuresql_connection'},
                            'query_source_snowflake': {'job_input_type': 'literal',
@@ -1741,12 +1742,12 @@ class TestDSLPipelineWithSpecificNodes:
 
         omit_fields = [
             "properties.jobs.*.componentId",
+            "properties.experiment_name"
         ]
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             'properties': {
                 'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_import_stored_database_job',
                 'inputs': {},
                 'is_archived': False,
                 'job_type': 'Pipeline',
@@ -1808,12 +1809,12 @@ class TestDSLPipelineWithSpecificNodes:
 
         omit_fields = [
             "properties.jobs.*.componentId",
+            "properties.experiment_name"
         ]
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             'properties': {
                 'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_export_database_job',
                 'inputs': {'connection_target_azuresql': {'job_input_type': 'literal',
                                                           'value': 'azureml:my_azuresql_connection'},
                            'table_name': {'job_input_type': 'literal',
@@ -1880,13 +1881,13 @@ class TestDSLPipelineWithSpecificNodes:
         assert pipeline1_dict == pipeline_regenerated_from_rest_dict
 
         omit_fields = [
-            # "properties.jobs.*.componentId",
+            "properties.jobs.*.componentId",
+            "properties.experiment_name"
         ]
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             'properties': {
                 'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_import_file_system_job',
                 'inputs': {'connection_target': {'job_input_type': 'literal',
                                                  'value': 'azureml:my_s3_connection'},
                            'path_source_s3': {'job_input_type': 'literal',
@@ -1894,7 +1895,6 @@ class TestDSLPipelineWithSpecificNodes:
                 'is_archived': False,
                 'job_type': 'Pipeline',
                 'jobs': {'node1': {'_source': 'BUILTIN',
-                                   'componentId': 'azureml://registries/import_file_system',
                                    'name': 'node1',
                                    'source': {'connection': 'azureml:my_s3_connection',
                                               'path': 's3://my_bucket/my_folder',
@@ -1902,7 +1902,6 @@ class TestDSLPipelineWithSpecificNodes:
                                    'task': 'import_data',
                                    'type': 'data_transfer'},
                          'node2': {'_source': 'BUILTIN',
-                                   'componentId': 'azureml://registries/import_file_system',
                                    'name': 'node2',
                                    'outputs': {'sink': {'type': 'literal',
                                                         'value': '${{parent.outputs.pipeline_output}}'}},
@@ -1956,12 +1955,12 @@ class TestDSLPipelineWithSpecificNodes:
 
         omit_fields = [
             "properties.jobs.*.componentId",
+            "properties.experiment_name"
         ]
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
             'properties': {
                 'display_name': 'pipeline',
-                'experiment_name': 'test_pipeline_with_data_transfer_export_file_system_job',
                 'inputs': {'connection_target': {'job_input_type': 'literal',
                                                  'value': 'azureml:my_s3_connection'},
                            'cosmos_folder': {'job_input_type': 'uri_folder',

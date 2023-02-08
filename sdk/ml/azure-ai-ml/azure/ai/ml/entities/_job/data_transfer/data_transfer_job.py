@@ -246,7 +246,7 @@ class DataTransferImportJob(DataTransferJob):
             task=self.task,
             id=component_id,
         )
-        component._source = ComponentSource.BUIlTIN
+        component._source = ComponentSource.BUILTIN
         return component
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs):
@@ -324,7 +324,7 @@ class DataTransferExportJob(DataTransferJob):
             task=self.task,
             id=component_id,
         )
-        component._source = ComponentSource.BUIlTIN
+        component._source = ComponentSource.BUILTIN
         return component
 
     def _to_node(self, context: Optional[Dict] = None, **kwargs):

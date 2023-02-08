@@ -69,7 +69,7 @@ class ComponentSource:
     REMOTE_REGISTRY = "REMOTE.REGISTRY"
     YAML_JOB = "YAML.JOB"
     YAML_COMPONENT = "YAML.COMPONENT"
-    BUIlTIN = "BUILTIN"
+    BUILTIN = "BUILTIN"
 
 
 class ParallelTaskType:

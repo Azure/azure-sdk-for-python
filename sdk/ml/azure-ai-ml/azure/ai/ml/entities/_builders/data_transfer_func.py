@@ -29,8 +29,7 @@ def copy_data(
         data_copy_mode: Optional[str] = None,
         **kwargs,
 ) -> DataTransferCopy:
-    """Create a Spark object which can be used inside dsl.pipeline as a function and
-    can also be created as a standalone spark job.
+    """Create a DataTransferCopy object which can be used inside dsl.pipeline as a function.
 
     :param name: The name of the job.
     :type name: str
@@ -110,8 +109,7 @@ def import_data(
         task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
         **kwargs,
 ) -> DataTransferImport:
-    """Create a Spark object which can be used inside dsl.pipeline as a function and
-    can also be created as a standalone spark job.
+    """Create a DataTransferImport object which can be used inside dsl.pipeline as a function.
 
     :param name: The name of the job.
     :type name: str
@@ -163,7 +161,7 @@ def import_data(
             id=component_id,
             **kwargs,
         )
-        component._source = ComponentSource.BUIlTIN
+        component._source = ComponentSource.BUILTIN
     data_transfer_import_obj = DataTransferImport(
         component=component,
         name=name,
@@ -194,8 +192,7 @@ def export_data(
         task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
         **kwargs,
 ) -> DataTransferExport:
-    """Create a Spark object which can be used inside dsl.pipeline as a function and
-    can also be created as a standalone spark job.
+    """Create a DataTransferExport object which can be used inside dsl.pipeline as a function.
 
     :param name: The name of the job.
     :type name: str
@@ -246,7 +243,7 @@ def export_data(
             id=component_id,
             **kwargs,
         )
-        component._source = ComponentSource.BUIlTIN
+        component._source = ComponentSource.BUILTIN
     data_transfer_export_obj = DataTransferExport(
         component=component,
         name=name,

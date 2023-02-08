@@ -185,7 +185,8 @@ class StoredProcedureParamsSchema(metaclass=PatchedSchemaMeta):
     def check_dict(self, data, **kwargs):
         for key in self.dump_fields.keys():  # pylint: disable=no-member
             if data.get(key, None) is None:
-                raise ValidationError(f"StoredProcedureParams must have a {key} value")
+                msg = "StoredProcedureParams must have a {!r} value."
+                raise ValidationError(msg.format(key))
         return data
 
 
@@ -219,7 +220,8 @@ class DatabaseSchema(metaclass=PatchedSchemaMeta):
 
         if isinstance(data, Database):
             return data
-        raise ValidationError("DatabaseSchema needs type Database to dump")
+        msg = "DatabaseSchema needs type Database to dump, but got {!r}."
+        raise ValidationError(msg.format(type(data)))
 
 
 class FileSystemSchema(metaclass=PatchedSchemaMeta):
@@ -244,4 +246,5 @@ class FileSystemSchema(metaclass=PatchedSchemaMeta):
 
         if isinstance(data, FileSystem):
             return data
-        raise ValidationError("FileSystemSchema needs type FileSystem to dump")
+        msg = "FileSystemSchema needs type FileSystem to dump, but got {!r}."
+        raise ValidationError(msg.format(type(data)))
