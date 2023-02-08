@@ -5,9 +5,6 @@ parameters:
 - name: ServiceDirectory
   type: string
   default: ''
-- name: Services
-  type: string
-  default: ''
 - name: PackageVersions
   type: string
   default: '.*'
@@ -42,7 +39,6 @@ extends:
       inputs:
         versionSpec: $(PythonVersion)
     ServiceDirectory: ${{ parameters.ServiceDirectory }}
-    Services: ${{ parameters.Services }}
     PackageVersions: ${{ parameters.PackageVersions }}
     Tests: ${{ parameters.Tests }}
     Arguments: ${{ parameters.Arguments }}
