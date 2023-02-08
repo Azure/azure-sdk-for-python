@@ -61,7 +61,7 @@ class AzureKeyCredential:
     """Credential type used for authenticating to an Azure service.
     It provides the ability to update the key without creating a new client.
 
-    :param Union[str, Tuple[str, ...]] key: The key used to authenticate to an Azure service
+    :param TKeys key: The key used to authenticate to an Azure service
     :raises: TypeError
     """
 
