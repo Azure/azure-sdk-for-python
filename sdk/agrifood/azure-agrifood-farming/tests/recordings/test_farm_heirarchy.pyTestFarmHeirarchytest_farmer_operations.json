@@ -225,7 +225,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-party-ops?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -236,8 +236,8 @@
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
-        "name": "Test Farmer",
-        "description": "Farmer created during testing.",
+        "name": "Test Party",
+        "description": "Party created during testing.",
         "status": "Sample Status",
         "properties": {
           "foo": "bar",
@@ -247,25 +247,25 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-07-31-preview",
+        "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Content-Length": "417",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 30 Jan 2023 01:34:58 GMT",
         "ETag": "010004cb-0000-0600-0000-63d71ec20000",
-        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/farmers/test-farmer-farmer-ops",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/test-party-party-ops",
         "mise-correlation-id": "5e6ba429-0362-45f4-a5ec-f2d066dd42e7",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
-        "id": "test-farmer-farmer-ops",
+        "id": "test-party-party-ops",
         "eTag": "010004cb-0000-0600-0000-63d71ec20000",
         "status": "Sample Status",
         "createdDateTime": "2023-01-30T01:34:58Z",
         "modifiedDateTime": "2023-01-30T01:34:58Z",
-        "name": "Test Farmer",
-        "description": "Farmer created during testing.",
+        "name": "Test Party",
+        "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "properties": {
@@ -276,7 +276,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-party-ops?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -287,7 +287,7 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-07-31-preview",
+        "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
@@ -299,13 +299,13 @@
         "x-ms-throttle-information": "100"
       },
       "ResponseBody": {
-        "id": "test-farmer-farmer-ops",
+        "id": "test-party-party-ops",
         "eTag": "010004cb-0000-0600-0000-63d71ec20000",
         "status": "Sample Status",
         "createdDateTime": "2023-01-30T01:34:58Z",
         "modifiedDateTime": "2023-01-30T01:34:58Z",
-        "name": "Test Farmer",
-        "description": "Farmer created during testing.",
+        "name": "Test Party",
+        "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "properties": {
@@ -316,7 +316,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-party-ops?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -327,8 +327,8 @@
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
-        "name": "Test Farmer Updated",
-        "description": "Farmer created during testing.",
+        "name": "Test Party Updated",
+        "description": "Party created during testing.",
         "status": "Sample Status",
         "properties": {
           "foo": "bar",
@@ -338,7 +338,7 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-07-31-preview",
+        "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
@@ -350,13 +350,13 @@
         "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
-        "id": "test-farmer-farmer-ops",
+        "id": "test-party-party-ops",
         "eTag": "010005cb-0000-0600-0000-63d71ec30000",
         "status": "Sample Status",
         "createdDateTime": "2023-01-30T01:34:58Z",
         "modifiedDateTime": "2023-01-30T01:34:59Z",
-        "name": "Test Farmer Updated",
-        "description": "Farmer created during testing.",
+        "name": "Test Party Updated",
+        "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "properties": {
@@ -367,7 +367,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-party-ops?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -378,7 +378,7 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-07-31-preview",
+        "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
@@ -390,13 +390,13 @@
         "x-ms-throttle-information": "100"
       },
       "ResponseBody": {
-        "id": "test-farmer-farmer-ops",
+        "id": "test-party-party-ops",
         "eTag": "010005cb-0000-0600-0000-63d71ec30000",
         "status": "Sample Status",
         "createdDateTime": "2023-01-30T01:34:58Z",
         "modifiedDateTime": "2023-01-30T01:34:59Z",
-        "name": "Test Farmer Updated",
-        "description": "Farmer created during testing.",
+        "name": "Test Party Updated",
+        "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "properties": {
@@ -407,7 +407,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-party-ops?api-version=2022-11-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -419,7 +419,7 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-07-31-preview",
+        "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Date": "Mon, 30 Jan 2023 01:35:01 GMT",
         "mise-correlation-id": "fd45cf01-decf-4c3b-9439-c3bcd78bb79b",
@@ -429,7 +429,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/farmers/test-farmer-farmer-ops?api-version=2021-07-31-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-party-ops?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -440,7 +440,7 @@
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-07-31-preview",
+        "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json",
@@ -454,7 +454,7 @@
       "ResponseBody": {
         "error": {
           "code": "ResourceNotFound",
-          "message": "Resource \u0027Party\u0027 with id \u0027test-farmer-farmer-ops\u0027 does not exist."
+          "message": "Resource \u0027Party\u0027 with id \u0027test-party-party-ops\u0027 does not exist."
         },
         "traceId": "0HMNUP0OV5H57:00000003"
       }

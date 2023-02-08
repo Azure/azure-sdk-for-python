@@ -19,10 +19,10 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
 
         # Setup data
-        common_id_prefix = "satellite-flow-"
-        farmer_id = common_id_prefix + "test-farmer"
+        party_id = "test-party-3476"
+        common_id_prefix = "satellite-flow-asdf"
         boundary_id = common_id_prefix + "test-boundary"
-        job_id = common_id_prefix + "job-4868"
+        job_id = common_id_prefix + "job-4846"
 
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())
@@ -30,15 +30,15 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         # Setup client
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
-        # Create farmer
-        farmer = await client.farmers.create_or_update(
-            farmer_id=farmer_id,
-            farmer={}
+        # Create party
+        party = await client.parties.create_or_update(
+            party_id=party_id,
+            party={}
         )
 
         # Create boundary if not exists
         boundary = await client.boundaries.create_or_update(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id,
             boundary={
                 "geometry":
@@ -69,7 +69,7 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
             job={
                 "boundaryId": boundary_id,
                 "endDateTime": end_date_time,
-                "farmerId": farmer_id,
+                "partyId": party_id,
                 "startDateTime": start_date_time,
                 "provider": "Microsoft",
                 "source": "Sentinel_2_L2A",
@@ -91,12 +91,14 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         # Get terminal job state and assert
         assert satellite_job_poller.status() == "Succeeded"
 
-        # Get scenes which are available in FarmBeats for our farmer and boundary of intrest.
+        # Get scenes which are available in FarmBeats for our party and boundary of intrest.
         scenes = client.scenes.list(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id,
             start_date_time=start_date_time,
             end_date_time=end_date_time,
+            provider="Microsoft",
+            source="Sentinel_2_L2A",
         )
 
         scenes_list = [scene async for scene in scenes]

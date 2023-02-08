@@ -6,7 +6,7 @@ FILE: sample_farm_hierarchy_complete.py
 
 DESCRIPTION:
     This sample demonstrates creation of the complete farm hierarchy
-    - Creation of Farmer
+    - Creation of Party
     - Creation of Farm
     - Creation of Field
     - Creation of Crop and Crop Variety
@@ -42,9 +42,9 @@ def sample_farm_hierarchy_complete():
         credential=credential
     )
 
-    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
-    farmer_name = "contoso-farmer-name"
-    farmer_description = "contoso-farmer-description"
+    party_id = f"contoso-party-{random.randint(0,1000)}"
+    party_name = "contoso-party-name"
+    party_description = "contoso-party-description"
     farm_id = "contoso-farm"
     farm_name = "contoso-farm-name"
     farm_description = "contoso-farm-description"
@@ -57,9 +57,9 @@ def sample_farm_hierarchy_complete():
     crop_id = "contoso-crop"
     crop_name = "contoso-crop-name"
     crop_description = "contoso-crop-description"
-    crop_variety_id = "contoso-crop-variety"
-    crop_variety_name = "contoso-crop_variety-name"
-    crop_variety_description = "contoso-crop-variety-description"
+    crop_product_id = "contoso-crop-product"
+    crop_product_name = "contoso-crop_product-name"
+    crop_product_description = "contoso-crop-product-description"
     season_id = "contoso-season"
     season_name = "contoso-season-name"
     season_description = "contoso-season-description"
@@ -108,28 +108,28 @@ def sample_farm_hierarchy_complete():
         ]
     }
 
-    # Step 1: Create a farmer.
+    # Step 1: Create a party.
     print(
-        f"Creating or updating farmer with Id {farmer_id}...", end=" ", flush=True)
-    farmer = client.farmers.create_or_update(
-        farmer_id=farmer_id,
-        farmer={
-            "name": farmer_name,
-            "description": farmer_description
+        f"Creating or updating party with Id {party_id}...", end=" ", flush=True)
+    party = client.parties.create_or_update(
+        party_id=party_id,
+        party={
+            "name": party_name,
+            "description": party_description
         }
     )
     print("Done")
 
-    print("Details of farmer:")
-    print("\tID:", farmer["id"])
-    print("\tName:", farmer["name"])
-    print("\tDescription:", farmer["description"])
+    print("Details of party:")
+    print("\tID:", party["id"])
+    print("\tName:", party["name"])
+    print("\tDescription:", party["description"])
 
     # Step 2: Create a farm.
     print(
         f"Creating or updating farm with Id {farm_id}...", end=" ", flush=True)
     farm = client.farms.create_or_update(
-        farmer_id=farmer_id,
+        party_id=party_id,
         farm_id=farm_id,
         farm={
             "name": farm_name,
@@ -141,14 +141,14 @@ def sample_farm_hierarchy_complete():
     print("Details of farm:")
     print("\tID:", farm["id"])
     print("\tName:", farm["name"])
-    print("\tFarmer Id:", farm["farmerId"])
+    print("\tParty Id:", farm["partyId"])
     print("\tDescription:", farm["description"])
 
     # Step 3: Create a field.
     print(
         f"Creating or updating field with Id {field_id}...", end=" ", flush=True)
     field = client.fields.create_or_update(
-        farmer_id=farmer_id,
+        party_id=party_id,
         field_id=field_id,
         field={
             "name": field_name,
@@ -161,7 +161,7 @@ def sample_farm_hierarchy_complete():
     print("Details of field:")
     print("\tID:", field["id"])
     print("\tName:", field["name"])
-    print("\tFarmer Id:", field["farmerId"])
+    print("\tParty Id:", field["partyId"])
     print("\tFarm Id:", field["farmId"])
     print("\tName:", field["name"])
     print("\tDescription:", field["description"])
@@ -183,22 +183,23 @@ def sample_farm_hierarchy_complete():
     print("\tName:", crop["name"])
     print("\tDescription:", crop["description"])
 
-    # Step 5: Create a crop variety.
+    # Step 5: Create a crop product.
     print(
-        f"Creating or updating crop variety with Id {crop_variety_id}...", end=" ", flush=True)
-    crop_variety = client.crop_varieties.create_or_update(
-        crop_variety_id=crop_variety_id,
-        crop_variety={
-            "name": crop_variety_name,
-            "description": crop_variety_description
+        f"Creating or updating crop product with Id {crop_product_id}...", end=" ", flush=True)
+    crop_product = client.crop_products.create_or_update(
+        crop_product_id=crop_product_id,
+        crop_product={
+            "name": crop_product_name,
+            "description": crop_product_description,
+            "cropIds": [crop_id]
         }
     )
     print("Done")
 
-    print("Details of crop variety:")
-    print("\tID:", crop_variety["id"])
-    print("\tName:", crop_variety["name"])
-    print("\tDescription:", crop_variety["description"])
+    print("Details of crop product:")
+    print("\tID:", crop_product["id"])
+    print("\tName:", crop_product["name"])
+    print("\tDescription:", crop_product["description"])
 
     # Step 6: Create a season.
     print(
@@ -227,7 +228,7 @@ def sample_farm_hierarchy_complete():
     print(
         f"Creating or updating seasonal field with Id {seasonal_field_id}...", end=" ", flush=True)
     seasonal_field = client.seasonal_fields.create_or_update(
-        farmer_id=farmer_id,
+        party_id=party_id,
         seasonal_field_id=seasonal_field_id,
         seasonal_field={
             "name": seasonal_field_name,
@@ -235,7 +236,7 @@ def sample_farm_hierarchy_complete():
             "fieldId": field_id,
             "seasonId": season_id,
             "cropId": crop_id,
-            "cropVarietyIds": [crop_variety_id],
+            "cropProductIds": [crop_product_id],
             "description": seasonal_field_description
         }
     )
@@ -244,12 +245,12 @@ def sample_farm_hierarchy_complete():
     print("Details of seasonal field:")
     print("\tID:", seasonal_field["id"])
     print("\tName:", seasonal_field["name"])
-    print("\tFarmer Name:", seasonal_field["farmerId"])
+    print("\tParty Name:", seasonal_field["partyId"])
     print("\tFarm Name:", seasonal_field["farmId"])
     print("\tCrop Name:", seasonal_field["cropId"])
     print("\tSeason Name:", seasonal_field["seasonId"])
     print("\tField Name:", seasonal_field["fieldId"])
-    print("\tCrop Variety Name:", seasonal_field["cropVarietyIds"])
+    print("\tCrop Variety Name:", seasonal_field["cropProductIds"])
     print("\tName:", seasonal_field["name"])
     print("\tDescription:", seasonal_field["description"])
 
@@ -258,7 +259,7 @@ def sample_farm_hierarchy_complete():
         print(
             f"Trying to fetch boundary with id {boundary_id}...", end=" ", flush=True)
         boundary = client.boundaries.get(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id
         )
         print("Boundary already exists.")
@@ -266,7 +267,7 @@ def sample_farm_hierarchy_complete():
         print(
             f"Doesn't exist. Creating boundary...", end=" ", flush=True)
         boundary = client.boundaries.create_or_update(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id,
             boundary={
                 "name": boundary_name,

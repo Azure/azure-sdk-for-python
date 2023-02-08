@@ -7,8 +7,8 @@ FILE: sample_attachments_async.py
 DESCRIPTION:
     This sample demonstrates FarmBeats' capability of storing arbitrary files 
     in context to the various farm hierarchy objects. 
-    We first attach some files onto a farmer and a farm, and then download all 
-    existing attachments for the farmer onto a local directory.
+    We first attach some files onto a party and a farm, and then download all 
+    existing attachments for the party onto a local directory.
 
 USAGE:
     ```python sample_attachments_async.py```
@@ -24,7 +24,7 @@ from typing import Dict
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.agrifood.farming.aio import FarmBeatsClient
-from azure.agrifood.farming.models import Farmer
+from azure.agrifood.farming.models import Party
 from pathlib import Path
 import asyncio
 import os
@@ -42,26 +42,26 @@ async def sample_attachments_async():
         credential=credential
     )
 
-    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
+    party_id = f"contoso-party-{random.randint(0,1000)}"
     farm_id = "contoso-farm"
-    attachment_on_farmer_id = "contoso-farmer-attachment-1"
+    attachment_on_party_id = "contoso-party-attachment-1"
     attachment_on_farm_id = "contoso-farm-attachment-1"
-    attachment_on_farmer_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
+    attachment_on_party_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
     attachment_on_farm_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
 
-    if not (os.path.isfile(attachment_on_farmer_file_path) and 
+    if not (os.path.isfile(attachment_on_party_file_path) and 
             os.path.isfile(attachment_on_farm_file_path)):
         raise SystemExit(
             "Please provide the paths to the files you want to upload."
         )
 
-    # Ensure farmer exists, create if necessary.
-    print(f"Create/updating farmer with id {farmer_id}...", end=" ", flush=True)
-    await client.farmers.create_or_update(
-        farmer_id=farmer_id,
-        farmer={
-            "name": "Comtoso Farmer",
-            "description": "Contoso Farmer.",
+    # Ensure party exists, create if necessary.
+    print(f"Create/updating party with id {party_id}...", end=" ", flush=True)
+    await client.parties.create_or_update(
+        party_id=party_id,
+        party={
+            "name": "Comtoso Party",
+            "description": "Contoso Party.",
             "status": "Contoso Status",
             "properties": {
                 "foo": "bar",
@@ -75,7 +75,7 @@ async def sample_attachments_async():
     # Ensure farm exists, create if necessary.
     print(f"Create/updating farm with id {farm_id}...", end=" ", flush=True)
     await client.farms.create_or_update(
-        farmer_id=farmer_id,
+        party_id=party_id,
         farm_id=farm_id,
         farm={
             "name": "Comtoso Farm",
@@ -85,13 +85,13 @@ async def sample_attachments_async():
     )
     print("Done!")
 
-    # Create attachment on farmer
+    # Create attachment on party
     try:
-        print(f"Checking if attachment with id {attachment_on_farmer_id} already exists "
-            f"on farmer with id {farmer_id}...", end=" ", flush=True)
+        print(f"Checking if attachment with id {attachment_on_party_id} already exists "
+            f"on party with id {party_id}...", end=" ", flush=True)
         await client.attachments.get(
-            farmer_id=farmer_id,
-            attachment_id=attachment_on_farmer_id
+            party_id=party_id,
+            attachment_id=attachment_on_party_id
         )
         print("Attachment already exists. Not updating file.")
 
@@ -99,21 +99,21 @@ async def sample_attachments_async():
         print("Attachment doesn't exist")
         print("Creating attachment...", end=" ", flush=True)
 
-        file_to_attach_on_farmer = open(
-            attachment_on_farmer_file_path,
+        file_to_attach_on_party = open(
+            attachment_on_party_file_path,
             "rb")
 
         attachment = {
-            "resourceId": farmer_id,
-            "resourceType": "Farmer",
+            "resourceId": party_id,
+            "resourceType": "Party",
             "name": "a"
         }
 
         await client.attachments.create_or_update(
-            farmer_id=farmer_id,
-            attachment_id=attachment_on_farmer_id,
+            party_id=party_id,
+            attachment_id=attachment_on_party_id,
             attachment=attachment,
-            file=file_to_attach_on_farmer)
+            file=file_to_attach_on_party)
 
         print("Done!")
         
@@ -122,7 +122,7 @@ async def sample_attachments_async():
         print(f"Checking if attachment with id {attachment_on_farm_id} already exists " + 
             f"on farm with id {farm_id}...", end=" ", flush=True)
         await client.attachments.get(
-            farmer_id=farmer_id,
+            party_id=party_id,
             attachment_id=attachment_on_farm_id
         )
         print("Attachment already exists. Not updating file.")
@@ -140,7 +140,7 @@ async def sample_attachments_async():
         }
 
         await client.attachments.create_or_update(
-            farmer_id=farmer_id,
+            party_id=party_id,
             attachment_id=attachment_on_farm_id,
             attachment=attachment,
             file=file_to_attach_on_farm)
@@ -148,15 +148,15 @@ async def sample_attachments_async():
         print("Done!")
 
     print("Getting a list of all attachments " +
-        f"on the farmer with id {farmer_id}...", end=" ", flush=True)
-    farmer_attachments = client.attachments.list_by_farmer_id(
-        farmer_id=farmer_id,
+        f"on the party with id {party_id}...", end=" ", flush=True)
+    party_attachments = client.attachments.list_by_party_id(
+        party_id=party_id,
     )
     print("Done!")
 
-    async for attachment in farmer_attachments:
+    async for attachment in party_attachments:
         downloaded_attachment = await client.attachments.download(
-            farmer_id=farmer_id,
+            party_id=party_id,
             attachment_id=attachment['id']
         )
         out_path = Path(

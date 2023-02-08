@@ -6,7 +6,7 @@ FILE: sample_hello_world.py
 
 DESCRIPTION:
     This sample demonstrates the most basic operation that can be 
-    performed - creation of a Farmer. Use this to understand how to 
+    performed - creation of a Party. Use this to understand how to 
     create the client object, how to authenticate it, and make sure 
     your client is set up correctly to call into your FarmBeats endpoint.
 
@@ -38,16 +38,16 @@ def sample_hello_world():
         credential=credential
     )
 
-    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
-    farmer_name = "Contoso"
-    farmer_description = "Contoso is hard working."
+    party_id = f"contoso-party-{random.randint(0,1000)}"
+    party_name = "Contoso"
+    party_description = "Contoso is hard working."
 
-    print("Creating farmer, or updating if farmer already exists...", end=" ", flush=True)
-    farmer = client.farmers.create_or_update(
-        farmer_id=farmer_id,
-        farmer={
-            "name": farmer_name,
-            "description": farmer_description,
+    print("Creating party, or updating if party already exists...", end=" ", flush=True)
+    party = client.parties.create_or_update(
+        party_id=party_id,
+        party={
+            "name": party_name,
+            "description": party_description,
             "status": "Sample Status",
             "properties": {
                 "foo": "bar",
@@ -58,12 +58,12 @@ def sample_hello_world():
     )
     print("Done")
     
-    print("Here are the details of the farmer:")
-    print("\tID:", farmer["id"])
-    print("\tName:", farmer["name"])
-    print("\tDescription:", farmer["description"])
-    print("\tCreated timestamp:", farmer["createdDateTime"])
-    print("\tLast modified timestamp:", farmer["modifiedDateTime"])
+    print("Here are the details of the party:")
+    print("\tID:", party["id"])
+    print("\tName:", party["name"])
+    print("\tDescription:", party["description"])
+    print("\tCreated timestamp:", party["createdDateTime"])
+    print("\tLast modified timestamp:", party["modifiedDateTime"])
 
 
 if __name__ == "__main__":

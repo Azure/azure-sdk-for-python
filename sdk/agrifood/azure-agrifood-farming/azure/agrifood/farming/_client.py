@@ -18,12 +18,11 @@ from .operations import (
     ApplicationDataOperations,
     AttachmentsOperations,
     BoundariesOperations,
-    CropVarietiesOperations,
+    CropProductsOperations,
     CropsOperations,
     DeviceDataModelsOperations,
     DevicesOperations,
     FarmOperationsOperations,
-    FarmersOperations,
     FarmsOperations,
     FieldsOperations,
     HarvestDataOperations,
@@ -35,6 +34,7 @@ from .operations import (
     NutrientAnalysesOperations,
     OAuthProvidersOperations,
     OAuthTokensOperations,
+    PartiesOperations,
     PlantTissueAnalysesOperations,
     PlantingDataOperations,
     PrescriptionMapsOperations,
@@ -49,12 +49,15 @@ from .operations import (
     SensorsOperations,
     SolutionInferenceOperations,
     TillageDataOperations,
+    WeatherDataOperations,
     WeatherOperations,
     ZonesOperations,
 )
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
+    from typing import Dict
+
     from azure.core.credentials import TokenCredential
 
 
@@ -67,16 +70,14 @@ class FarmBeatsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :vartype attachments: azure.agrifood.farming.operations.AttachmentsOperations
     :ivar boundaries: BoundariesOperations operations
     :vartype boundaries: azure.agrifood.farming.operations.BoundariesOperations
+    :ivar crop_products: CropProductsOperations operations
+    :vartype crop_products: azure.agrifood.farming.operations.CropProductsOperations
     :ivar crops: CropsOperations operations
     :vartype crops: azure.agrifood.farming.operations.CropsOperations
-    :ivar crop_varieties: CropVarietiesOperations operations
-    :vartype crop_varieties: azure.agrifood.farming.operations.CropVarietiesOperations
     :ivar device_data_models: DeviceDataModelsOperations operations
     :vartype device_data_models: azure.agrifood.farming.operations.DeviceDataModelsOperations
     :ivar devices: DevicesOperations operations
     :vartype devices: azure.agrifood.farming.operations.DevicesOperations
-    :ivar farmers: FarmersOperations operations
-    :vartype farmers: azure.agrifood.farming.operations.FarmersOperations
     :ivar farm_operations: FarmOperationsOperations operations
     :vartype farm_operations: azure.agrifood.farming.operations.FarmOperationsOperations
     :ivar farms: FarmsOperations operations
@@ -101,6 +102,8 @@ class FarmBeatsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :vartype oauth_providers: azure.agrifood.farming.operations.OAuthProvidersOperations
     :ivar oauth_tokens: OAuthTokensOperations operations
     :vartype oauth_tokens: azure.agrifood.farming.operations.OAuthTokensOperations
+    :ivar parties: PartiesOperations operations
+    :vartype parties: azure.agrifood.farming.operations.PartiesOperations
     :ivar planting_data: PlantingDataOperations operations
     :vartype planting_data: azure.agrifood.farming.operations.PlantingDataOperations
     :ivar plant_tissue_analyses: PlantTissueAnalysesOperations operations
@@ -132,13 +135,15 @@ class FarmBeatsClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :vartype tillage_data: azure.agrifood.farming.operations.TillageDataOperations
     :ivar weather: WeatherOperations operations
     :vartype weather: azure.agrifood.farming.operations.WeatherOperations
+    :ivar weather_data: WeatherDataOperations operations
+    :vartype weather_data: azure.agrifood.farming.operations.WeatherDataOperations
     :ivar zones: ZonesOperations operations
     :vartype zones: azure.agrifood.farming.operations.ZonesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword endpoint: Service URL. Required. Default value is "".
     :paramtype endpoint: str
-    :keyword api_version: Api Version. Default value is "2021-07-31-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-11-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -159,13 +164,12 @@ class FarmBeatsClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._client, self._config, self._serialize, self._deserialize
         )
         self.boundaries = BoundariesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.crop_products = CropProductsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.crops = CropsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.crop_varieties = CropVarietiesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.device_data_models = DeviceDataModelsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.devices = DevicesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.farmers = FarmersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.farm_operations = FarmOperationsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.farms = FarmsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.fields = FieldsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -186,6 +190,7 @@ class FarmBeatsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         )
         self.oauth_providers = OAuthProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.oauth_tokens = OAuthTokensOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.parties = PartiesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.planting_data = PlantingDataOperations(self._client, self._config, self._serialize, self._deserialize)
         self.plant_tissue_analyses = PlantTissueAnalysesOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -211,6 +216,7 @@ class FarmBeatsClient:  # pylint: disable=client-accepts-api-version-keyword,too
         )
         self.tillage_data = TillageDataOperations(self._client, self._config, self._serialize, self._deserialize)
         self.weather = WeatherOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.weather_data = WeatherDataOperations(self._client, self._config, self._serialize, self._deserialize)
         self.zones = ZonesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:

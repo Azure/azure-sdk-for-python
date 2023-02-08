@@ -9,11 +9,10 @@
 from ._operations import ApplicationDataOperations
 from ._operations import AttachmentsOperations
 from ._operations import BoundariesOperations
+from ._operations import CropProductsOperations
 from ._operations import CropsOperations
-from ._operations import CropVarietiesOperations
 from ._operations import DeviceDataModelsOperations
 from ._operations import DevicesOperations
-from ._operations import FarmersOperations
 from ._operations import FarmOperationsOperations
 from ._operations import FarmsOperations
 from ._operations import FieldsOperations
@@ -26,6 +25,7 @@ from ._operations import ModelInferenceOperations
 from ._operations import NutrientAnalysesOperations
 from ._operations import OAuthProvidersOperations
 from ._operations import OAuthTokensOperations
+from ._operations import PartiesOperations
 from ._operations import PlantingDataOperations
 from ._operations import PlantTissueAnalysesOperations
 from ._operations import PrescriptionMapsOperations
@@ -41,6 +41,7 @@ from ._operations import SensorsOperations
 from ._operations import SolutionInferenceOperations
 from ._operations import TillageDataOperations
 from ._operations import WeatherOperations
+from ._operations import WeatherDataOperations
 from ._operations import ZonesOperations
 
 from ._patch import __all__ as _patch_all
@@ -51,11 +52,10 @@ __all__ = [
     "ApplicationDataOperations",
     "AttachmentsOperations",
     "BoundariesOperations",
+    "CropProductsOperations",
     "CropsOperations",
-    "CropVarietiesOperations",
     "DeviceDataModelsOperations",
     "DevicesOperations",
-    "FarmersOperations",
     "FarmOperationsOperations",
     "FarmsOperations",
     "FieldsOperations",
@@ -68,6 +68,7 @@ __all__ = [
     "NutrientAnalysesOperations",
     "OAuthProvidersOperations",
     "OAuthTokensOperations",
+    "PartiesOperations",
     "PlantingDataOperations",
     "PlantTissueAnalysesOperations",
     "PrescriptionMapsOperations",
@@ -83,6 +84,7 @@ __all__ = [
     "SolutionInferenceOperations",
     "TillageDataOperations",
     "WeatherOperations",
+    "WeatherDataOperations",
     "ZonesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

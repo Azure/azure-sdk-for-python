@@ -5,7 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import random
 import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.agrifood.farming import FarmBeatsClient

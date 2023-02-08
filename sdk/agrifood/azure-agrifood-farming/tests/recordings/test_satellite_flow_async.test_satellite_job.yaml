@@ -11,10 +11,10 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/satellite-flow-async-test-farmer?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/parties/satellite-flow-async-test-party?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"satellite-flow-async-test-farmer","eTag":"0000db01-0000-0600-0000-60a41b4c0000","createdDateTime":"2021-05-18T19:53:48Z","modifiedDateTime":"2021-05-18T19:53:48Z"}'
+      string: '{"id":"satellite-flow-async-test-party","eTag":"0000db01-0000-0600-0000-60a41b4c0000","createdDateTime":"2021-05-18T19:53:48Z","modifiedDateTime":"2021-05-18T19:53:48Z"}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
       api-supported-versions: 2021-03-31-preview
@@ -23,13 +23,13 @@ interactions:
       content-type: application/json; charset=utf-8
       date: Tue, 18 May 2021 19:53:48 GMT
       etag: 0000db01-0000-0600-0000-60a41b4c0000
-      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/satellite-flow-async-test-farmer
+      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/parties/satellite-flow-async-test-party
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/satellite-flow-async-test-farmer?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/parties/satellite-flow-async-test-party?api-version=2021-03-31-preview
 - request:
     body: null
     headers:
@@ -38,7 +38,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/satellite-flow-async-test-farmer/boundaries/satellite-flow-async-test-boundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/parties/satellite-flow-async-test-party/boundaries/satellite-flow-async-test-boundary?api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
@@ -60,7 +60,7 @@ interactions:
     status:
       code: 404
       message: Not Found
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/satellite-flow-async-test-farmer/boundaries/satellite-flow-async-test-boundary?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/parties/satellite-flow-async-test-party/boundaries/satellite-flow-async-test-boundary?api-version=2021-03-31-preview
 - request:
     body: '{"geometry": {"coordinates": [[[73.70457172393799, 20.545385304358106],
       [73.70457172393799, 20.545385304358106], [73.70448589324951, 20.542411534243367],
@@ -77,10 +77,10 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/satellite-flow-async-test-farmer/boundaries/satellite-flow-async-test-boundary?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/parties/satellite-flow-async-test-party/boundaries/satellite-flow-async-test-boundary?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"farmerId":"satellite-flow-async-test-farmer","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"satellite-flow-async-test-boundary","eTag":"0000de01-0000-0600-0000-60a41b4e0000","createdDateTime":"2021-05-18T19:53:50Z","modifiedDateTime":"2021-05-18T19:53:50Z","description":"Created
+      string: '{"partyId":"satellite-flow-async-test-party","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"satellite-flow-async-test-boundary","eTag":"0000de01-0000-0600-0000-60a41b4e0000","createdDateTime":"2021-05-18T19:53:50Z","modifiedDateTime":"2021-05-18T19:53:50Z","description":"Created
         by SDK"}'
     headers:
       api-deprecated-versions: 2020-12-31-preview
@@ -90,15 +90,15 @@ interactions:
       content-type: application/json; charset=utf-8
       date: Tue, 18 May 2021 19:53:50 GMT
       etag: 0000de01-0000-0600-0000-60a41b4e0000
-      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/satellite-flow-async-test-farmer/boundaries/satellite-flow-async-test-boundary
+      location: http://sdk-live-test-agadhika-second.farmbeats.azure.net/parties/satellite-flow-async-test-party/boundaries/satellite-flow-async-test-boundary
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 201
       message: Created
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/farmers/satellite-flow-async-test-farmer/boundaries/satellite-flow-async-test-boundary?api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/parties/satellite-flow-async-test-party/boundaries/satellite-flow-async-test-boundary?api-version=2021-03-31-preview
 - request:
-    body: '{"farmerId": "satellite-flow-async-test-farmer", "boundaryId": "satellite-flow-async-test-boundary",
+    body: '{"partyId": "satellite-flow-async-test-party", "boundaryId": "satellite-flow-async-test-boundary",
       "startDateTime": "2020-01-01T00:00:00.000Z", "endDateTime": "2020-12-31T00:00:00.000Z",
       "data": {"imageNames": ["LAI"]}}'
     headers:
@@ -114,7 +114,7 @@ interactions:
     uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-async-job-9299?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"farmerId":"satellite-flow-async-test-farmer","boundaryId":"satellite-flow-async-test-boundary","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-12-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"satellite-flow-async-job-9299","status":"Waiting","message":"Created
+      string: '{"partyId":"satellite-flow-async-test-party","boundaryId":"satellite-flow-async-test-boundary","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-12-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"satellite-flow-async-job-9299","status":"Waiting","message":"Created
         job ''satellite-flow-async-job-9299'' to fetch satellite data for boundary
         ''satellite-flow-async-test-boundary'' from startDate ''01/01/2020'' to endDate
         ''12/31/2020'' (both inclusive).","createdDateTime":"2021-05-18T19:53:51Z","lastActionDateTime":"2021-05-18T19:53:51Z","startTime":"2021-05-18T19:53:51Z"}'
@@ -237,7 +237,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&farmerId=satellite-flow-async-test-farmer&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=satellite-flow-async-test-party&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
@@ -411,7 +411,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/scenes?provider=Microsoft&farmerId=satellite-flow-async-test-farmer&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/scenes?provider=Microsoft&partyId=satellite-flow-async-test-party&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview
 - request:
     body: null
     headers:
@@ -420,7 +420,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&farmerId=satellite-flow-async-test-farmer&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDYnhDUUFBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjUlREOm4rVGxTTDV1UEkzZjhDSUxkNys1QlRNeE16RXVNVGt1TXpoVk1URTdNVEU3TVRGYkFBPT0jSVNWOjIjSUVPOjY1NTY3I1FDRjo3I0ZQQzpBV2tKQUFBQUFBQUE5d2tBQUFBQUFBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiIxRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRiJ9fV0
+    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=satellite-flow-async-test-party&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDYnhDUUFBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjUlREOm4rVGxTTDV1UEkzZjhDSUxkNys1QlRNeE16RXVNVGt1TXpoVk1URTdNVEU3TVRGYkFBPT0jSVNWOjIjSUVPOjY1NTY3I1FDRjo3I0ZQQzpBV2tKQUFBQUFBQUE5d2tBQUFBQUFBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiIxRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRiJ9fV0
   response:
     body:
       string: !!binary |
@@ -593,7 +593,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/scenes?provider=Microsoft&farmerId=satellite-flow-async-test-farmer&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDYnhDUUFBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjUlREOm4rVGxTTDV1UEkzZjhDSUxkNys1QlRNeE16RXVNVGt1TXpoVk1URTdNVEU3TVRGYkFBPT0jSVNWOjIjSUVPOjY1NTY3I1FDRjo3I0ZQQzpBV2tKQUFBQUFBQUE5d2tBQUFBQUFBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiIxRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRiJ9fV0
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/scenes?provider=Microsoft&partyId=satellite-flow-async-test-party&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDYnhDUUFBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjUlREOm4rVGxTTDV1UEkzZjhDSUxkNys1QlRNeE16RXVNVGt1TXpoVk1URTdNVEU3TVRGYkFBPT0jSVNWOjIjSUVPOjY1NTY3I1FDRjo3I0ZQQzpBV2tKQUFBQUFBQUE5d2tBQUFBQUFBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiIxRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRiJ9fV0
 - request:
     body: null
     headers:
@@ -602,7 +602,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&farmerId=satellite-flow-async-test-farmer&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDWnVDUUFBQUFBQUFBPT0jUlQ6MiNUUkM6MTAwI1JURDpuK1RsU0w1dVBJM2Y4Q0lMZDcrNUJUTXhNekV1TVRVdU1qcFZNVEU3TVRFN01URmJBQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NyNGUEM6QVdrSkFBQUFBQUFBOXdrQUFBQUFBQUE9IiwicmFuZ2UiOnsibWluIjoiIiwibWF4IjoiMUZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkYifX1d
+    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=satellite-flow-async-test-party&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDWnVDUUFBQUFBQUFBPT0jUlQ6MiNUUkM6MTAwI1JURDpuK1RsU0w1dVBJM2Y4Q0lMZDcrNUJUTXhNekV1TVRVdU1qcFZNVEU3TVRFN01URmJBQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NyNGUEM6QVdrSkFBQUFBQUFBOXdrQUFBQUFBQUE9IiwicmFuZ2UiOnsibWluIjoiIiwibWF4IjoiMUZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkYifX1d
   response:
     body:
       string: !!binary |
@@ -750,5 +750,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/scenes?provider=Microsoft&farmerId=satellite-flow-async-test-farmer&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDWnVDUUFBQUFBQUFBPT0jUlQ6MiNUUkM6MTAwI1JURDpuK1RsU0w1dVBJM2Y4Q0lMZDcrNUJUTXhNekV1TVRVdU1qcFZNVEU3TVRFN01URmJBQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NyNGUEM6QVdrSkFBQUFBQUFBOXdrQUFBQUFBQUE9IiwicmFuZ2UiOnsibWluIjoiIiwibWF4IjoiMUZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkYifX1d
+    url: https://sdk-live-test-agadhika-second.farmbeats.azure.net/scenes?provider=Microsoft&partyId=satellite-flow-async-test-party&boundaryId=satellite-flow-async-test-boundary&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDWnVDUUFBQUFBQUFBPT0jUlQ6MiNUUkM6MTAwI1JURDpuK1RsU0w1dVBJM2Y4Q0lMZDcrNUJUTXhNekV1TVRVdU1qcFZNVEU3TVRFN01URmJBQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NyNGUEM6QVdrSkFBQUFBQUFBOXdrQUFBQUFBQUE9IiwicmFuZ2UiOnsibWluIjoiIiwibWF4IjoiMUZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkYifX1d
 version: 1

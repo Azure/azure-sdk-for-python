@@ -62,11 +62,11 @@ __all__: List[str] = [
 
 class AttachmentsOperations(AttachmentsOperationsGenerated):
     @distributed_trace
-    def create_or_update(self, farmer_id: str, attachment_id: str, attachment: JSON, file: IO, **kwargs: Any) -> JSON:
-        """Creates or updates a farmer resource.
+    def create_or_update(self, party_id: str, attachment_id: str, attachment: JSON, file: IO, **kwargs: Any) -> JSON:
+        """Creates or updates a party resource.
 
-        :param farmer_id: Id of the farmer resource. Required.
-        :type farmer_id: str
+        :param party_id: Id of the party resource. Required.
+        :type party_id: str
         :param attachment_id: Id of the attachment resource. Required.
         :type attachment_id: str
         :param attachment: Attachment resource payload to create or update. Is a model type. Required.
@@ -81,7 +81,7 @@ class AttachmentsOperations(AttachmentsOperationsGenerated):
                 attachment = {
                     "resourceId": "str", # Required. Id of the resource the attachment is associated with.
                     "resourceType": "str", # Required. Type of the resource the attachment is associated with,
-                      allowed values: Farmer, Farm, Field, SeasonalField, Boundary, ApplicationData, HarvestData, TillageData, PlantingData, PlantTissueAnalysis
+                      allowed values: Party, Farm, Field, SeasonalField, Boundary, ApplicationData, HarvestData, TillageData, PlantingData, PlantTissueAnalysis
                     "description": "str",  # Optional. Textual description of the resource.
                     "eTag": "str",  # Optional. The ETag value to implement optimistic
                       concurrency.
@@ -127,13 +127,13 @@ class AttachmentsOperations(AttachmentsOperationsGenerated):
         api_version = (self._config.api_version,)
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-31-preview"))  # type: str
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))  # type: str
         accept = _headers.pop("Accept", "application/json")
 
         # Construct URL
-        _url = "/farmers/{farmerId}/attachments/{attachmentId}"
+        _url = "/parties/{partyId}/attachments/{attachmentId}"
         path_format_arguments = {
-            "farmerId": _SERIALIZER.url("farmer_id", farmer_id, "tr"),
+            "partyId": _SERIALIZER.url("party_id", party_id, "tr"),
             "attachmentId": _SERIALIZER.url("attachment_id", attachment_id, "str"),
         }
 
@@ -144,7 +144,9 @@ class AttachmentsOperations(AttachmentsOperationsGenerated):
 
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-        request = HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, files={'file': file, **attachment})
+        request = HttpRequest(
+            method="PATCH", url=_url, params=_params, headers=_headers, files={"file": file, **attachment}
+        )
 
         request.url = self._client.format_url(request.url)  # type: ignore
 
@@ -157,22 +159,18 @@ class AttachmentsOperations(AttachmentsOperationsGenerated):
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if response.status_code == 200:
             if response.content:
                 deserialized = response.json()
             else:
                 deserialized = None
-
         if response.status_code == 201:
             if response.content:
                 deserialized = response.json()
             else:
                 deserialized = None
-
         if cls:
             return cls(pipeline_response, cast(JSON, deserialized), {})
-
         return cast(JSON, deserialized)
 
 
@@ -180,7 +178,7 @@ class InsightAttachmentsOperations(InsightAttachmentsOperationsGenerated):
     @distributed_trace
     def create_or_update(
         self,
-        farmer_id: str,
+        party_id: str,
         model_id: str,
         resource_type: str,
         resource_id: str,
@@ -189,14 +187,14 @@ class InsightAttachmentsOperations(InsightAttachmentsOperationsGenerated):
         file: IO,
         **kwargs: Any
     ) -> JSON:
-        """Creates or updates a farmer resource.
+        """Creates or updates a party resource.
 
-        :param farmer_id: Id of the farmer resource. Required.
-        :type farmer_id: str
+        :param party_id: Id of the party resource. Required.
+        :type party_id: str
         :param model_id: Id of the model. Required.
         :type model_id: str
         :param resource_type: Type of the resource the attachment is associated with,
-          allowed values: Farmer, Farm, Field, SeasonalField, Boundary, ApplicationData, HarvestData, TillageData, PlantingData, PlantTissueAnalysis. Required.
+          allowed values: Party, Farm, Field, SeasonalField, Boundary, ApplicationData, HarvestData, TillageData, PlantingData, PlantTissueAnalysis. Required.
         :type resource_type: str
         :param resource_id: Id of the resource insight attachment is associated with. Required.
         :type resource_id: str
@@ -228,7 +226,7 @@ class InsightAttachmentsOperations(InsightAttachmentsOperationsGenerated):
                     "modelId": "str", # Required. Id of the model.
                     "resouceType": "str", # Required. Type of the resource the attachment is associated with.
                     "resourceId": "str", # Required. Id of the resource insight attachment is associated with.
-                    "farmerId": "str", # Required. Id of the farmer resource.
+                    "partyId": "str", # Required. Id of the party resource.
                     "originalFileName": "str", # Optional. File name of the attachment.
                     "createdDateTime": "2020-02-20 00:00:00",  # Optional. Date-time when
                       resource was created, sample format: yyyy-MM-ddTHH:mm:ssZ.
@@ -262,13 +260,13 @@ class InsightAttachmentsOperations(InsightAttachmentsOperationsGenerated):
         api_version = (self._config.api_version,)
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-31-preview"))  # type: str
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))  # type: str
         accept = _headers.pop("Accept", "application/json")
 
         # Construct URL
-        _url = "/farmers/{farmerId}/models/{modelId}/resource-types/{resourceType}/resources/{resourceId}/insight-attachments/{insightAttachmentId}"
+        _url = "/parties/{partyId}/models/{modelId}/resource-types/{resourceType}/resources/{resourceId}/insight-attachments/{insightAttachmentId}"
         path_format_arguments = {
-            "farmerId": _SERIALIZER.url("farmer_id", farmer_id, "str"),
+            "partyId": _SERIALIZER.url("party_id", party_id, "str"),
             "modelId": _SERIALIZER.url("model_id", model_id, "str"),
             "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
             "resourceId": _SERIALIZER.url("resource_id", resource_id, "str"),
@@ -282,7 +280,9 @@ class InsightAttachmentsOperations(InsightAttachmentsOperationsGenerated):
 
         _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-        request = HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, files={'file': file, **insight_attachment})
+        request = HttpRequest(
+            method="PATCH", url=_url, params=_params, headers=_headers, files={"file": file, **insight_attachment}
+        )
 
         request.url = self._client.format_url(request.url)  # type: ignore
 
@@ -295,22 +295,18 @@ class InsightAttachmentsOperations(InsightAttachmentsOperationsGenerated):
         if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
-
         if response.status_code == 200:
             if response.content:
                 deserialized = response.json()
             else:
                 deserialized = None
-
         if response.status_code == 201:
             if response.content:
                 deserialized = response.json()
             else:
                 deserialized = None
-
         if cls:
             return cls(pipeline_response, cast(JSON, deserialized), {})
-
         return cast(JSON, deserialized)
 
 

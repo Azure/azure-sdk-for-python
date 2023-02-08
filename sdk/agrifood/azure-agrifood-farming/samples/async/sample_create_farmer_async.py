@@ -7,7 +7,7 @@ import asyncio
 import random
 
 
-async def create_farmer():
+async def create_party():
     farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
 
     credential = DefaultAzureCredential()
@@ -16,18 +16,18 @@ async def create_farmer():
         credential=credential
     )
 
-    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
+    party_id = f"contoso-party-{random.randint(0,1000)}"
 
-    # Create or update a farmer within FarmBeats.
-    farmer = await client.farmers.create_or_update(
-        farmer_id=farmer_id,
-        farmer={
-            "name": "contoso farmer",
+    # Create or update a party within FarmBeats.
+    party = await client.parties.create_or_update(
+        party_id=party_id,
+        party={
+            "name": "contoso party",
             "status": "created from SDK",
             "description": "created from SDK"
         }
     )
-    print(farmer)
+    print(party)
 
     await client.close()
     await credential.close()
@@ -37,4 +37,4 @@ if __name__ == "__main__":
 
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    asyncio.run(create_farmer())
+    asyncio.run(create_party())

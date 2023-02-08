@@ -4,11 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
-import random
-from azure.agrifood.farming.models import Farmer, SatelliteDataIngestionJob, SatelliteData
-from azure.core.exceptions import ResourceNotFoundError
 from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTestCase
-from random import randint
 from isodate.tzinfo import Utc
 from devtools_testutils import recorded_by_proxy
 from urllib.parse import urlparse, parse_qs
@@ -22,10 +18,10 @@ class TestFarmBeatsSatelliteJob(FarmBeatsTestCase):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
 
         # Setup data
-        common_id_prefix = "satellite-flow-"
-        farmer_id = common_id_prefix + "test-farmer"
+        party_id = "test-party-3476"
+        common_id_prefix = "satellite-flow-asdf"
         boundary_id = common_id_prefix + "test-boundary"
-        job_id = common_id_prefix + "job-736"
+        job_id = common_id_prefix + "job-359376"
 
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())
@@ -33,15 +29,15 @@ class TestFarmBeatsSatelliteJob(FarmBeatsTestCase):
         # Setup client
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
-        # Create farmer
-        farmer = client.farmers.create_or_update(
-            farmer_id=farmer_id,
-            farmer={}
+        # Create party
+        party = client.parties.create_or_update(
+            party_id=party_id,
+            party={}
         )
 
         # Create boundary if not exists
         boundary = client.boundaries.create_or_update(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id,
             boundary={
                 "geometry":
@@ -72,7 +68,7 @@ class TestFarmBeatsSatelliteJob(FarmBeatsTestCase):
             job={
                 "boundaryId": boundary_id,
                 "endDateTime": end_date_time,
-                "farmerId": farmer_id,
+                "partyId": party_id,
                 "startDateTime": start_date_time,
                 "provider": "Microsoft",
                 "source": "Sentinel_2_L2A",
@@ -94,12 +90,14 @@ class TestFarmBeatsSatelliteJob(FarmBeatsTestCase):
         # Get terminal job state and assert
         assert satellite_job_poller.status() == "Succeeded"
 
-        # Get scenes which are available in FarmBeats for our farmer and boundary of intrest.
+        # Get scenes which are available in FarmBeats for our party and boundary of intrest.
         scenes = client.scenes.list(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id,
             start_date_time=start_date_time,
             end_date_time=end_date_time,
+            provider="Microsoft",
+            source="Sentinel_2_L2A"
         )
 
         scenes_list = list(scenes)

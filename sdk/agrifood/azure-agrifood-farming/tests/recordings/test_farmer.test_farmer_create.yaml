@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"status": "Sample Status", "name": "Test Farmer", "description": "Farmer
+    body: '{"status": "Sample Status", "name": "Test Party", "description": "Party
       created during testing.", "properties": {"foo": "bar", "numeric one": 1, "1":
       "numeric key"}}'
     headers:
@@ -17,12 +17,12 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/parties/test-party?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"test-farmer","eTag":"01001050-0000-0600-0000-60a2de220000","status":"Sample
+      string: '{"id":"test-party","eTag":"01001050-0000-0600-0000-60a2de220000","status":"Sample
         Status","createdDateTime":"2021-05-17T16:41:51Z","modifiedDateTime":"2021-05-17T21:20:33Z","name":"Test
-        Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        Party","description":"Party created during testing.","properties":{"foo":"bar","numeric
         one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions:
@@ -60,12 +60,12 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/farmers/test-farmer?api-version=2021-03-31-preview
+    uri: https://fakeAccount.farmbeats.azure.net/parties/test-party?api-version=2021-03-31-preview
   response:
     body:
-      string: '{"id":"test-farmer","eTag":"01001050-0000-0600-0000-60a2de220000","status":"Sample
+      string: '{"id":"test-party","eTag":"01001050-0000-0600-0000-60a2de220000","status":"Sample
         Status","createdDateTime":"2021-05-17T16:41:51Z","modifiedDateTime":"2021-05-17T21:20:33Z","name":"Test
-        Farmer","description":"Farmer created during testing.","properties":{"foo":"bar","numeric
+        Party","description":"Party created during testing.","properties":{"foo":"bar","numeric
         one":1,"1":"numeric key"}}'
     headers:
       api-deprecated-versions:

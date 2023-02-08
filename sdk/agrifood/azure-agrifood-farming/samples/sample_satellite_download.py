@@ -6,7 +6,7 @@ FILE: sample_satellite_download.py
 
 DESCRIPTION:
     This sample demonstrates:
-    - Creating a Farmer and a Boundary
+    - Creating a Party and a Boundary
     - Queuing a satellite data ingestion job, and waiting for its completion
     - Dowloading the data synchronously/sequentially
 
@@ -65,19 +65,19 @@ def sample_satellite_download():
         credential=credential
     )
 
-    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
+    party_id = f"contoso-party-{random.randint(0,1000)}"
     boundary_id = "contoso-boundary"
     job_id_prefix = "contoso-job"
     start_date_time = datetime(2020, 1, 1, tzinfo=UTC)
     end_date_time = datetime(2020, 1, 31, tzinfo=UTC)
     data_root_dir = "./data"
 
-    # Create or update a farmer within FarmBeats.
+    # Create or update a party within FarmBeats.
     print(
-        f"Ensure farmer with id {farmer_id} exists... ", end="", flush=True)
-    farmer = client.farmers.create_or_update(
-        farmer_id=farmer_id,
-        farmer={}
+        f"Ensure party with id {party_id} exists... ", end="", flush=True)
+    party = client.parties.create_or_update(
+        party_id=party_id,
+        party={}
     )
     print("Done")
 
@@ -86,7 +86,7 @@ def sample_satellite_download():
         print(
             f"Checking if boundary with id {boundary_id} exists... ", end="", flush=True)
         boundary = client.boundaries.get(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id
         )
         print("Exists")
@@ -95,7 +95,7 @@ def sample_satellite_download():
         print("Boundary doesn't exist. Creating... ", end="", flush=True)
         # Creating a boundary.
         boundary = client.boundaries.create_or_update(
-            farmer_id=farmer_id,
+            party_id=party_id,
             boundary_id=boundary_id,
             boundary={
                 "geometry":
@@ -129,7 +129,7 @@ def sample_satellite_download():
         job={
             "boundaryId": boundary_id,
             "endDateTime": end_date_time,
-            "farmerId": farmer_id,
+            "partyId": party_id,
             "startDateTime": start_date_time,
             "provider": "Microsoft",
             "source": "Sentinel_2_L2A",
@@ -150,13 +150,15 @@ def sample_satellite_download():
     satellite_job_poller.result()
     print(f"Job completed with status {satellite_job_poller.status()}")
 
-    # Get scenes which are available in FarmBeats for our farmer and boundary of intrest.
+    # Get scenes which are available in FarmBeats for our party and boundary of intrest.
     print("Getting scenes list... ", end="", flush=True)
     scenes = client.scenes.list(
-        farmer_id=farmer_id,
+        party_id=party_id,
         boundary_id=boundary_id,
         start_date_time=start_date_time,
         end_date_time=end_date_time,
+        provider="Microsoft",
+        source="Sentinel_2_L2A"
     )
     print("Done")        
 

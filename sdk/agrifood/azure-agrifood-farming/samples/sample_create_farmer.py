@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 import random
 
 
-def create_farmer():
+def create_party():
     farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
 
     credential = DefaultAzureCredential()
@@ -14,21 +14,21 @@ def create_farmer():
         credential=credential
     )
 
-    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
+    party_id = f"contoso-party-{random.randint(0,1000)}"
 
-    # Create or update a farmer within FarmBeats.
-    farmer = client.farmers.create_or_update(
-        farmer_id=farmer_id,
-        farmer={
-            "name": "contoso farmersdk",
+    # Create or update a party within FarmBeats.
+    party = client.parties.create_or_update(
+        party_id=party_id,
+        party={
+            "name": "contoso party sdk",
             "status": "created from SDK",
             "description": "created from SDK"
         }
     )
-    print(farmer)
+    print(party)
 
 if __name__ == "__main__":
 
     load_dotenv()
 
-    create_farmer()
+    create_party()

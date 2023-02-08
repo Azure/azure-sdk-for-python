@@ -7,8 +7,8 @@ FILE: sample_attachments.py
 DESCRIPTION:
     This sample demonstrates FarmBeats' capability of storing arbitrary files 
     in context to the various farm hierarchy objects. 
-    We first attach some files onto a farmer and a farm, and then download all 
-    existing attachments for the farmer onto a local directory.
+    We first attach some files onto a party and a farm, and then download all 
+    existing attachments for the party onto a local directory.
 
 USAGE:
     ```python sample_attachments.py```
@@ -40,26 +40,26 @@ def sample_attachments():
         credential=credential
     )
 
-    farmer_id = f"contoso-farmer-{random.randint(0,1000)}"
+    party_id = f"contoso-party-{random.randint(0,1000)}"
     farm_id = "contoso-farm"
-    attachment_on_farmer_id = "contoso-farmer-attachment-1"
+    attachment_on_party_id = "contoso-party-attachment-1"
     attachment_on_farm_id = "contoso-farm-attachment-1"
-    attachment_on_farmer_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
+    attachment_on_party_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
     attachment_on_farm_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
 
-    if not (os.path.isfile(attachment_on_farmer_file_path) and 
+    if not (os.path.isfile(attachment_on_party_file_path) and 
             os.path.isfile(attachment_on_farm_file_path)):
         raise SystemExit(
             "Please provide the paths to the files you want to upload."
         )
 
-    # Ensure farmer exists, create if necessary.
-    print(f"Create/updating farmer with id {farmer_id}...", end=" ", flush=True)
-    client.farmers.create_or_update(
-        farmer_id=farmer_id,
-        farmer={
-            "name": "Comtoso Farmer",
-            "description": "Contoso Farmer.",
+    # Ensure party exists, create if necessary.
+    print(f"Create/updating party with id {party_id}...", end=" ", flush=True)
+    client.parties.create_or_update(
+        party_id=party_id,
+        party={
+            "name": "Comtoso Party",
+            "description": "Contoso Party.",
             "status": "Contoso Status",
             "properties": {
                 "foo": "bar",
@@ -73,7 +73,7 @@ def sample_attachments():
     # Ensure farm exists, create if necessary.
     print(f"Create/updating farm with id {farm_id}...", end=" ", flush=True)
     client.farms.create_or_update(
-        farmer_id=farmer_id,
+        party_id=party_id,
         farm_id=farm_id,
         farm={
             "name": "Comtoso Farm",
@@ -83,13 +83,13 @@ def sample_attachments():
     )
     print("Done!")
 
-    # Create attachment on farmer
+    # Create attachment on party
     try:
-        print(f"Checking if attachment with id {attachment_on_farmer_id} already exists "
-            f"on farmer with id {farmer_id}...", end=" ", flush=True)
+        print(f"Checking if attachment with id {attachment_on_party_id} already exists "
+            f"on party with id {party_id}...", end=" ", flush=True)
         client.attachments.get(
-            farmer_id=farmer_id,
-            attachment_id=attachment_on_farmer_id
+            party_id=party_id,
+            attachment_id=attachment_on_party_id
         )
         print("Attachment already exists. Not updating file.")
 
@@ -98,21 +98,21 @@ def sample_attachments():
         print("Creating attachment...", end=" ", flush=True)
 
         # Open file with buffering set to 0, to get a IO object.
-        file_to_attach_on_farmer = open(
-            attachment_on_farmer_file_path,
+        file_to_attach_on_party = open(
+            attachment_on_party_file_path,
             "rb")
 
         attachment = {
-            "resourceId": farmer_id,
-            "resourceType": "Farmer",
+            "resourceId": party_id,
+            "resourceType": "Party",
             "name": "a"
         }
 
         client.attachments.create_or_update(
-            farmer_id=farmer_id,
-            attachment_id=attachment_on_farmer_id,
+            party_id=party_id,
+            attachment_id=attachment_on_party_id,
             attachment=attachment,
-            file=file_to_attach_on_farmer)
+            file=file_to_attach_on_party)
 
         print("Done!")
         
@@ -130,7 +130,7 @@ def sample_attachments():
         }
 
         client.attachments.create_or_update(
-            farmer_id=farmer_id,
+            party_id=party_id,
             attachment_id=attachment_on_farm_id,
             attachment=attachment,
             file=file_to_attach_on_farm)
@@ -140,7 +140,7 @@ def sample_attachments():
         print(f"Checking if attachment with id {attachment_on_farm_id} already exists " + 
             f"on farm with id {farm_id}...", end=" ", flush=True)
         client.attachments.get(
-            farmer_id=farmer_id,
+            party_id=party_id,
             attachment_id=attachment_on_farm_id
         )
         print("Attachment already exists. Not updating file.")
@@ -161,7 +161,7 @@ def sample_attachments():
         }
 
         client.attachments.create_or_update(
-            farmer_id=farmer_id,
+            party_id=party_id,
             attachment_id=attachment_on_farm_id,
             attachment=attachment,
             file=file_to_attach_on_farm)
@@ -170,17 +170,17 @@ def sample_attachments():
 
 
     print("Getting a list of all attachments " +
-        f"on the farmer with id {farmer_id}...", end=" ", flush=True)
-    farmer_attachments = client.attachments.list_by_farmer_id(
-        farmer_id=farmer_id,
+        f"on the party with id {party_id}...", end=" ", flush=True)
+    party_attachments = client.attachments.list_by_party_id(
+        party_id=party_id,
     )
     print("Done!")
 
-    for attachment in farmer_attachments:
+    for attachment in party_attachments:
 
         downloaded_attachment = client.attachments.download(
-            farmer_id=farmer_id,
-            attachment_id=attachment_on_farmer_id
+            party_id=party_id,
+            attachment_id=attachment_on_party_id
         )
         out_path = Path(
             "./data/attachments/" +

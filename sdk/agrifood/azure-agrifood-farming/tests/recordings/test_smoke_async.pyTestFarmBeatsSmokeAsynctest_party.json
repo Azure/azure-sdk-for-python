@@ -15,18 +15,20 @@
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "92",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-83WM8BnaPDz3w_PUxwSOQw\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 04:41:37 GMT",
+        "Date": "Wed, 08 Feb 2023 17:28:47 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=ArWr6DKIqztBjbPTtPLMIFUU3PbiBgAAADJBadsOAAAA; expires=Wed, 01-Mar-2023 04:41:38 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=AvPe8maZTeJBrRaUQz8dvHsU3PbiAQAAAM7SddsOAAAA; expires=Fri, 10-Mar-2023 17:28:47 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14601.8 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14601.8 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -37,12 +39,12 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-39646?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "167",
+        "Content-Length": "165",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
@@ -60,21 +62,24 @@
       "ResponseHeaders": {
         "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Length": "412",
+        "Content-Length": "409",
+        "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 30 Jan 2023 04:41:39 GMT",
-        "ETag": "00002805-0000-0600-0000-63d74a830000",
-        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/smoke-test-party",
-        "mise-correlation-id": "08de25f9-11ba-442f-82a8-fe920a34ead2",
+        "Date": "Wed, 08 Feb 2023 17:28:48 GMT",
+        "ETag": "0000562b-0000-0600-0000-63e3dbd00000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/test-party-39646",
+        "mise-correlation-id": "2489d805-25fc-4c89-a830-7cca020adb74",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
         "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
-        "id": "smoke-test-party",
-        "eTag": "00002805-0000-0600-0000-63d74a830000",
+        "id": "test-party-39646",
+        "eTag": "0000562b-0000-0600-0000-63e3dbd00000",
         "status": "Sample Status",
-        "createdDateTime": "2023-01-30T04:41:39Z",
-        "modifiedDateTime": "2023-01-30T04:41:39Z",
+        "createdDateTime": "2023-02-08T17:28:48Z",
+        "modifiedDateTime": "2023-02-08T17:28:48Z",
         "name": "Test Party",
         "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -87,7 +92,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-39646?api-version=2022-11-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -100,9 +105,12 @@
       "ResponseHeaders": {
         "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
-        "Date": "Mon, 30 Jan 2023 04:41:39 GMT",
-        "mise-correlation-id": "87657a99-fb91-4b98-b03b-75a0a2fd5e54",
+        "Content-Security-Policy": "self",
+        "Date": "Wed, 08 Feb 2023 17:28:49 GMT",
+        "mise-correlation-id": "ca189dd4-208d-4443-a48f-48c23571a0aa",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
         "x-ms-throttle-information": "100"
       },
       "ResponseBody": null
