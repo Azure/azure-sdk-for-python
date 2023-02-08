@@ -18,12 +18,13 @@ from ._constants import *
 from ._user_agent import USER_AGENT
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureKeyCredential, TokenCredential
+    from azure.core.credentials import TokenCredential
+
 
 @overload
 def load_provider(
         endpoint: str,
-        credential: Union["AzureKeyCredential", "TokenCredential"],
+        credential: "TokenCredential",
         *,
         selects: Optional[List[SettingSelector]] = None,
         trimmed_key_prefixes: Optional[List[str]] = None,
@@ -35,7 +36,7 @@ def load_provider(
 
     :param str endpoint: Endpoint for App Configuration resource.
     :param credential: Credential for App Configuration resource. 
-    :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]
+    :type credential: ~azure.core.credentials.TokenCredential
     :keyword selects: List of setting selectors to filter configuration settings
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
     :keyword trimmed_key_prefixes: List of prefixes to trim from configuration keys
@@ -72,7 +73,7 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     # Start by parsing kwargs
     endpoint: Optional[str] = kwargs.pop("endpoint", None)
-    credential: Optional[Union["AzureKeyCredential", "TokenCredential"]] = kwargs.pop("credential", None)
+    credential: Optional["TokenCredential"] = kwargs.pop("credential", None)
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
     selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector("*", "\0")])
@@ -96,7 +97,7 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
         raise ValueError("Please pass either endpoint and credential, or a connection string.")
 
 
-    provider = __buildprovider(connection_string, endpoint, credential, key_vault_options)
+    provider = _buildprovider(connection_string, endpoint, credential, key_vault_options, **kwargs)
     provider._trim_prefixes = sorted(trim_prefixes, key=len, reverse=True)
 
     if key_vault_options is not None and len(key_vault_options.secret_clients) > 0:
@@ -117,14 +118,14 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
                     break
 
             if config.content_type == SecretReferenceConfigurationSetting._secret_reference_content_type:
-                secret = __resolve_keyvault_reference(config, key_vault_options, provider)
+                secret = _resolve_keyvault_reference(config, key_vault_options, provider)
                 provider._dict[trimmed_key] = secret
             elif config.content_type == FeatureFlagConfigurationSetting._feature_flag_content_type:
                 feature_management = provider._dict.get(FEATURE_MANAGEMENT_KEY, {})
                 feature_management[trimmed_key] = config.value
                 if FEATURE_MANAGEMENT_KEY not in provider._dict.keys():
                     provider._dict[FEATURE_MANAGEMENT_KEY] = feature_management
-            elif __is_json_content_type(config.content_type):
+            elif _is_json_content_type(config.content_type):
                 try:
                     j_object = json.loads(config.value)
                     provider._dict[trimmed_key] = j_object
@@ -135,23 +136,14 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
                 provider._dict[trimmed_key] = config.value
     return provider
 
-def __buildprovider(
-        connection_string: str,
-        endpoint: str,
-        credential: Optional[Union["AzureKeyCredential", "TokenCredential"]],
-        key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions]
-    ) -> "AzureAppConfigurationProvider":
-    provider = AzureAppConfigurationProvider()
-    headers = {}
-    correlation_context = "RequestType=Startup"
 
+def _get_correlation_context(key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions]) -> str:
+    correlation_context = "RequestType=Startup"
     if key_vault_options and (
         key_vault_options.credential or key_vault_options.secret_clients or key_vault_options.secret_resolver
     ):
         correlation_context += ",UsesKeyVault"
-
     host_type = ""
-
     if (os.environ.get(AzureFunctionEnvironmentVariable) is not None):
         host_type = "AzureFunctions"
     elif (os.environ.get(AzureWebAppEnvironmentVariable) is not None):
@@ -162,24 +154,38 @@ def __buildprovider(
         host_type = "Kubernetes"
     elif (os.environ.get(ServiceFabricEnvironmentVariable) is not None):
         host_type = "ServiceFabric"
-    
     if host_type is not "":
         correlation_context += ",Host=" + host_type
+    return correlation_context
 
-    headers["Correlation-Context"] = correlation_context
+
+def _buildprovider(
+        connection_string: Optional[str],
+        endpoint: Optional[str],
+        credential: Optional["TokenCredential"],
+        key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions],
+        **kwargs
+    ) -> "AzureAppConfigurationProvider":
+    #pylint:disable=protected-access
+    provider = AzureAppConfigurationProvider()
+    headers = kwargs.pop("headers", {})
+    headers["Correlation-Context"] = _get_correlation_context(key_vault_options)
     useragent = USER_AGENT
 
     if connection_string:
-        #pylint:disable=protected-access
         provider._client = AzureAppConfigurationClient.from_connection_string(
-            connection_string, user_agent=useragent, headers=headers
+            connection_string, user_agent=useragent, headers=headers, **kwargs
         )
         return provider
-    #pylint:disable=protected-access
-    provider._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
+    provider._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers, **kwargs)
     return provider
 
-def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfigurationKeyVaultOptions, provider) -> str:
+
+def _resolve_keyvault_reference(
+        config,
+        key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions],
+        provider: "AzureAppConfigurationProvider"
+    ) -> str:
     if key_vault_options is None:
         raise ValueError("Key Vault options must be set to resolve Key Vault references.")
 
@@ -207,7 +213,8 @@ def __resolve_keyvault_reference(config, key_vault_options:AzureAppConfiguration
         "No Secret Client found for Key Vault reference %s" % (key_vault_identifier.vault_url)
     )
 
-def __is_json_content_type(content_type: str) -> bool:
+
+def _is_json_content_type(content_type: str) -> bool:
     if not content_type:
         return False
 
