@@ -17,7 +17,7 @@ class DataAsset:
     :type name: str
     :param path: Path where the data asset is stored.
     :type path: str
-    :param version: Versio of data asset. 
+    :param version: Version of data asset.
     :type version" int
 
     """

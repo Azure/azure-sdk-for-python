@@ -327,8 +327,8 @@ class OnlineDeployment(Deployment):
 
     @classmethod
     def _filter_datastore_from_rest_object(
-        cls, 
-        entity: "OnlineDeployment", 
+        cls,
+        entity: "OnlineDeployment",
         deployment: RestOnlineDeploymentDetails) -> "OnlineDeployment":
         # Data collector is private preview. If Private Preview environment variable is not enable
         # data collector will be removed from tags. Data Collector values will be stored in tags

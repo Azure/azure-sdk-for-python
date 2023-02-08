@@ -33,7 +33,7 @@ class DataCollectorSchema(metaclass=PatchedSchemaMeta):
     @validates("sampling_rate")
     def validate_sampling_rate(self, value, **kwargs):
         if value > 1.0 or value < 0.0:
-            raise ValidationError("Sampling rate must be an number between 0.0-1.0")
+            raise ValidationError("Sampling rate must be an number in range (0.0-1.0)")
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
