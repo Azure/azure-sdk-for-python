@@ -49,7 +49,6 @@ class TimeoutFailoverRetryPolicy(object):
     def needsRetry(self):
         if self.args:
             if (self.args[3].method == "GET") or (http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
-                print("NEEDS RETRY")
                 return True
         return False
 

@@ -80,10 +80,8 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             client_timeout = kwargs.get('timeout')
             start_time = time.time()
             if args:
-                print("EXE FUN 1")
                 result = ExecuteFunction(function, global_endpoint_manager, *args, **kwargs)
             else:
-                print("EXE FUN 2")
                 result = ExecuteFunction(function, *args, **kwargs)
             if not client.last_response_headers:
                 client.last_response_headers = {}
@@ -98,7 +96,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
 
             return result
         except exceptions.CosmosHttpResponseError as e:
-            print(" GOT TO ERROR")
             retry_policy = None
             if e.status_code == StatusCodes.FORBIDDEN and e.sub_status == SubStatusCodes.WRITE_FORBIDDEN:
                 retry_policy = endpointDiscovery_retry_policy
@@ -113,7 +110,6 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
             elif (e.status_code == StatusCodes.REQUEST_TIMEOUT):
-                print("TIMEOUT RETRY POLICY SET")
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
