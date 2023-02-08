@@ -981,7 +981,7 @@ def get_valid_dot_keys_with_wildcard(
     *,
     validate_func: Optional[Callable[[List[str], Dict[str, Any]], bool]] = None,
 ):
-    """Get all valid dot keys with wildcard. Only "*" is supported for now.
+    """Get all valid dot keys with wildcard. Only "x.*.x" and "x.*" is supported for now.
 
     A valid dot key should satisfy the following conditions:
     1) It should be a valid dot key in the root node.
