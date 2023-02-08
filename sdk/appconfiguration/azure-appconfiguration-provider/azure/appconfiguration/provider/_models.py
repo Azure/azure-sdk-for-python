@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from typing import overload, List, Optional, Callable, TYPE_CHECKING, Union, Awaitable
+from typing import List, Optional, Callable, TYPE_CHECKING, Union, Awaitable
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -18,8 +18,7 @@ class AzureAppConfigurationKeyVaultOptions:
             *,
             credential: Optional[Union["TokenCredential", "AsyncTokenCredential"]] = None,
             secret_clients: Optional[Union[List["SecretClient"], List["AsyncSecretClient"]]] = None,
-            secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None,
-            **kwargs
+            secret_resolver: Optional[Union[Callable[[str], str], Callable[[str], Awaitable[str]]]] = None
         ):
         """
         Options for connecting to Key Vault.
