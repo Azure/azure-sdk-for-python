@@ -36,8 +36,8 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
                     input2=do_while_body.outputs.output2
                 )
 
-    :param body: Pipeline job for the do-while loop body.
-    :type body: Pipeline
+    :param body: Pipeline job or command node for the do-while loop body.
+    :type body: Union[Pipeline, Command]
     :param mapping: Output-Input mapping for reach round of the do-while loop.
                     Key is the last round output of the body. Value is the input port for current body.
     :type mapping: Dict[Union[str, Output], Union[str, Input, List]]
