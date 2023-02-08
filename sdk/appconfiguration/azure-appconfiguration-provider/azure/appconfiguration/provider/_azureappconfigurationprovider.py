@@ -26,7 +26,7 @@ def load_provider(
         credential: Union["AzureKeyCredential", "TokenCredential"],
         *,
         selects: Optional[List[SettingSelector]] = None,
-        trim_prefixes: Optional[List[str]] = None,
+        trimmed_key_prefixes: Optional[List[str]] = None,
         key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
         **kwargs
     ) -> "AzureAppConfigurationProvider":
@@ -38,8 +38,8 @@ def load_provider(
     :type credential: Union[~azure.core.credentials.AzureKeyCredential, ~azure.core.credentials.TokenCredential]
     :keyword selects: List of setting selectors to filter configuration settings
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trim_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trim_prefixes: Optional[List[str]]
+    :keyword trimmed_key_prefixes: List of prefixes to trim from configuration keys
+    :paramtype trimmed_key_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
     """
@@ -50,7 +50,7 @@ def load_provider(
         *,
         connection_string: str,
         selects: Optional[List[SettingSelector]] = None,
-        trim_prefixes: Optional[List[str]] = None,
+        trimmed_key_prefixes: Optional[List[str]] = None,
         key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = None,
         **kwargs
     ) -> "AzureAppConfigurationProvider":
@@ -60,8 +60,8 @@ def load_provider(
     :keyword str connection_string: Connection string for App Configuration resource.
     :keyword selects: List of setting selectors to filter configuration settings
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
-    :keyword trim_prefixes: List of prefixes to trim from configuration keys
-    :paramtype trim_prefixes: Optional[List[str]]
+    :keyword trimmed_key_prefixes: List of prefixes to trim from configuration keys
+    :paramtype trimmed_key_prefixes: Optional[List[str]]
     :keyword key_vault_options: Options for resolving Key Vault references
     :paramtype key_vault_options: ~azure.appconfiguration.provider.AzureAppConfigurationKeyVaultOptions
     """
@@ -76,7 +76,7 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
     connection_string: Optional[str] = kwargs.pop("connection_string", None)
     key_vault_options: Optional[AzureAppConfigurationKeyVaultOptions] = kwargs.pop("key_vault_options", None)
     selects: List[SettingSelector] = kwargs.pop("selects", [SettingSelector("*", "\0")])
-    trim_prefixes : List[str] = kwargs.pop("trim_prefixes", [])
+    trim_prefixes : List[str] = kwargs.pop("trimmed_key_prefixes", [])
 
     # Update endpoint and credential if specified positionally.
     if len(args) > 2:
