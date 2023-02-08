@@ -366,11 +366,11 @@ def test_azure_duo_key_credential_updates():
     assert credential.get_key(key_header2) == api_key2
 
     api_key = "new"
-    credential.update(key_header1, api_key)
+    credential._update(key_header1, api_key)
     assert credential.get_key(key_header1) == api_key
     assert credential.get_key(key_header2) == api_key2
 
-    credential.update(key_header2, api_key)
+    credential._update(key_header2, api_key)
     assert credential.get_key(key_header1) == api_key
     assert credential.get_key(key_header2) == api_key
 

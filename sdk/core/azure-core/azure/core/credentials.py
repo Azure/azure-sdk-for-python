@@ -138,7 +138,7 @@ class AzureDuoKeyCredential:
         """
         return self._header2
 
-    def update(self, header: str, key: str) -> None:
+    def _update(self, header: str, key: str) -> None:
         """Update the key with specified header. If header is not found, raise ValueError.
 
         This can be used when you've regenerated your service key and want
