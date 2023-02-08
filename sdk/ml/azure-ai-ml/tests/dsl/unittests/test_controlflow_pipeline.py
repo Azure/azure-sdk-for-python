@@ -3,7 +3,6 @@ import pytest
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._parallel_for import parallel_for
-from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -18,6 +17,10 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestControlFlowPipelineUT:
+    pass
+
+
+class CustomizedObject:
     pass
 
 
@@ -102,7 +105,7 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             (
                     # unsupported item value type
                     [
-                        {"component_in_number": PipelineInput(name="fake_input", meta=None)},
+                        {"component_in_number": CustomizedObject()},
                     ],
                     "Unsupported type"
             ),

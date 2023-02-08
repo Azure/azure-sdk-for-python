@@ -114,6 +114,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
         for key, val in item.items():
             if isinstance(val, Input):
                 asset_inputs[key] = val
+            elif isinstance(val, (PipelineInput, NodeOutput)):
+                # convert binding object to string
+                primitive_inputs[key] = str(val)
             else:
                 primitive_inputs[key] = val
         return {
@@ -133,15 +136,17 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # convert items to rest object
         if isinstance(items, list):
             rest_items = [cls._to_rest_item(item=i) for i in items]
+            rest_items = json.dumps(rest_items)
         elif isinstance(items, dict):
             rest_items = {k: cls._to_rest_item(item=v) for k, v in items.items()}
+            rest_items = json.dumps(rest_items)
         elif isinstance(items, (NodeOutput, PipelineInput)):
             rest_items = str(items)
         elif isinstance(items, str):
             rest_items = items
         else:
             raise UserErrorException("Unsupported items type: {}".format(type(items)))
-        return json.dumps(rest_items)
+        return rest_items
 
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
@@ -301,7 +306,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
     @classmethod
     def _validate_item_value_type(cls, item: dict, validation_result):
         # pylint: disable=protected-access
-        supported_types = (Input, str, bool, int, float)
+        supported_types = (Input, str, bool, int, float, PipelineInput)
         for _, val in item.items():
             if not isinstance(val, supported_types):
                 validation_result.append_error(
