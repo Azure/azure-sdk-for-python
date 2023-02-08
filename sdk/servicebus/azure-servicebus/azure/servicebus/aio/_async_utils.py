@@ -45,20 +45,20 @@ async def create_authentication(client):
     except AttributeError:
         token_type = TOKEN_TYPE_JWT
     if token_type == TOKEN_TYPE_SASTOKEN:
-        return client._amqp_transport.create_token_auth_async(
+        return (await client._amqp_transport.create_token_auth_async(
             client._auth_uri,
             get_token=functools.partial(client._credential.get_token, client._auth_uri),
             token_type=token_type,
             config=client._config,
             update_token=True
-        )
-    return client._amqp_transport.create_token_auth(
+        ))
+    return (await client._amqp_transport.create_token_auth_async(
             client._auth_uri,
             get_token=functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
             token_type=token_type,
             config=client._config,
             update_token=False,
-        )
+        ))
 
 
 def get_dict_with_loop_if_needed(loop):

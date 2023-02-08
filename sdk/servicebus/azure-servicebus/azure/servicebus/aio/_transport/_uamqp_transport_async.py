@@ -100,19 +100,27 @@ if uamqp_installed:
             )
 
         @staticmethod
-        async def send_messages_async(producer, timeout_time, last_exception, logger):
+        async def send_messages_async(sender, message, logger, timeout, last_exception):
             """
-            Handles sending of event data messages.
-            :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
-            :param int timeout_time: Timeout time.
+            Handles sending of service bus messages.
+            :param sender: The sender with handler to send messages.
+            :param message: ServiceBusMessage with uamqp.Message to be sent.
+            :paramtype message: ~azure.servicebus.ServiceBusMessage or ~azure.servicebus.ServiceBusMessageBatch
+            :param int timeout: Timeout time.
             :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
             :param logger: Logger.
             """
             # pylint: disable=protected-access
-            pass
+            await sender._open()
+            default_timeout = sender._handler._msg_timeout
+            try:
+                UamqpTransportAsync.set_msg_timeout(sender, logger, timeout, last_exception)
+                await sender._handler.send_message_async(message._message)
+            finally:  # reset the timeout of the handler back to the default value
+                UamqpTransportAsync.set_msg_timeout(sender, logger, default_timeout, None)
 
         @staticmethod
-        def create_receive_client(*, config, **kwargs): # pylint:disable=unused-argument
+        def create_receive_client(receiver, **kwargs): # pylint:disable=unused-argument
             """
             Creates and returns the receive client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -133,7 +141,6 @@ if uamqp_installed:
             :keyword streaming_receive: Required.
             :keyword timeout: Required.
             """
-
             source = kwargs.pop("source")
             retry_policy = kwargs.pop("retry_policy")
             network_trace = kwargs.pop("network_trace")
@@ -149,8 +156,22 @@ if uamqp_installed:
                 send_settle_mode=constants.SenderSettleMode.Settled
                 if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
                 else None,
+                on_attach=functools.partial(
+                    UamqpTransportAsync.on_attach,
+                    receiver
+                ),
                 **kwargs
             )
+
+        @staticmethod
+        async def reset_link_credit_async(handler, link_credit):
+            """
+            Resets the link credit on the link.
+            :param ReceiveClientAsync handler: Client with link to reset link credit.
+            :param int link_credit: Link credit needed.
+            :rtype: None
+            """
+            await handler.message_handler.reset_link_credit_async(link_credit)
 
         @staticmethod
         async def settle_message_via_receiver_link_async(
@@ -167,7 +188,6 @@ if uamqp_installed:
                 dead_letter_reason,
                 dead_letter_error_description
             )()
-            return
 
         @staticmethod
         async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):

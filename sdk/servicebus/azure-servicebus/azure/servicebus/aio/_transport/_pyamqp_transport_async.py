@@ -7,13 +7,25 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
+import functools
 from typing import Union, cast, TYPE_CHECKING, Optional
 
-from ..._pyamqp import constants, error as AMQPErrors
+from ..._pyamqp import constants
+from ..._pyamqp.message import BatchMessage
 from ..._pyamqp.utils import amqp_string_value
 from ..._pyamqp.aio import AMQPClientAsync, SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
+from ..._pyamqp.error import (
+    ErrorCondition,
+    #AMQPException,
+    AMQPError,
+    AMQPLinkError,
+    #RetryPolicy,
+    #AMQPConnectionError,
+    #AuthenticationException,
+    MessageException,
+)
 
 from ._base_async import AmqpTransportAsync
 from ..._common.utils import utc_from_timestamp, utc_now
@@ -101,25 +113,31 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def send_messages_async(producer, timeout_time, last_exception, logger):
+    async def send_messages_async(sender, message, logger, timeout, last_exception):
         """
-        Handles sending of event data messages.
-        :param ~azure.eventhub._producer.EventHubProducer producer: The producer with handler to send messages.
-        :param int timeout_time: Timeout time.
-        :param last_exception: Exception to raise if message timed out. Only used by pyamqp transport.
+        Handles sending of service bus messages.
+        :param sender: The sender with handler to send messages.
+        :param int timeout: Timeout time.
+        :param last_exception: Exception to raise if message timed out. Only used by uamqp transport.
         :param logger: Logger.
         """
         # pylint: disable=protected-access
+        await sender._open()
         try:
-            await producer._open()
-            timeout = timeout_time - time.time() if timeout_time else 0
-            await producer._handler.send_message_async(producer._unsent_events[0], timeout=timeout)
-            producer._unsent_events = None
-        except TimeoutError as exc:
-            raise OperationTimeoutError(message=str(exc), details=exc)
+            if isinstance(message._message, list):
+                await sender._handler.send_message_async(BatchMessage(*message._message), timeout=timeout)
+            else:
+                await sender._handler.send_message_async(
+                    message._message,
+                    timeout=timeout
+                )
+        except TimeoutError:
+            raise OperationTimeoutError(message="Send operation timed out")
+        except MessageException as e:
+            raise PyamqpTransportAsync.create_servicebus_exception(logger, e)
 
     @staticmethod
-    def create_receive_client(*, config, **kwargs):  # pylint:disable=unused-argument
+    def create_receive_client(receiver, **kwargs):  # pylint:disable=unused-argument
         """
         Creates and returns the receive client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -140,7 +158,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword streaming_receive: Required.
         :keyword timeout: Required.
         """
-
+        config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
         receive_mode = kwargs.pop("receive_mode")
 
@@ -155,8 +173,22 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             send_settle_mode=constants.SenderSettleMode.Settled
             if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else constants.SenderSettleMode.Unsettled,
+            on_attach=functools.partial(
+                PyamqpTransportAsync.on_attach_async,
+                receiver
+            ),
             **kwargs,
         )
+
+    @staticmethod
+    async def reset_link_credit_async(handler, link_credit):
+        """
+        Resets the link credit on the link.
+        :param ReceiveClientAsync handler: Client with link to reset link credit.
+        :param int link_credit: Link credit needed.
+        :rtype: None
+        """
+        await handler._link.flow(link_credit=link_credit)   # pylint: disable=protected-access
 
     @staticmethod
     async def settle_message_via_receiver_link_async(
@@ -179,7 +211,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             return await handler.settle_messages_async(
                 message.delivery_id,
                 'rejected',
-                error=AMQPErrors.AMQPError(
+                error=AMQPError(
                     condition=DEADLETTERNAME,
                     description=dead_letter_error_description,
                     info={
@@ -215,92 +247,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             receiver._session_id = session_filter.decode(receiver._config.encoding)
             receiver._session._session_id = receiver._session_id
 
-    #@staticmethod
-    #async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
-    #    while consumer._callback_task_run: # pylint: disable=protected-access
-    #        async with consumer._message_buffer_lock: # pylint: disable=protected-access
-    #            messages = [
-    #                consumer._message_buffer.popleft() # pylint: disable=protected-access
-    #                for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
-    #            ]
-    #        events = [EventData._from_message(message) for message in messages] # pylint: disable=protected-access
-    #        now_time = time.time()
-    #        if len(events) > 0:
-    #            await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
-    #            consumer._last_callback_called_time = now_time # pylint: disable=protected-access
-    #        else:
-    #            if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time: # pylint: disable=protected-access
-    #                # no events received, and need to callback
-    #                await consumer._on_event_received([] if batch else None) # pylint: disable=protected-access
-    #                consumer._last_callback_called_time = now_time # pylint: disable=protected-access
-    #            # backoff a bit to avoid throttling CPU when no events are coming
-    #            await asyncio.sleep(0.05)
-
-    @staticmethod
-    async def _receive_task(consumer):
-        # pylint:disable=protected-access
-        max_retries = consumer._client._config.max_retries
-        retried_times = 0
-        running = True
-        try:
-            while retried_times <= max_retries and running and consumer._callback_task_run:
-                try:
-                    await consumer._open() # pylint: disable=protected-access
-                    running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch)
-                except asyncio.CancelledError:  # pylint: disable=try-except-raise
-                    raise
-                except Exception as exception:  # pylint: disable=broad-except
-                    if (
-                        isinstance(exception, errors.AMQPLinkError)
-                        and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
-                    ):
-                        raise await consumer._handle_exception(exception)
-                    if not consumer.running:  # exit by close
-                        return
-                    if consumer._last_received_event:
-                        consumer._offset = consumer._last_received_event.offset
-                    last_exception = await consumer._handle_exception(exception)
-                    retried_times += 1
-                    if retried_times > max_retries:
-                        _LOGGER.info(
-                            "%r operation has exhausted retry. Last exception: %r.",
-                            consumer._name,
-                            last_exception,
-                        )
-                        raise last_exception
-        finally:
-            consumer._callback_task_run = False
-
     @staticmethod
     async def message_received_async(consumer, message: Message) -> None:
         async with consumer._message_buffer_lock: # pylint: disable=protected-access
             consumer._message_buffer.append(message) # pylint: disable=protected-access
-
-    @staticmethod
-    async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
-        """
-        Receives messages, creates events, and returns them by calling the on received callback.
-        :param ~azure.eventhub.aio.EventHubConsumer consumer: The EventHubConsumer.
-        :param bool batch: If receive batch or single event.
-        :param int max_batch_size: Max batch size.
-        :param int or None max_wait_time: Max wait time.
-        """
-        # pylint:disable=protected-access
-        consumer._callback_task_run = True
-        consumer._last_callback_called_time = time.time()
-        callback_task = asyncio.create_task(
-            PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
-        )
-        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
-
-        tasks = [callback_task, receive_task]
-        try:
-            await asyncio.gather(*tasks)
-        finally:
-            consumer._callback_task_run = False
-            for t in tasks:
-                if not t.done():
-                    await asyncio.wait([t], timeout=1)
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):

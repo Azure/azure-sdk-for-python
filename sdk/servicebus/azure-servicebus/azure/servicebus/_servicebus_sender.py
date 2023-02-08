@@ -293,7 +293,9 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         # pylint: disable=protected-access
 
         self._check_live()
-        obj_messages = transform_outbound_messages(messages, ServiceBusMessage, to_outgoing_amqp_message=self._amqp_transport.to_outgoing_amqp_message)
+        obj_messages = transform_outbound_messages(
+            messages, ServiceBusMessage, to_outgoing_amqp_message=self._amqp_transport.to_outgoing_amqp_message
+        )
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
@@ -421,7 +423,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
                     batch._from_list(message._messages, send_span)  # type: ignore
                     obj_message = batch
                 else:
-                    obj_message = message  # type: MessageObjTypes
+                    obj_message: "MessageObjTypes" = message
             else:
                 obj_message = transform_outbound_messages(  # type: ignore
                     message, ServiceBusMessage, self._amqp_transport.to_outgoing_amqp_message
@@ -471,9 +473,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
 
         if max_size_in_bytes and max_size_in_bytes > self._max_message_size_on_link:
             raise ValueError(
-                "Max message size: {} is too large, acceptable max batch size is: {} bytes.".format(
-                    max_size_in_bytes, self._max_message_size_on_link
-                )
+                f"Max message size: {max_size_in_bytes} is too large, acceptable max batch size is: {self._max_message_size_on_link} bytes."
             )
 
         return ServiceBusMessageBatch(

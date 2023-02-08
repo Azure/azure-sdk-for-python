@@ -59,6 +59,7 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from ._transport._base_async import AmqpTransportAsync
+    from .._pyamqp.message import Message
     from .._pyamqp.aio import ReceiveClientAsync
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
     from azure.core.credentials_async import AsyncTokenCredential
@@ -317,17 +318,13 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     def _create_handler(self, auth: Union["JWTTokenAuthAsync", "uamqp_JWTTokenAsync"]) -> None:
 
         self._handler = self._amqp_transport.create_receive_client(
-            config=self._config,
+            receiver=self,
             source=self._get_source(),
             auth=auth,
             network_trace=self._config.logging_enable,
             properties=self._properties,
             retry_policy=self._error_policy,
             client_name=self._name,
-            on_attach=functools.partial(
-                self._amqp_transport.on_attach_async,
-                self
-            ),
             receive_mode=self._receive_mode,
             #timeout=self._max_wait_time * 1000 if self._max_wait_time else 0, TODO: This is not working
             link_credit=self._prefetch_count,
@@ -395,7 +392,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             # Dynamically issue link credit if max_message_count > 1 when the prefetch_count is the default value 1
             if max_message_count and self._prefetch_count == 1 and max_message_count > 1:
                 link_credit_needed = max_message_count - len(batch)
-                await amqp_receive_client._link.flow(link_credit=link_credit_needed)
+                await self._amqp_transport.reset_link_credit_async(amqp_receive_client, link_credit_needed)
 
             first_message_received = expired = False
             receiving = True

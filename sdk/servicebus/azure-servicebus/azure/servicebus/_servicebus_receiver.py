@@ -360,17 +360,13 @@ class ServiceBusReceiver(
     def _create_handler(self, auth: Union["JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
 
         self._handler = self._amqp_transport.create_receive_client(
-            config=self._config,
+            receiver=self,
             source=self._get_source(),
             auth=auth,
             network_trace=self._config.logging_enable,
             properties=self._properties,
             retry_policy=self._error_policy,
             client_name=self._name,
-            on_attach=functools.partial(
-                self._amqp_transport.on_attach,
-                self
-            ),
             receive_mode=self._receive_mode,
             # TODO: check that this shouldn't be 1000 for both
             timeout=self._max_wait_time * self._amqp_transport.TIMEOUT_FACTOR

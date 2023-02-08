@@ -4,17 +4,16 @@
 # --------------------------------------------------------------------------------------------
 
 import logging
+import functools
 import time
 import datetime
 from typing import Optional, Tuple, cast, List, TYPE_CHECKING
 
 from azure.core.serialization import TZ_UTC
 from .._pyamqp import (
-    error as AMQPErrors,
     utils,
     SendClient,
     constants,
-    AMQPClient,
     ReceiveClient,
     __version__,
 )
@@ -453,9 +452,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def send_messages(sender, message, logger, timeout, last_exception):
+    def send_messages(sender, message, logger, timeout, last_exception):    # pylint: disable=unused-argument
         """
-        Handles sending of event data messages.
+        Handles sending of service bus messages.
         :param ~azure.servicebus._servicebus_sender.ServiceBusSender sender: The sender with handler
          to send messages.
         :param int timeout: Timeout time.
@@ -465,7 +464,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         # pylint: disable=protected-access
         sender._open()
         try:
-            #sender._handler.send_message(message._message, timeout=timeout) # pylint:disable=protected-access
             if isinstance(message._message, list):    # BatchMessage
                 sender._handler.send_message(BatchMessage(*message._message), timeout=timeout) # pylint:disable=protected-access
             else:   # Message
@@ -473,31 +471,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException as e:
-            raise PyamqpTransport.create_servicebus_exception(_LOGGER, e)
-
-    #@staticmethod
-    #def set_message_partition_key(message, partition_key, **kwargs):
-    #    # type: (Message, Optional[Union[bytes, str]], Any) -> Message
-    #    """Set the partition key as an annotation on a uamqp message.
-    #    :param Message message: The message to update.
-    #    :param str partition_key: The partition key value.
-    #    :rtype: Message
-    #    """
-    #    encoding = kwargs.pop("encoding", "utf-8")
-    #    if partition_key:
-    #        annotations = message.message_annotations
-    #        if annotations is None:
-    #            annotations = {}
-    #        try:
-    #            partition_key = cast(bytes, partition_key).decode(encoding)
-    #        except AttributeError:
-    #            pass
-    #        annotations[
-    #            PROP_PARTITION_KEY
-    #        ] = partition_key  # pylint:disable=protected-access
-    #        header = Header(durable=True)  # type: ignore
-    #        return message._replace(message_annotations=annotations, header=header)
-    #    return message
+            raise PyamqpTransport.create_servicebus_exception(logger, e)
 
     @staticmethod
     def add_batch(
@@ -528,7 +502,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return source
 
     @staticmethod
-    def create_receive_client(*, config, **kwargs):
+    def create_receive_client(receiver, **kwargs):
         """
         Creates and returns the receive client.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -549,7 +523,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword streaming_receive: Required.
         :keyword timeout: Required.
         """
-
+        config = receiver._config   # pylint: disable=protected-access
         source = kwargs.pop("source")
         receive_mode = kwargs.pop("receive_mode")
         return ReceiveClient(
@@ -563,6 +537,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             send_settle_mode=constants.SenderSettleMode.Settled
             if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
             else constants.SenderSettleMode.Unsettled,
+            on_attach=functools.partial(
+                PyamqpTransport.on_attach,
+                receiver
+            ),
             **kwargs
         )
 
@@ -663,7 +641,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param int link_credit: Link credit needed.
         :rtype: None
         """
-        handler._link.flow(link_credit=link_credit)
+        handler._link.flow(link_credit=link_credit) # pylint: disable=protected-access
 
     @staticmethod
     def settle_message_via_receiver_link(

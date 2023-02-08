@@ -23,7 +23,6 @@ try:
         Source,
         authentication,
         compat,
-        errors as AMQPErrors,
         Connection,
         __version__,
     )
@@ -31,6 +30,16 @@ try:
     from uamqp.message import (
         MessageHeader,
         MessageProperties,
+    )
+    from uamqp.errors import (
+        AMQPConnectionError,
+        AMQPError,
+        AuthenticationException,
+        ErrorAction,
+        ErrorPolicy,
+        MessageAlreadySettled,
+        MessageContentTooLarge,
+        MessageException,
     )
     uamqp_installed = True
 except ImportError:
@@ -155,19 +164,19 @@ if uamqp_installed:
         :rtype: ~uamqp.errors.ErrorAction
         """
         if error.condition == b"com.microsoft:server-busy":
-            return AMQPErrors.ErrorAction(retry=True, backoff=4)
+            return ErrorAction(retry=True, backoff=4)
         if error.condition == b"com.microsoft:timeout":
-            return AMQPErrors.ErrorAction(retry=True, backoff=2)
+            return ErrorAction(retry=True, backoff=2)
         if error.condition == b"com.microsoft:operation-cancelled":
-            return AMQPErrors.ErrorAction(retry=True)
+            return ErrorAction(retry=True)
         if error.condition == b"com.microsoft:container-close":
-            return AMQPErrors.ErrorAction(retry=True, backoff=4)
+            return ErrorAction(retry=True, backoff=4)
         if error.condition in _NO_RETRY_CONDITION_ERROR_CODES:
-            return AMQPErrors.ErrorAction(retry=False)
-        return AMQPErrors.ErrorAction(retry=True)
+            return ErrorAction(retry=False)
+        return ErrorAction(retry=True)
 
 
-    class _ServiceBusErrorPolicy(AMQPErrors.ErrorPolicy):
+    class _ServiceBusErrorPolicy(ErrorPolicy):
         def __init__(self, max_retries=3, is_session=False):
             self._is_session = is_session
             super(_ServiceBusErrorPolicy, self).__init__(
@@ -176,17 +185,17 @@ if uamqp_installed:
 
         def on_unrecognized_error(self, error):
             if self._is_session:
-                return AMQPErrors.ErrorAction(retry=False)
+                return ErrorAction(retry=False)
             return super(_ServiceBusErrorPolicy, self).on_unrecognized_error(error)
 
         def on_link_error(self, error):
             if self._is_session:
-                return AMQPErrors.ErrorAction(retry=False)
+                return ErrorAction(retry=False)
             return super(_ServiceBusErrorPolicy, self).on_link_error(error)
 
         def on_connection_error(self, error):
             if self._is_session:
-                return AMQPErrors.ErrorAction(retry=False)
+                return ErrorAction(retry=False)
             return super(_ServiceBusErrorPolicy, self).on_connection_error(error)
 
 
@@ -528,28 +537,6 @@ if uamqp_installed:
             finally:
                 UamqpTransport.set_msg_timeout(sender, logger, default_timeout, None)
 
-        #@staticmethod
-        #def set_message_partition_key(message, partition_key, **kwargs):  # pylint:disable=unused-argument
-        #    # type: (Message, Optional[Union[bytes, str]], Any) -> Message
-        #    """Set the partition key as an annotation on a uamqp message.
-
-        #    :param ~uamqp.Message message: The message to update.
-        #    :param str partition_key: The partition key value.
-        #    :rtype: Message
-        #    """
-        #    if partition_key:
-        #        annotations = message.annotations
-        #        if annotations is None:
-        #            annotations = {}
-        #        annotations[
-        #            UamqpTransport.PROP_PARTITION_KEY_AMQP_SYMBOL   # TODO: see if setting non-amqp symbol is valid
-        #        ] = partition_key
-        #        header = MessageHeader()
-        #        header.durable = True
-        #        message.annotations = annotations
-        #        message.header = header
-        #    return message
-
         @staticmethod
         def add_batch(
             sb_message_batch, outgoing_sb_message
@@ -579,7 +566,7 @@ if uamqp_installed:
             return source
 
         @staticmethod
-        def create_receive_client(*, config, **kwargs): # pylint: disable=unused-argument
+        def create_receive_client(receiver, **kwargs):
             """
             Creates and returns the receive client.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -599,7 +586,6 @@ if uamqp_installed:
             :keyword desired_capabilities: Required.
             :keyword timeout: Required.
             """
-
             source = kwargs.pop("source")
             retry_policy = kwargs.pop("retry_policy")
             network_trace = kwargs.pop("network_trace")
@@ -615,6 +601,10 @@ if uamqp_installed:
                 send_settle_mode=constants.SenderSettleMode.Settled
                 if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
                 else None,
+                on_attach=functools.partial(
+                    UamqpTransport.on_attach,
+                    receiver
+                ),
                 **kwargs
             )
 
@@ -731,7 +721,6 @@ if uamqp_installed:
                 dead_letter_reason,
                 dead_letter_error_description
             )()
-            return
 
         @staticmethod
         def settle_message_via_receiver_link_impl(
@@ -795,7 +784,7 @@ if uamqp_installed:
         #    :param exception: Exception to check.
         #    """
         #    if (
-        #        isinstance(exception, AMQPErrors.LinkDetach)
+        #        isinstance(exception, LinkDetach)
         #        and exception.condition == constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
         #    ):
         #        raise consumer._handle_exception(exception)  # pylint: disable=protected-access
@@ -930,14 +919,14 @@ if uamqp_installed:
         #    :param str description: Description of error.
         #    """
         #    if status_code in [401]:
-        #        return AMQPErrors.AuthenticationException(
+        #        return AuthenticationException(
         #            f"Management authentication failed. Status code: {status_code}, Description: {description!r}"
         #        )
         #    if status_code in [404]:
         #        return ConnectError(
         #            f"Management connection failed. Status code: {status_code}, Description: {description!r}"
         #        )
-        #    return AMQPErrors.AMQPConnectionError(
+        #    return AMQPConnectionError(
         #        f"Management request error. Status code: {status_code}, Description: {description!r}"
         #    )
 
@@ -951,7 +940,7 @@ if uamqp_installed:
         #    if not base.running and isinstance(
         #        exception, compat.TimeoutException
         #    ):
-        #        exception = AMQPErrors.AuthenticationException(
+        #        exception = AuthenticationException(
         #            "Authorization timeout."
         #        )
         #    return exception
@@ -971,13 +960,13 @@ if uamqp_installed:
                 # handle NotFound error code
                 error_cls = (
                     ServiceBusCommunicationError
-                    if isinstance(exception, AMQPErrors.AMQPConnectionError)
+                    if isinstance(exception, AMQPConnectionError)
                     else MessagingEntityNotFoundError
                 )
             elif condition == AMQPErrorCodes.ClientError and "timed out" in str(exception):
                 # handle send timeout
                 error_cls = OperationTimeoutError
-            elif condition == AMQPErrorCodes.UnknownError and isinstance(exception, AMQPErrors.AMQPConnectionError):
+            elif condition == AMQPErrorCodes.UnknownError and isinstance(exception, AMQPConnectionError):
                 error_cls = ServiceBusConnectionError
             else:
                 # handle other error codes
@@ -999,17 +988,17 @@ if uamqp_installed:
         @staticmethod
         def _handle_amqp_exception_without_condition(logger, exception):
             error_cls = ServiceBusError
-            if isinstance(exception, AMQPErrors.AMQPConnectionError):
+            if isinstance(exception, AMQPConnectionError):
                 logger.info("AMQP Connection error occurred: (%r).", exception)
                 error_cls = ServiceBusConnectionError
-            elif isinstance(exception, AMQPErrors.AuthenticationException):
+            elif isinstance(exception, AuthenticationException):
                 logger.info("AMQP Connection authentication error occurred: (%r).", exception)
                 error_cls = ServiceBusAuthenticationError
-            elif isinstance(exception, AMQPErrors.MessageException):
+            elif isinstance(exception, MessageException):
                 logger.info("AMQP Message error occurred: (%r).", exception)
-                if isinstance(exception, AMQPErrors.MessageAlreadySettled):
+                if isinstance(exception, MessageAlreadySettled):
                     error_cls = MessageAlreadySettled
-                elif isinstance(exception, AMQPErrors.MessageContentTooLarge):
+                elif isinstance(exception, MessageContentTooLarge):
                     error_cls = MessageSizeExceededError
             else:
                 logger.info(
@@ -1036,7 +1025,7 @@ if uamqp_installed:
 
         @staticmethod
         def create_servicebus_exception(logger, exception):
-            if isinstance(exception, AMQPErrors.AMQPError):
+            if isinstance(exception, AMQPError):
                 try:
                     # handling AMQP Errors that have the condition field
                     condition = exception.condition
