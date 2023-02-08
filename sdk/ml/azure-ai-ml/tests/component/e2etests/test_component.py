@@ -608,15 +608,21 @@ class TestComponent(AzureRecordedTestCase):
     def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_resource = client.components.create_or_update(command_component, is_anonymous=True)
-        assert component_resource.name == ANONYMOUS_COMPONENT_NAME
+        assert component_resource.name == command_component.name
+        assert component_resource.version == command_component.version
+
+        anonymous_name, _, anonymous_version = component_resource.id.split("/")[-3:]
+        assert anonymous_name == ANONYMOUS_COMPONENT_NAME
         # version calculation has been moved to the server side
-        # assert component_resource.version == command_component.version
-        component = client.components.get(component_resource.name, component_resource.version)
+
+        component = client.components.get(anonymous_name, anonymous_version)
         # TODO 1807731: enable this check after server-side fix
         omit_fields = ["creation_context"]
         assert pydash.omit(component_resource._to_dict(), *omit_fields) == pydash.omit(
             component._to_dict(), *omit_fields
         )
+        assert component.name == command_component.name
+        assert component.version == command_component.version
         assert component._source == "REMOTE.WORKSPACE.COMPONENT"
 
     def test_component_archive_restore_version(self, client: MLClient, randstr: Callable[[str], str]) -> None:
