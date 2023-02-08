@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-from typing import Any, Union
+from typing import Union, List, Dict, Optional
+
 from ._generated._serialization import Model
-from ._generated.models import KeyValue
+from ._generated.models import CompositionType, KeyValue, KeyValueFilter, Snapshot
 
 
 PolymorphicConfigurationSetting = Union[
@@ -15,8 +16,7 @@ PolymorphicConfigurationSetting = Union[
 
 class ConfigurationSetting(Model):
     """A configuration value.
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: The value of the configuration setting
     :vartype value: str
@@ -50,7 +50,7 @@ class ConfigurationSetting(Model):
     kind = "Generic"
     content_type = None
 
-    def __init__(self, **kwargs: Any) -> None:
+    def __init__(self, **kwargs) -> None:
         super(ConfigurationSetting, self).__init__(**kwargs)
         self.key = kwargs.get("key", None)
         self.label = kwargs.get("label", None)
@@ -110,8 +110,7 @@ class ConfigurationSetting(Model):
 
 class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=too-many-instance-attributes
     """A feature flag configuration value.
-    Variables are only populated by the server, and will be ignored when
-    sending a request.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar etag: Entity tag (etag) of the object
     :vartype etag: str
@@ -155,7 +154,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
     )
     kind = "FeatureFlag"
 
-    def __init__(self, feature_id: str, **kwargs: Any) -> None:  # pylint: disable=dangerous-default-value, super-init-not-called
+    def __init__(self, feature_id: str, **kwargs) -> None:  # pylint: disable=dangerous-default-value, super-init-not-called
         if "key" in kwargs.keys() or "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'key' or 'value' as a keyword-arg")
         self.feature_id = feature_id
@@ -281,7 +280,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
     )
     kind = "SecretReference"
 
-    def __init__(self, key: str, secret_id: str, **kwargs: Any) -> None: # pylint: disable=super-init-not-called
+    def __init__(self, key: str, secret_id: str, **kwargs) -> None: # pylint: disable=super-init-not-called
         if "value" in kwargs.keys():
             raise TypeError("Unexpected keyword argument, do not provide 'value' as a keyword-arg")
         self.key = key
@@ -349,4 +348,97 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
             tags=self.tags,
             locked=self.read_only,
             etag=self.etag,
+        )
+
+class ConfigurationSettingSnapshot():
+    """The snapshot.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: The value of the configuration setting
+    :vartype value: str
+    :ivar etag: Entity tag (etag) of the object
+    :vartype etag: str
+    :param key:
+    :type key: str
+    :param label:
+    :type label: str
+    :param content_type:
+    :type content_type: str
+    :ivar last_modified:
+    :vartype last_modified: datetime
+    :ivar read_only:
+    :vartype read_only: bool
+    :param tags:
+    :type tags: Dict[str, str]
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "status_code": {"key": "status_code", "type": "int"},
+        "filters": {"key": "filters", "type": "[KeyValueFilter]"},
+        "composition_type": {"key": "composition_type", "type": "str"},
+        "created": {"key": "created", "type": "iso-8601"},
+        "expires": {"key": "expires", "type": "iso-8601"},
+        "retention_period": {"key": "retention_period", "type": "int"},
+        "size": {"key": "size", "type": "int"},
+        "items_count": {"key": "items_count", "type": "int"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+    }
+    
+    def __init__(
+        self,
+        name: str,
+        filters: List[KeyValueFilter],
+        composition_type: Optional[Union[str, CompositionType]] = None,
+        retention_period: Optional[int] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        self.name = name
+        self.status = kwargs.get("status", None)
+        self.status_code = kwargs.get("status_code", None)
+        self.filters = filters
+        self.composition_type = composition_type
+        self.created = kwargs.get("created", None)
+        self.expires = kwargs.get("expires", None)
+        self.retention_period = retention_period
+        self.size = kwargs.get("size", None)
+        self.items_count = kwargs.get("items_count", None)
+        self.tags = tags
+        self.etag = kwargs.get("etag", None)
+
+    @classmethod
+    def _from_generated(cls, snapshot: Snapshot) -> "ConfigurationSettingSnapshot":
+        if snapshot is None:
+            return snapshot
+        return cls(
+            name = snapshot.name,
+            status = snapshot.status,
+            status_code = snapshot.status_code,
+            filters = snapshot.filters,
+            composition_type = snapshot.composition_type,
+            created = snapshot.created,
+            expires = snapshot.expires,
+            retention_period = snapshot.retention_period,
+            size = snapshot.size,
+            items_count = snapshot.items_count,
+            tags = snapshot.tags,
+            etag = snapshot.etag
+        )
+
+    def _to_generated(self) -> Snapshot:
+        return Snapshot(
+            status = self.status,
+            status_code = self.status_code,
+            filters = self.filters,
+            composition_type = self.composition_type,
+            created = self.created,
+            expires = self.expires,
+            retention_period = self.retention_period,
+            size = self.size,
+            items_count = self.items_count,
+            tags = self.tags,
+            etag = self.etag
         )

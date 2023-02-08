@@ -981,7 +981,7 @@ class TestAppConfigurationClientUnitTest:
             async def open(self):
                 pass
 
-            async def send(self, request: PipelineRequest, **kwargs: Any) -> PipelineResponse:
+            async def send(self, request: PipelineRequest, **kwargs) -> PipelineResponse:
                 assert request.headers['Authorization'] != self.auth_headers
                 self.auth_headers.append(request.headers['Authorization'])
                 response = HttpResponse(request, None)

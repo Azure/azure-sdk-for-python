@@ -4,10 +4,11 @@
 # license information.
 # -------------------------------------------------------------------------
 import binascii
-from typing import Dict, Any, Optional, Mapping, Union, TYPE_CHECKING
+from typing import Any, Optional, Mapping, Union
 from requests.structures import CaseInsensitiveDict
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import (
     UserAgentPolicy,
     AsyncBearerTokenCredentialPolicy,
@@ -22,21 +23,19 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     ResourceNotModifiedError,
 )
+from ._sync_token_async import AsyncSyncTokenPolicy
 from .._azure_appconfiguration_error import ResourceReadOnlyError
+from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
+from .._generated.aio import AzureAppConfiguration
+from .._generated.models import SnapshotUpdateParameters
+from .._models import ConfigurationSetting, ConfigurationSettingSnapshot
+from .._user_agent import USER_AGENT
 from .._utils import (
     get_endpoint_from_connection_string,
     prep_if_match,
     prep_if_none_match,
 )
-from .._generated.aio import AzureAppConfiguration
-from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
-from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
-from .._models import ConfigurationSetting
-from .._user_agent import USER_AGENT
-from ._sync_token_async import AsyncSyncTokenPolicy
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class AzureAppConfigurationClient:
@@ -59,8 +58,8 @@ class AzureAppConfigurationClient:
     def __init__(
         self,
         base_url: str,
-        credential: Union[AppConfigConnectionStringCredential, "AsyncTokenCredential"],
-        **kwargs: Any
+        credential: Union[AppConfigConnectionStringCredential, AsyncTokenCredential],
+        **kwargs
     ) -> None:
         try:
             if not base_url.lower().startswith("http"):
@@ -102,7 +101,7 @@ class AzureAppConfigurationClient:
         )
 
     @classmethod
-    def from_connection_string(cls, connection_string: str, **kwargs: Any) -> "AzureAppConfigurationClient":
+    def from_connection_string(cls, connection_string: str, **kwargs) -> "AzureAppConfigurationClient":
         """Create AzureAppConfigurationClient from a Connection String.
         This is the async version of :class:`azure.appconfiguration.AzureAppConfigurationClient`
 
@@ -132,7 +131,7 @@ class AzureAppConfigurationClient:
         self,
         key_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
-        **kwargs: Any
+        **kwargs
     ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """List the configuration settings stored in the configuration service, optionally filtered by
@@ -197,7 +196,7 @@ class AzureAppConfigurationClient:
         label: Optional[str] = None,
         etag: Optional[str] = "*",
         match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
-        **kwargs: Any
+        **kwargs
     ) -> Union[None, ConfigurationSetting]:
 
         """Get the matched ConfigurationSetting from Azure App Configuration service
@@ -257,7 +256,7 @@ class AzureAppConfigurationClient:
     async def add_configuration_setting(
         self,
         configuration_setting: ConfigurationSetting,
-        **kwargs: Any
+        **kwargs
     ) -> ConfigurationSetting:
 
         """Add a ConfigurationSetting instance into the Azure App Configuration service.
@@ -307,7 +306,7 @@ class AzureAppConfigurationClient:
         self,
         configuration_setting: ConfigurationSetting,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
-        **kwargs: Any
+        **kwargs
     ) -> ConfigurationSetting:
 
         """Add or update a ConfigurationSetting.
@@ -378,7 +377,7 @@ class AzureAppConfigurationClient:
         self,
         key: str,
         label: Optional[str] = None,
-        **kwargs: Any
+        **kwargs
     ) -> ConfigurationSetting:
         """Delete a ConfigurationSetting if it exists
 
@@ -434,7 +433,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_revisions(
-        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs: Any
+        self, key_filter: Optional[str] = None, label_filter: Optional[str] = None, **kwargs
     ) -> AsyncItemPaged[ConfigurationSetting]:
 
         """
@@ -495,7 +494,7 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     async def set_read_only(
-        self, configuration_setting: ConfigurationSetting, read_only: Optional[bool] = True, **kwargs: Any
+        self, configuration_setting: ConfigurationSetting, read_only: Optional[bool] = True, **kwargs
     ) -> ConfigurationSetting:
 
         """Set a configuration setting read only
@@ -563,6 +562,152 @@ class AzureAppConfigurationClient:
             raise e(message=error.message, response=error.response)
         except binascii.Error:
             raise binascii.Error("Connection string secret has incorrect padding")
+
+    @distributed_trace
+    async def create_snapshot(self, snapshot: ConfigurationSettingSnapshot, **kwargs) -> ConfigurationSettingSnapshot:
+        """Create a configuration setting snapshot.
+
+        :param snapshot: The configuration setting snapshot to create
+        :type snapshot: :class:`ConfigurationSettingSnapshot`
+        :return: The ConfigurationSettingSnapshot returned from the service
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSettingSnapshot`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
+        """
+        try:
+            snapshot_added = await self._impl.create_snapshot(
+                name=snapshot.name,
+                entity=snapshot._to_generated(),
+                **kwargs
+            )
+            return ConfigurationSettingSnapshot._from_generated(snapshot_added)
+        except HttpResponseError as error:
+            raise error
+
+    @distributed_trace
+    async def update_snapshot(
+        self,
+        name: str,
+        status: Optional[str],
+        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        **kwargs
+    ) -> ConfigurationSettingSnapshot:
+        """Update the state of a configuration setting snapshot
+
+        :param name: The name of the configuration setting snapshot to update
+        :type name: str
+        :param status: The status of the configuration setting snapshot to update
+        :type status: str
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: :class:`~azure.core.MatchConditions`
+        :keyword str etag: Check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :return: The ConfigurationSettingSnapshot returned from the service
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSettingSnapshot`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
+        :class:`ResourceModifiedError`
+        """
+        etag = kwargs.pop("etag", None)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        if match_condition == MatchConditions.IfModified:
+            error_map[412] = ResourceNotModifiedError
+        if match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        if match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        try:
+            snapshot_updated = await self._impl.update_snapshot(
+                name=name,
+                entity=SnapshotUpdateParameters(status=status),
+                if_match=prep_if_match(etag, match_condition),
+                if_none_match=prep_if_none_match(etag, match_condition),
+                error_map=error_map,
+                **kwargs
+            )
+            return ConfigurationSettingSnapshot._from_generated(snapshot_updated)
+        except HttpResponseError as error:
+            raise error
+
+    @distributed_trace
+    async def get_snapshot(
+        self,
+        name: str,
+        etag: Optional[str] = "*",
+        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        **kwargs
+    ) -> ConfigurationSettingSnapshot:
+        """Get a configuration setting snapshot
+
+        :param name: The name of the configuration setting snapshot to retrieve
+        :type name: str
+        :param etag: Check if the ConfigurationSetting is changed. Set None to skip checking etag
+        :type etag: str
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: :class:`~azure.core.MatchConditions`
+        :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields
+        :return: The ConfigurationSettingSnapshot returned from the service
+        :rtype: :class:`~azure.appconfiguration.ConfigurationSettingSnapshot`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
+        :class:`ResourceModifiedError`
+        """
+        select = kwargs.pop("fields", None)
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        if match_condition == MatchConditions.IfModified:
+            error_map[412] = ResourceNotModifiedError
+        if match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        if match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        try:
+            snapshot = await self._impl.get_snapshot(
+                name=name,
+                if_match=prep_if_match(etag, match_condition),
+                if_none_match=prep_if_none_match(etag, match_condition),
+                select=select,
+                error_map=error_map,
+                **kwargs
+            )
+            return ConfigurationSettingSnapshot._from_generated(snapshot)
+        except HttpResponseError as error:
+            raise error
+
+    @distributed_trace
+    def list_snapshots(
+        self, name: Optional[str] = None, status: Optional[str] = None, **kwargs
+    ) -> AsyncItemPaged[ConfigurationSettingSnapshot]:
+        """List the configuration setting snapshots stored in the configuration service, optionally filtered by
+        snapshot name and status
+
+        :param name: Filter results based on snapshot name
+        :type name: str
+        :keyword status: Filter results based on snapshot keys
+        :type status: str
+        :keyword str after: Instruct the server to return elements that appear after the element referred to by the
+         specified token
+        :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields
+        :return: An iterator of :class:`~azure.appconfiguration.ConfigurationSettingSnapshot`
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[ConfigurationSettingSnapshot]
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`
+        """
+        after=kwargs.pop("after", None)
+        select=kwargs.pop("fields", None)
+        error_map = {401: ClientAuthenticationError}
+        try:
+            return self._impl.get_snapshots(
+                name=name,
+                after=after,
+                select=select,
+                status=status,
+                cls=lambda objs: [
+                    ConfigurationSettingSnapshot._from_generated(x) for x in objs
+                ],
+                error_map=error_map,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            raise error
 
     def update_sync_token(self, token: str) -> None:
 
