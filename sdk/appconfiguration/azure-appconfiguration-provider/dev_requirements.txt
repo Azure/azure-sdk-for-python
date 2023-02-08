@@ -1,6 +1,6 @@
 -e ../../../tools/azure-devtools
 azure-core
-azure-appconfiguration
+azure-appconfiguration==1.4.0b1
 azure-identity
 azure-keyvault-secrets
 aiohttp>=3.0
