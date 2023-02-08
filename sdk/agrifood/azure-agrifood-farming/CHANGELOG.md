@@ -2,6 +2,9 @@
 
 ## 1.0.0b2 (Unreleased)
 - Adding clients for Sensor Integration which includes crud operations on DeviceDataModels, Devices, SensorDataModels, Sensors, SensorMappings, SensorPartnerIntegration and get Sensor events.
+- Renaming farmers to parties as per the new API version
+- Renaming Crop Variety to Crop Product
+- Adding new APIs for STAC search
 
 ### Bugs Fixed
 

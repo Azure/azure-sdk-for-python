@@ -11,7 +11,7 @@ from devtools_testutils import recorded_by_proxy
 from testcase import FarmBeatsPowerShellPreparer, FarmBeatsTestCase
 
 
-class TestFarmHeirarchy(FarmBeatsTestCase):    
+class TestFarmHierarchy(FarmBeatsTestCase):    
     @FarmBeatsPowerShellPreparer()
     @recorded_by_proxy
     def test_party_operations(self, **kwargs):

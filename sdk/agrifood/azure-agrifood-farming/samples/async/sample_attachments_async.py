@@ -24,12 +24,12 @@ from typing import Dict
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.agrifood.farming.aio import FarmBeatsClient
-from azure.agrifood.farming.models import Party
 from pathlib import Path
 import asyncio
 import os
 from dotenv import load_dotenv
 import random
+import pathlib
 
 
 async def sample_attachments_async():
@@ -46,8 +46,9 @@ async def sample_attachments_async():
     farm_id = "contoso-farm"
     attachment_on_party_id = "contoso-party-attachment-1"
     attachment_on_farm_id = "contoso-farm-attachment-1"
-    attachment_on_party_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
-    attachment_on_farm_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
+    file_path = str(pathlib.Path(pathlib.Path(__file__).parent.parent.resolve(), "test.txt"))
+    attachment_on_party_file_path = file_path
+    attachment_on_farm_file_path = file_path
 
     if not (os.path.isfile(attachment_on_party_file_path) and 
             os.path.isfile(attachment_on_farm_file_path)):
@@ -60,7 +61,7 @@ async def sample_attachments_async():
     await client.parties.create_or_update(
         party_id=party_id,
         party={
-            "name": "Comtoso Party",
+            "name": "Contoso Party",
             "description": "Contoso Party.",
             "status": "Contoso Status",
             "properties": {
@@ -78,7 +79,7 @@ async def sample_attachments_async():
         party_id=party_id,
         farm_id=farm_id,
         farm={
-            "name": "Comtoso Farm",
+            "name": "Contoso Farm",
             "description": "Contoso Farm.",
             "status": "Contoso Status"
         }

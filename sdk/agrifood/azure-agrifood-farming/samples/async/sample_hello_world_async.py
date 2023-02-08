@@ -22,7 +22,6 @@ USAGE:
 
 from azure.identity.aio import DefaultAzureCredential
 from azure.agrifood.farming.aio import FarmBeatsClient
-from azure.agrifood.farming.models import Party
 import os
 import asyncio
 from dotenv import load_dotenv

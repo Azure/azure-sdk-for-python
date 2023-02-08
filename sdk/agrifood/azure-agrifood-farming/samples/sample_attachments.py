@@ -28,6 +28,7 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 import random
+import pathlib
 
 
 def sample_attachments():
@@ -44,8 +45,9 @@ def sample_attachments():
     farm_id = "contoso-farm"
     attachment_on_party_id = "contoso-party-attachment-1"
     attachment_on_farm_id = "contoso-farm-attachment-1"
-    attachment_on_party_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
-    attachment_on_farm_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
+    file_path = str(pathlib.Path(pathlib.Path(__file__).parent.resolve(), "test.txt"))
+    attachment_on_party_file_path = file_path
+    attachment_on_farm_file_path = file_path
 
     if not (os.path.isfile(attachment_on_party_file_path) and 
             os.path.isfile(attachment_on_farm_file_path)):
@@ -58,7 +60,7 @@ def sample_attachments():
     client.parties.create_or_update(
         party_id=party_id,
         party={
-            "name": "Comtoso Party",
+            "name": "Contoso Party",
             "description": "Contoso Party.",
             "status": "Contoso Status",
             "properties": {
@@ -76,7 +78,7 @@ def sample_attachments():
         party_id=party_id,
         farm_id=farm_id,
         farm={
-            "name": "Comtoso Farm",
+            "name": "Contoso Farm",
             "description": "Contoso Farm.",
             "status": "Contoso Status"
         }
@@ -126,7 +128,7 @@ def sample_attachments():
         attachment = {
             "resourceId": farm_id,
             "resourceType": "Farm",
-            "name": "aasdf"
+            "name": "attachment name"
         }
 
         client.attachments.create_or_update(
@@ -157,7 +159,7 @@ def sample_attachments():
         attachment = {
             "resourceId": farm_id,
             "resourceType": "Farm",
-            "name": "aasdf"
+            "name": "attachment name"
         }
 
         client.attachments.create_or_update(

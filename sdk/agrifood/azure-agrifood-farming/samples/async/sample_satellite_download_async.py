@@ -23,7 +23,6 @@ USAGE:
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity.aio import DefaultAzureCredential
 from azure.agrifood.farming.aio import FarmBeatsClient
-from azure.agrifood.farming.models import Party, Boundary, Polygon, SatelliteDataIngestionJob, SatelliteData
 import asyncio
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
@@ -156,6 +155,8 @@ async def sample_satellite_download_async():
         boundary_id=boundary_id,
         start_date_time=start_date_time,
         end_date_time=end_date_time,
+        provider="Microsoft",
+        source="Sentinel_2_L2A"
     )
     print("Done")        
 

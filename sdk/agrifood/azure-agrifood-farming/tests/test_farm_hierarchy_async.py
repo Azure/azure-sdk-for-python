@@ -12,7 +12,7 @@ from testcase_async import FarmBeatsAsyncTestCase
 from testcase import FarmBeatsPowerShellPreparer
 
 
-class TestFarmHeirarchyAsync(FarmBeatsAsyncTestCase):    
+class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):    
     @FarmBeatsPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_party_operations(self, **kwargs):
