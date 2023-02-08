@@ -126,12 +126,6 @@ def necessary_to_install(version_requested) -> bool:
     precached_version = Version(MAX_PRECACHED_VERSION)
     precached = True
 
-    try:
-        version_from_spec = Version(args.version_spec)
-    except InvalidVersion:
-        print("Invalid Version Spec. Skipping custom install.")
-        exit(1)
-
     # the azure devops folks would prefer that we request python version by Major.Minor, EG
     # "3.11", "3.9". However, in cases like "3.11", the max precached version is "3.11.1".
     # This means that if we do a simple check of 3.11 > 3.11.1, we will FAIL, which will result in
@@ -166,6 +160,12 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
+
+    try:
+        version_from_spec = Version(args.version_spec)
+    except InvalidVersion:
+        print("Invalid Version Spec. Skipping custom install.")
+        exit(0)
 
     if necessary_to_install(args.version_spec):
         with urllib.request.urlopen(MANIFEST_LOCATION) as url:
