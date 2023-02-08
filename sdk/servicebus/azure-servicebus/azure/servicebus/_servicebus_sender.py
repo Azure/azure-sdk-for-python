@@ -16,9 +16,6 @@ from ._common.message import (
     ServiceBusMessageBatch,
 )
 from .amqp import AmqpAnnotatedMessage
-from .exceptions import (
-    OperationTimeoutError
-)
 from ._common.utils import (
     create_authentication,
     transform_outbound_messages,
@@ -39,8 +36,6 @@ from ._common.constants import (
 )
 
 if TYPE_CHECKING:
-    from ._transport._base import AmqpTransport
-    from ._pyamqp.authentication import JWTTokenAuth
     from azure.core.credentials import (
         TokenCredential,
         AzureSasCredential,
@@ -48,11 +43,12 @@ if TYPE_CHECKING:
     )
     try:
         from uamqp import SendClient as uamqp_SendClientSync
-        from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
         pass
 
+    from ._transport._base import AmqpTransport
+    from ._pyamqp.authentication import JWTTokenAuth
     from ._pyamqp.client import SendClient as SendClientSync
     MessageTypes = Union[
         Mapping[str, Any],
@@ -72,16 +68,11 @@ _LOGGER = logging.getLogger(__name__)
 
 class SenderMixin(object):
     def _create_attribute(self, **kwargs):
-        self._amqp_transport: AmqpTransport
-        self._auth_uri = "sb://{}/{}".format(
-            self.fully_qualified_namespace, self._entity_name
-        )
-        self._entity_uri = "amqps://{}/{}".format(
-            self.fully_qualified_namespace, self._entity_name
-        )
+        self._auth_uri = f"sb://{self.fully_qualified_namespace}/{self._entity_name}"
+        self._entity_uri = f"amqps://{self.fully_qualified_namespace}/{self._entity_name}"
         # TODO: What's the retry overlap between servicebus and pyamqp?
         self._error_policy = self._amqp_transport.create_retry_policy(self._config)
-        self._name = kwargs.get("client_identifier","SBSender-{}".format(uuid.uuid4()))
+        self._name = kwargs.get("client_identifier",f"SBSender-{uuid.uuid4()}")
         self._max_message_size_on_link = 0
         self.entity_name = self._entity_name
 
@@ -91,13 +82,15 @@ class SenderMixin(object):
         for message in messages:
             if not isinstance(message, ServiceBusMessage):
                 raise ValueError(
-                    "Scheduling batch messages only supports iterables containing "
-                    "ServiceBusMessage Objects. Received instead: {}".format(
-                        message.__class__.__name__
-                    )
+                    f"Scheduling batch messages only supports iterables containing "
+                    f"ServiceBusMessage Objects. Received instead: {message.__class__.__name__}"
                 )
             message.scheduled_enqueue_time_utc = schedule_time_utc
-            message = transform_outbound_messages(message, ServiceBusMessage, to_outgoing_amqp_message=amqp_transport.to_outgoing_amqp_message)
+            message = transform_outbound_messages(
+                message,
+                ServiceBusMessage,
+                to_outgoing_amqp_message=amqp_transport.to_outgoing_amqp_message
+            )
             trace_message(message, send_span)
             message_data = {}
             message_data[MGMT_REQUEST_MESSAGE_ID] = message.message_id
@@ -157,6 +150,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         topic_name: Optional[str] = None,
         **kwargs: Any
     ) -> None:
+        self._amqp_transport: AmqpTransport
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,

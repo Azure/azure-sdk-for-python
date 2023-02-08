@@ -6,7 +6,7 @@
 import logging
 import time
 import datetime
-from typing import Optional, Union, Any, Tuple, cast, List, TYPE_CHECKING
+from typing import Optional, Tuple, cast, List, TYPE_CHECKING
 
 from azure.core.serialization import TZ_UTC
 from .._pyamqp import (
@@ -32,7 +32,7 @@ from .._pyamqp._encode import encode_payload
 from .._pyamqp._decode import decode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
 from .._pyamqp.authentication import JWTTokenAuth
-from .._pyamqp.endpoints import Source, ApacheFilters
+from .._pyamqp.endpoints import Source
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
 from ._base import AmqpTransport
@@ -199,8 +199,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         message = cast(List, [None] * 9)
         message[5] = data
         return message
-        #return BatchMessage(data=data)
-    
+
     @staticmethod
     def get_message_delivery_tag(_, frame):  # pylint: disable=unused-argument
         """
@@ -336,7 +335,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param List message: Message to get encoded size of.
         :rtype: int
         """
-        #return utils.get_message_encoded_size(message)
         return utils.get_message_encoded_size(BatchMessage(*message))
 
     @staticmethod
@@ -428,7 +426,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return connection.state
 
     @staticmethod
-    def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
+    def create_send_client(config, **kwargs):
         """
         Creates and returns the pyamqp SendClient.
         :keyword ~azure.servicebus._configuration.Configuration config: The configuration. Required.
@@ -475,7 +473,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException as e:
-            raise PyamqpTransport._create_servicebus_exception(_LOGGER, e)
+            raise PyamqpTransport.create_servicebus_exception(_LOGGER, e)
 
     #@staticmethod
     #def set_message_partition_key(message, partition_key, **kwargs):
@@ -546,10 +544,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :keyword dict link_properties: Required.
         :keyword properties: Required.
         :keyword link_credit: Required. The prefetch.
-        :keyword keep_alive_interval: Required. Missing in pyamqp.
+        :keyword keep_alive_interval: Required.
         :keyword desired_capabilities: Required.
         :keyword streaming_receive: Required.
-        :keyword message_received_callback: Required.
         :keyword timeout: Required.
         """
 
@@ -574,7 +571,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
         Opens the receive client and returns ready status.
         :param ReceiveClient handler: The receive client.
-        :param ~azure.eventhub.EventHubConsumerClient client: The consumer client.
+        :param ~azure.eventhub.ServiceBusConsumerClient client: The consumer client.
         :param auth: Auth.
         :rtype: bool
         """
@@ -657,7 +654,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: int
         """
         return time.time()
-    
+
     @staticmethod
     def reset_link_credit(handler, link_credit):
         """
@@ -667,7 +664,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: None
         """
         handler._link.flow(link_credit=link_credit)
-    
+
     @staticmethod
     def settle_message_via_receiver_link(
         handler: ReceiveClient,
@@ -708,7 +705,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         raise ValueError(
             f"Unsupported settle operation type: {settle_operation}"
         )
-    
+
     @staticmethod
     def parse_received_message(message, message_type, **kwargs):
         """
@@ -729,7 +726,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 )
             )
         return parsed
-    
+
     @staticmethod
     def get_message_value(message):
         return message.value
@@ -738,7 +735,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     #def check_link_stolen(consumer, exception):
     #    """
     #    Checks if link stolen and handles exception.
-    #    :param consumer: The EventHubConsumer.
+    #    :param consumer: The ServiceBusConsumer.
     #    :param exception: Exception to check.
     #    """
 
@@ -807,7 +804,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param mgmt_auth: Auth.
         """
         return mgmt_auth.get_token()
-    
+
     @staticmethod
     def create_mgmt_msg(
         message,
@@ -955,7 +952,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         logger, error_description, condition=None, description=None, status_code=None
     ):
         if description:
-            error_description += " {}.".format(description)
+            error_description += f" {description}."
 
         raise PyamqpTransport._handle_amqp_exception_with_condition(
             logger,
@@ -966,7 +963,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def _create_servicebus_exception(logger, exception):
+    def create_servicebus_exception(logger, exception):
         if isinstance(exception, AMQPException):
             # handling AMQP Errors that have the condition field
             condition = exception.condition
@@ -979,7 +976,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 "Unexpected error occurred (%r). Handler shutting down.", exception
             )
             exception = ServiceBusError(
-                message="Handler failed: {}.".format(exception), error=exception
+                message=f"Handler failed: {exception}.", error=exception
             )
 
         return exception

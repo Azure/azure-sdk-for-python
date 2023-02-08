@@ -118,7 +118,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         uamqp_transport = kwargs.pop("uamqp_transport", False)
         if uamqp_transport and not UamqpTransport:
             raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
-        self._amqp_transport = kwargs.pop("amqp_transport", UamqpTransport if uamqp_transport else PyamqpTransport)
+        self._amqp_transport = UamqpTransport if uamqp_transport else PyamqpTransport
 
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
@@ -139,12 +139,12 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._connection = None
         # Optional entity name, can be the name of Queue or Topic.  Intentionally not advertised, typically be needed.
         self._entity_name = kwargs.get("entity_name")
-        self._auth_uri = "sb://{}".format(self.fully_qualified_namespace)
+        self._auth_uri = f"sb://{self.fully_qualified_namespace}"
         if self._entity_name:
-            self._auth_uri = "{}/{}".format(self._auth_uri, self._entity_name)
+            self._auth_uri = f"{self._auth_uri}/{self._entity_name}"
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
-        self._handlers = WeakSet()  # type: WeakSet
+        self._handlers: WeakSet = WeakSet()
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
 

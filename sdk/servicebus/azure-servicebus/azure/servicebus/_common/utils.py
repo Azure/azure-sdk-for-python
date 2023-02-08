@@ -65,6 +65,7 @@ if TYPE_CHECKING:
     except ImportError:
         pass
     from .._pyamqp.message import Message
+    from .._pyamqp.authentication import JWTTokenAuth
     from .message import (
         ServiceBusReceivedMessage,
         ServiceBusMessage,

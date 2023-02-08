@@ -56,11 +56,13 @@ from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
     try:
-        from uamqp import ReceiveClient as uamqp_ReceiveClientSync
+        from uamqp import ReceiveClient as uamqp_ReceiveClientSync, Message as uamqp_Message
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
         pass
+    from ._transport._base import AmqpTransport
     from ._pyamqp.client import ReceiveClient as ReceiveClientSync
+    from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
     from ._common.auto_lock_renewer import AutoLockRenewer
     from azure.core.credentials import (
@@ -154,6 +156,7 @@ class ServiceBusReceiver(
         **kwargs: Any,
     ) -> None:
         self._message_iter: Optional[Iterator[ServiceBusReceivedMessage]] = None
+        self._amqp_transport: AmqpTransport
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -293,8 +296,9 @@ class ServiceBusReceiver(
             self._receive_context.clear()
 
     @classmethod
-    def _from_connection_string(cls, conn_str, **kwargs):
-        # type: (str, Any) -> ServiceBusReceiver
+    def _from_connection_string(
+        cls, conn_str: str, **kwargs: Any
+    ) -> "ServiceBusReceiver":
         """Create a ServiceBusReceiver from a connection string.
 
         :param conn_str: The connection string of a Service Bus.
@@ -355,15 +359,6 @@ class ServiceBusReceiver(
 
     def _create_handler(self, auth: Union["JWTTokenAuth", "uamqp_JWTTokenAuth"]) -> None:
 
-
-        #self._handler = self._amqp_transport.create_send_client(
-        #    config=self._config,
-        #    target=self._entity_uri,
-        #    auth=auth,
-        #    properties=self._properties,
-        #    retry_policy=self._error_policy,
-        #    client_name=self._name,
-        #)
         self._handler = self._amqp_transport.create_receive_client(
             config=self._config,
             source=self._get_source(),
@@ -417,8 +412,9 @@ class ServiceBusReceiver(
         if self._auto_lock_renewer and self._session:
             self._auto_lock_renewer.register(self, self.session)
 
-    def _receive(self, max_message_count=None, timeout=None):
-        # type: (Optional[int], Optional[float]) -> List[ServiceBusReceivedMessage]
+    def _receive(
+        self, max_message_count: Optional[int] = None, timeout: Optional[float] = None
+    ) -> List[ServiceBusReceivedMessage]:
         # pylint: disable=protected-access
         try:
             self._receive_context.set()
@@ -532,12 +528,11 @@ class ServiceBusReceiver(
 
     def _settle_message(
         self,
-        message,
-        settle_operation,
-        dead_letter_reason=None,
-        dead_letter_error_description=None,
-    ):
-        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
+        message: ServiceBusReceivedMessage,
+        settle_operation: str,
+        dead_letter_reason: Optional[str] = None,
+        dead_letter_error_description: Optional[str] = None,
+    ) -> None:
         # pylint: disable=protected-access
         try:
             if not message._is_deferred_message:
@@ -600,8 +595,7 @@ class ServiceBusReceiver(
         )
 
 
-    def _renew_locks(self, *lock_tokens, **kwargs):
-        # type: (str, Any) -> Any
+    def _renew_locks(self, *lock_tokens: str, **kwargs: Any) -> Any:
         timeout = kwargs.pop("timeout", None)
         message = {MGMT_REQUEST_LOCK_TOKENS: self._amqp_transport.AMQP_ARRAY_VALUE(lock_tokens)}
         return self._mgmt_request_response_with_retry(
@@ -616,8 +610,7 @@ class ServiceBusReceiver(
         super(ServiceBusReceiver, self)._close_handler()
 
     @property
-    def session(self):
-        # type: () -> ServiceBusSession
+    def session(self) -> ServiceBusSession:
         """
         Get the ServiceBusSession object linked with the receiver. Session is only available to session-enabled
         entities, it would return None if called on a non-sessionful receiver.
@@ -635,13 +628,13 @@ class ServiceBusReceiver(
         """
         return self._session  # type: ignore
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         super(ServiceBusReceiver, self).close()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
 
-    def _get_streaming_message_iter(self, max_wait_time=None):
-        # type: (Optional[float]) -> Iterator[ServiceBusReceivedMessage]
+    def _get_streaming_message_iter(
+        self, max_wait_time: Optional[float] = None
+    ) -> Iterator[ServiceBusReceivedMessage]:
         """Receive messages from an iterator indefinitely, or if a max_wait_time is specified, until
         such a timeout occurs.
 

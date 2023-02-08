@@ -75,12 +75,14 @@ from ..exceptions import (
     ServiceBusError,
     ServiceBusConnectionError,
     ServiceBusCommunicationError,
+    MessageAlreadySettled,
     MessageLockLostError,
     MessageNotFoundError,
     MessagingEntityDisabledError,
     MessagingEntityNotFoundError,
     MessagingEntityAlreadyExistsError,
     ServiceBusServerBusyError,
+    ServiceBusAuthenticationError,
     SessionCannotBeLockedError,
     SessionLockLostError,
     OperationTimeoutError
@@ -204,7 +206,8 @@ if uamqp_installed:
             )
         TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
 
-        # To enable extensible string enums for the public facing parameter, and translate to the "real" uamqp constants.
+        # To enable extensible string enums for the public facing parameter
+        # and translate to the "real" uamqp constants.
         ServiceBusToAMQPReceiveModeMap = {
             ServiceBusReceiveMode.PEEK_LOCK: constants.ReceiverSettleMode.PeekLock,
             ServiceBusReceiveMode.RECEIVE_AND_DELETE: constants.ReceiverSettleMode.ReceiveAndDelete,
@@ -348,7 +351,7 @@ if uamqp_installed:
                 delivery_annotations=annotated_message.delivery_annotations,
                 footer=annotated_message.footer
             )
-        
+
         @staticmethod
         def encode_message(message):
             """
@@ -398,7 +401,7 @@ if uamqp_installed:
             :rtype: int
             """
             return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
-        
+
         @staticmethod
         def get_handler_link_name(handler):
             """
@@ -462,7 +465,7 @@ if uamqp_installed:
             return connection._state    # pylint:disable=protected-access
 
         @staticmethod
-        def create_send_client(*, config, **kwargs): # pylint:disable=unused-argument
+        def create_send_client(config, **kwargs):
             """
             Creates and returns the uamqp SendClient.
             :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -490,7 +493,8 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def _set_msg_timeout(sender, logger, timeout, last_exception):
+        def set_msg_timeout(sender, logger, timeout, last_exception):
+            # pylint: disable=protected-access
             if not timeout:
                 sender._handler._msg_timeout = 0
                 return
@@ -499,9 +503,9 @@ if uamqp_installed:
                     error = last_exception
                 else:
                     error = OperationTimeoutError(message="Send operation timed out")
-                logger.info("%r send operation timed out. (%r)", sender._name, error) # pylint: disable=protected-access
+                logger.info("%r send operation timed out. (%r)", sender._name, error)
                 raise error
-            sender._handler._msg_timeout = timeout * UamqpTransport.TIMEOUT_FACTOR # type: ignore  # pylint: disable=protected-access
+            sender._handler._msg_timeout = timeout * UamqpTransport.TIMEOUT_FACTOR # type: ignore
 
         @staticmethod
         def send_messages(sender, message, logger, timeout, last_exception):
@@ -519,10 +523,10 @@ if uamqp_installed:
             sender._open()
             default_timeout = sender._handler._msg_timeout
             try:
-                UamqpTransport._set_msg_timeout(sender, logger, timeout, last_exception)
+                UamqpTransport.set_msg_timeout(sender, logger, timeout, last_exception)
                 sender._handler.send_message(message._message)
             finally:
-                UamqpTransport._set_msg_timeout(sender, logger, default_timeout, None)
+                UamqpTransport.set_msg_timeout(sender, logger, default_timeout, None)
 
         #@staticmethod
         #def set_message_partition_key(message, partition_key, **kwargs):  # pylint:disable=unused-argument
@@ -593,8 +597,6 @@ if uamqp_installed:
             :keyword link_credit: Required. The prefetch.
             :keyword keep_alive_interval: Required.
             :keyword desired_capabilities: Required.
-            :keyword streaming_receive: Required.
-            :keyword message_received_callback: Required.
             :keyword timeout: Required.
             """
 
@@ -629,7 +631,7 @@ if uamqp_installed:
             handler.open(connection=client._conn_manager.get_connection(
                 client._address.hostname, auth
             ))
-        
+
         @staticmethod
         def on_attach(receiver, source, target, properties, error): # pylint: disable=unused-argument
             """
@@ -667,6 +669,7 @@ if uamqp_installed:
             message_type: "ServiceBusReceivedMessage",
             received: "Message"
         ):
+            # pylint: disable=protected-access
             message = message_type(
                 message=received, receive_mode=receiver._receive_mode, receiver=receiver
             )
@@ -680,7 +683,7 @@ if uamqp_installed:
             :param ReceiveClient handler: Handler to set timeout on.
             :rtype: int
             """
-            return handler._timeout
+            return handler._timeout    # pylint: disable=protected-access
 
         @staticmethod
         def set_receive_timeout(handler, max_wait_time):
@@ -690,8 +693,8 @@ if uamqp_installed:
             :param int max_wait_time: Max wait time.
             :rtype: None
             """
-            handler._timeout = max_wait_time
-        
+            handler._timeout = max_wait_time    # pylint: disable=protected-access
+
         @staticmethod
         def get_current_time(handler):
             """
@@ -699,8 +702,8 @@ if uamqp_installed:
             :param ReceiveClient handler: Handler with counter to get time.
             :rtype: int
             """
-            return handler._counter.get_current_ms()
-        
+            return handler._counter.get_current_ms()    # pylint: disable=protected-access
+
         @staticmethod
         def reset_link_credit(handler, link_credit):
             """
@@ -721,7 +724,7 @@ if uamqp_installed:
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
         ) -> None:  # pylint: disable=unused-argument
-            UamqpTransport._settle_message_via_receiver_link(
+            UamqpTransport.settle_message_via_receiver_link_impl(
                 handler,
                 message,
                 settle_operation,
@@ -731,13 +734,14 @@ if uamqp_installed:
             return
 
         @staticmethod
-        def _settle_message_via_receiver_link(
+        def settle_message_via_receiver_link_impl(
             _: ReceiveClient,
             message: "ServiceBusReceivedMessage",
             settle_operation: str,
             dead_letter_reason: Optional[str] = None,
             dead_letter_error_description: Optional[str] = None,
         ) -> Callable:  # pylint: disable=unused-argument
+            # pylint: disable=protected-access
             if settle_operation == MESSAGE_COMPLETE:
                 return functools.partial(message._message.accept)
             if settle_operation == MESSAGE_ABANDON:
@@ -755,7 +759,7 @@ if uamqp_installed:
             if settle_operation == MESSAGE_DEFER:
                 return functools.partial(message._message.modify, True, True)
             raise ValueError(
-                "Unsupported settle operation type: {}".format(settle_operation)
+                f"Unsupported settle operation type: {settle_operation}"
             )
 
         @staticmethod
@@ -778,7 +782,7 @@ if uamqp_installed:
                     )
                 )
             return parsed
-    
+
         @staticmethod
         def get_message_value(message):
             return message.get_data()
@@ -1020,7 +1024,7 @@ if uamqp_installed:
             logger, error_description, condition=None, description=None, status_code=None
         ):
             if description:
-                error_description += " {}.".format(description)
+                error_description += f" {description}."
 
             raise UamqpTransport._handle_amqp_exception_with_condition(
                 logger,
@@ -1031,7 +1035,7 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def _create_servicebus_exception(logger, exception):
+        def create_servicebus_exception(logger, exception):
             if isinstance(exception, AMQPErrors.AMQPError):
                 try:
                     # handling AMQP Errors that have the condition field
@@ -1048,7 +1052,7 @@ if uamqp_installed:
                     "Unexpected error occurred (%r). Handler shutting down.", exception
                 )
                 exception = ServiceBusError(
-                    message="Handler failed: {}.".format(exception), error=exception
+                    message=f"Handler failed: {exception}.", error=exception
                 )
 
             return exception

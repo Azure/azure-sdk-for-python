@@ -94,21 +94,12 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def create_connection_async(**kwargs):
+    async def create_connection_async(host, auth, network_trace, **kwargs):
         """
-        Creates and returns the uamqp async Connection object.
-        :keyword str host: The hostname, used by uamqp.
-        :keyword JWTTokenAuth auth: The auth, used by uamqp.
-        :keyword str endpoint: The endpoint, used by pyamqp.
-        :keyword str container_id: Required.
-        :keyword int max_frame_size: Required.
-        :keyword int channel_max: Required.
-        :keyword int idle_timeout: Required.
-        :keyword Dict properties: Required.
-        :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
-        :keyword error_policy: Required.
-        :keyword bool debug: Required.
-        :keyword str encoding: Required.
+        Creates and returns the pyamqp Connection object.
+        :param str host: The hostname used by pyamqp.
+        :param JWTTokenAuth auth: The auth used by pyamqp.
+        :param bool network_trace: Debug setting.
         """
 
     @staticmethod
@@ -246,15 +237,25 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
+    async def mgmt_client_request_async(
+        mgmt_client,
+        mgmt_msg,
+        *,
+        operation,
+        operation_type,
+        node,
+        timeout,
+        callback
+    ):
         """
         Send mgmt request.
-        :param AMQP Client mgmt_client: Client to send request with.
-        :param str mgmt_msg: Message.
+        :param AMQPClient mgmt_client: Client to send request with.
+        :param Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
-        :keyword operation_type: Op type.
-        :keyword status_code_field: mgmt status code.
-        :keyword description_fields: mgmt status desc.
+        :keyword bytes operation_type: Op type.
+        :keyword bytes node: Mgmt target.
+        :keyword int timeout: Timeout.
+        :keyword Callable callback: Callback to process request response.
         """
 
     @staticmethod

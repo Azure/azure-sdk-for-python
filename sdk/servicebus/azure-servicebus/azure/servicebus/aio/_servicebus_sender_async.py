@@ -35,12 +35,20 @@ from .._common.utils import (
 )
 from ..exceptions import (
     OperationTimeoutError,
-    _create_servicebus_exception
+    create_servicebus_exception
 )
 from ._async_utils import create_authentication
 
 if TYPE_CHECKING:
+    try:
+        from uamqp.async_ops.client_async import SendClientAsync as uamqp_SendClientAsync
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
+    except ImportError:
+        pass
     from azure.core.credentials_async import AsyncTokenCredential
+    from ._transport._base_async import AmqpTransportAsync
+    from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
+    from .._pyamqp.aio import SendClientAsync
 
 
 MessageTypes = Union[
@@ -108,6 +116,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         topic_name: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        self._amqp_transport: AmqpTransportAsync
         if kwargs.get("entity_name"):
             super(ServiceBusSender, self).__init__(
                 fully_qualified_namespace=fully_qualified_namespace,
@@ -136,7 +145,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         self._max_message_size_on_link = 0
         self._create_attribute(**kwargs)
         self._connection = kwargs.get("connection")
-        self._handler: SendClientAsync
+        self._handler: Union["SendClientAsync", "uamqp_SendClientAsync"]
 
     @classmethod
     def _from_connection_string(
@@ -173,26 +182,15 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         constructor_args = cls._convert_connection_string_to_kwargs(conn_str, **kwargs)
         return cls(**constructor_args)
 
-    def _create_handler(self, auth):
-        custom_endpoint_address = self._config.custom_endpoint_address # pylint:disable=protected-access
-        transport_type = self._config.transport_type # pylint:disable=protected-access
-        hostname = self.fully_qualified_namespace
-        if transport_type.name == 'AmqpOverWebsocket':
-            hostname += '/$servicebus/websocket/'
-            if custom_endpoint_address:
-                custom_endpoint_address += '/$servicebus/websocket/'
+    def _create_handler(self, auth: Union["uamqp_JWTTokenAsync", "JWTTokenAuthAsync"]) -> None:
 
-        self._handler = SendClientAsync(
-            hostname,
-            self._entity_uri,
+        self._handler = self._amqp_transport.create_send_client(
+            config=self._config,
+            target=self._entity_uri,
             auth=auth,
-            network_trace=self._config.logging_enable,
             properties=self._properties,
             retry_policy=self._error_policy,
             client_name=self._name,
-            keep_alive_interval=self._config.keep_alive,
-            transport_type=self._config.transport_type,
-            http_proxy=self._config.http_proxy
         )
 
     async def _open(self):
@@ -231,7 +229,7 @@ class ServiceBusSender(BaseHandler, SenderMixin):
         except TimeoutError:
             raise OperationTimeoutError(message="Send operation timed out")
         except MessageException as e:
-            raise _create_servicebus_exception(_LOGGER, e)
+            raise create_servicebus_exception(_LOGGER, e)
 
     async def schedule_messages(
         self,

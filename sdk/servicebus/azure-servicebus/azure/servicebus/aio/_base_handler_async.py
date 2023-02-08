@@ -6,13 +6,10 @@ import logging
 import asyncio
 import uuid
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
-from .._pyamqp.utils import amqp_string_value
-from .._pyamqp.message import Message, Properties
-from .._pyamqp.aio._client_async import AMQPClientAsync
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
 from .._common._configuration import Configuration
 from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
@@ -27,10 +24,15 @@ from ..exceptions import (
     ServiceBusConnectionError,
     SessionLockLostError,
     OperationTimeoutError,
-    _create_servicebus_exception,
 )
 
 if TYPE_CHECKING:
+    try:
+        from uamqp.async_ops import AMQPClientAsync as uamqp_AMQPClientAsync
+    except ImportError:
+        pass
+    from .._pyamqp.aio._client_async import AMQPClientAsync
+    from .._pyamqp.message import Message
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -86,8 +88,7 @@ class ServiceBusAzureNamedKeyTokenCredentialAsync(object):
     :type credential: ~azure.core.credentials.AzureNamedKeyCredential
     """
 
-    def __init__(self, azure_named_key_credential):
-        # type: (AzureNamedKeyCredential) -> None
+    def __init__(self, azure_named_key_credential: AzureNamedKeyCredential) -> None:
         self._credential = azure_named_key_credential
         self.token_type = b"servicebus.windows.net:sastoken"
 
@@ -124,6 +125,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
+        self._amqp_transport = kwargs.pop("amqp_transport")
+
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(
             fully_qualified_namespace.strip()
@@ -142,11 +145,18 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         else:
             self._credential = credential # type: ignore
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
-        self._config = Configuration(**kwargs)
+        self._config = Configuration(
+            hostname=self.fully_qualified_namespace,
+            amqp_transport=self._amqp_transport,
+            **kwargs
+        )
         self._running = False
-        self._handler = cast(AMQPClientAsync, None)  # type: AMQPClientAsync
+        self._handler: Union["uamqp_AMQPClientAsync", "AMQPClientAsync"] = None # type: ignore
         self._auth_uri = None
-        self._properties = create_properties(self._config.user_agent)
+        self._properties = create_properties(
+            self._config.user_agent,
+            amqp_transport=self._amqp_transport,
+        )
         self._shutdown = asyncio.Event()
 
     @classmethod
@@ -173,7 +183,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     async def _handle_exception(self, exception):
         # pylint: disable=protected-access
-        error = _create_servicebus_exception(_LOGGER, exception)
+        error = self._amqp_transport.create_servicebus_exception(_LOGGER, exception)
 
         try:
             # If SessionLockLostError or ServiceBusConnectionError happen when a session receiver is running,
@@ -224,8 +234,12 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         except AttributeError:
             pass
 
-    async def _do_retryable_operation(self, operation, timeout=None, **kwargs):
-        # type: (Callable, Optional[float], Any) -> Any
+    async def _do_retryable_operation(
+        self,
+        operation: Callable,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> Any:
         require_last_exception = kwargs.pop("require_last_exception", False)
         operation_requires_timeout = kwargs.pop("operation_requires_timeout", False)
         retried_times = 0
@@ -292,14 +306,13 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     async def _mgmt_request_response(
         self,
-        mgmt_operation,
-        message,
-        callback,
-        keep_alive_associated_link=True,
-        timeout=None,
-        **kwargs
-    ):
-        # type: (bytes, Message, Callable, bool, Optional[float], Any) -> Message
+        mgmt_operation: bytes,
+        message: Any,
+        callback: Callable,
+        keep_alive_associated_link: bool = True,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> "Message":
         """
         Execute an amqp management operation.
 
@@ -322,36 +335,45 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._handler._link.name  # pylint: disable=protected-access
+                    ASSOCIATEDLINKPROPERTYNAME: self._amqp_transport.get_handler_link_name(self._handler)
                 }
             except AttributeError:
                 pass
-        mgmt_msg = Message( # type: ignore  # TODO: fix mypy
-            value=message,
-            properties=Properties(reply_to=self._mgmt_target, **kwargs),
+
+        mgmt_msg = self._amqp_transport.create_mgmt_msg(    # type: ignore  # TODO: fix mypy
+            message=message,
             application_properties=application_properties,
+            config=self._config,
+            reply_to=self._mgmt_target,
+            **kwargs
         )
+
         try:
-            status, description, response = await self._handler.mgmt_request_async(
+            return await self._amqp_transport.mgmt_client_request_async(
+                self._handler,
                 mgmt_msg,
-                operation=amqp_string_value(mgmt_operation),
-                operation_type=amqp_string_value(MGMT_REQUEST_OP_TYPE_ENTITY_MGMT),
+                operation=mgmt_operation,
+                operation_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
+                timeout=timeout,
+                callback=callback
             )
-            return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, TimeoutError): #TODO: was compat.TimeoutException
+            if isinstance(exp, self._amqp_transport.TIMEOUT_ERROR):
                 raise OperationTimeoutError(error=exp)
             raise
 
     async def _mgmt_request_response_with_retry(
-        self, mgmt_operation, message, callback, timeout=None, **kwargs
-    ):
-        # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
+        self,
+        mgmt_operation: bytes,
+        message: Dict[str, Any],
+        callback: Callable,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> Any:
         return await self._do_retryable_operation(
             self._mgmt_request_response,
-            mgmt_operation=mgmt_operation.decode("UTF-8"),
+            mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
             timeout=timeout,

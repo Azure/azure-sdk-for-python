@@ -7,25 +7,38 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Union, cast, TYPE_CHECKING, List
+from typing import Union, cast, TYPE_CHECKING, Optional
 
-from ..._pyamqp import constants, error as errors
+from ..._pyamqp import constants, error as AMQPErrors
+from ..._pyamqp.utils import amqp_string_value
 from ..._pyamqp.aio import AMQPClientAsync, SendClientAsync, ReceiveClientAsync
 from ..._pyamqp.aio._authentication_async import JWTTokenAuthAsync
 from ..._pyamqp.aio._connection_async import Connection as ConnectionAsync
 
 from ._base_async import AmqpTransportAsync
+from ..._common.utils import utc_from_timestamp, utc_now
+from ..._common.constants import (
+    DATETIMEOFFSET_EPOCH,
+    SESSION_LOCKED_UNTIL,
+    SESSION_FILTER,
+    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
+    RECEIVER_LINK_DEAD_LETTER_REASON,
+    DEADLETTERNAME,
+    MESSAGE_COMPLETE,
+    MESSAGE_ABANDON,
+    MESSAGE_DEFER,
+    MESSAGE_DEAD_LETTER,
+    ServiceBusReceiveMode,
+)
 from ..._transport._pyamqp_transport import PyamqpTransport
 from ...exceptions import (
-    EventHubError,
-    EventDataSendError,
     OperationTimeoutError
 )
-from ..._common import EventData
 
 if TYPE_CHECKING:
-    from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
     from ..._pyamqp.message import Message
+    from .._servicebus_receiver_async import ServiceBusReceiver as ServiceBusReceiverAsync
+    from ..._common.message import ServiceBusReceivedMessage
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,27 +49,19 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     """
 
     @staticmethod
-    async def create_connection_async(**kwargs):
+    async def create_connection_async(host, auth, network_trace, **kwargs):
         """
         Creates and returns the pyamqp Connection object.
-        :keyword str host: The hostname, used by pyamqp.
-        :keyword JWTTokenAuthAsync auth: The auth, used by pyamqp.
-        :keyword str endpoint: The endpoint, used by pyamqp.
-        :keyword str container_id: Required.
-        :keyword int max_frame_size: Required.
-        :keyword int channel_max: Required.
-        :keyword int idle_timeout: Required.
-        :keyword Dict properties: Required.
-        :keyword int remote_idle_timeout_empty_frame_send_ratio: Required.
-        :keyword error_policy: Required.
-        :keyword bool debug: Required.
-        :keyword str encoding: Required.
+        :param str host: The hostname used by pyamqp.
+        :param JWTTokenAuth auth: The auth used by pyamqp.
+        :param bool network_trace: Debug setting.
         """
-        endpoint = kwargs.pop("endpoint")
-        host = kwargs.pop("host")  # pylint:disable=unused-variable
-        auth = kwargs.pop("auth")  # pylint:disable=unused-variable
-        network_trace = kwargs.pop("debug")
-        return ConnectionAsync(endpoint, network_trace=network_trace, **kwargs)
+        return ConnectionAsync(
+            endpoint=host,
+            sasl_credential=auth.sasl,
+            network_trace=network_trace,
+            **kwargs
+        )
 
     @staticmethod
     async def close_connection_async(connection):
@@ -67,7 +72,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         await connection.close()
 
     @staticmethod
-    def create_send_client(*, config, **kwargs):  # pylint:disable=unused-argument
+    def create_send_client(config, **kwargs):
         """
         Creates and returns the pyamqp SendClient.
         :param ~azure.eventhub._configuration.Configuration config: The configuration.
@@ -83,12 +88,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword properties: Required.
         """
         target = kwargs.pop("target")
-        # TODO: extra passed in to pyamqp, but not used. should be used?
-        msg_timeout = kwargs.pop("msg_timeout")  # pylint: disable=unused-variable  # TODO: not used by pyamqp?
-
         return SendClientAsync(
             config.hostname,
             target,
+            network_trace=config.logging_enable,
+            keep_alive_interval=config.keep_alive,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
             transport_type=config.transport_type,
@@ -134,42 +138,103 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :keyword keep_alive_interval: Required.
         :keyword desired_capabilities: Required.
         :keyword streaming_receive: Required.
-        :keyword message_received_callback: Required.
         :keyword timeout: Required.
         """
 
         source = kwargs.pop("source")
+        receive_mode = kwargs.pop("receive_mode")
+
         return ReceiveClientAsync(
             config.hostname,
             source,
-            receive_settle_mode=constants.ReceiverSettleMode.First,  # TODO: make more descriptive in pyamqp?
             http_proxy=config.http_proxy,
             transport_type=config.transport_type,
             custom_endpoint_address=config.custom_endpoint_address,
             connection_verify=config.connection_verify,
+            receive_settle_mode=PyamqpTransportAsync.ServiceBusToAMQPReceiveModeMap[receive_mode],
+            send_settle_mode=constants.SenderSettleMode.Settled
+            if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
+            else constants.SenderSettleMode.Unsettled,
             **kwargs,
         )
 
     @staticmethod
-    async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
-        while consumer._callback_task_run: # pylint: disable=protected-access
-            async with consumer._message_buffer_lock: # pylint: disable=protected-access
-                messages = [
-                    consumer._message_buffer.popleft() # pylint: disable=protected-access
-                    for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
-                ]
-            events = [EventData._from_message(message) for message in messages] # pylint: disable=protected-access
-            now_time = time.time()
-            if len(events) > 0:
-                await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
-                consumer._last_callback_called_time = now_time # pylint: disable=protected-access
-            else:
-                if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time: # pylint: disable=protected-access
-                    # no events received, and need to callback
-                    await consumer._on_event_received([] if batch else None) # pylint: disable=protected-access
-                    consumer._last_callback_called_time = now_time # pylint: disable=protected-access
-                # backoff a bit to avoid throttling CPU when no events are coming
-                await asyncio.sleep(0.05)
+    async def settle_message_via_receiver_link_async(
+        handler: "ServiceBusReceiverAsync",
+        message: "ServiceBusReceivedMessage",
+        settle_operation: str,
+        dead_letter_reason: Optional[str] = None,
+        dead_letter_error_description: Optional[str] = None,
+    ) -> None:
+        if settle_operation == MESSAGE_COMPLETE:
+            return await handler.settle_messages_async(message.delivery_id, 'accepted')
+        if settle_operation == MESSAGE_ABANDON:
+            return await handler.settle_messages_async(
+                message.delivery_id,
+                'modified',
+                delivery_failed=True,
+                undeliverable_here=False
+            )
+        if settle_operation == MESSAGE_DEAD_LETTER:
+            return await handler.settle_messages_async(
+                message.delivery_id,
+                'rejected',
+                error=AMQPErrors.AMQPError(
+                    condition=DEADLETTERNAME,
+                    description=dead_letter_error_description,
+                    info={
+                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
+                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
+                    }
+                )
+            )
+        if settle_operation == MESSAGE_DEFER:
+            return await handler.settle_messages_async(
+                message.delivery_id,
+                'modified',
+                delivery_failed=True,
+                undeliverable_here=True
+            )
+        raise ValueError(
+            f"Unsupported settle operation type: {settle_operation}"
+        )
+
+    @staticmethod
+    async def on_attach_async(receiver, attach_frame):
+        # pylint: disable=protected-access, unused-argument
+        if receiver._session and attach_frame.source.address.decode(receiver._config.encoding) == receiver._entity_uri:
+            # This has to live on the session object so that autorenew has access to it.
+            receiver._session._session_start = utc_now()
+            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
+            if expiry_in_seconds:
+                expiry_in_seconds = (
+                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
+                ) / 10000000
+                receiver._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
+            session_filter = attach_frame.source.filters[SESSION_FILTER]
+            receiver._session_id = session_filter.decode(receiver._config.encoding)
+            receiver._session._session_id = receiver._session_id
+
+    #@staticmethod
+    #async def _callback_task(consumer, batch, max_batch_size, max_wait_time):
+    #    while consumer._callback_task_run: # pylint: disable=protected-access
+    #        async with consumer._message_buffer_lock: # pylint: disable=protected-access
+    #            messages = [
+    #                consumer._message_buffer.popleft() # pylint: disable=protected-access
+    #                for _ in range(min(max_batch_size, len(consumer._message_buffer))) # pylint: disable=protected-access
+    #            ]
+    #        events = [EventData._from_message(message) for message in messages] # pylint: disable=protected-access
+    #        now_time = time.time()
+    #        if len(events) > 0:
+    #            await consumer._on_event_received(events if batch else events[0]) # pylint: disable=protected-access
+    #            consumer._last_callback_called_time = now_time # pylint: disable=protected-access
+    #        else:
+    #            if max_wait_time and (now_time - consumer._last_callback_called_time) > max_wait_time: # pylint: disable=protected-access
+    #                # no events received, and need to callback
+    #                await consumer._on_event_received([] if batch else None) # pylint: disable=protected-access
+    #                consumer._last_callback_called_time = now_time # pylint: disable=protected-access
+    #            # backoff a bit to avoid throttling CPU when no events are coming
+    #            await asyncio.sleep(0.05)
 
     @staticmethod
     async def _receive_task(consumer):
@@ -297,75 +362,31 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         return await mgmt_auth.get_token()
 
     @staticmethod
-    async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
+    async def mgmt_client_request_async(
+        mgmt_client,
+        mgmt_msg,
+        *,
+        operation,
+        operation_type,
+        node,
+        timeout,
+        callback
+    ):
         """
         Send mgmt request.
-        :param AMQPClientAsync mgmt_client: Client to send request with.
-        :param str mgmt_msg: Message.
+        :param AMQPClient mgmt_client: Client to send request with.
+        :param Message mgmt_msg: Message.
         :keyword bytes operation: Operation.
-        :keyword operation_type: Op type.
-        :keyword status_code_field: mgmt status code.
-        :keyword description_fields: mgmt status desc.
+        :keyword bytes operation_type: Op type.
+        :keyword bytes node: Mgmt target.
+        :keyword int timeout: Timeout.
+        :keyword Callable callback: Callback to process request response.
         """
-        operation_type = kwargs.pop("operation_type")
-        operation = kwargs.pop("operation")
-        return await mgmt_client.mgmt_request_async(
-            mgmt_msg, operation=operation.decode(), operation_type=operation_type.decode(), **kwargs
+        status, description, response = await mgmt_client.mgmt_request_async(
+            mgmt_msg,
+            operation=amqp_string_value(operation.decode("UTF-8")),
+            operation_type=amqp_string_value(operation_type),
+            node=node,
+            timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
         )
-
-    @staticmethod
-    async def _handle_exception_async(  # pylint:disable=too-many-branches, too-many-statements
-        exception: Exception, closable: Union["ClientBaseAsync", "ConsumerProducerMixin"], *, is_consumer=False
-    ) -> Exception:
-        # pylint: disable=protected-access
-        if isinstance(exception, asyncio.CancelledError):
-            raise exception
-        error = exception
-        try:
-            name = cast("ConsumerProducerMixin", closable)._name
-        except AttributeError:
-            name = cast("ClientBaseAsync", closable)._container_id
-        if isinstance(exception, KeyboardInterrupt):  # pylint:disable=no-else-raise
-            _LOGGER.info("%r stops due to keyboard interrupt", name)
-            await cast("ConsumerProducerMixin", closable)._close_connection_async()
-            raise error
-        elif isinstance(exception, EventHubError):
-            await cast("ConsumerProducerMixin", closable)._close_handler_async()
-            raise error
-        # TODO: The following errors seem to be useless in EH
-        # elif isinstance(
-        #     exception,
-        #     (
-        #         errors.MessageAccepted,
-        #         errors.MessageAlreadySettled,
-        #         errors.MessageModified,
-        #         errors.MessageRejected,
-        #         errors.MessageReleased,
-        #         errors.MessageContentTooLarge,
-        #     ),
-        # ):
-        #     _LOGGER.info("%r Event data error (%r)", name, exception)
-        #     error = EventDataError(str(exception), exception)
-        #     raise error
-        elif isinstance(exception, errors.MessageException):
-            _LOGGER.info("%r Event data send error (%r)", name, exception)
-            error = EventDataSendError(str(exception), exception)
-            raise error
-        else:
-            try:
-                if isinstance(exception, errors.AuthenticationException):
-                    await closable._close_connection_async()  # pylint:disable=protected-access
-                elif isinstance(exception, errors.AMQPLinkError):
-                    await cast("ConsumerProducerMixin", closable)._close_handler_async()  # pylint:disable=protected-access
-                elif isinstance(exception, errors.AMQPConnectionError):
-                    await closable._close_connection_async()  # pylint:disable=protected-access
-                # TODO: add MessageHandlerError in amqp?
-                # elif isinstance(exception, errors.MessageHandlerError):
-                #     if hasattr(closable, "_close_handler"):
-                #         closable._close_handler()  # pylint:disable=protected-access
-                else:  # errors.AMQPConnectionError, compat.TimeoutException
-                    await closable._close_connection_async()  # pylint:disable=protected-access
-                return PyamqpTransportAsync._create_eventhub_exception(exception, is_consumer=is_consumer)
-            except AttributeError:
-                pass
-            return PyamqpTransportAsync._create_eventhub_exception(exception, is_consumer=is_consumer)
+        return callback(status, response, description, amqp_transport=PyamqpTransportAsync)

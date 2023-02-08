@@ -255,7 +255,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._entity_path = self._entity_name + (
             ("/Subscriptions/" + subscription_name) if subscription_name else ""
         )
-        self._mgmt_target = "{}{}".format(self._entity_path, MANAGEMENT_PATH_SUFFIX)
+        self._mgmt_target = f"{self._entity_path}{MANAGEMENT_PATH_SUFFIX}"
         if isinstance(credential, AzureSasCredential):
             self._credential = ServiceBusAzureSasTokenCredential(credential)
         elif isinstance(credential, AzureNamedKeyCredential):
@@ -304,10 +304,8 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             and (entity_in_conn_str != entity_in_kwargs)
         ):
             raise ValueError(
-                "The queue or topic name provided: {} which does not match the EntityPath in"
-                " the connection string passed to the ServiceBusClient constructor: {}.".format(
-                    entity_in_conn_str, entity_in_kwargs
-                )
+                f"The queue or topic name provided: {entity_in_conn_str} which does not match the EntityPath in"
+                f" the connection string passed to the ServiceBusClient constructor: {entity_in_kwargs}."
             )
 
         kwargs["fully_qualified_namespace"] = host
@@ -339,7 +337,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
 
     def _handle_exception(self, exception: BaseException) -> "ServiceBusError":
         # pylint: disable=protected-access, line-too-long
-        error = self._amqp_transport._create_servicebus_exception(_LOGGER, exception)
+        error = self._amqp_transport.create_servicebus_exception(_LOGGER, exception)
 
         try:
             # If SessionLockLostError or ServiceBusConnectionError happen when a
@@ -500,7 +498,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
                 }
             except AttributeError:
                 pass
-        
+
         mgmt_msg = self._amqp_transport.create_mgmt_msg(
             message=message,
             application_properties=application_properties,
@@ -525,9 +523,13 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             raise
 
     def _mgmt_request_response_with_retry(
-        self, mgmt_operation, message, callback, timeout=None, **kwargs
-    ):
-        # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
+        self,
+        mgmt_operation: bytes,
+        message: Dict[str, Any],
+        callback: Callable,
+        timeout: Optional[float] = None,
+        **kwargs: Any
+    ) -> Any:
         return self._do_retryable_operation(
             self._mgmt_request_response,
             mgmt_operation=mgmt_operation,
@@ -556,8 +558,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
             self._handler = None
         self._running = False
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close down the handler links (and connection if the handler uses a separate connection).
 
         If the handler has already closed, this operation will do nothing.
