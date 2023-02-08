@@ -129,16 +129,21 @@ class DoWhile(LoopNode):
             ]
             mapping[output_name] = [get_port_obj(body, item, validate_port=validate_port) for item in input_names]
 
-        # Convert condition to output object
-        condition_name = cls._get_data_binding_expression_value(
-            loaded_data.pop("condition"), regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
-        )
-
         limits = loaded_data.pop("limits", None)
+
+        if "condition" in loaded_data:
+            # Convert condition to output object
+            condition_name = cls._get_data_binding_expression_value(
+                loaded_data.pop("condition"), regex=r"\{\{.*\.%s\.outputs\.(.*)\}\}" % body_name
+            )
+            condition_value = get_port_obj(body, condition_name, is_input=False, validate_port=validate_port)
+        else:
+            condition_value = None
+
         do_while_instance = DoWhile(
             body=body,
             mapping=mapping,
-            condition=get_port_obj(body, condition_name, is_input=False, validate_port=validate_port),
+            condition=condition_value,
             **loaded_data,
         )
         do_while_instance.set_limits(**limits)
@@ -207,11 +212,8 @@ class DoWhile(LoopNode):
 
     def _validate_loop_condition(self, raise_error=True):
         # pylint: disable=protected-access
-
         validation_result = self._create_empty_validation_result()
-        if self.condition is None:
-            validation_result.append_error(yaml_path="condition", message="The condition cannot be empty.")
-        else:
+        if self.condition is not None:
             # Check condition exists in dowhile body.
             validation_result.merge_with(
                 self._validate_port(self.condition, self.body.outputs, port_type="output", yaml_path="condition")
