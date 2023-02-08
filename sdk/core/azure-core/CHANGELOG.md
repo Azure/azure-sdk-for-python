@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Extended `AzureKeyCredential` and `AzureKeyCredentialPolicy` to support multiple keys.
+
 ### Breaking Changes
 
 ### Bugs Fixed

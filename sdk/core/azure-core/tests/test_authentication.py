@@ -321,6 +321,43 @@ def test_azure_key_credential_updates():
     credential.update(api_key)
     assert credential.key == api_key
 
+
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+def test_azure_key_credential_policy_with_two_keys(http_request):
+    """Tests to see if we can use an AzureKeyCredentialPolicy with two keys"""
+
+    key_header1 = "api_key1"
+    api_key1 = "test_key1"
+    key_header2 = "api_key2"
+    api_key2 = "test_key2"
+
+    def verify_authorization_header(request):
+        assert request.headers[key_header1] == api_key1
+        assert request.headers[key_header2] == api_key2
+
+    transport = Mock(send=verify_authorization_header)
+    credential = AzureKeyCredential((api_key1, api_key2))
+    credential_policy = AzureKeyCredentialPolicy(credential=credential, name=(key_header1, key_header2))
+    pipeline = Pipeline(transport=transport, policies=[credential_policy])
+
+    pipeline.run(http_request("GET", "https://test_key_credential"))
+
+
+def test_azure_key_credential_updates_with_two_keys():
+    """Tests AzureKeyCredential updates"""
+    api_key1 = "test_key1"
+    new_api_key1 = "new_key1"
+    api_key2 = "test_key2"
+    new_api_key2 = "new_key2"
+
+    credential = AzureKeyCredential(key=(api_key1, api_key2))
+    assert credential.key == (api_key1, api_key2)
+
+    api_key = "new"
+    credential.update((new_api_key1, new_api_key2))
+    assert credential.key == (new_api_key1, new_api_key2)
+
+
 combinations = [
     ("sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),
     ("?sig=test_signature", "https://test_sas_credential", "https://test_sas_credential?sig=test_signature"),

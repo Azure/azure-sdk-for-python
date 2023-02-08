@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, Tuple
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -190,12 +190,16 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
         self._credential = credential
         if not name:
             raise ValueError("name can not be None or empty")
-        if not isinstance(name, str):
-            raise TypeError("name must be a string.")
+        if not isinstance(name, str) and not isinstance(name, Tuple):
+            raise TypeError("name must be a string or a tuple of strings.")
         self._name = name
 
     def on_request(self, request):
-        request.http_request.headers[self._name] = self._credential.key
+        if isinstance(self._name, str):
+            request.http_request.headers[self._name] = self._credential.key
+        else:
+            for name, key in zip(self._name, self._credential.key):
+                request.http_request.headers[name] = key
 
 
 class AzureSasCredentialPolicy(SansIOHTTPPolicy):
