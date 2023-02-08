@@ -11,4 +11,4 @@ AzureFunctionEnvironmentVariable = "FUNCTIONS_EXTENSION_VERSION"
 AzureWebAppEnvironmentVariable = "WEBSITE_SITE_NAME"
 ContainerAppEnvironmentVariable = "CONTAINER_APP_NAME"
 KubernetesEnvironmentVariable = "KUBERNETES_PORT"
-ServiceFabricEnvironmentVariable = "Fabric_NvodeName"
+ServiceFabricEnvironmentVariable = "Fabric_NvodeName"  # cspell:disable-line

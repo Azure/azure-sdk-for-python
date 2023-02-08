@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import os
 import json
 from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING
 
@@ -11,13 +10,14 @@ from azure.appconfiguration import FeatureFlagConfigurationSetting, SecretRefere
 from azure.appconfiguration.aio import AzureAppConfigurationClient
 from azure.keyvault.secrets.aio import SecretClient
 from azure.keyvault.secrets import KeyVaultSecretIdentifier
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 from .._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from .._constants import *
+from .._constants import FEATURE_MANAGEMENT_KEY
 from .._azureappconfigurationprovider import _is_json_content_type, _get_correlation_context
 from .._user_agent import USER_AGENT
+
+if TYPE_CHECKING:
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 @overload
@@ -34,7 +34,7 @@ async def load_provider(
     Loads configuration settings from Azure App Configuration into a Python application.
 
     :param str endpoint: Endpoint for App Configuration resource.
-    :param credential: Credential for App Configuration resource. 
+    :param credential: Credential for App Configuration resource.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword selects: List of setting selectors to filter configuration settings
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
@@ -156,7 +156,9 @@ def _buildprovider(
             connection_string, user_agent=useragent, headers=headers, **kwargs
         )
         return provider
-    provider._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers, **kwargs)
+    provider._client = AzureAppConfigurationClient(
+        endpoint, credential, user_agent=useragent, headers=headers, **kwargs
+    )
     return provider
 
 

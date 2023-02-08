@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import os
 import json
-from typing import Any, Dict, Iterable, Mapping, Optional, Union, overload, List, Tuple, TYPE_CHECKING
+from typing import Any, Dict, Iterable, Mapping, Optional, overload, List, Tuple, TYPE_CHECKING
 from azure.appconfiguration import (
     AzureAppConfigurationClient,
     FeatureFlagConfigurationSetting,
@@ -13,7 +13,14 @@ from azure.appconfiguration import (
 )
 from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from ._constants import *
+from ._constants import (
+    FEATURE_MANAGEMENT_KEY,
+    ServiceFabricEnvironmentVariable,
+    AzureFunctionEnvironmentVariable,
+    AzureWebAppEnvironmentVariable,
+    ContainerAppEnvironmentVariable,
+    KubernetesEnvironmentVariable
+)
 
 from ._user_agent import USER_AGENT
 
@@ -35,7 +42,7 @@ def load_provider(
     Loads configuration settings from Azure App Configuration into a Python application.
 
     :param str endpoint: Endpoint for App Configuration resource.
-    :param credential: Credential for App Configuration resource. 
+    :param credential: Credential for App Configuration resource.
     :type credential: ~azure.core.credentials.TokenCredential
     :keyword selects: List of setting selectors to filter configuration settings
     :paramtype selects: Optional[List[~azure.appconfiguration.provider.SettingSelector]]
@@ -144,17 +151,17 @@ def _get_correlation_context(key_vault_options: Optional[AzureAppConfigurationKe
     ):
         correlation_context += ",UsesKeyVault"
     host_type = ""
-    if (os.environ.get(AzureFunctionEnvironmentVariable) is not None):
+    if os.environ.get(AzureFunctionEnvironmentVariable) is not None:
         host_type = "AzureFunctions"
-    elif (os.environ.get(AzureWebAppEnvironmentVariable) is not None):
+    elif os.environ.get(AzureWebAppEnvironmentVariable) is not None:
         host_type = "AzureWebApps"
-    elif (os.environ.get(ContainerAppEnvironmentVariable) is not None):
+    elif os.environ.get(ContainerAppEnvironmentVariable) is not None:
         host_type = "ContainerApps"
-    elif (os.environ.get(KubernetesEnvironmentVariable) is not None):
+    elif os.environ.get(KubernetesEnvironmentVariable) is not None:
         host_type = "Kubernetes"
-    elif (os.environ.get(ServiceFabricEnvironmentVariable) is not None):
+    elif os.environ.get(ServiceFabricEnvironmentVariable) is not None:
         host_type = "ServiceFabric"
-    if host_type is not "":
+    if host_type:
         correlation_context += ",Host=" + host_type
     return correlation_context
 
@@ -177,7 +184,9 @@ def _buildprovider(
             connection_string, user_agent=useragent, headers=headers, **kwargs
         )
         return provider
-    provider._client = AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers, **kwargs)
+    provider._client = AzureAppConfigurationClient(
+        endpoint, credential, user_agent=useragent, headers=headers, **kwargs
+    )
     return provider
 
 
