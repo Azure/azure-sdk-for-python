@@ -94,7 +94,8 @@ class WorkspaceOutboundRuleOperations:
         port_ranges = kwargs.get("port_ranges", None)
         service_resource_id = kwargs.get("service_resource_id", None)
         subresource_target = kwargs.get("subresource_target", None)
-        spark_jobs_enabled = kwargs.get("spark_jobs_enabled", None)
+        spark = kwargs.get("spark_enabled", None)
+        spark_enabled = True if (spark in ["True","true","T","t",True]) else False
 
         rule = None
 
@@ -111,7 +112,7 @@ class WorkspaceOutboundRuleOperations:
             destination = PrivateEndpointOutboundRuleDestination(
                 service_resource_id=service_resource_id,
                 subresource_target=subresource_target,
-                spark_jobs_enabled=spark_jobs_enabled,
+                spark_enabled=spark_enabled,
             )
             rule = PrivateEndpointOutboundRule(
                 type=type, category=OutboundRuleCategory.USER_DEFINED, destination=destination

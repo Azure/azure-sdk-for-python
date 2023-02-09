@@ -17744,14 +17744,14 @@ class PrivateEndpointDestination(msrest.serialization.Model):
     :vartype service_resource_id: str
     :ivar subresource_target:
     :vartype subresource_target: str
-    :ivar spark_jobs_enabled:
-    :vartype spark_jobs_enabled: bool
+    :ivar spark_enabled:
+    :vartype spark_enabled: bool
     """
 
     _attribute_map = {
         'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
         'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
-        'spark_jobs_enabled': {'key': 'sparkJobsEnabled', 'type': 'bool'},
+        'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -17763,13 +17763,13 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         :paramtype service_resource_id: str
         :keyword subresource_target:
         :paramtype subresource_target: str
-        :keyword spark_jobs_enabled:
-        :paramtype spark_jobs_enabled: bool
+        :keyword spark_enabled:
+        :paramtype spark_enabled: bool
         """
         super(PrivateEndpointDestination, self).__init__(**kwargs)
         self.service_resource_id = kwargs.get('service_resource_id', None)
         self.subresource_target = kwargs.get('subresource_target', None)
-        self.spark_jobs_enabled = kwargs.get('spark_jobs_enabled', None)
+        self.spark_enabled = kwargs.get('spark_enabled', None)
 
 
 class PrivateEndpointOutboundRule(OutboundRule):
@@ -17820,14 +17820,14 @@ class PrivateEndpointOutboundRuleDestination(PrivateEndpointDestination):
     :vartype service_resource_id: str
     :ivar subresource_target:
     :vartype subresource_target: str
-    :ivar spark_jobs_enabled:
-    :vartype spark_jobs_enabled: bool
+    :ivar spark_enabled:
+    :vartype spark_enabled: bool
     """
 
     _attribute_map = {
         'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
         'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
-        'spark_jobs_enabled': {'key': 'sparkJobsEnabled', 'type': 'bool'},
+        'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -17839,8 +17839,8 @@ class PrivateEndpointOutboundRuleDestination(PrivateEndpointDestination):
         :paramtype service_resource_id: str
         :keyword subresource_target:
         :paramtype subresource_target: str
-        :keyword spark_jobs_enabled:
-        :paramtype spark_jobs_enabled: bool
+        :keyword spark_enabled:
+        :paramtype spark_enabled: bool
         """
         super(PrivateEndpointOutboundRuleDestination, self).__init__(**kwargs)
 

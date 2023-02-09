@@ -19253,14 +19253,14 @@ class PrivateEndpointDestination(msrest.serialization.Model):
     :vartype service_resource_id: str
     :ivar subresource_target:
     :vartype subresource_target: str
-    :ivar spark_jobs_enabled:
-    :vartype spark_jobs_enabled: bool
+    :ivar spark_enabled:
+    :vartype spark_enabled: bool
     """
 
     _attribute_map = {
         'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
         'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
-        'spark_jobs_enabled': {'key': 'sparkJobsEnabled', 'type': 'bool'},
+        'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -19268,7 +19268,7 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         *,
         service_resource_id: Optional[str] = None,
         subresource_target: Optional[str] = None,
-        spark_jobs_enabled: Optional[bool] = None,
+        spark_enabled: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -19276,13 +19276,13 @@ class PrivateEndpointDestination(msrest.serialization.Model):
         :paramtype service_resource_id: str
         :keyword subresource_target:
         :paramtype subresource_target: str
-        :keyword spark_jobs_enabled:
-        :paramtype spark_jobs_enabled: bool
+        :keyword spark_enabled:
+        :paramtype spark_enabled: bool
         """
         super(PrivateEndpointDestination, self).__init__(**kwargs)
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
-        self.spark_jobs_enabled = spark_jobs_enabled
+        self.spark_enabled = spark_enabled
 
 
 class PrivateEndpointOutboundRule(OutboundRule):
@@ -19336,14 +19336,14 @@ class PrivateEndpointOutboundRuleDestination(PrivateEndpointDestination):
     :vartype service_resource_id: str
     :ivar subresource_target:
     :vartype subresource_target: str
-    :ivar spark_jobs_enabled:
-    :vartype spark_jobs_enabled: bool
+    :ivar spark_enabled:
+    :vartype spark_enabled: bool
     """
 
     _attribute_map = {
         'service_resource_id': {'key': 'serviceResourceId', 'type': 'str'},
         'subresource_target': {'key': 'subresourceTarget', 'type': 'str'},
-        'spark_jobs_enabled': {'key': 'sparkJobsEnabled', 'type': 'bool'},
+        'spark_enabled': {'key': 'sparkEnabled', 'type': 'bool'},
     }
 
     def __init__(
@@ -19351,7 +19351,7 @@ class PrivateEndpointOutboundRuleDestination(PrivateEndpointDestination):
         *,
         service_resource_id: Optional[str] = None,
         subresource_target: Optional[str] = None,
-        spark_jobs_enabled: Optional[bool] = None,
+        spark_enabled: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -19359,10 +19359,10 @@ class PrivateEndpointOutboundRuleDestination(PrivateEndpointDestination):
         :paramtype service_resource_id: str
         :keyword subresource_target:
         :paramtype subresource_target: str
-        :keyword spark_jobs_enabled:
-        :paramtype spark_jobs_enabled: bool
+        :keyword spark_enabled:
+        :paramtype spark_enabled: bool
         """
-        super(PrivateEndpointOutboundRuleDestination, self).__init__(service_resource_id=service_resource_id, subresource_target=subresource_target, spark_jobs_enabled=spark_jobs_enabled, **kwargs)
+        super(PrivateEndpointOutboundRuleDestination, self).__init__(service_resource_id=service_resource_id, subresource_target=subresource_target, spark_enabled=spark_enabled, **kwargs)
 
 
 class PrivateLinkResource(Resource):
