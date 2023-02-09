@@ -5,13 +5,15 @@
 # license information.
 # -------------------------------------------------------------------------
 from testcase import WorkflowTest, WorkflowPowerShellPreparer
+from devtools_testutils import recorded_by_proxy
 
 class WorkflowSmokeTest(WorkflowTest):
 
 
     @WorkflowPowerShellPreparer()
+    @recorded_by_proxy
     def test_smoke(self, workflow_endpoint):
         client = self.create_client(endpoint=workflow_endpoint)
-        # test your code here, for example:
-        # result = client.xxx.xx(...)
-        # assert result is not None
+        response = client.list_workflows()
+        result = [item for item in response]
+        assert len(result) >= 1

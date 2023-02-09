@@ -6,13 +6,16 @@
 # -------------------------------------------------------------------------
 from testcase import WorkflowPowerShellPreparer
 from testcase_async import WorkflowAsyncTest
+from devtools_testutils.aio import recorded_by_proxy_async
 
 
 class WorkflowSmokeAsyncTest(WorkflowAsyncTest):
 
     @WorkflowPowerShellPreparer()
+    @recorded_by_proxy_async
     async def test_smoke_async(self, workflow_endpoint):
-        client = self.create_client(endpoint=workflow_endpoint)
-        # test your code here, for example:
-        # result = await client.xxx.xx(...)
-        # assert result is not None
+        client = self.create_async_client(endpoint=workflow_endpoint)
+        response = client.list_workflows()
+        result = [item async for item in response]
+        assert len(result) >= 1
+

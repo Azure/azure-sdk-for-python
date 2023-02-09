@@ -7,6 +7,7 @@
 import functools
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.purview.workflow import PurviewWorkflowClient
+from tests import workflow_testutils
 
 
 class WorkflowTest(AzureTestCase):

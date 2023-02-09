@@ -1,0 +1,84 @@
+interactions:
+- request:
+    body: '{"x-recording-file": "sdk/purview/azure-purview-workflow/tests/recordings/test_smoke.pyWorkflowSmokeTesttest_smoke"}'
+    headers: {}
+    method: POST
+    uri: https://localhost:5001/record/start
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 09 Feb 2023 07:52:45 GMT
+      server:
+      - Kestrel
+      x-recording-id:
+      - e2e55727-20b4-4c20-8f31-702612bd7777
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-purview-workflow/1.0.0b1 Python/3.9.0 (Windows-10-10.0.22621-SP0)
+      x-recording-id:
+      - e2e55727-20b4-4c20-8f31-702612bd7777
+      x-recording-mode:
+      - record
+      x-recording-upstream-base-uri:
+      - https://test-create-account.purview.azure.com
+    method: GET
+    uri: https://localhost:5001/workflow/workflows?api-version=2022-05-01-preview
+  response:
+    body:
+      string: '{"value":[{"id":"47de85f0-b835-415b-8db2-280aed78965e","triggers":[{"type":"when_term_creation_is_requested","underGlossaryHierarchy":"/glossaries/d167f7c5-cfa9-4e1a-b511-a0ff148226e1"}],"createdTime":"2022-11-30T08:42:49.447391319Z","createdBy":"242ee032-7ed5-46d7-93c4-26feb17ee419","lastUpdateTime":"2022-12-01T04:30:35.440865856Z","updatedBy":"83ffc40f-f670-49b0-a17e-30c7f74f209a","name":"CreateTerm16424820221130","isEnabled":false,"description":""},{"id":"8f8a7faa-71f2-4d7c-bbca-1d83ec61f0f8","triggers":[{"type":"when_term_creation_is_requested","underGlossaryHierarchy":"/glossaries/d167f7c5-cfa9-4e1a-b511-a0ff148226e1"}],"createdTime":"2022-12-05T02:38:29.316491561Z","createdBy":"83ffc40f-f670-49b0-a17e-30c7f74f209a","lastUpdateTime":"2022-12-19T07:54:30.579892807Z","updatedBy":"83ffc40f-f670-49b0-a17e-30c7f74f209a","name":"CreateTerm10382820221205","isEnabled":false,"description":""},{"id":"d8b7594f-ffa3-468e-8574-8bbb75ba2ac1","triggers":[{"type":"when_term_creation_is_requested","underGlossaryHierarchy":"/glossaries/5dae5e5b-5aa6-48f1-9e46-26fe7328de71"}],"createdTime":"2022-12-05T02:41:56.260246220Z","createdBy":"83ffc40f-f670-49b0-a17e-30c7f74f209a","lastUpdateTime":"2022-12-19T07:54:59.125951377Z","updatedBy":"83ffc40f-f670-49b0-a17e-30c7f74f209a","name":"CreateTerm10415520221205","isEnabled":true,"description":""}]}'
+    headers:
+      content-length:
+      - '1348'
+      content-type:
+      - application/json
+      date:
+      - Thu, 09 Feb 2023 07:52:48 GMT
+      server:
+      - MicrosoftPurview
+      strict-transport-security:
+      - max-age=31536000; includeSubDomains
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{}'
+    headers:
+      Content-Type:
+      - application/json
+      x-recording-file:
+      - sdk/purview/azure-purview-workflow/tests/recordings/test_smoke.pyWorkflowSmokeTesttest_smoke
+      x-recording-id:
+      - e2e55727-20b4-4c20-8f31-702612bd7777
+      x-recording-save:
+      - 'true'
+    method: POST
+    uri: https://localhost:5001/record/stop
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      date:
+      - Thu, 09 Feb 2023 07:52:48 GMT
+      server:
+      - Kestrel
+    status:
+      code: 200
+      message: OK
+version: 1
