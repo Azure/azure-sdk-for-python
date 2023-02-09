@@ -132,7 +132,7 @@ def necessary_to_install(version_requested) -> bool:
     # unnecessarily installation.
     #
     # If we are passed a short version, we just gotta compare major.minor against max precached version major.minor.
-    # if we both are less, we can avoid installing.
+    # if the requested version is lower or equal up to the minor version, we can avoid installing.
     if len(version_requested.split(".")) <= 2:
         if version_from_spec > Version(f"{precached_version.major}.{precached_version.minor}"):
             precached = False
