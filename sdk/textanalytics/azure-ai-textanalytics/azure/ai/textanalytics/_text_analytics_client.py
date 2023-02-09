@@ -69,8 +69,8 @@ from ._models import (
     _AnalyzeActionsType,
     ExtractSummaryAction,
     ExtractSummaryResult,
-    AbstractSummaryAction,
-    AbstractSummaryResult,
+    AbstractiveSummaryAction,
+    AbstractiveSummaryResult,
     DynamicClassificationResult,
     PiiEntityDomain,
     PiiEntityCategory,
@@ -91,7 +91,7 @@ AnalyzeActionsResponse = TextAnalysisLROPoller[
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
                 ExtractSummaryResult,
-                AbstractSummaryResult,
+                AbstractiveSummaryResult,
                 DocumentError,
             ]
         ]
@@ -1120,7 +1120,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
                 ExtractSummaryAction,
-                AbstractSummaryAction,
+                AbstractiveSummaryAction,
             ]
         ],
         *,
@@ -1144,7 +1144,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
                     ExtractSummaryResult,
-                    AbstractSummaryResult,
+                    AbstractiveSummaryResult,
                     DocumentError,
                 ]
             ]
@@ -1177,7 +1177,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
             MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or ExtractSummaryAction
-            or AbstractSummaryAction]
+            or AbstractiveSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1211,7 +1211,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
             or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult
-            or AbstractSummaryResult or DocumentError]]]
+            or AbstractiveSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1222,8 +1222,8 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
         .. versionadded:: 2022-10-01-preview
-            The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
-            *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
+            The *ExtractSummaryAction* and *AbstractiveSummaryAction* input options and the corresponding
+            *ExtractSummaryResult* and *AbstractiveSummaryResult* result objects.
             The *auto_detect_language* keyword argument.
 
         .. admonition:: Example:
@@ -2012,7 +2012,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
     @validate_multiapi_args(
         version_method_added="2022-10-01-preview"
     )
-    def begin_abstract_summary(
+    def begin_abstractive_summary(
         self,
         documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
         *,
@@ -2027,7 +2027,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         string_index_type: Optional[str] = None,
         max_sentence_count: Optional[int] = None,
         **kwargs: Any,
-    ) -> TextAnalysisLROPoller[ItemPaged[Union[AbstractSummaryResult, DocumentError]]]:
+    ) -> TextAnalysisLROPoller[ItemPaged[Union[AbstractiveSummaryResult, DocumentError]]]:
         """Start a long-running abstractive summarization operation.
 
         For a conceptual discussion of abstractive summarization, see the service documentation:
@@ -2073,21 +2073,21 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         :keyword str display_name: An optional display name to set for the requested analysis.
         :return: An instance of an TextAnalysisLROPoller. Call `result()` on the this
             object to return a heterogeneous pageable of
-            :class:`~azure.ai.textanalytics.AbstractSummaryResult` and
+            :class:`~azure.ai.textanalytics.AbstractiveSummaryResult` and
             :class:`~azure.ai.textanalytics.DocumentError`.
         :rtype:
             ~azure.ai.textanalytics.TextAnalysisLROPoller[~azure.core.paging.ItemPaged[
-            ~azure.ai.textanalytics.AbstractSummaryResult or ~azure.ai.textanalytics.DocumentError]]
+            ~azure.ai.textanalytics.AbstractiveSummaryResult or ~azure.ai.textanalytics.DocumentError]]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         .. versionadded:: 2022-10-01-preview
-            The *begin_abstract_summary* client method.
+            The *begin_abstractive_summary* client method.
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/sample_abstract_summary.py
-                :start-after: [START abstract_summary]
-                :end-before: [END abstract_summary]
+            .. literalinclude:: ../samples/sample_abstractive_summary.py
+                :start-after: [START abstractive_summary]
+                :end-before: [END abstractive_summary]
                 :language: python
                 :dedent: 4
                 :caption: Perform abstractive summarization on a batch of documents.
@@ -2098,7 +2098,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
 
         if continuation_token:
             return cast(
-                TextAnalysisLROPoller[ItemPaged[Union[AbstractSummaryResult, DocumentError]]],
+                TextAnalysisLROPoller[ItemPaged[Union[AbstractiveSummaryResult, DocumentError]]],
                 _get_result_from_continuation_token(
                     self._client._client,  # pylint: disable=protected-access
                     continuation_token,
@@ -2116,12 +2116,12 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         try:
             return cast(
                 TextAnalysisLROPoller[
-                    ItemPaged[Union[AbstractSummaryResult, DocumentError]]
+                    ItemPaged[Union[AbstractiveSummaryResult, DocumentError]]
                 ],
                 self.begin_analyze_actions(
                     documents,
                     actions=[
-                        AbstractSummaryAction(
+                        AbstractiveSummaryAction(
                             model_version=model_version,
                             string_index_type=string_index_type_arg,
                             max_sentence_count=max_sentence_count,

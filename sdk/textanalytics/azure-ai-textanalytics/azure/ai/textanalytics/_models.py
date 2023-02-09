@@ -1254,7 +1254,7 @@ class DocumentError(DictMixin):
             + RecognizeCustomEntitiesResult().keys()
             + ClassifyDocumentResult().keys()
             + ExtractSummaryResult().keys()
-            + AbstractSummaryResult().keys()
+            + AbstractiveSummaryResult().keys()
             + DynamicClassificationResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
@@ -2883,12 +2883,12 @@ class SummarySentence(DictMixin):
         )
 
 
-class AbstractSummaryResult(DictMixin):
-    """AbstractSummaryResult is a result object which contains
+class AbstractiveSummaryResult(DictMixin):
+    """AbstractiveSummaryResult is a result object which contains
     the summary generated for a particular document.
 
     .. versionadded:: 2022-10-01-preview
-        The *AbstractSummaryResult* model.
+        The *AbstractiveSummaryResult* model.
     """
 
     id: str  # pylint: disable=redefined-builtin
@@ -2906,7 +2906,7 @@ class AbstractSummaryResult(DictMixin):
         field will contain information about the document payload."""
     is_error: Literal[False] = False
     """Boolean check for error item when iterating over list of
-        results. Always False for an instance of a AbstractSummaryResult."""
+        results. Always False for an instance of a AbstractiveSummaryResult."""
     kind: Literal["AbstractiveSummarization"] = "AbstractiveSummarization"
     """The text analysis kind - "AbstractiveSummarization"."""
 
@@ -2921,7 +2921,7 @@ class AbstractSummaryResult(DictMixin):
 
     def __repr__(self) -> str:
         return (
-            f"AbstractSummaryResult(id={self.id}, detected_language={repr(self.detected_language)}, "
+            f"AbstractiveSummaryResult(id={self.id}, detected_language={repr(self.detected_language)}, "
             f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
             f"summaries={repr(self.summaries)}, is_error={self.is_error}, kind={self.kind})"[:1024]
         )
@@ -3008,8 +3008,8 @@ class SummaryContext(DictMixin):
         )
 
 
-class AbstractSummaryAction(DictMixin):
-    """AbstractSummaryAction encapsulates the parameters for starting a long-running
+class AbstractiveSummaryAction(DictMixin):
+    """AbstractiveSummaryAction encapsulates the parameters for starting a long-running
     abstractive summarization operation. For a conceptual discussion of extractive summarization,
     see the service documentation:
     https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
@@ -3038,7 +3038,7 @@ class AbstractSummaryAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
 
     .. versionadded:: 2022-10-01-preview
-        The *AbstractSummaryAction* model.
+        The *AbstractiveSummaryAction* model.
     """
 
     max_sentence_count: Optional[int] = None
@@ -3076,7 +3076,7 @@ class AbstractSummaryAction(DictMixin):
 
     def __repr__(self) -> str:
         return (
-            f"AbstractSummaryAction(model_version={self.model_version}, "
+            f"AbstractiveSummaryAction(model_version={self.model_version}, "
             f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
             f"max_sentence_count={self.max_sentence_count})"[:1024]
         )
