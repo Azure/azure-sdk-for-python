@@ -26,13 +26,12 @@ USAGE:
     4) MULTI_LABEL_CLASSIFY_DEPLOYMENT_NAME - your Language Studio deployment name
 """
 
-
-import os
 import asyncio
 
 
 async def sample_classify_document_multi_label_async() -> None:
     # [START multi_label_classify_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 

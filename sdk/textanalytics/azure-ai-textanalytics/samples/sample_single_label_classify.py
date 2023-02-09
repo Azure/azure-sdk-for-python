@@ -27,11 +27,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_classify_document_single_label() -> None:
     # [START single_label_classify]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 

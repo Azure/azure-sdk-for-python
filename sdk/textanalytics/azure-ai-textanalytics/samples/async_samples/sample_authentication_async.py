@@ -28,13 +28,13 @@ USAGE:
     5) AZURE_CLIENT_SECRET - the secret of your active directory application.
 """
 
-import os
 import asyncio
 
 
 async def sample_authentication_with_api_key_credential_async() -> None:
     print("\n.. authentication_with_api_key_credential_async")
     # [START create_ta_client_with_key_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
