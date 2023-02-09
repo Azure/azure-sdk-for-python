@@ -256,37 +256,6 @@ class OperationGroup(VersionedObject):
             get_names_by_api_version=_get_names_by_api_version,
         )
 
-class Property(VersionedObject):
-    ...
-
-class Model(VersionedObject):
-    def __init__(self, code_model: "CodeModel", name: str) -> None:
-        super().__init__(code_model, name)
-        self.properties: List[Property] = []
-
-    def _get_model(self, api_version: str):
-        folder_api_version = self.code_model.api_version_to_folder_api_version[api_version]
-        module = importlib.import_module(
-            f"{self.code_model.module_name}.{folder_api_version}.models"
-        )
-        return getattr(module, self.name)
-
-    def combine_properties(self) -> None:
-        api_versions = [v for v in self.code_model.sorted_api_versions if v in self.api_versions]
-        def _get_names_by_api_version(api_version: str):
-            model = self._get_model(api_version)
-            return [p for p in dir(model) if p[0] != "_"]
-
-        def _get_property(code_model: "CodeModel", name: str) -> Property:
-            return Property(code_model, name)
-
-        self.properties = _combine_helper(
-            code_model=self.code_model,
-            sorted_api_versions=api_versions,
-            get_cls=_get_property,
-            get_names_by_api_version=_get_names_by_api_version,
-        )
-
 
 class Client:
     def __init__(self, code_model: "CodeModel") -> None:
@@ -327,8 +296,7 @@ class CodeModel:
         self.default_api_version = self.sorted_api_versions[-1]
         self.default_folder_api_version = self.api_version_to_folder_api_version[self.default_api_version]
         self.module_name = pkg_path.stem.replace("-", ".")
-        # self.operation_groups = self._combine_operation_groups()
-        self.models = self._combine_models()
+        self.operation_groups = self._combine_operation_groups()
         self.client = Client(self)
 
     def get_root_of_code(self, async_mode: bool) -> Path:
@@ -374,28 +342,6 @@ class CodeModel:
             for operation in operation_group.operations:
                 operation.combine_parameters()
         return ogs
-
-
-    def _combine_models(self) -> List[Model]:
-        def _get_model(code_model: "CodeModel", name: str) -> Model:
-            return Model(code_model, name)
-
-        def _get_names_by_api_version(api_version: str):
-            folder_api_version = self.api_version_to_folder_api_version[api_version]
-            module = importlib.import_module(
-                f"{self.module_name}.{folder_api_version}.models"
-            )
-            return [m for m in dir(module) if m[0] != "_"]
-        models = _combine_helper(
-            code_model=self,
-            sorted_api_versions=self.sorted_api_versions,
-            get_cls=_get_model,
-            get_names_by_api_version=_get_names_by_api_version,
-        )
-        for model in models:
-            model.combine_properties()
-        return models
-
 
 class Serializer:
     def __init__(self, code_model: "CodeModel") -> None:
@@ -585,12 +531,20 @@ class Serializer:
         with open(f"{self.code_model.get_root_of_code(False)}/_validation.py", "w") as fd:
             fd.write(self.env.get_template("validation.py.jinja2").render())
 
+    def serialize_models_folder(self):
+        shutil.copytree(
+            Path(self.code_model.default_folder_api_version) / "models",
+            self.code_model.get_root_of_code(False)
+        )
+
+
     def remove_versioned_files(self):
         root_of_code = self.code_model.get_root_of_code(False)
         for api_version_folder_stem in self.code_model.api_version_to_folder_api_version.values():
             api_version_folder = root_of_code / api_version_folder_stem
             shutil.rmtree(api_version_folder / Path("operations"), ignore_errors=True)
             shutil.rmtree(api_version_folder / Path("aio"), ignore_errors=True)
+            shutil.rmtree(api_version_folder / Path("models"), ignore_errors=True)
             files_to_remove = [
                 "__init__.py",
                 "_configuration.py",
@@ -604,12 +558,11 @@ class Serializer:
             for file in files_to_remove:
                 os.remove(f"{api_version_folder}/{file}")
 
-            # add empty init file so we can still see the models folder
-            with open(f"{api_version_folder}/__init__.py", "w") as f:
-                f.write("")
-
     def remove_top_level_files(self, async_mode: bool):
-        top_level_files = [self.code_model.client.generated_filename, "_operations_mixin"]
+        top_level_files = [
+            self.code_model.client.generated_filename,
+            "_operations_mixin"
+        ]
         for file in top_level_files:
             os.remove(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
 
@@ -624,8 +577,8 @@ class Serializer:
         self.serialize_client(async_mode=False)
         self.serialize_client(async_mode=True)
         self.serialize_general()
+        self.serialize_models_folder()
         self.remove_old_code()
-        # self.serialize_models_file()
 
 
 def get_args() -> argparse.Namespace:
