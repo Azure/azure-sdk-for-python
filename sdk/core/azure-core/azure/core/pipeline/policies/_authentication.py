@@ -190,7 +190,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
         self._credential = credential
         if not name:
             raise ValueError("name can not be None or empty")
-        if not isinstance(name, str) and not isinstance(name, Tuple):
+        if not isinstance(name, (str, Tuple)):
             raise TypeError("name must be a string or a tuple of strings.")
         self._name = name
 
