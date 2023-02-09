@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from test_utilities.utils import omit_with_wildcard
 
-from azure.ai.ml import Input, load_component
+from azure.ai.ml import Input, load_component, Output
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.base import _resolve_builders_2_data_bindings
@@ -198,3 +198,161 @@ class TestInputOutputBuilder:
             "Type <class 'azure.ai.ml.entities._job.pipeline._io.base.PipelineInput'> "
             "is not supported for operation bool()."
         )
+
+    def test_node_output_setting_path(self) -> None:
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func = load_component(source=component_yaml)
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            # this will store in node output's data(will be a pipeline output object)'s path
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["jobs"]["node1"]["outputs"]["component_out_path"]["uri"]
+        assert output_path == "azureml://datastores/workspaceblobstore/paths/outputs/1"
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            node1.outputs.component_out_path = Output(
+                type="uri_file",
+                path="azureml://datastores/workspaceblobstore/paths/outputs/2"
+            )
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["jobs"]["node1"]["outputs"]["component_out_path"]["uri"]
+        assert output_path == "azureml://datastores/workspaceblobstore/paths/outputs/2"
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            node1.outputs.component_out_path = Output(
+                type="uri_file",
+                path="azureml://datastores/workspaceblobstore/paths/outputs/2"
+            )
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/3"
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["jobs"]["node1"]["outputs"]["component_out_path"]["uri"]
+        assert output_path == "azureml://datastores/workspaceblobstore/paths/outputs/3"
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path = Output(
+                type="uri_file",
+            )
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["jobs"]["node1"]["outputs"]["component_out_path"]["uri"]
+        assert output_path == "azureml://datastores/workspaceblobstore/paths/outputs/1"
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            # this setting will erase path setting
+            node1.outputs.component_out_path = Output(
+                type="uri_file",
+            )
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["jobs"]["node1"]["outputs"]["component_out_path"]
+        assert output_path == {'type': 'literal', 'value': '${{parent.outputs.component_out_path}}'}
+
+    def test_pipeline_output_setting_path(self) -> None:
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func = load_component(source=component_yaml)
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        # this will store in pipeline output's data's path
+        pipeline_job.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/2"
+
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["outputs"]["component_out_path"]["uri"]
+        assert output_path == "azureml://datastores/workspaceblobstore/paths/outputs/2"
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        pipeline_job.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/2"
+        pipeline_job.outputs.component_out_path = Output(
+            type="uri_file",
+            path="azureml://datastores/workspaceblobstore/paths/outputs/3"
+        )
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["outputs"]["component_out_path"]["uri"]
+        assert output_path == "azureml://datastores/workspaceblobstore/paths/outputs/3"
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        pipeline_job.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/2"
+        pipeline_job.outputs.component_out_path = Output(
+            type="uri_file",
+            path="azureml://datastores/workspaceblobstore/paths/outputs/3"
+        )
+        pipeline_job.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/4"
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["outputs"]["component_out_path"]["uri"]
+        assert output_path == "azureml://datastores/workspaceblobstore/paths/outputs/4"
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        pipeline_job.outputs.component_out_path = Output(
+            type="uri_file",
+        )
+        pipeline_job.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/4"
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["outputs"]["component_out_path"]["uri"]
+        assert output_path == "azureml://datastores/workspaceblobstore/paths/outputs/4"
+
+        @pipeline
+        def my_pipeline():
+            node1 = component_func(component_in_number=1, component_in_path=Input(path="fake_path1"))
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        pipeline_job = my_pipeline()
+        pipeline_job.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/4"
+        # this setting will erase path setting
+        pipeline_job.outputs.component_out_path = Output(
+            type="uri_file",
+        )
+        rest_pipeline_job = pipeline_job._to_rest_object().properties.as_dict()
+        output_path = rest_pipeline_job["outputs"]["component_out_path"]
+        assert output_path == {'job_output_type': 'uri_file'}
