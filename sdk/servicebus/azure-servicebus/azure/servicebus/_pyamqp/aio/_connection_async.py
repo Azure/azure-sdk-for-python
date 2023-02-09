@@ -236,7 +236,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         timeout: Optional[Union[int, float]] = None
         if wait is False:
-            timeout = 1  # TODO: What should this default be?
+            timeout = .2  # TODO: What should this default be?, are the other if statements are used 
         elif wait is True:
             timeout = None
         else:
@@ -756,7 +756,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 return
             for _ in range(batch):
                 if self._can_read():
+                    # print(f'Start {time.time()}')
+                    # print(f"Our wait is {kwargs}")
                     if await self._read_frame(wait=wait, **kwargs):
+                        # print(f'End {time.time()}')
                         break
                 else:
                     _LOGGER.info(
@@ -764,6 +767,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                         self.state,
                         extra=self._network_trace_params
                     )
+                    # print(f'Couldnt read {time.time()}')
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
