@@ -15,7 +15,7 @@ class WorkflowTest(AzureTestCase):
         super(WorkflowTest, self).__init__(method_name, **kwargs)
 
     def create_client(self, endpoint):
-        credential = self.get_credential(PurviewWorkflowClient)
+        credential = workflow_testutils.get_credential()
         return self.create_client_from_credential(
             PurviewWorkflowClient,
             credential=credential,
