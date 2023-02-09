@@ -196,18 +196,21 @@ class NodeIOMixin:
             rest_output_bindings[key] = {"value": binding["value"], "type": "literal"}
             if "mode" in binding:
                 rest_output_bindings[key].update({"mode": binding["mode"].value})
-        updated_rest_data_outputs = {}
-        for name, val in rest_data_outputs.items():
-            # rest_data_outputs consist of two part:
-            # 1) output doesn't have binding(the output may be registered or not)
-            # 2) output has binding but need to be registered
-            # we select the outputs that need to be registered using RestJobOutput format
-            if val.asset_name:
-                updated_rest_data_outputs[name] = val
-            else:
-                updated_rest_data_outputs[name] = val.as_dict()
-        rest_output_bindings.update(updated_rest_data_outputs)
-        return rest_output_bindings
+            if "name" in binding:
+                rest_output_bindings[key].update({"name": binding["name"]})
+            if "version" in binding:
+                rest_output_bindings[key].update({"version": binding["version"]})
+
+        def _rename_name_and_version(output_dict):
+            if 'asset_name' in output_dict.keys():
+                output_dict['name'] = output_dict.pop('asset_name')
+            if 'asset_version' in output_dict.keys():
+                output_dict['version'] = output_dict.pop('asset_version')
+            return output_dict
+
+        rest_data_outputs = {name: _rename_name_and_version(val.as_dict()) for name, val in rest_data_outputs.items()}
+        rest_data_outputs.update(rest_output_bindings)
+        return rest_data_outputs
 
     @classmethod
     def _from_rest_inputs(cls, inputs) -> Dict[str, Union[Input, str, bool, int, float]]:
