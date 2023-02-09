@@ -23,5 +23,5 @@ class FarmBeatsTestCase(AzureRecordedTestCase):
 FarmBeatsPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "agrifood",
-    agrifood_endpoint="https://fakeAccount.farmbeats.azure.net"
+    agrifood_endpoint="https://fakeaccount.farmbeats.azure.net"
 )

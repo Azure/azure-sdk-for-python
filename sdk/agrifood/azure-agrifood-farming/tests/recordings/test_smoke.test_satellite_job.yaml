@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/parties/fake-party/boundaries/fake-boundary-scenes?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/parties/fake-party/boundaries/fake-boundary-scenes?api-version=2021-03-31-preview
   response:
     body:
       string: '{"partyId":"fake-party","geometry":{"type":"Polygon","coordinates":[[[73.70457172393799,20.545385304358106],[73.70457172393799,20.545385304358106],[73.70448589324951,20.542411534243367],[73.70877742767334,20.541688176010233],[73.71023654937744,20.545083911372505],[73.70663166046143,20.546992723579137],[73.70457172393799,20.545385304358106]]]},"isPrimary":false,"acreage":60.40491151079627,"id":"fake-boundary-scenes","eTag":"cc00d754-0000-0600-0000-60a26af50000","createdDateTime":"2021-05-17T13:09:09Z","modifiedDateTime":"2021-05-17T13:09:09Z","description":"Created
@@ -58,7 +58,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
   response:
     body:
       string: '{"partyId":"fake-party","boundaryId":"fake-boundary-scenes","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"fake-job-268-268","status":"Waiting","message":"Created
@@ -78,9 +78,9 @@ interactions:
       date:
       - Mon, 17 May 2021 21:47:07 GMT
       location:
-      - https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
+      - https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
       operation-location:
-      - https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
+      - https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
       server:
       - nginx/1.19.1
       strict-transport-security:
@@ -100,7 +100,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
   response:
     body:
       string: '{"partyId":"fake-party","boundaryId":"fake-boundary-scenes","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"fake-job-268-268","status":"Succeeded","durationInSeconds":4.306813,"message":"Satellite
@@ -142,7 +142,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/fake-job-268-268?api-version=2021-03-31-preview
   response:
     body:
       string: '{"partyId":"fake-party","boundaryId":"fake-boundary-scenes","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-01-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"fake-job-268-268","status":"Succeeded","durationInSeconds":4.306813,"message":"Satellite

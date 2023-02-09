@@ -226,7 +226,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-3476?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-3476?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -263,7 +263,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-3476/boundaries/satellite-flow-asdftest-boundary?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-3476/boundaries/satellite-flow-asdftest-boundary?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -322,7 +322,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 08 Feb 2023 17:21:59 GMT",
         "ETag": "02008b35-0000-0600-0000-63e3da370000",
-        "Location": "https://fakeAccount.farmbeats.azure.net/parties/test-party-3476/boundaries/satellite-flow-asdftest-boundary",
+        "Location": "https://fakeaccount.farmbeats.azure.net/parties/test-party-3476/boundaries/satellite-flow-asdftest-boundary",
         "mise-correlation-id": "f860d4a4-1799-4243-b89d-6017c6080642",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
@@ -413,7 +413,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -452,9 +452,9 @@
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 08 Feb 2023 17:22:00 GMT",
-        "Location": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
+        "Location": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
         "mise-correlation-id": "4aa8ed16-70c2-4202-a266-962f18168fd3",
-        "operation-location": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
+        "operation-location": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
@@ -487,7 +487,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -541,7 +541,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -597,7 +597,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-359376?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -653,7 +653,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft\u0026partyId=test-party-3476\u0026boundaryId=satellite-flow-asdftest-boundary\u0026source=Sentinel_2_L2A\u0026startDateTime=2020-01-01T00%3A00%3A00.000Z\u0026endDateTime=2020-01-31T00%3A00%3A00.000Z\u0026maxCloudCoveragePercentage=100.0\u0026maxDarkPixelCoveragePercentage=100.0\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft\u0026partyId=test-party-3476\u0026boundaryId=satellite-flow-asdftest-boundary\u0026source=Sentinel_2_L2A\u0026startDateTime=2020-01-01T00%3A00%3A00.000Z\u0026endDateTime=2020-01-31T00%3A00%3A00.000Z\u0026maxCloudCoveragePercentage=100.0\u0026maxDarkPixelCoveragePercentage=100.0\u0026api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -686,7 +686,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-30%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-30%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -706,7 +706,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-28%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-28%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -726,7 +726,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-25%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-25%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -746,7 +746,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-23%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-23%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -766,7 +766,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-20%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-20%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -786,7 +786,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-18%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-18%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -806,7 +806,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-15%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-15%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -826,7 +826,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-13%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-13%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -846,7 +846,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-10%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-10%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -866,7 +866,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-08%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-08%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -886,7 +886,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-05%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-05%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -906,7 +906,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-03%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-3476%2fsatellite-flow-asdftest-boundary%2f2020-01-03%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -924,7 +924,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/scenes/downloadFiles?filePath=Microsoft%2FSentinel_2_L2A%2Ftest-party-3476%2Fsatellite-flow-asdftest-boundary%2F2020-01-30%2F00-00-00%2Fndvi_10.tif\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?filePath=Microsoft%2FSentinel_2_L2A%2Ftest-party-3476%2Fsatellite-flow-asdftest-boundary%2F2020-01-30%2F00-00-00%2Fndvi_10.tif\u0026api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json, application/octet-stream",

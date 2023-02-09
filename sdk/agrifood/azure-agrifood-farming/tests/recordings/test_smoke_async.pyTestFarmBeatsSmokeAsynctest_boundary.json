@@ -37,7 +37,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -65,7 +65,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 08 Feb 2023 17:28:50 GMT",
         "ETag": "0000572b-0000-0600-0000-63e3dbd20000",
-        "Location": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party",
+        "Location": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party",
         "mise-correlation-id": "3f601a30-179d-4b9f-ad87-5c7f695652b3",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
@@ -90,7 +90,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -148,7 +148,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 08 Feb 2023 17:28:51 GMT",
         "ETag": "0000582b-0000-0600-0000-63e3dbd30000",
-        "Location": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary",
+        "Location": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary",
         "mise-correlation-id": "99477d2c-6804-4bbc-8d82-9b248b8ede58",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
@@ -239,7 +239,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -347,7 +347,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party/boundaries/smoke-test-boundary?api-version=2022-11-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -371,7 +371,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/smoke-test-party?api-version=2022-11-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",

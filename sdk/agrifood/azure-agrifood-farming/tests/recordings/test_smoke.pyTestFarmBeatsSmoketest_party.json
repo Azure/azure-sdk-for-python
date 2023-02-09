@@ -224,7 +224,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-496874?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-496874?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -253,7 +253,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 08 Feb 2023 17:27:32 GMT",
         "ETag": "0200e235-0000-0600-0000-63e3db840000",
-        "Location": "https://fakeAccount.farmbeats.azure.net/parties/test-party-496874",
+        "Location": "https://fakeaccount.farmbeats.azure.net/parties/test-party-496874",
         "mise-correlation-id": "86007cfb-d5ed-47bd-b9be-3f1037e933ca",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
@@ -278,7 +278,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeAccount.farmbeats.azure.net/parties/test-party-496874?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-496874?api-version=2022-11-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",

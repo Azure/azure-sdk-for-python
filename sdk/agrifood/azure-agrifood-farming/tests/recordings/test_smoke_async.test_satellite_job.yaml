@@ -11,7 +11,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PATCH
-    uri: https://fakeAccount.farmbeats.azure.net/parties/async-satellite-test-party?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/parties/async-satellite-test-party?api-version=2021-03-31-preview
   response:
     body:
       string: '{"id":"async-satellite-test-party","eTag":"00000303-0000-0600-0000-60a41b9d0000","createdDateTime":"2021-05-18T19:20:15Z","modifiedDateTime":"2021-05-18T19:55:09Z"}'
@@ -37,7 +37,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/parties/async-satellite-test-party/boundaries/async-satellite-test-boundary-scenes?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/parties/async-satellite-test-party/boundaries/async-satellite-test-boundary-scenes?api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
@@ -77,7 +77,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: PUT
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
   response:
     body:
       string: '{"partyId":"async-satellite-test-party","boundaryId":"async-satellite-test-boundary-scenes","startDateTime":"2020-01-01T00:00:00Z","endDateTime":"2020-12-31T00:00:00Z","provider":"Microsoft","source":"Sentinel_2_L2A","data":{"imageNames":["LAI"],"imageFormats":["TIF"],"imageResolutions":[10.0]},"id":"async-satellite-test-job7386","status":"Waiting","message":"Created
@@ -91,8 +91,8 @@ interactions:
       content-length: '674'
       content-type: application/json; charset=utf-8
       date: Tue, 18 May 2021 19:55:10 GMT
-      location: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
-      operation-location: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
+      location: https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
+      operation-location: https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
       server: nginx/1.19.1
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
@@ -105,7 +105,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
@@ -137,7 +137,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/async-satellite-test-job7386?api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
@@ -171,7 +171,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
@@ -353,7 +353,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDWVRDUUFBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjUlREOm4rVGxTTDV1UEkzZjhDSUxkNys1QlRNeE16RXVNVGt1TXpoVk1URTdNVEU3TVRGYkFBPT0jSVNWOjIjSUVPOjY1NTY3I1FDRjo3I0ZQQzpBY0lJQUFBQUFBQUFVQWtBQUFBQUFBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiIxRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRiJ9fV0
+    uri: https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDWVRDUUFBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjUlREOm4rVGxTTDV1UEkzZjhDSUxkNys1QlRNeE16RXVNVGt1TXpoVk1URTdNVEU3TVRGYkFBPT0jSVNWOjIjSUVPOjY1NTY3I1FDRjo3I0ZQQzpBY0lJQUFBQUFBQUFVQWtBQUFBQUFBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiIxRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRiJ9fV0
   response:
     body:
       string: !!binary |
@@ -534,7 +534,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDYnNDQUFBQUFBQUFBPT0jUlQ6MiNUUkM6MTAwI1JURDpuK1RsU0w1dVBJM2Y4Q0lMZDcrNUJUTXhNekV1TVRVdU1qcFZNVEU3TVRFN01URmJBQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NyNGUEM6QWNJSUFBQUFBQUFBVUFrQUFBQUFBQUE9IiwicmFuZ2UiOnsibWluIjoiIiwibWF4IjoiMUZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkYifX1d
+    uri: https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&startDateTime=2020-01-01T00:00:00.000Z&endDateTime=2020-12-31T00:00:00.000Z&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDYnNDQUFBQUFBQUFBPT0jUlQ6MiNUUkM6MTAwI1JURDpuK1RsU0w1dVBJM2Y4Q0lMZDcrNUJUTXhNekV1TVRVdU1qcFZNVEU3TVRFN01URmJBQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NyNGUEM6QWNJSUFBQUFBQUFBVUFrQUFBQUFBQUE9IiwicmFuZ2UiOnsibWluIjoiIiwibWF4IjoiMUZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkYifX1d
   response:
     body:
       string: !!binary |
@@ -690,7 +690,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview
+    uri: https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview
   response:
     body:
       string: !!binary |
@@ -871,7 +871,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDWVRDUUFBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjUlREOm4rVGxTTDV1UEkzZjhDSUxkNys1QlRNeE16RXVNVGt1TXpoVk1URTdNVEU3TVRGYkFBPT0jSVNWOjIjSUVPOjY1NTY3I1FDRjo3I0ZQQzpBY0lJQUFBQUFBQUFVQWtBQUFBQUFBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiIxRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRiJ9fV0
+    uri: https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDWVRDUUFBQUFBQUFBPT0jUlQ6MSNUUkM6NTAjUlREOm4rVGxTTDV1UEkzZjhDSUxkNys1QlRNeE16RXVNVGt1TXpoVk1URTdNVEU3TVRGYkFBPT0jSVNWOjIjSUVPOjY1NTY3I1FDRjo3I0ZQQzpBY0lJQUFBQUFBQUFVQWtBQUFBQUFBQT0iLCJyYW5nZSI6eyJtaW4iOiIiLCJtYXgiOiIxRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRiJ9fV0
   response:
     body:
       string: !!binary |
@@ -1051,7 +1051,7 @@ interactions:
       User-Agent:
       - azsdk-python-agrifood-farming/1.0.0b1 Python/3.7.4 (Windows-10-10.0.19041-SP0)
     method: GET
-    uri: https://fakeAccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDYnNDQUFBQUFBQUFBPT0jUlQ6MiNUUkM6MTAwI1JURDpuK1RsU0w1dVBJM2Y4Q0lMZDcrNUJUTXhNekV1TVRVdU1qcFZNVEU3TVRFN01URmJBQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NyNGUEM6QWNJSUFBQUFBQUFBVUFrQUFBQUFBQUE9IiwicmFuZ2UiOnsibWluIjoiIiwibWF4IjoiMUZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkYifX1d
+    uri: https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft&partyId=async-satellite-test-party&boundaryId=async-satellite-test-boundary-scenes&source=Sentinel_2_L2A&maxCloudCoveragePercentage=100.0&maxDarkPixelCoveragePercentage=100.0&$maxPageSize=50&api-version=2021-03-31-preview&$skipToken=W3sidG9rZW4iOiIrUklEOn5Qa1pRQU1teHVDYnNDQUFBQUFBQUFBPT0jUlQ6MiNUUkM6MTAwI1JURDpuK1RsU0w1dVBJM2Y4Q0lMZDcrNUJUTXhNekV1TVRVdU1qcFZNVEU3TVRFN01URmJBQT09I0lTVjoyI0lFTzo2NTU2NyNRQ0Y6NyNGUEM6QWNJSUFBQUFBQUFBVUFrQUFBQUFBQUE9IiwicmFuZ2UiOnsibWluIjoiIiwibWF4IjoiMUZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkZGRkYifX1d
   response:
     body:
       string: !!binary |
