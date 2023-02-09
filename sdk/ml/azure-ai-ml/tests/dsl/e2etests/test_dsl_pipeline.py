@@ -2718,3 +2718,41 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert job_dict["jobs"]["node1"]["outputs"] == expected_node_output_dict
         assert job_dict["outputs"] == expected_pipeline_output_dict
+
+    def test_pipeline_component_output_setting(self, client: MLClient) -> None:
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def inner_pipeline():
+            node1 = component_func1(component_in_number=1, component_in_path=job_input)
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/1"
+            return node1.outputs
+
+        @dsl.pipeline()
+        def outer_pipeline():
+            node1 = inner_pipeline()
+            node1.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/2"
+            return node1.outputs
+
+        pipeline_job = outer_pipeline()
+        pipeline_job.outputs.component_out_path.path = "azureml://datastores/workspaceblobstore/paths/outputs/3"
+
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job = client.jobs.create_or_update(pipeline_job)
+        client.jobs.begin_cancel(pipeline_job.name)
+        job_dict = pipeline_job._to_dict()
+        expected_node_output_dict = {
+            'component_out_path': {'path': '${{parent.outputs.component_out_path}}',
+                                   'uri': 'azureml://datastores/workspaceblobstore/paths/outputs/2'}
+        }
+        expected_pipeline_output_dict = {
+            # default mode added by mt, default type added by SDK
+            'component_out_path': {
+                'mode': 'rw_mount',
+                'type': 'uri_folder',
+                'path': 'azureml://datastores/workspaceblobstore/paths/outputs/3'
+            }
+        }
+        assert job_dict["jobs"]["node1"]["outputs"] == expected_node_output_dict
+        assert job_dict["outputs"] == expected_pipeline_output_dict
