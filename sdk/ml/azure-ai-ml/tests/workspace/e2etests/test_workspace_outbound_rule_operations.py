@@ -71,7 +71,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert isinstance(rules["my-storage"], PrivateEndpointDestination)
         assert rules["my-storage"].category == OutboundRuleCategory.USER_DEFINED
         assert rules["my-storage"].service_resource_id == "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount"
-        assert rules["my-storage"].spark_jobs_enabled == False
+        assert rules["my-storage"].spark_enabled == False
         assert rules["my-storage"].subresource_target == "blob"
 
         assert "pytorch" in rules.keys()
@@ -131,7 +131,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         pe_rule_name = "testPERule"
         service_resource_id = "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount"
         subresource_target = "blob"
-        spark_jobs_enabled = True
+        spark_enabled = True
         rule_poller = client.workspace_outbound_rule.set(
             client.resource_group_name,
             wps_name,
@@ -140,7 +140,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
             category=OutboundRuleCategory.USER_DEFINED,
             service_resource_id=service_resource_id,
             subresource_target=subresource_target,
-            spark_jobs_enabled=spark_jobs_enabled)
+            spark_enabled=spark_enabled)
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
@@ -152,7 +152,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert rule.category == OutboundRuleCategory.USER_DEFINED
         assert rule.service_resource_id == service_resource_id
         assert rule.subresource_target == subresource_target
-        assert rule.spark_jobs_enabled == spark_jobs_enabled
+        assert rule.spark_enabled == spark_enabled
 
         # test remove outbound rule
         rule_poller = client.workspace_outbound_rule.remove(

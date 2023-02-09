@@ -23,7 +23,7 @@ from azure.ai.ml._utils._experimental import experimental
 class DestinationSchema(metaclass=PatchedSchemaMeta):
     service_resource_id = fields.Str()
     subresource_target = fields.Str()
-    spark_jobs_enabled = fields.Bool()
+    spark_enabled = fields.Bool()
     service_tag = fields.Str()
     protocol = fields.Str()
     port_ranges = fields.Str()
@@ -41,7 +41,7 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
             data.destination = self.fqdn_dest2dict(data.destination)
         if data and isinstance(data, PrivateEndpointDestination):
             data.destination = self.pe_dest2dict(
-                data.service_resource_id, data.subresource_target, data.spark_jobs_enabled
+                data.service_resource_id, data.subresource_target, data.spark_enabled
             )
         if data and isinstance(data, ServiceTagDestination):
             data.destination = self.service_tag_dest2dict(data.service_tag, data.protocol, data.port_ranges)
@@ -56,7 +56,7 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
             else:
                 if dest.get("subresource_target", False):
                     return PrivateEndpointDestination(
-                        dest["service_resource_id"], dest["subresource_target"], dest["spark_jobs_enabled"]
+                        dest["service_resource_id"], dest["subresource_target"], dest["spark_enabled"]
                     )
                 if dest.get("service_tag", False):
                     return ServiceTagDestination(dest["service_tag"], dest["protocol"], dest["port_ranges"])
@@ -66,11 +66,11 @@ class OutboundRuleSchema(metaclass=PatchedSchemaMeta):
         res = fqdndest
         return res
 
-    def pe_dest2dict(self, service_resource_id, subresource_target, spark_jobs_enabled):
+    def pe_dest2dict(self, service_resource_id, subresource_target, spark_enabled):
         pedest = {}
         pedest["service_resource_id"] = service_resource_id
         pedest["subresource_target"] = subresource_target
-        pedest["spark_jobs_enabled"] = spark_jobs_enabled
+        pedest["spark_enabled"] = spark_enabled
         return pedest
 
     def service_tag_dest2dict(self, service_tag, protocol, port_ranges):

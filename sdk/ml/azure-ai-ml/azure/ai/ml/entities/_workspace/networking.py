@@ -37,7 +37,7 @@ class OutboundRule:
             rule = PrivateEndpointDestination(
                 service_resource_id=rest_obj.destination.service_resource_id,
                 subresource_target=rest_obj.destination.subresource_target,
-                spark_jobs_enabled=rest_obj.destination.spark_jobs_enabled,
+                spark_enabled=rest_obj.destination.spark_enabled,
             )
             rule.category = rest_obj.category
             return rule
@@ -66,10 +66,10 @@ class FqdnDestination(OutboundRule):
 
 @experimental
 class PrivateEndpointDestination(OutboundRule):
-    def __init__(self, service_resource_id: str, subresource_target: str, spark_jobs_enabled: bool = False) -> None:
+    def __init__(self, service_resource_id: str, subresource_target: str, spark_enabled: bool = False) -> None:
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
-        self.spark_jobs_enabled = spark_jobs_enabled
+        self.spark_enabled = spark_enabled
         OutboundRule.__init__(self, OutboundRuleType.PRIVATE_ENDPOINT)
 
     def _to_rest_object(self) -> RestPrivateEndpointOutboundRule:
@@ -79,7 +79,7 @@ class PrivateEndpointDestination(OutboundRule):
             destination=RestPrivateEndpointOutboundRuleDestination(
                 service_resource_id=self.service_resource_id,
                 subresource_target=self.subresource_target,
-                spark_jobs_enabled=self.spark_jobs_enabled,
+                spark_enabled=self.spark_enabled,
             ),
         )
 
@@ -90,7 +90,7 @@ class PrivateEndpointDestination(OutboundRule):
             "destination": {
                 "service_resource_id": self.service_resource_id,
                 "subresource_target": self.subresource_target,
-                "spark_jobs_enabled": self.spark_jobs_enabled,
+                "spark_enabled": self.spark_enabled,
             },
         }
 

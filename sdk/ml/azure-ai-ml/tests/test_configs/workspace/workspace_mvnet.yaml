@@ -12,7 +12,7 @@ managed_network:
     my-storage:
       destination:
         service_resource_id: /subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount
-        spark_jobs_enabled: false
+        spark_enabled: false
         subresource_target: blob
       type: PrivateEndpoint
     pytorch:

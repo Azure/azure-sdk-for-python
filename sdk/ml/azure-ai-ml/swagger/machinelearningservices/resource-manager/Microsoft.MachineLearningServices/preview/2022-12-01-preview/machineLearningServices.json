@@ -6759,7 +6759,7 @@
           "type": "string",
           "x-nullable": true
         },
-        "sparkJobsEnabled": {
+        "sparkEnabled": {
           "type": "boolean"
         }
       }
