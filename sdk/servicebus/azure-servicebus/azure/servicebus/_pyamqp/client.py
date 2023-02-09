@@ -165,7 +165,7 @@ class AMQPClient(
         self._auth_timeout = kwargs.pop("auth_timeout", DEFAULT_AUTH_TIMEOUT)
         self._mgmt_links = {}
         self._retry_policy = kwargs.pop("retry_policy", RetryPolicy())
-        self._keep_alive_interval = int(kwargs.get("keep_alive_interval") or 0)
+        self._keep_alive_interval = int(kwargs.get("keep_alive_interval", 0))
         self._keep_alive_thread = None
         self._lock = threading.Lock()
 
@@ -210,10 +210,6 @@ class AMQPClient(
         self._custom_endpoint_address = kwargs.get("custom_endpoint_address")
         self._connection_verify = kwargs.get("connection_verify")
 
-        # Keep Alive (release messages)
-        self._keep_alive_interval = int(kwargs.get("keep_alive_interval",0))
-        self._keep_alive_thread = None
-
 
     def __enter__(self):
         """Run Client in a context manager."""
@@ -236,7 +232,7 @@ class AMQPClient(
                     start_time = current_time
                 time.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
-            _logger.info("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
+            _logger.debug("Connection keep-alive for %r failed: %r.", self.__class__.__name__, e)
 
     def _client_ready(self):  # pylint: disable=no-self-use
         """Determine whether the client is ready to start sending and/or
@@ -798,7 +794,6 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         self._timeout_reached = False
         self._last_activity_stamp = time.time()
         self._running_iter = False
-        self.auto_complete = kwargs.pop("auto_complete", True)
         super(ReceiveClient, self).__init__(hostname, **kwargs)
 
     def _client_ready(self):
@@ -940,8 +935,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
         criteria, pass in a callback.
 
         :param on_message_received: A callback to process messages as they arrive from the
-         service. It takes a single argument, a ~uamqp.message.Message object.
-        :type on_message_received: callable[~uamqp.message.Message]
+         service. It takes a single argument, a ~pyamqp.message.Message object.
+        :type on_message_received: callable[~pyamqp.message.Message]
         """
         self._message_received_callback = on_message_received
         return self._message_generator()
@@ -949,10 +944,8 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
     def _message_generator(self):
         """Iterate over processed messages in the receive queue.
 
-        :rtype: generator[~uamqp.message.Message]
+        :rtype: generator[~pyamqp.message.Message]
         """
-        auto_complete = self.auto_complete
-        self.auto_complete = False
         self._timeout_reached = False
         receiving = True
         message = None
@@ -974,17 +967,10 @@ class ReceiveClient(AMQPClient): # pylint:disable=too-many-instance-attributes
                     self._last_activity_stamp = time.time()
                     self._received_messages.task_done()
                     yield message
-                    self._complete_message(message, auto_complete)
 
         finally:
             if self._shutdown:
                 self.close()
-
-    def _complete_message(self, message, auto): # pylint:disable=no-self-use
-        if not message or not auto:
-            return
-        # TODO: this is off here, message delivery id?
-        # self.settle_messages(message[0][1], "accepted")
 
     @overload
     def settle_messages(

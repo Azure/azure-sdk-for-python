@@ -839,8 +839,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
         criteria, pass in a callback.
 
         :param on_message_received: A callback to process messages as they arrive from the
-         service. It takes a single argument, a ~uamqp.message.Message object.
-        :type on_message_received: callable[~uamqp.message.Message]
+         service. It takes a single argument, a ~pyamqp.message.Message object.
+        :type on_message_received: callable[~pyamqp.message.Message]
         """
         self._message_received_callback = on_message_received
         return self._message_generator_async()
@@ -848,10 +848,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
     async def _message_generator_async(self):
         """Iterate over processed messages in the receive queue.
 
-        :rtype: generator[~uamqp.message.Message]
+        :rtype: generator[~pyamqp.message.Message]
         """
-        auto_complete = self.auto_complete
-        self.auto_complete = False
         receiving = True
         message = None
         self._last_activity_stamp = time.time()
@@ -873,17 +871,10 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                     self._last_activity_stamp = time.time()
                     self._received_messages.task_done()
                     yield message
-                    await self._complete_message_async(message, auto_complete)
+
         finally:
             if self._shutdown:
                 await self.close_async()
-
-    async def _complete_message_async(self, message, auto):
-        if not message or not auto:
-            return
-        # TODO: this is off here, message delivery id?
-        # await self.settle_messages_async(message[0][1], "accepted")
-
 
     @overload
     async def settle_messages_async(
