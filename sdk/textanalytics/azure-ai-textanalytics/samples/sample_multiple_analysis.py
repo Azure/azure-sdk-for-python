@@ -58,7 +58,6 @@ document_results = poller.result()
 for doc, action_results in zip(documents, document_results):
     print(f"\nDocument text: {doc}")
     for result in action_results:
-        print(result.kind)
         if result.kind == "EntityRecognition":
             print("...Results of Recognize Entities Action:")
             for entity in result.entities:
