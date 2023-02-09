@@ -118,17 +118,6 @@ def _resolve_inputs_outputs(job):
     return result
 
 
-def _add_node_output_setting(data, original):
-    for name, output in data.get("outputs", {}).items():
-        original_output = original.outputs.get(name)
-        if original_output._uri:
-            if isinstance(output, str):
-                output = {"path": output}
-            if isinstance(output, dict):
-                output["uri"] = original_output._uri
-            data["outputs"][name] = output
-    return data
-
 
 class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     # pylint: disable=unused-argument
@@ -211,10 +200,6 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
-
-    @post_dump(pass_original=True)
-    def add_node_output_setting(self, data, original, **kwargs):
-        return _add_node_output_setting(data, original)
 
 
 class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):

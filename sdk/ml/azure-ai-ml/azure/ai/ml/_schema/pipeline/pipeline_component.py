@@ -7,7 +7,7 @@ import copy
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load, pre_dump
+from marshmallow import INCLUDE, fields, post_load, pre_dump, post_dump
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -86,7 +86,46 @@ def PipelineJobsField():
     return pipeline_job_field
 
 
-def _post_load_pipeline_jobs(context, data: dict) -> dict:
+def _add_node_output_setting_load(pipeline_data: dict, original: dict):
+    from azure.ai.ml.exceptions import ValidationException
+
+    jobs = pipeline_data.get("jobs", {})
+    original_jobs = original.get("jobs", {})
+
+    for key, node_obj in jobs.items():
+        original_node_dict = original_jobs[key]
+        if not hasattr(node_obj, "outputs"):
+            continue
+        outputs = getattr(node_obj, "outputs", {})
+        for name, output_obj in outputs.items():
+            original_output = original_node_dict["outputs"][name]
+            if isinstance(original_output, dict) and original_output.get("uri"):
+                uri = original_output["uri"]
+                try:
+                    output_obj.path = uri
+                except ValidationException:
+                    # when path failed to assign to output, assign uri
+                    output_obj._uri = uri
+    return pipeline_data
+
+
+def _add_node_output_setting_dump(pipeline_data: dict, original):
+    jobs = pipeline_data.get("jobs", {})
+    original_jobs = getattr(original, "jobs", {})
+    for key, node_dict in jobs.items():
+        original_node_obj = original_jobs[key]
+        for name, output in node_dict.get("outputs", {}).items():
+            original_output = original_node_obj.outputs.get(name)
+            if getattr(original_output, "_uri"):
+                if isinstance(output, str):
+                    output = {"path": output}
+                if isinstance(output, dict):
+                    output["uri"] = original_output._uri
+                node_dict["outputs"][name] = output
+    return pipeline_data
+
+
+def _post_load_pipeline_jobs(context, data: dict, original: dict) -> dict:
     """Silently convert Job in pipeline jobs to node."""
     from azure.ai.ml.entities._builders import parse_inputs_outputs
     from azure.ai.ml.entities._builders.do_while import DoWhile
@@ -133,6 +172,7 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
             jobs[key] = job_instance
         # update job instance name to key
         job_instance.name = key
+    data = _add_node_output_setting_load(data, original)
     return data
 
 
@@ -163,9 +203,13 @@ class PipelineComponentSchema(ComponentSchema):
     def resolve_pipeline_component_inputs(self, component, **kwargs):  # pylint: disable=unused-argument, no-self-use
         return _resolve_pipeline_component_inputs(component, **kwargs)
 
-    @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument
-        return _post_load_pipeline_jobs(self.context, data)
+    @post_load(pass_original=True)
+    def make(self, data, original, **kwargs):  # pylint: disable=unused-argument
+        return _post_load_pipeline_jobs(self.context, data, original)
+
+    @post_dump(pass_original=True)
+    def add_node_output_setting_dump(self, data, original, **kwargs):  # pylint: disable=unused-argument, no-self-use
+        return _add_node_output_setting_dump(data, original)
 
 
 class RestPipelineComponentSchema(PipelineComponentSchema):
@@ -185,19 +229,23 @@ class _AnonymousPipelineComponentSchema(AnonymousAssetSchema, PipelineComponentS
     order).
     """
 
-    @post_load
-    def make(self, data, **kwargs):
+    @post_load(pass_original=True)
+    def make(self, data, original, **kwargs):
         from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 
         # pipeline jobs post process is required before init of pipeline component: it converts control node dict
         # to entity.
         # however @post_load invocation order is not guaranteed, so we need to call it explicitly here.
-        _post_load_pipeline_jobs(self.context, data)
+        _post_load_pipeline_jobs(self.context, data, original)
 
         return PipelineComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             **data,
         )
+
+    @post_dump(pass_original=True)
+    def add_node_output_setting_dump(self, data, original, **kwargs):
+        return _add_node_output_setting_dump(data, original)
 
 
 class PipelineComponentFileRefField(FileRefField):

@@ -1432,6 +1432,63 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.name == 'convert_data_node_output'
         assert node_output.version == '1'
 
+    def test_node_output_setting_path(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        pipeline_spec_path = "./tests/test_configs/pipeline_jobs/node_output_path_setting.yaml"
+        pipeline = load_job(source=pipeline_spec_path, params_override=[{'name': randstr("job_name")}])
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        job_dict = pipeline_job._to_dict()
+        expected_node_output_dict = {
+            'component_out_path': {'path': '${{parent.outputs.component_out_path}}',
+                                   'uri': 'azureml://datastores/workspaceblobstore/paths/outputs/1'}
+        }
+        expected_pipeline_output_dict = {
+            # default mode added by mt, default type added by SDK
+            'component_out_path': {'mode': 'rw_mount', 'type': 'uri_folder'}
+        }
+        assert job_dict["jobs"]["node1"]["outputs"] == expected_node_output_dict
+        assert job_dict["outputs"] == expected_pipeline_output_dict
+
+    def test_pipeline_output_setting_path(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        pipeline_spec_path = "./tests/test_configs/pipeline_jobs/pipeline_output_path_setting.yaml"
+        pipeline = load_job(source=pipeline_spec_path, params_override=[{'name': randstr("job_name")}])
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        job_dict = pipeline_job._to_dict()
+        expected_node_output_dict = {
+            'component_out_path': '${{parent.outputs.component_out_path}}'
+        }
+        expected_pipeline_output_dict = {
+            # default mode added by mt, default type added by SDK
+            'component_out_path': {'mode': 'rw_mount',
+                                   'path': 'azureml://datastores/workspaceblobstore/paths/outputs/2',
+                                   'type': 'uri_folder'}
+        }
+        assert job_dict["jobs"]["node1"]["outputs"] == expected_node_output_dict
+        assert job_dict["outputs"] == expected_pipeline_output_dict
+
+    def test_mixed_output_setting_path(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        pipeline_spec_path = "./tests/test_configs/pipeline_jobs/mixed_output_path_setting.yaml"
+        pipeline = load_job(source=pipeline_spec_path, params_override=[{'name': randstr("job_name")}])
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        job_dict = pipeline_job._to_dict()
+        expected_node_output_dict = {
+            'component_out_path': {'path': '${{parent.outputs.component_out_path}}',
+                                   'uri': 'azureml://datastores/workspaceblobstore/paths/outputs/1'}
+        }
+        expected_pipeline_output_dict = {
+            # default mode added by mt, default type added by SDK
+            'component_out_path': {
+                'mode': 'rw_mount',
+                'type': 'uri_folder',
+                'path': 'azureml://datastores/workspaceblobstore/paths/outputs/2',
+        }
+        }
+        assert job_dict["jobs"]["node1"]["outputs"] == expected_node_output_dict
+        assert job_dict["outputs"] == expected_pipeline_output_dict
+
+
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test

@@ -1,0 +1,23 @@
+display_name: pipeline
+type: pipeline
+outputs:
+  component_out_path:
+    mode: rw_mount
+    type: uri_folder
+jobs:
+  node1:
+    type: command
+    inputs:
+      component_in_number: 1
+      component_in_path:
+        type: uri_file
+        path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    outputs:
+      component_out_path:
+        path: ${{parent.outputs.component_out_path}}
+        # This is not included in schema, it's supported to write.
+        uri: azureml://datastores/workspaceblobstore/paths/outputs/1
+    component: ../components/helloworld_component.yml
+settings:
+  default_compute: azureml:cpu-cluster
+experiment_name: azure-ai-ml

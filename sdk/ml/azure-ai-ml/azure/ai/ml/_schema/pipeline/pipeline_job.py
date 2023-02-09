@@ -6,7 +6,7 @@
 
 import logging
 
-from marshmallow import INCLUDE, ValidationError, post_load, pre_dump, pre_load
+from marshmallow import INCLUDE, ValidationError, post_load, pre_dump, pre_load, post_dump
 
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
@@ -22,7 +22,7 @@ from azure.ai.ml._schema.pipeline.component_job import _resolve_inputs_outputs
 from azure.ai.ml._schema.pipeline.pipeline_component import (
     PipelineComponentFileRefField,
     PipelineJobsField,
-    _post_load_pipeline_jobs,
+    _post_load_pipeline_jobs, _add_node_output_setting_dump,
 )
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml.constants import JobType
@@ -71,6 +71,10 @@ class PipelineJobSchema(BaseJobSchema):
             raise ValidationError(error_msg)
         return data
 
-    @post_load
-    def make(self, data: dict, **kwargs) -> dict:
-        return _post_load_pipeline_jobs(self.context, data)
+    @post_load(pass_original=True)
+    def make(self, data: dict, original: dict, **kwargs) -> dict:
+        return _post_load_pipeline_jobs(self.context, data, original)
+
+    @post_dump(pass_original=True)
+    def add_node_output_setting_dump(self, data, original, **kwargs):
+        return _add_node_output_setting_dump(data, original)

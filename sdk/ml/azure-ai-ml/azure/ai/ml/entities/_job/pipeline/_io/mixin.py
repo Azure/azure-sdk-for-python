@@ -181,6 +181,7 @@ class NodeIOMixin:
         The built dictionary's format aligns with component job's output yaml, eg:
         {"eval_output": "${{jobs.eval.outputs.eval_output}}"}
         """
+        # pylint: disable=protected-access
         built_outputs = self._build_outputs()
 
         # Convert io entity to rest io objects
@@ -199,8 +200,15 @@ class NodeIOMixin:
             output_builder = self.outputs[key]
             # if configured path for output binding, add it to "uri"
             try:
-                if output_builder.path:
-                    rest_output_bindings[key].update({"uri": output_builder.path})
+                output_data = output_builder._data
+                if isinstance(output_data, str):
+                    # for CLI scenario, output_data is a binding string, uri is stored in _uri field
+                    if output_builder._uri:
+                        rest_output_bindings[key].update({"uri": output_builder._uri})
+                else:
+                    if output_builder.path:
+                        rest_output_bindings[key].update({"uri": output_builder.path})
+
             except ValidationException:
                 # When path not configured, output builder will raise ValidationException
                 pass
