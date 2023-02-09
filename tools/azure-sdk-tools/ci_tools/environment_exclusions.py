@@ -82,7 +82,6 @@ MYPY_OPT_OUT = [
     "azure-communication-sms",
     "azure-cosmos",
     "azure-confidentialledger",
-    "azure-containerregistry",
     "azure-mgmt-core",
     "azure-iot-deviceupdate",
     "azure-digitaltwins-core",
