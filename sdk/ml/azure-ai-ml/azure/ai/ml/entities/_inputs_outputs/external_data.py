@@ -37,6 +37,14 @@ class StoredProcedureParameter(DictMixin, RestTranslatableMixin):
 class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """Define a database class for a DataTransfer Component or Job.
 
+    e.g.
+    source_snowflake = Database(query='SELECT * FROM my_table', connection='azureml:my_azuresql_connection')
+    or
+    stored_procedure_params = [{'name': 'job', 'value': 'Engineer', 'type': 'String'},
+    {'name': 'department', 'value': 'Engineering', 'type': 'String'}]
+    source_snowflake = Database(stored_procedure='SelectEmployeeByJobAndDepartment',
+                                stored_procedure_params=stored_procedure_params,
+                                connection='azureml:my_azuresql_connection')
 
     :param type: The type of the data input. Possible values include: 'file_system', 'database'.
     :type type: str
@@ -47,7 +55,7 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
     :param stored_procedure: stored_procedure
     :type stored_procedure: str
     :param stored_procedure_params: stored_procedure_params
-    :type stored_procedure_params: List[dict]
+    :type stored_procedure_params: List[dict, StoredProcedureParameter]
     :param connection: Connection is workspace, we didn't support storage connection here, need leverage workspace
     connection to store these credential info.
     :type connection: str
@@ -125,7 +133,9 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
 class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-instance-attributes
     """Define a file system class of a DataTransfer Component or Job.
 
+    e.g. source_s3 = FileSystem(path='s3://my_bucket/my_folder', connection='azureml:my_s3_connection')
 
+    The init function of Group will be 'def __init__(self, *, int_param0, int_param3, int_param1=1)'.
     :param type: The type of the data input. Possible values include: 'file_system', 'database'.
     :type type: str
     :param path: The path to which the input is pointing. Could be pointing to the path of file system.
