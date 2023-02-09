@@ -110,7 +110,7 @@ class TestDSLGroup:
 
         values = list(getattr(MixedGroup, IOConstants.GROUP_ATTR_NAME).values.values())
         assert len(values) == 5
-        values = sorted(values, key=lambda item: item["_arg_name"])
+        values = sorted(values, key=lambda item: item["_port_name"])
         for idx, val in enumerate(values):
             assert val.type == "integer"
             if idx < 4:
@@ -238,10 +238,10 @@ class TestDSLGroup:
             "int_param7",
         ]
         for _id, (expected_key, value) in enumerate(zip(expected_keys, list(params.values()))):
-            assert value._arg_name == expected_key
+            assert value._port_name == expected_key
             if _id > 4:
                 assert value.default is not None
-                assert value._arg_name == f"int_param{value.default}"
+                assert value._port_name == f"int_param{value.default}"
 
     def test_pipeline_with_group(self):
         class EnumOps(PyEnum):

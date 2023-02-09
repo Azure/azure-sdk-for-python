@@ -16,9 +16,9 @@ from .._helpers import _create_gzip_requests, GZIP_MAGIC_NUMBER
 from .._models import UploadLogsError
 
 if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
+    from collections.abc import Mapping, MutableMapping
 else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+    from typing import Mapping, MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -26,7 +26,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsIngestionClientOperationsMixin(GeneratedOps):
-    def upload(  # type:ignore[override] # pylint: disable=arguments-renamed, arguments-differ
+    def upload(  # type: ignore[override] # pylint: disable=arguments-renamed, arguments-differ
         self,
         rule_id: str,
         stream_name: str,
@@ -70,15 +70,11 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         for gzip_data, log_chunk in _create_gzip_requests(cast(List[JSON], logs)):
             try:
                 super().upload(
-                    rule_id,
-                    stream=stream_name,
-                    body=gzip_data,  # type: ignore
-                    content_encoding="gzip",
-                    **kwargs
+                    rule_id, stream=stream_name, body=gzip_data, content_encoding="gzip", **kwargs  # type: ignore
                 )
             except Exception as err:  # pylint: disable=broad-except
                 if on_error:
-                    on_error(UploadLogsError(error=err, failed_logs=log_chunk))
+                    on_error(UploadLogsError(error=err, failed_logs=cast(List[Mapping[str, Any]], log_chunk)))
                 else:
                     _LOGGER.error("Failed to upload chunk containing %d log entries", len(log_chunk))
                     raise err

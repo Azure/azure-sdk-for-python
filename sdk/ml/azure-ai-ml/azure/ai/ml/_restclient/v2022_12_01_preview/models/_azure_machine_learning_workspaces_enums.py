@@ -303,6 +303,10 @@ class ConnectionCategory(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SNOWFLAKE = "Snowflake"
     AZURE_SQL_DB = "AzureSqlDb"
     AZURE_SYNAPSE_ANALYTICS = "AzureSynapseAnalytics"
+    AZURE_MY_SQL_DB = "AzureMySqlDb"
+    AZURE_POSTGRES_DB = "AzurePostgresDb"
+    AZURE_DATA_LAKE_GEN2 = "AzureDataLakeGen2"
+    REDIS = "Redis"
 
 class ContainerType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """The type of container to retrieve logs from.
