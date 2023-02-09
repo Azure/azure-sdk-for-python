@@ -66,7 +66,7 @@ class AzureKeyCredential:
     """
 
     def __init__(self, key: TKeys) -> None:
-        if not isinstance(key, str) and not isinstance(key, Tuple):
+        if not isinstance(key, (str, Tuple)):
             raise TypeError("key must be a string or a tuple of strings.")
         self._key = key
 
@@ -89,7 +89,7 @@ class AzureKeyCredential:
         """
         if not key:
             raise ValueError("The key used for updating can not be None or empty")
-        if not isinstance(key, str) and not isinstance(key, Tuple):
+        if not isinstance(key, (str, Tuple)):
             raise TypeError("The key used for updating must be a string or a tuple of strings.")
         self._key = key
 
