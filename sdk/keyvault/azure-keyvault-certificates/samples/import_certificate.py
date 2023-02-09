@@ -48,7 +48,7 @@ pfx_cert_name = "pfxCert"
 with open(os.environ["PFX_CERT_PATH"], "rb") as f:
     pfx_cert_bytes = f.read()
 imported_pfx_cert = client.import_certificate(certificate_name=pfx_cert_name, certificate_bytes=pfx_cert_bytes)
-print("PFX certificate '{}' imported successfully.".format(imported_pfx_cert.name))
+print(f"PFX certificate '{imported_pfx_cert.name}' imported successfully.")
 
 # Now let's import a PEM-formatted certificate.
 # To import a PEM-formatted certificate, you must provide a CertificatePolicy that sets the content_type to
@@ -60,4 +60,4 @@ pem_cert_policy = CertificatePolicy(issuer_name=WellKnownIssuerNames.self, conte
 imported_pem_cert = client.import_certificate(
     certificate_name=pem_cert_name, certificate_bytes=pem_cert_bytes, policy=pem_cert_policy
 )
-print("PEM-formatted certificate '{}' imported successfully.".format(imported_pem_cert.name))
+print(f"PEM-formatted certificate '{imported_pem_cert.name}' imported successfully.")

@@ -1,15 +1,13 @@
+import os
 from pathlib import Path
-
-
-def _find_certificate():
-    devcert_path = Path('eng/common/testproxy/dotnet-devcert.crt')
-    with open(devcert_path, 'r') as fr:
-        return fr.read()
+from subprocess import getoutput
 
 
 def add_certificate():
-    certification = _find_certificate()
-    cacert_path = Path('../venv-sdk/lib/python3.8/site-packages/certifi/cacert.pem')
-    with open(cacert_path, 'a+') as f:
-        f.seek(0, 0)
-        f.write(certification)
+    # Set the following certificate paths:
+    #     SSL_CERT_DIR=C:\<YOUR DIRECTORY>\azure-sdk-for-python\.certificate
+    #     REQUESTS_CA_BUNDLE=C:\<YOUR DIRECTORY>\azure-sdk-for-python\.certificate\dotnet-devcert.pem
+    result = getoutput(f"python {Path('scripts/devops_tasks/trust_proxy_cert.py')}").split("\n")
+    for item in result[1:]:
+        name, value = item.strip().split("=", 1)
+        os.environ[name] = value

@@ -1,6 +1,6 @@
 # Release History
 
-## 0.14.1 (Unreleased)
+## 0.15.1 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,27 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 0.15.0 (2023-01-09)
+
+### Features Added
+
+  - Model AzureSynapseArtifactsLinkedService has a new parameter workspace_resource_id
+  - Model RestServiceLinkedService has a new parameter auth_headers
+  - Model SynapseSparkJobDefinitionActivity has a new parameter configuration_type
+  - Model SynapseSparkJobDefinitionActivity has a new parameter files_v2
+  - Model SynapseSparkJobDefinitionActivity has a new parameter python_code_reference
+  - Model SynapseSparkJobDefinitionActivity has a new parameter scan_folder
+  - Model SynapseSparkJobDefinitionActivity has a new parameter spark_config
+  - Model SynapseSparkJobDefinitionActivity has a new parameter target_spark_configuration 
+
+### Breaking Changes
+
+  - Parameter export_settings of model SnowflakeSource is now required
+  - Renamed operation LinkConnectionOperations.create_or_update_link_connection to LinkConnectionOperations.create_or_update
+  - Renamed operation LinkConnectionOperations.delete_link_connection to LinkConnectionOperations.delete
+  - Renamed operation LinkConnectionOperations.get_link_connection to LinkConnectionOperations.get
+  - Renamed operation LinkConnectionOperations.list_link_connections_by_workspace to LinkConnectionOperations.list_by_workspace
 
 ## 0.14.0 (2022-09-19)
 

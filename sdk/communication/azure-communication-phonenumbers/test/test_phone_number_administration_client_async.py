@@ -30,9 +30,6 @@ SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv(
     "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
 SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
 
-API_VERSION = "2022-01-11-preview2"
-
-
 def _get_test_phone_number():
     if SKIP_UPDATE_CAPABILITIES_TESTS:
         return os.environ["AZURE_PHONE_NUMBER"]
@@ -40,10 +37,12 @@ def _get_test_phone_number():
     test_agent = os.environ["AZURE_TEST_AGENT"]
     return os.environ["AZURE_PHONE_NUMBER_" + test_agent]
 
+
 @pytest.mark.asyncio
 class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
     def setup_method(self):
-        super(TestPhoneNumbersClientAsync, self).setUp(use_dynamic_resource=False)
+        super(TestPhoneNumbersClientAsync, self).setUp(
+            use_dynamic_resource=False)
         if self.is_playback():
             self.phone_number = "sanitized"
             self.country_code = "US"
@@ -55,8 +54,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
         self.phone_number_client = PhoneNumbersClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy(),
-            api_version=API_VERSION
+            headers_policy=get_header_policy()
         )
 
     def _get_managed_identity_phone_number_client(self):
@@ -66,8 +64,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
             endpoint,
             credential,
             http_logging_policy=get_http_logging_policy(),
-            headers_policy=get_header_policy(),
-            api_version=API_VERSION
+            headers_policy=get_header_policy()
         )
 
     @recorded_by_proxy_async
@@ -259,7 +256,7 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                 )
 
     @recorded_by_proxy_async
-    async def test_update_phone_number_capabilities_with_invalid_phone_number(self):
+    async def test_update_phone_number_capabilities_with_unauthorized_number(self):
         if self.is_playback():
             phone_number = "sanitized"
         else:
@@ -276,3 +273,173 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
 
         assert str(ex.value.status_code) == "404"  # type: ignore
         assert ex.value.message is not None  # type: ignore
+
+    @recorded_by_proxy_async
+    async def test_update_phone_number_capabilities_with_invalid_number(self):
+        if self.is_playback():
+            phone_number = "invalid_phone_number"
+        else:
+            phone_number = "invalid_phone_number"
+
+        with pytest.raises(Exception) as ex:
+            async with self.phone_number_client:
+                await self.phone_number_client.begin_update_phone_number_capabilities(
+                    phone_number,
+                    PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+                    PhoneNumberCapabilityType.INBOUND,
+                    polling=True
+                )
+
+        assert str(ex.value.status_code) == "404"  # type: ignore
+        assert ex.value.message is not None  # type: ignore
+
+    @recorded_by_proxy_async
+    async def test_update_phone_number_capabilities_with_empty_number(self):
+        if self.is_playback():
+            phone_number = ""
+        else:
+            phone_number = ""
+
+        with pytest.raises(ValueError) as ex:
+            async with self.phone_number_client:
+                await self.phone_number_client.begin_update_phone_number_capabilities(
+                    phone_number,
+                    PhoneNumberCapabilityType.INBOUND_OUTBOUND,
+                    PhoneNumberCapabilityType.INBOUND,
+                    polling=True
+                )
+
+    @recorded_by_proxy_async
+    async def test_list_toll_free_area_codes_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            area_codes = phone_number_client.list_available_area_codes(
+                "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+            items = []
+            async for item in area_codes:
+                items.append(item)
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_toll_free_area_codes(self):
+        async with self.phone_number_client:
+            area_codes = self.phone_number_client.list_available_area_codes(
+                "US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+            items = []
+            async for item in area_codes:
+                items.append(item)
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_geographic_area_codes_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            localities = phone_number_client.list_available_localities("US")
+            async for first_locality in localities:
+                area_codes = self.phone_number_client.list_available_area_codes(
+                    "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
+                items = []
+                async for item in area_codes:
+                    items.append(item)
+                break
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_geographic_area_codes(self):
+        async with self.phone_number_client:
+            localities = self.phone_number_client.list_available_localities(
+                "US")
+            async for first_locality in localities:
+                area_codes = self.phone_number_client.list_available_area_codes(
+                    "US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name, administrative_division=first_locality.administrative_division.abbreviated_name)
+                items = []
+                async for item in area_codes:
+                    items.append(item)
+                break
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_countries_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            countries = phone_number_client.list_available_countries()
+            items = []
+            async for item in countries:
+                items.append(item)
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_countries(self):
+        async with self.phone_number_client:
+            countries = self.phone_number_client.list_available_countries()
+            items = []
+            async for item in countries:
+                items.append(item)
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_localities_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            localities = phone_number_client.list_available_localities("US")
+            items = []
+            async for item in localities:
+                items.append(item)
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_localities(self):
+        async with self.phone_number_client:
+            localities = self.phone_number_client.list_available_localities(
+                "US")
+            items = []
+            async for item in localities:
+                items.append(item)
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_localities_with_ad_and_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            localities = phone_number_client.list_available_localities("US")
+            async for first_locality in localities:
+                localities = phone_number_client.list_available_localities(
+                    "US", administrative_division=first_locality.administrative_division.abbreviated_name)
+                items = []
+                async for item in localities:
+                    items.append(item)
+                break
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_localities_with_ad(self):
+        async with self.phone_number_client:
+            localities = self.phone_number_client.list_available_localities(
+                "US")
+            async for first_locality in localities:
+                localities = self.phone_number_client.list_available_localities(
+                    "US", administrative_division=first_locality.administrative_division.abbreviated_name)
+                items = []
+                async for item in localities:
+                    items.append(item)
+                break
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_offerings_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            offerings = phone_number_client.list_available_offerings("US")
+            items = []
+            async for item in offerings:
+                items.append(item)
+        assert len(items) > 0
+
+    @recorded_by_proxy_async
+    async def test_list_offerings(self):
+        async with self.phone_number_client:
+            offerings = self.phone_number_client.list_available_offerings("US")
+            items = []
+            async for item in offerings:
+                items.append(item)
+        assert len(items) > 0

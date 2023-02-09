@@ -36,13 +36,9 @@ class TestCancelTranslation(AsyncDocumentTranslationTest):
 
         # cancel translation
         await client.cancel_translation(poller.id)
-
+        await poller.result()
         # check translation status
         translation_details = await client.get_translation_status(poller.id)
         assert translation_details.status in ["Canceled", "Canceling"]
         self._validate_translations(translation_details)
-        try:
-            await poller.wait()
-        except HttpResponseError:
-            pass  # expected if the operation was already in a terminal state.
         return variables

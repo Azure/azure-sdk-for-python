@@ -3089,6 +3089,36 @@ class SupportedCapabilities(_serialization.Model):
         self.architecture = architecture
 
 
+class SystemData(_serialization.Model):
+    """The system meta data relating to this resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar created_at: Specifies the time in UTC at which the Cloud Service (extended support)
+     resource was created. :code:`<br />`Minimum api-version: 2022-04-04.
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_at: Specifies the time in UTC at which the Cloud Service (extended support)
+     resource was last modified. :code:`<br />`Minimum api-version: 2022-04-04.
+    :vartype last_modified_at: ~datetime.datetime
+    """
+
+    _validation = {
+        "created_at": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.created_at = None
+        self.last_modified_at = None
+
+
 class UserAssignedIdentitiesValue(_serialization.Model):
     """UserAssignedIdentitiesValue.
 

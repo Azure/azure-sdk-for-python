@@ -34,6 +34,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 from ._image_metadata import ImageMetadata
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
+from ._custom_applications import CustomApplications, validate_custom_applications
 
 module_logger = logging.getLogger(__name__)
 
@@ -131,20 +132,23 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
-    :param idle_time_before_shutdown: Deprecated. Use :param: `idle_time_before_shutdown_minutes` instead.
+    :param idle_time_before_shutdown: Deprecated. Use the `idle_time_before_shutdown_minutes` parameter instead.
         Stops compute instance after user defined period of inactivity.
-        Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+        Time is defined in ISO8601 format. Minimum is 15 minutes, maximum is 3 days.
     :type idle_time_before_shutdown: Optional[str], optional
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
-        inactivity in minutes. Minimum is 15 min, maximum is 3 days.
+        inactivity in minutes. Minimum is 15 minutes, maximum is 3 days.
     :type idle_time_before_shutdown_minutes: Optional[int], optional
     :param enable_node_public_ip: Enable or disable node public IP address provisioning. Possible values are:
         True - Indicates that the compute nodes will have public IPs provisioned.
         False - Indicates that the compute nodes will have a private endpoint and no public IPs.
         Default Value: True.
     :type enable_node_public_ip: Optional[bool], optional
-    :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
+    :param setup_scripts: Experimental. Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[SetupScripts], optional
+    :param custom_applications: Experimental. List of custom applications and their endpoints
+        for the compute instance.
+    :type custom_applications: Optional[List[CustomApplications]], optional
     """
 
     def __init__(
@@ -162,7 +166,8 @@ class ComputeInstance(Compute):
         idle_time_before_shutdown: Optional[str] = None,
         idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
-        enable_node_public_ip: Optional[bool] = True,
+        enable_node_public_ip: bool = True,
+        custom_applications: Optional[List[CustomApplications]] = None,
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.COMPUTEINSTANCE
@@ -188,6 +193,7 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
         self.enable_node_public_ip = enable_node_public_ip
+        self.custom_applications = custom_applications
         self.subnet = None
 
     @property
@@ -288,12 +294,11 @@ class ComputeInstance(Compute):
         compute_instance_prop.setup_scripts = (
             self.setup_scripts._to_rest_object() if self.setup_scripts else None
         )
-        compute_instance_prop.schedules = (
-            self.schedules._to_rest_object() if self.schedules else None
-        )
-        compute_instance_prop.setup_scripts = (
-            self.setup_scripts._to_rest_object() if self.setup_scripts else None
-        )
+        if self.custom_applications:
+            validate_custom_applications(self.custom_applications)
+            compute_instance_prop.custom_services = []
+            for app in self.custom_applications:
+                compute_instance_prop.custom_services.append(app._to_rest_object())
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,
@@ -386,6 +391,11 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown_minutes = (
                 int(idle_time_match[1]) if idle_time_match else None
             )
+        custom_applications = None
+        if prop.properties and prop.properties.custom_services:
+            custom_applications = []
+            for app in prop.properties.custom_services:
+                custom_applications.append(CustomApplications._from_rest_object(app))
 
         response = ComputeInstance(
             name=rest_obj.name,
@@ -433,8 +443,9 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
             os_image_metadata=os_image_metadata,
             enable_node_public_ip=prop.properties.enable_node_public_ip
-            if (prop.properties and prop.properties.enable_node_public_ip)
+            if (prop.properties and prop.properties.enable_node_public_ip is not None)
             else True,
+            custom_applications=custom_applications,
         )
         return response
 

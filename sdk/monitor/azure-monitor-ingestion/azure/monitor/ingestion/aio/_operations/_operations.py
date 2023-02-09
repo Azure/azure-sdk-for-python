@@ -23,8 +23,8 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_upload_request
-from .._vendor import MixinABC
+from ..._operations._operations import build_logs_ingestion_upload_request
+from .._vendor import LogsIngestionClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -35,7 +35,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class LogsIngestionClientOperationsMixin(MixinABC):
+class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
     @overload
     async def upload(  # pylint: disable=inconsistent-return-statements
         self,
@@ -132,7 +132,7 @@ class LogsIngestionClientOperationsMixin(MixinABC):
         :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
         :type stream: str
         :param body: An array of objects matching the schema defined by the provided stream. Is either
-         a list type or a IO type. Required.
+         a [JSON] type or a IO type. Required.
         :type body: list[JSON] or IO
         :keyword content_encoding: gzip. Default value is None.
         :paramtype content_encoding: str
@@ -156,8 +156,8 @@ class LogsIngestionClientOperationsMixin(MixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -167,7 +167,7 @@ class LogsIngestionClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_upload_request(
+        request = build_logs_ingestion_upload_request(
             rule_id=rule_id,
             stream=stream,
             content_encoding=content_encoding,
@@ -182,9 +182,9 @@ class LogsIngestionClientOperationsMixin(MixinABC):
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 

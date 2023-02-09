@@ -33,7 +33,7 @@ from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import ValidationException, UnexpectedKeywordError
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -2289,6 +2289,57 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert actual_job["inputs"] == expected_job_inputs
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
 
+    def test_registered_pipeline_with_group(self, client: MLClient):
+
+        hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
+        hello_world_component_func = load_component(hello_world_component_yaml)
+        from azure.ai.ml.dsl._group_decorator import group
+
+        @group
+        class SubParamClass:
+            int_param: Input(min=1.0, max=5.0, type="integer")
+
+        @group
+        class ParamClass:
+            sub: SubParamClass
+            str_param: str = "test"
+            bool_param: bool = True
+            number_param = 4.0
+
+        @dsl.pipeline()
+        def pipeline_with_group(group: ParamClass):
+            hello_world_component_func(
+                component_in_string=group.str_param,
+                component_in_ranged_number=group.number_param,
+                component_in_boolean=group.bool_param,
+                component_in_ranged_integer=group.sub.int_param,
+            )
+        component = client.components.create_or_update(pipeline_with_group)
+        # Assert key not exists
+        match = "(.*)unexpected keyword argument 'group.not_exist'(.*)valid keywords: " \
+                "'group', 'group.sub.int_param', 'group.str_param', 'group.bool_param', 'group.number_param'"
+        with pytest.raises(UnexpectedKeywordError, match=match):
+            component(**{
+                "group.number_param": 4.0, "group.str_param": "testing",
+                "group.sub.int_param": 4, "group.not_exist": 4,
+            })
+        # Assert conflict assignment
+        with pytest.raises(Exception, match="Conflict parameter key 'group' and 'group.number_param'"):
+            pipeline = component(**{
+                "group.number_param": 4.0, "group.str_param": "testing",
+                "group.sub.int_param": 4, "group": ParamClass(sub=SubParamClass(int_param=1))
+            })
+            pipeline.settings.default_compute = "cpu-cluster"
+            client.jobs.create_or_update(pipeline)
+        # Assert happy path
+        inputs = {
+            "group.number_param": 4.0, "group.str_param": "testing", "group.sub.int_param": 4
+        }
+        pipeline = component(**inputs)
+        pipeline.settings.default_compute = "cpu-cluster"
+        rest_pipeline_job = client.jobs.create_or_update(pipeline)
+        assert rest_pipeline_job._to_dict()["inputs"] == {key: str(val) for key, val in inputs.items()}
+
     def test_dsl_pipeline_with_default_component(
         self,
         client: MLClient,
@@ -2458,3 +2509,122 @@ class TestDSLPipeline(AzureRecordedTestCase):
         component = client.components.create_or_update(pipeline_job.component, _is_anonymous=True)
         # pipeline component output mode is undefined behavior so we skip assert it
         # assert component._to_rest_object().as_dict()["properties"]["component_spec"]["outputs"] == expected_outputs
+
+    def test_local_data_as_node_input(self, client: MLClient):
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(source=hello_world_component_yaml)
+        local_data_input = Input(type="uri_folder", path="./tests/test_configs/data")
+
+        @dsl.pipeline
+        def my_pipeline():
+            hello_world_component_func(component_in_number=1, component_in_path=local_data_input)
+
+        pipeline_job: PipelineJob = my_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        assert_job_cancel(pipeline_job, client)
+
+    def test_register_output_sdk(self, client: MLClient):
+        from azure.ai.ml.sweep import BanditPolicy, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+        spark_component = load_component(source="./tests/test_configs/spark_component/component.yml")
+        parallel_component = load_component(source="./tests/test_configs/components/parallel_component_with_file_input.yml")
+        sweep_component = load_component(source="./tests/test_configs/components/helloworld_component_for_sweep.yml")
+
+        @dsl.pipeline()
+        def register_node_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = 'a_output'
+            node.outputs.component_out_path.version = '1'
+
+            spark_node = spark_component(file_input=component_input)
+            spark_node.compute = "cpu-cluster"
+            spark_node.outputs.output.name = 'spark_output'
+            spark_node.outputs.output.version = '1'
+
+            parallel_node = parallel_component(job_data_path=Input(type='mltable', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv'))
+            parallel_node.outputs.job_output_path.name = "parallel_output"
+            parallel_node.outputs.job_output_path.version = '123_parallel'
+
+            cmd_node1 = sweep_component(
+                batch_size=Choice([25, 35]),
+                first_layer_neurons=Randint(upper=50),
+                second_layer_neurons=QUniform(min_value=10, max_value=50, q=5),
+                third_layer_neurons=QLogNormal(mu=5, sigma=1, q=5),
+                epochs=QLogUniform(min_value=1, max_value=5, q=5),
+                momentum=QNormal(mu=10, sigma=5, q=2),
+                weight_decay=LogNormal(mu=0, sigma=1),
+                learning_rate=LogUniform(min_value=-6, max_value=-1),
+                f1=Normal(mu=0, sigma=1),
+                f2=Uniform(min_value=10, max_value=20),
+                data_folder=Input(
+                    type=AssetTypes.MLTABLE,
+                    path="https://dprepdata.blob.core.windows.net/demo/",
+                    mode=InputOutputModes.RO_MOUNT,
+                ),
+            )
+            sweep_node = cmd_node1.sweep(
+                primary_metric="validation_acc",
+                goal="maximize",
+                sampling_algorithm="random",
+            )
+            sweep_node.compute = "cpu-cluster"
+            sweep_node.set_limits(max_total_trials=2, max_concurrent_trials=3, timeout=600)
+            sweep_node.early_termination = BanditPolicy(evaluation_interval=2, slack_factor=0.1, delay_evaluation=1)
+            sweep_node.outputs.trained_model_dir.name = 'sweep_output'
+            sweep_node.outputs.trained_model_dir.version = 'sweep_2'
+
+        pipeline = register_node_output()
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.jobs['node'].outputs.component_out_path
+        assert output.name == 'a_output'
+        assert output.version == '1'
+        output = pipeline_job.jobs['spark_node'].outputs.output
+        assert output.name == 'spark_output'
+        assert output.version == '1'
+        output = pipeline_job.jobs['parallel_node'].outputs.job_output_path
+        assert output.name == 'parallel_output'
+        assert output.version == '123_parallel'
+        output = pipeline_job.jobs['sweep_node'].outputs.trained_model_dir
+        assert output.name == 'sweep_output'
+        assert output.version == 'sweep_2'
+
+        @dsl.pipeline()
+        def register_pipeline_output():
+            node = component(component_in_path=component_input)
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_pipeline_output()
+        pipeline.outputs.pipeine_a_output.name = 'a_output'
+        pipeline.outputs.pipeine_a_output.version = '1'
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+        output = pipeline_job.outputs.pipeine_a_output
+        assert output.name == 'a_output'
+        assert output.version == '1'
+
+        @dsl.pipeline()
+        def register_both_output():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = 'a_output'
+            node.outputs.component_out_path.version = '1'
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_both_output()
+        pipeline.outputs.pipeine_a_output.name = 'b_output'
+        pipeline.outputs.pipeine_a_output.version = '2'
+        pipeline.settings.default_compute = "azureml:cpu-cluster"
+        pipeline_job = assert_job_cancel(pipeline, client)
+
+        pipeline_output = pipeline_job.outputs.pipeine_a_output
+        assert pipeline_output.name == 'b_output'
+        assert pipeline_output.version == '2'
+        node_output = pipeline_job.jobs['node'].outputs.component_out_path
+        assert node_output.name == 'a_output'
+        assert node_output.version == '1'

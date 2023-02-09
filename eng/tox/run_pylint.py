@@ -14,13 +14,12 @@ import os
 import logging
 import sys
 
-from ci_tools.environment_exclusions import PYLINT_OPT_OUT
+from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-rcFileLocation = os.path.join(root_dir, "pylintrc")
 lint_plugin_path = os.path.join(root_dir, "scripts/pylint_custom_plugin")
 
 if __name__ == "__main__":
@@ -36,14 +35,22 @@ if __name__ == "__main__":
         required=True,
     )
 
+    parser.add_argument(
+        "--next",
+        default=False,
+        help="Next version of pylint is being tested.",
+        required=False,      
+    )
+
     args = parser.parse_args()
 
     pkg_dir = os.path.abspath(args.target_package)
     pkg_details = ParsedSetup.from_path(pkg_dir)
+    rcFileLocation = os.path.join(root_dir, "eng/pylintrc") if args.next else os.path.join(root_dir, "pylintrc")
 
     top_level_module = pkg_details.namespace.split('.')[0]
 
-    if pkg_details.name not in PYLINT_OPT_OUT:
+    if is_check_enabled(args.target_package, "pylint"):
         try:
             check_call(
                 [
