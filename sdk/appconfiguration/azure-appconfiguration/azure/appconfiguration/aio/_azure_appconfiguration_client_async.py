@@ -28,7 +28,7 @@ from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._azure_appconfiguration_credential import AppConfigConnectionStringCredential
 from .._generated.aio import AzureAppConfiguration
-from .._generated.models import Snapshot, SnapshotUpdateParameters, KeyValueFilter
+from .._generated.models import Snapshot, SnapshotStatus, SnapshotUpdateParameters, KeyValueFilter
 from .._models import ConfigurationSetting
 from .._user_agent import USER_AGENT
 from .._utils import (
@@ -577,6 +577,11 @@ class AzureAppConfigurationClient:
         :type name: str
         :param filters: A list of filters used to filter the key-values included in the snapshot
         :type filters: list[~azure.appconfiguration.models.KeyValueFilter]
+        :keyword composition_type: The composition type describes how the key-values within the
+         snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
+         composition type ensures there are no two key-values containing the same key. Known values are:
+         "all" and "group_by_key"
+        :paramtype composition_type: str or ~azure.appconfiguration.models.CompositionType
         :return: The Snapshot returned from the service
         :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
@@ -593,28 +598,28 @@ class AzureAppConfigurationClient:
             raise error
 
     @distributed_trace
-    async def update_snapshot(
+    async def archive_snapshot(
         self,
         name: str,
-        status: Optional[str],
         match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
         **kwargs
     ) -> Snapshot:
-        """Update the status of a snapshot
+        """Archive a snapshot. It will update the status of a snapshot from "ready" to "archived"
 
-        :param name: The name of the configuration setting snapshot to update
+        :param name: The name of the configuration setting snapshot to archive
         :type name: str
-        :param status: The status of the configuration setting snapshot to update
-        :type status: str
         :param match_condition: The match condition to use upon the etag
         :type match_condition: :class:`~azure.core.MatchConditions`
         :keyword str etag: Check if the Snapshot is changed. Set None to skip checking etag
         :return: The Snapshot returned from the service
         :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
-        :class:`ResourceModifiedError`
+        :class:`ResourceModifiedError` :class`Exception`
         """
-        etag = kwargs.pop("etag", None)
+        snapshot = await self.get_snapshot(name=name)
+        if snapshot.status != SnapshotStatus.READY:
+            raise Exception(f"Can not archive a snapshot when its status is {snapshot.status}")
+
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
         if match_condition == MatchConditions.IfNotModified:
             error_map[412] = ResourceModifiedError
@@ -627,9 +632,52 @@ class AzureAppConfigurationClient:
         try:
             return await self._impl.update_snapshot(
                 name=name,
-                entity=SnapshotUpdateParameters(status=status),
-                if_match=prep_if_match(etag, match_condition),
-                if_none_match=prep_if_none_match(etag, match_condition),
+                entity=SnapshotUpdateParameters(status=SnapshotStatus.ARCHIVED),
+                if_match=prep_if_match(snapshot.etag, match_condition),
+                if_none_match=prep_if_none_match(snapshot.etag, match_condition),
+                error_map=error_map,
+                **kwargs
+            )
+        except HttpResponseError as error:
+            raise error
+
+    @distributed_trace
+    async def recover_snapshot(
+        self,
+        name: str,
+        match_condition: Optional[MatchConditions] = MatchConditions.Unconditionally,
+        **kwargs
+    ) -> Snapshot:
+        """Recover a snapshot. It will update the status of a snapshot from "archived" to "ready"
+
+        :param name: The name of the configuration setting snapshot to recover
+        :type name: str
+        :param match_condition: The match condition to use upon the etag
+        :type match_condition: :class:`~azure.core.MatchConditions`
+        :return: The Snapshot returned from the service
+        :rtype: :class:`~azure.appconfiguration.models.Snapshot`
+        :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceNotFoundError`, \
+        :class:`ResourceModifiedError` :class`Exception`
+        """
+        snapshot = await self.get_snapshot(name=name)
+        if snapshot.status != SnapshotStatus.ARCHIVED:
+            raise Exception(f"Can not archive a snapshot when its status is {snapshot.status}")
+
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError}
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        if match_condition == MatchConditions.IfModified:
+            error_map[412] = ResourceNotModifiedError
+        if match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        if match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        try:
+            return await self._impl.update_snapshot(
+                name=name,
+                entity=SnapshotUpdateParameters(status=SnapshotStatus.READY),
+                if_match=prep_if_match(snapshot.etag, match_condition),
+                if_none_match=prep_if_none_match(snapshot.etag, match_condition),
                 error_map=error_map,
                 **kwargs
             )
@@ -682,15 +730,13 @@ class AzureAppConfigurationClient:
 
     @distributed_trace
     def list_snapshots(
-        self, name: Optional[str] = None, status: Optional[str] = None, **kwargs
+        self, *, name: Optional[str] = None, status: Optional[str] = None, **kwargs
     ) -> AsyncItemPaged[Snapshot]:
         """List the snapshots stored in the configuration service, optionally filtered by
         snapshot name and status
 
-        :param name: Filter results based on snapshot name
-        :type name: str
-        :keyword status: Filter results based on snapshot keys
-        :type status: str
+        :keyword str name: Filter results based on snapshot name
+        :keyword str status: Filter results based on snapshot keys
         :keyword str after: Instruct the server to return elements that appear after the element referred to by the
          specified token
         :keyword List[str] fields: Specify which fields to include in the results. Leave None to include all fields
