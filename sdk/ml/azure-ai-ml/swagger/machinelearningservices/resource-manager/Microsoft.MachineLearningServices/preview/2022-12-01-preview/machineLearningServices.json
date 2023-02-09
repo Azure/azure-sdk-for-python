@@ -2165,6 +2165,9 @@
         "sku": {
           "$ref": "../../../../../common-types/resource-management/v3/types.json#/definitions/Sku",
           "description": "The sku of the workspace."
+        },
+        "kind": {
+          "type": "string"
         }
       }
     },
@@ -2333,6 +2336,10 @@
         "systemDatastoresAuthMode": {
           "description": "The auth mode used for accessing the system datastores of the workspace",
           "type": "string"
+        },
+        "featureStoreSettings": {
+          "description": "Settings for feature store type workspace.",
+          "$ref": "#/definitions/FeatureStoreSettings"
         }
       }
     },
@@ -2409,6 +2416,10 @@
         "encryption": {
           "$ref": "#/definitions/EncryptionUpdateProperties",
           "description": "The encryption settings of the workspace."
+        },
+        "featureStoreSettings": {
+          "description": "Settings for feature store type workspace.",
+          "$ref": "#/definitions/FeatureStoreSettings"
         }
       }
     },
@@ -5794,7 +5805,11 @@
         "S3",
         "Snowflake",
         "AzureSqlDb",
-        "AzureSynapseAnalytics"
+        "AzureSynapseAnalytics",
+        "AzureMySqlDb",
+        "AzurePostgresDb",
+        "AzureDataLakeGen2",
+        "Redis"
       ],
       "type": "string",
       "description": "Category of the connection",
@@ -6225,6 +6240,31 @@
         "idleTimeBeforeShutdown": {
           "type": "string",
           "description": "Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days."
+        }
+      }
+    },
+    "FeatureStoreSettings": {
+      "type": "object",
+      "properties": {
+        "computeRuntime": {
+          "$ref": "#/definitions/ComputeRuntimeDto"
+        },
+        "offlineStoreConnectionName": {
+          "type": "string"
+        },
+        "onlineStoreConnectionName": {
+          "type": "string"
+        },
+        "allowRoleAssignmentsOnResourceGroupLevel": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ComputeRuntimeDto": {
+      "type": "object",
+      "properties": {
+        "sparkRuntimeVersion": {
+          "type": "string"
         }
       }
     }

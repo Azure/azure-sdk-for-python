@@ -41,8 +41,8 @@ class TestConditionalNodeInPipeline(AzureRecordedTestCase):
 
 
 class TestIfElse(TestConditionalNodeInPipeline):
-    def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr('name')}]
+    def test_happy_path_if_else(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
         my_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/if_else/simple_pipeline.yml",
             params_override=params_override,
@@ -68,8 +68,8 @@ class TestIfElse(TestConditionalNodeInPipeline):
             'result': {'name': 'result', 'type': 'command'}
         }
 
-    def test_if_else_one_branch(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr('name')}]
+    def test_if_else_one_branch(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
         my_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/if_else/one_branch.yml",
             params_override=params_override,
@@ -90,8 +90,8 @@ class TestIfElse(TestConditionalNodeInPipeline):
             'result': {'name': 'result', 'type': 'command'}
         }
 
-    def test_if_else_literal_condition(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr('name')}]
+    def test_if_else_literal_condition(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
         my_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/if_else/literal_condition.yml",
             params_override=params_override,
@@ -111,7 +111,7 @@ class TestIfElse(TestConditionalNodeInPipeline):
                       'type': 'command'}
         }
 
-    def test_if_else_invalid_case(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_if_else_invalid_case(self, client: MLClient) -> None:
         my_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/if_else/invalid_binding.yml",
         )
@@ -120,23 +120,26 @@ class TestIfElse(TestConditionalNodeInPipeline):
         assert '"path": "jobs.conditionnode.true_block",' in str(e.value)
         assert "'true_block' of dsl.condition has invalid binding expression:" in str(e.value)
 
+
 class TestDoWhile(TestConditionalNodeInPipeline):
-    def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr('name')}]
+    @pytest.mark.disable_mock_code_hash
+    def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml",
             params_override=params_override,
         )
         created_pipeline = assert_job_cancel(pipeline_job, client)
-        assert len(created_pipeline.jobs) == 5
+        assert len(created_pipeline.jobs) == 7
         assert isinstance(created_pipeline.jobs["pipeline_body_node"], Pipeline)
         assert isinstance(created_pipeline.jobs["do_while_job_with_pipeline_job"], DoWhile)
+        assert isinstance(created_pipeline.jobs["do_while_true_job_with_pipeline_job"], DoWhile)
         assert isinstance(created_pipeline.jobs["do_while_job_with_command_component"], DoWhile)
         assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
-    def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr('name')}]
+    def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline_with_primitive_inputs.yml",
             params_override=params_override,
