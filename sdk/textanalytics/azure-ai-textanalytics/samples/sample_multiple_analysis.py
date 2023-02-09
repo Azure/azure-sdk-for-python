@@ -17,6 +17,12 @@ import os
 
 endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
 key = os.environ["AZURE_LANGUAGE_KEY"]
+project_name_custom_entities = os.environ["CUSTOM_ENTITIES_PROJECT_NAME"]
+deployment_name_custom_entities = os.environ["CUSTOM_ENTITIES_DEPLOYMENT_NAME"]
+project_name_single_label_classify = os.environ["SINGLE_LABEL_CLASSIFY_PROJECT_NAME"]
+deployment_name_single_label_classify = os.environ["SINGLE_LABEL_CLASSIFY_DEPLOYMENT_NAME"]
+project_name_multi_label_classify = os.environ["MULTI_LABEL_CLASSIFY_PROJECT_NAME"]
+deployment_name_multi_label_classify = os.environ["MULTI_LABEL_CLASSIFY_DEPLOYMENT_NAME"]
 
 
 text_analytics_client = TextAnalyticsClient(
@@ -40,14 +46,15 @@ poller = text_analytics_client.begin_analyze_actions(
     documents,
     display_name="Multiple Analysis",
     actions=[
+        # Comment out unnecessary Actions.
         RecognizeEntitiesAction(),
         RecognizeLinkedEntitiesAction(),
         RecognizePiiEntitiesAction(),
         ExtractKeyPhrasesAction(),
         AnalyzeSentimentAction(),
-        RecognizeCustomEntitiesAction('customner', 'customner'),
-        SingleLabelClassifyAction('singleclassify', 'singleclassify'),
-        MultiLabelClassifyAction('multiclassify', 'multiclassify'),#project_name, deployment_name),
+        RecognizeCustomEntitiesAction(project_name_custom_entities, deployment_name_custom_entities),
+        SingleLabelClassifyAction(project_name_single_label_classify, deployment_name_single_label_classify),
+        MultiLabelClassifyAction(project_name_multi_label_classify, deployment_name_multi_label_classify)
         AnalyzeHealthcareEntitiesAction(),
         ExtractSummaryAction(),
         AbstractSummaryAction(),
