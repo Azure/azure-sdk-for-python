@@ -5,11 +5,11 @@
 
 import asyncio
 
-from ._test_base import _ReceiveTest
+from ._test_base import _QueueReceiveTest
 
 
-class ReceiveMessageStreamTest(_ReceiveTest):
-    def run_sync(self):
+class ReceiveQueueMessageStreamTest(_QueueReceiveTest):
+    def run_sync(self) -> None:
         count = 0
         if self.args.peeklock:
             for msg in self.receiver:
@@ -23,7 +23,7 @@ class ReceiveMessageStreamTest(_ReceiveTest):
                     break
                 count += 1
 
-    async def run_async(self):
+    async def run_async(self) -> None:
         count = 0
         if self.args.peeklock:
             async for msg in self.async_receiver:
