@@ -322,7 +322,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Wed, 08 Feb 2023 17:21:59 GMT",
         "ETag": "02008b35-0000-0600-0000-63e3da370000",
-        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/test-party-3476/boundaries/satellite-flow-asdftest-boundary",
+        "Location": "https://fakeAccount.farmbeats.azure.net/parties/test-party-3476/boundaries/satellite-flow-asdftest-boundary",
         "mise-correlation-id": "f860d4a4-1799-4243-b89d-6017c6080642",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",

@@ -64,7 +64,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 30 Jan 2023 04:40:24 GMT",
         "ETag": "010077cb-0000-0600-0000-63d74a380000",
-        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/test-party-party-ops",
+        "Location": "https://fakeAccount.farmbeats.azure.net/parties/test-party-party-ops",
         "mise-correlation-id": "ffd86649-65b2-460f-adc6-d4944a46dab7",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-throttle-information": "1000"

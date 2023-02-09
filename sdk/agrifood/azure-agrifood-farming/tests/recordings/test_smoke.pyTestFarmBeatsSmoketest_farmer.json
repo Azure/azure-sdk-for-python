@@ -250,7 +250,7 @@
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Mon, 30 Jan 2023 04:41:34 GMT",
         "ETag": "00002505-0000-0600-0000-63d74a7e0000",
-        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/smoke-test-party",
+        "Location": "https://fakeAccount.farmbeats.azure.net/parties/smoke-test-party",
         "mise-correlation-id": "7f026cf6-610b-4b43-96a5-0a8cba7c03b8",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "x-ms-throttle-information": "1000"
