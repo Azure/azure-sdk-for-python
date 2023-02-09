@@ -5,6 +5,7 @@
 - Renaming farmers to parties as per the new API version
 - Renaming Crop Variety to Crop Product
 - Adding new APIs for STAC search
+- Updating minimum required azure.core version to 1.20
 
 ### Bugs Fixed
 

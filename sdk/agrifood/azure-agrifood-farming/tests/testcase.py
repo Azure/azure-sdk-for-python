@@ -8,7 +8,6 @@
 import functools
 from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer, recorded_by_proxy
 from azure.agrifood.farming import FarmBeatsClient
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
 
 class FarmBeatsTestCase(AzureRecordedTestCase):
 
