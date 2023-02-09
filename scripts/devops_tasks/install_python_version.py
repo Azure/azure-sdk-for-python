@@ -126,13 +126,18 @@ def necessary_to_install(version_requested) -> bool:
     precached_version = Version(MAX_PRECACHED_VERSION)
     precached = True
 
-    # the azure devops folks would prefer that we request python version by Major.Minor, EG
-    # "3.11", "3.9". However, in cases like "3.11", the max precached version is "3.11.1".
-    # This means that if we do a simple check of 3.11 > 3.11.1, we will FAIL, which will result in
-    # unnecessarily installation.
+    # Azure Devops UsePythonVersion@0 task issues a warning if the input python version is an exact value like "3.11.1" or "3.9.4."
+    # 
+    # As a result, this script needs to verify that the major/minor combo is present on the box. Unfortunately, one cannot
+    # safely compare just against the MAX_PRECACHED_VERSION, as Version("3.11") generates to a version with value "3.11.0."
+    # 3.11.0 is _not_ greater than 3.11.1, and as such will fail an easy version comparison against max_precached_version.
     #
-    # If we are passed a short version, we just gotta compare major.minor against max precached version major.minor.
-    # if the requested version is lower or equal up to the minor version, we can avoid installing.
+    # Instead, if we detect an input that has major/minor only, we compare that against major/minor of max_precached_version only.
+    # 
+    # We do not include >= because if the input major.minor == the max_precached major.minor, then we know that input
+    # is already present.
+    # 
+    # In cases where we _are_ given a full input, we can simply check against the max precached version.
     if len(version_requested.split(".")) <= 2:
         if version_from_spec > Version(f"{precached_version.major}.{precached_version.minor}"):
             precached = False
