@@ -322,12 +322,30 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
-        return self._operation_2022_12_preview.begin_cancel(
-            id=name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            **self._kwargs,
-        )
+        kwargs = self._kwargs
+        tags = kwargs.get("tags", None) if kwargs else None
+
+        if not tags:
+            return self._operation_2022_12_preview.begin_cancel(
+                id=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+
+        # Note: Below batch cancel is experimental and for private usage
+        results = []
+        jobs = self.list(tags=tags)
+        # TODO: Do we need to show error message when no jobs is returned for the given tag?
+        for job in jobs:
+            result = self._operation_2022_12_preview.begin_cancel(
+                id=job.name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._kwargs,
+            )
+            results.append(result)
+        return results
 
     def _try_get_compute_arm_id(self, compute: Union[Compute, str]):
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
