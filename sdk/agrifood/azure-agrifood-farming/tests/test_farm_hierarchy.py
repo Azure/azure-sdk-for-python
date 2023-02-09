@@ -18,7 +18,7 @@ class TestFarmHierarchy(FarmBeatsTestCase):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         
         # Setup data
-        party_id = "test-party-3476"
+        party_id = "test-party-396735"
         party_request = {
             "name": "Test Party",
             "description": "Party created during testing.",
