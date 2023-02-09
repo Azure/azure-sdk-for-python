@@ -72,9 +72,9 @@ from azure.ai.ml.operations import (
     OnlineDeploymentOperations,
     OnlineEndpointOperations,
     RegistryOperations,
+    VirtualClusterOperations,
     WorkspaceConnectionsOperations,
     WorkspaceOperations,
-    VirtualClusterOperations,
 )
 from azure.ai.ml.operations._code_operations import CodeOperations
 from azure.ai.ml.operations._local_deployment_helper import _LocalDeploymentHelper
@@ -85,37 +85,37 @@ module_logger = logging.getLogger(__name__)
 
 
 # pylint: disable=too-many-public-methods
-class MLClient(object):
+class MLClient:
     """A client class to interact with Azure ML services.
 
     Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
 
     :param credential: Credential to use for authentication.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None
+    :param subscription_id: Azure subscription ID, optional for registry assets only, defaults to None.
     :type subscription_id: typing.Optional[str]
-    :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None
+    :param resource_group_name: Azure resource group, optional for registry assets only, defaults to None.
     :type resource_group_name: typing.Optional[str]
     :param workspace_name: Workspace to use in the client, optional for non workspace dependent operations only,
-            defaults to None
+            defaults to None.
     :type workspace_name: typing.Optional[str]
     :param registry_name: Registry to use in the client, optional for non registry dependent operations only,
-            defaults to None
+            defaults to None.
     :type registry_name: typing.Optional[str]
     :param show_progress: Whether to display progress bars for long-running operations. E.g. customers may consider
             setting this to False if not using this SDK in an interactive setup. defaults to True.
     :type show_progress: typing.Optional[bool]
-    :keyword str cloud: The cloud name to use, defaults to AzureCloud.
+    :keyword cloud: The cloud name to use, defaults to AzureCloud.
+    :paramtype cloud: str
 
     .. admonition:: Example:
 
-        .. literalinclude:: ../../samples/ml_samples_authentication_sovereign_cloud.py
+        .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
             :start-after: [START create_ml_client_default_credential]
             :end-before: [END create_ml_client_default_credential]
             :language: python
             :dedent: 8
             :caption: Creating the MLClient with Azure Identity credentials.
-
     """
 
     # pylint: disable=client-method-missing-type-annotations
@@ -128,8 +128,7 @@ class MLClient(object):
         registry_name: Optional[str] = None,
         **kwargs: Any,
     ):
-        """
-        A client class to interact with Azure ML services.
+        """A client class to interact with Azure ML services.
 
         Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
 
@@ -394,7 +393,8 @@ class MLClient(object):
         self._data = DataOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2022,
+            self._service_client_10_2021_dataplanepreview
+            if registry_name else self._service_client_10_2022,
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             **ops_kwargs,
@@ -472,7 +472,6 @@ class MLClient(object):
         if path.is_file():
             found_path = path
         else:
-
             # Based on priority
             # Look in config dirs like .azureml, aml_config or plain directory
             # with None
@@ -485,9 +484,11 @@ class MLClient(object):
             found_path = None
             for curr_dir, curr_file in product(directories_to_look, files_to_look):
                 module_logger.debug(
-                    "No config file directly found, starting search from %s "
-                    "directory, for %s file name to be present in "
-                    "%s subdirectory",
+                    (
+                        "No config file directly found, starting search from %s "
+                        "directory, for %s file name to be present in "
+                        "%s subdirectory"
+                    ),
                     path,
                     curr_file,
                     curr_dir,
@@ -529,8 +530,9 @@ class MLClient(object):
     @classmethod
     def _ml_client_cli(cls, credentials, subscription_id, **kwargs):
         """This method provides a way to create MLClient object for cli to leverage cli context for authentication.
-        With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage).
-        The credentials are passed by cli get_mgmt_service_client when it created a object of this class.
+
+        With this we do not have to use AzureCliCredentials from azure-identity package (not meant for heavy usage). The
+        credentials are passed by cli get_mgmt_service_client when it created a object of this class.
         """
 
         ml_client = cls(credential=credentials, subscription_id=subscription_id, **kwargs)
@@ -716,7 +718,7 @@ class MLClient(object):
 
     @classmethod
     def _get_workspace_info(cls, found_path: Optional[str]) -> Tuple[str, str, str]:
-        with open(found_path, "r") as config_file:
+        with open(found_path) as config_file:
             config = json.load(config_file)
 
         # Checking the keys in the config.json file to check for required parameters.
