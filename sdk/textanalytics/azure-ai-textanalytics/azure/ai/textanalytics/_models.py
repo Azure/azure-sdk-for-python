@@ -2958,7 +2958,7 @@ class AbstractiveSummary(DictMixin):
 
     text: str
     """The text of the summary. Required."""
-    contexts: Optional[List["SummaryContext"]] = None
+    contexts: List["SummaryContext"]
     """The context list of the summary."""
 
     def __init__(self, **kwargs: Any) -> None:
@@ -2975,7 +2975,7 @@ class AbstractiveSummary(DictMixin):
             contexts=[
                 SummaryContext._from_generated(context)  # pylint: disable=protected-access
                 for context in result.contexts
-            ] if result.contexts else None
+            ] if result.contexts else []
         )
 
 
