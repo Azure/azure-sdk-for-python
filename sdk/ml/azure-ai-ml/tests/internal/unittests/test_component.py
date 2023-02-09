@@ -828,6 +828,11 @@ class TestComponent:
                     'optional': False,
                     'type': 'Float'
                 },
+                'input_boolean': {
+                    'default': 'False',
+                    'optional': False,
+                    'type': 'Boolean'
+                },
                 'delimiter': {
                     'default': '\t',
                     'optional': True,
