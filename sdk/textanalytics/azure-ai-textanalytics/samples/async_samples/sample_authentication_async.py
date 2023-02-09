@@ -62,6 +62,7 @@ async def sample_authentication_with_azure_active_directory_async() -> None:
     """
     print("\n.. authentication_with_azure_active_directory_async")
     # [START create_ta_client_with_aad_async]
+    import os
     from azure.ai.textanalytics.aio import TextAnalyticsClient
     from azure.identity.aio import DefaultAzureCredential
 

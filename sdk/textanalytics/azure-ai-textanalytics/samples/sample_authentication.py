@@ -58,6 +58,7 @@ def sample_authentication_with_azure_active_directory() -> None:
     """
     print("\n.. authentication_with_azure_active_directory")
     # [START create_ta_client_with_aad]
+    import os
     from azure.ai.textanalytics import TextAnalyticsClient
     from azure.identity import DefaultAzureCredential
 
