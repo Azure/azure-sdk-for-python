@@ -50,10 +50,3 @@ def pytest_configure(config):
     config.addinivalue_line(
         "markers", "playback_test_only: mark test to be a playback test only"
     )
-
-
-def pytest_collection_modifyitems(config, items):
-    skip_non_mock = pytest.mark.skip(reason="non mock")
-    for test in items:
-        if not "mocksb" in test.keywords:
-            test.add_marker(skip_non_mock)

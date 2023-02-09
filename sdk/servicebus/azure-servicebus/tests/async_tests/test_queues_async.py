@@ -1640,7 +1640,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                                                   auto_lock_renewer=AutoLockRenewer()) as receiver:
                 
                     raise Exception("Should not get here, should fail fast because RECEIVE_AND_DELETE messages cannot be autorenewed.")
-    @pytest.mark.mocksb
+
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
