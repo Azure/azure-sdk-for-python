@@ -33,7 +33,10 @@ omit_fields = [
     "mock_asset_name",
     "mock_component_hash",
     "bodiless_matching",
-    "mock_snapshot_hash"
+    "mock_snapshot_hash",
+    "storage_account_guid_sanitizer",
+    "mock_anon_component_version",
+    "storage_account_guid_sanitizer",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

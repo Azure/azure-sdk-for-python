@@ -66,6 +66,8 @@ common_omit_fields = [
     "mock_code_hash",
     "mock_component_hash",
     "recorded_test",
+    "mock_snapshot_hash",
+    "bodiless_matching",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest

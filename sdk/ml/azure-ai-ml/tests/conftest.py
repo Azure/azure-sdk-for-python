@@ -107,18 +107,6 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         group_for_replace="1",
     )
 
-    # masks blob storage account name in SAS uris
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='.blob.core.windows.net:443\\/([^/\\s"]{47})',
-        group_for_replace="1",
-    )
-    add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000",
-        regex='.blob.core.windows.net\\/([^/\\s"]{47})',
-        group_for_replace="1",
-    )
-
 
 def pytest_addoption(parser):
     parser.addoption("--location", action="store", default="eastus2euap")
@@ -187,6 +175,30 @@ def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
         workspace_name=Test_Workspace_Name,
     )
 
+
+@pytest.fixture
+def storage_account_guid_sanitizer(test_proxy):
+    # masks blob storage account info in SAS uris
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='.blob.core.windows.net:443\\/([^/\\s"]{46,52})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000",
+        regex='.blob.core.windows.net\\/([^/\\s"]{47})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000",
+        regex='skt=([^/\\s"]{24})',
+        group_for_replace="1",
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000",
+        regex='ske=([^/\\s"]{24})',
+        group_for_replace="1",
+    )
 
 @pytest.fixture
 def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:

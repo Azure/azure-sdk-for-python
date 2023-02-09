@@ -48,6 +48,9 @@ def assert_job_input_output_types(job: PipelineJob):
     "mock_asset_name",
     "mock_component_hash",
     "enable_environment_id_arm_expansion",
+    "bodiless_matching",
+    "mock_snapshot_hash",
+    # "mock_anon_component_version",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -302,6 +305,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component = client.components.get(arm_id.asset_name, arm_id.asset_version)
         assert created_component._is_anonymous
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_default_datastore_compute(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -1296,6 +1300,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.JOB"}
 
+    @pytest.mark.disable_mock_anon_component_version
     def test_remote_pipeline_component_job(self, client: MLClient, randstr: Callable[[str], str]):
         params_override = [{"name": randstr("component_name")}]
         test_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
