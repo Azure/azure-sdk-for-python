@@ -568,6 +568,7 @@ class AzureAppConfigurationClient:
         self,
         name: str,
         filters: List[KeyValueFilter],
+        *,
         composition_type: Optional[str] = None,
         **kwargs
     ) -> Snapshot:
@@ -577,11 +578,10 @@ class AzureAppConfigurationClient:
         :type name: str
         :param filters: A list of filters used to filter the key-values included in the snapshot
         :type filters: list[~azure.appconfiguration.models.KeyValueFilter]
-        :keyword composition_type: The composition type describes how the key-values within the
+        :keyword str composition_type: The composition type describes how the key-values within the
          snapshot are composed. The 'all' composition type includes all key-values. The 'group_by_key'
          composition type ensures there are no two key-values containing the same key. Known values are:
          "all" and "group_by_key"
-        :paramtype composition_type: str or ~azure.appconfiguration.models.CompositionType
         :return: The Snapshot returned from the service
         :rtype: :class:`~azure.appconfiguration.models.Snapshot`
         :raises: :class:`HttpResponseError`, :class:`ClientAuthenticationError`, :class:`ResourceExistsError`
