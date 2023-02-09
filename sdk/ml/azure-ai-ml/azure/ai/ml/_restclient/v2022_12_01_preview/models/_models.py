@@ -24,7 +24,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -57,7 +57,7 @@ class WorkspaceConnectionPropertiesV2(msrest.serialization.Model):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -86,7 +86,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -118,7 +118,7 @@ class AccessKeyAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionProperti
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -6369,6 +6369,29 @@ class ComputeResource(Resource, ComputeResourceSchema):
         self.system_data = None
 
 
+class ComputeRuntimeDto(msrest.serialization.Model):
+    """ComputeRuntimeDto.
+
+    :ivar spark_runtime_version:
+    :vartype spark_runtime_version: str
+    """
+
+    _attribute_map = {
+        'spark_runtime_version': {'key': 'sparkRuntimeVersion', 'type': 'str'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword spark_runtime_version:
+        :paramtype spark_runtime_version: str
+        """
+        super(ComputeRuntimeDto, self).__init__(**kwargs)
+        self.spark_runtime_version = kwargs.get('spark_runtime_version', None)
+
+
 class ComputeSchedules(msrest.serialization.Model):
     """The list of schedules to be applied on the computes.
 
@@ -9526,6 +9549,47 @@ class ExternalFQDNResponse(msrest.serialization.Model):
         """
         super(ExternalFQDNResponse, self).__init__(**kwargs)
         self.value = kwargs.get('value', None)
+
+
+class FeatureStoreSettings(msrest.serialization.Model):
+    """FeatureStoreSettings.
+
+    :ivar compute_runtime:
+    :vartype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
+    :ivar offline_store_connection_name:
+    :vartype offline_store_connection_name: str
+    :ivar online_store_connection_name:
+    :vartype online_store_connection_name: str
+    :ivar allow_role_assignments_on_resource_group_level:
+    :vartype allow_role_assignments_on_resource_group_level: bool
+    """
+
+    _attribute_map = {
+        'compute_runtime': {'key': 'computeRuntime', 'type': 'ComputeRuntimeDto'},
+        'offline_store_connection_name': {'key': 'offlineStoreConnectionName', 'type': 'str'},
+        'online_store_connection_name': {'key': 'onlineStoreConnectionName', 'type': 'str'},
+        'allow_role_assignments_on_resource_group_level': {'key': 'allowRoleAssignmentsOnResourceGroupLevel', 'type': 'bool'},
+    }
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        """
+        :keyword compute_runtime:
+        :paramtype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
+        :keyword offline_store_connection_name:
+        :paramtype offline_store_connection_name: str
+        :keyword online_store_connection_name:
+        :paramtype online_store_connection_name: str
+        :keyword allow_role_assignments_on_resource_group_level:
+        :paramtype allow_role_assignments_on_resource_group_level: bool
+        """
+        super(FeatureStoreSettings, self).__init__(**kwargs)
+        self.compute_runtime = kwargs.get('compute_runtime', None)
+        self.offline_store_connection_name = kwargs.get('offline_store_connection_name', None)
+        self.online_store_connection_name = kwargs.get('online_store_connection_name', None)
+        self.allow_role_assignments_on_resource_group_level = kwargs.get('allow_role_assignments_on_resource_group_level', None)
 
 
 class FeaturizationSettings(msrest.serialization.Model):
@@ -14758,7 +14822,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -14791,7 +14855,7 @@ class ManagedIdentityAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPr
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -16144,7 +16208,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -16173,7 +16237,7 @@ class NoneAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2)
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -17139,7 +17203,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -17172,7 +17236,7 @@ class PATAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -18729,7 +18793,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -18762,7 +18826,7 @@ class SASAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionPropertiesV2):
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -19215,7 +19279,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -19248,7 +19312,7 @@ class ServicePrincipalAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -22505,7 +22569,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
     :vartype auth_type: str or ~azure.mgmt.machinelearningservices.models.ConnectionAuthType
     :ivar category: Category of the connection. Possible values include: "PythonFeed",
      "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-     "AzureSynapseAnalytics".
+     "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
     :vartype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
     :ivar target:
     :vartype target: str
@@ -22538,7 +22602,7 @@ class UsernamePasswordAuthTypeWorkspaceConnectionProperties(WorkspaceConnectionP
         """
         :keyword category: Category of the connection. Possible values include: "PythonFeed",
          "ContainerRegistry", "Git", "FeatureStore", "S3", "Snowflake", "AzureSqlDb",
-         "AzureSynapseAnalytics".
+         "AzureSynapseAnalytics", "AzureMySqlDb", "AzurePostgresDb", "AzureDataLakeGen2", "Redis".
         :paramtype category: str or ~azure.mgmt.machinelearningservices.models.ConnectionCategory
         :keyword target:
         :paramtype target: str
@@ -23082,6 +23146,8 @@ class Workspace(Resource):
     :vartype tags: dict[str, str]
     :ivar sku: The sku of the workspace.
     :vartype sku: ~azure.mgmt.machinelearningservices.models.Sku
+    :ivar kind:
+    :vartype kind: str
     :ivar workspace_id: The immutable id associated with this workspace.
     :vartype workspace_id: str
     :ivar description: The description of this workspace.
@@ -23160,6 +23226,9 @@ class Workspace(Resource):
     :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
      the workspace.
     :vartype system_datastores_auth_mode: str
+    :ivar feature_store_settings: Settings for feature store type workspace.
+    :vartype feature_store_settings:
+     ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
     """
 
     _validation = {
@@ -23189,6 +23258,7 @@ class Workspace(Resource):
         'location': {'key': 'location', 'type': 'str'},
         'tags': {'key': 'tags', 'type': '{str}'},
         'sku': {'key': 'sku', 'type': 'Sku'},
+        'kind': {'key': 'kind', 'type': 'str'},
         'workspace_id': {'key': 'properties.workspaceId', 'type': 'str'},
         'description': {'key': 'properties.description', 'type': 'str'},
         'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
@@ -23217,6 +23287,7 @@ class Workspace(Resource):
         'soft_deleted_at': {'key': 'properties.softDeletedAt', 'type': 'str'},
         'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'str'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
+        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
     }
 
     def __init__(
@@ -23232,6 +23303,8 @@ class Workspace(Resource):
         :paramtype tags: dict[str, str]
         :keyword sku: The sku of the workspace.
         :paramtype sku: ~azure.mgmt.machinelearningservices.models.Sku
+        :keyword kind:
+        :paramtype kind: str
         :keyword description: The description of this workspace.
         :paramtype description: str
         :keyword friendly_name: The friendly name for this workspace. This name in mutable.
@@ -23280,12 +23353,16 @@ class Workspace(Resource):
         :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
          the workspace.
         :paramtype system_datastores_auth_mode: str
+        :keyword feature_store_settings: Settings for feature store type workspace.
+        :paramtype feature_store_settings:
+         ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
         """
         super(Workspace, self).__init__(**kwargs)
         self.identity = kwargs.get('identity', None)
         self.location = kwargs.get('location', None)
         self.tags = kwargs.get('tags', None)
         self.sku = kwargs.get('sku', None)
+        self.kind = kwargs.get('kind', None)
         self.workspace_id = None
         self.description = kwargs.get('description', None)
         self.friendly_name = kwargs.get('friendly_name', None)
@@ -23314,6 +23391,7 @@ class Workspace(Resource):
         self.soft_deleted_at = None
         self.scheduled_purge_date = None
         self.system_datastores_auth_mode = kwargs.get('system_datastores_auth_mode', None)
+        self.feature_store_settings = kwargs.get('feature_store_settings', None)
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):
@@ -23634,6 +23712,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
     :vartype container_registry: str
     :ivar encryption: The encryption settings of the workspace.
     :vartype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+    :ivar feature_store_settings: Settings for feature store type workspace.
+    :vartype feature_store_settings:
+     ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
     """
 
     _attribute_map = {
@@ -23649,6 +23730,7 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         'application_insights': {'key': 'properties.applicationInsights', 'type': 'str'},
         'container_registry': {'key': 'properties.containerRegistry', 'type': 'str'},
         'encryption': {'key': 'properties.encryption', 'type': 'EncryptionUpdateProperties'},
+        'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
     }
 
     def __init__(
@@ -23685,6 +23767,9 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         :paramtype container_registry: str
         :keyword encryption: The encryption settings of the workspace.
         :paramtype encryption: ~azure.mgmt.machinelearningservices.models.EncryptionUpdateProperties
+        :keyword feature_store_settings: Settings for feature store type workspace.
+        :paramtype feature_store_settings:
+         ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
         """
         super(WorkspaceUpdateParameters, self).__init__(**kwargs)
         self.tags = kwargs.get('tags', None)
@@ -23699,3 +23784,4 @@ class WorkspaceUpdateParameters(msrest.serialization.Model):
         self.application_insights = kwargs.get('application_insights', None)
         self.container_registry = kwargs.get('container_registry', None)
         self.encryption = kwargs.get('encryption', None)
+        self.feature_store_settings = kwargs.get('feature_store_settings', None)

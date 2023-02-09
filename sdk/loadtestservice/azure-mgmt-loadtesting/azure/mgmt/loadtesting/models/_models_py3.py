@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
@@ -49,7 +49,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -98,7 +98,9 @@ class CheckQuotaAvailabilityResponse(Resource):
         "availability_status": {"key": "properties.availabilityStatus", "type": "str"},
     }
 
-    def __init__(self, *, is_available: Optional[bool] = None, availability_status: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, is_available: Optional[bool] = None, availability_status: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword is_available: True/False indicating whether the quota request be granted based on
          availability.
@@ -134,8 +136,8 @@ class EncryptionProperties(_serialization.Model):
         *,
         identity: Optional["_models.EncryptionPropertiesIdentity"] = None,
         key_url: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword identity: All identity configuration for Customer-managed key settings defining which
          identity should be used to auth to Key Vault.
@@ -151,7 +153,8 @@ class EncryptionProperties(_serialization.Model):
 
 
 class EncryptionPropertiesIdentity(_serialization.Model):
-    """All identity configuration for Customer-managed key settings defining which identity should be used to auth to Key Vault.
+    """All identity configuration for Customer-managed key settings defining which identity should be
+    used to auth to Key Vault.
 
     :ivar type: Managed identity type to use for accessing encryption key Url. Known values are:
      "SystemAssigned" and "UserAssigned".
@@ -168,8 +171,8 @@ class EncryptionPropertiesIdentity(_serialization.Model):
     }
 
     def __init__(
-        self, *, type: Optional[Union[str, "_models.Type"]] = None, resource_id: Optional[str] = None, **kwargs
-    ):
+        self, *, type: Optional[Union[str, "_models.Type"]] = None, resource_id: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword type: Managed identity type to use for accessing encryption key Url. Known values are:
          "SystemAssigned" and "UserAssigned".
@@ -211,7 +214,7 @@ class EndpointDependency(_serialization.Model):
         "endpoint_details": {"key": "endpointDetails", "type": "[EndpointDetail]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.domain_name = None
@@ -236,7 +239,7 @@ class EndpointDetail(_serialization.Model):
         "port": {"key": "port", "type": "int"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.port = None
@@ -263,7 +266,7 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.type = None
@@ -303,7 +306,7 @@ class ErrorDetail(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -314,7 +317,8 @@ class ErrorDetail(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.loadtesting.models.ErrorDetail
@@ -324,7 +328,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.loadtesting.models.ErrorDetail
@@ -334,7 +338,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class TrackedResource(Resource):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which has 'tags' and a 'location'.
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -374,7 +379,7 @@ class TrackedResource(Resource):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -454,8 +459,8 @@ class LoadTestResource(TrackedResource):  # pylint: disable=too-many-instance-at
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         description: Optional[str] = None,
         encryption: Optional["_models.EncryptionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -491,8 +496,12 @@ class LoadTestResourcePageList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.LoadTestResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.LoadTestResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of resources in current page.
         :paramtype value: list[~azure.mgmt.loadtesting.models.LoadTestResource]
@@ -535,8 +544,8 @@ class LoadTestResourcePatchRequestBody(_serialization.Model):
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         description: Optional[str] = None,
         encryption: Optional["_models.EncryptionProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -597,8 +606,8 @@ class ManagedServiceIdentity(_serialization.Model):
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of managed service identity (where both SystemAssigned and UserAssigned
          types are allowed). Required. Known values are: "None", "SystemAssigned", "UserAssigned", and
@@ -655,7 +664,7 @@ class Operation(_serialization.Model):
         "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.loadtesting.models.OperationDisplay
@@ -701,7 +710,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -711,7 +720,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -731,7 +741,7 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -739,7 +749,8 @@ class OperationListResult(_serialization.Model):
 
 
 class OutboundEnvironmentEndpoint(_serialization.Model):
-    """A collection of related endpoints from the same service for which the Batch service requires outbound access.
+    """A collection of related endpoints from the same service for which the Batch service requires
+    outbound access.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -760,7 +771,7 @@ class OutboundEnvironmentEndpoint(_serialization.Model):
         "endpoints": {"key": "endpoints", "type": "[EndpointDependency]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.category = None
@@ -788,7 +799,7 @@ class OutboundEnvironmentEndpointCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The continuation token.
         :paramtype next_link: str
@@ -852,8 +863,8 @@ class QuotaBucketRequest(Resource):
         current_quota: Optional[int] = None,
         new_quota: Optional[int] = None,
         dimensions: Optional["_models.QuotaBucketRequestPropertiesDimensions"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword current_usage: Current quota usage of the quota bucket.
         :paramtype current_usage: int
@@ -890,7 +901,7 @@ class QuotaBucketRequestPropertiesDimensions(_serialization.Model):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, subscription_id: Optional[str] = None, location: Optional[str] = None, **kwargs):
+    def __init__(self, *, subscription_id: Optional[str] = None, location: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword subscription_id: Subscription Id dimension for new quota request of the quota bucket.
         :paramtype subscription_id: str
@@ -947,7 +958,7 @@ class QuotaResource(Resource):
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
-    def __init__(self, *, limit: Optional[int] = None, usage: Optional[int] = None, **kwargs):
+    def __init__(self, *, limit: Optional[int] = None, usage: Optional[int] = None, **kwargs: Any) -> None:
         """
         :keyword limit: Current quota limit of the quota bucket.
         :paramtype limit: int
@@ -981,7 +992,7 @@ class QuotaResourceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.value = None
@@ -1025,8 +1036,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1073,7 +1084,7 @@ class UserAssignedIdentity(_serialization.Model):
         "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.principal_id = None

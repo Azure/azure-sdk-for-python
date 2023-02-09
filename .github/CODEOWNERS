@@ -6,7 +6,7 @@
 ################
 # As of 1/26/2023 these paths have no owners:
 
-# /
+# /**
 # /.devcontainer/
 # /.vscode/
 # /conda-releaselogs/
@@ -19,7 +19,7 @@
 ################
 
 # Git Hub integration and bot rules
-/.github/                                       @jsquire @ronniegeraghty
+/.github/                                                            @jsquire @ronniegeraghty
 
 ###########
 # SDK
@@ -180,7 +180,7 @@
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # PRLabel: %ML-Jobs
-/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/                         @DouglasXiaoMS @TonyJ1 @wangchao1230
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job*                         @DouglasXiaoMS @TonyJ1 @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/                       @DouglasXiaoMS @TonyJ1 @wangchao1230
 /sdk/ml/training-experiences.tests.yml                               @DouglasXiaoMS @TonyJ1
 
@@ -302,7 +302,7 @@
 /sdk/personalizer/                                                   @sharathmalladi
 
 # PRLabel: %Graph
-sdk/graphrbac/                                                       @msyyc @Wzb123456789
+/sdk/graphrbac/                                                      @msyyc @Wzb123456789
 
 # PRLabel: %Tables
 /sdk/tables/                                                         @annatisch @YalinLi0312
@@ -919,8 +919,6 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 # Eng Sys
 ###########
 /eng/                                                                @scbedd @weshaggard @benbp
-/**/tests.yml                                                        @scbedd @benbp
-/**/ci.yml                                                           @scbedd @benbp
 
 # Add owners for notifications for specific pipelines
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp

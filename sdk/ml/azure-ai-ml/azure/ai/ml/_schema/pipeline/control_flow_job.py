@@ -54,7 +54,7 @@ class DoWhileSchema(BaseLoopSchema):
         ),
         required=True,
     )
-    limits = NestedField(DoWhileLimitsSchema)
+    limits = NestedField(DoWhileLimitsSchema, required=True)
 
     @pre_dump
     def resolve_inputs_outputs(self, data, **kwargs):  # pylint: disable=no-self-use
@@ -63,11 +63,11 @@ class DoWhileSchema(BaseLoopSchema):
         mapping = {}
         for k, v in result.mapping.items():
             v = v if isinstance(v, list) else [v]
-            mapping[k] = [item._name for item in v]
+            mapping[k] = [item._port_name for item in v]
         result._mapping = mapping
 
         try:
-            result._condition = result._condition._name
+            result._condition = result._condition._port_name
         except AttributeError:
             result._condition = result._condition
 

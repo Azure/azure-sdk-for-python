@@ -303,7 +303,7 @@ class PipelineExpression(PipelineExpressionMixin):
             _postfix: List[str],
             _expression_inputs: Dict[str, ExpressionInput],
         ) -> Tuple[List[str], dict]:
-            _name = _pipeline_input._name
+            _name = _pipeline_input._port_name
             # 1. use name with counter for pipeline input; 2. add component's name to component output
             if _name in _expression_inputs:
                 _seen_input = _expression_inputs[_name]
@@ -311,12 +311,12 @@ class PipelineExpression(PipelineExpressionMixin):
                     _name = _get_or_create_input_name(_name, _pipeline_input, _expression_inputs)
                 else:
                     _expression_inputs.pop(_name)
-                    _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._name}"
+                    _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._port_name}"
                     _postfix = _update_postfix(_postfix, _name, _new_name)
                     _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
             _postfix.append(_name)
             _expression_inputs[_name] = ExpressionInput(
-                _name, pipeline_inputs[_pipeline_input._name].type, _pipeline_input
+                _name, pipeline_inputs[_pipeline_input._port_name].type, _pipeline_input
             )
             return _postfix, _expression_inputs
 
@@ -327,11 +327,11 @@ class PipelineExpression(PipelineExpressionMixin):
         ) -> Tuple[List[str], dict]:
             if not _component_output._meta.is_control:
                 error_message = (
-                    f"Component output {_component_output._name} in expression must have "
+                    f"Component output {_component_output._port_name} in expression must have "
                     f'"is_control" field with value {True!r}, got {_component_output._meta.is_control!r}'
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
-            _name = _component_output._name
+            _name = _component_output._port_name
             _has_prefix = False
             # "output" is the default output name for command component, add component's name as prefix
             if _name == "output":
@@ -344,17 +344,17 @@ class PipelineExpression(PipelineExpressionMixin):
                 _seen_input = _expression_inputs[_name]
                 if isinstance(_seen_input.value, PipelineInput):
                     if not _has_prefix:
-                        _name = f"{_component_output._owner.component.name}__{_component_output._name}"
+                        _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
                         _has_prefix = True
                         continue
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
                 else:
                     if not _has_prefix:
                         _expression_inputs.pop(_name)
-                        _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._name}"
+                        _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._port_name}"
                         _postfix = _update_postfix(_postfix, _name, _new_name)
                         _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
-                        _name = f"{_component_output._owner.component.name}__{_component_output._name}"
+                        _name = f"{_component_output._owner.component.name}__{_component_output._port_name}"
                         _has_prefix = True
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
             _postfix.append(_name)

@@ -7,8 +7,9 @@
 from typing import Mapping
 
 
-def parse_connection_string(conn_str, case_sensitive_keys=False):
-    # type: (str, bool) -> Mapping[str, str]
+def parse_connection_string(
+    conn_str: str, case_sensitive_keys: bool = False
+) -> Mapping[str, str]:
     """Parses the connection string into a dict of its component parts, with the option of preserving case
     of keys, and validates that each key in the connection string has a provided value. If case of keys
     is not preserved (ie. `case_sensitive_keys=False`), then a dict with LOWERCASE KEYS will be returned.

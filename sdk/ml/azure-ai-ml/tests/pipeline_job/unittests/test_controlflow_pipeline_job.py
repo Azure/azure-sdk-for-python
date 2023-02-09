@@ -2,6 +2,8 @@ import pytest
 from marshmallow import ValidationError
 
 from azure.ai.ml import load_job
+from azure.ai.ml.entities import PipelineJob
+from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 from azure.ai.ml.exceptions import ValidationException
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 
@@ -16,6 +18,49 @@ from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
 @pytest.mark.pipeline_test
 class TestControlFlowPipelineJobUT:
     pass
+
+
+class TestDoWhilePipelineJobUT(TestControlFlowPipelineJobUT):
+    def test_do_while_true_pipeline_omit_condition(self):
+        yaml_path = "./tests/test_configs/pipeline_jobs/control_flow/do_while/pipeline.yml"
+        pipeline_job = load_job(yaml_path)
+        rest_job_resource = to_rest_job_object(pipeline_job)
+        assert "condition" in rest_job_resource.properties.jobs["do_while_job_with_pipeline_job"]
+        assert "condition" not in rest_job_resource.properties.jobs["do_while_true_job_with_pipeline_job"]
+
+    def test_do_while_pipeline_illegal_cases(self):
+        yaml_path = "./tests/test_configs/pipeline_jobs/control_flow/do_while/invalid_pipeline.yml"
+        expected_validation_result = [
+            # bool type is illegal for field condition
+            (
+                "Not a valid string.; Not a valid string.",
+                "jobs.invalid_condition.condition",
+            ),
+            (
+                "Missing data for required field.",
+                "jobs.empty_mapping.mapping",
+            ),
+            (
+                "Must be greater than or equal to 1 and less than or equal to 1000.",
+                "jobs.out_of_range_max_iteration_count.limits.max_iteration_count",
+            ),
+            (
+                "Missing data for required field.",
+                "jobs.empty_max_iteration_count.limits",
+            ),
+            (
+                "Not a valid integer.",
+                "jobs.invalid_max_iteration_count.limits.max_iteration_count",
+            ),
+        ]
+        with pytest.raises(ValidationError) as e:
+            load_job(yaml_path)
+        error_message = str(e.value)
+        # use count of "invalid_pipeline.yml#line" to get number of error messages
+        assert error_message.count("invalid_pipeline.yml#line") == len(expected_validation_result)
+        for msg, location in expected_validation_result:
+            assert msg in error_message
+            assert location in error_message
 
 
 class TestParallelForPipelineJobUT(TestControlFlowPipelineJobUT):
@@ -81,5 +126,3 @@ class TestParallelForPipelineJobUT(TestControlFlowPipelineJobUT):
 
         assert msg in str(e.value)
         assert location in str(e.value)
-
-

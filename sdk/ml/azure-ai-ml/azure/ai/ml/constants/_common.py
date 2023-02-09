@@ -35,6 +35,9 @@ DATASTORE_RESOURCE_ID = (
 PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
+SINGULARITY_ID_FORMAT = (
+    "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
+)
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"
@@ -272,6 +275,12 @@ class ArmConstants(object):
     AZURE_MGMT_APPINSIGHT_API_VERSION = "2015-05-01"
     AZURE_MGMT_KEYVAULT_API_VERSION = "2019-09-01"
     AZURE_MGMT_CONTAINER_REG_API_VERSION = "2019-05-01"
+
+    DEFAULT_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+    METADATA_URL_ENV_NAME = "ARM_CLOUD_METADATA_URL"
+    REGISTRY_DISCOVERY_DEFAULT_REGION = "west"
+    REGISTRY_DISCOVERY_REGION_ENV_NAME = "REGISTRY_DISCOVERY_ENDPOINT_REGION"
+    REGISTRY_ENV_URL = "REGISTRY_DISCOVERY_ENDPOINT_URL"
 
 
 class HttpResponseStatusCode(object):
