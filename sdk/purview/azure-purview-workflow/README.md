@@ -1,54 +1,69 @@
-
 # Azure Purview Workflow Service client library for Python
-<!-- write necessary description of service -->
+
+Workflows are automated, repeatable business processes that users can create within Microsoft Purview to validate and orchestrate CUD (create, update, delete) operations on their data entities. Enabling these processes allow organizations to track changes, enforce policy compliance, and ensure quality data across their data landscape.
+
+Use the client library for Purview Workflow to:
+
+- Manage workflows
+- Submit user requests and monitor workflow runs
+- View and respond to workflow tasks
+
+For more details about how to use workflow, please refer to the [service documentation][product_documentation]
 
 ## Getting started
 
-### Installating the package
-
-```bash
-python -m pip install azure-purview-workflow
-```
-
-#### Prequisites
+### Prequisites
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Purview Workflow Service instance.
-#### Create with an Azure Active Directory Credential
-To use an [Azure Active Directory (AAD) token credential][authenticate_with_token],
-provide an instance of the desired credential type obtained from the
-[azure-identity][azure_identity_credentials] library.
+- An existing Azure [Purview account][purview_resource].
+  
+### Authentication
 
 To authenticate with AAD, you must first [pip][pip] install [`azure-identity`][azure_identity_pip]
 
 After setup, you can choose which type of [credential][azure_identity_credentials] from azure.identity to use.
-As an example, [DefaultAzureCredential][default_azure_credential] can be used to authenticate the client:
+For Workflow service, it is recommended that use the [UsernamePasswordCredential][username_password_credential] to authenticate the client:
 
-Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`
+Set the values of  client ID and tenant ID of the AAD application, set the values username and password of the AAD user as environment variables:
+`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `USERNAME` and `PASSWORD`
 
 Use the returned token credential to authenticate the client:
 
 ```python
->>> from azure.purview.workflow import PurviewWorkflowClient
->>> from azure.identity import DefaultAzureCredential
->>> client = PurviewWorkflowClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
+from azure.purview.workflow import PurviewWorkflowClient
+from azure.identity import UsernamePasswordCredential
+username = os.getenv("USERNAME")
+password = os.getenv("PASSWORD")
+client_id = os.getenv("AZURE_CLIENT_ID")
+tenant_id = os.getenv("AZURE_TENANT_ID")
+credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password, tenant_id=tenant_id)
+client = PurviewWorkflowClient(endpoint='<endpoint>', credential=credential)
 ```
 
 ## Examples
 
+The following section shows you how to initialize and authenticate your client, then list all workflows.
+
+- [List All Workflows](#list-all-workflows "List All Data Sources")
+
+### List All Workflows
+
 ```python
->>> from azure.purview.workflow import PurviewWorkflowClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
-
->>> client = PurviewWorkflowClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
-
+from azure.purview.workflow import PurviewWorkflowClient
+from azure.identity import UsernamePasswordCredential
+username = os.getenv("USERNAME")
+password = os.getenv("PASSWORD")
+client_id = os.getenv("AZURE_CLIENT_ID")
+tenant_id = os.getenv("AZURE_TENANT_ID")
+credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password, tenant_id=tenant_id)
+client = PurviewWorkflowClient(endpoint='<endpoint>', credential=credential)
+try:
+    response = client.list_workflows()
+    result = [item for item in response]
+    print(result)
+except HttpResponseError as e:
+    print('service responds error: {}'.format(e.response.json()))
 ```
 
 ## Contributing
@@ -69,10 +84,11 @@ see the Code of Conduct FAQ or contact opencode@microsoft.com with any
 additional questions or comments.
 
 <!-- LINKS -->
-[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[authenticate_with_token]: https://docs.microsoft.com/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-an-authentication-token
+[product_documentation]: https://learn.microsoft.com/azure/purview/concept-workflow
+[purview_resource]: https://docs.microsoft.com/azure/purview/create-catalog-portal
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
-[azure_identity_pip]: https://pypi.org/project/azure-identity/
-[default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
-[pip]: https://pypi.org/project/pip/
+[username_password_credential]: https://learn.microsoft.com/python/api/azure-identity/azure.identity.usernamepasswordcredential?view=azure-python
 [azure_sub]: https://azure.microsoft.com/free/
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
+[azure_identity_pip]: https://pypi.org/project/azure-identity/
+[pip]: https://pypi.org/project/pip/
