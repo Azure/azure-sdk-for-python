@@ -95,7 +95,10 @@ class WorkspaceOutboundRuleOperations:
         service_resource_id = kwargs.get("service_resource_id", None)
         subresource_target = kwargs.get("subresource_target", None)
         spark = kwargs.get("spark_enabled", None)
-        spark_enabled = True if (spark in ["True","true","T","t",True]) else False
+        if (spark in ["True","true","T","t",True]):
+            spark_enabled = True
+        else: 
+            spark_enabled = False
 
         rule = None
 
