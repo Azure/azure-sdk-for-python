@@ -7,12 +7,11 @@ settings:
 inputs:
   cosmos_folder:
     type: uri_folder
-    path: azureml://locations/centraluseuap/workspaces/80eaba04-c6ec-4775-8ddc-d538e9642c2d/data/dtv2_asset_uriFolder/versions/1
+    path: ../../data/
 
 outputs:
   merged_blob:
     type: uri_folder
-    path: azureml://datastores/workspaceblobstore/paths/azureml/dtv2_dest/
 
 jobs:
     copy_files:

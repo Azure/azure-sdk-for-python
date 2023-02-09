@@ -7,12 +7,11 @@ settings:
 inputs:
   cosmos_folder:
     type: uri_file
-    path: azureml://locations/centraluseuap/workspaces/80eaba04-c6ec-4775-8ddc-d538e9642c2d/data/dtv2_asset_uriFile/versions/1
+    path: ../../data/sample1.csv
 
 outputs:
   merged_blob:
     type: uri_file
-    path: azureml://datastores/testadlsgen2datastore/paths/dtv2_parquet_dest/my.parquet
 
 jobs:
     copy_files:
