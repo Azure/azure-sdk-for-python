@@ -364,7 +364,7 @@ class AMQPClient(
             try:
                 self._keep_alive_thread.join()
             except RuntimeError:  # Probably thread failed to start in .open()
-                logging.info("Keep alive thread failed to join.", exc_info=True)
+                logging.debug("Keep alive thread failed to join.", exc_info=True)
             self._keep_alive_thread = None
         self._network_trace_params["amqpConnection"] = None
         self._network_trace_params["amqpSession"] = None

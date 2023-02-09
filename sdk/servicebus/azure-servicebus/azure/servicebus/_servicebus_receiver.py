@@ -218,6 +218,7 @@ class ServiceBusReceiver(
             else ServiceBusSession(cast(str, self._session_id), self)
         )
         self._receive_context = threading.Event()
+        self._handler: ReceiveClientSync
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -234,7 +235,6 @@ class ServiceBusReceiver(
                 original_timeout = self._handler._timeout
                 self._handler._timeout = max_wait_time * 1
             try:
-                self._receive_context.set()
                 message = self._inner_next()
                 links = get_receive_links(message)
                 with receive_trace_context_manager(self, links=links):
@@ -242,7 +242,6 @@ class ServiceBusReceiver(
             except StopIteration:
                 break
             finally:
-                self._receive_context.clear()
                 if original_timeout:
                     try:
                         self._handler._timeout = original_timeout
@@ -366,7 +365,6 @@ class ServiceBusReceiver(
             hostname,
             self._get_source(),
             auth=auth,
-            auto_complete=False,
             network_trace=self._config.logging_enable,
             properties=self._properties,
             retry_policy=self._error_policy,
@@ -610,16 +608,16 @@ class ServiceBusReceiver(
     ):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         if settle_operation == MESSAGE_COMPLETE:
-            return self._handler.settle_messages(message.delivery_id, 'accepted') # type: ignore[attr-defined]
+            return self._handler.settle_messages(message.delivery_id, 'accepted')
         if settle_operation == MESSAGE_ABANDON:
-            return self._handler.settle_messages( # type: ignore[attr-defined]
+            return self._handler.settle_messages(
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=False
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
-            return self._handler.settle_messages( # type: ignore[attr-defined]
+            return self._handler.settle_messages(
                 message.delivery_id,
                 'rejected',
                 error=AMQPError(
@@ -632,7 +630,7 @@ class ServiceBusReceiver(
                 )
             )
         if settle_operation == MESSAGE_DEFER:
-            return self._handler.settle_messages( # type: ignore[attr-defined]
+            return self._handler.settle_messages(
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,

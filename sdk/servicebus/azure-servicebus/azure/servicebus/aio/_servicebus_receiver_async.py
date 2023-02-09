@@ -212,6 +212,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             None if self._session_id is None else ServiceBusSession(cast(str, self._session_id), self)
         )
         self._receive_context = asyncio.Event()
+        self._handler: ReceiveClientAsync
 
     async def _iter_contextual_wrapper(self, max_wait_time=None):
         # pylint: disable=protected-access
@@ -367,7 +368,6 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
             hostname,
             self._get_source(),
             auth=auth,
-            auto_complete=False,
             network_trace=self._config.logging_enable,
             properties=self._properties,
             retry_policy=self._error_policy,
@@ -517,16 +517,16 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
     ):
         # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
         if settle_operation == MESSAGE_COMPLETE:
-            return await self._handler.settle_messages_async(message.delivery_id, 'accepted') # type: ignore[attr-defined] # pylint:disable=line-too-long
+            return await self._handler.settle_messages_async(message.delivery_id, 'accepted') # pylint:disable=line-too-long
         if settle_operation == MESSAGE_ABANDON:
-            return await self._handler.settle_messages_async( # type: ignore[attr-defined]
+            return await self._handler.settle_messages_async(
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,
                 undeliverable_here=False
             )
         if settle_operation == MESSAGE_DEAD_LETTER:
-            return await self._handler.settle_messages_async( # type: ignore[attr-defined]
+            return await self._handler.settle_messages_async(
                 message.delivery_id,
                 'rejected',
                 error=AMQPError(
@@ -539,7 +539,7 @@ class ServiceBusReceiver(collections.abc.AsyncIterator, BaseHandler, ReceiverMix
                 )
             )
         if settle_operation == MESSAGE_DEFER:
-            return await self._handler.settle_messages_async( # type: ignore[attr-defined]
+            return await self._handler.settle_messages_async(
                 message.delivery_id,
                 'modified',
                 delivery_failed=True,
