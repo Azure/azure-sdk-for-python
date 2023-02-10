@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_abstract_summary.py
+FILE: sample_abstractive_summary.py
 
 DESCRIPTION:
     This sample demonstrates how to submit text documents for abstractive text summarization.
@@ -18,7 +18,7 @@ DESCRIPTION:
     https://aka.ms/applyforgatedsummarizationfeatures
 
 USAGE:
-    python sample_abstract_summary.py
+    python sample_abstractive_summary.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
@@ -27,7 +27,7 @@ USAGE:
 
 
 def sample_abstractive_summarization() -> None:
-    # [START abstract_summary]
+    # [START abstractive_summary]
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
@@ -59,17 +59,17 @@ def sample_abstractive_summarization() -> None:
         "component of this aspiration, if grounded with external knowledge sources in the downstream AI tasks."
     ]
 
-    poller = text_analytics_client.begin_abstract_summary(document)
-    abstract_summary_results = poller.result()
-    for result in abstract_summary_results:
+    poller = text_analytics_client.begin_abstractive_summary(document)
+    abstractive_summary_results = poller.result()
+    for result in abstractive_summary_results:
         if result.kind == "AbstractiveSummarization":
             print("Summaries abstracted:")
             [print(f"{summary.text}\n") for summary in result.summaries]
         elif result.is_error is True:
             print("...Is an error with code '{}' and message '{}'".format(
-                result.code, result.message
+                result.error.code, result.error.message
             ))
-    # [END abstract_summary]
+    # [END abstractive_summary]
 
 
 if __name__ == "__main__":

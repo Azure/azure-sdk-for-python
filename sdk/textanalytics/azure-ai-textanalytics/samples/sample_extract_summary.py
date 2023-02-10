@@ -62,7 +62,7 @@ def sample_extractive_summarization():
             )
         elif result.is_error is True:
             print("...Is an error with code '{}' and message '{}'".format(
-                result.code, result.message
+                result.error.code, result.error.message
             ))
     # [END extract_summary]
 
