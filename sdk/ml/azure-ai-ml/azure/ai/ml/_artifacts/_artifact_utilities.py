@@ -452,7 +452,7 @@ def _get_asset_by_hash(
     # Response is SnapshotDto which is defined here: https://dev.azure.com/msdata/Vienna/_git/vienna?
     # path=/src/azureml-api/src/ProjectContent/Contracts/SnapshotDto.cs&version=GBmaster&line=18&
     # lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
-    response = requests_pipeline.post(request_url, headers=request_headers)
+    response = requests_pipeline.get(request_url, headers=request_headers)
     if response.status_code == 404:
         return None
     if response.status_code != 200:
