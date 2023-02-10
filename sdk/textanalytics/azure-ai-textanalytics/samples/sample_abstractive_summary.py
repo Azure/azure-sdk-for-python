@@ -69,7 +69,7 @@ def sample_abstractive_summarization() -> None:
             [print(f"{summary.text}\n") for summary in result.summaries]
         elif result.is_error is True:
             print("...Is an error with code '{}' and message '{}'".format(
-                result.code, result.message
+                result.error.code, result.error.message
             ))
     # [END abstractive_summary]
 
