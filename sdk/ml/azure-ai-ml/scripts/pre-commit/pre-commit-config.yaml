@@ -17,10 +17,11 @@ repos:
     language_version: python3 # Should be a command that runs python3.6+
     args:
         - "--line-length=120"
-- repo: https://github.com/pycqa/flake8
-  rev: 6.0.0
-  hooks:
-  - id: flake8
+# seems that current repo is not compatible with flake8 6.0.0
+#- repo: https://github.com/pycqa/flake8
+#  rev: 6.0.0
+#  hooks:
+#  - id: flake8
 - repo: https://github.com/hadialqattan/pycln
   rev: v2.1.3 # Possible releases: https://github.com/hadialqattan/pycln/tags
   hooks:
@@ -42,7 +43,7 @@ repos:
   - id: pylint
     name: Pylint Check
     language: system
-    # Please run `tox -c ../../../eng/tox/tox.ini -e lint` to set up the environment before first run
+    # Please run `tox -c ../../../eng/tox/tox.ini -e pylint` to set up the environment before first run
     entry: sdk/ml/azure-ai-ml/.tox/lint/scripts/python.exe
     require_serial: true
     types:
@@ -52,16 +53,20 @@ repos:
       - pylint
       - --rcfile=pylintrc
       - --output-format=parseable
-# this is an experimental pre-commit to run specific tests
+# This is an experimental pre-commit to run specific tests when source code is changed.
+# You'll need to set up a virtual environment under project root before the first run.
+# Be careful to enable this as it will take a long time to run all tests and remember to
+# switch to playback mode unless you understand what it takes to run live tests.
+# It's more proper to add this to pre-push, please refer to https://pre-commit.com/#pre-commit-during-push
+#- repo: local
+#  hooks:
 #  - id: pytest-pipeline
 #    name: Pipeline related tests
 #    files: 'sdk/ml/azure-ai-ml/azure/ai/ml/.*'
 #    language: system
-#    entry: sdk/ml/azure-ai-ml/Scripts/run_tests.ps1
+#    entry: bash -c 'cd sdk/ml/azure-ai-ml && venv/Scripts/pytest.exe -m pipeline_test'
 #    require_serial: true
 #    types:
 #      - python
 #    pass_filenames: false
-#    args:
-#      - -m
-#      - pipeline_test
+#    verbose: true
