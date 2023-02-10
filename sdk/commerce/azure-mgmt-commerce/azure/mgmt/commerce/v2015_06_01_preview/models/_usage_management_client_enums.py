@@ -6,15 +6,20 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._usage_management_client import UsageManagementClient
-__all__ = ['UsageManagementClient']
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
-try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
-except ImportError:
-    pass
 
-from ._version import VERSION
+class AggregationGranularity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AggregationGranularity."""
 
-__version__ = VERSION
+    DAILY = "Daily"
+    HOURLY = "Hourly"
+
+
+class OfferTermInfoEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Name of the offer term."""
+
+    RECURRING_CHARGE = "Recurring Charge"
+    MONETARY_COMMITMENT = "Monetary Commitment"
+    MONETARY_CREDIT = "Monetary Credit"
