@@ -28,6 +28,9 @@ from ..cosmos.documents import _OperationType
 
 class _TimeoutFailoverRetryPolicy(object):
 
+    Max_retry_attempt_count = 1
+    Retry_after_in_milliseconds = 0
+
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self._max_retry_attempt_count = 120
         self.current_retry_attempt_count = 0
@@ -49,12 +52,13 @@ class _TimeoutFailoverRetryPolicy(object):
 
     def needsRetry(self):
         if self.args:
-            if (self.args[3].method == "GET") or (http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
+            if (self.args[3].method == "GET") \
+                    or (http_constants.HttpHeaders.IsQueryPlanRequest in self.args[3].headers):
                 return True
         return False
 
 
-    def ShouldRetry(self, exception):
+    def ShouldRetry(self, _exception):
         """Returns true if should retry based on the passed-in exception.
 
         :param (exceptions.CosmosHttpResponseError instance) exception:
