@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_abstract_summary.py
+FILE: sample_abstractive_summary_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit text documents for abstractive text summarization.
@@ -18,7 +18,7 @@ DESCRIPTION:
     https://aka.ms/applyforgatedsummarizationfeatures
 
 USAGE:
-    python sample_abstract_summary.py
+    python sample_abstractive_summary_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_LANGUAGE_ENDPOINT - the endpoint to your Language resource.
@@ -27,12 +27,13 @@ USAGE:
 
 
 import os
+import asyncio
 
 
-def sample_abstractive_summarization() -> None:
-    # [START abstract_summary]
+async def sample_abstractive_summarization_async() -> None:
+    # [START abstractive_summary_async]
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.textanalytics import TextAnalyticsClient
+    from azure.ai.textanalytics.aio import TextAnalyticsClient
 
     endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
     key = os.environ["AZURE_LANGUAGE_KEY"]
@@ -60,19 +61,23 @@ def sample_abstractive_summarization() -> None:
         "is closer in line with how humans learn and understand. I believe the joint XYZ-code is a foundational "
         "component of this aspiration, if grounded with external knowledge sources in the downstream AI tasks."
     ]
+    async with text_analytics_client:
+        poller = await text_analytics_client.begin_abstractive_summary(document)
+        abstractive_summary_results = await poller.result()
+        async for result in abstractive_summary_results:
+            if result.kind == "AbstractiveSummarization":
+                print("Summaries abstracted:")
+                [print(f"{summary.text}\n") for summary in result.summaries]
+            elif result.is_error is True:
+                print("...Is an error with code '{}' and message '{}'".format(
+                    result.error.code, result.error.message
+                ))
+    # [END abstractive_summary_async]
 
-    poller = text_analytics_client.begin_abstract_summary(document)
-    abstract_summary_results = poller.result()
-    for result in abstract_summary_results:
-        if result.kind == "AbstractiveSummarization":
-            print("Summaries abstracted:")
-            [print(f"{summary.text}\n") for summary in result.summaries]
-        elif result.is_error is True:
-            print("...Is an error with code '{}' and message '{}'".format(
-                result.code, result.message
-            ))
-    # [END abstract_summary]
+
+async def main():
+    await sample_abstractive_summarization_async()
 
 
-if __name__ == "__main__":
-    sample_abstractive_summarization()
+if __name__ == '__main__':
+    asyncio.run(main())
