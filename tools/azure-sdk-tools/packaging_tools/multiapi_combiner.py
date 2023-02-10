@@ -286,6 +286,18 @@ class Client:
         return list(self.code_model.api_version_to_metadata.values())[-1]["client"]["name"]
 
 
+class ModelAndEnum(VersionedObject):
+    @property
+    def generated_class(self):
+        folder_api_version = self.code_model.api_version_to_folder_api_version[self.api_versions[-1]]
+        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}.models")
+        return getattr(module, self.name)
+
+    @property
+    def source_code(self) -> str:
+        return strip_version_from_docs(inspect.getsource(self.generated_class))
+
+
 class CodeModel:
     def __init__(self, pkg_path: Path):
         self._root_of_code = pkg_path
@@ -304,6 +316,9 @@ class CodeModel:
         self.default_folder_api_version = self.api_version_to_folder_api_version[self.default_api_version]
         self.module_name = pkg_path.stem.replace("-", ".")
         self.operation_groups = self._combine_operation_groups()
+        self.models: List[ModelAndEnum] = []
+        self.enums: List[ModelAndEnum] = []
+        self._combine_models_and_enums()
         self.client = Client(self)
 
     def get_root_of_code(self, async_mode: bool) -> Path:
@@ -349,6 +364,27 @@ class CodeModel:
             for operation in operation_group.operations:
                 operation.combine_parameters()
         return ogs
+
+    def _combine_models_and_enums(self) -> None:
+        def _get_model(code_model: "CodeModel", name: str) -> ModelAndEnum:
+            return ModelAndEnum(code_model, name)
+
+        def _get_names_by_api_version(api_version: str):
+            folder_api_version = self.api_version_to_folder_api_version[api_version]
+            module = importlib.import_module(f"{self.module_name}.{folder_api_version}.models")
+            return [m for m in dir(module) if m[0] != "_"]
+
+        models_and_enums = _combine_helper(
+            code_model=self,
+            sorted_api_versions=self.sorted_api_versions,
+            get_cls=_get_model,
+            get_names_by_api_version=_get_names_by_api_version,
+        )
+        for m in models_and_enums:
+            if hasattr(m.generated_class, "from_dict"):
+                self.models.append(m)
+            else:
+                self.enums.append(m)
 
 
 class Serializer:
@@ -542,18 +578,28 @@ class Serializer:
             fd.write(self.env.get_template("validation.py.jinja2").render())
 
     def serialize_models_folder(self):
-        default_models_folder = (
-            self.code_model.get_root_of_code(False) / self.code_model.default_folder_api_version / "models"
+        # serialize init file
+        models_folder = self.code_model.get_root_of_code(False) / "models"
+        Path(models_folder).mkdir(parents=True, exist_ok=True)
+        with open(f"{models_folder}/__init__.py", "w") as fd:
+            fd.write(self.env.get_template("models_init.py.jinja2").render(code_model=self.code_model))
+        default_api_version = self.code_model.default_folder_api_version
+        default_models_folder_name = f"{self.code_model.module_name}.{default_api_version}.models"
+
+        # serialize models file
+        default_models_module = importlib.import_module(f"{default_models_folder_name}._models_py3")
+        imports = inspect.getsource(default_models_module).split("class")[0]
+        with open(f"{models_folder}/_models.py", "w") as fd:
+            fd.write(self.env.get_template("models.py.jinja2").render(code_model=self.code_model, imports=imports))
+
+        # serialize enums file
+        default_enums_module = importlib.import_module(
+            f"{default_models_folder_name}.{self.code_model.client.generated_filename}_enums"
         )
-        models_module = self.code_model.get_root_of_code(False) / "models"
-        shutil.copytree(default_models_folder, models_module)
-        for file in models_module.iterdir():
-            if file.suffix != ".py":
-                continue
-            with open(file, "r") as rfd:
-                read_file = rfd.read()
-                with open(file, "w") as wfd:
-                    wfd.write(strip_version_from_docs(read_file))
+        imports = inspect.getsource(default_enums_module).split("class")[0]
+        if self.code_model.enums:
+            with open(f"{models_folder}/_enums.py", "w") as fd:
+                fd.write(self.env.get_template("enums.py.jinja2").render(code_model=self.code_model, imports=imports))
 
     def remove_versioned_files(self):
         root_of_code = self.code_model.get_root_of_code(False)
