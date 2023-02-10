@@ -2629,7 +2629,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert node_output.name == 'a_output'
         assert node_output.version == '1'
 
-    def test_register_output_succeed(self, client: MLClient, randstr: Callable[[str], str], randint: Callable[[int], int]):
+    def test_register_output_sdk_succeed(self, client: MLClient, randstr: Callable[[str], str], randint: Callable[[int], int]):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
 
