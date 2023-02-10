@@ -71,6 +71,38 @@ from ._azure_blob_storage_enums import BlockListType
 from ._azure_blob_storage_enums import CopyStatusType
 from ._azure_blob_storage_enums import DeleteSnapshotsOptionType
 from ._azure_blob_storage_enums import EncryptionAlgorithmType
+from ._azure_blob_storage_enums import Enum0
+from ._azure_blob_storage_enums import Enum1
+from ._azure_blob_storage_enums import Enum10
+from ._azure_blob_storage_enums import Enum11
+from ._azure_blob_storage_enums import Enum12
+from ._azure_blob_storage_enums import Enum13
+from ._azure_blob_storage_enums import Enum14
+from ._azure_blob_storage_enums import Enum15
+from ._azure_blob_storage_enums import Enum16
+from ._azure_blob_storage_enums import Enum2
+from ._azure_blob_storage_enums import Enum22
+from ._azure_blob_storage_enums import Enum24
+from ._azure_blob_storage_enums import Enum25
+from ._azure_blob_storage_enums import Enum26
+from ._azure_blob_storage_enums import Enum27
+from ._azure_blob_storage_enums import Enum28
+from ._azure_blob_storage_enums import Enum29
+from ._azure_blob_storage_enums import Enum3
+from ._azure_blob_storage_enums import Enum30
+from ._azure_blob_storage_enums import Enum32
+from ._azure_blob_storage_enums import Enum33
+from ._azure_blob_storage_enums import Enum34
+from ._azure_blob_storage_enums import Enum35
+from ._azure_blob_storage_enums import Enum36
+from ._azure_blob_storage_enums import Enum37
+from ._azure_blob_storage_enums import Enum38
+from ._azure_blob_storage_enums import Enum39
+from ._azure_blob_storage_enums import Enum41
+from ._azure_blob_storage_enums import Enum5
+from ._azure_blob_storage_enums import Enum7
+from ._azure_blob_storage_enums import Enum8
+from ._azure_blob_storage_enums import Enum9
 from ._azure_blob_storage_enums import FilterBlobsIncludeItem
 from ._azure_blob_storage_enums import GeoReplicationStatusType
 from ._azure_blob_storage_enums import LeaseDurationType
@@ -81,12 +113,13 @@ from ._azure_blob_storage_enums import ListContainersIncludeType
 from ._azure_blob_storage_enums import PremiumPageBlobAccessTier
 from ._azure_blob_storage_enums import PublicAccessType
 from ._azure_blob_storage_enums import QueryFormatType
+from ._azure_blob_storage_enums import QueryRequestQueryType
 from ._azure_blob_storage_enums import RehydratePriority
 from ._azure_blob_storage_enums import SequenceNumberActionType
 from ._azure_blob_storage_enums import SkuName
 from ._azure_blob_storage_enums import StorageErrorCode
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -154,6 +187,38 @@ __all__ = [
     "CopyStatusType",
     "DeleteSnapshotsOptionType",
     "EncryptionAlgorithmType",
+    "Enum0",
+    "Enum1",
+    "Enum10",
+    "Enum11",
+    "Enum12",
+    "Enum13",
+    "Enum14",
+    "Enum15",
+    "Enum16",
+    "Enum2",
+    "Enum22",
+    "Enum24",
+    "Enum25",
+    "Enum26",
+    "Enum27",
+    "Enum28",
+    "Enum29",
+    "Enum3",
+    "Enum30",
+    "Enum32",
+    "Enum33",
+    "Enum34",
+    "Enum35",
+    "Enum36",
+    "Enum37",
+    "Enum38",
+    "Enum39",
+    "Enum41",
+    "Enum5",
+    "Enum7",
+    "Enum8",
+    "Enum9",
     "FilterBlobsIncludeItem",
     "GeoReplicationStatusType",
     "LeaseDurationType",
@@ -164,6 +229,7 @@ __all__ = [
     "PremiumPageBlobAccessTier",
     "PublicAccessType",
     "QueryFormatType",
+    "QueryRequestQueryType",
     "RehydratePriority",
     "SequenceNumberActionType",
     "SkuName",

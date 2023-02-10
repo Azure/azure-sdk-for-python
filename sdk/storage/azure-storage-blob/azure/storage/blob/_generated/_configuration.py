@@ -6,10 +6,12 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Union
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
+
+from . import models as _models
 
 VERSION = "unknown"
 
@@ -23,27 +25,24 @@ class AzureBlobStorageConfiguration(Configuration):  # pylint: disable=too-many-
     :param url: The URL of the service account, container, or blob that is the target of the
      desired operation. Required.
     :type url: str
-    :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2021-12-02". Note that overriding this default value may result in unsupported behavior.
-    :paramtype version: str
+    :param version: Specifies the version of the operation to use for this request. "2021-12-02"
+     Required.
+    :type version: str or ~azure.storage.blob.models.Enum2
     """
 
-    def __init__(self, url: str, **kwargs: Any) -> None:
+    def __init__(self, url: str, version: Union[str, _models.Enum2], **kwargs: Any) -> None:
         super(AzureBlobStorageConfiguration, self).__init__(**kwargs)
-        version = kwargs.pop("version", "2021-12-02")  # type: str
-
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
+        if version is None:
+            raise ValueError("Parameter 'version' must not be None.")
 
         self.url = url
         self.version = version
         kwargs.setdefault("sdk_moniker", "azureblobstorage/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

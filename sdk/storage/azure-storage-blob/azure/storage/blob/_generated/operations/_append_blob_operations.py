@@ -7,6 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
+import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -14,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -26,6 +28,10 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -37,6 +43,7 @@ def build_create_request(
     url: str,
     *,
     content_length: int,
+    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     blob_content_type: Optional[str] = None,
     blob_content_encoding: Optional[str] = None,
@@ -48,7 +55,7 @@ def build_create_request(
     blob_content_disposition: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -58,15 +65,14 @@ def build_create_request(
     request_id_parameter: Optional[str] = None,
     blob_tags_string: Optional[str] = None,
     immutability_policy_expiry: Optional[datetime.datetime] = None,
-    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+    immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
     legal_hold: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -75,7 +81,7 @@ def build_create_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -149,8 +155,10 @@ def build_create_request(
 def build_append_block_request(
     url: str,
     *,
+    comp: Union[str, _models.Enum37],
     content_length: int,
     content: IO,
+    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     transactional_content_md5: Optional[bytes] = None,
     transactional_content_crc64: Optional[bytes] = None,
@@ -159,7 +167,7 @@ def build_append_block_request(
     append_position: Optional[int] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -172,9 +180,7 @@ def build_append_block_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "appendblock"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -183,7 +189,7 @@ def build_append_block_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -239,8 +245,10 @@ def build_append_block_request(
 def build_append_block_from_url_request(
     url: str,
     *,
+    comp: Union[str, _models.Enum37],
     source_url: str,
     content_length: int,
+    version: Union[str, _models.Enum2],
     source_range: Optional[str] = None,
     source_content_md5: Optional[bytes] = None,
     source_contentcrc64: Optional[bytes] = None,
@@ -248,7 +256,7 @@ def build_append_block_from_url_request(
     transactional_content_md5: Optional[bytes] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
+    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
     encryption_scope: Optional[str] = None,
     lease_id: Optional[str] = None,
     max_size: Optional[int] = None,
@@ -269,8 +277,6 @@ def build_append_block_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "appendblock"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -279,7 +285,7 @@ def build_append_block_from_url_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -354,6 +360,8 @@ def build_append_block_from_url_request(
 def build_seal_request(
     url: str,
     *,
+    comp: Union[str, _models.Enum38],
+    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     lease_id: Optional[str] = None,
@@ -367,8 +375,6 @@ def build_seal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "seal"))  # type: str
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -377,7 +383,7 @@ def build_seal_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -433,7 +439,7 @@ class AppendBlobOperations:
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
+        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
         legal_hold: Optional[bool] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -493,14 +499,19 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -543,6 +554,7 @@ class AppendBlobOperations:
         request = build_create_request(
             url=self._config.url,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             blob_content_type=_blob_content_type,
             blob_content_encoding=_blob_content_encoding,
@@ -567,15 +579,14 @@ class AppendBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             blob_type=blob_type,
-            version=self._config.version,
             template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -610,11 +621,12 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    create.metadata = {"url": "{url}/{containerName}/{blob}"}
 
     @distributed_trace
     def append_block(  # pylint: disable=inconsistent-return-statements
         self,
+        comp: Union[str, _models.Enum37],
         content_length: int,
         body: IO,
         timeout: Optional[int] = None,
@@ -632,6 +644,8 @@ class AppendBlobOperations:
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
         AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
 
+        :param comp: comp. "appendblock" Required.
+        :type comp: str or ~azure.storage.blob.models.Enum37
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param body: Initial data. Required.
@@ -662,23 +676,24 @@ class AppendBlobOperations:
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
-        :keyword comp: comp. Default value is "appendblock". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        comp = kwargs.pop("comp", _params.pop("comp", "appendblock"))  # type: str
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _max_size = None
@@ -713,7 +728,9 @@ class AppendBlobOperations:
 
         request = build_append_block_request(
             url=self._config.url,
+            comp=comp,
             content_length=content_length,
+            version=self._config.version,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
             transactional_content_crc64=transactional_content_crc64,
@@ -730,18 +747,16 @@ class AppendBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
-            comp=comp,
             content_type=content_type,
-            version=self._config.version,
             content=_content,
             template_url=self.append_block.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -784,11 +799,12 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    append_block.metadata = {"url": "{url}/{containerName}/{blob}"}
 
     @distributed_trace
     def append_block_from_url(  # pylint: disable=inconsistent-return-statements
         self,
+        comp: Union[str, _models.Enum37],
         source_url: str,
         content_length: int,
         source_range: Optional[str] = None,
@@ -811,6 +827,8 @@ class AppendBlobOperations:
         the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on
         version 2015-02-21 version or later.
 
+        :param comp: comp. "appendblock" Required.
+        :type comp: str or ~azure.storage.blob.models.Enum37
         :param source_url: Specify a URL to the copy source. Required.
         :type source_url: str
         :param content_length: The length of the request. Required.
@@ -852,22 +870,23 @@ class AppendBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
-        :keyword comp: comp. Default value is "appendblock". Note that overriding this default value
-         may result in unsupported behavior.
-        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        comp = kwargs.pop("comp", _params.pop("comp", "appendblock"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -910,8 +929,10 @@ class AppendBlobOperations:
 
         request = build_append_block_from_url_request(
             url=self._config.url,
+            comp=comp,
             source_url=source_url,
             content_length=content_length,
+            version=self._config.version,
             source_range=source_range,
             source_content_md5=source_content_md5,
             source_contentcrc64=source_contentcrc64,
@@ -935,16 +956,14 @@ class AppendBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
-            comp=comp,
-            version=self._config.version,
             template_url=self.append_block_from_url.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -984,11 +1003,12 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    append_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}
 
     @distributed_trace
     def seal(  # pylint: disable=inconsistent-return-statements
         self,
+        comp: Union[str, _models.Enum38],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -999,6 +1019,8 @@ class AppendBlobOperations:
         """The Seal operation seals the Append Blob to make it read-only. Seal is supported only on
         version 2019-12-12 version or later.
 
+        :param comp: comp. "seal" Required.
+        :type comp: str or ~azure.storage.blob.models.Enum38
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1015,22 +1037,23 @@ class AppendBlobOperations:
         :param append_position_access_conditions: Parameter group. Default value is None.
         :type append_position_access_conditions:
          ~azure.storage.blob.models.AppendPositionAccessConditions
-        :keyword comp: comp. Default value is "seal". Note that overriding this default value may
-         result in unsupported behavior.
-        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        comp = kwargs.pop("comp", _params.pop("comp", "seal"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
         _if_modified_since = None
@@ -1050,6 +1073,8 @@ class AppendBlobOperations:
 
         request = build_seal_request(
             url=self._config.url,
+            comp=comp,
+            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
@@ -1058,16 +1083,14 @@ class AppendBlobOperations:
             if_match=_if_match,
             if_none_match=_if_none_match,
             append_position=_append_position,
-            comp=comp,
-            version=self._config.version,
             template_url=self.seal.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1092,4 +1115,4 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    seal.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
+    seal.metadata = {"url": "{url}/{containerName}/{blob}"}

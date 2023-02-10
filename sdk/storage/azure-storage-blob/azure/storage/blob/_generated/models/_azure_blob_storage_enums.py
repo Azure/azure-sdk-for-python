@@ -151,6 +151,198 @@ class EncryptionAlgorithmType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AES256 = "AES256"
 
 
+class Enum0(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum0."""
+
+    SERVICE = "service"
+
+
+class Enum1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum1."""
+
+    PROPERTIES = "properties"
+
+
+class Enum10(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum10."""
+
+    BLOBS = "blobs"
+
+
+class Enum11(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum11."""
+
+    CONTAINER = "container"
+
+
+class Enum12(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum12."""
+
+    METADATA = "metadata"
+
+
+class Enum13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum13."""
+
+    ACL = "acl"
+
+
+class Enum14(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum14."""
+
+    UNDELETE = "undelete"
+
+
+class Enum15(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum15."""
+
+    RENAME = "rename"
+
+
+class Enum16(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum16."""
+
+    LEASE = "lease"
+
+
+class Enum2(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum2."""
+
+    TWO_THOUSAND_TWENTY_ONE12_02 = "2021-12-02"
+
+
+class Enum22(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum22."""
+
+    EXPIRY = "expiry"
+
+
+class Enum24(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum24."""
+
+    IMMUTABILITY_POLICIES = "immutabilityPolicies"
+
+
+class Enum25(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum25."""
+
+    LEGALHOLD = "legalhold"
+
+
+class Enum26(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum26."""
+
+    SNAPSHOT = "snapshot"
+
+
+class Enum27(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum27."""
+
+    TRUE = "true"
+
+
+class Enum28(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum28."""
+
+    COPY = "copy"
+
+
+class Enum29(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum29."""
+
+    ABORT = "abort"
+
+
+class Enum3(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum3."""
+
+    STATS = "stats"
+
+
+class Enum30(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum30."""
+
+    TIER = "tier"
+
+
+class Enum32(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum32."""
+
+    BLOCK = "block"
+
+
+class Enum33(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum33."""
+
+    BLOCKLIST = "blocklist"
+
+
+class Enum34(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum34."""
+
+    PAGE = "page"
+
+
+class Enum35(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum35."""
+
+    PAGELIST = "pagelist"
+
+
+class Enum36(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum36."""
+
+    INCREMENTALCOPY = "incrementalcopy"
+
+
+class Enum37(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum37."""
+
+    APPENDBLOCK = "appendblock"
+
+
+class Enum38(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum38."""
+
+    SEAL = "seal"
+
+
+class Enum39(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum39."""
+
+    QUERY = "query"
+
+
+class Enum41(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum41."""
+
+    TAGS = "tags"
+
+
+class Enum5(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum5."""
+
+    LIST = "list"
+
+
+class Enum7(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum7."""
+
+    USERDELEGATIONKEY = "userdelegationkey"
+
+
+class Enum8(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum8."""
+
+    ACCOUNT = "account"
+
+
+class Enum9(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum9."""
+
+    BATCH = "batch"
+
+
 class FilterBlobsIncludeItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FilterBlobsIncludeItem."""
 
@@ -243,6 +435,12 @@ class QueryFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JSON = "json"
     ARROW = "arrow"
     PARQUET = "parquet"
+
+
+class QueryRequestQueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Required. The type of the provided query expression."""
+
+    SQL = "SQL"
 
 
 class RehydratePriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):

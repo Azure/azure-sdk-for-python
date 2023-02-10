@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, Union
 
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
+from . import models as _models
 from ._configuration import AzureBlobStorageConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
@@ -43,20 +43,20 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
     :param url: The URL of the service account, container, or blob that is the target of the
      desired operation. Required.
     :type url: str
+    :param version: Specifies the version of the operation to use for this request. "2021-12-02"
+     Required.
+    :type version: str or ~azure.storage.blob.models.Enum2
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
-    :keyword version: Specifies the version of the operation to use for this request. Default value
-     is "2021-12-02". Note that overriding this default value may result in unsupported behavior.
-    :paramtype version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, url: str, base_url: str = "", **kwargs: Any
+        self, url: str, version: Union[str, _models.Enum2], base_url: str = "", **kwargs: Any
     ) -> None:
-        self._config = AzureBlobStorageConfiguration(url=url, **kwargs)
+        self._config = AzureBlobStorageConfiguration(url=url, version=version, **kwargs)
         self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -89,15 +89,12 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AzureBlobStorage
+    def __enter__(self) -> "AzureBlobStorage":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)
