@@ -19,7 +19,6 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-import sys
 import unittest
 import azure.cosmos.cosmos_client as cosmos_client
 import pytest
@@ -214,6 +213,7 @@ class Test_retry_policy_tests(unittest.TestCase):
         created_document = self.created_collection.create_item(body=document_definition)
 
         try:
+            print("\n\n\n\n\nIN TEST\n\n\n\n\n")
             original_execute_function = _retry_utility.ExecuteFunction
             mf = self.MockExecuteFunctionConnectionReset(original_execute_function)
             _retry_utility.ExecuteFunction = mf
@@ -254,19 +254,20 @@ class Test_retry_policy_tests(unittest.TestCase):
             self.assertEqual(mf.counter, 1)
         finally:
             _retry_utility.ExecuteFunction = original_execute_function
+
     def test_timeout_failover_retry_policy_for_read(self):
         document_definition = {'id': 'doc',
                                'name': 'sample document',
                                'key': 'value'}
 
         created_document = self.created_collection.create_item(body=document_definition)
-
         try:
             original_execute_function = _retry_utility.ExecuteFunction
             mf = self.MockExecuteFunctionTimeout(original_execute_function)
 
             _retry_utility.ExecuteFunction = mf
-            hi = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
+            doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
+            self.assertEqual(doc['id'], 'doc')
         finally:
             _retry_utility.ExecuteFunction = original_execute_function
 
