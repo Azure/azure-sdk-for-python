@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from typing import TYPE_CHECKING, Dict, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, Optional, Tuple, Union
 
 from . import HTTPPolicy, SansIOHTTPPolicy
 from ...exceptions import ServiceRequestError
@@ -176,14 +176,14 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
 
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param str name: The name of the key header used for the credential.
+    :param Union[str, Tuple[str, ...]] name: The name of the key header used for the credential.
     :raises: ValueError or TypeError
     """
 
     def __init__(
         self,
         credential: "AzureKeyCredential",
-        name: str,
+        name: Union[str, Tuple[str, ...]],
         **kwargs  # pylint: disable=unused-argument
     ) -> None:
         super(AzureKeyCredentialPolicy, self).__init__()
