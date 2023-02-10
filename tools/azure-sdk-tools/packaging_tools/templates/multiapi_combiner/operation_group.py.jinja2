@@ -6,7 +6,7 @@
 class {{ operation_group.name }}{{ "(" + operation_group.name.replace("Operations", "") + "ABC)" if operation_group.is_mixin else "" }}:
 {% if not operation_group.is_mixin %}
     """
-    {{ operation_group.generated_class(async_mode).__doc__ }}
+    {{ operation_group.doc(async_mode) }}
     """
     models = _models
 

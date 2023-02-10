@@ -34,6 +34,9 @@ def modify_relative_imports(regex: str, file: str) -> str:
     return file.replace(original_str, new_str)
 
 
+def strip_version_from_docs(input: str) -> str:
+    return re.sub(r".v20[^.]*", "", input)
+
 class VersionedObject:
     """An object that can be added / removed in an api version"""
 
@@ -105,7 +108,7 @@ class Operation(VersionedObject):
         self._request_builder: Optional[str] = None
 
     def source_code(self, async_mode: bool) -> str:
-        return inspect.getsource(self._get_op(self.api_versions[-1], async_mode))
+        return strip_version_from_docs(inspect.getsource(self._get_op(self.api_versions[-1], async_mode)))
 
     @property
     def request_builder_name(self) -> Optional[str]:
@@ -256,6 +259,9 @@ class OperationGroup(VersionedObject):
             get_names_by_api_version=_get_names_by_api_version,
         )
 
+    def doc(self, async_mode: bool) -> str:
+        return strip_version_from_docs(self.generated_class(async_mode).__doc__)
+
 
 class Client:
     def __init__(self, code_model: "CodeModel") -> None:
@@ -342,6 +348,7 @@ class CodeModel:
             for operation in operation_group.operations:
                 operation.combine_parameters()
         return ogs
+
 
 class Serializer:
     def __init__(self, code_model: "CodeModel") -> None:
@@ -485,7 +492,9 @@ class Serializer:
 
         main_client_source = "class" + "class".join(split_main_client_source[1:])
 
-        client_initialization = re.search(r"((?s).*?)    @classmethod", main_client_source).group(1)
+        client_initialization = strip_version_from_docs(
+            re.search(r"((?s).*?)    @classmethod", main_client_source).group(1)
+        )
 
         # TODO: switch to current file path
         with open(f"{self.code_model.get_root_of_code(async_mode)}/_client.py", "w") as fd:
@@ -532,12 +541,10 @@ class Serializer:
             fd.write(self.env.get_template("validation.py.jinja2").render())
 
     def serialize_models_folder(self):
-        default_models_folder = self.code_model.get_root_of_code(False) / self.code_model.default_folder_api_version / "models"
-        shutil.copytree(
-            default_models_folder,
-            self.code_model.get_root_of_code(False) / "models"
+        default_models_folder = (
+            self.code_model.get_root_of_code(False) / self.code_model.default_folder_api_version / "models"
         )
-
+        shutil.copytree(default_models_folder, self.code_model.get_root_of_code(False) / "models")
 
     def remove_versioned_files(self):
         root_of_code = self.code_model.get_root_of_code(False)
