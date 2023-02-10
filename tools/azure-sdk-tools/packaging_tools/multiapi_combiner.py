@@ -37,6 +37,7 @@ def modify_relative_imports(regex: str, file: str) -> str:
 def strip_version_from_docs(input: str) -> str:
     return re.sub(r".v20[^.]*", "", input)
 
+
 class VersionedObject:
     """An object that can be added / removed in an api version"""
 
@@ -544,7 +545,15 @@ class Serializer:
         default_models_folder = (
             self.code_model.get_root_of_code(False) / self.code_model.default_folder_api_version / "models"
         )
-        shutil.copytree(default_models_folder, self.code_model.get_root_of_code(False) / "models")
+        models_module = self.code_model.get_root_of_code(False) / "models"
+        shutil.copytree(default_models_folder, models_module)
+        for file in models_module.iterdir():
+            if file.suffix != ".py":
+                continue
+            with open(file, "r") as rfd:
+                read_file = rfd.read()
+                with open(file, "w") as wfd:
+                    wfd.write(strip_version_from_docs(read_file))
 
     def remove_versioned_files(self):
         root_of_code = self.code_model.get_root_of_code(False)
