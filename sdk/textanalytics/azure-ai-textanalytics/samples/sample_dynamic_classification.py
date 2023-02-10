@@ -58,7 +58,7 @@ def sample_dynamic_classification() -> None:
                 ))
         elif classification_result.is_error is True:
             print("Document '{}' has an error with code '{}' and message '{}'".format(
-                doc, classification_result.code, classification_result.message
+                doc, classification_result.error.code, classification_result.error.message
             ))
     # [END dynamic_classification]
 

@@ -386,7 +386,8 @@
     "prnumber",
     "yarl",
     "SDDL",
-    "dacl"
+    "dacl",
+    "whls"
   ],
   "overrides": [
     {
@@ -430,9 +431,10 @@
       ]
     },
     {
-      "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
+      "filename": "sdk/translation/azure-ai-translation-document/**",
       "words": [
-        "essai"
+        "essai",
+        "myfoldername"
       ]
     },
     {

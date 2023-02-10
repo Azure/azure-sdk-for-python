@@ -13,16 +13,12 @@ from common_tasks import (
     clean_coverage,
     is_error_code_5_allowed,
     create_code_coverage_params,
-    find_whl,
 )
 
-from ci_tools.parsing import ParsedSetup
-from ci_tools.build import create_package
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
 from ci_tools.ci_interactions import output_ci_warning
-
-
+from ci_tools.functions import build_whl_for_req
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
 
@@ -114,27 +110,6 @@ def inject_custom_reqs(file, injected_packages, package_dir):
             # If a file is opened in text mode (the default), during write python will accidentally double replace due to "\r" being
             # replaced with "\r\n" on Windows. Result: "\r\n\n". Extra line breaks!
             f.write("\n".join(all_adjustments))
-
-
-def build_whl_for_req(req, package_path):
-    if ".." in req:
-        # Create temp path if it doesn't exist
-        temp_dir = os.path.join(package_path, ".tmp_whl_dir")
-        if not os.path.exists(temp_dir):
-            os.mkdir(temp_dir)
-
-        req_pkg_path = os.path.abspath(os.path.join(package_path, req.replace("\n", "")))
-        parsed = ParsedSetup.from_path(req_pkg_path)
-
-        logging.info("Building wheel for package {}".format(parsed.name))
-        create_package(req_pkg_path, temp_dir, enable_sdist=False)
-
-        whl_path = os.path.join(temp_dir, find_whl(parsed.name, parsed.version, temp_dir))
-        logging.info("Wheel for package {0} is {1}".format(parsed.name, whl_path))
-        logging.info("Replacing dev requirement. Old requirement:{0}, New requirement:{1}".format(req, whl_path))
-        return whl_path
-    else:
-        return req
 
 
 def replace_dev_reqs(file, pkg_root):

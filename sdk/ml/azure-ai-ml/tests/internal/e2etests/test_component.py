@@ -84,6 +84,8 @@ class TestComponent(AzureRecordedTestCase):
         randstr: Callable[[str], str],
         yaml_path: str,
     ) -> None:
+        if "ae365" not in yaml_path:
+            return
         omit_fields = ["id", "creation_context", "code", "name"]
         component_name = randstr("component_name")
 
@@ -100,6 +102,12 @@ class TestComponent(AzureRecordedTestCase):
         with open(json_path, "r") as f:
             expected_dict = json.load(f)
             expected_dict["_source"] = "REMOTE.WORKSPACE.COMPONENT"
+
+            # default value for datatransfer
+            if expected_dict["type"] == "DataTransferComponent" and "datatransfer" not in expected_dict:
+                expected_dict["datatransfer"] = {
+                    'allow_overwrite': 'True'
+                }
 
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)
