@@ -20,6 +20,10 @@ class TestControlFlowPipelineUT:
     pass
 
 
+class CustomizedObject:
+    pass
+
+
 class TestParallelForPipelineUT(TestControlFlowPipelineUT):
     def test_dsl_parallel_for_pipeline_illegal_cases(self):
         # body unsupported
@@ -97,7 +101,29 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
                     # invalid JSON string items
                     '[{"component_in_number": 1}, {}]',
                     "Items should have same keys with body inputs"
-            )
+            ),
+            (
+                    # unsupported item value type
+                    [
+                        {"component_in_number": CustomizedObject()},
+                    ],
+                    "Unsupported type"
+            ),
+            (
+                    # local file input
+                    [{"component_in_path": Input(path="./tests/test_configs/components/helloworld_component.yml")}],
+                    "Local file input"
+            ),
+            (
+                    # empty path
+                    [{"component_in_path": Input(path=None)}],
+                    "Input path not provided"
+            ),
+            (
+                    # dict Input
+                    [{"component_in_path": {"job_input_path": "azureml://path/to/file"}}],
+                    "Unsupported type"
+            ),
         ],
     )
     def test_dsl_parallel_for_pipeline_illegal_items_content(self, items, error_message):
