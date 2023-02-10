@@ -2280,7 +2280,6 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert receiver.error_raised
                 assert receiver.execution_times >= 4  # at least 1 failure and 3 successful receiving iterator
 
-    @pytest.mark.skip(reason="TODO: Pyamqp Message Header Time to Live")
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2329,7 +2328,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             sb_message = ServiceBusMessage(body=content)
             message_with_ttl = AmqpAnnotatedMessage(data_body=data_body, header=AmqpMessageHeader(time_to_live=60000))
             pyamqp_with_ttl = message_with_ttl._to_outgoing_amqp_message()
-            assert pyamqp_with_ttl.properties.absolute_expiry_time == pyamqp_with_ttl.properties.creation_time + pyamqp_with_ttl.header.time_to_live
+            assert pyamqp_with_ttl.properties.absolute_expiry_time == pyamqp_with_ttl.properties.creation_time + pyamqp_with_ttl.header.ttl
 
             recv_data_msg = recv_sequence_msg = recv_value_msg = normal_msg = 0
             async with sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=10) as receiver:
