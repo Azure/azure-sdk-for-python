@@ -891,7 +891,10 @@
         "SEPS",
         "wargs",
         "pycache",
-        "ruamel"
+        "ruamel",
+        "rcfile",
+        "pycln",
+        "pylintrc"
       ]
     },
     {
