@@ -136,8 +136,9 @@ class AMQPClientAsync(AMQPClientSync):
     :paramtype connection_verify: str
     """
 
-    def __init__(self):
+    def __init__(self, hostname, **kwargs):
         self._lock_async = asyncio.Lock()
+        super().__init__(hostname,**kwargs)
 
 
     async def _keep_alive_async(self):
