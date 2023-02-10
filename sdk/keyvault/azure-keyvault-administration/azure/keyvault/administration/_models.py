@@ -2,22 +2,22 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Dict, Generic, TypeVar, Union
+
+from azure.core.rest import HttpResponse
 
 from ._enums import SettingType
+from ._generated_models import (
+    FullBackupOperation,
+    Permission,
+    RoleAssignment,
+    RoleAssignmentProperties,
+    RoleAssignmentPropertiesWithScope,
+    RoleDefinition,
+    Setting,
+)
 
-if TYPE_CHECKING:
-    from typing import Any, Dict, Union
-    from azure.core.rest import HttpResponse
-    from ._generated_models import (
-        FullBackupOperation,
-        Permission,
-        RoleAssignment,
-        RoleAssignmentProperties,
-        RoleAssignmentPropertiesWithScope,
-        RoleDefinition,
-        Setting,
-    )
+T = TypeVar("T", bool, str)
 
 
 class KeyVaultPermission(object):
@@ -171,18 +171,24 @@ class KeyVaultBackupResult(object):
         return cls(folder_url=deserialized_operation.azure_storage_blob_container_uri)
 
 
-class KeyVaultSetting(object):
+class KeyVaultSetting(Generic[T]):
     """A Key Vault setting.
 
     :ivar str name: The name of the account setting.
-    :ivar str value: The value of the pool setting.
     :ivar SettingType type: The type specifier of the value.
+    :ivar T value: The value of the pool setting. This is a boolean if `type` is SettingType.BOOLEAN, and a string
+        otherwise. If `value` is provided as a string when `type` is SettingType.BOOLEAN, the value will be converted
+        into a boolean (True if `value` is "True" (case-insensitive); False otherwise).
     """
 
     def __init__(self, **kwargs) -> None:
         self.name = kwargs.get("name")
-        self.value = kwargs.get("value")
         self.type = kwargs.get("type")
+        self.value = kwargs.get("value")
+
+        # If `value` was given as a string but the type is boolean, convert it to a bool
+        if hasattr(self.value, "lower") and self.type == SettingType.BOOLEAN:
+            self.value = self.value.lower() == "true"
 
     @classmethod
     def _from_generated(cls, setting: "Setting") -> "KeyVaultSetting":

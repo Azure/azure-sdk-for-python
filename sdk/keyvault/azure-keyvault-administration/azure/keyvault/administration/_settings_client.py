@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Union
+
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 
@@ -61,17 +63,18 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:
+    def update_setting(self, name: str, value: Union[bool, str], **kwargs) -> KeyVaultSetting:
         """Updates a given account setting with the provided value.
 
         :param str name: The name of the account setting to update.
-        :param str value: The value to set.
+        :param value: The value to set.
+        :type value: bool or str
 
         :returns: The updated account setting, as a :class:`~azure.keyvault.administration.KeyVaultSetting`.
         :rtype: ~azure.keyvault.administration.KeyVaultSetting
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        parameters = UpdateSettingsRequest(value=value)
+        parameters = UpdateSettingsRequest(value=str(value).lower())
         result = self._client.update_settings(
             vault_base_url=self._vault_url,
             setting_name=name,
