@@ -274,6 +274,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-synapse-monitoring azure-core>=1.20.0,<2.0.0
 #override azure-synapse-managedprivateendpoints azure-core>=1.20.0,<2.0.0
 #override azure-ai-anomalydetector azure-core>=1.6.0,<2.0.0
+#override azure-mgmt-databoxedge msrest>=0.7.1
+#override azure-mgmt-databoxedge azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-eventgrid azure-core<2.0.0,>=1.24.0
 #override azure-eventgrid msrest>=0.7.1
 #override azure-mgmt-machinelearningcompute msrest>=0.7.1
@@ -682,6 +684,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-eventhub azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-servicefabric typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-datashare typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-databoxedge typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-redis typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-marketplaceordering typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-logic msrest>=0.7.1
