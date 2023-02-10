@@ -136,6 +136,10 @@ class AMQPClientAsync(AMQPClientSync):
     :paramtype connection_verify: str
     """
 
+    def __init__(self):
+        self._lock_async = asyncio.Lock()
+
+
     async def _keep_alive_async(self):
         start_time = time.time()
         try:
@@ -227,9 +231,6 @@ class AMQPClientAsync(AMQPClientSync):
         :type connection: ~pyamqp.aio.Connection
         """
         # pylint: disable=protected-access
-
-        self._lock_async = asyncio.Lock() # pylint:disable=attribute-defined-outside-init
-
         if self._session:
             return  # already open.
         if connection:
