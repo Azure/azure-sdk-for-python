@@ -7,7 +7,8 @@
 import datetime
 from typing import Any, List, Union, overload, Dict, cast, TYPE_CHECKING
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
@@ -27,7 +28,7 @@ _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
 _X_API_KEY_HEADER_NAME = "x-api-key"
 
 
-class MetricsAdvisorKeyCredential:
+class MetricsAdvisorKeyCredential(AzureKeyCredential):
     """Credential type used for authenticating to an Azure Metrics Advisor service.
 
     :param str subscription_key: The subscription key
@@ -38,8 +39,7 @@ class MetricsAdvisorKeyCredential:
     def __init__(self, subscription_key: str, api_key: str) -> None:
         if not (isinstance(subscription_key, str) and isinstance(api_key, str)):
             raise TypeError("key must be a string.")
-        self._subscription_key: str = subscription_key
-        self._api_key: str = api_key
+        super(MetricsAdvisorKeyCredential, self).__init__((subscription_key, api_key))
 
     @property
     def subscription_key(self) -> str:
@@ -47,7 +47,7 @@ class MetricsAdvisorKeyCredential:
 
         :rtype: str
         """
-        return self._subscription_key
+        return self._key[0]
 
     @property
     def api_key(self) -> str:
@@ -55,7 +55,7 @@ class MetricsAdvisorKeyCredential:
 
         :rtype: str
         """
-        return self._api_key
+        return self._key[1]
 
     def update_key(self, **kwargs: Any) -> None:
         """Update the subscription key or the api key.
@@ -67,38 +67,37 @@ class MetricsAdvisorKeyCredential:
         :keyword str api_key: The api key
         :raises: ValueError or TypeError
         """
-        subscription_key = kwargs.pop("subscription_key", None)
-        api_key = kwargs.pop("api_key", None)
+        subscription_key = kwargs.pop("subscription_key", self.subscription_key)
+        api_key = kwargs.pop("api_key", self.api_key)
         if len(kwargs) > 0:
             raise TypeError("Got an unexpected keyword argument: {}".format(list(kwargs.keys())[0]))
         if subscription_key:
             if not isinstance(subscription_key, str):
                 raise TypeError("The subscription_key used for updating must be a string.")
-            self._subscription_key = subscription_key
         if api_key:
             if not isinstance(api_key, str):
                 raise TypeError("The api_key used for updating must be a string.")
-            self._api_key = api_key
+        self.update((subscription_key, api_key))
 
 
-class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
-    """Adds a key header for the provided credential.
-
-    :param credential: The credential used to authenticate requests.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param str name: The name of the key header used for the credential.
-    :raises: ValueError or TypeError
-    """
-
-    def __init__(
-        self, credential: MetricsAdvisorKeyCredential, **kwargs: Any  # pylint: disable=unused-argument
-    ) -> None:
-        super(MetricsAdvisorKeyCredentialPolicy, self).__init__()
-        self._credential = credential
-
-    def on_request(self, request):
-        request.http_request.headers[_API_KEY_HEADER_NAME] = self._credential.subscription_key
-        request.http_request.headers[_X_API_KEY_HEADER_NAME] = self._credential.api_key
+# class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
+#     """Adds a key header for the provided credential.
+#
+#     :param credential: The credential used to authenticate requests.
+#     :type credential: ~azure.core.credentials.AzureKeyCredential
+#     :param str name: The name of the key header used for the credential.
+#     :raises: ValueError or TypeError
+#     """
+#
+#     def __init__(
+#         self, credential: MetricsAdvisorKeyCredential, **kwargs: Any  # pylint: disable=unused-argument
+#     ) -> None:
+#         super(MetricsAdvisorKeyCredentialPolicy, self).__init__()
+#         self._credential = credential
+#
+#     def on_request(self, request):
+#         request.http_request.headers[_API_KEY_HEADER_NAME] = self._credential.subscription_key
+#         request.http_request.headers[_X_API_KEY_HEADER_NAME] = self._credential.api_key
 
 
 def get_authentication_policy(credential):
@@ -106,7 +105,7 @@ def get_authentication_policy(credential):
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, MetricsAdvisorKeyCredential):
-        return MetricsAdvisorKeyCredentialPolicy(credential)
+        return AzureKeyCredentialPolicy(credential=credential, name=(_API_KEY_HEADER_NAME, _API_KEY_HEADER_NAME))
     if credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of MetricsAdvisorKeyCredential "
