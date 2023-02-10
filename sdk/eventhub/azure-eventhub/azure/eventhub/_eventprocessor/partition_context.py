@@ -37,7 +37,7 @@ class PartitionContext(object):
         self.eventhub_name = eventhub_name
         self.consumer_group = consumer_group
         self._checkpoint_store = checkpoint_store
-        self._last_received_event = None  # type: Optional[EventData]
+        self._last_received_event: Optional[EventData] = None
 
     @property
     def last_enqueued_event_properties(self) -> Optional[Dict[str, Any]]:

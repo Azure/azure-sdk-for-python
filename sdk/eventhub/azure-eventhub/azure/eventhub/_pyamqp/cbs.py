@@ -48,13 +48,13 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, session, auth, **kwargs):
         self._session = session
         self._connection = self._session._connection
-        self._mgmt_link = self._session.create_request_response_link_pair(
+        self._mgmt_link: ManagementLink = self._session.create_request_response_link_pair(
             endpoint="$cbs",
             on_amqp_management_open_complete=self._on_amqp_management_open_complete,
             on_amqp_management_error=self._on_amqp_management_error,
             status_code_field=b"status-code",
             status_description_field=b"status-description",
-        )  # type: ManagementLink
+        )
 
         if not auth.get_token or not callable(auth.get_token):
             raise ValueError("get_token must be a callable object.")
@@ -78,8 +78,13 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         self.state = CbsState.CLOSED
         self.auth_state = CbsAuthState.IDLE
 
-    def _put_token(self, token, token_type, audience, expires_on=None):
-        # type: (str, str, str, datetime) -> None
+    def _put_token(
+        self,
+        token: str,
+        token_type: str,
+        audience: str,
+        expires_on: datetime = None
+    ) -> None:
         message = Message(  # type: ignore  # TODO: missing positional args header, etc.
             value=token,
             properties=Properties(message_id=self._mgmt_link.next_message_id),  # type: ignore

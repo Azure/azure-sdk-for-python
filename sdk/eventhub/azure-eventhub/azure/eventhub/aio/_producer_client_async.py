@@ -177,14 +177,14 @@ class EventHubProducerClient(
             network_tracing=kwargs.pop("logging_enable", False),
             **kwargs
         )
-        self._producers = {
+        self._producers: Dict[str, Optional[EventHubProducer]] = {
             ALL_PARTITIONS: self._create_producer()
-        }  # type: Dict[str, Optional[EventHubProducer]]
+        }
         self._lock = asyncio.Lock(
             **self._internal_kwargs
         )  # sync the creation of self._producers
         self._max_message_size_on_link = 0
-        self._partition_ids = None  # Optional[List[str]]
+        self._partition_ids: Optional[List[str]] = None
         self._buffered_mode = buffered_mode
         self._on_success = on_success
         self._on_error = on_error

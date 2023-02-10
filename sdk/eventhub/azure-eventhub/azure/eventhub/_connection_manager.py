@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Union, Any, runtime_checkable
 from threading import Lock
 from enum import Enum
 
@@ -17,8 +17,7 @@ if TYPE_CHECKING:
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
         from uamqp import Connection as uamqp_Connection
     except ImportError:
-        uamqp_JWTTokenAuth = None
-        uamqp_Connection = None
+        pass
     from ._transport._base import AmqpTransport
 
     try:
@@ -26,6 +25,7 @@ if TYPE_CHECKING:
     except ImportError:
         Protocol = object  # type: ignore
 
+    @runtime_checkable
     class ConnectionManager(Protocol):
         def get_connection(
             self,
@@ -93,15 +93,13 @@ class _SharedConnectionManager(object):  # pylint:disable=too-many-instance-attr
                 )
             return self._conn
 
-    def close_connection(self):
-        # type: () -> None
+    def close_connection(self) -> None:
         with self._lock:
             if self._conn:
                 self._amqp_transport.close_connection(self._conn)
             self._conn = None
 
-    def reset_connection_if_broken(self):
-        # type: () -> None
+    def reset_connection_if_broken(self) -> None:
         with self._lock:
             conn_state = self._amqp_transport.get_connection_state(self._conn)
             if self._conn and conn_state in self._amqp_transport.CONNECTION_CLOSING_STATES:
@@ -121,18 +119,15 @@ class _SeparateConnectionManager(object):
     ) -> None:
         return None
 
-    def close_connection(self):
-        # type: () -> None
+    def close_connection(self) -> None:
         pass
 
-    def reset_connection_if_broken(self):
-        # type: () -> None
+    def reset_connection_if_broken(self) -> None:
         pass
 
 
-def get_connection_manager(**kwargs):
-    # type: (...) -> 'ConnectionManager'
-    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)  # type: ignore
+def get_connection_manager(**kwargs: Any) -> "ConnectionManager":
+    connection_mode: _ConnectionMode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

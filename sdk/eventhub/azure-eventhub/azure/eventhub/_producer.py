@@ -39,9 +39,7 @@ if TYPE_CHECKING:
         from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
         from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
     except ImportError:
-        uamqp_MessageSendResult = None
-        uamqp_SendClient = None
-        uamqp_JWTTokenAuth = None
+        pass
     from ._pyamqp.client import SendClient
     from ._pyamqp.message import BatchMessage
     from ._pyamqp.authentication import JWTTokenAuth
@@ -188,6 +186,7 @@ class EventHubProducer(
         span: Optional["AbstractSpan"],
         partition_key: Optional[AnyStr],
     ) -> Union[EventData, EventDataBatch]:
+        wrapper_event_data: Union[EventData, EventDataBatch]
         if isinstance(event_data, (EventData, AmqpAnnotatedMessage)):
             outgoing_event_data = transform_outbound_single_message(
                 event_data, EventData, self._amqp_transport.to_outgoing_amqp_message

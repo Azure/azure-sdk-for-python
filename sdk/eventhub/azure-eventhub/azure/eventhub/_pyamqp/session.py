@@ -80,8 +80,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         new_session = cls(connection, channel)
         return new_session
 
-    def _set_state(self, new_state):
-        # type: (SessionState) -> None
+    def _set_state(self, new_state: SessionState) -> None:
         """Update the session state."""
         if new_state is None:
             return
@@ -101,8 +100,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             if self.state not in [SessionState.DISCARDING, SessionState.UNMAPPED]:
                 self._set_state(SessionState.DISCARDING)
 
-    def _get_next_output_handle(self):
-        # type: () -> int
+    def _get_next_output_handle(self) -> int:
         """Get the next available outgoing handle number within the max handle limit.
 
         :raises ValueError: If maximum handle has been reached.
@@ -427,8 +425,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 )
             )
 
-    def _wait_for_response(self, wait, end_state):
-        # type: (Union[bool, float], SessionState) -> None
+    def _wait_for_response(
+        self,
+        wait: Union[bool, float],
+        end_state: SessionState
+    ) -> None:
         if wait is True:
             self._connection.listen(wait=False)
             while self.state != end_state:
@@ -453,8 +454,11 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
             )
 
-    def end(self, error=None, wait=False):
-        # type: (Optional[AMQPError], bool) -> None
+    def end(
+        self,
+        error: Optional[AMQPError] = None,
+        wait: bool = False
+    ) -> None:
         try:
             if self.state not in [SessionState.UNMAPPED, SessionState.DISCARDING]:
                 self._outgoing_end(error=error)

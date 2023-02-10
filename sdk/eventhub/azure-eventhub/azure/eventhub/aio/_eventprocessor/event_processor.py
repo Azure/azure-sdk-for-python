@@ -107,8 +107,8 @@ class EventProcessor(
         self._load_balancing_strategy = (
             load_balancing_strategy or LoadBalancingStrategy.GREEDY
         )
-        self._tasks = {}  # type: Dict[str, asyncio.Task]
-        self._partition_contexts = {}  # type: Dict[str, PartitionContext]
+        self._tasks: Dict[str, asyncio.Task] = {}
+        self._partition_contexts: Dict[str, PartitionContext] = {}
         self._owner_level = owner_level
         if checkpoint_store and self._owner_level is None:
             self._owner_level = 0
@@ -120,7 +120,7 @@ class EventProcessor(
         self._internal_kwargs = get_dict_with_loop_if_needed(loop)
         self._running = False
 
-        self._consumers = {}  # type: Dict[str, EventHubConsumer]
+        self._consumers: Dict[str, EventHubConsumer] = {}
         self._ownership_manager = OwnershipManager(
             cast("EventHubConsumerClient", self._eventhub_client),
             self._consumer_group,

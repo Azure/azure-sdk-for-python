@@ -38,7 +38,6 @@ from ..error import (
     AMQPException,
     MessageException
 )
-from ..constants import LinkState
 
 _logger = logging.getLogger(__name__)
 

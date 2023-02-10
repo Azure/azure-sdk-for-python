@@ -32,9 +32,7 @@ if TYPE_CHECKING:
         from uamqp.constants import MessageSendResult as uamqp_MessageSendResult
         from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAsync
     except ImportError:
-        uamqp_MessageSendResult = None
-        uamqp_SendClientAsync = None
-        uamqp_JWTTokenAsync = None
+        pass
 
     from .._pyamqp.aio._client_async import SendClientAsync
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
@@ -99,7 +97,7 @@ class EventHubProducer(
         )
         self._reconnect_backoff = 1
         self._name = "EHProducer-{}".format(uuid.uuid4())
-        self._unsent_events = []  # type: List[Any]
+        self._unsent_events: List[Any] = []
         self._error = None
         if partition:
             self._target += "/Partitions/" + partition

@@ -185,7 +185,7 @@ class EventHubConsumerClient(
             **kwargs,
         )
         self._lock = asyncio.Lock(**self._internal_kwargs)
-        self._event_processors = dict()  # type: Dict[Tuple[str, str], EventProcessor]
+        self._event_processors: Dict[Tuple[str, str], EventProcessor] = dict()
 
     async def __aenter__(self):
         return self
