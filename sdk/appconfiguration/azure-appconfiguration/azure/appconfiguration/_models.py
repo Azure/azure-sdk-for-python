@@ -155,7 +155,7 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting): # pylint: disable=t
     )
     kind = "FeatureFlag"
 
-    def __init__( # pylint: disable=dangerous-default-value, super-init-not-called
+    def __init__( # pylint: disable=super-init-not-called
         self,
         feature_id: str,
         *,
