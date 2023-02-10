@@ -532,9 +532,10 @@ class Serializer:
             fd.write(self.env.get_template("validation.py.jinja2").render())
 
     def serialize_models_folder(self):
+        default_models_folder = self.code_model.get_root_of_code(False) / self.code_model.default_folder_api_version / "models"
         shutil.copytree(
-            Path(self.code_model.default_folder_api_version) / "models",
-            self.code_model.get_root_of_code(False)
+            default_models_folder,
+            self.code_model.get_root_of_code(False) / "models"
         )
 
 
@@ -561,8 +562,10 @@ class Serializer:
     def remove_top_level_files(self, async_mode: bool):
         top_level_files = [
             self.code_model.client.generated_filename,
-            "_operations_mixin"
+            "_operations_mixin",
         ]
+        if not async_mode:
+            top_level_files.append("models")
         for file in top_level_files:
             os.remove(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
 
