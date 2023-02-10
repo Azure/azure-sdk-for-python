@@ -7,8 +7,7 @@ import logging
 import platform
 import subprocess
 import sys
-from typing import List, Any, Tuple
-
+from typing import List, Tuple, Optional, Any
 import six
 
 from azure.core.credentials import AccessToken
@@ -43,7 +42,7 @@ Write-Output "`nazsdk%$($token.Token)%$($token.ExpiresOn.ToUnixTimeSeconds())`n"
 """
 
 
-class AzurePowerShellCredential(object):
+class AzurePowerShellCredential:
     """Authenticates by requesting a token from Azure PowerShell.
 
     This requires previously logging in to Azure via "Connect-AzAccount", and will use the currently logged in identity.
@@ -53,7 +52,12 @@ class AzurePowerShellCredential(object):
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: Optional[List[str]] = None
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
@@ -68,13 +72,15 @@ class AzurePowerShellCredential(object):
         """Calling this method is unnecessary."""
 
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
@@ -126,8 +132,7 @@ def run_command_line(command_line: List[str]) -> str:
     return stdout
 
 
-def start_process(args):
-    # type: (List[str]) -> subprocess.Popen
+def start_process(args: List[str]) -> "subprocess.Popen":
     working_directory = get_safe_working_dir()
     proc = subprocess.Popen(
         args,
@@ -139,8 +144,7 @@ def start_process(args):
     return proc
 
 
-def parse_token(output):
-    # type: (str) -> AccessToken
+def parse_token(output: str) -> AccessToken:
     for line in output.split():
         if line.startswith("azsdk%"):
             _, token, expires_on = line.split("%")
@@ -149,8 +153,7 @@ def parse_token(output):
     raise ClientAuthenticationError(message='Unexpected output from Get-AzAccessToken: "{}"'.format(output))
 
 
-def get_command_line(scopes, tenant_id):
-    # type: (Tuple, str) -> List[str]
+def get_command_line(scopes: Tuple[str, ...], tenant_id: str) -> List[str]:
     if tenant_id:
         tenant_argument = " -TenantId " + tenant_id
     else:
@@ -165,8 +168,7 @@ def get_command_line(scopes, tenant_id):
     return ["/bin/sh", "-c", command]
 
 
-def raise_for_error(return_code, stdout, stderr):
-    # type: (int, str, str) -> None
+def raise_for_error(return_code: int, stdout: str, stderr: str) -> None:
     if return_code == 0:
         if NO_AZ_ACCOUNT_MODULE in stdout:
             raise CredentialUnavailableError(AZ_ACCOUNT_NOT_INSTALLED)

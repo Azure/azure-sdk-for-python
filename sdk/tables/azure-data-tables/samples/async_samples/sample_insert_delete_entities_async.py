@@ -78,7 +78,7 @@ class InsertDeleteEntity(object):
         from azure.core.exceptions import ResourceExistsError
         from azure.core.credentials import AzureNamedKeyCredential
 
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key) # type: ignore[arg-type]
         table_client = TableClient(endpoint=self.endpoint, table_name=self.table_name, credential=credential)
 
         # [START delete_entity]
@@ -88,7 +88,7 @@ class InsertDeleteEntity(object):
             except ResourceExistsError:
                 print("Entity already exists!")
 
-            await table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"])
+            await table_client.delete_entity(row_key=self.entity["RowKey"], partition_key=self.entity["PartitionKey"]) # type: ignore[call-overload]
             print("Successfully deleted!")
         # [END delete_entity]
 

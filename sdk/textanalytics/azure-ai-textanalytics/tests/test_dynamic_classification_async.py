@@ -6,7 +6,7 @@
 import pytest
 import platform
 import functools
-from testcase import TextAnalyticsTest, TextAnalyticsPreparer
+from testcase import TextAnalyticsTest, TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.textanalytics.aio import TextAnalyticsClient
@@ -21,6 +21,7 @@ TextAnalyticsClientPreparer = functools.partial(_TextAnalyticsClientPreparer, Te
 
 class TestDynamicClassification(TextAnalyticsTest):
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -42,6 +43,7 @@ class TestDynamicClassification(TextAnalyticsTest):
                     assert classification.category
                     assert classification.confidence_score is not None
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async

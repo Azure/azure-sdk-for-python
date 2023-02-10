@@ -10,6 +10,13 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class ActiveDirectoryAuthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """If Enabled, Azure Active Directory authentication is enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class ArmServerKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Data encryption type to depict if it is System assigned vs Azure Key vault."""
 
@@ -108,6 +115,13 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FULL = "Full"
 
 
+class PasswordAuthEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """If Enabled, Password authentication is enabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
 class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The principal type used to represent the type of Active Directory Administrator."""
 
@@ -120,6 +134,7 @@ class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ReplicationRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Used to indicate role of the server in replication set."""
 
+    NONE = "None"
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
     WAL_REPLICA = "WalReplica"

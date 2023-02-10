@@ -8,7 +8,8 @@ from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 from .input import Input
-from .utils import is_parameter_group
+from .output import Output
+from .utils import is_group
 
 
 class GroupInput(Input):
@@ -40,6 +41,10 @@ class GroupInput(Input):
         default_dict = {}
         # Note: no top-level group names at this time.
         for k, v in self.values.items():
+            # skip create default for outputs or port inputs
+            if isinstance(v, Output):
+                continue
+
             # Create PipelineInput object if not subgroup
             if not isinstance(v, GroupInput):
                 default_dict[k] = PipelineInput(name=k, data=v.default, meta=v)
@@ -54,19 +59,19 @@ class GroupInput(Input):
         """Check if all value in group is _Param type with unique name."""
         names = set()
         msg = (
-            f"Parameter {{!r}} with type {{!r}} is not supported in parameter group. "
-            f"Supported types are: {list(IOConstants.PRIMITIVE_STR_2_TYPE.keys())}"
+            f"Parameter {{!r}} with type {{!r}} is not supported in group. "
+            f"Supported types are: {list(IOConstants.INPUT_TYPE_COMBINATION.keys())}"
         )
         for key, value in values.items():
-            if not isinstance(value, Input):
+            if not isinstance(value, (Input, Output)):
                 raise ValueError(msg.format(key, type(value).__name__))
             if value.type is None:
                 # Skip check for parameter translated from pipeline job (lost type)
                 continue
-            if value.type not in IOConstants.PRIMITIVE_STR_2_TYPE and not isinstance(value, GroupInput):
+            if value.type not in IOConstants.INPUT_TYPE_COMBINATION and not isinstance(value, GroupInput):
                 raise UserErrorException(msg.format(key, value.type))
             if key in names:
-                raise ValueError(f"Duplicate parameter name {value.name!r} found in ParameterGroup values.")
+                raise ValueError(f"Duplicate parameter name {value.name!r} found in Group values.")
             names.add(key)
 
     def flatten(self, group_parameter_name):
@@ -81,15 +86,15 @@ class GroupInput(Input):
                 all_parameters[flattened_name] = value
         return all_parameters
 
-    def _to_dict(self, remove_name=True) -> dict:
-        attr_dict = super()._to_dict(remove_name)
+    def _to_dict(self) -> dict:
+        attr_dict = super()._to_dict()
         attr_dict["values"] = {k: v._to_dict() for k, v in self.values.items()}  # pylint: disable=protected-access
         return attr_dict
 
     @staticmethod
     def custom_class_value_to_attr_dict(value, group_names=None):
         """Convert custom parameter group class object to GroupAttrDict."""
-        if not is_parameter_group(value):
+        if not is_group(value):
             return value
         group_definition = getattr(value, IOConstants.GROUP_ATTR_NAME)
         group_names = [*group_names] if group_names else []
@@ -97,7 +102,7 @@ class GroupInput(Input):
         from .._job.pipeline._io import PipelineInput
 
         for k, v in value.__dict__.items():
-            if is_parameter_group(v):
+            if is_group(v):
                 attr_dict[k] = GroupInput.custom_class_value_to_attr_dict(v, [*group_names, k])
                 continue
             data = v.value if isinstance(v, PyEnum) else v
@@ -173,12 +178,12 @@ class GroupInput(Input):
     def _update_default(self, default_value=None):  # pylint: disable=protected-access
         default_cls = type(default_value)
 
-        # Assert '__parameter_group__' must in the class of default value
+        # Assert '__dsl_group__' must in the class of default value
         if self._is_group_attr_dict(default_value):
             self.default = default_value
             self.optional = False
             return
-        if default_value and not is_parameter_group(default_cls):
+        if default_value and not is_group(default_cls):
             raise ValueError(f"Default value must be instance of parameter group, got {default_cls}.")
         if hasattr(default_value, "__dict__"):
             # Convert default value with customer type to _AttrDict

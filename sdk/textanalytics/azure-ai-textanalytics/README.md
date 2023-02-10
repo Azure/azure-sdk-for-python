@@ -30,30 +30,7 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 
 The Language service supports both [multi-service and single-service access][multi_and_single_service].
 Create a Cognitive Services resource if you plan to access multiple cognitive services under a single endpoint/key. For Language service access only, create a Language service resource.
-
-You can create the resource using
-
-**Option 1:** [Azure Portal][azure_portal_create_ta_resource]
-
-**Option 2:** [Azure CLI][azure_cli_create_ta_resource].
-Below is an example of how you can create a Language service resource using the CLI:
-
-```bash
-# Create a new resource group to hold the Language service resource -
-# if using an existing resource group, skip this step
-az group create --name my-resource-group --location westus2
-```
-
-```bash
-# Create text analytics
-az cognitiveservices account create \
-    --name text-analytics-resource \
-    --resource-group my-resource-group \
-    --kind TextAnalytics \
-    --sku F0 \
-    --location westus2 \
-    --yes
-```
+You can create the resource using the [Azure Portal][azure_portal_create_ta_resource] or [Azure CLI][azure_cli] following the steps in [this document][azure_cli_create_ta_resource].
 
 Interaction with the service using the client library begins with a [client](#textanalyticsclient "TextAnalyticsClient").
 To create a client object, you will need the Cognitive Services or Language service `endpoint` to
@@ -255,10 +232,10 @@ The following section provides several code snippets covering some of the most c
 - [Custom Single Label Classification][single_label_classify_sample]
 - [Custom Multi Label Classification][multi_label_classify_sample]
 - [Extractive Summarization][extract_summary_sample]
-- [Abstractive Summarization][abstract_summary_sample]
+- [Abstractive Summarization][abstractive_summary_sample]
 - [Dynamic Classification][dynamic_classification_sample]
 
-### Analyze sentiment
+### Analyze Sentiment
 
 [analyze_sentiment][analyze_sentiment] looks at its input text and determines whether its sentiment is positive, negative, neutral or mixed. It's response includes per-sentence sentiment analysis and confidence scores.
 
@@ -293,7 +270,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 
 Please refer to the service documentation for a conceptual discussion of [sentiment analysis][sentiment_analysis]. To see how to conduct more granular analysis into the opinions related to individual aspects (such as attributes of a product or service) in a text, see [here][opinion_mining_sample].
 
-### Recognize entities
+### Recognize Entities
 
 [recognize_entities][recognize_entities] recognizes and categories entities in its input text as people, places, organizations, date/time, quantities, percentages, currencies, and more.
 
@@ -330,7 +307,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for a conceptual discussion of [named entity recognition][named_entity_recognition]
 and [supported types][named_entity_categories].
 
-### Recognize linked entities
+### Recognize Linked Entities
 
 [recognize_linked_entities][recognize_linked_entities] recognizes and disambiguates the identity of each entity found in its input text (for example,
 determining whether an occurrence of the word Mars refers to the planet, or to the
@@ -370,7 +347,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 Please refer to the service documentation for a conceptual discussion of [entity linking][linked_entity_recognition]
 and [supported types][linked_entities_categories].
 
-### Recognize PII entities
+### Recognize PII Entities
 
 [recognize_pii_entities][recognize_pii_entities] recognizes and categorizes Personally Identifiable Information (PII) entities in its input text, such as
 Social Security Numbers, bank account information, credit card numbers, and more.
@@ -408,7 +385,7 @@ Please refer to the service documentation for [supported PII entity types][pii_e
 
 Note: The Recognize PII Entities service is available in API version v3.1 and newer.
 
-### Extract key phrases
+### Extract Key Phrases
 
 [extract_key_phrases][extract_key_phrases] determines the main talking points in its input text. For example, for the input text "The food was delicious and there were wonderful staff", the API returns: "food" and "wonderful staff".
 
@@ -440,7 +417,7 @@ The returned response is a heterogeneous list of result and error objects: list[
 
 Please refer to the service documentation for a conceptual discussion of [key phrase extraction][key_phrase_extraction].
 
-### Detect language
+### Detect Language
 
 [detect_language][detect_language] determines the language of its input text, including the confidence score of the predicted language.
 
@@ -670,12 +647,13 @@ Common scenarios
 - Custom Single Label Classification: [sample_single_label_classify.py][single_label_classify_sample] ([async_version][single_label_classify_sample_async])
 - Custom Multi Label Classification: [sample_multi_label_classify.py][multi_label_classify_sample] ([async_version][multi_label_classify_sample_async])
 - Extractive text summarization: [sample_extract_summary.py][extract_summary_sample] ([async version][extract_summary_sample_async])
-- Abstractive text summarization: [sample_abstract_summary.py][abstract_summary_sample] ([async version][abstract_summary_sample_async])
+- Abstractive text summarization: [sample_abstractive_summary.py][abstractive_summary_sample] ([async version][abstractive_summary_sample_async])
 - Dynamic Classification: [sample_dynamic_classification.py][dynamic_classification_sample] ([async_version][dynamic_classification_sample_async])
 
 Advanced scenarios
 
 - Opinion Mining: [sample_analyze_sentiment_with_opinion_mining.py][opinion_mining_sample] ([async_version][opinion_mining_sample_async])
+- NER resolutions: [sample_recognize_entity_resolutions.py][recognize_entity_resolutions_sample] ([async_version][recognize_entity_resolutions_sample_async])
 
 ### Additional documentation
 
@@ -700,7 +678,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [ta_or_cs_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [pip]: https://pypi.org/project/pip/
 [azure_portal_create_ta_resource]: https://ms.portal.azure.com/#create/Microsoft.CognitiveServicesTextAnalytics
-[azure_cli_create_ta_resource]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli?tabs=windows
+[azure_cli]: https://docs.microsoft.com/cli/azure
+[azure_cli_create_ta_resource]: https://learn.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account-cli
 [multi_and_single_service]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows
 [azure_cli_endpoint_lookup]: https://docs.microsoft.com/cli/azure/cognitiveservices/account?view=azure-cli-latest#az-cognitiveservices-account-show
 [azure_portal_get_endpoint]: https://docs.microsoft.com/azure/cognitive-services/cognitive-services-apis-create-account?tabs=multiservice%2Cwindows#get-the-keys-for-your-resource
@@ -740,7 +719,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [key_phrase_extraction]: https://docs.microsoft.com/azure/cognitive-services/language-service/key-phrase-extraction/overview
 [linked_entities_categories]: https://aka.ms/taner
 [linked_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/language-service/entity-linking/overview
-[pii_entity_categories]: https://aka.ms/tanerpii
+[pii_entity_categories]: https://aka.ms/azsdk/language/pii
 [named_entity_recognition]: https://docs.microsoft.com/azure/cognitive-services/language-service/named-entity-recognition/overview
 [named_entity_categories]: https://aka.ms/taner
 [azure_core_ref_docs]: https://aka.ms/azsdk-python-core-policies
@@ -776,10 +755,12 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [healthcare_action_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_analyze_healthcare_action.py
 [extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
 [extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
-[abstract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_abstract_summary.py
-[abstract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_abstract_summary_async.py
+[abstractive_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_abstractive_summary.py
+[abstractive_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_abstractive_summary_async.py
 [dynamic_classification_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamic_classification.py
 [dynamic_classification_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamic_classification_async.py
+[recognize_entity_resolutions_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_recognize_entity_resolutions.py
+[recognize_entity_resolutions_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_recognize_entity_resolutions_async.py
 [cla]: https://cla.microsoft.com
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [coc_faq]: https://opensource.microsoft.com/codeofconduct/faq/

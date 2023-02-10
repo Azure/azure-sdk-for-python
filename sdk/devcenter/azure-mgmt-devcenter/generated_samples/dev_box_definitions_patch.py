@@ -26,7 +26,7 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
 def main():
     client = DevCenterMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="{subscriptionId}",
+        subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
     response = client.dev_box_definitions.begin_update(
@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-10-12-preview/examples/DevBoxDefinitions_Patch.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/DevBoxDefinitions_Patch.json
 if __name__ == "__main__":
     main()

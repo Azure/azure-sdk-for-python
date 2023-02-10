@@ -2,10 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint:skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
+
 from typing import TYPE_CHECKING
 from enum import Enum
-from six import with_metaclass
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -20,20 +19,20 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V7_4_PREVIEW_1 = "7.4-preview.1"
     V7_3 = "7.3"
     V7_2 = "7.2"
 
 
-DEFAULT_VERSION = ApiVersion.V7_3
+DEFAULT_VERSION = ApiVersion.V7_4_PREVIEW_1
 
 
 class KeyVaultClientBase(object):
-    def __init__(self, vault_url, credential, **kwargs):
-        # type: (str, TokenCredential, **Any) -> None
+    def __init__(self, vault_url: str, credential: "TokenCredential", **kwargs) -> None:
         if not credential:
             raise ValueError(
                 "credential should be an object supporting the TokenCredential protocol, "
@@ -72,26 +71,22 @@ class KeyVaultClientBase(object):
             self._models = _KeyVaultClient.models(api_version=api_version)
         except ValueError:
             raise NotImplementedError(
-                "This package doesn't support API version '{}'. ".format(api_version)
-                + "Supported versions: {}".format(", ".join(v.value for v in ApiVersion))
+                f"This package doesn't support API version '{api_version}'. "
+                + f"Supported versions: {', '.join(v.value for v in ApiVersion)}"
             )
 
     @property
-    def vault_url(self):
-        # type: () -> str
+    def vault_url(self) -> str:
         return self._vault_url
 
-    def __enter__(self):
-        # type: () -> KeyVaultClientBase
+    def __enter__(self) -> "KeyVaultClientBase":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *args):
-        # type: (*Any) -> None
+    def __exit__(self, *args: "Any") -> None:
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close sockets opened by the client.
 
         Calling this method is unnecessary when using the client as a context manager.

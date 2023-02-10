@@ -7,7 +7,7 @@ from pytest_mock import MockFixture
 from requests import Response
 
 from azure.ai.ml import load_online_endpoint
-from azure.ai.ml._restclient.v2021_10_01.models import EndpointAuthKeys
+from azure.ai.ml._restclient.v2022_10_01.models import EndpointAuthKeys
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     KubernetesOnlineDeployment as RestKubernetesOnlineDeployment,
 )
@@ -110,12 +110,12 @@ auth_mode: Key
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
 
@@ -219,7 +219,7 @@ def mock_online_endpoint_operations(
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestOnlineEndpointsOperations:
     def test_online_list(self, mock_online_endpoint_operations: OnlineEndpointOperations) -> None:
         mock_online_endpoint_operations.list()
@@ -445,6 +445,7 @@ class TestOnlineEndpointsOperations:
         pytest.param({"blue": "100", "green": "0"}, {"blue": "100"}),
         pytest.param({"green": "0"}, {}),
         pytest.param({}, {}),
+        pytest.param({"blue": "10", "GREEN": "90"}, {"blue": "10", "green": "90"}),
     ],
 )
 def test_strip_traffic_from_traffic_map(traffic, expected_traffic) -> None:

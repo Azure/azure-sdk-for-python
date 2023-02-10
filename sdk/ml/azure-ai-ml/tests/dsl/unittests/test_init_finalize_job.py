@@ -1,15 +1,10 @@
 from functools import partial
 from pathlib import Path
 
-import pydash
 import pytest
-from azure.ai.ml import Input, dsl, load_component
-from azure.ai.ml.constants._common import (
-    AssetTypes,
-    InputOutputModes,
-)
+
+from azure.ai.ml import dsl, load_component, load_job
 from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities._builders import Spark
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -28,7 +23,16 @@ class TestInitFinalizeJob:
     )
     hello_world_func = load_component(str(components_dir / "helloworld_component.yml"))
 
-    def test_init_finalize_job(self) -> None:
+    def test_init_finalize_job_from_yaml(self) -> None:
+        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
+        assert pipeline_job._validate_init_finalize_job().passed
+        assert pipeline_job.settings.on_init == "a"
+        assert pipeline_job.settings.on_finalize == "c"
+        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
+        assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"
+
+    def test_init_finalize_job_from_sdk(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
         from azure.ai.ml.dsl import pipeline
 
@@ -80,7 +84,16 @@ class TestInitFinalizeJob:
         pipeline3 = in_decorator_func()
         assert_pipeline_job_init_finalize_job(pipeline3)
 
-    def test_invalid_init_finalize_job(self) -> None:
+    def test_invalid_init_finalize_job_from_yaml(self) -> None:
+        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize_invalid.yaml")
+        validation_result = pipeline_job._validate_init_finalize_job()
+        assert not validation_result.passed
+        assert (
+            validation_result.error_messages["settings.on_finalize"]
+            == "On_finalize job should not have connection to other execution node."
+        )
+
+    def test_invalid_init_finalize_job_from_sdk(self) -> None:
         # invalid case: job name not exists
         @dsl.pipeline()
         def invalid_init_finalize_job_func():
@@ -165,120 +178,9 @@ class TestInitFinalizeJob:
         assert valid_pipeline.settings.on_init == "init_job"
         assert valid_pipeline.settings.on_finalize == "finalize_job"
 
-    def test_dsl_pipeline_with_spark_hobo(self) -> None:
-        add_greeting_column_func = load_component(
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
-        )
-        count_by_row_func = load_component(
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
-        )
+    def test_init_finalize_with_group(self) -> None:
+        from test_configs.dsl_pipeline.pipeline_component_with_group.pipeline import pipeline_job
 
-        @dsl.pipeline(description="submit a pipeline with spark job")
-        def spark_pipeline_from_yaml(iris_data):
-            add_greeting_column = add_greeting_column_func(file_input=iris_data)
-            add_greeting_column.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
-            count_by_row = count_by_row_func(file_input=iris_data)
-            count_by_row.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
-            count_by_row.identity = {"type": "managed"}
-
-            return {"output": count_by_row.outputs.output}
-
-        dsl_pipeline: PipelineJob = spark_pipeline_from_yaml(
-            iris_data=Input(
-                path="https://azuremlexamples.blob.core.windows.net/datasets/iris.csv",
-                type=AssetTypes.URI_FILE,
-                mode=InputOutputModes.DIRECT,
-            ),
-        )
-        dsl_pipeline.outputs.output.mode = "Direct"
-
-        spark_node = dsl_pipeline.jobs["add_greeting_column"]
-        job_data_path_input = spark_node.inputs["file_input"]._meta
-        assert job_data_path_input
-        # spark_node.component._id = "azureml:test_component:1"
-        spark_node_dict = spark_node._to_dict()
-
-        spark_node_rest_obj = spark_node._to_rest_object()
-        regenerated_spark_node = Spark._from_rest_object(spark_node_rest_obj)
-
-        spark_node_dict_from_rest = regenerated_spark_node._to_dict()
-        omit_fields = []
-        assert pydash.omit(spark_node_dict, *omit_fields) == pydash.omit(spark_node_dict_from_rest, *omit_fields)
-        omit_fields = [
-            "jobs.add_greeting_column.componentId",
-            "jobs.count_by_row.componentId",
-            "jobs.add_greeting_column.properties",
-            "jobs.count_by_row.properties",
-        ]
-        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
-        assert actual_job == {
-            "description": "submit a pipeline with spark job",
-            "properties": {},
-            "tags": {},
-            "display_name": "spark_pipeline_from_yaml",
-            "is_archived": False,
-            "job_type": "Pipeline",
-            "inputs": {
-                "iris_data": {
-                    "mode": "Direct",
-                    "uri": "https://azuremlexamples.blob.core.windows.net/datasets/iris.csv",
-                    "job_input_type": "uri_file",
-                }
-            },
-            "jobs": {
-                "add_greeting_column": {
-                    "type": "spark",
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-                    "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-                    "py_files": ["utils.zip"],
-                    "files": ["my_files.txt"],
-                    "archives": None,
-                    "jars": None,
-                    "identity": {"identity_type": "UserIdentity"},
-                    "conf": {
-                        "spark.driver.cores": 2,
-                        "spark.driver.memory": "1g",
-                        "spark.executor.cores": 1,
-                        "spark.executor.memory": "1g",
-                        "spark.executor.instances": 1,
-                    },
-                    "args": "--file_input ${{inputs.file_input}}",
-                    "name": "add_greeting_column",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
-                    "inputs": {
-                        "file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
-                    },
-                    "outputs": {},
-                    "_source": "YAML.COMPONENT",
-                },
-                "count_by_row": {
-                    "_source": "YAML.COMPONENT",
-                    "archives": None,
-                    "args": "--file_input ${{inputs.file_input}} " "--output ${{outputs.output}}",
-                    "computeId": None,
-                    "conf": {
-                        "spark.driver.cores": 2,
-                        "spark.driver.memory": "1g",
-                        "spark.executor.cores": 1,
-                        "spark.executor.instances": 1,
-                        "spark.executor.memory": "1g",
-                    },
-                    "display_name": None,
-                    "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-                    "files": ["my_files.txt"],
-                    "identity": {"identity_type": "Managed"},
-                    "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
-                    "jars": ["scalaproj.jar"],
-                    "name": "count_by_row",
-                    "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-                    "py_files": None,
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-                    "tags": {},
-                    "type": "spark",
-                },
-            },
-            "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
-            "settings": {"_source": "DSL"},
-        }
+        assert pipeline_job._validate().passed
+        assert pipeline_job.settings.on_init == "init_job"
+        assert pipeline_job.settings.on_finalize == "finalize_job"

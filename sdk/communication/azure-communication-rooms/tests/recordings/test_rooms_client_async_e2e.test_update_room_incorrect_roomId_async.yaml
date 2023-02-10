@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -9,13 +9,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2'
+      - '0'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Mon, 08 Aug 2022 19:46:06 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -26,15 +26,15 @@ interactions:
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
-        2021-11-01, 2022-06-01
+        2021-11-01, 2022-06-01, 2022-10-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 08 Aug 2022 19:46:06 GMT
+      - Wed, 01 Feb 2023 00:18:00 GMT
       ms-cv:
-      - obeVA3DOY0aIWqQEWHfcBg.0
+      - fiRZND4DOk+fL1ofsx7+Iw.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,12 +42,12 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 32ms
+      - 83ms
     status:
       code: 201
       message: Created
 - request:
-    body: '{}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -56,13 +56,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2'
+      - '0'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Mon, 08 Aug 2022 19:46:06 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -73,15 +73,15 @@ interactions:
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
-        2021-11-01, 2022-06-01
+        2021-11-01, 2022-06-01, 2022-10-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 08 Aug 2022 19:46:06 GMT
+      - Wed, 01 Feb 2023 00:18:00 GMT
       ms-cv:
-      - CfUpqy7GDk+VM9kQ7HGxyA.0
+      - jZswoqO6IUWXmIBm2lqx2A.0
       request-context:
       - appId=
       strict-transport-security:
@@ -89,12 +89,12 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 29ms
+      - 89ms
     status:
       code: 201
       message: Created
 - request:
-    body: '{}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -103,13 +103,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '2'
+      - '0'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Mon, 08 Aug 2022 19:46:06 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -120,15 +120,15 @@ interactions:
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
-        2021-11-01, 2022-06-01
+        2021-11-01, 2022-06-01, 2022-10-01
       content-length:
       - '101'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Mon, 08 Aug 2022 19:46:07 GMT
+      - Wed, 01 Feb 2023 00:18:00 GMT
       ms-cv:
-      - l3APaA6G0kq+7xqIUmib+Q.0
+      - 9W+r/yVUOUCQLMmF//wo/g.0
       request-context:
       - appId=
       strict-transport-security:
@@ -136,7 +136,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 29ms
+      - 85ms
     status:
       code: 201
       message: Created
@@ -150,23 +150,24 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-rooms/1.0.0b1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-rooms/1.0.0b3 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Mon, 08 Aug 2022 19:46:06 GMT
+      - Wed, 01 Feb 2023 00:18:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.communication.azure.com/rooms/78469124725336262?api-version=2022-02-01
   response:
     body:
-      string: '{"error":{"code":"NotFound","message":"Resource not found"}}'
+      string: '{"error":{"code":"ResourceNotFound","message":"Resource not found"}}'
     headers:
-      api-supported-versions: 2021-04-07, 2022-02-01
+      api-supported-versions: 2021-04-07, 2022-02-01, 2023-01-10
       content-type: application/json; charset=utf-8
-      date: Mon, 08 Aug 2022 19:46:06 GMT
-      ms-cv: YNddyAMcPUyu8RjW5vDiGg.0
+      date: Wed, 01 Feb 2023 00:18:01 GMT
+      ms-cv: vwj8bfDX6EKVco9Rrlk1nA.0
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
+      x-ms-error-code: ResourceNotFound
     status:
       code: 404
       message: Not Found
@@ -183,9 +184,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Mon, 08 Aug 2022 19:46:07 GMT
+      - Wed, 01 Feb 2023 00:18:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -196,11 +197,11 @@ interactions:
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
-        2021-11-01, 2022-06-01
+        2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Mon, 08 Aug 2022 19:46:07 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       ms-cv:
-      - +5BMf1pFBkyJdddyhqtjwQ.0
+      - UEJ76hrI00KerFBDU/CgRA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -208,7 +209,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 220ms
+      - 304ms
     status:
       code: 204
       message: No Content
@@ -224,9 +225,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Mon, 08 Aug 2022 19:46:07 GMT
+      - Wed, 01 Feb 2023 00:18:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -237,11 +238,11 @@ interactions:
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
-        2021-11-01, 2022-06-01
+        2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Mon, 08 Aug 2022 19:46:07 GMT
+      - Wed, 01 Feb 2023 00:18:01 GMT
       ms-cv:
-      - /EHgpkmyqEegwnKLC6sR4Q.0
+      - GqY4qSwY6ESO09tHVmzimA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -249,7 +250,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 178ms
+      - 300ms
     status:
       code: 204
       message: No Content
@@ -265,9 +266,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.10.5 (Windows-10-10.0.19044-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Mon, 08 Aug 2022 19:46:07 GMT
+      - Wed, 01 Feb 2023 00:18:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -278,11 +279,11 @@ interactions:
     headers:
       api-supported-versions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
-        2021-11-01, 2022-06-01
+        2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Mon, 08 Aug 2022 19:46:08 GMT
+      - Wed, 01 Feb 2023 00:18:02 GMT
       ms-cv:
-      - Qsj3AdKRl0yyM+AD6yuawg.0
+      - 2IugXcTF9kqv6oEKqS1HSA.0
       request-context:
       - appId=
       strict-transport-security:
@@ -290,7 +291,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 214ms
+      - 283ms
     status:
       code: 204
       message: No Content

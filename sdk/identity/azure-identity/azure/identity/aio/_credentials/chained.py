@@ -4,7 +4,7 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING, Any
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.credentials import AccessToken
@@ -36,12 +36,12 @@ class ChainedTokenCredential(AsyncContextManager):
         self._successful_credential = None  # type: Optional[AsyncTokenCredential]
         self.credentials = credentials
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the transport sessions of all credentials in the chain."""
 
         await asyncio.gather(*(credential.close() for credential in self.credentials))
 
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Asynchronously request a token from each credential, in order, returning the first token received.
 
         If no credential provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
@@ -50,6 +50,8 @@ class ChainedTokenCredential(AsyncContextManager):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         within_credential_chain.set(True)

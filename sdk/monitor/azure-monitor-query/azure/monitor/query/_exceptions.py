@@ -4,36 +4,52 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ._models import LogsQueryStatus
+import sys
+from typing import Any, List, Optional
+
+from ._enums import LogsQueryStatus
+
+if sys.version_info >= (3, 9):
+    from collections.abc import Mapping
+else:
+    from typing import Mapping  # pylint: disable=ungrouped-imports
 
 
-class LogsQueryError(object):
-    """The code and message for an error.
+JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
 
-    :ivar code: A machine readable error code.
-    :vartype code: str
-    :ivar message: A human readable error message.
-    :vartype message: str
-    :ivar status: status for error item when iterating over list of
-        results. Always "Failure" for an instance of a LogsQueryError.
-    :vartype status: ~azure.monitor.query.LogsQueryStatus
-    """
 
-    def __init__(self, **kwargs):
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
+class LogsQueryError:
+    """The code and message for an error."""
+
+    code: str
+    """A machine readable error code."""
+    message: str
+    """A human readable error message."""
+    details: Optional[List[JSON]] = None
+    """A list of additional details about the error."""
+    status: LogsQueryStatus
+    """Status for error item when iterating over list of results. Always "Failure" for an instance of a
+    LogsQueryError."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        self.code = kwargs.get("code", "")
+        self.message = kwargs.get("message", "")
+        self.details = kwargs.get("details", None)
         self.status = LogsQueryStatus.FAILURE
+
+    def __str__(self) -> str:
+        return str(self.__dict__)
 
     @classmethod
     def _from_generated(cls, generated):
         if not generated:
             return None
-
         innererror = generated
-        while innererror.innererror is not None:
-            innererror = innererror.innererror
-        message = innererror.message
+        while innererror.get("innererror"):
+            innererror = innererror["innererror"]
+        message = innererror.get("message")
         return cls(
-            code=generated.code,
+            code=generated.get("code"),
             message=message,
+            details=generated.get("details"),
         )

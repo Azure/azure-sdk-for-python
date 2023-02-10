@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union, Any
 from azure.core.credentials import AccessToken
 
 from .. import CredentialUnavailableError
@@ -14,14 +14,12 @@ from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
 from .user_password import UsernamePasswordCredential
 
-
-if TYPE_CHECKING:
-    EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
+EnvironmentCredentialTypes = Union[CertificateCredential, ClientSecretCredential, UsernamePasswordCredential]
 
 _LOGGER = logging.getLogger(__name__)
 
 
-class EnvironmentCredential(object):
+class EnvironmentCredential:
     """A credential configured by environment variables.
 
     This credential is capable of authenticating as a service principal using a client secret or a certificate, or as
@@ -56,8 +54,8 @@ class EnvironmentCredential(object):
         when no value is given.
     """
 
-    def __init__(self, **kwargs) -> None:
-        self._credential = None  # type: Optional[EnvironmentCredentialTypes]
+    def __init__(self, **kwargs: Any) -> None:
+        self._credential: Optional[EnvironmentCredentialTypes] = None
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
             self._credential = ClientSecretCredential(
@@ -113,12 +111,14 @@ class EnvironmentCredential(object):
         self.__exit__()
 
     @log_get_token("EnvironmentCredential")
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`

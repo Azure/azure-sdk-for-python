@@ -1,49 +1,49 @@
 {
-    "id": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master/jobs/test_580619710376",
-    "name": "test_580619710376",
+    "id": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/jobs/test_240010912529",
+    "name": "test_240010912529",
     "type": "Microsoft.MachineLearningServices/workspaces/jobs",
     "system_data": {
         "created_by": "Ying Chen",
         "created_by_type": "User",
-        "created_at": "2022-09-06T07:01:37.065408Z"
+        "created_at": "2022-11-23T09:27:21.69252Z",
     },
     "properties": {
         "description": "Example of using data in a local folder as pipeline input",
         "properties": {
             "mlflow.source.git.repoURL": "msdata@vs-ssh.visualstudio.com:v3/msdata/Vienna/sdk-cli-v2",
-            "mlflow.source.git.branch": "chenyin/parse_job_none",
-            "mlflow.source.git.commit": "93afd7f355cc878a3c6348542a67ad1e62db5c49",
+            "mlflow.source.git.branch": "chenyin/add_pipeline_e2e_test",
+            "mlflow.source.git.commit": "a0802beac4bfc4a23eea2f9e820f067c186d6499",
             "azureml.git.dirty": "True",
             "azureml.DevPlatv2": "true",
             "azureml.runsource": "azureml.PipelineRun",
             "runSource": "MFE",
             "runType": "HTTP",
-            "azureml.parameters": "{'pipeline_sample_input_string':'Hello_Pipeline_World'}",
+            "azureml.parameters": '{"pipeline_sample_input_string":"Hello_Pipeline_World"}',
             "azureml.continue_on_step_failure": "False",
             "azureml.continue_on_failed_optional_input": "True",
             "azureml.defaultDataStoreName": "workspaceblobstore",
-            "azureml.pipelineComponent": "pipelinerun"
+            "azureml.pipelineComponent": "pipelinerun",
         },
         "tags": {},
         "display_name": "4a_local_data_input",
-        "experiment_name": "azure-ai-ml",
-        "is_archived": false,
+        "experiment_name": "sdk-cli-v2",
+        "is_archived": False,
         "job_type": "Pipeline",
         "services": {
             "Tracking": {
-                "endpoint": "azureml://master.api.azureml-test.ms/mlflow/v1.0/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master?",
-                "job_service_type": "Tracking"
+                "endpoint": "azureml://eastus.api.azureml.ms/mlflow/v1.0/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli?",
+                "job_service_type": "Tracking",
             },
             "Studio": {
-                "endpoint": "https://ml.azure.com/runs/test_580619710376?wsid=/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourcegroups/sdk/workspaces/sdk-master",
-                "job_service_type": "Studio"
-            }
+                "endpoint": "https://ml.azure.com/runs/test_240010912529?wsid=/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourcegroups/chenyin-test-eastus/workspaces/sdk_vnext_cli",
+                "job_service_type": "Studio",
+            },
         },
         "status": "Preparing",
         "inputs": {
             "pipeline_sample_input_string": {
-                "job_input_type": "Literal",
-                "value": "Hello_Pipeline_World"
+                "job_input_type": "literal",
+                "value": "Hello_Pipeline_World",
             }
         },
         "jobs": {
@@ -53,39 +53,36 @@
                 "limits": null,
                 "environment_variables": {},
                 "name": "hello_python_world_job",
-                "type": "command",
                 "display_name": null,
                 "tags": {},
-                "computeId": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master/computes/cpu-cluster",
+                "computeId": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/computes/cpu-cluster",
                 "inputs": {
                     "sample_input_string": {
                         "job_input_type": "Literal",
                         "value": "${{parent.inputs.pipeline_sample_input_string}}",
-                        "mode": "RoMount"
+                        "mode": "RoMount",
                     },
                     "sample_input_data": {
-                        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/553d1a28-7933-4017-8321-96c2a9f1fc44/data/",
-                        "job_input_type": "UriFolder"
-                    }
+                        "mode": "ReadOnlyMount",
+                        "uri": "azureml://datastores/workspaceblobstore/paths/LocalUpload/22fd2a62-9759-4843-ab92-5bd79c35f6f0/data/",
+                        "job_input_type": "UriFolder",
+                    },
                 },
                 "outputs": {
                     "sample_output_data": {
                         "value": "${{parent.outputs.pipeline_sample_output_data}}",
-                        "type": "Literal"
+                        "type": "Literal",
                     }
                 },
-                "_source": "YAML.JOB",
-                "componentId": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master/components/azureml_anonymous/versions/6ffc3ff9-8801-4cc4-9285-9f8052b946fe"
+                "componentId": "/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/components/azureml_anonymous/versions/9904ff48-9cb2-4733-ad1c-eb1eb9940a19",
             }
         },
         "outputs": {
             "pipeline_sample_output_data": {
                 "mode": "Upload",
-                "job_output_type": "UriFolder"
+                "job_output_type": "uri_folder",
             }
         },
-        "settings": {
-            "_source": "YAML.JOB"
-        }
-    }
+        "settings": {},
+    },
 }

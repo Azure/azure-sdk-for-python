@@ -32,9 +32,9 @@ def del_outdated_samples(readme: str):
 
     with open(python_readme, "r") as file_in:
         content = file_in.readlines()
-    pattern = "$(python-sdks-folder)"
+    pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
     for line in content:
-        if pattern in line:
+        if all(p in line for p in pattern):
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
             sample_folder = Path(f"sdk/{sdk_folder}/generated_samples") 
             if sample_folder.exists():
@@ -76,6 +76,7 @@ def main(generate_input, generate_output):
 
     for input_readme in readme_files:
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
+        is_cadl = False
         if "resource-manager" in input_readme:
             relative_path_readme = str(Path(spec_folder, input_readme))
             del_outdated_samples(relative_path_readme)
@@ -92,6 +93,7 @@ def main(generate_input, generate_output):
             config = gen_dpg(input_readme, data.get("autorestConfig", ""), dpg_relative_folder(spec_folder))
         else:
             config = gen_cadl(input_readme, spec_folder)
+            is_cadl = True
         package_names = get_package_names(sdk_folder)
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen end. [(packages:{str(package_names)})]")
 
@@ -113,7 +115,7 @@ def main(generate_input, generate_output):
                 result[package_name][spec_word].append(input_readme)
 
             # Generate some necessary file for new service
-            init_new_service(package_name, folder_name)
+            init_new_service(package_name, folder_name, is_cadl)
             format_samples(sdk_code_path)
 
             # Update metadata

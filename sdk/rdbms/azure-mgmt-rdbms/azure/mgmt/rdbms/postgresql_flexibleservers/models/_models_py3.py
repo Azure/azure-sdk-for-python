@@ -249,40 +249,47 @@ class AdministratorListResult(_serialization.Model):
 class AuthConfig(_serialization.Model):
     """Authentication configuration properties of a server.
 
-    :ivar active_directory_auth_enabled: If true, Azure Active Directory authentication is enabled.
-    :vartype active_directory_auth_enabled: bool
-    :ivar password_auth_enabled: If true, Password authentication is enabled.
-    :vartype password_auth_enabled: bool
+    :ivar active_directory_auth: If Enabled, Azure Active Directory authentication is enabled.
+     Known values are: "Enabled" and "Disabled".
+    :vartype active_directory_auth: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ActiveDirectoryAuthEnum
+    :ivar password_auth: If Enabled, Password authentication is enabled. Known values are:
+     "Enabled" and "Disabled".
+    :vartype password_auth: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.PasswordAuthEnum
     :ivar tenant_id: Tenant id of the server.
     :vartype tenant_id: str
     """
 
     _attribute_map = {
-        "active_directory_auth_enabled": {"key": "activeDirectoryAuthEnabled", "type": "bool"},
-        "password_auth_enabled": {"key": "passwordAuthEnabled", "type": "bool"},
+        "active_directory_auth": {"key": "activeDirectoryAuth", "type": "str"},
+        "password_auth": {"key": "passwordAuth", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        active_directory_auth_enabled: Optional[bool] = None,
-        password_auth_enabled: bool = True,
+        active_directory_auth: Optional[Union[str, "_models.ActiveDirectoryAuthEnum"]] = None,
+        password_auth: Union[str, "_models.PasswordAuthEnum"] = "Enabled",
         tenant_id: str = "",
         **kwargs
     ):
         """
-        :keyword active_directory_auth_enabled: If true, Azure Active Directory authentication is
-         enabled.
-        :paramtype active_directory_auth_enabled: bool
-        :keyword password_auth_enabled: If true, Password authentication is enabled.
-        :paramtype password_auth_enabled: bool
+        :keyword active_directory_auth: If Enabled, Azure Active Directory authentication is enabled.
+         Known values are: "Enabled" and "Disabled".
+        :paramtype active_directory_auth: str or
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ActiveDirectoryAuthEnum
+        :keyword password_auth: If Enabled, Password authentication is enabled. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype password_auth: str or
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.PasswordAuthEnum
         :keyword tenant_id: Tenant id of the server.
         :paramtype tenant_id: str
         """
         super().__init__(**kwargs)
-        self.active_directory_auth_enabled = active_directory_auth_enabled
-        self.password_auth_enabled = password_auth_enabled
+        self.active_directory_auth = active_directory_auth
+        self.password_auth = password_auth
         self.tenant_id = tenant_id
 
 
@@ -1651,7 +1658,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :vartype point_in_time_utc: ~datetime.datetime
     :ivar availability_zone: availability zone information of the server.
     :vartype availability_zone: str
-    :ivar replication_role: Replication role of the server. Known values are: "Primary",
+    :ivar replication_role: Replication role of the server. Known values are: "None", "Primary",
      "Secondary", "WalReplica", "SyncReplica", "AsyncReplica", "GeoSyncReplica", and
      "GeoAsyncReplica".
     :vartype replication_role: str or
@@ -1770,7 +1777,7 @@ class Server(TrackedResource):  # pylint: disable=too-many-instance-attributes
         :paramtype point_in_time_utc: ~datetime.datetime
         :keyword availability_zone: availability zone information of the server.
         :paramtype availability_zone: str
-        :keyword replication_role: Replication role of the server. Known values are: "Primary",
+        :keyword replication_role: Replication role of the server. Known values are: "None", "Primary",
          "Secondary", "WalReplica", "SyncReplica", "AsyncReplica", "GeoSyncReplica", and
          "GeoAsyncReplica".
         :paramtype replication_role: str or
@@ -1927,6 +1934,11 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
      "Update".
     :vartype create_mode: str or
      ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreateModeForUpdate
+    :ivar replication_role: Replication role of the server. Known values are: "None", "Primary",
+     "Secondary", "WalReplica", "SyncReplica", "AsyncReplica", "GeoSyncReplica", and
+     "GeoAsyncReplica".
+    :vartype replication_role: str or
+     ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ReplicationRole
     """
 
     _attribute_map = {
@@ -1942,6 +1954,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         "auth_config": {"key": "properties.authConfig", "type": "AuthConfig"},
         "data_encryption": {"key": "properties.dataEncryption", "type": "DataEncryption"},
         "create_mode": {"key": "properties.createMode", "type": "str"},
+        "replication_role": {"key": "properties.replicationRole", "type": "str"},
     }
 
     def __init__(
@@ -1959,6 +1972,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         auth_config: Optional["_models.AuthConfig"] = None,
         data_encryption: Optional["_models.DataEncryption"] = None,
         create_mode: Optional[Union[str, "_models.CreateModeForUpdate"]] = None,
+        replication_role: Optional[Union[str, "_models.ReplicationRole"]] = None,
         **kwargs
     ):
         """
@@ -1990,6 +2004,11 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
          and "Update".
         :paramtype create_mode: str or
          ~azure.mgmt.rdbms.postgresql_flexibleservers.models.CreateModeForUpdate
+        :keyword replication_role: Replication role of the server. Known values are: "None", "Primary",
+         "Secondary", "WalReplica", "SyncReplica", "AsyncReplica", "GeoSyncReplica", and
+         "GeoAsyncReplica".
+        :paramtype replication_role: str or
+         ~azure.mgmt.rdbms.postgresql_flexibleservers.models.ReplicationRole
         """
         super().__init__(**kwargs)
         self.sku = sku
@@ -2004,6 +2023,7 @@ class ServerForUpdate(_serialization.Model):  # pylint: disable=too-many-instanc
         self.auth_config = auth_config
         self.data_encryption = data_encryption
         self.create_mode = create_mode
+        self.replication_role = replication_role
 
 
 class ServerListResult(_serialization.Model):

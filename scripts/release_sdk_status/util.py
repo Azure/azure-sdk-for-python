@@ -1,15 +1,13 @@
 import os
 from pathlib import Path
+from subprocess import getoutput
 
 
-def _find_certificate():
-    devcert_path = Path(os.getenv('SDK_REPO') + '/eng/common/testproxy/dotnet-devcert.crt')
-    with open(devcert_path, 'r') as fr:
-        return fr.read()
-
-
-def add_certificate(file: str):
-    certification = _find_certificate()
-    with open(file, 'a+') as f:
-        f.seek(0, 0)
-        f.write(certification)
+def add_certificate():
+    # Set the following certificate paths:
+    #     SSL_CERT_DIR=C:\<YOUR DIRECTORY>\azure-sdk-for-python\.certificate
+    #     REQUESTS_CA_BUNDLE=C:\<YOUR DIRECTORY>\azure-sdk-for-python\.certificate\dotnet-devcert.pem
+    result = getoutput(f"python {Path('scripts/devops_tasks/trust_proxy_cert.py')}").split("\n")
+    for item in result[1:]:
+        name, value = item.strip().split("=", 1)
+        os.environ[name] = value

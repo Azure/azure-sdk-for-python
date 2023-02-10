@@ -1,6 +1,8 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+import copy
 from pathlib import Path
-
-import pydash
 
 from azure.ai.ml import Input
 from azure.ai.ml.constants._common import AssetTypes
@@ -17,6 +19,7 @@ PARAMETERS_TO_TEST = [
         {},
         {
             "compute": "cpu-cluster",  # runsettings.target
+            "environment_variables": {"verbose": "DEBUG"},  # runsettings.environment_variables
             "environment": None,  # runsettings.environment
             # TODO: "resources.priority": 5,  # runsettings.priority  # JobResourceConfiguration doesn't have priority
             "limits.timeout": 300,  # runsettings.timeout_seconds
@@ -40,6 +43,7 @@ PARAMETERS_TO_TEST = [
         {
             "compute": "cpu-cluster",  # runsettings.target
             "environment": None,  # runsettings.environment
+            "environment_variables": {"verbose": "DEBUG"},  # runsettings.environment_variables
             "limits.timeout": 300,  # runsettings.timeout_seconds
             "resources.instance_type": "1Gi",  # runsettings.resource_layout.instance_type
             "resources.instance_count": 2,  # runsettings.resource_layout.instance_count/node_count
@@ -60,7 +64,7 @@ PARAMETERS_TO_TEST = [
         },
         {
             "resources.instance_count": 1,  # runsettings.parallel.node_count
-            "max_concurrency_per_instance": 2,  # runsettings.parallel.max_concurrency_per_instance
+            "max_concurrency_per_instance": 2,  # runsettings.parallel.process_count_per_node
             "error_threshold": 5,  # runsettings.parallel.error_threshold
             "mini_batch_size": 2,  # runsettings.parallel.mini_batch_size
             "logging_level": "DEBUG",  # runsettings.parallel.logging_level
@@ -187,6 +191,51 @@ TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
 )))
 
 
+def get_expected_runsettings_items(runsettings_dict, client=None):
+    expected_values = copy.deepcopy(runsettings_dict)
+    dot_key_map = {"compute": "computeId"}
+
+    for dot_key in dot_key_map:
+        if dot_key in expected_values:
+            expected_values[dot_key_map[dot_key]] = expected_values.pop(dot_key)
+
+    for dot_key in expected_values:
+        # hack: mini_batch_size will be transformed into str
+        if dot_key == "mini_batch_size":
+            expected_values[dot_key] = str(expected_values[dot_key])
+        # hack: timeout will be transformed into str
+        if dot_key == "limits.timeout":
+            expected_values[dot_key] = "PT5M"
+        # hack: compute_name for hdinsight will be transformed into arm str
+        if dot_key == "compute_name" and client is not None:
+            expected_values[dot_key] = f"/subscriptions/{client.subscription_id}/" \
+                             f"resourceGroups/{client.resource_group_name}/" \
+                             f"providers/Microsoft.MachineLearningServices/" \
+                             f"workspaces/{client.workspace_name}/" \
+                             f"computes/{expected_values[dot_key]}"
+    return expected_values.items()
+
+
+ANONYMOUS_COMPONENT_TEST_PARAMS = [
+    (
+        "simple-command/powershell_copy.yaml",
+        # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
+        "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+    ),
+    (
+        "additional-includes/component_spec.yaml",
+        # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
+        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
+    ),
+    # TODO(2076035): skip tests related to zip additional includes for now
+    # (
+    #     "additional-includes-in-zip/component_spec.yaml",
+    #     # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
+    #     "24f26249-94c3-19c5-effe-030a60205d88"
+    # ),
+]
+
+
 def set_run_settings(node, runsettings_dict):
     for dot_key, value in runsettings_dict.items():
         keys = dot_key.split(".")
@@ -208,7 +257,7 @@ def assert_strong_type_intellisense_enabled(node, runsettings_dict):
         for key in keys:
             current_obj = getattr(current_obj, key)
         if isinstance(current_obj, _AttrDict):
-            if current_obj._is_arbitrary_attr(last_key):
+            if current_obj._is_arbitrary_attr(last_key):  # pylint: disable=protected-access
                 failed_attrs.append(dot_key)
         elif not hasattr(current_obj, last_key):
             failed_attrs.append(dot_key)
@@ -224,14 +273,13 @@ def extract_non_primitive(obj):
             if val:
                 r[key] = val
         return r
-    elif isinstance(obj, list):
+    if isinstance(obj, list):
         r = []
         for val in obj:
             val = extract_non_primitive(val)
             if val:
                 r.append(val)
         return r
-    elif isinstance(obj, (float, int, str)):
+    if isinstance(obj, (float, int, str)):
         return None
-    else:
-        return obj
+    return obj

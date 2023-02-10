@@ -93,6 +93,11 @@ steps:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestMarkArgument: ${{ parameters.TestMarkArgument }}
 
+  - template: run_pyright.yml
+    parameters:
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
+      TestMarkArgument: ${{ parameters.TestMarkArgument }}
+
   - template: run_pylint.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}

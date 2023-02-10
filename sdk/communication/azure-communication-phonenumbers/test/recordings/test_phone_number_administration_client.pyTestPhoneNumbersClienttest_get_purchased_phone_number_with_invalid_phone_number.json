@@ -1,0 +1,38 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/phoneNumbers/sanitized?api-version=2022-12-01",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.9 (Windows-10-10.0.22621-SP0)",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01",
+        "Content-Type": "application/json",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
+        "Strict-Transport-Security": "max-age=2592000",
+        "Transfer-Encoding": "chunked",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "664ms"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "NotFound",
+          "message": "Input phoneNumber \u002Bsanitized cannot be found.",
+          "target": "phonenumber"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

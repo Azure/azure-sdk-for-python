@@ -3,7 +3,7 @@
 
 $schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
 name: samples_score
-version: 0.0.4
+version: 0.0.5
 display_name: Score
 type: CommandComponent
 description: A dummy scoring module

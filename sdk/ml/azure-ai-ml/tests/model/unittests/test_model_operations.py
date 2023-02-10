@@ -1,7 +1,6 @@
 from pathlib import Path
-from typing import Callable, Iterable
+from typing import Iterable
 from unittest.mock import Mock, patch
-
 import pytest
 
 from azure.ai.ml import load_model
@@ -11,6 +10,7 @@ from azure.ai.ml._restclient.v2022_05_01.models._models_py3 import (
     ModelVersionData,
     ModelVersionDetails,
 )
+from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets._artifacts.artifact import ArtifactStorageInfo
@@ -20,12 +20,12 @@ from azure.ai.ml.operations import DatastoreOperations, ModelOperations
 
 @pytest.fixture
 def mock_datastore_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
 
@@ -44,8 +44,23 @@ def mock_model_operation(
     )
 
 
+@pytest.fixture
+def mock_model_operation_reg(
+    mock_registry_scope: OperationScope,
+    mock_operation_config: OperationConfig,
+    mock_aml_services_2021_10_01_dataplanepreview: Mock,
+    mock_datastore_operation: Mock,
+) -> ModelOperations:
+    yield ModelOperations(
+        operation_scope=mock_registry_scope,
+        operation_config=mock_operation_config,
+        service_client=mock_aml_services_2021_10_01_dataplanepreview,
+        datastore_operations=mock_datastore_operation,
+    )
+
+
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestModelOperations:
     def test_create_with_spec_file(
         self,
@@ -91,6 +106,7 @@ version: 3"""
                 sas_uri=None,
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=True,
+                ignore_file=None,
             )
         mock_model_operation._model_versions_operation.create_or_update.assert_called_once()
         assert "version='3'" in str(mock_model_operation._model_versions_operation.create_or_update.call_args)
@@ -253,4 +269,45 @@ path: ./model.pkl"""
                 sas_uri=None,
                 artifact_type=ErrorTarget.MODEL,
                 show_progress=True,
+                ignore_file=None,
             )
+
+    def test_promote_model_from_workspace(
+        self,
+        mock_model_operation_reg: ModelOperations,
+        mock_model_operation: ModelOperations,
+        tmp_path: Path,
+    ) -> None:
+        model_name = f"model_random_string"
+        p = tmp_path / "model_full.yml"
+        model_path = tmp_path / "model.pkl"
+        model_path.write_text("hello world")
+        p.write_text(
+            f"""
+    name: {model_name}
+    path: ./model.pkl
+    version: 3"""
+        )
+
+        with patch(
+            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
+            return_value=ArtifactStorageInfo(
+                name=model_name,
+                version="3",
+                relative_path="path",
+                datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
+                container_name="containerName",
+            ),
+        ) as mock_upload, patch(
+            "azure.ai.ml.operations._model_operations.Model._from_rest_object",
+            return_value=Model(),
+        ):
+            model = load_model(source=p)
+            model_to_promote = mock_model_operation._prepare_to_copy(model, "new_name", "new_version")
+            assert model_to_promote.name == "new_name"
+            assert model_to_promote.version == "new_version"
+            mock_model_operation_reg._model_versions_operation.get.side_effect = Mock(
+                side_effect=ResourceNotFoundError("Test")
+            )
+            mock_model_operation_reg.create_or_update(model_to_promote)
+            mock_model_operation_reg._service_client.resource_management_asset_reference.begin_import_method.assert_called_once()

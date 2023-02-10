@@ -120,6 +120,6 @@ if __name__ == "__main__":
             except UnicodeDecodeError:
                 pass
     if not_up_to_date:
-        _LOGGER.error(f'Error: code snippets are out of sync. Please run Python PythonSnippetUpdater.py "{path}" to fix it.')
+        _LOGGER.error(f'Error: code snippets are out of sync. Please run Python python_snippet_updater.py "{path}" to fix it.')
         exit(1)
     _LOGGER.info(f"README.md under {path} is up to date.")

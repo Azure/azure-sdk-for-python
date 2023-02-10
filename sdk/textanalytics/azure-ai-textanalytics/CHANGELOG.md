@@ -1,6 +1,32 @@
 # Release History
 
-## 5.3.0b1 (Unreleased)
+## 5.3.0b2 (Unreleased)
+
+This version of the client library defaults to the service API version `2022-10-01-preview`.
+
+### Features Added
+
+- Added `begin_extract_summary` client method to perform extractive summarization on documents.
+- Added `begin_abstractive_summary` client method to perform abstractive summarization on documents.
+
+### Breaking Changes
+
+- Removed models `BaseResolution` and `BooleanResolution`.
+- Renamed property `date_time_sub_kind` to `datetime_subkind` on `DateTimeResolution`.
+- Renamed model `AbstractSummaryAction` to `AbstractiveSummaryAction`.
+- Renamed model `AbstractSummaryResult` to `AbstractiveSummaryResult`.
+- Renamed keyword argument `sentence_count` to `max_sentence_count` on `AbstractiveSummaryAction`.
+- Changed automatic language detection, it is now controlled by the boolean keyword argument `auto_detect_language`.
+  Pass `True` to enable automatic language detection for text documents analyzed by long-running operation APIs.
+- Removed keyword argument `autodetect_default_language` - use `language` to provide a default/fallback language.
+
+### Bugs Fixed
+
+### Other Changes
+
+## 5.3.0b1 (2022-11-17)
+
+This version of the client library defaults to the service API version `2022-10-01-preview`.
 
 ### Features Added
 - Added the Extractive Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`.
@@ -25,10 +51,6 @@
   `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult` to indicate the language detected by automatic language detection.
 - Added property `script` to `DetectedLanguage` to indicate the script of the input document.
 - Added the `dynamic_classification` client method to perform dynamic classification on documents without needing to train a model.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 - Removed dependency on `msrest`.

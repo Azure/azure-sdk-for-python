@@ -28,8 +28,7 @@ from ._error import (
 )
 from ._generated.models import (
     SignedIdentifier,
-    TableProperties,
-    QueryOptions
+    TableProperties
 )
 from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._base_client import parse_connection_str, TablesBaseClient
@@ -47,7 +46,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 
 
-class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
+class TableClient(TablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -74,6 +73,10 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
             :class:`~azure.core.credentials.AzureSasCredential` or
             :class:`~azure.core.credentials.TokenCredential`
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
+
         :returns: None
         """
         if not table_name:
@@ -340,10 +343,10 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
             row_key = entity['RowKey']
         except (TypeError, IndexError):
             partition_key = kwargs.pop('partition_key', None)
-            if not partition_key:
+            if partition_key is None:
                 partition_key = args[0]
             row_key = kwargs.pop("row_key", None)
-            if not row_key:
+            if row_key is None:
                 row_key = args[1]
 
         match_condition = kwargs.pop("match_condition", None)
@@ -611,7 +614,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                query_options=QueryOptions(select=user_select),
+                select=user_select,
                 **kwargs
             )
         except HttpResponseError as error:

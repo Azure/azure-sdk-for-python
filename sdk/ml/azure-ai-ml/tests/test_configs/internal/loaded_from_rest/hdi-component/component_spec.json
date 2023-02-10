@@ -13,7 +13,8 @@
   "inputs": {
     "input_path": {
       "type": "path",
-      "description": "Iris csv file"
+      "description": "Iris csv file",
+      "optional": false
     },
     "regularization_rate": {
       "type": "Float",

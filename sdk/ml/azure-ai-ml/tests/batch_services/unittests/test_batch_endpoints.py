@@ -50,12 +50,12 @@ auth_mode: aad_token # required
 
 @pytest.fixture
 def mock_datastore_operations(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_05_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2022_05_01=mock_aml_services_2022_05_01,
+        serviceclient_2022_10_01=mock_aml_services_2022_10_01,
     )
 
 
@@ -78,13 +78,13 @@ def mock_model_operations(
 def mock_code_assets_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_datastore_operations: DatastoreOperations,
 ) -> CodeOperations:
     yield CodeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         datastore_operations=mock_datastore_operations,
     )
 
@@ -112,12 +112,12 @@ def mock_data_operations() -> Mock:
 @pytest.fixture
 def mock_workspace_operations(
     mock_workspace_scope: OperationScope,
-    mock_aml_services_2021_10_01: Mock,
+    mock_aml_services_2022_10_01: Mock,
     mock_machinelearning_client: Mock,
 ) -> WorkspaceOperations:
     yield WorkspaceOperations(
         operation_scope=mock_workspace_scope,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01,
         all_operations=mock_machinelearning_client._operation_container,
     )
 
@@ -159,7 +159,7 @@ def mock_batch_endpoint_operations(
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestBatchEndpointOperations:
     def test_batch_endpoint_create(
         self,

@@ -6,7 +6,7 @@
 import os
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview.models import AmlToken, ManagedIdentity, UserIdentity
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Environment
@@ -79,33 +79,33 @@ def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Di
 
 def spark(
     *,
-    experiment_name: str = None,
-    name: str = None,
-    display_name: str = None,
-    description: str = None,
-    tags: Dict = None,
-    code: Union[str, os.PathLike] = None,
+    experiment_name: Optional[str] = None,
+    name: Optional[str] = None,
+    display_name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    code: Optional[Union[str, os.PathLike]] = None,
     entry: Union[Dict[str, str], SparkJobEntry, None] = None,
     py_files: Optional[List[str]] = None,
     jars: Optional[List[str]] = None,
     files: Optional[List[str]] = None,
     archives: Optional[List[str]] = None,
-    identity: Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity] = None,
-    driver_cores: int = None,
-    driver_memory: str = None,
-    executor_cores: int = None,
-    executor_memory: str = None,
-    executor_instances: int = None,
-    dynamic_allocation_enabled: bool = None,
-    dynamic_allocation_min_executors: int = None,
-    dynamic_allocation_max_executors: int = None,
+    identity: Optional[Union[Dict[str, str], ManagedIdentity, AmlToken, UserIdentity]] = None,
+    driver_cores: Optional[int] = None,
+    driver_memory: Optional[str] = None,
+    executor_cores: Optional[int] = None,
+    executor_memory: Optional[str] = None,
+    executor_instances: Optional[int] = None,
+    dynamic_allocation_enabled: Optional[bool] = None,
+    dynamic_allocation_min_executors: Optional[int] = None,
+    dynamic_allocation_max_executors: Optional[int] = None,
     conf: Optional[Dict[str, str]] = None,
-    environment: Union[str, Environment] = None,
-    inputs: Dict = None,
-    outputs: Dict = None,
-    args: str = None,
-    compute: str = None,
-    resources: Union[Dict, SparkResourceConfiguration] = None,
+    environment: Optional[Union[str, Environment]] = None,
+    inputs: Optional[Dict] = None,
+    outputs: Optional[Dict] = None,
+    args: Optional[str] = None,
+    compute: Optional[str] = None,
+    resources: Optional[Union[Dict, SparkResourceConfiguration]] = None,
     **kwargs,
 ) -> Spark:
     """Create a Spark object which can be used inside dsl.pipeline as a function and

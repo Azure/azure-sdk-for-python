@@ -1,17 +1,15 @@
 from typing import Callable
 
 import pytest
+from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_online_deployment, load_online_endpoint
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.entities import ManagedOnlineEndpoint, Model, ManagedOnlineDeployment
-
-from devtools_testutils import AzureRecordedTestCase
+from azure.ai.ml.entities import ManagedOnlineDeployment, ManagedOnlineEndpoint, Model
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestOnlineDeployment(AzureRecordedTestCase):
     @pytest.mark.skip(
         reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."

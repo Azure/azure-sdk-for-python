@@ -4,6 +4,7 @@
 # ------------------------------------
 import logging
 import os
+from typing import Any
 
 from azure.core.credentials import AccessToken
 from .chained import ChainedTokenCredential
@@ -51,7 +52,7 @@ class AzureApplicationCredential(ChainedTokenCredential):
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
         managed_identity_client_id = kwargs.pop(
@@ -62,12 +63,14 @@ class AzureApplicationCredential(ChainedTokenCredential):
             ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs),
         )
 
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
             `message` attribute listing each authentication attempt and its error message.
         """

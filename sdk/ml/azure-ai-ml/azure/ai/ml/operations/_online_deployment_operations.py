@@ -20,13 +20,14 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml._utils._endpoint_utils import upload_dependencies,validate_scoring_script
+
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+from azure.ai.ml._utils._azureml_polling import AzureMLPolling
+from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.exceptions import (
     ErrorCategory,
@@ -44,7 +45,7 @@ from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
@@ -62,11 +63,11 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         service_client_02_2022_preview: ServiceClient022022Preview,
         all_operations: OperationsContainer,
         local_deployment_helper: _LocalDeploymentHelper,
-        credentials: TokenCredential = None,
+        credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
     ):
         super(OnlineDeploymentOperations, self).__init__(operation_scope, operation_config)
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._local_deployment_helper = local_deployment_helper
         self._online_deployment = service_client_02_2022_preview.online_deployments
         self._online_endpoint_operations = service_client_02_2022_preview.online_endpoints
@@ -75,7 +76,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         self._init_kwargs = kwargs
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.BeginCreateOrUpdate", ActivityType.PUBLICAPI)
     def begin_create_or_update(
         self,
         deployment: OnlineDeployment,
@@ -124,6 +125,13 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 return self._local_deployment_helper.create_or_update(
                     deployment=deployment,
                     local_endpoint_mode=self._get_local_endpoint_mode(vscode_debug),
+                )
+            if (deployment and deployment.instance_type and deployment.instance_type.lower() in SmallSKUs):
+                module_logger.warning(
+                    "Instance type %s may be too small for compute resources. " # pylint: disable=line-too-long
+                    "Minimum recommended compute SKU is Standard_DS3_v2 for general purpose endpoints. Learn more about SKUs here: " # pylint: disable=line-too-long
+                    "https://learn.microsoft.com/en-us/azure/machine-learning/referencemanaged-online-endpoints-vm-sku-list",
+                    deployment.instance_type # pylint: disable=line-too-long
                 )
             if (
                 not skip_script_validation
@@ -183,7 +191,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 raise ex
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.Get", ActivityType.PUBLICAPI)
     def get(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> OnlineDeployment:
         """Get a deployment resource.
 
@@ -214,7 +222,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return deployment
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
     def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
@@ -239,7 +247,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.GetLogs", ActivityType.PUBLICAPI)
     def get_logs(
         self,
         name: str,
@@ -282,7 +290,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         ).content
 
     @distributed_trace
-    @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "OnlineDeployment.List", ActivityType.PUBLICAPI)
     def list(self, endpoint_name: str, *, local: bool = False) -> ItemPaged[OnlineDeployment]:
         """List a deployment resource.
 

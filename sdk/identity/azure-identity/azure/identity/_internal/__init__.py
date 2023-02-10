@@ -4,7 +4,6 @@
 # ------------------------------------
 from .aad_client import AadClient
 from .aad_client_base import AadClientBase
-from .auth_code_redirect_handler import AuthCodeRedirectServer
 from .aadclient_certificate import AadClientCertificate
 from .decorators import wrap_exceptions
 from .interactive import InteractiveCredential
@@ -34,7 +33,6 @@ __all__ = [
     "_scopes_to_resource",
     "AadClient",
     "AadClientBase",
-    "AuthCodeRedirectServer",
     "AadClientCertificate",
     "get_default_authority",
     "InteractiveCredential",

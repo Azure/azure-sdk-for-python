@@ -48,8 +48,8 @@ def build_list_by_dev_center_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -85,8 +85,8 @@ def build_get_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -121,8 +121,8 @@ def build_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -160,8 +160,8 @@ def build_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -199,8 +199,8 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -271,7 +271,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnvironmentTypeListResult]
 
         error_map = {
@@ -372,7 +372,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnvironmentType]
 
         request = build_get_request(
@@ -510,7 +510,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnvironmentType]
 
@@ -661,7 +661,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnvironmentType]
 
@@ -739,7 +739,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_request(

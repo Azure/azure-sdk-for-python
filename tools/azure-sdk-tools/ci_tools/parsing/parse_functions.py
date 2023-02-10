@@ -2,7 +2,15 @@ import os
 import ast
 import textwrap
 import re
-from typing import Dict, List, Tuple
+
+try:
+    # py 311 adds this library natively
+    import tomllib as toml
+except:
+    # otherwise fall back to pypi package tomli
+    import tomli as toml
+
+from typing import Dict, List, Tuple, Any
 
 # Assumes the presence of setuptools
 from pkg_resources import (
@@ -29,23 +37,27 @@ class ParsedSetup:
         self,
         name: str,
         version: str,
-        python_requires: List[str],
+        python_requires: str,
         requires: List[str],
         is_new_sdk: bool,
         setup_filename: str,
         name_space: str,
-        package_data: Dict,
+        package_data: Dict[str, Any],
         include_package_data: bool,
+        classifiers: List[str],
     ):
         self.name: str = name
         self.version: str = version
-        self.python_requires: List[str] = python_requires
+        self.python_requires: str = python_requires
         self.requires: List[str] = requires
         self.is_new_sdk: bool = is_new_sdk
         self.setup_filename: str = setup_filename
-        self.namespace = name_space
-        self.package_data = package_data
-        self.include_package_data = include_package_data
+        self.namespace: str = name_space
+        self.package_data: Dict[str, Any] = package_data
+        self.include_package_data: bool = include_package_data
+        self.classifiers: List[str] = classifiers
+
+        self.folder = os.path.dirname(self.setup_filename)
 
     @classmethod
     def from_path(cls, parse_directory_or_file: str):
@@ -59,6 +71,7 @@ class ParsedSetup:
             name_space,
             package_data,
             include_package_data,
+            classifiers,
         ) = parse_setup(parse_directory_or_file)
 
         return cls(
@@ -71,7 +84,28 @@ class ParsedSetup:
             name_space,
             package_data,
             include_package_data,
+            classifiers,
         )
+
+    def get_build_config(self) -> Dict[str, Any]:
+        return get_build_config(self.folder)
+
+def get_build_config(package_path: str) -> Dict[str, Any]:
+    if package_path.lower().endswith("setup.py"):
+        package_path = os.path.dirname(package_path)
+
+    toml_file = os.path.join(package_path, "pyproject.toml")
+
+    if os.path.exists(toml_file):
+        try:
+            with open(toml_file, "rb") as f:
+                toml_dict = toml.load(f)
+                if "tool" in toml_dict:
+                    tool_configs = toml_dict["tool"]
+                    if "azure-sdk-build" in tool_configs:
+                        return tool_configs["azure-sdk-build"]
+        except:
+            return {}
 
 
 def read_setup_py_content(setup_filename: str) -> str:
@@ -83,7 +117,7 @@ def read_setup_py_content(setup_filename: str) -> str:
         return content
 
 
-def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bool, str]:
+def parse_setup(setup_filename: str) -> Tuple[str, str, str, List[str], bool, str, str, Dict[str, Any], bool, List[str]]:
     """
     Used to evaluate a setup.py (or a directory containing a setup.py) and return a tuple containing:
     (
@@ -95,7 +129,8 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
         <parsed setup.py location>,
         <namespace>,
         <package_data dict>,
-        <include_package_data bool>
+        <include_package_data bool>,
+        <classifiers>
     )
     """
     if not setup_filename.endswith("setup.py"):
@@ -164,6 +199,10 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
     if "include_package_data" in kwargs:
         include_package_data = kwargs["include_package_data"]
 
+    classifiers = []
+    if "classifiers" in kwargs:
+        classifiers = kwargs["classifiers"]
+
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
 
     return (
@@ -176,6 +215,7 @@ def parse_setup(setup_filename: str) -> Tuple[str, str, List[str], List[str], bo
         name_space,
         package_data,
         include_package_data,
+        classifiers
     )
 
 
@@ -200,7 +240,7 @@ def parse_require(req: str) -> Tuple[str, SpecifierSet]:
         return [pkg_name, None]
 
     # regex details ripped from https://peps.python.org/pep-0508/
-    isolated_spec = re.sub(r'^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?', "", str(req_object))
+    isolated_spec = re.sub(r"^([a-zA-Z0-9\-\_\.]+)(\[[a-zA-Z0-9\-\_\.\,]*\])?", "", str(req_object))
     spec = SpecifierSet(isolated_spec)
     return (pkg_name, spec)
 

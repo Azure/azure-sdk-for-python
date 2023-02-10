@@ -4,20 +4,19 @@
 from typing import Callable
 
 import pytest
-from azure.ai.ml._utils.utils import camel_to_snake
+from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
+from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import PublicNetworkAccess
+from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._workspace.diagnose import DiagnoseResponseResultValue
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
 from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
-
-from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.mark.e2etest
@@ -69,26 +68,33 @@ class TestWorkspace(AzureRecordedTestCase):
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
 
+        static_acr = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/acrmhetest2"
+        static_appinsights = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/aimhetest2"
+        param_image_build_compute = "compute"
+        param_display_name = "Test display name"
+        param_description = "Test description"
+        param_tags = {"k1": "v1", "k2": "v2"}
         workspace_poller = client.workspaces.begin_update(
             workspace,
-            image_build_compute="compute",
+            display_name=param_display_name,
+            description=param_description,
+            image_build_compute=param_image_build_compute,
             public_network_access=PublicNetworkAccess.DISABLED,
-            container_regristry=workspace.container_registry,
-            application_insights=workspace.application_insights,
+            container_registry=static_acr,
+            application_insights=static_appinsights,
             update_dependent_resources=True,
+            tags=param_tags,
         )
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
-        assert workspace.image_build_compute == "compute"
+        assert workspace.display_name == param_display_name
+        assert workspace.description == param_description
+        assert workspace.image_build_compute == param_image_build_compute
         assert workspace.public_network_access == PublicNetworkAccess.DISABLED
-        # verify updating acr
-        # TODO (1412559): Disabling this logic as it is deleting the main test workspace container registry
-        # static_acr: str = client.workspaces.get(client._operation_scope.workspace_name).container_registry
-        # workspace = client.workspaces.begin_update_dependencies(
-        #     workspace_name=workspace.name, container_registry=static_acr, force=True
-        # )
-        # assert workspace.container_registry.lower() == static_acr.lower()
+        assert workspace.container_registry.lower() == static_acr.lower()
+        assert workspace.application_insights.lower() == static_appinsights.lower()
+        assert workspace.tags == param_tags
 
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned

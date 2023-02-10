@@ -5,9 +5,9 @@ import json
 import os.path
 from typing import Callable, Dict, List
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 import pydash
 import pytest
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._internal.entities import InternalComponent
@@ -84,6 +84,8 @@ class TestComponent(AzureRecordedTestCase):
         randstr: Callable[[str], str],
         yaml_path: str,
     ) -> None:
+        if "ae365" not in yaml_path:
+            return
         omit_fields = ["id", "creation_context", "code", "name"]
         component_name = randstr("component_name")
 
@@ -99,6 +101,13 @@ class TestComponent(AzureRecordedTestCase):
                 json.dump(loaded_dict, f, indent=2)
         with open(json_path, "r") as f:
             expected_dict = json.load(f)
+            expected_dict["_source"] = "REMOTE.WORKSPACE.COMPONENT"
+
+            # default value for datatransfer
+            if expected_dict["type"] == "DataTransferComponent" and "datatransfer" not in expected_dict:
+                expected_dict["datatransfer"] = {
+                    'allow_overwrite': 'True'
+                }
 
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)

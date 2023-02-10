@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import os
 from typing import Dict, Optional, Any, List, Mapping, Union, TYPE_CHECKING
 from uuid import uuid4
 try:
@@ -36,7 +36,8 @@ from ._common_conversion import _is_cosmos_endpoint
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     STORAGE_OAUTH_SCOPE,
-    SERVICE_HOST_BASE,
+    DEFAULT_COSMOS_ENDPOINT_SUFFIX,
+    DEFAULT_STORAGE_ENDPOINT_SUFFIX,
 )
 from ._error import (
     RequestTooLargeError,
@@ -56,13 +57,15 @@ from ._sdk_moniker import SDK_MONIKER
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
+    from typing import Literal
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
+# cspell:disable-next-line
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1" # pylint: disable=line-too-long
 
 
 def get_api_version(kwargs, default):
-    # type: (Dict[str, Any], str) -> str
+    # type: (Dict[str, Any], Literal["2019-02-02"]) -> Literal["2019-02-02"]
     api_version = kwargs.pop("api_version", None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = "\n".join(_SUPPORTED_API_VERSIONS)
@@ -121,9 +124,10 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "named_key"):
-            self.account_name = self.credential.named_key.name  # type: ignore
+            self.account_name = self.credential.named_key.name # type: ignore
             secondary_hostname = "{}-secondary.table.{}".format(
-                self.credential.named_key.name, SERVICE_HOST_BASE  # type: ignore
+                self.credential.named_key.name, # type: ignore
+                os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             )
 
         if not self._hosts:
@@ -205,7 +209,22 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         return self._client._config.version  # pylint: disable=protected-access
 
 
-class TablesBaseClient(AccountHostsMixin): # pylint: disable=client-accepts-api-version-keyword
+class TablesBaseClient(AccountHostsMixin):
+    """Base class for TableClient
+
+    :param str endpoint: A URL to an Azure Tables account.
+    :keyword credential:
+        The credentials with which to authenticate. This is optional if the
+        account URL already has a SAS token. The value can be one of AzureNamedKeyCredential (azure-core),
+        AzureSasCredential (azure-core), or TokenCredentials from azure-identity.
+    :paramtype credential:
+        :class:`~azure.core.credentials.AzureNamedKeyCredential` or
+        :class:`~azure.core.credentials.AzureSasCredential` or
+        :class:`~azure.core.credentials.TokenCredential`
+    :keyword api_version: Specifies the version of the operation to use for this request. Default value
+        is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
+    """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
         self,
@@ -353,6 +372,7 @@ def parse_connection_str(conn_str, credential, keyword_args):
     conn_settings = parse_connection_string(conn_str)
     primary = None
     secondary = None
+    endpoint_type = keyword_args.pop("endpoint_type", None)
     if not credential:
         try:
             credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
@@ -379,10 +399,14 @@ def parse_connection_str(conn_str, credential, keyword_args):
             pass
 
     if not primary:
+        if endpoint_type and endpoint_type == "cosmos":
+            endpoint_suffix = os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
+        else:
+            endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         try:
             primary = "https://{}.table.{}".format(
                 conn_settings["accountname"],
-                conn_settings.get("endpointsuffix", SERVICE_HOST_BASE),
+                conn_settings.get("endpointsuffix", endpoint_suffix),
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")

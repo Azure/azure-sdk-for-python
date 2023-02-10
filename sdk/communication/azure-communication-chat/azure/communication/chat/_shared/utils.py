@@ -13,7 +13,7 @@ from typing import (cast,
                     )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
-from azure.core.credentials import AccessToken
+from azure.core.credentials import AccessToken, AzureKeyCredential
 
 
 def _convert_datetime_to_utc_int(input_datetime):
@@ -99,7 +99,7 @@ def create_access_token(token):
 
 def get_authentication_policy(
         endpoint,  # type: str
-        credential,  # type: Union[TokenCredential, str]
+        credential,  # type: Union[TokenCredential, AzureKeyCredential, str]
         decode_url=False,  # type: bool
         is_async=False,  # type: bool
 ):
@@ -109,7 +109,7 @@ def get_authentication_policy(
     :param endpoint: The endpoint to which we are authenticating to.
     :type endpoint: str
     :param credential: The credential we use to authenticate to the service
-    :type credential: Union[TokenCredential, str]
+    :type credential: Union[TokenCredential, AzureKeyCredential, str]
     :param isAsync: For async clients there is a need to decode the url
     :type bool: isAsync or str
     :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
@@ -126,7 +126,7 @@ def get_authentication_policy(
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default")
-    if isinstance(credential, str):
+    if isinstance(credential, (AzureKeyCredential, str)):
         from .._shared.policy import HMACCredentialsPolicy
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 

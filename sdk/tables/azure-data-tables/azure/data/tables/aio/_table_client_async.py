@@ -20,7 +20,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._base_client import parse_connection_str
 from .._entity import TableEntity
-from .._generated.models import SignedIdentifier, TableProperties, QueryOptions
+from .._generated.models import SignedIdentifier, TableProperties
 from .._models import TableAccessPolicy, TableItem
 from .._serialize import serialize_iso, _parameter_filter_substitution, _prepare_key
 from .._deserialize import deserialize_iso, _return_headers_and_deserialized
@@ -43,7 +43,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-version-keyword
+class TableClient(AsyncTablesBaseClient):
     """A client to interact with a specific Table in an Azure Tables account.
 
     :ivar str account_name: The name of the Tables account.
@@ -71,6 +71,9 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
             :class:`~azure.core.credentials.AzureNamedKeyCredential` or
             :class:`~azure.core.credentials.AzureSasCredential` or
             :class:`~azure.core.credentials.TokenCredential`
+        :keyword api_version: Specifies the version of the operation to use for this request. Default value
+            is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+        :paramtype api_version: str
 
         :returns: None
         """
@@ -328,10 +331,10 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
             row_key = entity['RowKey']
         except (TypeError, IndexError):
             partition_key = kwargs.pop('partition_key', None)
-            if not partition_key:
+            if partition_key is None:
                 partition_key = args[0]
             row_key = kwargs.pop("row_key", None)
-            if not row_key:
+            if row_key is None:
                 row_key = args[1]
 
         match_condition = kwargs.pop("match_condition", None)
@@ -595,7 +598,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                query_options=QueryOptions(select=user_select),
+                select=user_select,
                 **kwargs
             )
             properties = _convert_to_entity(entity)

@@ -1,12 +1,17 @@
 import pytest
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AcrDetails, RegistryProperties, StorageAccountDetails, UserCreatedAcrAccount, UserCreatedStorageAccount
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AcrDetails
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ArmResourceId as RestArmResourceId
 from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
+from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
+from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountDetails
 from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountType as RestStorageAccountType
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedAcrAccount as RestSystemCreatedAcrAccount
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedStorageAccount as RestSystemCreatedStorageAccount
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ArmResourceId as RestArmResourceId
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount, UserCreatedStorageAccount
 from azure.ai.ml.constants._registry import StorageAccountType
 
 # from azure.ai.ml.entities._util import load_from_dict
@@ -95,9 +100,6 @@ class TestRegistryEntity:
         assert registry_entity
         assert registry_entity.location == loc_1
         assert registry_entity.tags == exterior_tags
-        # TODO https://dev.azure.com/msdata/Vienna/_workitems/edit/1971490/
-        # assert registry_entity.name == name #  TODO Local workspace obj doesn't record name besides pushing up to super class. Should we?
-        # assert registry_entity.id == id # TODO Local workspace obj doesn't record id. Should we?
         assert registry_entity.public_network_access == pna
         assert registry_entity.discovery_url == discovery_url
         assert registry_entity.intellectual_property_publisher == ipp

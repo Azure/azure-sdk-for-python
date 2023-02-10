@@ -18,16 +18,22 @@ from ._monitors_operations import MonitorsOperations
 from ._provider_instances_operations import ProviderInstancesOperations
 from ._skus_operations import SkusOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'PhpWorkloadsOperations',
-    'WordpressInstancesOperations',
-    'WorkloadsClientOperationsMixin',
-    'SAPVirtualInstancesOperations',
-    'SAPCentralInstancesOperations',
-    'SAPDatabaseInstancesOperations',
-    'SAPApplicationServerInstancesOperations',
-    'Operations',
-    'MonitorsOperations',
-    'ProviderInstancesOperations',
-    'SkusOperations',
+    "PhpWorkloadsOperations",
+    "WordpressInstancesOperations",
+    "WorkloadsClientOperationsMixin",
+    "SAPVirtualInstancesOperations",
+    "SAPCentralInstancesOperations",
+    "SAPDatabaseInstancesOperations",
+    "SAPApplicationServerInstancesOperations",
+    "Operations",
+    "MonitorsOperations",
+    "ProviderInstancesOperations",
+    "SkusOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

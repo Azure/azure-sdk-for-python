@@ -92,7 +92,7 @@ class SchedulesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.ScheduleListResult]
 
         error_map = {
@@ -205,7 +205,7 @@ class SchedulesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.Schedule]
 
         request = build_get_request(
@@ -265,7 +265,7 @@ class SchedulesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.Schedule]
 
@@ -458,7 +458,7 @@ class SchedulesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.Schedule]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
@@ -530,7 +530,7 @@ class SchedulesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.Schedule]]
 
@@ -721,7 +721,7 @@ class SchedulesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.Schedule]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
@@ -792,7 +792,7 @@ class SchedulesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_request(
@@ -866,7 +866,7 @@ class SchedulesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

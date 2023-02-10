@@ -77,8 +77,8 @@ class RestSparkConfKey:
 class JobServiceTypeNames:
     class EntityNames:
         CUSTOM = "custom"
-        TRACKING = "tracking"
-        STUDIO = "studio"
+        TRACKING = "Tracking"
+        STUDIO = "Studio"
         JUPYTER_LAB = "jupyter_lab"
         SSH = "ssh"
         TENSOR_BOARD = "tensor_board"

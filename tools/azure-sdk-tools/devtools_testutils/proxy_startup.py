@@ -6,7 +6,6 @@
 
 import os
 import logging
-import requests
 import shlex
 import sys
 import time
@@ -14,6 +13,8 @@ import signal
 
 import pytest
 import subprocess
+
+import urllib3
 
 from .config import PROXY_URL
 from .helpers import is_live_and_not_recording
@@ -32,6 +33,19 @@ PROXY_CHECK_URL = PROXY_URL + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
 discovered_roots = []
+
+from urllib3 import PoolManager, Retry
+from urllib3.exceptions import HTTPError
+
+if os.getenv("REQUESTS_CA_BUNDLE"):
+    http_client = PoolManager(
+        retries=Retry(total=3, raise_on_status=False),
+        cert_reqs="CERT_REQUIRED",
+        ca_certs=os.getenv("REQUESTS_CA_BUNDLE"),
+    )
+else:
+    http_client = PoolManager(retries=Retry(total=1, raise_on_status=False))
+
 
 def get_image_tag(repo_root: str) -> str:
     """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
@@ -84,15 +98,26 @@ def delete_container() -> None:
 def check_availability() -> None:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
-        response = requests.get(PROXY_CHECK_URL, timeout=10)
-        return response.status_code
+        response = http_client.request(method="GET", url=PROXY_CHECK_URL, timeout=10)
+        return response.status
     # We get an SSLError if the container is started but the endpoint isn't available yet
-    except requests.exceptions.SSLError as sslError:
+    except urllib3.exceptions.SSLError as sslError:
         _LOGGER.debug(sslError)
         return 404
     except Exception as e:
         _LOGGER.debug(e)
         return 404
+
+
+def check_system_proxy_availability() -> None:
+    """Checks for SSL_CERT_DIR and REQUESTS_CA_BUNDLE environment variables."""
+    ssl_cert = "SSL_CERT_DIR"
+    ca_bundle = "REQUESTS_CA_BUNDLE"
+
+    if PROXY_URL.startswith("https") and not os.environ.get(ssl_cert):
+        _LOGGER.error(f"Please ensure the '{ssl_cert}' environment variable is correctly set in your test environment")
+    if PROXY_URL.startswith("https") and not os.environ.get(ca_bundle):
+        _LOGGER.error(f"Please ensure the '{ca_bundle}' environment variable is correctly set in your test environment")
 
 
 def check_proxy_availability() -> None:
@@ -139,6 +164,7 @@ def start_test_proxy(request) -> None:
     function will start the test-proxy .NET tool."""
 
     repo_root = ascend_to_root(request.node.items[0].module.__file__)
+    check_system_proxy_availability()
 
     if not PROXY_MANUALLY_STARTED:
         if os.getenv("TF_BUILD"):
@@ -159,7 +185,7 @@ def start_test_proxy(request) -> None:
                 proc = subprocess.Popen(
                     shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
                     stdout=log,
-                    stderr=log
+                    stderr=log,
                 )
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:

@@ -50,8 +50,8 @@ def build_list_by_subscription_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,8 +80,8 @@ def build_list_by_resource_group_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -116,8 +116,8 @@ def build_get_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -151,8 +151,8 @@ def build_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -189,8 +189,8 @@ def build_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -227,8 +227,8 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -291,7 +291,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.DevCenterListResult]
 
         error_map = {
@@ -381,7 +381,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.DevCenterListResult]
 
         error_map = {
@@ -477,7 +477,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.DevCenter]
 
         request = build_get_request(
@@ -527,7 +527,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.DevCenter]
 
@@ -680,7 +680,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.DevCenter]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
@@ -741,7 +741,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.DevCenter]]
 
@@ -892,7 +892,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.DevCenter]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
@@ -953,7 +953,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_request(
@@ -1009,7 +1009,7 @@ class DevCentersOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)

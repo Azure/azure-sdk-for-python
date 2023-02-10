@@ -36,4 +36,4 @@ TEST_RUN_ID = "my-new-load-test-run"
 # Build a client through AAD and resource endpoint
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-client.load_test_runs.delete_test_run(TEST_RUN_ID)
+client.test_run.delete_test_run(TEST_RUN_ID)

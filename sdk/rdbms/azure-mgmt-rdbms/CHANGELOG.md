@@ -1,5 +1,23 @@
 # Release History
 
+## 10.2.0b6 (2023-01-04)
+
+### Features Added
+
+  - Model AuthConfig has a new parameter active_directory_auth
+  - Model AuthConfig has a new parameter password_auth
+
+### Breaking Changes
+
+  - Model AuthConfig no longer has parameter active_directory_auth_enabled
+  - Model AuthConfig no longer has parameter password_auth_enabled
+
+## 10.2.0b5 (2022-11-14)
+
+### Features Added
+
+  - Model ServerForUpdate has a new parameter replication_role
+
 ## 10.2.0b4 (2022-11-02)
 
 ### Features Added

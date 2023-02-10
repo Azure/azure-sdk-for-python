@@ -99,16 +99,18 @@ function ProcessPackage($PackageName)
                 return 1
             }
 
+            $revisionLabel = "$($pkgInfo.Version) - Source Branch:${SourceBranch}"
             Write-Host "Version: $($version)"
             Write-Host "SDK Type: $($pkgInfo.SdkType)"
             Write-Host "Release Status: $($pkgInfo.ReleaseStatus)"
+            Write-Host "Label: $($revisionLabel)"
 
             # Run create review step only if build is triggered from main branch or if version is GA.
             # This is to avoid invalidating review status by a build triggered from feature branch
             if ( ($SourceBranch -eq $DefaultBranch) -or (-not $version.IsPrerelease))
             {
                 Write-Host "Submitting API Review for package $($pkg)"
-                $respCode = Submit-APIReview -reviewFileName $reviewFileName -packageArtifactname $pkg -apiLabel $($pkgInfo.Version) -releaseStatus $pkgInfo.ReleaseStatus 
+                $respCode = Submit-APIReview -reviewFileName $reviewFileName -packageArtifactname $pkg -apiLabel $revisionLabel -releaseStatus $pkgInfo.ReleaseStatus
                 Write-Host "HTTP Response code: $($respCode)"
                 # HTTP status 200 means API is in approved status
                 if ($respCode -eq '200')
@@ -117,6 +119,13 @@ function ProcessPackage($PackageName)
                 }
                 elseif ($version.IsPrerelease)
                 {
+                    # Check if package name is approved. Preview version cannot be released without package name approval
+                    if ($respCode -eq '202' -and $pkgInfo.ReleaseStatus -and $pkgInfo.ReleaseStatus -ne "Unreleased")
+                    {
+                        Write-Error "Package '$PackageName' is not yet approved on APIView for preview release. Package approval for beta relase must be completed by an API approver if it was never released as a stable version."
+                        Write-Error "You can check http://aka.ms/azsdk/engsys/apireview/faq for more details on package name approval."
+                        exit 1
+                    }
                     # Ignore API review status for prerelease version
                     Write-Host "Package version is not GA. Ignoring API view approval status"
                 }

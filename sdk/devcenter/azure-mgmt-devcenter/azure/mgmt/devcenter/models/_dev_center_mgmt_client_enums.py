@@ -25,6 +25,13 @@ class CatalogSyncState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELED = "Canceled"
 
 
+class CheckNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason why the given name is not available."""
+
+    INVALID = "Invalid"
+    ALREADY_EXISTS = "AlreadyExists"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 
@@ -59,6 +66,13 @@ class HealthCheckStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
     WARNING = "Warning"
     UNKNOWN = "Unknown"
+
+
+class HibernateSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether hibernate is enabled/disabled."""
+
+    DISABLED = "Disabled"
+    ENABLED = "Enabled"
 
 
 class ImageValidationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -103,6 +117,27 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
+
+    NOT_SPECIFIED = "NotSpecified"
+    ACCEPTED = "Accepted"
+    RUNNING = "Running"
+    CREATING = "Creating"
+    CREATED = "Created"
+    UPDATING = "Updating"
+    UPDATED = "Updated"
+    DELETING = "Deleting"
+    DELETED = "Deleted"
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    MOVING_RESOURCES = "MovingResources"
+    TRANSIENT_FAILURE = "TransientFailure"
+    ROLLOUT_IN_PROGRESS = "RolloutInProgress"
+    STORAGE_PROVISIONING_FAILED = "StorageProvisioningFailed"
 
 
 class ScheduledFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):

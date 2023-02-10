@@ -1,5 +1,22 @@
 # Release History
 
+## 1.0.0b4 (2022-11-24)
+
+### Features Added
+
+  - Added operation group CheckNameAvailabilityOperations
+  - Model DevBoxDefinition has a new parameter hibernate_support
+  - Model DevBoxDefinitionProperties has a new parameter hibernate_support
+  - Model DevBoxDefinitionUpdate has a new parameter hibernate_support
+  - Model DevBoxDefinitionUpdateProperties has a new parameter hibernate_support
+  - Model DevCenter has a new parameter dev_center_uri
+  - Model Project has a new parameter dev_center_uri
+  - Model ProjectProperties has a new parameter dev_center_uri
+
+### Breaking Changes
+
+  - Renamed operation NetworkConnectionsOperations.run_health_checks to NetworkConnectionsOperations.begin_run_health_checks
+
 ## 1.0.0b3 (2022-11-08)
 
 ### Features Added

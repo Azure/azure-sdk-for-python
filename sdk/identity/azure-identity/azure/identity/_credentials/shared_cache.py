@@ -3,20 +3,19 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING, Any, Optional
+from azure.core.credentials import AccessToken
 
 from .silent import SilentAuthenticationCredential
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AadClient
+from .._internal import AadClient, AadClientBase
 from .._internal.decorators import log_get_token
 from .._internal.shared_token_cache import NO_TOKEN, SharedTokenCacheBase
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-    from .._internal import AadClientBase
 
-
-class SharedTokenCacheCredential(object):
+class SharedTokenCacheCredential:
     """Authenticates using tokens in the local cache shared between Microsoft applications.
 
     :param str username: Username (typically an email address) of the user to authenticate as. This is used when the
@@ -34,7 +33,7 @@ class SharedTokenCacheCredential(object):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     """
 
-    def __init__(self, username: str = None, **kwargs) -> None:
+    def __init__(self, username: Optional[str] = None, **kwargs: Any) -> None:
         if "authentication_record" in kwargs:
             self._credential = SilentAuthenticationCredential(**kwargs)  # type: TokenCredential
         else:
@@ -52,8 +51,7 @@ class SharedTokenCacheCredential(object):
         self.__exit__()
 
     @log_get_token("SharedTokenCacheCredential")
-    def get_token(self, *scopes, **kwargs):
-        # type (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Get an access token for `scopes` from the shared cache.
 
         If no access token is cached, attempt to acquire one using a cached refresh token.
@@ -61,12 +59,11 @@ class SharedTokenCacheCredential(object):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
-
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str claims: additional claims required in the token, such as those returned in a resource provider's
             claims challenge following an authorization failure
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -95,8 +92,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         if self._client:
             self._client.__exit__(*args)
 
-    def get_token(self, *scopes, **kwargs):
-        # type (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         if not scopes:
             raise ValueError("'get_token' requires at least one scope")
 
@@ -119,6 +115,5 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
-    def _get_auth_client(self, **kwargs):
-        # type: (**Any) -> AadClientBase
+    def _get_auth_client(self, **kwargs: Any) -> AadClientBase:
         return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)

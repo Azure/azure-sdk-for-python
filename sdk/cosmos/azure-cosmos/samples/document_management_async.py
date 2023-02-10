@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.partition_key import PartitionKey
 import datetime
@@ -180,7 +180,7 @@ def get_sales_order_v2(item_id):
     return order2
 
 async def run_sample():
-    async with cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
+    async with CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
         try:
             # setup database for this sample
             db = await client.create_database_if_not_exists(id=DATABASE_ID)

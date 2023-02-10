@@ -26,16 +26,16 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
 def main():
     client = DevCenterMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="{subscriptionId}",
+        subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
     response = client.network_connections.begin_delete(
         resource_group_name="rg1",
-        network_connection_name="{networkConnectionName}",
+        network_connection_name="eastusnetwork",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-10-12-preview/examples/NetworkConnections_Delete.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/NetworkConnections_Delete.json
 if __name__ == "__main__":
     main()

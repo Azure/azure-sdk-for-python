@@ -7,28 +7,29 @@ from pathlib import Path
 import pydash
 import pytest
 import yaml
+from test_utilities.utils import parse_local_path
 
 from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
+    Ae365exepool,
     AISuperComputerConfiguration,
     AISuperComputerScalePolicy,
     AISuperComputerStorageReferenceConfiguration,
+    Command,
+    DataTransfer,
+    Distributed,
+    HDInsight,
+    Hemera,
     ITPConfiguration,
     ITPInteractiveConfiguration,
     ITPPriorityConfiguration,
     ITPResourceConfiguration,
     ITPRetrySettings,
-    TargetSelector,
-    Command,
-    Scope,
-    HDInsight,
     Parallel,
-    Distributed,
-    DataTransfer,
-    Starlite,
     Pipeline,
-    Hemera,
-    Ae365exepool,
+    Scope,
+    Starlite,
+    TargetSelector,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
 from azure.ai.ml.constants._common import AssetTypes
@@ -41,6 +42,7 @@ from .._utils import (
     PARAMETERS_TO_TEST,
     assert_strong_type_intellisense_enabled,
     extract_non_primitive,
+    get_expected_runsettings_items,
     set_run_settings,
 )
 
@@ -96,14 +98,7 @@ class TestPipelineJob:
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
-        dot_key_map = {"compute": "computeId"}
-        for dot_key, expected_value in runsettings_dict.items():
-            if dot_key in dot_key_map:
-                dot_key = dot_key_map[dot_key]
-
-            # hack: timeout will be transformed into str
-            if dot_key == "limits.timeout":
-                expected_value = "PT5M"
+        for dot_key, expected_value in get_expected_runsettings_items(runsettings_dict):
             value = pydash.get(node_rest_dict, dot_key)
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)
@@ -199,6 +194,11 @@ class TestPipelineJob:
 
     @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
     def test_internal_component_output_as_pipeline_component_output(self):
+        from azure.ai.ml._utils.utils import try_enable_internal_components
+
+        # force register internal components after partially reload schema files
+        try_enable_internal_components(force=True)
+
         yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component_func = load_component(yaml_path, params_override=[{"inputs": {}}])
 
@@ -405,9 +405,8 @@ class TestPipelineJob:
         scope_internal_func = load_component(source=yaml_path)
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
-        for _input in yaml_dict["inputs"].values():
-            if "optional" in _input and _input["optional"] is False:
-                del _input["optional"]
+
+        yaml_dict["code"] = parse_local_path(yaml_dict["code"], scope_internal_func.base_path)
 
         command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
 
@@ -446,7 +445,6 @@ class TestPipelineJob:
                 "ExtractionClause": "column1:string, column2:int",
                 "TextData": {"path": "azureml:scope_tsv:1", "type": "mltable"},
             },
-            "outputs": {},
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         assert pydash.omit(scope_node._to_rest_object(), "componentId") == {
@@ -459,7 +457,6 @@ class TestPipelineJob:
                 "ExtractionClause": {"job_input_type": "literal", "value": "column1:string, column2:int"},
                 "TextData": {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"},
             },
-            "outputs": {},
             "type": "ScopeComponent",
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
@@ -469,12 +466,7 @@ class TestPipelineJob:
         assert pydash.omit(dsl_pipeline._to_dict(), *omit_fields) == pydash.omit(
             {
                 "display_name": "pipeline_func",
-                "inputs": {},
                 "jobs": {"node": dsl_pipeline.jobs["node"]._to_dict(), "node_internal": scope_node._to_dict()},
-                "outputs": {},
-                "properties": {},
-                "settings": {},
-                "tags": {},
                 "type": "pipeline",
             },
             *omit_fields,
@@ -607,4 +599,3 @@ class TestPipelineJob:
             assert len(node_dict["properties"]) == 1
             assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
             assert node_dict["properties"] == rest_node_dict["properties"]
-

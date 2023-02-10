@@ -8,9 +8,20 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import (
+    ArmVersionedStr,
+    StringTransformedEnum,
+    UnionField,
+    LocalPathField,
+    VersionField,
+)
+
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
-from azure.ai.ml.constants._common import LOCAL_PATH, AssetTypes, AzureMLResourceType, InputOutputModes
+from azure.ai.ml.constants._common import (
+    AssetTypes,
+    AzureMLResourceType,
+    InputOutputModes,
+)
 
 module_logger = logging.getLogger(__name__)
 
@@ -35,13 +46,21 @@ def generate_path_property(azureml_type):
     return UnionField(
         [
             ArmVersionedStr(azureml_type=azureml_type),
-            ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
-            fields.Str(metadata={"pattern": "^(http(s)?):.*"}),
-            fields.Str(metadata={"pattern": "^(wasb(s)?):.*"}),
-            ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
+            fields.Str(metadata={"pattern": r"^(http(s)?):.*"}),
+            fields.Str(metadata={"pattern": r"^(wasb(s)?):.*"}),
+            LocalPathField(pattern=r"^file:.*"),
+            LocalPathField(pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*",),
         ],
         is_strict=True,
     )
+
+
+def generate_datastore_property():
+    metadata = {
+        "description": "Name of the datastore to upload local paths to.",
+        "arm_type": AzureMLResourceType.DATASTORE,
+    }
+    return fields.Str(metadata=metadata, required=False)
 
 
 class ModelInputSchema(InputSchema):
@@ -61,7 +80,7 @@ class ModelInputSchema(InputSchema):
         ]
     )
     path = generate_path_property(azureml_type=AzureMLResourceType.MODEL)
-    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
+    datastore = generate_datastore_property()
 
 
 class DataInputSchema(InputSchema):
@@ -80,7 +99,8 @@ class DataInputSchema(InputSchema):
         ]
     )
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
-    datastore = fields.Str(metadata={"description": "Name of the datastore to upload local paths to."}, required=False)
+    datastore = generate_datastore_property()
+
 
 
 class MLTableInputSchema(InputSchema):
@@ -96,7 +116,8 @@ class MLTableInputSchema(InputSchema):
     )
     type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
-    datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
+    datastore = generate_datastore_property()
+
 
 
 class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
@@ -114,6 +135,8 @@ class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
 
 
 class OutputSchema(PathAwareSchema):
+    name = fields.Str()
+    version = VersionField()
     mode = StringTransformedEnum(
         allowed_values=[
             InputOutputModes.MOUNT,

@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
@@ -30,17 +30,20 @@ class ExchangeClientAuthenticationPolicy(SansIOHTTPPolicy):
         pass
 
 
-class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-keyword
+class ACRExchangeClient(object):
     """Class for handling oauth authentication requests
 
     :param endpoint: Azure Container Registry endpoint
     :type endpoint: str
     :param credential: Credential which provides tokens to authenticate requests
     :type credential: ~azure.core.credentials.TokenCredential
+    :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
+     may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(self, endpoint, credential, **kwargs):
-        # type: (str, TokenCredential, Dict[str, Any]) -> None
+        # type: (str, TokenCredential, Any) -> None
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -53,11 +56,11 @@ class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-ke
             **kwargs
         )
         self._credential = credential
-        self._refresh_token = None
-        self._expiration_time = 0
+        self._refresh_token = None # type: Optional[str]
+        self._expiration_time = 0 # type: float
 
     def get_acr_access_token(self, challenge, **kwargs):
-        # type: (str, Dict[str, Any]) -> str
+        # type: (str, Any) -> Optional[str]
         parsed_challenge = _parse_challenge(challenge)
         refresh_token = self.get_refresh_token(parsed_challenge["service"], **kwargs)
         return self.exchange_refresh_token_for_access_token(
@@ -65,24 +68,24 @@ class ACRExchangeClient(object): # pylint: disable=client-accepts-api-version-ke
         )
 
     def get_refresh_token(self, service, **kwargs):
-        # type: (str, Dict[str, Any]) -> str
+        # type: (str, Any) -> str
         if not self._refresh_token or self._expiration_time - time.time() > 300:
             self._refresh_token = self.exchange_aad_token_for_refresh_token(service, **kwargs)
             self._expiration_time = _parse_exp_time(self._refresh_token)
         return self._refresh_token
 
-    def exchange_aad_token_for_refresh_token(self, service=None, **kwargs):
-        # type: (str, Dict[str, Any]) -> str
+    def exchange_aad_token_for_refresh_token(self, service, **kwargs):
+        # type: (str, Any) -> str
         refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN,
             service=service,
             access_token=self._credential.get_token(*self.credential_scopes).token,
             **kwargs
         )
-        return refresh_token.refresh_token
+        return refresh_token.refresh_token if refresh_token.refresh_token is not None else ""
 
-    def exchange_refresh_token_for_access_token(self, refresh_token, service=None, scope=None, **kwargs):
-        # type: (str, str, str, Dict[str, Any]) -> str
+    def exchange_refresh_token_for_access_token(self, refresh_token, service, scope, **kwargs):
+        # type: (str, str, str, Any) -> Optional[str]
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, **kwargs
         )

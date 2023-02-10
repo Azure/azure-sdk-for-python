@@ -83,8 +83,8 @@ class TestComponentOperation:
         )
         assert component._auto_increment_version
         with patch.object(ComponentOperations, "_resolve_arm_id_or_upload_dependencies") as mock_thing, patch(
-            "azure.ai.ml.operations._component_operations.Component._from_rest_object",
-            return_value=component,
+                "azure.ai.ml.operations._component_operations.Component._from_rest_object",
+                return_value=component,
         ):
             mock_component_operation.create_or_update(component)
             mock_thing.assert_called_once()

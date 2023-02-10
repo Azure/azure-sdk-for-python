@@ -6,6 +6,7 @@
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Dict, List
 
+from azure.core import CaseInsensitiveEnumMeta
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import PageIterator
 # from azure.core import CaseInsensitiveEnumMeta
@@ -17,7 +18,6 @@ from ._generated.models import Logging as GeneratedLogging
 from ._generated.models import Metrics as GeneratedMetrics
 from ._generated.models import RetentionPolicy as GeneratedRetentionPolicy
 from ._generated.models import CorsRule as GeneratedCorsRule
-from ._generated.models import QueryOptions
 from ._deserialize import (
     _convert_to_entity,
     _return_context_and_deserialized,
@@ -307,10 +307,10 @@ class TablePropertiesPaged(PageIterator):
         self._location_mode = None
 
     def _get_next_cb(self, continuation_token, **kwargs):
-        query_options = QueryOptions(top=self.results_per_page, filter=self.filter)
         try:
             return self._command(
-                query_options=query_options,
+                top=self.results_per_page,
+                filter=self.filter,
                 next_table_name=continuation_token or None,
                 cls=kwargs.pop("cls", None) or _return_context_and_deserialized,
                 use_location=self._location_mode,
@@ -356,12 +356,11 @@ class TableEntityPropertiesPaged(PageIterator):
         next_partition_key, next_row_key = _extract_continuation_token(
             continuation_token
         )
-        query_options = QueryOptions(
-            top=self.results_per_page, select=self.select, filter=self.filter
-        )
         try:
             return self._command(
-                query_options=query_options,
+                top=self.results_per_page,
+                select=self.select,
+                filter=self.filter,
                 next_row_key=next_row_key,
                 next_partition_key=next_partition_key,
                 table=self.table,
@@ -535,24 +534,24 @@ class TablePayloadFormat(object):
     """Returns minimal type information for the entity properties plus some extra odata properties."""
 
 
-class UpdateMode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class UpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REPLACE = "replace"
     MERGE = "merge"
 
 
-class TransactionOperation(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class TransactionOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CREATE = "create"
     UPSERT = "upsert"
     UPDATE = "update"
     DELETE = "delete"
 
 
-class SASProtocol(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class SASProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HTTPS = "https"
     HTTP = "http"
 
 
-class LocationMode(str, Enum): # pylint: disable=enum-must-inherit-case-insensitive-enum-meta
+class LocationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
     Specifies the location the request should be sent to. This mode only applies
     for RA-GRS accounts which allow secondary read access. All other account types

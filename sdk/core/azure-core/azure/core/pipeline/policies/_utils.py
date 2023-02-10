@@ -32,10 +32,7 @@ from ...utils._utils import _FixedOffset, case_insensitive_dict
 def _parse_http_date(text):
     """Parse a HTTP date format into datetime."""
     parsed_date = email.utils.parsedate_tz(text)
-    return datetime.datetime(
-        *parsed_date[:6],
-        tzinfo=_FixedOffset(parsed_date[9] / 60)
-    )
+    return datetime.datetime(*parsed_date[:6], tzinfo=_FixedOffset(parsed_date[9] / 60))
 
 
 def parse_retry_after(retry_after):

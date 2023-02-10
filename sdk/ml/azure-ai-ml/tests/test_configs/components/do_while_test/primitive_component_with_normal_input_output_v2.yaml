@@ -1,0 +1,57 @@
+$schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
+name: primitive_component_with_normal_input_output_v2
+display_name: primitive_component_with_normal_input_output_v2
+type: command
+is_deterministic: true
+tags:
+  codegenBy: mldesigner
+inputs:
+  input_data:
+    type: uri_folder
+  parambool:
+    type: boolean
+  paramint:
+    type: integer
+  paramfloat:
+    type: number
+  paramstr:
+    type: string
+outputs:
+  output_data:
+    type: uri_folder
+  bool_param_output:
+    type: boolean
+    is_control: true
+  int_param_output:
+    type: integer
+    is_control: true
+  float_param_output:
+    type: number
+    is_control: true
+  str_param_output:
+    type: string
+    is_control: true
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+  conda_file:
+    channels:
+    - defaults
+    dependencies:
+    - python=3.8.12
+    - pip=21.2.2
+    - pip:
+      - --extra-index-url=https://azuremlsdktestpypi.azureedge.net/sdk-cli-v2
+      - mldesigner==0.1.0b6
+      - mlflow==1.29.0
+      - azureml-mlflow==1.45.0
+      - azure-ai-ml==1.0.0
+      - azure-core==1.26.0
+      - azure-common==1.1.28
+      - azureml-core==1.45.0.post2
+      - azure-ml-component==0.9.13.post1
+      - azure-identity==1.11.0
+command: mldesigner execute --source entry.py --name primitive_component_with_normal_input_output_v2
+  --inputs input_data="${{inputs.input_data}}" parambool="${{inputs.parambool}}" paramint="${{inputs.paramint}}"
+  paramfloat="${{inputs.paramfloat}}" paramstr="${{inputs.paramstr}}" --outputs output_data="${{outputs.output_data}}"
+  bool_param_output="${{outputs.bool_param_output}}" int_param_output="${{outputs.int_param_output}}"
+  float_param_output="${{outputs.float_param_output}}" str_param_output="${{outputs.str_param_output}}"

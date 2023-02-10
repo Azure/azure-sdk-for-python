@@ -74,8 +74,11 @@ class AllowedEnvironmentType(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -144,8 +147,11 @@ class AttachedNetworkConnection(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar network_connection_id: The resource ID of the NetworkConnection you want to attach.
     :vartype network_connection_id: str
     :ivar network_connection_location: The geo-location where the NetworkConnection resource
@@ -271,8 +277,11 @@ class Catalog(Resource):
     :vartype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
     :ivar ado_git: Properties for an Azure DevOps catalog type.
     :vartype ado_git: ~azure.mgmt.devcenter.models.GitCatalog
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar sync_state: The synchronization state of the catalog. Known values are: "Succeeded",
      "InProgress", "Failed", and "Canceled".
     :vartype sync_state: str or ~azure.mgmt.devcenter.models.CatalogSyncState
@@ -392,8 +401,11 @@ class CatalogProperties(CatalogUpdateProperties):
     :vartype git_hub: ~azure.mgmt.devcenter.models.GitCatalog
     :ivar ado_git: Properties for an Azure DevOps catalog type.
     :vartype ado_git: ~azure.mgmt.devcenter.models.GitCatalog
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar sync_state: The synchronization state of the catalog. Known values are: "Succeeded",
      "InProgress", "Failed", and "Canceled".
     :vartype sync_state: str or ~azure.mgmt.devcenter.models.CatalogSyncState
@@ -471,6 +483,73 @@ class CatalogUpdate(_serialization.Model):
         self.tags = tags
         self.git_hub = git_hub
         self.ado_git = ado_git
+
+
+class CheckNameAvailabilityRequest(_serialization.Model):
+    """The check availability request body.
+
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.type = type
+
+
+class CheckNameAvailabilityResponse(_serialization.Model):
+    """The check availability result.
+
+    :ivar name_available: Indicates if the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.devcenter.models.CheckNameAvailabilityReason
+    :ivar message: Detailed reason why the given name is available.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name_available: Optional[bool] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
+        message: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name_available: Indicates if the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
+         and "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.devcenter.models.CheckNameAvailabilityReason
+        :keyword message: Detailed reason why the given name is available.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.name_available = name_available
+        self.reason = reason
+        self.message = message
 
 
 class CloudErrorBody(_serialization.Model):
@@ -614,8 +693,15 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
     :ivar os_storage_type: The storage type used for the Operating System disk of Dev Boxes created
      using this definition.
     :vartype os_storage_type: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar hibernate_support: Indicates whether Dev Boxes created with this definition are capable
+     of hibernation. Not all images are capable of supporting hibernation. To find out more see
+     https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar image_validation_status: Validation status of the configured image. Known values are:
      "Unknown", "Pending", "Succeeded", "Failed", and "TimedOut".
     :vartype image_validation_status: str or ~azure.mgmt.devcenter.models.ImageValidationStatus
@@ -650,6 +736,7 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
         "image_reference": {"key": "properties.imageReference", "type": "ImageReference"},
         "sku": {"key": "properties.sku", "type": "Sku"},
         "os_storage_type": {"key": "properties.osStorageType", "type": "str"},
+        "hibernate_support": {"key": "properties.hibernateSupport", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "image_validation_status": {"key": "properties.imageValidationStatus", "type": "str"},
         "image_validation_error_details": {
@@ -667,6 +754,7 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
         image_reference: Optional["_models.ImageReference"] = None,
         sku: Optional["_models.Sku"] = None,
         os_storage_type: Optional[str] = None,
+        hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
         **kwargs
     ):
         """
@@ -681,11 +769,16 @@ class DevBoxDefinition(TrackedResource):  # pylint: disable=too-many-instance-at
         :keyword os_storage_type: The storage type used for the Operating System disk of Dev Boxes
          created using this definition.
         :paramtype os_storage_type: str
+        :keyword hibernate_support: Indicates whether Dev Boxes created with this definition are
+         capable of hibernation. Not all images are capable of supporting hibernation. To find out more
+         see https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+        :paramtype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
+        self.hibernate_support = hibernate_support
         self.provisioning_state = None
         self.image_validation_status = None
         self.image_validation_error_details = None
@@ -730,12 +823,17 @@ class DevBoxDefinitionUpdateProperties(_serialization.Model):
     :ivar os_storage_type: The storage type used for the Operating System disk of Dev Boxes created
      using this definition.
     :vartype os_storage_type: str
+    :ivar hibernate_support: Indicates whether Dev Boxes created with this definition are capable
+     of hibernation. Not all images are capable of supporting hibernation. To find out more see
+     https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
     """
 
     _attribute_map = {
         "image_reference": {"key": "imageReference", "type": "ImageReference"},
         "sku": {"key": "sku", "type": "Sku"},
         "os_storage_type": {"key": "osStorageType", "type": "str"},
+        "hibernate_support": {"key": "hibernateSupport", "type": "str"},
     }
 
     def __init__(
@@ -744,6 +842,7 @@ class DevBoxDefinitionUpdateProperties(_serialization.Model):
         image_reference: Optional["_models.ImageReference"] = None,
         sku: Optional["_models.Sku"] = None,
         os_storage_type: Optional[str] = None,
+        hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
         **kwargs
     ):
         """
@@ -754,11 +853,16 @@ class DevBoxDefinitionUpdateProperties(_serialization.Model):
         :keyword os_storage_type: The storage type used for the Operating System disk of Dev Boxes
          created using this definition.
         :paramtype os_storage_type: str
+        :keyword hibernate_support: Indicates whether Dev Boxes created with this definition are
+         capable of hibernation. Not all images are capable of supporting hibernation. To find out more
+         see https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+        :paramtype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
         """
         super().__init__(**kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
+        self.hibernate_support = hibernate_support
 
 
 class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
@@ -773,8 +877,15 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
     :ivar os_storage_type: The storage type used for the Operating System disk of Dev Boxes created
      using this definition.
     :vartype os_storage_type: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar hibernate_support: Indicates whether Dev Boxes created with this definition are capable
+     of hibernation. Not all images are capable of supporting hibernation. To find out more see
+     https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar image_validation_status: Validation status of the configured image. Known values are:
      "Unknown", "Pending", "Succeeded", "Failed", and "TimedOut".
     :vartype image_validation_status: str or ~azure.mgmt.devcenter.models.ImageValidationStatus
@@ -798,6 +909,7 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
         "image_reference": {"key": "imageReference", "type": "ImageReference"},
         "sku": {"key": "sku", "type": "Sku"},
         "os_storage_type": {"key": "osStorageType", "type": "str"},
+        "hibernate_support": {"key": "hibernateSupport", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
         "image_validation_status": {"key": "imageValidationStatus", "type": "str"},
         "image_validation_error_details": {"key": "imageValidationErrorDetails", "type": "ImageValidationErrorDetails"},
@@ -810,6 +922,7 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
         image_reference: Optional["_models.ImageReference"] = None,
         sku: Optional["_models.Sku"] = None,
         os_storage_type: Optional[str] = None,
+        hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
         **kwargs
     ):
         """
@@ -820,8 +933,18 @@ class DevBoxDefinitionProperties(DevBoxDefinitionUpdateProperties):
         :keyword os_storage_type: The storage type used for the Operating System disk of Dev Boxes
          created using this definition.
         :paramtype os_storage_type: str
+        :keyword hibernate_support: Indicates whether Dev Boxes created with this definition are
+         capable of hibernation. Not all images are capable of supporting hibernation. To find out more
+         see https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+        :paramtype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
         """
-        super().__init__(image_reference=image_reference, sku=sku, os_storage_type=os_storage_type, **kwargs)
+        super().__init__(
+            image_reference=image_reference,
+            sku=sku,
+            os_storage_type=os_storage_type,
+            hibernate_support=hibernate_support,
+            **kwargs
+        )
         self.provisioning_state = None
         self.image_validation_status = None
         self.image_validation_error_details = None
@@ -868,6 +991,10 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
     :ivar os_storage_type: The storage type used for the Operating System disk of Dev Boxes created
      using this definition.
     :vartype os_storage_type: str
+    :ivar hibernate_support: Indicates whether Dev Boxes created with this definition are capable
+     of hibernation. Not all images are capable of supporting hibernation. To find out more see
+     https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+    :vartype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
     """
 
     _attribute_map = {
@@ -876,6 +1003,7 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
         "image_reference": {"key": "properties.imageReference", "type": "ImageReference"},
         "sku": {"key": "properties.sku", "type": "Sku"},
         "os_storage_type": {"key": "properties.osStorageType", "type": "str"},
+        "hibernate_support": {"key": "properties.hibernateSupport", "type": "str"},
     }
 
     def __init__(
@@ -886,6 +1014,7 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
         image_reference: Optional["_models.ImageReference"] = None,
         sku: Optional["_models.Sku"] = None,
         os_storage_type: Optional[str] = None,
+        hibernate_support: Optional[Union[str, "_models.HibernateSupport"]] = None,
         **kwargs
     ):
         """
@@ -900,11 +1029,16 @@ class DevBoxDefinitionUpdate(TrackedResourceUpdate):
         :keyword os_storage_type: The storage type used for the Operating System disk of Dev Boxes
          created using this definition.
         :paramtype os_storage_type: str
+        :keyword hibernate_support: Indicates whether Dev Boxes created with this definition are
+         capable of hibernation. Not all images are capable of supporting hibernation. To find out more
+         see https://aka.ms/devbox/hibernate. Known values are: "Disabled" and "Enabled".
+        :paramtype hibernate_support: str or ~azure.mgmt.devcenter.models.HibernateSupport
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.image_reference = image_reference
         self.sku = sku
         self.os_storage_type = os_storage_type
+        self.hibernate_support = hibernate_support
 
 
 class DevCenter(TrackedResource):
@@ -931,8 +1065,13 @@ class DevCenter(TrackedResource):
     :vartype location: str
     :ivar identity: Managed identity properties.
     :vartype identity: ~azure.mgmt.devcenter.models.ManagedServiceIdentity
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
+    :ivar dev_center_uri: The URI of the resource.
+    :vartype dev_center_uri: str
     """
 
     _validation = {
@@ -942,6 +1081,7 @@ class DevCenter(TrackedResource):
         "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
+        "dev_center_uri": {"readonly": True},
     }
 
     _attribute_map = {
@@ -953,6 +1093,7 @@ class DevCenter(TrackedResource):
         "location": {"key": "location", "type": "str"},
         "identity": {"key": "identity", "type": "ManagedServiceIdentity"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "dev_center_uri": {"key": "properties.devCenterUri", "type": "str"},
     }
 
     def __init__(
@@ -974,6 +1115,7 @@ class DevCenter(TrackedResource):
         super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.provisioning_state = None
+        self.dev_center_uri = None
 
 
 class DevCenterListResult(_serialization.Model):
@@ -1238,8 +1380,11 @@ class EnvironmentType(Resource):
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -1388,6 +1533,26 @@ class ErrorDetail(_serialization.Model):
         self.additional_info = None
 
 
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.devcenter.models.ErrorDetail
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetail"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.devcenter.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
 class Gallery(Resource):
     """Represents a gallery.
 
@@ -1404,8 +1569,11 @@ class Gallery(Resource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.devcenter.models.SystemData
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar gallery_resource_id: The resource ID of the backing Azure Compute Gallery.
     :vartype gallery_resource_id: str
     """
@@ -1712,8 +1880,11 @@ class Image(ProxyResource):
      image.
     :vartype recommended_machine_configuration:
      ~azure.mgmt.devcenter.models.RecommendedMachineConfiguration
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -1894,8 +2065,11 @@ class ImageVersion(ProxyResource):
     :vartype exclude_from_latest: bool
     :ivar os_disk_image_size_in_gb: The size of the OS disk image, in GB.
     :vartype os_disk_image_size_in_gb: int
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -2085,8 +2259,11 @@ class NetworkConnection(TrackedResource):  # pylint: disable=too-many-instance-a
     :vartype domain_username: str
     :ivar domain_password: The password for the account used to join domain.
     :vartype domain_password: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar health_check_status: Overall health status of the network connection. Health checks are
      run on creation, update, and periodically to validate the network connection. Known values are:
      "Pending", "Running", "Passed", "Failed", "Warning", and "Unknown".
@@ -2347,8 +2524,11 @@ class NetworkProperties(NetworkConnectionUpdateProperties):
     :vartype domain_username: str
     :ivar domain_password: The password for the account used to join domain.
     :vartype domain_password: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     :ivar health_check_status: Overall health status of the network connection. Health checks are
      run on creation, update, and periodically to validate the network connection. Known values are:
      "Pending", "Running", "Passed", "Failed", "Warning", and "Unknown".
@@ -2751,8 +2931,11 @@ class Pool(TrackedResource):  # pylint: disable=too-many-instance-attributes
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
      local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -2906,8 +3089,11 @@ class PoolProperties(PoolUpdateProperties):
     :ivar local_administrator: Indicates whether owners of Dev Boxes in this pool are added as
      local administrators on the Dev Box. Known values are: "Disabled" and "Enabled".
     :vartype local_administrator: str or ~azure.mgmt.devcenter.models.LocalAdminStatus
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -3041,8 +3227,13 @@ class Project(TrackedResource):
     :vartype dev_center_id: str
     :ivar description: Description of the project.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
+    :ivar dev_center_uri: The URI of the resource.
+    :vartype dev_center_uri: str
     """
 
     _validation = {
@@ -3052,6 +3243,7 @@ class Project(TrackedResource):
         "system_data": {"readonly": True},
         "location": {"required": True},
         "provisioning_state": {"readonly": True},
+        "dev_center_uri": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3064,6 +3256,7 @@ class Project(TrackedResource):
         "dev_center_id": {"key": "properties.devCenterId", "type": "str"},
         "description": {"key": "properties.description", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "dev_center_uri": {"key": "properties.devCenterUri", "type": "str"},
     }
 
     def __init__(
@@ -3089,6 +3282,7 @@ class Project(TrackedResource):
         self.dev_center_id = dev_center_id
         self.description = description
         self.provisioning_state = None
+        self.dev_center_uri = None
 
 
 class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-attributes
@@ -3126,8 +3320,11 @@ class ProjectEnvironmentType(Resource):  # pylint: disable=too-many-instance-att
     :ivar user_role_assignments: Role Assignments created on environment backing resources. This is
      a mapping from a user object ID to an object of role definition IDs.
     :vartype user_role_assignments: dict[str, ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -3307,8 +3504,11 @@ class ProjectEnvironmentTypeProperties(ProjectEnvironmentTypeUpdateProperties):
     :ivar user_role_assignments: Role Assignments created on environment backing resources. This is
      a mapping from a user object ID to an object of role definition IDs.
     :vartype user_role_assignments: dict[str, ~azure.mgmt.devcenter.models.UserRoleAssignmentValue]
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -3518,18 +3718,25 @@ class ProjectProperties(ProjectUpdateProperties):
     :vartype dev_center_id: str
     :ivar description: Description of the project.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
+    :ivar dev_center_uri: The URI of the resource.
+    :vartype dev_center_uri: str
     """
 
     _validation = {
         "provisioning_state": {"readonly": True},
+        "dev_center_uri": {"readonly": True},
     }
 
     _attribute_map = {
         "dev_center_id": {"key": "devCenterId", "type": "str"},
         "description": {"key": "description", "type": "str"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "dev_center_uri": {"key": "devCenterUri", "type": "str"},
     }
 
     def __init__(self, *, dev_center_id: Optional[str] = None, description: Optional[str] = None, **kwargs):
@@ -3541,6 +3748,7 @@ class ProjectProperties(ProjectUpdateProperties):
         """
         super().__init__(dev_center_id=dev_center_id, description=description, **kwargs)
         self.provisioning_state = None
+        self.dev_center_uri = None
 
 
 class ProjectUpdate(TrackedResourceUpdate):
@@ -3670,8 +3878,11 @@ class Schedule(Resource):
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
      "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {
@@ -3826,8 +4037,11 @@ class ScheduleProperties(ScheduleUpdateProperties):
     :ivar state: Indicates whether or not this scheduled task is enabled. Known values are:
      "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.devcenter.models.EnableStatus
-    :ivar provisioning_state: The provisioning state of the resource.
-    :vartype provisioning_state: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are:
+     "NotSpecified", "Accepted", "Running", "Creating", "Created", "Updating", "Updated",
+     "Deleting", "Deleted", "Succeeded", "Failed", "Canceled", "MovingResources",
+     "TransientFailure", "RolloutInProgress", and "StorageProvisioningFailed".
+    :vartype provisioning_state: str or ~azure.mgmt.devcenter.models.ProvisioningState
     """
 
     _validation = {

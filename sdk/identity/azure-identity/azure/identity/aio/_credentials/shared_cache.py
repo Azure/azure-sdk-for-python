@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from typing import Any
 from azure.core.credentials import AccessToken
 from ..._internal.aad_client import AadClientBase
 from ... import CredentialUnavailableError
@@ -31,17 +32,17 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
     async def __aenter__(self):
         if self._client:
-            await self._client.__aenter__()
+            await self._client.__aenter__() # type: ignore
         return self
 
-    async def close(self):
+    async def close(self) -> None:
         """Close the credential's transport session."""
 
         if self._client:
-            await self._client.__aexit__()
+            await self._client.__aexit__()  # type: ignore
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
+    async def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:  # pylint:disable=unused-argument
         """Get an access token for `scopes` from the shared cache.
 
         If no access token is cached, attempt to acquire one using a cached refresh token.
@@ -49,10 +50,10 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.identity.CredentialUnavailableError: the cache is unavailable or contains insufficient user
             information
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``
@@ -81,5 +82,5 @@ class SharedTokenCacheCredential(SharedTokenCacheBase, AsyncContextManager):
 
         raise CredentialUnavailableError(message=NO_TOKEN.format(account.get("username")))
 
-    def _get_auth_client(self, **kwargs) -> AadClientBase:
+    def _get_auth_client(self, **kwargs: Any) -> AadClientBase:
         return AadClient(client_id=DEVELOPER_SIGN_ON_CLIENT_ID, **kwargs)

@@ -1,10 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+"""Contains exception module in Azure Machine Learning SDKv2.
 
+This includes enums and classes for exceptions.
+"""
 import logging
 from enum import Enum
-from typing import Union
+from typing import Optional, Union
 
 from azure.core.exceptions import AzureError
 
@@ -19,14 +22,16 @@ class ValidationErrorType(Enum):
     When using ValidationException, specify the type that best describes the nature of the error being captured.
     If no type fits, add a new enum here and update raise_error.py to handle it.
 
-    INVALID_VALUE -> One or more schema fields are invalid (e.g. incorrect type or format)
-    UNKNOWN_FIELD -> A least one unrecognized schema parameter is specified
-    MISSING_FIELD -> At least one required schema parameter is missing
-    FILE_OR_FOLDER_NOT_FOUND -> One or more files or folder paths do not exist
-    CANNOT_SERIALIZE -> Same as "Cannot dump". One or more fields cannot be serialized by marshmallow.
-    CANNOT_PARSE -> YAML file cannot be parsed
-    RESOURCE_NOT_FOUND -> Resource could not be found
-    GENERIC -> Undefined placeholder. Avoid using.
+    Types of validation errors:
+
+    * INVALID_VALUE -> One or more schema fields are invalid (e.g. incorrect type or format)
+    * UNKNOWN_FIELD -> A least one unrecognized schema parameter is specified
+    * MISSING_FIELD -> At least one required schema parameter is missing
+    * FILE_OR_FOLDER_NOT_FOUND -> One or more files or folder paths do not exist
+    * CANNOT_SERIALIZE -> Same as "Cannot dump". One or more fields cannot be serialized by marshmallow.
+    * CANNOT_PARSE -> YAML file cannot be parsed
+    * RESOURCE_NOT_FOUND -> Resource could not be found
+    * GENERIC -> Undefined placeholder. Avoid using.
     """
 
     INVALID_VALUE = "INVALID VALUE"
@@ -398,6 +403,8 @@ class ValidationException(MlException):
             **kwargs,
         )
 
+        self.raw_error = message  # used for CLI error formatting
+
         if error_type in list(ValidationErrorType):
             self._error_type = error_type
         else:
@@ -479,10 +486,11 @@ class UserErrorException(MlException):
         message,
         no_personal_data_message=None,
         error_category=ErrorCategory.USER_ERROR,
+        target: ErrorTarget = ErrorTarget.PIPELINE
     ):
         super().__init__(
             message=message,
-            target=ErrorTarget.PIPELINE,
+            target=target,
             no_personal_data_message=no_personal_data_message,
             error_category=error_category,
         )
@@ -504,8 +512,9 @@ class UnsupportedParameterKindError(UserErrorException):
     """Exception raised when a user try setting attributes of
     inputs/outputs."""
 
-    def __init__(self, func_name):
-        msg = "%r: dsl pipeline does not accept *args or **kwargs as parameters." % func_name
+    def __init__(self, func_name, parameter_kind=None):
+        parameter_kind = parameter_kind or "*args or **kwargs"
+        msg = "%r: dsl pipeline does not accept %s as parameters." % (func_name, parameter_kind)
         super(UnsupportedParameterKindError, self).__init__(message=msg, no_personal_data_message=msg)
 
 
@@ -594,7 +603,7 @@ class LocalEndpointNotFoundError(MlException):
     def __init__(
         self,
         endpoint_name: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -628,7 +637,7 @@ class LocalEndpointInFailedStateError(MlException):
             error_category=error_category,
             target=ErrorTarget.LOCAL_ENDPOINT,
             no_personal_data_message=(
-                f"Local ({resource_type}) is in failed state. " "Try getting logs to debug scoring script."
+                f"Local ({resource_type}) is in failed state. Try getting logs to debug scoring script."
             ),
         )
 
@@ -700,7 +709,7 @@ class CloudArtifactsNotSupportedError(MlException):
         self,
         endpoint_name: str,
         invalid_artifact: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -729,7 +738,7 @@ class RequiredLocalArtifactsNotFoundError(MlException):
         endpoint_name: str,
         required_artifact: str,
         required_artifact_type: str,
-        deployment_name: str = None,
+        deployment_name: Optional[str] = None,
         error_category=ErrorCategory.USER_ERROR,
     ):
         resource_name = (
@@ -738,8 +747,10 @@ class RequiredLocalArtifactsNotFoundError(MlException):
             else f"Local endpoint ({endpoint_name})"
         )
         err = (
-            "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
-            " of type '%s'.",
+            (
+                "Local endpoints only support local artifacts. '%s' did not contain required local artifact '%s'"
+                " of type '%s'."
+            ),
             resource_name,
             required_artifact,
             required_artifact_type,

@@ -28,7 +28,7 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Dict, Optional, List, Union, Type, TYPE_CHECKING
+from typing import Callable, Any, Optional, Union, Type, List, Dict, TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,8 +58,7 @@ __all__ = [
 ]
 
 
-def raise_with_traceback(exception, *args, **kwargs):
-    # type: (Callable, Any, Any) -> None
+def raise_with_traceback(exception: Callable, *args, **kwargs) -> None:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
@@ -80,13 +79,15 @@ def raise_with_traceback(exception, *args, **kwargs):
         error.__traceback__ = exc_traceback
         raise error
 
-class ErrorMap(object):
+
+class ErrorMap:
     """Error Map class. To be used in map_error method, behaves like a dictionary.
     It returns the error type if it is found in custom_error_map. Or return default_error
 
     :param dict custom_error_map: User-defined error map, it is used to map status codes to error types.
     :keyword error default_error: Default error type. It is returned if the status code is not found in custom_error_map
     """
+
     def __init__(self, custom_error_map=None, **kwargs):
         self._custom_error_map = custom_error_map or {}
         self._default_error = kwargs.pop("default_error", None)
@@ -96,6 +97,7 @@ class ErrorMap(object):
         if ret:
             return ret
         return self._default_error
+
 
 def map_error(status_code, response, error_map):
     if not error_map:
@@ -107,7 +109,7 @@ def map_error(status_code, response, error_map):
     raise error
 
 
-class ODataV4Format(object):
+class ODataV4Format:
     """Class to describe OData V4 error format.
 
     http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
@@ -145,36 +147,40 @@ class ODataV4Format(object):
     :ivar dict innererror: An object. The contents of this object are service-defined.
      Usually this object contains information that will help debug the service.
     """
+
     CODE_LABEL = "code"
     MESSAGE_LABEL = "message"
     TARGET_LABEL = "target"
     DETAILS_LABEL = "details"
     INNERERROR_LABEL = "innererror"
 
-    def __init__(self, json_object):
+    def __init__(self, json_object: Dict[str, Any]):
         if "error" in json_object:
             json_object = json_object["error"]
-        cls = self.__class__  # type: Type[ODataV4Format]
+        cls: Type[ODataV4Format] = self.__class__
 
         # Required fields, but assume they could be missing still to be robust
-        self.code = json_object.get(cls.CODE_LABEL)  # type: Optional[str]
-        self.message = json_object.get(cls.MESSAGE_LABEL)  # type: Optional[str]
+        self.code: Optional[str] = json_object.get(cls.CODE_LABEL)
+        self.message: Optional[str] = json_object.get(cls.MESSAGE_LABEL)
 
         if not (self.code or self.message):
-            raise ValueError("Impossible to extract code/message from received JSON:\n"+json.dumps(json_object))
+            raise ValueError(
+                "Impossible to extract code/message from received JSON:\n"
+                + json.dumps(json_object)
+            )
 
         # Optional fields
-        self.target = json_object.get(cls.TARGET_LABEL)  # type: Optional[str]
+        self.target: Optional[str] = json_object.get(cls.TARGET_LABEL)
 
         # details is recursive of this very format
-        self.details = []  # type: List[ODataV4Format]
+        self.details: List[ODataV4Format] = []
         for detail_node in json_object.get(cls.DETAILS_LABEL) or []:
             try:
                 self.details.append(self.__class__(detail_node))
             except Exception:  # pylint: disable=broad-except
                 pass
 
-        self.innererror = json_object.get(cls.INNERERROR_LABEL, {})  # type: Dict[str, Any]
+        self.innererror: Dict[str, Any] = json_object.get(cls.INNERERROR_LABEL, {})
 
     @property
     def error(self):
@@ -187,16 +193,10 @@ class ODataV4Format(object):
         return self
 
     def __str__(self):
-        return "({}) {}\n{}".format(
-            self.code,
-            self.message,
-            self.message_details()
-        )
+        return "({}) {}\n{}".format(self.code, self.message, self.message_details())
 
-    def message_details(self):
-        """Return a detailled string of the error.
-        """
-        # () -> str
+    def message_details(self) -> str:
+        """Return a detailled string of the error."""
         error_str = "Code: {}".format(self.code)
         error_str += "\nMessage: {}".format(self.message)
         if self.target:
@@ -241,7 +241,7 @@ class AzureError(Exception):
         )
         self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)
         self.message = str(message)
-        self.continuation_token = kwargs.get('continuation_token')
+        self.continuation_token = kwargs.get("continuation_token")
         super(AzureError, self).__init__(self.message, *args)
 
     def raise_with_traceback(self):
@@ -263,11 +263,14 @@ class ServiceResponseError(AzureError):
     The connection may have timed out. These errors can be retried for idempotent or
     safe operations"""
 
+
 class ServiceRequestTimeoutError(ServiceRequestError):
     """Error raised when timeout happens"""
 
+
 class ServiceResponseTimeoutError(ServiceResponseError):
     """Error raised when timeout happens"""
+
 
 class HttpResponseError(AzureError):
     """A request was made, and a non-success status code was received from the service.
@@ -302,14 +305,14 @@ class HttpResponseError(AzureError):
 
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
-        model = kwargs.pop("model", None)  # type: Optional[msrest.serialization.Model]
+        model: Optional[Any] = kwargs.pop("model", None)
         if model is not None:  # autorest v5
             self.model = model
         else:  # autorest azure-core, for KV 1.0, Storage 12.0, etc.
-            self.model = getattr(
-                self, "error", None
-            )  # type: Optional[msrest.serialization.Model]
-        self.error = self._parse_odata_body(error_format, response)  # type: Optional[ODataV4Format]
+            self.model: Optional[Any] = getattr(self, "error", None)
+        self.error: Optional[ODataV4Format] = self._parse_odata_body(
+            error_format, response
+        )
 
         # By priority, message is:
         # - odatav4 message, OR
@@ -325,8 +328,9 @@ class HttpResponseError(AzureError):
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
     @staticmethod
-    def _parse_odata_body(error_format, response):
-        # type: (Type[ODataV4Format], _HttpResponseBase) -> Optional[ODataV4Format]
+    def _parse_odata_body(
+        error_format: Type[ODataV4Format], response: "_HttpResponseBase"
+    ) -> Optional[ODataV4Format]:
         try:
             odata_json = json.loads(response.text())
             return error_format(odata_json)
@@ -360,8 +364,7 @@ class ResourceExistsError(HttpResponseError):
 
 
 class ResourceNotFoundError(HttpResponseError):
-    """ An error response, typically triggered by a 412 response (for update) or 404 (for get/post)
-    """
+    """An error response, typically triggered by a 412 response (for update) or 404 (for get/post)"""
 
 
 class ClientAuthenticationError(HttpResponseError):
@@ -407,11 +410,9 @@ class ODataV4Error(HttpResponseError):
 
     _ERROR_FORMAT = ODataV4Format
 
-    def __init__(self, response, **kwargs):
-        # type: (_HttpResponseBase, Any) -> None
-
+    def __init__(self, response: "_HttpResponseBase", **kwargs) -> None:
         # Ensure field are declared, whatever can happen afterwards
-        self.odata_json = None  # type: Optional[Dict[str, Any]]
+        self.odata_json: Optional[Dict[str, Any]] = None
         try:
             self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
@@ -419,18 +420,18 @@ class ODataV4Error(HttpResponseError):
             # If the body is not JSON valid, just stop now
             odata_message = None
 
-        self.code = None  # type: Optional[str]
-        self.message = kwargs.get("message", odata_message)  # type: Optional[str]
-        self.target = None  # type: Optional[str]
-        self.details = []  # type: Optional[List[Any]]
-        self.innererror = {}  # type: Optional[Dict[str, Any]]
+        self.code: Optional[str] = None
+        self.message: Optional[str] = kwargs.get("message", odata_message)
+        self.target: Optional[str] = None
+        self.details: Optional[List[Any]] = []
+        self.innererror: Optional[Dict[str, Any]] = {}
 
         if self.message and "message" not in kwargs:
             kwargs["message"] = self.message
 
         super(ODataV4Error, self).__init__(response=response, **kwargs)
 
-        self._error_format = None  # type: Optional[Union[str, ODataV4Format]]
+        self._error_format: Optional[Union[str, ODataV4Format]] = None
         if self.odata_json:
             try:
                 error_node = self.odata_json["error"]
@@ -453,20 +454,23 @@ class ODataV4Error(HttpResponseError):
             return str(self._error_format)
         return super(ODataV4Error, self).__str__()
 
+
 class StreamConsumedError(AzureError):
     """Error thrown if you try to access the stream of a response once consumed.
 
     It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been consumed.
     """
+
     def __init__(self, response):
         message = (
-            "You are attempting to read or stream the content from request {}. "\
+            "You are attempting to read or stream the content from request {}. "
             "You have likely already consumed this stream, so it can not be accessed anymore.".format(
                 response.request
             )
         )
         super(StreamConsumedError, self).__init__(message)
+
 
 class StreamClosedError(AzureError):
     """Error thrown if you try to access the stream of a response once closed.
@@ -474,12 +478,14 @@ class StreamClosedError(AzureError):
     It is thrown if you try to read / stream an ~azure.core.rest.HttpResponse or
     ~azure.core.rest.AsyncHttpResponse once the response's stream has been closed.
     """
+
     def __init__(self, response):
         message = (
-            "The content for response from request {} can no longer be read or streamed, since the "\
+            "The content for response from request {} can no longer be read or streamed, since the "
             "response has already been closed.".format(response.request)
         )
         super(StreamClosedError, self).__init__(message)
+
 
 class ResponseNotReadError(AzureError):
     """Error thrown if you try to access a response's content without reading first.
@@ -490,17 +496,19 @@ class ResponseNotReadError(AzureError):
 
     def __init__(self, response):
         message = (
-            "You have not read in the bytes for the response from request {}. "\
-            "Call .read() on the response first.".format(
-                response.request
-            )
+            "You have not read in the bytes for the response from request {}. "
+            "Call .read() on the response first.".format(response.request)
         )
         super(ResponseNotReadError, self).__init__(message)
 
+
 class SerializationError(ValueError):
     """Raised if an error is encountered during serialization."""
+
     ...
+
 
 class DeserializationError(ValueError):
     """Raised if an error is encountered during deserialization."""
+
     ...

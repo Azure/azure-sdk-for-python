@@ -1,10 +1,17 @@
 # Release History
 
-## 12.10.2 (Unreleased)
+## 12.11.0 (Unreleased)
 
 ### Features Added
+- Stable release of features from 12.11.0b1
 
-### Breaking Changes
+## 12.11.0b1 (2023-02-02)
+
+### Features Added
+- Added support for service version 2021-12-02.
+- Added support for file and directory paths that contain invalid XML characters. When listing or fetching properties,
+the service will encode illegal characters and the SDK will now automatically decode them.
+- Added support for `AsyncIterable` as data type for async file upload.
 
 ### Bugs Fixed
 - Fixed an issue where keyword `name_starts_with` was not being passed to the service properly for the `list_shares` async API

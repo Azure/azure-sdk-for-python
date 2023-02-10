@@ -33,7 +33,7 @@ from azure.ai.ml._schema.pipeline.component_job import (
     _resolve_inputs_outputs,
 )
 from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
-from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema
+from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema, ParallelForSchema
 from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
@@ -77,6 +77,7 @@ def PipelineJobsField():
     if is_private_preview_enabled():
         pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema, unknown=INCLUDE)]
         pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
+        pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema, unknown=INCLUDE)]
 
     pipeline_job_field = fields.Dict(
         keys=NodeNameStr(),
@@ -89,8 +90,10 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
     """Silently convert Job in pipeline jobs to node."""
     from azure.ai.ml.entities._builders import parse_inputs_outputs
     from azure.ai.ml.entities._builders.do_while import DoWhile
+    from azure.ai.ml.entities._builders.parallel_for import ParallelFor
     from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
     from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+    from azure.ai.ml.entities._builders.condition_node import ConditionNode
 
     # parse inputs/outputs
     data = parse_inputs_outputs(data)
@@ -104,11 +107,18 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 job_instance = AutoMLJob._create_instance_from_schema_dict(
                     loaded_data=job_instance,
                 )
-                jobs[key] = job_instance
+            elif job_instance.get("type") == ControlFlowType.IF_ELSE:
+                # Convert to if-else node.
+                job_instance = ConditionNode._create_instance_from_schema_dict(loaded_data=job_instance)
             elif job_instance.get("type") == ControlFlowType.DO_WHILE:
                 # Convert to do-while node.
                 job_instance = DoWhile._create_instance_from_schema_dict(pipeline_jobs=jobs, loaded_data=job_instance)
-                jobs[key] = job_instance
+            elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
+                # Convert to do-while node.
+                job_instance = ParallelFor._create_instance_from_schema_dict(
+                    pipeline_jobs=jobs, loaded_data=job_instance
+                )
+            jobs[key] = job_instance
 
     for key, job_instance in jobs.items():
         # Translate job to node if translatable and overrides to_node.
@@ -179,6 +189,11 @@ class _AnonymousPipelineComponentSchema(AnonymousAssetSchema, PipelineComponentS
     def make(self, data, **kwargs):
         from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 
+        # pipeline jobs post process is required before init of pipeline component: it converts control node dict
+        # to entity.
+        # however @post_load invocation order is not guaranteed, so we need to call it explicitly here.
+        _post_load_pipeline_jobs(self.context, data)
+
         return PipelineComponent(
             base_path=self.context[BASE_PATH_CONTEXT_KEY],
             **data,
@@ -224,7 +239,7 @@ class PipelineSchema(BaseNodeSchema):
     component = UnionField(
         [
             # for registry type assets
-            RegistryStr(),
+            RegistryStr(azureml_type=AzureMLResourceType.COMPONENT),
             # existing component
             ArmVersionedStr(azureml_type=AzureMLResourceType.COMPONENT, allow_default_version=True),
             # component file reference

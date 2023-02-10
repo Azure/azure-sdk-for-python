@@ -405,6 +405,7 @@ from ._sql_management_client_enums import AdvancedThreatProtectionName
 from ._sql_management_client_enums import AdvancedThreatProtectionState
 from ._sql_management_client_enums import AdvisorStatus
 from ._sql_management_client_enums import AggregationFunctionType
+from ._sql_management_client_enums import AlwaysEncryptedEnclaveType
 from ._sql_management_client_enums import AuthenticationName
 from ._sql_management_client_enums import AutoExecuteStatus
 from ._sql_management_client_enums import AutoExecuteStatusInheritedFrom
@@ -436,6 +437,7 @@ from ._sql_management_client_enums import DatabaseReadScale
 from ._sql_management_client_enums import DatabaseState
 from ._sql_management_client_enums import DatabaseStatus
 from ._sql_management_client_enums import DayOfWeek
+from ._sql_management_client_enums import DevOpsAuditingSettingsName
 from ._sql_management_client_enums import DiffBackupIntervalInHours
 from ._sql_management_client_enums import DtcName
 from ._sql_management_client_enums import ElasticPoolLicenseType
@@ -503,6 +505,7 @@ from ._sql_management_client_enums import RuleStatus
 from ._sql_management_client_enums import RuleType
 from ._sql_management_client_enums import SQLVulnerabilityAssessmentName
 from ._sql_management_client_enums import SampleName
+from ._sql_management_client_enums import SecondaryInstanceType
 from ._sql_management_client_enums import SecondaryType
 from ._sql_management_client_enums import SecurityAlertPolicyName
 from ._sql_management_client_enums import SecurityAlertPolicyState
@@ -544,7 +547,7 @@ from ._sql_management_client_enums import VulnerabilityAssessmentPolicyBaselineN
 from ._sql_management_client_enums import VulnerabilityAssessmentScanState
 from ._sql_management_client_enums import VulnerabilityAssessmentScanTriggerType
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
@@ -946,6 +949,7 @@ __all__ = [
     "AdvancedThreatProtectionState",
     "AdvisorStatus",
     "AggregationFunctionType",
+    "AlwaysEncryptedEnclaveType",
     "AuthenticationName",
     "AutoExecuteStatus",
     "AutoExecuteStatusInheritedFrom",
@@ -977,6 +981,7 @@ __all__ = [
     "DatabaseState",
     "DatabaseStatus",
     "DayOfWeek",
+    "DevOpsAuditingSettingsName",
     "DiffBackupIntervalInHours",
     "DtcName",
     "ElasticPoolLicenseType",
@@ -1044,6 +1049,7 @@ __all__ = [
     "RuleType",
     "SQLVulnerabilityAssessmentName",
     "SampleName",
+    "SecondaryInstanceType",
     "SecondaryType",
     "SecurityAlertPolicyName",
     "SecurityAlertPolicyState",

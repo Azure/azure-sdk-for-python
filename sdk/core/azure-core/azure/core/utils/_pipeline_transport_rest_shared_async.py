@@ -6,13 +6,13 @@
 # --------------------------------------------------------------------------
 import asyncio
 from collections.abc import AsyncIterator
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, List
 from ..pipeline import PipelineContext, PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result as _await_result
 
 if TYPE_CHECKING:
-    from typing import List
     from ..pipeline.policies import SansIOHTTPPolicy
+
 
 class _PartGenerator(AsyncIterator):
     """Until parts is a real async iterator, wrap the sync call.
@@ -30,9 +30,9 @@ class _PartGenerator(AsyncIterator):
             http_response_type=self._default_http_response_type
         )
         if self._response.request.multipart_mixed_info:
-            policies = self._response.request.multipart_mixed_info[
-                1
-            ]  # type: List[SansIOHTTPPolicy]
+            policies: List[
+                "SansIOHTTPPolicy"
+            ] = self._response.request.multipart_mixed_info[1]
 
             async def parse_responses(response):
                 http_request = response.request

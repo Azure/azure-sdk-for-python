@@ -29,8 +29,8 @@ class LogsIngestionClient(LogsIngestionClientOperationsMixin):  # pylint: disabl
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2021-11-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2023-01-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
@@ -76,5 +76,5 @@ class LogsIngestionClient(LogsIngestionClientOperationsMixin):  # pylint: disabl
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

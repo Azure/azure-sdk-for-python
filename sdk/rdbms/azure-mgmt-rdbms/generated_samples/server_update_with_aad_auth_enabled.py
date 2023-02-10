@@ -35,7 +35,11 @@ def main():
         parameters={
             "properties": {
                 "administratorLoginPassword": "newpassword",
-                "authConfig": {"activeDirectoryAuthEnabled": True, "tenantId": "tttttt-tttt-tttt-tttt-tttttttttttt"},
+                "authConfig": {
+                    "activeDirectoryAuth": "Enabled",
+                    "passwordAuth": "Enabled",
+                    "tenantId": "tttttt-tttt-tttt-tttt-tttttttttttt",
+                },
                 "backup": {"backupRetentionDays": 20},
                 "createMode": "Update",
                 "storage": {"storageSizeGB": 1024},
@@ -46,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ServerUpdateWithAadAuthEnabled.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2022-12-01/examples/ServerUpdateWithAadAuthEnabled.json
 if __name__ == "__main__":
     main()

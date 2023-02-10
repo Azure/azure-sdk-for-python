@@ -111,6 +111,8 @@ class BaseExporter:
                 name="{} Storage".format(self.__class__.__name__),
                 lease_period=self._storage_min_retry_interval,
             )
+        # specifies whether current exporter is used for collection of instrumentation metrics
+        self._instrumentation_collection = kwargs.get('instrumentation_collection', False)
         # statsbeat initialization
         if self._should_collect_stats():
             # Import here to avoid circular dependencies
@@ -293,7 +295,8 @@ class BaseExporter:
     def _should_collect_stats(self):
         return is_statsbeat_enabled() and \
             not get_statsbeat_shutdown() and \
-            not self._is_stats_exporter()
+            not self._is_stats_exporter() and \
+            not self._instrumentation_collection
 
     # check to see if statsbeat is in "attempting to be initialized" state
     def _is_statsbeat_initializing_state(self):

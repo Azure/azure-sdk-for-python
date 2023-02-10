@@ -2,8 +2,8 @@ import pytest
 
 from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import BanditPolicy as RestBanditPolicy
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    BanditPolicy as RestBanditPolicy,
     JobBase,
     LogVerbosity,
     MLTableJobInput,
@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     TaskType,
     TextNer,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml._restclient.v2022_12_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     ClassificationPrimaryMetrics,
 )
