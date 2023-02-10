@@ -1,0 +1,111 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/DistributedComponent.json
+name: prism_cf
+version: 0.0.1
+display_name: Prism CF
+type: DistributedComponent
+description: |-
+  A module to run CF training job for Prism.
+is_deterministic: true
+inputs:
+  splatt_training_command_display_only:
+    type: String
+    description: splatt training command
+    optional: true
+  pre_command:
+    type: String
+    description: pre command
+    optional: false
+  user_command:
+    type: String
+    description: job command
+    optional: false
+  input_path0:
+    type: [AnyFile, AnyDirectory]
+    description: input path 0
+    optional: false
+  input_path1:
+    type: [AnyFile, AnyDirectory]
+    description: input path 1
+    optional: true
+  input_path2:
+    type: [AnyFile, AnyDirectory]
+    description: input path 2
+    optional: true
+  input_path3:
+    type: [AnyFile, AnyDirectory]
+    description: input path 3
+    optional: true
+  input_path4:
+    type: [AnyFile, AnyDirectory]
+    description: input path 4
+    optional: true
+  input_path5:
+    type: [AnyFile, AnyDirectory]
+    description: input path 5
+    optional: true
+  input_path6:
+    type: [AnyFile, AnyDirectory]
+    description: input path 6
+    optional: true
+  input_path7:
+    type: [AnyFile, AnyDirectory]
+    description: input path 7
+    optional: true
+  input_path8:
+    type: [AnyFile, AnyDirectory]
+    description: input path 8
+    optional: true
+  input_path9:
+    type: [AnyFile, AnyDirectory]
+    description: input path 9
+    optional: true
+  code_folder:
+    type: String
+    description: a string indicating local source code path
+    default: src
+  aml_run_node_count:
+    type: Integer
+    description: number of nodes
+    default: 1
+  aml_run_process_count:
+    type: Integer
+    description: number of process per node
+    default: 1
+  adls_datastore:
+    type: String
+    description: ADLS datastore name
+    default: adls_relevance09
+outputs:
+  output_folder:
+    type: AnyDirectory
+    description: output folder
+  output_logs_zip:
+    type: AnyDirectory
+    description: output logs zip folder
+launcher:
+  type: mpi
+  additional_arguments: >-
+    python3 run_pipeline.py
+    --pre_command {inputs.pre_command}
+    --user_command {inputs.user_command}
+    --input_path0 {inputs.input_path0}
+    [--input_path1 {inputs.input_path1}]
+    [--input_path2 {inputs.input_path2}]
+    [--input_path3 {inputs.input_path3}]
+    [--input_path4 {inputs.input_path4}]
+    [--input_path5 {inputs.input_path5}]
+    [--input_path6 {inputs.input_path6}]
+    [--input_path7 {inputs.input_path7}]
+    [--input_path8 {inputs.input_path8}]
+    [--input_path9 {inputs.input_path9}]
+    --code_folder {inputs.code_folder}
+    --output_folder {outputs.output_folder}
+    --output_logs_zip {outputs.output_logs_zip}
+    --aml_run_node_count {inputs.aml_run_node_count}
+    --aml_run_process_count {inputs.aml_run_process_count}
+    --adls_datastore {inputs.adls_datastore}
+environment:
+  docker:
+    build:
+      dockerfile: file:Dockerfile
+  os: Linux
