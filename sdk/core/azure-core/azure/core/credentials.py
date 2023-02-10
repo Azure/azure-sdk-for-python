@@ -4,9 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 from collections import namedtuple
-from typing import Any, NamedTuple, Optional, Tuple, Union
+from typing import Any, NamedTuple, Optional, TypeVar, Tuple, Union
 from typing_extensions import Protocol, runtime_checkable
 
+TKeys = TypeVar('TKeys', bound=Union[str, Tuple[str, ...]])
 
 class AccessToken(NamedTuple):
     """Represents an OAuth access token."""
@@ -59,30 +60,30 @@ class AzureKeyCredential:
     """Credential type used for authenticating to an Azure service.
     It provides the ability to update the key without creating a new client.
 
-    :param Union[str, Tuple[str, ...]] key: The key used to authenticate to an Azure service
+    :param TKeys key: The key used to authenticate to an Azure service
     :raises: TypeError
     """
 
-    def __init__(self, key: Union[str, Tuple[str, ...]]) -> None:
+    def __init__(self, key: TKeys) -> None:
         if not isinstance(key, (str, Tuple)):
             raise TypeError("key must be a string or a tuple of strings.")
         self._key = key
 
     @property
-    def key(self) -> Union[str, Tuple[str, ...]]:
+    def key(self) -> TKeys:
         """The value of the configured key.
 
         :rtype: TKeys
         """
         return self._key
 
-    def update(self, key: Union[str, Tuple[str, ...]]) -> None:
+    def update(self, key: TKeys) -> None:
         """Update the key.
 
         This can be used when you've regenerated your service key and want
         to update long-lived clients.
 
-        :param Union[str, Tuple[str, ...]] key: The key used to authenticate to an Azure service
+        :param TKeys key: The key used to authenticate to an Azure service
         :raises: ValueError or TypeError
         """
         if not key:
