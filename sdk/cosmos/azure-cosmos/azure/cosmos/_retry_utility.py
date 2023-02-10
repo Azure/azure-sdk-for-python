@@ -109,7 +109,7 @@ def Execute(client, global_endpoint_manager, function, *args, **kwargs):
                 retry_policy = sessionRetry_policy
             elif exceptions._partition_range_is_gone(e):
                 retry_policy = partition_key_range_gone_retry_policy
-            elif (e.status_code == StatusCodes.REQUEST_TIMEOUT):
+            elif e.status_code == StatusCodes.REQUEST_TIMEOUT:
                 retry_policy = timeout_failover_retry_policy
             else:
                 retry_policy = defaultRetry_policy
