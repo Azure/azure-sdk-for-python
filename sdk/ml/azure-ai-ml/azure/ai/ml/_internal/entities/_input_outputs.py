@@ -71,7 +71,8 @@ class InternalInput(Input):
             return True
         return super()._is_primitive_type
 
-    def _convert_ui_widget_type(self, input_type):
+    @staticmethod
+    def _convert_ui_widget_type(input_type):
         try:
             UIWidgetTypeEnum(input_type)
             return ComponentParameterTypes.STRING
