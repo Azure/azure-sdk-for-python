@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 import logging
@@ -27,8 +28,7 @@ class CloudEventDistributedTracingPolicy(SansIOHTTPPolicy):
 
     _CONTENT_TYPE = "application/cloudevents-batch+json; charset=utf-8"
 
-    def on_request(self, request):
-        # type: (PipelineRequest) -> None
+    def on_request(self, request: PipelineRequest) -> None:
         try:
             traceparent = request.http_request.headers["traceparent"]
             tracestate = request.http_request.headers["tracestate"]

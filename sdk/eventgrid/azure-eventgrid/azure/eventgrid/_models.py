@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint:disable=protected-access
+from __future__ import annotations
 from typing import Any, cast
 import datetime as dt
 import uuid
@@ -11,7 +12,6 @@ from ._messaging_shared import _get_json_content
 from ._generated.models import (
     EventGridEvent as InternalEventGridEvent,
 )
-
 
 class EventGridEvent(InternalEventGridEvent):
     """Properties of an event published to an Event Grid topic using the EventGrid Schema.
@@ -82,8 +82,7 @@ class EventGridEvent(InternalEventGridEvent):
         "data_version": {"key": "dataVersion", "type": "str"},
     }
 
-    def __init__(self, subject, event_type, data, data_version, **kwargs):
-        # type: (str, str, object, str, Any) -> None
+    def __init__(self, subject: str, event_type: str, data: object, data_version: str, **kwargs: Any) -> None:
         kwargs.setdefault("id", uuid.uuid4())
         kwargs.setdefault("subject", subject)
         kwargs.setdefault("event_type", event_type)
@@ -92,6 +91,14 @@ class EventGridEvent(InternalEventGridEvent):
         kwargs.setdefault("data_version", data_version)
 
         super(EventGridEvent, self).__init__(**kwargs)
+        self.id = kwargs['id']
+        self.topic = kwargs.get('topic', None)
+        self.subject = kwargs['subject']
+        self.data = kwargs['data']
+        self.event_type = kwargs['event_type']
+        self.event_time = kwargs['event_time']
+        self.metadata_version = None
+        self.data_version = kwargs['data_version']
 
     def __repr__(self):
         return "EventGridEvent(subject={}, event_type={}, id={}, event_time={})".format(
@@ -99,8 +106,7 @@ class EventGridEvent(InternalEventGridEvent):
         )[:1024]
 
     @classmethod
-    def from_json(cls, event):
-        # type: (Any) -> EventGridEvent
+    def from_json(cls, event: Any) -> EventGridEvent:
         """
         Returns the deserialized EventGridEvent object when a json payload is provided.
         :param event: The json string that should be converted into a EventGridEvent. This can also be

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 import json
 import hashlib
@@ -12,25 +13,22 @@ import six
 try:
     from urllib.parse import quote
 except ImportError:
-    from urllib2 import quote  # type: ignore
+    from urllib2 import quote # type: ignore
 
 from msrest import Serializer
 from azure.core.exceptions import raise_with_traceback
-from azure.core.pipeline.transport import HttpRequest
+from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
-from ._generated.models import (
-    CloudEvent as InternalCloudEvent,
-)
+from azure.core.messaging import CloudEvent as InternalCloudEvent
 
 if TYPE_CHECKING:
     from datetime import datetime
 
-def generate_sas(endpoint, shared_access_key, expiration_date_utc, **kwargs):
-    # type: (str, str, datetime, Any) -> str
+def generate_sas(endpoint: str, shared_access_key: str, expiration_date_utc: datetime, **kwargs: Any) -> str:
     """Helper method to generate shared access signature given hostname, key, and expiration date.
     :param str endpoint: The topic endpoint to send the events to.
         Similar to <YOUR-TOPIC-NAME>.<YOUR-REGION-NAME>-1.eventgrid.azure.net
@@ -70,7 +68,7 @@ def _generate_hmac(key, message):
     return base64.b64encode(hmac_new)
 
 
-def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCredentialPolicy):
+def _get_authentication_policy(credential, bearer_token_policy):
     if credential is None:
         raise ValueError("Parameter 'self._credential' must not be None.")
     if hasattr(credential, "get_token"):
@@ -91,16 +89,14 @@ def _get_authentication_policy(credential, bearer_token_policy=BearerTokenCreden
     )
 
 
-def _is_cloud_event(event):
-    # type: (Any) -> bool
+def _is_cloud_event(event: Any) -> bool:
     required = ("id", "source", "specversion", "type")
     try:
         return all([_ in event for _ in required]) and event["specversion"] == "1.0"
     except TypeError:
         return False
 
-def _is_eventgrid_event(event):
-    # type: (Any) -> bool
+def _is_eventgrid_event(event: Any) -> bool:
     required = ("subject", "eventType", "data", "dataVersion", "id", "eventTime")
     try:
         return all([prop in event for prop in required])
@@ -160,20 +156,20 @@ def _from_cncf_events(event):
 
 def _build_request(endpoint, content_type, events, *, channel_name=None):
     serialize = Serializer()
-    header_parameters = {}  # type: Dict[str, Any]
+    header_parameters: dict[str, Any] = {}
     header_parameters['Content-Type'] = serialize.header("content_type", content_type, 'str')
 
     if channel_name:
         header_parameters['aeg-channel-name'] = channel_name
 
-    query_parameters = {}  # type: Dict[str, Any]
+    query_parameters: dict[str, Any] = {}
     query_parameters['api-version'] = serialize.query("api_version", "2018-01-01", 'str')
 
     body = serialize.body(events, '[object]')
     if body is None:
         data = None
     else:
-        data = json.dumps(body)
+        data = body
         header_parameters['Content-Length'] = str(len(data))
 
     request = HttpRequest(

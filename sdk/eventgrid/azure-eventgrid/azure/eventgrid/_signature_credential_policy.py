@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-
+from __future__ import annotations
 from typing import Any, TYPE_CHECKING
 import six
-
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 if TYPE_CHECKING:
@@ -21,8 +20,7 @@ class EventGridSasCredentialPolicy(SansIOHTTPPolicy):
     :raises: ValueError or TypeError
     """
 
-    def __init__(self, credential, name, **kwargs):  # pylint: disable=unused-argument
-        # type: (AzureSasCredential, str, Any) -> None
+    def __init__(self, credential: AzureSasCredential, name: str, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         super(EventGridSasCredentialPolicy, self).__init__()
         self._credential = credential
         if not name:
