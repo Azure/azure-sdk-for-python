@@ -14,10 +14,12 @@ from ._api_versions import DEFAULT_VERSION
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.utils import get_authentication_policy, parse_connection_str
 
-from ._generated.models._models import PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, CommunicationIdentifierModel
-from ._generated.models._models import PlaySource as PlaySourceInternal
-from ._generated.models._models import FileSource as FileSourceInternal
-from ._generated.models._models import TextSource as TextSourceInternal
+from ._generated.models._models import (
+PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, CommunicationIdentifierModel, 
+PlaySource as PlaySourceInternal, FileSource as FileSourceInternal, 
+TextSource as TextSourceInternal
+)
+
 from ._generated.models import PlaySourceType
 from ._models import CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions, CallMediaRecognizeChoiceOptions, PlaySource, FileSource, TextSource
 

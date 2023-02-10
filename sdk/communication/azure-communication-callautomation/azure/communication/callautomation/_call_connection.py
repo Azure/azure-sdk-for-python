@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any  # pylint: disable=unused-import
 if TYPE_CHECKING:
     from ._generated.operations import CallConnectionOperations, CallMediaOperations
 
-from ._call_media import CallMedia
+from ._call_media import CallMediaClient
 
 class CallConnection(object):
     def __init__(
@@ -26,9 +26,9 @@ class CallConnection(object):
     def get_call_media(
         self,
         **kwargs  # type: Any
-    ):  # type: (...) -> CallMedia
+    ):  # type: (...) -> CallMediaClient
 
-        return CallMedia(
+        return CallMediaClient(
             self.call_connection_id,
             self._call_media_client,
             **kwargs
