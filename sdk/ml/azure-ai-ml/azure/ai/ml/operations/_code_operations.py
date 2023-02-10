@@ -115,7 +115,8 @@ class CodeOperations(_ScopeDependentOperations):
                     return self.get(name=existing_asset.get("name"), version=existing_asset.get("version"))
 
             code = _check_and_upload_snapshot(
-                artifact=code, path=path,
+                artifact=code,
+                path=path,
                 ignore_file=ignore_file,
                 asset_operations=self,
                 sas_uri=sas_uri,
