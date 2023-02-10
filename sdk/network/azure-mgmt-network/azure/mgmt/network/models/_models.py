@@ -10,7 +10,7 @@
 import datetime
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from ... import _serialization
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
