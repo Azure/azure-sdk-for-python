@@ -1578,6 +1578,118 @@ class TestPipelineJob(AzureRecordedTestCase):
              'type': 'data_transfer'
         }
 
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute, and need update "
+                                                    "recording when builtin components are ready")
+    def test_pipeline_job_with_data_transfer_import_filesystem(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/import_file_system_to_blob.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["s3_blob"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+            'outputs': {'sink': {'job_output_type': 'uri_folder',
+                      'uri': 'azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//'}},
+            'source': {'connection': '${{parent.inputs.connection_target}}',
+                        'path': '${{parent.inputs.path_source_s3}}',
+                        'type': 'file_system'},
+            'task': 'import_data',
+            'type': 'data_transfer'
+        }
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute, and need update "
+                                                    "recording when builtin components are ready")
+    def test_pipeline_job_with_data_transfer_import_sql_database(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/import_sql_database_to_blob.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+             'computeId': 'adftest',
+             'outputs': {'sink': {'job_output_type': 'mltable'}},
+             'source': {'connection': 'azureml:my_azuresqldb_connection',
+                        'query': '${{parent.inputs.query_source_snowflake}}',
+                        'type': 'database'},
+             'task': 'import_data',
+             'type': 'data_transfer'
+        }
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute, and need update "
+                                                    "recording when builtin components are ready")
+    def test_pipeline_job_with_data_transfer_import_snowflake_database(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/import_database_to_blob.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["snowflake_blob"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+            'computeId': 'adftest',
+            'outputs': {'sink': {'job_output_type': 'mltable',
+                                  'uri': 'azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/'}},
+            'source': {'connection': 'azureml:my_snowflake_connection',
+                        'query': '${{parent.inputs.query_source_snowflake}}',
+                        'type': 'database'},
+            'task': 'import_data',
+            'type': 'data_transfer'
+        }
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute, and need update "
+                                                    "recording when builtin components are ready")
+    def test_pipeline_job_with_data_transfer_export_sql_database(
+        self, client: MLClient, randstr: Callable[[str], str]
+    ):
+        test_path = (
+            "./tests/test_configs/pipeline_jobs/data_transfer/export_database_to_blob.yaml"
+        )
+        pipeline: PipelineJob = load_job(source=test_path, params_override=[{"name": randstr("name")}])
+        created_pipeline = assert_job_cancel(pipeline, client)
+        pipeline_dict = created_pipeline._to_rest_object().as_dict()
+        fields_to_omit = ["name", "display_name", "experiment_name", "properties", "componentId"]
+
+        actual_dict = pydash.omit(
+            pipeline_dict["properties"]["jobs"]["blob_azuresql"], fields_to_omit
+        )
+
+        assert actual_dict == {
+            '_source': 'REMOTE.WORKSPACE.COMPONENT',
+            'inputs': {'source': {'job_input_type': 'literal',
+                                'value': '${{parent.inputs.cosmos_folder}}'}},
+            'sink': {'connection': '${{parent.inputs.connection_target_azuresql}}',
+                    'table_name': '${{parent.inputs.table_name}}',
+                    'type': 'database'},
+            'task': 'export_data',
+            'type': 'data_transfer'
+        }
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

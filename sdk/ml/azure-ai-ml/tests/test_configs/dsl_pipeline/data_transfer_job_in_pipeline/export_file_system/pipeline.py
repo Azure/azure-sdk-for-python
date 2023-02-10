@@ -18,22 +18,13 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     inputs = {"source": my_cosmos_folder}
     sink = {'type': 'file_system', 'connection': connection_target, 'path': path_source_s3}
 
-    # DataTransferExport from export_data() function
-    data_transfer_function = export_data(
-        inputs=inputs,
-        sink=sink,
-        task=DataTransferTaskType.EXPORT_DATA,
-    )
-
     @dsl.pipeline(description='submit a pipeline with data transfer export file system job')
     def data_transfer_export_file_system_pipeline_from_builder(path_source_s3, connection_target, cosmos_folder):
         from azure.ai.ml.data_transfer import FileSystem
-        s3_blob_input = data_transfer_function(source=my_cosmos_folder)
-        s3_blob_input.sink = sink
+        s3_blob_input = export_data(inputs=inputs, sink=sink, task=DataTransferTaskType.EXPORT_DATA)
 
         source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
-        s3_blob = data_transfer_function(source=cosmos_folder)
-        s3_blob.sink = source_snowflake
+        s3_blob = export_data(inputs={"source": cosmos_folder}, sink=source_snowflake)
 
     pipeline = data_transfer_export_file_system_pipeline_from_builder(path_source_s3, connection_target, my_cosmos_folder)
     pipeline.settings.default_compute = "adf_compute"

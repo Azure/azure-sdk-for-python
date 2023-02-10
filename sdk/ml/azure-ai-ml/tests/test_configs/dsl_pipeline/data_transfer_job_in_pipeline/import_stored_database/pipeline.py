@@ -18,17 +18,13 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
     source = {'type': 'database', 'connection': 'azureml:my_sql_connection', 'stored_procedure': stored_procedure,
               'stored_procedure_params': stored_procedure_params}
 
-    # DataTransferImport from import_data() function
-    data_transfer_function = import_data(
-        source=source,
-        outputs=outputs,
-        task=DataTransferTaskType.IMPORT_DATA,
-    )
-
     @dsl.pipeline(description='submit a pipeline with data transfer import stored database job')
     def data_transfer_import_database_pipeline_from_builder():
         from azure.ai.ml.data_transfer import Database
-        snowflake_blob = data_transfer_function(source=Database(**source))
+        snowflake_blob = import_data(
+            source=Database(**source),
+            outputs=outputs,
+        )
 
     pipeline = data_transfer_import_database_pipeline_from_builder()
     pipeline.settings.default_compute = "adf_compute"

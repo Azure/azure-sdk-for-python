@@ -111,38 +111,6 @@ class DataTransfer(BaseNode):
 
         return built_inputs
 
-    def __call__(self, *args, **kwargs) -> "DataTransfer":
-        """Call Command as a function will return a new instance each time."""
-        if isinstance(self._component, Component):
-            # call this to validate inputs
-            node = self._component(*args, **kwargs)
-            # merge inputs
-            for name, original_input in self.inputs.items():
-                if name not in kwargs.keys():
-                    # use setattr here to make sure owner of input won't change
-                    setattr(node.inputs, name, original_input._data)
-                    node._job_inputs[name] = original_input._data
-                # get outputs
-            for name, original_output in self.outputs.items():
-                # use setattr here to make sure owner of input won't change
-                setattr(node.outputs, name, original_output._data)
-            self._refine_optional_inputs_with_no_value(node, kwargs)
-            # set default values: compute, environment_variables, outputs
-            node._name = self.name
-            node.compute = self.compute
-            node.tags = self.tags
-            # Pass through the display name only if the display name is not system generated.
-            node.display_name = self.display_name if self.display_name != self.name else None
-            return node
-        msg = "copy_data/import_data/export_data can be called as a function only when referenced component is {}, " \
-              "currently got {}."
-        raise ValidationException(
-            message=msg.format(type(Component), self._component),
-            no_personal_data_message=msg.format(type(Component), "self._component"),
-            target=ErrorTarget.DATA_TRANSFER_JOB,
-            error_type=ValidationErrorType.INVALID_VALUE,
-        )
-
 
 class DataTransferCopy(DataTransfer):
     """Base class for data transfer copy node.
@@ -258,6 +226,38 @@ class DataTransferCopy(DataTransfer):
             compute=self.compute,
             task=self.task,
             data_copy_mode=self.data_copy_mode
+        )
+
+    def __call__(self, *args, **kwargs) -> "DataTransfer":
+        """Call Command as a function will return a new instance each time."""
+        if isinstance(self._component, Component):
+            # call this to validate inputs
+            node = self._component(*args, **kwargs)
+            # merge inputs
+            for name, original_input in self.inputs.items():
+                if name not in kwargs.keys():
+                    # use setattr here to make sure owner of input won't change
+                    setattr(node.inputs, name, original_input._data)
+                    node._job_inputs[name] = original_input._data
+                # get outputs
+            for name, original_output in self.outputs.items():
+                # use setattr here to make sure owner of input won't change
+                setattr(node.outputs, name, original_output._data)
+            self._refine_optional_inputs_with_no_value(node, kwargs)
+            # set default values: compute, environment_variables, outputs
+            node._name = self.name
+            node.compute = self.compute
+            node.tags = self.tags
+            # Pass through the display name only if the display name is not system generated.
+            node.display_name = self.display_name if self.display_name != self.name else None
+            return node
+        msg = "copy_data/import_data/export_data can be called as a function only when referenced component is {}, " \
+              "currently got {}."
+        raise ValidationException(
+            message=msg.format(type(Component), self._component),
+            no_personal_data_message=msg.format(type(Component), "self._component"),
+            target=ErrorTarget.DATA_TRANSFER_JOB,
+            error_type=ValidationErrorType.INVALID_VALUE,
         )
 
 

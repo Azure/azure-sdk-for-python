@@ -7,7 +7,7 @@
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load, pre_load, validates, ValidationError
+from marshmallow import INCLUDE, fields, post_load, validates, ValidationError
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -17,17 +17,10 @@ from azure.ai.ml._schema.core.fields import FileRefField, StringTransformedEnum,
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes
 from azure.ai.ml.constants._component import ComponentSource, NodeType, DataTransferTaskType, DataCopyMode, \
     ExternalDataType
-from azure.ai.ml._utils.utils import camel_to_snake
 
 
 class DataTransferComponentSchemaMixin(ComponentSchema):
     type = StringTransformedEnum(allowed_values=[NodeType.DATA_TRANSFER])
-
-    @pre_load
-    def convert_camel_to_snake(self, data, **kwargs):
-        if isinstance(data, dict) and data.get("task", None):
-            data["task"] = camel_to_snake(data["task"])
-        return data
 
 
 class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):

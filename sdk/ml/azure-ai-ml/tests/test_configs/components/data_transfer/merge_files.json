@@ -28,7 +28,7 @@
                     "type": "uri_folder"
                 }
             },
-            "task": "CopyData",
+            "task": "copy_data",
             "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json"
         }
     }

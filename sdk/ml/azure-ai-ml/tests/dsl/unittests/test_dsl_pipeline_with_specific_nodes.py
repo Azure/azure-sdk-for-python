@@ -589,21 +589,14 @@ class TestDSLPipelineWithSpecificNodes:
         )
         data_transfer_job_func = to_component(job=data_transfer_job)
 
-        # DataTransferImport from import_data() function
-        data_transfer_function = import_data(
-            source=source,
-            outputs=outputs,
-            task=DataTransferTaskType.IMPORT_DATA,
-        )
-
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_database_function")
         def pipeline(query_source_snowflake, connection_target_azuresql):
             node1 = data_transfer_job_func(source=Database(**source))
-            node2 = data_transfer_function(source=Database(**source))
+            node2 = import_data(source=Database(**source), outputs=outputs)
 
             source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
             node3 = data_transfer_job_func(source=source_snowflake)
-            node4 = data_transfer_function(source=source_snowflake)
+            node4 = import_data(source=source_snowflake, outputs=outputs)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
@@ -685,17 +678,10 @@ class TestDSLPipelineWithSpecificNodes:
         )
         data_transfer_job_func = to_component(job=data_transfer_job)
 
-        # DataTransferImport from import_data() function
-        data_transfer_function = import_data(
-            source=source,
-            outputs=outputs,
-            task=DataTransferTaskType.IMPORT_DATA,
-        )
-
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_stored_database_function")
         def pipeline():
             node1 = data_transfer_job_func(source=Database(**source))
-            node2 = data_transfer_function(source=Database(**source))
+            node2 = import_data(source=Database(**source), outputs=outputs)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
         pipeline1 = pipeline()
@@ -765,21 +751,15 @@ class TestDSLPipelineWithSpecificNodes:
         )
         data_transfer_job_func = to_component(job=data_transfer_job)
 
-        # DataTransferImport from import_data() function
-        data_transfer_function = import_data(
-            source=source,
-            outputs=outputs,
-            task=DataTransferTaskType.IMPORT_DATA,
-        )
-
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_import_file_system_function")
         def pipeline(path_source_s3, connection_target):
             node1 = data_transfer_job_func(source=FileSystem(**source))
-            node2 = data_transfer_function(source=FileSystem(**source))
+            node2 = import_data(source=FileSystem(**source), outputs=outputs)
+
 
             source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
             node3 = data_transfer_job_func(source=source_snowflake)
-            node4 = data_transfer_function(source=source_snowflake)
+            node4 = import_data(source=source_snowflake, outputs=outputs)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
@@ -861,25 +841,16 @@ class TestDSLPipelineWithSpecificNodes:
         )
         data_transfer_job_func = to_component(job=data_transfer_job)
 
-        # DataTransferImport from export_data() function
-        data_transfer_function = export_data(
-            inputs=inputs,
-            sink=sink,
-            task=DataTransferTaskType.EXPORT_DATA,
-        )
-
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_database_function")
         def pipeline(table_name, connection_target_azuresql):
             node1 = data_transfer_job_func(source=cosmos_folder)
             node1.sink = sink
-            node2 = data_transfer_function(source=cosmos_folder)
-            node2.sink = sink
+            node2 = export_data(inputs={"source": cosmos_folder}, sink=sink)
 
             source_snowflake = Database(table_name=table_name, connection=connection_target_azuresql)
             node3 = data_transfer_job_func(source=cosmos_folder)
             node3.sink = source_snowflake
-            node4 = data_transfer_function(source=cosmos_folder)
-            node4.sink = source_snowflake
+            node4 = export_data(inputs={"source": cosmos_folder}, sink=source_snowflake)
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
@@ -966,24 +937,16 @@ class TestDSLPipelineWithSpecificNodes:
         )
         data_transfer_job_func = to_component(job=data_transfer_job)
 
-        # DataTransferImport from export_data() function
-        data_transfer_function = export_data(
-            inputs=inputs,
-            sink=sink,
-            task=DataTransferTaskType.EXPORT_DATA,
-        )
-
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_file_system_function")
         def pipeline(path_source_s3, connection_target, cosmos_folder):
             node1 = data_transfer_job_func(source=my_cosmos_folder)
             node1.sink = sink
-            node2 = data_transfer_function(source=my_cosmos_folder)
-            node2.sink = sink
+            node2 = export_data(inputs = {"source": my_cosmos_folder}, sink=sink)
 
             source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
             node3 = data_transfer_job_func(source=cosmos_folder)
             node3.sink = source_snowflake
-            node4 = data_transfer_function(source=cosmos_folder)
+            node4 = export_data(inputs={"source": cosmos_folder}, sink=source_snowflake)
             node4.sink = source_snowflake
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]

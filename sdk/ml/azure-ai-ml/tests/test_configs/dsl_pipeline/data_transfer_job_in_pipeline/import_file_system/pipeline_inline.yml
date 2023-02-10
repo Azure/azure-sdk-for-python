@@ -3,10 +3,10 @@ type: pipeline
 
 description: 'submit a pipeline with data transfer import file system job'
 settings:
-  default_compute: azureml:adf_compute
+  default_compute: azureml:adftest
 inputs:
-  path_source_s3: s3://my_bucket/my_folder
-  connection_target: azureml:my_s3_connection
+  path_source_s3: test1/*
+  connection_target: azureml:my-s3-connection
 
 jobs:
   s3_blob:
@@ -19,16 +19,14 @@ jobs:
     outputs:
       sink:
         type: uri_folder
-        path: azureml://datastores/managed/paths/some_path
 
   s3_blob_input:
     type: data_transfer
     task: import_data
     source:
       type: file_system
-      path: s3://my_bucket/my_folder
-      connection: azureml:my_s3_connection
+      path: test1/*
+      connection: azureml:my-s3-connection
     outputs:
       sink:
         type: uri_folder
-        path: azureml://datastores/managed/paths/some_path

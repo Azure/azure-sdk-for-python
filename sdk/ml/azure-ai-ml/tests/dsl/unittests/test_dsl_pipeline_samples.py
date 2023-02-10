@@ -535,6 +535,8 @@ class TestDSLPipelineSamples:
         job_yaml = str(samples_dir / "data_transfer_job_in_pipeline/export_database/pipeline_inline.yml")
         omit_fields = [
             "properties.display_name",
+            "properties.inputs.cosmos_folder.uri",
+            "properties.jobs.blob_azuresql_node_input.inputs.source.uri",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 

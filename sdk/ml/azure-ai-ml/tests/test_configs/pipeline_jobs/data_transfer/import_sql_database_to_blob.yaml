@@ -5,7 +5,7 @@ description: 'pipeline with data transfer components'
 settings:
   default_compute: azureml:adftest
 inputs:
-  query_source_snowflake: select * from TPCH_SF1000.PARTSUPP limit 10
+  query_source_snowflake: select top(10) Name from SalesLT.ProductCategory
 
 jobs:
   snowflake_blob:
@@ -14,11 +14,10 @@ jobs:
     source:
       type: database
       query: ${{parent.inputs.query_source_snowflake}}
-      connection: azureml:my_snowflake_connection
+      connection: azureml:my_azuresqldb_connection
     outputs:
       sink:
         type: mltable
-        path: azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/
     compute: azureml:adftest
 
   snowflake_blob_node_input:
@@ -26,11 +25,10 @@ jobs:
     task: import_data
     source:
       type: database
-      query: select * from TPCH_SF1000.PARTSUPP limit 10
-      connection: azureml:my_snowflake_connection
+      query: select top(10) Name from SalesLT.ProductCategory
+      connection: azureml:my_azuresqldb_connection
     outputs:
       sink:
         type: mltable
-        path: azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/
 
 

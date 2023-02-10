@@ -79,16 +79,11 @@ class Database(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-in
         # The name will be updated by the annotated variable name.
         self.type = type
         self.name = None
-        self.connection = self._to_data_binding(connection)
-        self.query = self._to_data_binding(query)
-        self.table_name = self._to_data_binding(table_name)
+        self.connection = connection
+        self.query = query
+        self.table_name = table_name
         self.stored_procedure = stored_procedure
         self.stored_procedure_params = stored_procedure_params
-
-    def _to_data_binding(self, value):  # pylint: disable=no-self-use
-        if "_data_binding" in type(value).__dict__:
-            return value._data_binding()  # pylint: disable=protected-access
-        return value
 
     def _to_dict(self, remove_name=True):
         """Convert the Source object to a dict."""
@@ -157,19 +152,14 @@ class FileSystem(DictMixin, RestTranslatableMixin):  # pylint: disable=too-many-
     ):
         self.type = type
         self.name = None
-        self.connection = self._to_data_binding(connection)
+        self.connection = connection
 
         if path is not None and not isinstance(path, str):
             # this logic will make dsl data binding expression working in the same way as yaml
             # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
-            self.path = self._to_data_binding(str(path))
+            self.path = str(path)
         else:
-            self.path = self._to_data_binding(path)
-
-    def _to_data_binding(self, value):  # pylint: disable=no-self-use
-        if "_data_binding" in type(value).__dict__:
-            return value._data_binding()   # pylint: disable=protected-access
-        return value
+            self.path = path
 
     def _to_dict(self, remove_name=True):
         """Convert the Source object to a dict."""

@@ -42,7 +42,7 @@ from azure.ai.ml._schema.job import CommandJobSchema, ParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components, camel_to_snake
+from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from azure.ai.ml.constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
@@ -439,7 +439,7 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     try_enable_internal_components()
     # todo: refine Hard code for now to support different task type for DataTransfer component
     if _type == NodeType.DATA_TRANSFER:
-        _type = "_".join([NodeType.DATA_TRANSFER, camel_to_snake(data.get("task", " "))])
+        _type = "_".join([NodeType.DATA_TRANSFER, data.get("task", " ")])
     if _type not in valid_keys:
         if (
             schema

@@ -3,10 +3,10 @@ type: pipeline
 
 description: 'submit a pipeline with data transfer import database job'
 settings:
-  default_compute: azureml:adf_compute
+  default_compute: azureml:adftest
 inputs:
-  query_source_snowflake: 'SELECT * FROM my_table'
-  connection_target_azuresql: 'azureml:my_azuresql_connection'
+  query_source_snowflake: 'select * from TPCH_SF1000.PARTSUPP limit 10'
+  connection_target_azuresql: 'azureml:my_snowflake_connection'
 
 jobs:
   snowflake_blob_node_input:
@@ -14,11 +14,12 @@ jobs:
     task: import_data
     source:
       type: database
-      query: SELECT * FROM my_table
+      query: select * from TPCH_SF1000.PARTSUPP limit 10
       connection: azureml:my_snowflake_connection
     outputs:
       sink:
         type: mltable
+        path: azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/
   snowflake_blob:
     type: data_transfer
     task: import_data
@@ -29,4 +30,5 @@ jobs:
     outputs:
       sink:
         type: mltable
+        path: azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/
       # use default compute

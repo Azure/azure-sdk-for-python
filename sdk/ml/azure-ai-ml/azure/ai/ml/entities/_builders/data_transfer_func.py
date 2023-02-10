@@ -1,17 +1,104 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Optional, Dict, Union
+from typing import Optional, Dict, Union, Callable, Tuple
 
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
     DataTransferImportComponent, DataTransferExportComponent
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
 from azure.ai.ml.constants._component import ComponentSource, ExternalDataType, DataTransferBuiltinComponentUri, \
     DataTransferTaskType
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
-from azure.ai.ml.entities._inputs_outputs.output import Output
+from azure.ai.ml.entities._inputs_outputs import Output, Input
+from azure.ai.ml.entities._job.pipeline._io import PipelineInput, NodeOutput
+from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
 from .data_transfer import DataTransferCopy, DataTransferImport, DataTransferExport, _build_source_sink
-from .command_func import _parse_inputs_outputs, _parse_input, _parse_output
+from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+
+SUPPORTED_INPUTS = [
+    LegacyAssetTypes.PATH,
+    AssetTypes.URI_FILE,
+    AssetTypes.URI_FOLDER,
+    AssetTypes.CUSTOM_MODEL,
+    AssetTypes.MLFLOW_MODEL,
+    AssetTypes.MLTABLE,
+    AssetTypes.TRITON_MODEL,
+]
+
+
+def _parse_input(input_value):
+    component_input, job_input = None, None
+    if isinstance(input_value, Input):
+        component_input = Input(**input_value._to_dict())
+        input_type = input_value.type
+        if input_type in SUPPORTED_INPUTS:
+            job_input = Input(**input_value._to_dict())
+    elif isinstance(input_value, dict):
+        # if user provided dict, we try to parse it to Input.
+        # for job input, only parse for path type
+        input_type = input_value.get("type", None)
+        if input_type in SUPPORTED_INPUTS:
+            job_input = Input(**input_value)
+        component_input = Input(**input_value)
+    elif isinstance(input_value,  str):
+        # Input bindings
+        component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
+        job_input = input_value
+    elif isinstance(input_value, (PipelineInput, NodeOutput)):
+        # datatransfer node can accept PipelineInput/NodeOutput for export task.
+        if input_value._data is None or isinstance(input_value._data, Output):
+            data = Input(type=input_value.type, mode=input_value.mode)
+        else:
+            data = input_value._data
+        component_input, _ = _parse_input(data)
+        job_input = input_value
+    else:
+        msg = f"Unsupported input type: {type(input_value)}, only Input, dict, str, PipelineInput and NodeOutput are " \
+              f"supported."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.JOB,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
+    return component_input, job_input
+
+
+def _parse_output(output_value):
+    component_output, job_output = None, None
+    if isinstance(output_value, Output):
+        component_output = Output(**output_value._to_dict())
+        job_output = Output(**output_value._to_dict())
+    elif not output_value:
+        # output value can be None or empty dictionary
+        # None output value will be packed into a JobOutput object with mode = ReadWriteMount & type = UriFolder
+        component_output = ComponentTranslatableMixin._to_output(output_value)
+        job_output = output_value
+    elif isinstance(output_value, dict):  # When output value is a non-empty dictionary
+        job_output = Output(**output_value)
+        component_output = Output(**output_value)
+    elif isinstance(output_value, str):  # When output is passed in from pipeline job yaml
+        job_output = output_value
+    else:
+        msg = f"Unsupported output type: {type(output_value)}, only Output and dict are supported."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.JOB,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
+    return component_output, job_output
+
+
+def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Dict]:
+    component_io_dict, job_io_dict = {}, {}
+    if io_dict:
+        for key, val in io_dict.items():
+            component_io, job_io = parse_func(val)
+            component_io_dict[key] = component_io
+            job_io_dict[key] = job_io
+    return component_io_dict, job_io_dict
 
 
 def copy_data(
@@ -95,6 +182,7 @@ def copy_data(
     return data_transfer_copy_obj
 
 
+@pipeline_node_decorator
 def import_data(
         *,
         name: Optional[str] = None,
@@ -178,6 +266,7 @@ def import_data(
     return data_transfer_import_obj
 
 
+@pipeline_node_decorator
 def export_data(
         *,
         name: Optional[str] = None,
