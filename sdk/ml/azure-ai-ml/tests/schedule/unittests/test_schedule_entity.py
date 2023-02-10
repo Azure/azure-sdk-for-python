@@ -24,12 +24,13 @@ class TestScheduleEntity:
             assert type(schedule.trigger) == CronTrigger
 
         schedule = verify_entity_load_and_dump(load_schedule, simple_schedule_validation, test_path)[0]
+        schedule.properties["test"] = "val"
         actual_dict = schedule._to_rest_object().as_dict()["properties"]
         # Skip job definition
         actual_dict["action"]["job_definition"] = {}
         expected_dict = {
             "description": "a weekly retrain schedule",
-            "properties": {},
+            "properties": {"test": "val"},
             "tags": {},
             "action": {"action_type": "CreateJob", "job_definition": {}},
             "display_name": "weekly retrain schedule",

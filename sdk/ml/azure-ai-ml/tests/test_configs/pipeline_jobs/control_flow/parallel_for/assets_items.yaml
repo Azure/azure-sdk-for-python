@@ -1,0 +1,35 @@
+display_name: parallel_for_pipeline
+type: pipeline
+jobs:
+  parallel_body:
+    type: command
+    inputs:
+      component_in_number: 1
+      component_in_path:
+        type: uri_file
+        path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    component: ../../../components/helloworld_component.yml
+  parallel_node:
+    type: parallel_for
+    body: ${{parent.jobs.parallel_body}}
+    items: [
+      {
+        "component_in_path": {
+          "type": "uri_file",
+          "path": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
+        }
+      },
+      {
+        "component_in_path": {
+          "type": "uri_file",
+          "path": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv"
+        }
+      }
+    ]
+    outputs:
+      component_out_path: ${{parent.outputs.component_out_path}}
+outputs:
+  component_out_path:
+    type: mltable
+settings:
+  default_compute: azureml:cpu-cluster

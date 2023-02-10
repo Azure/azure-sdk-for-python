@@ -132,7 +132,7 @@ class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
         :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
         :type stream: str
         :param body: An array of objects matching the schema defined by the provided stream. Is either
-         a list type or a IO type. Required.
+         a [JSON] type or a IO type. Required.
         :type body: list[JSON] or IO
         :keyword content_encoding: gzip. Default value is None.
         :paramtype content_encoding: str

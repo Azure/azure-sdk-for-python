@@ -12,7 +12,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -205,7 +205,6 @@ def is_empty_target(obj):
 
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
     """Convert ordered dict to dict. Remove keys with None value.
-
     This is a workaround for rest request must be in dict instead of
     ordered dict.
     """

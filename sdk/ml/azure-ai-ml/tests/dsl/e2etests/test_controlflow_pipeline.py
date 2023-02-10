@@ -645,3 +645,42 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                                                                  'value': '${{parent.outputs.component_out_path}}'}},
                               'type': 'parallel_for'}
         }
+
+    def test_parallel_for_pipeline_with_asset_items(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component()
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1, "component_in_path": test_input},
+                    {"component_in_number": 2, "component_in_path": test_input},
+                ]
+            )
+            after_node = hello_world_component(
+                component_in_path=parallel_node.outputs.component_out_path,
+            )
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"]["parallel_node"] == {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_path": {"uri": '
+                     '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                     '"job_input_type": "uri_file"}, '
+                     '"component_in_number": 1}, {"component_in_path": '
+                     '{"uri": '
+                     '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                     '"job_input_type": "uri_file"}, '
+                     '"component_in_number": 2}]',
+            'type': 'parallel_for'
+        }
