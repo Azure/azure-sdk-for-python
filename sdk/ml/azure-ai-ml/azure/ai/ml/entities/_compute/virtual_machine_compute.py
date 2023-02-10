@@ -75,6 +75,7 @@ class VirtualMachineCompute(Compute):
             location=kwargs.pop("location", None),
             description=description,
             resource_id=resource_id,
+            tags=kwargs.pop("tags", None),
             **kwargs,
         )
         self.ssh_settings = ssh_settings
@@ -105,6 +106,7 @@ class VirtualMachineCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             public_key_data=credentials.public_key_data if credentials else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
@@ -141,5 +143,5 @@ class VirtualMachineCompute(Compute):
             resource_id=self.resource_id,
             description=self.description,
         )
-        resource = ComputeResource(name=self.name, location=self.location, properties=vm_compute)
+        resource = ComputeResource(name=self.name, location=self.location, tags=self.tags, properties=vm_compute)
         return resource

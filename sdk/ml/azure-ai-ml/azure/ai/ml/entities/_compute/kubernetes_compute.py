@@ -63,6 +63,7 @@ class KubernetesCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
@@ -101,4 +102,5 @@ class KubernetesCompute(Compute):
             properties=kubernetes_comp,
             name=self.name,
             identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            tags=self.tags,
         )

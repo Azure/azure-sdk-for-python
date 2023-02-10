@@ -116,7 +116,13 @@ class SynapseSparkCompute(Compute):
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
-        super().__init__(name=name, description=description, location=kwargs.pop("location", None), **kwargs)
+        super().__init__(
+            name=name,
+            description=description,
+            location=kwargs.pop("location", None),
+            tags=kwargs.pop("tags", None),
+            **kwargs
+        )
         self.identity = identity
         self.node_count = node_count
         self.node_family = node_family
@@ -148,6 +154,7 @@ class SynapseSparkCompute(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             created_on=prop.created_on if prop.properties else None,
             node_count=prop.properties.node_count if prop.properties else None,
             node_family=prop.properties.node_size_family if prop.properties else None,
@@ -189,4 +196,5 @@ class SynapseSparkCompute(Compute):
                 if self.identity
                 else None
             ),
+            tags=self.tags,
         )

@@ -180,6 +180,7 @@ class ComputeInstance(Compute):
             location=kwargs.pop("location", None),
             resource_id=kwargs.pop("resource_id", None),
             description=description,
+            tags=kwargs.pop("tags", None),
             **kwargs,
         )
         self.size = size
@@ -310,6 +311,7 @@ class ComputeInstance(Compute):
             identity=(
                 self.identity._to_compute_rest_object() if self.identity else None
             ),
+            tags=self.tags,
         )
 
     def _to_dict(self) -> Dict:
@@ -403,6 +405,7 @@ class ComputeInstance(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)

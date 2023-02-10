@@ -130,6 +130,7 @@ class AmlCompute(Compute):
             name=name,
             description=description,
             location=kwargs.pop("location", None),
+            tags=kwargs.pop("tags", None),
             **kwargs,
         )
         self.size = size
@@ -165,6 +166,7 @@ class AmlCompute(Compute):
             id=rest_obj.id,
             description=prop.description,
             location=rest_obj.location,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
@@ -239,4 +241,5 @@ class AmlCompute(Compute):
             location=self.location,
             properties=aml_comp,
             identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            tags=self.tags,
         )
