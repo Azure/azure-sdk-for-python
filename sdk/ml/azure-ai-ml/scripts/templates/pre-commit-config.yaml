@@ -1,0 +1,39 @@
+files: 'sdk/ml/azure-ai-ml/.*'
+repos:
+- repo: local
+  hooks:
+  - id: pylint
+    name: Pylint Check
+    language: system
+    # Please run `tox -c ../../../eng/tox/tox.ini -e lint` to set up the environment before first run
+    entry: sdk/ml/azure-ai-ml/.tox/lint/scripts/python.exe
+    require_serial: true
+    types:
+      - python
+    args:
+      - -m
+      - pylint
+      - --rcfile=pylintrc
+      - --output-format=parseable
+#  - id: pytest-pipeline
+#    name: Pipeline related tests
+#    files: 'sdk/ml/azure-ai-ml/azure/ai/ml/.*'
+#    language: system
+#    entry: sdk/ml/azure-ai-ml/Scripts/run_tests.ps1
+#    require_serial: true
+#    types:
+#      - python
+#    pass_filenames: false
+#    args:
+#      - .\tests\pipeline_job\
+#  - id: pytest-internal
+#    name: Pipeline related tests
+#    files: 'sdk/ml/azure-ai-ml/azure/ai/ml/.*'
+#    language: system
+#    entry: sdk/ml/azure-ai-ml/Scripts/run_tests.ps1
+#    require_serial: true
+#    types:
+#      - python
+#    pass_filenames: false
+#    args:
+#      - .\tests\internal\
