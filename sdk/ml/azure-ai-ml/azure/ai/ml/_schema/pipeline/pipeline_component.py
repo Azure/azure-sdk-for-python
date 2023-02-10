@@ -40,7 +40,7 @@ from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJ
 from azure.ai.ml._schema.pipeline.pipeline_spark_job import PipelineSparkJobSchema
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
-from azure.ai.ml.constants._component import ComponentSource, ControlFlowType, NodeType
+from azure.ai.ml.constants._component import ComponentSource, ControlFlowType, NodeType, CONTROL_FLOW_TYPES
 
 
 class NodeNameStr(PipelineNodeNameStr):
@@ -107,17 +107,26 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 job_instance = AutoMLJob._create_instance_from_schema_dict(
                     loaded_data=job_instance,
                 )
-            elif job_instance.get("type") == ControlFlowType.IF_ELSE:
-                # Convert to if-else node.
-                job_instance = ConditionNode._create_instance_from_schema_dict(loaded_data=job_instance)
-            elif job_instance.get("type") == ControlFlowType.DO_WHILE:
-                # Convert to do-while node.
-                job_instance = DoWhile._create_instance_from_schema_dict(pipeline_jobs=jobs, loaded_data=job_instance)
-            elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
-                # Convert to do-while node.
-                job_instance = ParallelFor._create_instance_from_schema_dict(
-                    pipeline_jobs=jobs, loaded_data=job_instance
-                )
+            elif job_instance.get("type") in CONTROL_FLOW_TYPES:
+                # Set source to yaml job for control flow node.
+                job_instance["_source"] = ComponentSource.YAML_JOB
+
+                job_type = job_instance.get("type")
+                if job_type == ControlFlowType.IF_ELSE:
+                    # Convert to if-else node.
+                    job_instance = ConditionNode._create_instance_from_schema_dict(
+                        loaded_data=job_instance
+                    )
+                elif job_instance.get("type") == ControlFlowType.DO_WHILE:
+                    # Convert to do-while node.
+                    job_instance = DoWhile._create_instance_from_schema_dict(
+                        pipeline_jobs=jobs, loaded_data=job_instance
+                    )
+                elif job_instance.get("type") == ControlFlowType.PARALLEL_FOR:
+                    # Convert to do-while node.
+                    job_instance = ParallelFor._create_instance_from_schema_dict(
+                        pipeline_jobs=jobs, loaded_data=job_instance
+                    )
             jobs[key] = job_instance
 
     for key, job_instance in jobs.items():
