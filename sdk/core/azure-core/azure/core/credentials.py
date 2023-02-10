@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from collections import namedtuple
-from typing import Any, NamedTuple, Optional, TypeVar, Tuple, Union
+from typing import Any, NamedTuple, Optional, Tuple, Union
 from typing_extensions import Protocol, runtime_checkable
 
 
