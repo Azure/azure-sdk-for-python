@@ -580,9 +580,9 @@ def mock_anon_component_version(mocker: MockFixture):
         return ANONYMOUS_COMPONENT_NAME, fake_uuid
 
     if is_live():
-        mocker.patch("azure.ai.ml.entities._component.component.Component._get_rest_name_version", side_effect=generate_name_version)
+        mocker.patch("azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version", side_effect=generate_name_version)
     else:
-        mocker.patch("azure.ai.ml.entities._component.component.Component._get_rest_name_version", side_effect=fake_name_version)
+        mocker.patch("azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version", side_effect=fake_name_version)
 
 
 def normalized_arm_id_in_object(items):
