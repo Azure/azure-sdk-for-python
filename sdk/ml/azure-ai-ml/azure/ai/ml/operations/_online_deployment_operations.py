@@ -28,7 +28,8 @@ from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_sco
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
 from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs
-from azure.ai.ml.entities import OnlineDeployment
+from azure.ai.ml.entities import OnlineDeployment, Data
+from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
@@ -160,6 +161,23 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 operation_scope=self._operation_scope,
                 operation_config=self._operation_config,
             )
+            if deployment.data_collector:
+                for c in deployment.data_collector.collections:
+                    data_name = deployment.endpoint_name + "-" + deployment.name + "-" + c
+                    data_object = Data(
+                        name = data_name,
+                        path = deployment.data_collector.destination.path 
+                        if deployment.data_collector.destination and deployment.data_collector.destination.path 
+                        else "azureml://datastores/workspaceblobstore/paths/modelDataCollector",
+                        is_anonymous= True
+                )
+                    result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
+                    deployment.data_collector.collections[c].data = DataAsset(
+                        data_id = result.id,
+                        path = result.path,
+                        name = result.name,
+                        version = result.version
+                    )
 
             upload_dependencies(deployment, orchestrators)
             try:

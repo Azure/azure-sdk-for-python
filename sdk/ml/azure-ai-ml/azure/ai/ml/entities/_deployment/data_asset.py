@@ -24,11 +24,13 @@ class DataAsset:
 
     def __init__(
         self,
+        data_id: Optional[str] = None,
         name: Optional[str] = None,
         path: Optional[str] = None,
         version: Optional[int] = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
+        self.data_id = data_id
         self.name = name
         self.path = path
         self.version = version
