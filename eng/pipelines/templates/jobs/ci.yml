@@ -98,9 +98,6 @@ jobs:
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
 
-    variables:
-    - template: ../variables/globals.yml
-
     dependsOn:
       - 'Build'
 
