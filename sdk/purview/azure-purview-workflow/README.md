@@ -45,7 +45,7 @@ client = PurviewWorkflowClient(endpoint='<endpoint>', credential=credential)
 
 The following section shows you how to initialize and authenticate your client, then list all workflows.
 
-- [List All Workflows](#list-all-workflows "List All Data Sources")
+- [List All Workflows](#list-all-workflows "List All Workflows")
 
 ### List All Workflows
 
@@ -60,8 +60,8 @@ credential = UsernamePasswordCredential(client_id=client_id, username=username, 
 client = PurviewWorkflowClient(endpoint='<endpoint>', credential=credential)
 try:
     response = client.list_workflows()
-    result = [item for item in response]
-    print(result)
+    for item in response:
+    print(item)
 except HttpResponseError as e:
     print('service responds error: {}'.format(e.response.json()))
 ```

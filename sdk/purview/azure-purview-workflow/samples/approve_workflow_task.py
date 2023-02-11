@@ -28,26 +28,39 @@ import logging
 import os
 
 from azure.purview.workflow import PurviewWorkflowClient
-from azure.identity import DefaultAzureCredential
+from azure.identity import UsernamePasswordCredential
 from azure.core.exceptions import HttpResponseError
 
 logging.basicConfig(level=logging.DEBUG)
 LOG = logging.getLogger()
 
-# Set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
-# AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, WORKFLOW_ENDPOINT
+# Set the value of the endpoint as environment variables:
+# WORKFLOW_ENDPOINT
+# Set the values of client ID and tenant ID of the AAD application as environment variables:
+# AZURE_CLIENT_ID, AZURE_TENANT_ID
+# set the values of username and password of the AAD user as environment variables:
+# USERNAME, PASSWORD
 try:
-    endpoint = os.environ["WORKFLOW_ENDPOINT"]
+    endpoint = os.getenv("WORKFLOW_ENDPOINT")
+    client_id = os.getenv("AZURE_CLIENT_ID")
+    tenant_id = os.getenv("AZURE_TENANT_ID")
+    username = os.getenv("USERNAME")
+    password = os.getenv("PASSWORD")
 except KeyError:
-    LOG.error("Missing environment variable 'WORKFLOW_ENDPOINT' - please set if before running the example")
+    LOG.error("Missing environment variable 'WORKFLOW_ENDPOINT' or 'AZURE_CLIENT_ID' or 'AZURE_TENANT_ID' or 'USERNAME' or 'PASSWORD' - please set if before running the example")
     exit()
-
+credential = UsernamePasswordCredential(client_id=client_id, username=username, password=password,
+                                        tenant_id=tenant_id)
 # Build a client through AAD
-client = PurviewWorkflowClient(credential=DefaultAzureCredential(), endpoint=endpoint)
+client = PurviewWorkflowClient(endpoint= endpoint, credential=credential)
 
-# write your sample here. For example:
-# try:
-#     result = client.xxx.xx(...)
-#     print(result)
-# except HttpResponseError as e:
-#     print('Failed to send JSON message: {}'.format(e.response.json()))
+try:
+    approve_response = {
+      "comment": "Thanks for raising this!"
+    }
+    task_id = "6785028c-1348-4415-b6b7-f723be6c8c31"
+    client.approve_approval_task(task_id, approve_response)
+    print('Successfully approve a workflow task.')
+
+except HttpResponseError as e:
+    print('Failed to send JSON message: {}'.format(e.response.json()))
