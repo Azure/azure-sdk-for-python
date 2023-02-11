@@ -6,7 +6,13 @@
 import time
 from itertools import product
 import azure.core
-from azure.core.credentials import AccessToken, AzureKeyCredential, AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import (
+    AccessToken,
+    AzureKeyCredential,
+    AzureSasCredential,
+    AzureNamedKeyCredential,
+    GenericKeyCredential,
+)
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.policies import (
@@ -20,6 +26,7 @@ from utils import HTTP_REQUESTS
 import pytest
 
 from unittest.mock import Mock
+from typing import Tuple
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -336,7 +343,7 @@ def test_azure_key_credential_policy_with_two_keys(http_request):
         assert request.headers[key_header2] == api_key2
 
     transport = Mock(send=verify_authorization_header)
-    credential = AzureKeyCredential((api_key1, api_key2))
+    credential = GenericKeyCredential[Tuple[str, str]]((api_key1, api_key2))
     credential_policy = AzureKeyCredentialPolicy(credential=credential, name=(key_header1, key_header2))
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
@@ -350,10 +357,9 @@ def test_azure_key_credential_updates_with_two_keys():
     api_key2 = "test_key2"
     new_api_key2 = "new_key2"
 
-    credential = AzureKeyCredential(key=(api_key1, api_key2))
+    credential = GenericKeyCredential[Tuple[str, str]](key=(api_key1, api_key2))
     assert credential.key == (api_key1, api_key2)
 
-    api_key = "new"
     credential.update((new_api_key1, new_api_key2))
     assert credential.key == (new_api_key1, new_api_key2)
 

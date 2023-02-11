@@ -28,7 +28,7 @@ _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
 _X_API_KEY_HEADER_NAME = "x-api-key"
 
 
-class MetricsAdvisorKeyCredential(GenericKeyCredential[Tuple[str, ...]]):
+class MetricsAdvisorKeyCredential(GenericKeyCredential[Tuple[str, str]]):
     """Credential type used for authenticating to an Azure Metrics Advisor service.
 
     :param str subscription_key: The subscription key
