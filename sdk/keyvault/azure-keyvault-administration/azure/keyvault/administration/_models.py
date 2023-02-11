@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Dict, Generic, TypeVar, Union
+from typing import Dict, Generic, Optional, TypeVar, Union
 
 from azure.core.rest import HttpResponse
 
@@ -38,7 +38,7 @@ class KeyVaultPermission(object):
         self.not_data_actions = kwargs.get("not_data_actions")
 
     @classmethod
-    def _from_generated(cls, permissions: "Permission") -> "KeyVaultPermission":
+    def _from_generated(cls, permissions: Permission) -> "KeyVaultPermission":
         return cls(
             actions=permissions.actions,
             not_actions=permissions.not_actions,
@@ -66,15 +66,15 @@ class KeyVaultRoleAssignment(object):
         return f"KeyVaultRoleAssignment<{self.role_assignment_id}>"
 
     @classmethod
-    def _from_generated(cls, role_assignment: "RoleAssignment") -> "KeyVaultRoleAssignment":
+    def _from_generated(cls, role_assignment: RoleAssignment) -> "KeyVaultRoleAssignment":
         # pylint:disable=protected-access
         return cls(
             role_assignment_id=role_assignment.id,
             name=role_assignment.name,
             assignment_type=role_assignment.type,
             properties=KeyVaultRoleAssignmentProperties._from_generated(role_assignment.properties)
-                if role_assignment.properties
-                else KeyVaultRoleAssignmentProperties(),
+            if role_assignment.properties
+            else KeyVaultRoleAssignmentProperties(),
         )
 
 
@@ -101,7 +101,7 @@ class KeyVaultRoleAssignmentProperties(object):
 
     @classmethod
     def _from_generated(
-        cls, role_assignment_properties: "Union[RoleAssignmentProperties, RoleAssignmentPropertiesWithScope]"
+        cls, role_assignment_properties: Union[RoleAssignmentProperties, RoleAssignmentPropertiesWithScope]
     ) -> "KeyVaultRoleAssignmentProperties":
         # the generated RoleAssignmentProperties and RoleAssignmentPropertiesWithScope
         # models differ only in that the latter has a "scope" attribute
@@ -139,7 +139,7 @@ class KeyVaultRoleDefinition(object):
         return f"KeyVaultRoleDefinition<{self.id}>"
 
     @classmethod
-    def _from_generated(cls, definition: "RoleDefinition") -> "KeyVaultRoleDefinition":
+    def _from_generated(cls, definition: RoleDefinition) -> "KeyVaultRoleDefinition":
         # pylint:disable=protected-access
         return cls(
             assignable_scopes=definition.assignable_scopes,
@@ -166,7 +166,7 @@ class KeyVaultBackupResult(object):
 
     @classmethod
     def _from_generated(
-        cls, response: "HttpResponse", deserialized_operation: "FullBackupOperation", response_headers: "Dict"
+        cls, response: HttpResponse, deserialized_operation: FullBackupOperation, response_headers: Dict
     ) -> "KeyVaultBackupResult":
         return cls(folder_url=deserialized_operation.azure_storage_blob_container_uri)
 
@@ -175,21 +175,30 @@ class KeyVaultSetting(Generic[T]):
     """A Key Vault setting.
 
     :ivar str name: The name of the account setting.
-    :ivar SettingType type: The type specifier of the value.
-    :ivar T value: The value of the pool setting. This is a boolean if `type` is SettingType.BOOLEAN, and a string
+    :ivar value: The value of the pool setting. This is a boolean if `type` is SettingType.BOOLEAN, and a string
         otherwise. If `value` is provided as a string when `type` is SettingType.BOOLEAN, the value will be converted
         into a boolean (True if `value` is "True" (case-insensitive); False otherwise).
+    :vartype value: str or bool
+    :ivar type: The type specifier of the value.
+    :vartype type: SettingType or None
     """
 
-    def __init__(self, **kwargs) -> None:
-        self.name = kwargs.get("name")
-        self.type = kwargs.get("type")
-        self.value = kwargs.get("value")
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: Union[str, bool],
+        type: Optional[SettingType] = None,
+        **kwargs,  # pylint:disable=unused-argument,redefined-builtin
+    ) -> None:
+        self.name = name
+        self.value = value
+        self.type = type
 
         # If `value` was given as a string but the type is boolean, convert it to a bool
         if hasattr(self.value, "lower") and self.type == SettingType.BOOLEAN:
             self.value = self.value.lower() == "true"
 
     @classmethod
-    def _from_generated(cls, setting: "Setting") -> "KeyVaultSetting":
+    def _from_generated(cls, setting: Setting) -> "KeyVaultSetting":
         return cls(name=setting.name, value=setting.value, type=SettingType(setting.type))
