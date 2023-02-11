@@ -6,15 +6,12 @@ from packaging.specifiers import SpecifierSet
 from packaging.version import Version, parse
 from pkg_resources import Requirement
 
-from ci_tools.variables import discover_repo_root, get_artifact_directory, DEV_BUILD_IDENTIFIER
-import os, sys, platform, glob, re
-
+from ci_tools.variables import discover_repo_root, DEV_BUILD_IDENTIFIER
 from ci_tools.parsing import ParsedSetup, get_build_config
 from pypi_tools.pypi import PyPIClient
 
-
+import os, sys, platform, glob, re, logging
 from typing import List, Any
-import logging
 
 INACTIVE_CLASSIFIER = "Development Status :: 7 - Inactive"
 
@@ -78,7 +75,7 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
 
     for pkg in package_set:
         try:
-            spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)    
+            spec_set = SpecifierSet(ParsedSetup.from_path(pkg).python_requires)
         except RuntimeError as e:
             logging.error(f"Unable to parse metadata for package {pkg}, omitting from build.")
             continue
@@ -92,7 +89,9 @@ def apply_compatibility_filter(package_set: List[str]) -> List[str]:
             collected_packages.append(pkg)
 
     logging.debug("Target packages after applying compatibility filter: {}".format(collected_packages))
-    logging.debug("Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages)))
+    logging.debug(
+        "Package(s) omitted by compatibility filter: {}".format(generate_difference(package_set, collected_packages))
+    )
 
     return collected_packages
 
@@ -117,8 +116,10 @@ def str_to_bool(input_string: str) -> bool:
     else:
         return False
 
+
 def generate_difference(original_packages: List[str], filtered_packages: List[str]):
     return list(set(original_packages) - set(filtered_packages))
+
 
 def glob_packages(glob_string: str, target_root_dir: str) -> List[str]:
     if glob_string:
@@ -141,8 +142,10 @@ def apply_business_filter(collected_packages: List[str], filter_type: str) -> Li
     pkg_set_ci_filtered = list(filter(omit_function_dict.get(filter_type, omit_build), collected_packages))
 
     logging.debug("Target packages after applying business filter: {}".format(pkg_set_ci_filtered))
-    logging.debug("Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, pkg_set_ci_filtered)))
-    
+    logging.debug(
+        "Package(s) omitted by business filter: {}".format(generate_difference(collected_packages, pkg_set_ci_filtered))
+    )
+
     return pkg_set_ci_filtered
 
 
@@ -152,7 +155,7 @@ def discover_targeted_packages(
     additional_contains_filter: str = "",
     filter_type: str = "Build",
     compatibility_filter: bool = True,
-    include_inactive: bool = False
+    include_inactive: bool = False,
 ) -> List[str]:
     """
     During build and test, the set of targeted packages may expand or contract depending on the needs of the invocation.
@@ -191,7 +194,7 @@ def get_config_setting(package_path: str, setting: str, default: Any = True) -> 
     override_value = os.getenv(f"{os.path.basename(package_path).upper()}_{setting.upper()}", None)
     if override_value:
         return override_value
-    
+
     # if no override, check for the config setting in the pyproject.toml
     config = get_build_config(package_path)
 
