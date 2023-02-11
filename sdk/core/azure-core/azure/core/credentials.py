@@ -64,8 +64,6 @@ class AzureKeyCredential(Generic[T]):
         """
 
     def __init__(self, key: T) -> None:
-        if not key:
-            raise ValueError("The key used for authentication can not be None or empty")
         self._key = key
 
     @property
