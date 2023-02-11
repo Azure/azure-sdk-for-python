@@ -15,10 +15,9 @@ from common_tasks import (
     create_code_coverage_params,
 )
 
-from ci_tools.parsing import ParsedSetup
-from ci_tools.build import create_package
 from ci_tools.variables import in_ci
 from ci_tools.environment_exclusions import filter_tox_environment_string
+from ci_tools.ci_interactions import output_ci_warning
 from ci_tools.functions import build_whl_for_req
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
@@ -252,6 +251,8 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         options_array.extend(["-m", "{}".format(parsed_args.mark_arg)])
 
     tox_command_tuples = []
+    check_set = set([env.strip().lower() for env in parsed_args.tox_env.strip().split(",")])
+    skipped_tox_checks = {}
 
     for index, package_dir in enumerate(targeted_packages):
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
@@ -302,12 +303,23 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
         if parsed_args.tox_env:
             filtered_tox_environment_set = filter_tox_environment_string(parsed_args.tox_env, package_dir)
+            filtered_set = set([env.strip().lower() for env in filtered_tox_environment_set.strip().split(",")])
+
+            if filtered_set != check_set:
+                skipped_environments = check_set - filtered_set
+                if in_ci() and skipped_environments:
+                    for check in skipped_environments:
+                        if check not in skipped_tox_checks:
+                            skipped_tox_checks[check] = []
+
+                    skipped_tox_checks[check].append(package_name)
 
             if not filtered_tox_environment_set:
                 logging.info(
-                    f"All requested tox environments for package {package_name} have been excluded by the environment exclusion list."
+                    f'All requested tox environments "{parsed_args.tox_env}" for package {package_name} have been excluded as indicated by is_check_enabled().'
                     + " Check file /tools/azure-sdk-tools/ci_tools/environment_exclusions.py and the pyproject.toml."
                 )
+
                 continue
 
             tox_execution_array.extend(["-e", filtered_tox_environment_set])
@@ -324,6 +336,17 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
             tox_execution_array.extend(["--"] + local_options_array)
 
         tox_command_tuples.append((tox_execution_array, package_dir))
+
+    if in_ci() and skipped_tox_checks:
+        warning_content = ""
+        for check in skipped_tox_checks:
+            warning_content += f"{check} is skipped by packages: {sorted(set(skipped_tox_checks[check]))}. \n"
+
+        if warning_content:
+            output_ci_warning(
+                    warning_content,
+                    "setup_execute_tests.py -> tox_harness.py::prep_and_run_tox",
+            )
 
     return_code = execute_tox_serial(tox_command_tuples)
 
