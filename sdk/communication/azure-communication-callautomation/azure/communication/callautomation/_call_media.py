@@ -15,13 +15,16 @@ from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.utils import get_authentication_policy, parse_connection_str
 
 from ._generated.models._models import (
-PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, CommunicationIdentifierModel, 
+PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, PlayOptions, CommunicationIdentifierModel, 
 PlaySource as PlaySourceInternal, FileSource as FileSourceInternal, 
 TextSource as TextSourceInternal
 )
 
 from ._generated.models import PlaySourceType
-from ._models import CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions, CallMediaRecognizeChoiceOptions, PlaySource, FileSource, TextSource
+from ._models import  (
+    CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions, CallMediaRecognizeChoiceOptions, 
+    PlaySource, FileSource, TextSource
+)
 
 if TYPE_CHECKING:
     from ._generated.operations import CallMediaOperations
@@ -66,7 +69,7 @@ class CallMediaClient(object):
 
     def play_to_all(
         self, 
-        play_source, 
+        play_source,
         **kwargs
     ):
         """
@@ -107,7 +110,7 @@ class CallMediaClient(object):
             play_source_internal.play_source_id = play_source.play_source_id
             play_source_internal.text_source = text_source
 
-        play_request = PlayRequest(play_source_internal, play_to)
+        play_request = PlayRequest(play_source_internal, play_to, PlayOptions(loop=kwargs['loop']))
         self._client.call_media.play(self.call_connection_id, play_request)
 
 
