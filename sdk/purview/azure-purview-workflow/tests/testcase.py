@@ -5,22 +5,30 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
+import os
 from devtools_testutils import AzureTestCase, PowerShellPreparer
 from azure.purview.workflow import PurviewWorkflowClient
-from tests import workflow_testutils
-
+from azure.identity import UsernamePasswordCredential
 
 class WorkflowTest(AzureTestCase):
     def __init__(self, method_name, **kwargs):
         super(WorkflowTest, self).__init__(method_name, **kwargs)
 
     def create_client(self, endpoint):
-        credential = workflow_testutils.get_credential()
+        credential = self.get_credential()
         return self.create_client_from_credential(
             PurviewWorkflowClient,
             credential=credential,
             endpoint=endpoint,
         )
+
+    def get_credential(self):
+        username = os.getenv("USERNAME")
+        password = os.getenv("PASSWORD")
+        client_id = os.getenv("AZURE_CLIENT_ID")
+        tenant_id = os.getenv("AZURE_TENANT_ID")
+        return UsernamePasswordCredential(client_id=client_id, username=username, password=password,
+                                          tenant_id=tenant_id)
 
 
 WorkflowPowerShellPreparer = functools.partial(
