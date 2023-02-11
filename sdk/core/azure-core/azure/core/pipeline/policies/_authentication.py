@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import (
         AccessToken,
         TokenCredential,
-        AzureKeyCredential,
+        GenericKeyCredential,
         AzureSasCredential,
     )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -42,7 +42,7 @@ class _BearerTokenCredentialPolicyBase:
 
     @staticmethod
     def _enforce_https(request: "PipelineRequest") -> None:
-        # move 'enforce_https' from options to context so it persists
+        # move 'enforce_https' from options to context, so it persists
         # across retries but isn't passed to a transport implementation
         option = request.context.options.pop("enforce_https", None)
 
@@ -182,7 +182,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def __init__(
         self,
-        credential: "AzureKeyCredential",
+        credential: "GenericKeyCredential",
         name: Union[str, Tuple[str, ...]],
         **kwargs  # pylint: disable=unused-argument
     ) -> None:
