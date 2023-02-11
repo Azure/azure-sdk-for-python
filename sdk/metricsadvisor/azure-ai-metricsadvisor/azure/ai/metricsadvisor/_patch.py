@@ -5,9 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import datetime
-from typing import Any, List, Union, overload, Dict, cast, TYPE_CHECKING, Tuple
+from typing import Any, List, Union, overload, Dict, cast, TYPE_CHECKING
 
-from azure.core.credentials import GenericKeyCredential
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
@@ -28,7 +28,7 @@ _API_KEY_HEADER_NAME = "Ocp-Apim-Subscription-Key"
 _X_API_KEY_HEADER_NAME = "x-api-key"
 
 
-class MetricsAdvisorKeyCredential(GenericKeyCredential[Tuple[str, str]]):
+class MetricsAdvisorKeyCredential(AzureKeyCredential):
     """Credential type used for authenticating to an Azure Metrics Advisor service.
 
     :param str subscription_key: The subscription key

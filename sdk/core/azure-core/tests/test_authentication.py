@@ -11,7 +11,6 @@ from azure.core.credentials import (
     AzureKeyCredential,
     AzureSasCredential,
     AzureNamedKeyCredential,
-    GenericKeyCredential,
 )
 from azure.core.exceptions import ServiceRequestError
 from azure.core.pipeline import Pipeline
@@ -305,18 +304,6 @@ def test_azure_key_credential_policy(http_request):
     pipeline.run(http_request("GET", "https://test_key_credential"))
 
 
-def test_azure_key_credential_policy_raises():
-    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-string input parameters."""
-    api_key = 1234
-    key_header = 5678
-    with pytest.raises(TypeError):
-        credential = AzureKeyCredential(api_key)
-
-    credential = AzureKeyCredential(str(api_key))
-    with pytest.raises(TypeError):
-        credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
-
-
 def test_azure_key_credential_updates():
     """Tests AzureKeyCredential updates"""
     api_key = "original"
@@ -343,7 +330,7 @@ def test_azure_key_credential_policy_with_two_keys(http_request):
         assert request.headers[key_header2] == api_key2
 
     transport = Mock(send=verify_authorization_header)
-    credential = GenericKeyCredential[Tuple[str, str]]((api_key1, api_key2))
+    credential = AzureKeyCredential((api_key1, api_key2))
     credential_policy = AzureKeyCredentialPolicy(credential=credential, name=(key_header1, key_header2))
     pipeline = Pipeline(transport=transport, policies=[credential_policy])
 
@@ -357,7 +344,7 @@ def test_azure_key_credential_updates_with_two_keys():
     api_key2 = "test_key2"
     new_api_key2 = "new_key2"
 
-    credential = GenericKeyCredential[Tuple[str, str]](key=(api_key1, api_key2))
+    credential = AzureKeyCredential(key=(api_key1, api_key2))
     assert credential.key == (api_key1, api_key2)
 
     credential.update((new_api_key1, new_api_key2))

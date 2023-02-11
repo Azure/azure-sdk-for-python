@@ -51,13 +51,12 @@ __all__ = [
     "AccessToken",
     "AzureNamedKeyCredential",
     "TokenCredential",
-    "GenericKeyCredential"
 ]
 
 T = TypeVar("T")
 
 
-class GenericKeyCredential(Generic[T]):
+class AzureKeyCredential(Generic[T]):
     """Credential type used for authenticating to an Azure service.
         It provides the ability to update the key without creating a new client.
         :param T key: The key used to authenticate to an Azure service
@@ -86,9 +85,6 @@ class GenericKeyCredential(Generic[T]):
         if not key:
             raise ValueError("The key used for updating can not be None or empty")
         self._key = key
-
-
-AzureKeyCredential = GenericKeyCredential[str]
 
 
 class AzureSasCredential:
