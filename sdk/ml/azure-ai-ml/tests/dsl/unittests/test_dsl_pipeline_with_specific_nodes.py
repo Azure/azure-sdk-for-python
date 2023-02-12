@@ -938,7 +938,7 @@ class TestDSLPipelineWithSpecificNodes:
         data_transfer_job_func = to_component(job=data_transfer_job)
 
         @dsl.pipeline(experiment_name="test_pipeline_with_data_transfer_export_file_system_function")
-        def pipeline(path_source_s3, connection_target, cosmos_folder):
+        def pipeline(path_source_s3, connection_target, cosmos_folder, my_cosmos_folder):
             node1 = data_transfer_job_func(source=my_cosmos_folder)
             node1.sink = sink
             node2 = export_data(inputs = {"source": my_cosmos_folder}, sink=sink)
@@ -947,11 +947,10 @@ class TestDSLPipelineWithSpecificNodes:
             node3 = data_transfer_job_func(source=cosmos_folder)
             node3.sink = source_snowflake
             node4 = export_data(inputs={"source": cosmos_folder}, sink=source_snowflake)
-            node4.sink = source_snowflake
 
         omit_fields = ["properties.jobs.*.componentId", "properties.experiment_name"]
 
-        pipeline1 = pipeline(path_source_s3, connection_target)
+        pipeline1 = pipeline(path_source_s3, connection_target, my_cosmos_folder)
         pipeline_job1 = pipeline1._to_rest_object().as_dict()
         pipeline_job1 = omit_with_wildcard(pipeline_job1, *omit_fields)
         assert pipeline_job1 == {
@@ -960,12 +959,15 @@ class TestDSLPipelineWithSpecificNodes:
                 'inputs': {'connection_target': {'job_input_type': 'literal',
                                                  'value': 'azureml:my_s3_connection'},
                            'path_source_s3': {'job_input_type': 'literal',
-                                              'value': 's3://my_bucket/my_folder'}},
+                                              'value': 's3://my_bucket/my_folder'},
+                           'cosmos_folder': {'job_input_type': 'uri_folder',
+                                             'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'},
+                           },
                 'is_archived': False,
                 'job_type': 'Pipeline',
                 'jobs': {'node1': {'_source': 'BUILTIN',
-                                   'inputs': {'source': {'job_input_type': 'uri_folder',
-                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'inputs': {'source': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.my_cosmos_folder}}'}},
                                    'name': 'node1',
                                    'sink': {'connection': 'azureml:my_s3_connection',
                                             'path': 's3://my_bucket/my_folder',
@@ -973,8 +975,8 @@ class TestDSLPipelineWithSpecificNodes:
                                    'task': 'export_data',
                                    'type': 'data_transfer'},
                          'node2': {'_source': 'BUILTIN',
-                                   'inputs': {'source': {'job_input_type': 'uri_folder',
-                                                         'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+                                   'inputs': {'source': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.my_cosmos_folder}}'}},
                                    'name': 'node2',
                                    'sink': {'connection': 'azureml:my_s3_connection',
                                             'path': 's3://my_bucket/my_folder',
