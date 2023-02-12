@@ -1578,8 +1578,7 @@ class TestPipelineJob(AzureRecordedTestCase):
              'type': 'data_transfer'
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute, and need update "
-                                                    "recording when builtin components are ready")
+    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     def test_pipeline_job_with_data_transfer_import_filesystem(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1606,8 +1605,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             'type': 'data_transfer'
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute, and need update "
-                                                    "recording when builtin components are ready")
+    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     def test_pipeline_job_with_data_transfer_import_sql_database(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1634,8 +1632,7 @@ class TestPipelineJob(AzureRecordedTestCase):
              'type': 'data_transfer'
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute, and need update "
-                                                    "recording when builtin components are ready")
+    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     def test_pipeline_job_with_data_transfer_import_snowflake_database(
         self, client: MLClient, randstr: Callable[[str], str]
     ):
@@ -1663,8 +1660,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             'type': 'data_transfer'
         }
 
-    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute, and need update "
-                                                    "recording when builtin components are ready")
+    @pytest.mark.skip(reason="need worskspace with datafactory compute, and builtin components")
     def test_pipeline_job_with_data_transfer_export_sql_database(
         self, client: MLClient, randstr: Callable[[str], str]
     ):

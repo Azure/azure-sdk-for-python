@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+# pylint: disable=protected-access
+
 from typing import Optional, Dict, Union, Callable, Tuple
 
 from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
@@ -12,9 +14,10 @@ from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSys
 from azure.ai.ml.entities._inputs_outputs import Output, Input
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, NodeOutput
 from azure.ai.ml.entities._builders.base_node import pipeline_node_decorator
-from .data_transfer import DataTransferCopy, DataTransferImport, DataTransferExport, _build_source_sink
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from .data_transfer import DataTransferCopy, DataTransferImport, DataTransferExport, _build_source_sink
+
 
 SUPPORTED_INPUTS = [
     LegacyAssetTypes.PATH,
