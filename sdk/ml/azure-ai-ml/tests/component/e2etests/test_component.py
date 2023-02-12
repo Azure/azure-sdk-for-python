@@ -606,7 +606,7 @@ class TestComponent(AzureRecordedTestCase):
             sleep_if_live(5)
             assert client.components.get(name, label="latest").version == version
 
-    # @pytest.mark.usefixtures("mock_anon_component_version")
+    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_resource = client.components.create_or_update(command_component, is_anonymous=True)
@@ -693,6 +693,9 @@ class TestComponent(AzureRecordedTestCase):
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }
 
+    @pytest.mark.skip(
+        reason="User/tenant/subscription is not allowed to access registry sdk-test to re-record",
+    )
     @pytest.mark.skipif(
         condition=not is_live(),
         reason="registry test, may fail in playback mode during retrieving registry client",

@@ -31,6 +31,7 @@ omit_fields = [
     "mock_asset_name",
     "mock_component_hash",
     "recorded_test",
+    "bodiless_matching",
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -252,6 +253,9 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
 
+@pytest.mark.skip(
+    reason="snapshot upload changes require this test to be re-recorded, but live tests can't be run until parallel_for is available in canary"
+)
 @pytest.mark.skipif(
     condition=is_live(),
     # TODO: reopen live test when parallel_for deployed to canary

@@ -295,6 +295,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             experiment_name="dsl_pipeline_e2e",
         )
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="x-ms-meta-name header masking fixture isn't working, so playback fails"
+    )
     def test_data_input(self, client: MLClient) -> None:
         parent_dir = str(tests_root_dir / "test_configs/dsl_pipeline/nyc_taxi_data_regression")
 
@@ -585,6 +589,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="x-ms-meta-name header masking fixture isn't working, so playback fails"
+    )
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
@@ -1531,6 +1539,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         job = client.jobs.create_or_update(pipeline, force_rerun=True)
         assert job.settings.force_rerun is True
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="x-ms-meta-name header masking fixture isn't working, so playback fails"
+    )
     def test_parallel_components_with_tabular_input(self, client: MLClient) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_tabular_input"
 
@@ -1595,6 +1607,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="x-ms-meta-name header masking fixture isn't working, so playback fails"
+    )
     def test_parallel_run_function(self, client: MLClient):
         # command job with dict distribution
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
@@ -1943,6 +1959,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             client.jobs.get(child.name)
             client.jobs.get(child.name)._repr_html_()
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="x-ms-meta-name header masking fixture isn't working, so playback fails"
+    )
     def test_dsl_pipeline_without_setting_binding_node(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_without_setting_binding_node,
@@ -2201,6 +2221,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="x-ms-meta-name header masking fixture isn't working, so playback fails"
+    )
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
@@ -2525,6 +2549,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job.settings.default_compute = "cpu-cluster"
         assert_job_cancel(pipeline_job, client)
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="x-ms-meta-name header masking fixture isn't working, so playback fails"
+    )
     def test_register_output_sdk(self, client: MLClient):
         from azure.ai.ml.sweep import BanditPolicy, Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
 

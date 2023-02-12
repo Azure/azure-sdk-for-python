@@ -34,9 +34,7 @@ omit_fields = [
     "mock_component_hash",
     "bodiless_matching",
     "mock_snapshot_hash",
-    "storage_account_guid_sanitizer",
     "mock_anon_component_version",
-    "storage_account_guid_sanitizer",
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -171,6 +169,9 @@ def assert_foreach(client: MLClient, job_name, source, expected_node):
     assert rest_job_dict["properties"]["jobs"]["parallel_node"] == expected_node
 
 
+@pytest.mark.skip(
+    reason="snapshot upload changes require this test to be re-recorded, but live tests can't be run until parallel_for is available in canary"
+)
 @pytest.mark.skipif(
     condition=is_live(),
     # TODO: reopen live test when parallel_for deployed to canary
