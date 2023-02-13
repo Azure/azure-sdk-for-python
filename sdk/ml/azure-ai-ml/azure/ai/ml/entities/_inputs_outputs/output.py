@@ -130,6 +130,8 @@ class Output(_InputOutputBase):
         # parse value from string to its original type. eg: "false" -> False
         if self.is_control:
             self.is_control = self._simple_parse(getattr(self, "is_control", "false"), _type="boolean")
+        if self.early_available:
+            self.early_available = self._simple_parse(getattr(self, "early_available", "false"), _type="boolean")
 
     @classmethod
     def _from_rest_object(cls, obj: Dict) -> "Output":
