@@ -36,7 +36,7 @@ for name in template['names']:
 for seed in template['seeds']:
     print(f'{seed["kind"]}, {seed["name"]}')
 
-#The discovery template can be used to create a discovery group with using a DiscoGroupRequest and the EasmClient's discovery_groups.put method. Don't forget to run your new disco group with discovery_groups.run
+#The discovery template can be used to create a discovery group with using the EasmClient's discovery_groups.put method. Don't forget to run your new disco group with discovery_groups.run
 group_name = '<your group name here>'
 
 request = {'templateId': template_id}
