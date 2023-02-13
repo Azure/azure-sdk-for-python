@@ -2198,6 +2198,7 @@ class TestDSLPipeline:
 
         pipeline_job = pipeline_func_consume_expression(int_param=1)
         assert pipeline_job.jobs["control_node"]._to_rest_object() == {
+            '_source': 'DSL',
             "type": "if_else",
             "condition": "${{parent.jobs.expression_component.outputs.output}}",
             "true_block": "${{parent.jobs.node1}}",
