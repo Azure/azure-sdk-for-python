@@ -91,12 +91,12 @@ endpoint = f'{region}.easm.defender.microsoft.com'
 
 client = EasmClient(endpoint, resource_group, sub_id, workspace_name, credential=DefaultAzureCredential())
 
-client.disco_groups.put("example group", {
+client.discovery_groups.put("example group", {
 	'seeds': [
 	    {'kind': 'host', 'name': 'example.org'}
 	]
 })
-client.disco_groups.run("example group")
+client.discovery_groups.run("example group")
 ```
 
 ### View assets
