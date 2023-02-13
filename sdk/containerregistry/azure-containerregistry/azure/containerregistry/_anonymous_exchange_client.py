@@ -45,7 +45,7 @@ class AnonymousACRExchangeClient(object):
         )
 
     def exchange_refresh_token_for_access_token(
-        self, refresh_token: str, service: str, scope: str, grant_type: Union[str, TokenGrantType], **kwargs
+        self, refresh_token: str, service: str, scope: str, grant_type: str, **kwargs
     ) -> Optional[str]:
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
