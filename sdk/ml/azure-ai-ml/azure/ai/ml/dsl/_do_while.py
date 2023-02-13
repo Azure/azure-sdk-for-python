@@ -54,4 +54,22 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
         _from_component_func=True,
     )
     do_while_node.set_limits(max_iteration_count=max_iteration_count)
+
+    def _infer_and_update_body_input_from_mapping():
+        for output_name, body_input in mapping.items():
+            # if input type is specified, no need to infer and skip
+            if body_input.type is not None:
+                continue
+            inferred_type = body.outputs[output_name].type
+            # update node input
+            body_input._meta._is_inferred_optional = True
+            body_input.type = inferred_type
+            # update node corresponding component input
+            input_name = body_input._meta.name
+            body.component.inputs[input_name]._is_inferred_optional = True
+            body.component.inputs[input_name].type = inferred_type
+
+    # infer and update for dynamic input
+    _infer_and_update_body_input_from_mapping()
+
     return do_while_node
