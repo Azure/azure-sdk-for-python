@@ -7104,51 +7104,6 @@ class CosmosDbSettings(msrest.serialization.Model):
         self.collections_throughput = collections_throughput
 
 
-class Cron(msrest.serialization.Model):
-    """The workflow trigger cron for ComputeStartStop schedule type.
-
-    :ivar start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
-    :vartype start_time: str
-    :ivar time_zone: Specifies time zone in which the schedule runs.
-     TimeZone should follow Windows time zone format. Refer:
-     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
-    :vartype time_zone: str
-    :ivar expression: [Required] Specifies cron expression of schedule.
-     The expression should follow NCronTab format.
-    :vartype expression: str
-    """
-
-    _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'expression': {'key': 'expression', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        start_time: Optional[str] = None,
-        time_zone: Optional[str] = "UTC",
-        expression: Optional[str] = None,
-        **kwargs
-    ):
-        """
-        :keyword start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
-        :paramtype start_time: str
-        :keyword time_zone: Specifies time zone in which the schedule runs.
-         TimeZone should follow Windows time zone format. Refer:
-         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
-        :paramtype time_zone: str
-        :keyword expression: [Required] Specifies cron expression of schedule.
-         The expression should follow NCronTab format.
-        :paramtype expression: str
-        """
-        super(Cron, self).__init__(**kwargs)
-        self.start_time = start_time
-        self.time_zone = time_zone
-        self.expression = expression
-
-
 class TriggerBase(msrest.serialization.Model):
     """TriggerBase.
 
@@ -19791,65 +19746,6 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
         self.seed = seed
 
 
-class Recurrence(msrest.serialization.Model):
-    """The workflow trigger recurrence for ComputeStartStop schedule type.
-
-    :ivar frequency: [Required] The frequency to trigger schedule. Possible values include:
-     "Minute", "Hour", "Day", "Week", "Month".
-    :vartype frequency: str or ~azure.mgmt.machinelearningservices.models.RecurrenceFrequency
-    :ivar interval: [Required] Specifies schedule interval in conjunction with frequency.
-    :vartype interval: int
-    :ivar start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
-    :vartype start_time: str
-    :ivar time_zone: Specifies time zone in which the schedule runs.
-     TimeZone should follow Windows time zone format. Refer:
-     https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
-    :vartype time_zone: str
-    :ivar schedule: [Required] The recurrence schedule.
-    :vartype schedule: ~azure.mgmt.machinelearningservices.models.RecurrenceSchedule
-    """
-
-    _attribute_map = {
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'interval': {'key': 'interval', 'type': 'int'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'schedule': {'key': 'schedule', 'type': 'RecurrenceSchedule'},
-    }
-
-    def __init__(
-        self,
-        *,
-        frequency: Optional[Union[str, "RecurrenceFrequency"]] = None,
-        interval: Optional[int] = None,
-        start_time: Optional[str] = None,
-        time_zone: Optional[str] = "UTC",
-        schedule: Optional["RecurrenceSchedule"] = None,
-        **kwargs
-    ):
-        """
-        :keyword frequency: [Required] The frequency to trigger schedule. Possible values include:
-         "Minute", "Hour", "Day", "Week", "Month".
-        :paramtype frequency: str or ~azure.mgmt.machinelearningservices.models.RecurrenceFrequency
-        :keyword interval: [Required] Specifies schedule interval in conjunction with frequency.
-        :paramtype interval: int
-        :keyword start_time: The start time in yyyy-MM-ddTHH:mm:ss format.
-        :paramtype start_time: str
-        :keyword time_zone: Specifies time zone in which the schedule runs.
-         TimeZone should follow Windows time zone format. Refer:
-         https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11.
-        :paramtype time_zone: str
-        :keyword schedule: [Required] The recurrence schedule.
-        :paramtype schedule: ~azure.mgmt.machinelearningservices.models.RecurrenceSchedule
-        """
-        super(Recurrence, self).__init__(**kwargs)
-        self.frequency = frequency
-        self.interval = interval
-        self.start_time = start_time
-        self.time_zone = time_zone
-        self.schedule = schedule
-
-
 class RecurrenceSchedule(msrest.serialization.Model):
     """RecurrenceSchedule.
 
@@ -25737,12 +25633,12 @@ class Workspace(Resource):
     :ivar system_datastores_auth_mode: The auth mode used for accessing the system datastores of
      the workspace.
     :vartype system_datastores_auth_mode: str
-    :ivar managed_network: Managed network settings.
-    :vartype managed_network:
-     ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
     :ivar feature_store_settings: Settings for feature store type workspace.
     :vartype feature_store_settings:
      ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+    :ivar managed_network: Managed network settings.
+    :vartype managed_network:
+     ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
     """
 
     _validation = {
@@ -25801,8 +25697,8 @@ class Workspace(Resource):
         'soft_deleted_at': {'key': 'properties.softDeletedAt', 'type': 'str'},
         'scheduled_purge_date': {'key': 'properties.scheduledPurgeDate', 'type': 'str'},
         'system_datastores_auth_mode': {'key': 'properties.systemDatastoresAuthMode', 'type': 'str'},
-        'managed_network': {'key': 'properties.managedNetwork', 'type': 'WorkspacePropertiesManagedNetwork'},
         'feature_store_settings': {'key': 'properties.featureStoreSettings', 'type': 'FeatureStoreSettings'},
+        'managed_network': {'key': 'properties.managedNetwork', 'type': 'WorkspacePropertiesManagedNetwork'},
     }
 
     def __init__(
@@ -25830,8 +25726,8 @@ class Workspace(Resource):
         primary_user_assigned_identity: Optional[str] = None,
         v1_legacy_mode: Optional[bool] = False,
         system_datastores_auth_mode: Optional[str] = None,
-        managed_network: Optional["WorkspacePropertiesManagedNetwork"] = None,
         feature_store_settings: Optional["FeatureStoreSettings"] = None,
+        managed_network: Optional["WorkspacePropertiesManagedNetwork"] = None,
         **kwargs
     ):
         """
@@ -25893,12 +25789,12 @@ class Workspace(Resource):
         :keyword system_datastores_auth_mode: The auth mode used for accessing the system datastores of
          the workspace.
         :paramtype system_datastores_auth_mode: str
-        :keyword managed_network: Managed network settings.
-        :paramtype managed_network:
-         ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
         :keyword feature_store_settings: Settings for feature store type workspace.
         :paramtype feature_store_settings:
          ~azure.mgmt.machinelearningservices.models.FeatureStoreSettings
+        :keyword managed_network: Managed network settings.
+        :paramtype managed_network:
+         ~azure.mgmt.machinelearningservices.models.WorkspacePropertiesManagedNetwork
         """
         super(Workspace, self).__init__(**kwargs)
         self.identity = identity
@@ -25934,8 +25830,8 @@ class Workspace(Resource):
         self.soft_deleted_at = None
         self.scheduled_purge_date = None
         self.system_datastores_auth_mode = system_datastores_auth_mode
-        self.managed_network = managed_network
         self.feature_store_settings = feature_store_settings
+        self.managed_network = managed_network
 
 
 class WorkspaceConnectionAccessKey(msrest.serialization.Model):
