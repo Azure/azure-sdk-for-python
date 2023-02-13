@@ -39,6 +39,14 @@ class _TimeoutFailoverRetryPolicy(object):
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
 
+        if self.request:
+            self.request.clear_route_to_location()
+
+            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
+            # This enables marking the endpoint unavailability on endpoint failover/unreachability
+            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
+            self.request.route_to_location(self.location_endpoint)
+
     def needsRetry(self):
         if self.args:
             if (self.args[3].method == "GET") \
