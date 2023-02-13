@@ -1,0 +1,7 @@
+name: banchci
+type: computeinstance
+tags:
+  test1: test
+  test2: "true"
+  test3: "0"
+size: Standard_DS2_v2
