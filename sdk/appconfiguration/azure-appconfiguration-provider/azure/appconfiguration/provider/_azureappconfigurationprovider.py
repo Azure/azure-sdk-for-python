@@ -130,7 +130,7 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
             elif config.content_type == FeatureFlagConfigurationSetting._feature_flag_content_type:
                 feature_management = provider._dict.get(FEATURE_MANAGEMENT_KEY, {})
                 feature_management[trimmed_key] = config.value
-                if FEATURE_MANAGEMENT_KEY not in provider._dict.keys():
+                if FEATURE_MANAGEMENT_KEY not in provider.keys():
                     provider._dict[FEATURE_MANAGEMENT_KEY] = feature_management
             elif _is_json_content_type(config.content_type):
                 try:
