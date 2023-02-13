@@ -84,7 +84,7 @@ def _sort_models_helper(current: "ModelAndEnum", seen_model_names: Set[str]) -> 
     if current.name in seen_model_names:
         return []
     ancestors: List["ModelAndEnum"] = [current]
-    for parent in current.parents or []:
+    for parent in current.parents:
         if parent.name in seen_model_names:
             continue
         seen_model_names.add(parent.name)
@@ -302,9 +302,9 @@ class Client:
 
 
 class ModelAndEnum(VersionedObject):
-    def __init__(self, code_model: "CodeModel", name: str, *, parents: Optional[List["ModelAndEnum"]]) -> None:
+    def __init__(self, code_model: "CodeModel", name: str) -> None:
         super().__init__(code_model, name)
-        self.parents = parents
+        self._parents: List["ModelAndEnum"] = []
 
     @property
     def generated_class(self):
@@ -315,6 +315,13 @@ class ModelAndEnum(VersionedObject):
     @property
     def source_code(self) -> str:
         return strip_version_from_docs(inspect.getsource(self.generated_class))
+
+    @property
+    def parents(self) -> List["ModelAndEnum"]:
+        if not self._parents:
+            for parent in self.generated_class.__mro__[1: len(self.generated_class.__mro__) - 2]:
+                self._parents.append(ModelAndEnum(self.code_model, parent.__name__))
+        return self._parents
 
 
 class CodeModel:
@@ -409,7 +416,6 @@ class CodeModel:
     def _sort_models(self) -> None:
         seen_model_names: Set[str] = set()
         sorted_models: List[ModelAndEnum] = []
-        self.models.sort(key=lambda x: x.name.lower())
         for model in self.models:
             sorted_models.extend(
                 _sort_models_helper(model, seen_model_names)
