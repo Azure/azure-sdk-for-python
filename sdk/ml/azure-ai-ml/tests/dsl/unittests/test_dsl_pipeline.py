@@ -2697,7 +2697,7 @@ class TestDSLPipeline:
             assert pipeline_job._customized_validate().passed
 
         warning_template = (
-            "Reserved word {io_name} is used as {io} name in node {node_name}, "
+            "Reserved word \"{io_name}\" is used as {io} name in node \"{node_name}\", "
             "can only be accessed with '{node_name}.{io}s[\"{io_name}\"]'"
         )
         assert caplog.messages == [
