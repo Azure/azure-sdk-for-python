@@ -5739,55 +5739,6 @@
         "modelAsString": true
       }
     },
-    "Recurrence": {
-      "type": "object",
-      "description": "The workflow trigger recurrence for ComputeStartStop schedule type.",
-      "properties": {
-        "frequency": {
-          "description": "[Required] The frequency to trigger schedule.",
-          "$ref": "./mfe.json#/definitions/RecurrenceFrequency"
-        },
-        "interval": {
-          "description": "[Required] Specifies schedule interval in conjunction with frequency",
-          "type": "integer",
-          "format": "int32"
-        },
-        "startTime": {
-          "description": "The start time in yyyy-MM-ddTHH:mm:ss format.",
-          "type": "string",
-          "x-nullable": true
-        },
-        "timeZone": {
-          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
-          "default": "UTC",
-          "type": "string"
-        },
-        "schedule": {
-          "description": "[Required] The recurrence schedule.",
-          "$ref": "./mfe.json#/definitions/RecurrenceSchedule"
-        }
-      }
-    },
-    "Cron": {
-      "type": "object",
-      "description": "The workflow trigger cron for ComputeStartStop schedule type.",
-      "properties": {
-        "startTime": {
-          "description": "The start time in yyyy-MM-ddTHH:mm:ss format.",
-          "type": "string",
-          "x-nullable": true
-        },
-        "timeZone": {
-          "description": "Specifies time zone in which the schedule runs.\r\nTimeZone should follow Windows time zone format. Refer: https://docs.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-time-zones?view=windows-11",
-          "type": "string",
-          "default": "UTC"
-        },
-        "expression": {
-          "description": "[Required] Specifies cron expression of schedule.\r\nThe expression should follow NCronTab format.",
-          "type": "string"
-        }
-      }
-    },
     "ComputeInstanceDataMount": {
       "type": "object",
       "description": "Defines an Aml Instance DataMount.",
@@ -6594,15 +6545,6 @@
         }
       }
     },
-    "ManagedNetworkDto": {
-      "type": "object",
-      "properties": {
-        "isolationMode": {
-          "type": "string",
-          "allOf": [
-            {
-              "$ref": "#/definitions/IsolationMode"
-            },
     "FeatureStoreSettings": {
       "type": "object",
       "properties": {
@@ -6618,6 +6560,17 @@
         "allowRoleAssignmentsOnResourceGroupLevel": {
           "type": "boolean"
         }
+      }
+    },
+    "ManagedNetworkDto": {
+      "type": "object",
+      "properties": {
+        "isolationMode": {
+          "type": "string",
+          "allOf": [
+            {
+              "$ref": "#/definitions/IsolationMode"
+            }
           ]
         },
         "outboundRules": {
@@ -6798,8 +6751,6 @@
           "type": "string",
           "x-nullable": true
         }
-      }
-    }
       }
     },
     "ComputeRuntimeDto": {

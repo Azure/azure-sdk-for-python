@@ -108,7 +108,6 @@ try:
     from ._models_py3 import ContainerResourceRequirements
     from ._models_py3 import ContainerResourceSettings
     from ._models_py3 import CosmosDbSettings
-    from ._models_py3 import Cron
     from ._models_py3 import CronTrigger
     from ._models_py3 import CsvExportSummary
     from ._models_py3 import CustomForecastHorizon
@@ -328,7 +327,6 @@ try:
     from ._models_py3 import QuotaBaseProperties
     from ._models_py3 import QuotaUpdateParameters
     from ._models_py3 import RandomSamplingAlgorithm
-    from ._models_py3 import Recurrence
     from ._models_py3 import RecurrenceSchedule
     from ._models_py3 import RecurrenceTrigger
     from ._models_py3 import RegenerateEndpointKeysRequest
@@ -554,7 +552,6 @@ except (SyntaxError, ImportError):
     from ._models import ContainerResourceRequirements  # type: ignore
     from ._models import ContainerResourceSettings  # type: ignore
     from ._models import CosmosDbSettings  # type: ignore
-    from ._models import Cron  # type: ignore
     from ._models import CronTrigger  # type: ignore
     from ._models import CsvExportSummary  # type: ignore
     from ._models import CustomForecastHorizon  # type: ignore
@@ -774,7 +771,6 @@ except (SyntaxError, ImportError):
     from ._models import QuotaBaseProperties  # type: ignore
     from ._models import QuotaUpdateParameters  # type: ignore
     from ._models import RandomSamplingAlgorithm  # type: ignore
-    from ._models import Recurrence  # type: ignore
     from ._models import RecurrenceSchedule  # type: ignore
     from ._models import RecurrenceTrigger  # type: ignore
     from ._models import RegenerateEndpointKeysRequest  # type: ignore
@@ -1147,7 +1143,6 @@ __all__ = [
     'ContainerResourceRequirements',
     'ContainerResourceSettings',
     'CosmosDbSettings',
-    'Cron',
     'CronTrigger',
     'CsvExportSummary',
     'CustomForecastHorizon',
@@ -1367,7 +1362,6 @@ __all__ = [
     'QuotaBaseProperties',
     'QuotaUpdateParameters',
     'RandomSamplingAlgorithm',
-    'Recurrence',
     'RecurrenceSchedule',
     'RecurrenceTrigger',
     'RegenerateEndpointKeysRequest',
