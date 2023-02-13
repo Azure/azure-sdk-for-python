@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import (
         AccessToken,
         TokenCredential,
+        AzureKeyCredential,
         AzureSasCredential,
     )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
