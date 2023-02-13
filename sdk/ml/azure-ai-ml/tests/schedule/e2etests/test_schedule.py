@@ -21,6 +21,7 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_D
     "mock_component_hash",
     "mock_snapshot_hash",
     "mock_anon_component_version",
+    "storage_account_guid_sanitizer",
 )
 @pytest.mark.pipeline_test
 class TestSchedule(AzureRecordedTestCase):
