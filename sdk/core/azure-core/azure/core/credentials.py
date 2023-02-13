@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from collections import namedtuple
-from typing import Any, NamedTuple, Optional, TypeVar, Generic
+from typing import Any, NamedTuple, Optional, TypeVar, Generic, Tuple
 from typing_extensions import Protocol, runtime_checkable
 
 
@@ -53,7 +53,7 @@ __all__ = [
     "TokenCredential",
 ]
 
-T = TypeVar("T")
+T = TypeVar("T", str, Tuple[str, ...])
 
 
 class AzureKeyCredential(Generic[T]):
