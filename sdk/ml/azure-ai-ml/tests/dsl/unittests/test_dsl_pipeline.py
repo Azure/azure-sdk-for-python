@@ -2693,11 +2693,12 @@ class TestDSLPipeline:
         with caplog.at_level(logging.WARNING):
             from test_configs.dsl_pipeline.pipeline_with_keyword_in_node_io.pipeline import pipeline_job
 
+            # validation should pass
             assert pipeline_job._customized_validate().passed
 
         warning_template = (
             "Reserved word {io_name} is used as {io} name in node {node_name}, "
-            "can only be accessed with \"{node_name}.{io}s[{io_name}]\""
+            "can only be accessed with '{node_name}.{io}s[\"{io_name}\"]'"
         )
         assert caplog.messages == [
             warning_template.format(io_name="__contains__", io="output", node_name="node"),
