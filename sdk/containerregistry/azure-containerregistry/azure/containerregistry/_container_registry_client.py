@@ -878,7 +878,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         :param str repository: Name of the repository
         :param str digest: The digest of the blob to download.
-        :returns: DownloadBlobResult or None
+        :returns: DownloadBlobResult or None when the download result is empty.
         :rtype: ~azure.containerregistry.DownloadBlobResult or None
         :raises ValueError: If the parameter repository or digest is None.
         """
