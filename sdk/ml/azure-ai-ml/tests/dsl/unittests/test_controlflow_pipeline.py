@@ -25,6 +25,15 @@ class CustomizedObject:
     pass
 
 
+class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
+    def test_infer_dynamic_input_type_from_mapping(self):
+        # Pass None to dynamic input in do-while loop body, and provide it in mapping for next iteration,
+        # which is a valid case in federated learning.
+        from test_configs.dsl_pipeline.dynamic_input_do_while.pipeline import pipeline_job
+
+        assert pipeline_job._customized_validate().passed
+
+
 class TestParallelForPipelineUT(TestControlFlowPipelineUT):
     def test_dsl_parallel_for_pipeline_illegal_cases(self):
         # body unsupported
