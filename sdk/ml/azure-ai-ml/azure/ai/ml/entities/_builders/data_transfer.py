@@ -121,7 +121,7 @@ class DataTransferCopy(DataTransfer):
     :param component: Id or instance of the data transfer component/job to be run for the step
     :type component: DataTransferCopyComponent
     :param inputs: Inputs to the data transfer.
-    :type inputs: Dict[str, Union[Input, str, bool, int, float, Enum, dict]]
+    :type inputs: Dict[str, Union[NodeOutput, Input, str]]
     :param outputs: Mapping of output data bindings used in the job.
     :type outputs: Dict[str, Union[str, Output, dict]]
     :param name: Name of the data transfer.
@@ -151,7 +151,7 @@ class DataTransferCopy(DataTransfer):
         *,
         component: Union[str, DataTransferCopyComponent],
         compute: Optional[str] = None,
-        inputs: Optional[Dict[str, Union[Input, str]]] = None,
+        inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         task: Optional[str] = DataTransferTaskType.COPY_DATA,
         data_copy_mode: Optional[str] = None,
@@ -396,7 +396,7 @@ class DataTransferExport(DataTransfer):
     :param sink: The sink of external data and databases.
     :type sink: Union[Dict, Database, FileSystem]
     :param inputs: Mapping of input data bindings used in the job.
-    :type inputs: Dict[str, Union[str, Input, dict]]
+    :type inputs: Dict[str, Union[NodeOutput, Input, str, Input]]
     :param name: Name of the data transfer.
     :type name: str
     :param description: Description of the data transfer.
@@ -423,7 +423,7 @@ class DataTransferExport(DataTransfer):
         component: Union[str, DataTransferExportComponent],
         compute: Optional[str] = None,
         sink: Optional[Union[Dict, Database, FileSystem]] = None,
-        inputs: Optional[Dict[str, Union[str, Input]]] = None,
+        inputs: Optional[Dict[str, Union[NodeOutput, Input, str]]] = None,
         task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
         **kwargs,
     ):
