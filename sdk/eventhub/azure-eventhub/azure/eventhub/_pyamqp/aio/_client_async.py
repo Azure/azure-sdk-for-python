@@ -276,9 +276,9 @@ class AMQPClientAsync(AMQPClientSync):
         self._shutdown = True
         if not self._session:
             return  # already closed.
-        if self._keep_alive_thread:
-            await self._keep_alive_thread
-            self._keep_alive_thread = None
+        # if self._keep_alive_thread:
+        #     await self._keep_alive_thread
+        #     self._keep_alive_thread = None
         await self._close_link_async()
         if self._cbs_authenticator:
             await self._cbs_authenticator.close()
@@ -581,7 +581,7 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
             MessageDeliveryState.Timeout
         ):
             try:
-                raise message_delivery.error  # pylint: disable=raising-bad-type
+                raise message_delivery.error  # type: ignore[reportGeneralTypeIssues] # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
                 raise MessageException(condition=ErrorCondition.UnknownError, description="Send failed.")
@@ -904,7 +904,7 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
             first = delivery_id
             last = None
         await self._link.send_disposition(
-            first_delivery_id=first,
+            first_delivery_id=cast(int, first),
             last_delivery_id=last,
             settled=True,
             delivery_state=state,

@@ -54,13 +54,6 @@ if TYPE_CHECKING:
         pass
     from azure.core.credentials_async import AsyncTokenCredential
 
-    CredentialTypes = Union[
-        "EventHubSharedKeyCredential",
-        AsyncTokenCredential,
-        AzureSasCredential,
-        AzureNamedKeyCredential,
-    ]
-
     try:
         from typing_extensions import Protocol
     except ImportError:
@@ -108,6 +101,13 @@ if TYPE_CHECKING:
         def _create_handler(self, auth: Union[uamqp_authentication.JWTTokenAsync, JWTTokenAuthAsync]) -> None:
             pass
 
+    CredentialTypes = Union[
+        "EventHubSharedKeyCredential",
+        AsyncTokenCredential,
+        AzureSasCredential,
+        AzureNamedKeyCredential,
+    ]
+    
     _MIXIN_BASE = AbstractConsumerProducer
 else:
     _MIXIN_BASE = object
@@ -202,13 +202,12 @@ class EventhubAzureSasTokenCredentialAsync(object):
         signature, expiry = parse_sas_credential(self._credential)
         return AccessToken(signature, expiry)
 
-
 class ClientBaseAsync(ClientBase):
     def __init__(
         self,
         fully_qualified_namespace: str,
         eventhub_name: str,
-        credential: "CredentialTypes",
+        credential: CredentialTypes,
         **kwargs: Any
     ) -> None:
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))

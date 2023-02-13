@@ -21,6 +21,7 @@ from ._constants import (
 )
 
 if TYPE_CHECKING:
+    import datetime
     from ._pyamqp import types
     from ._pyamqp.message import Message
     from ._pyamqp.authentication import JWTTokenAuth
@@ -77,7 +78,7 @@ class EventHubConsumer(
     def __init__(
         self, client: "EventHubConsumerClient", source: str, **kwargs: Any
     ) -> None:
-        event_position = kwargs.get("event_position", None)
+        event_position: Union[int, str, datetime.datetime] = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
         keep_alive = kwargs.get("keep_alive", None)

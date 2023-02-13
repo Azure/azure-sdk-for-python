@@ -9,7 +9,7 @@ import uuid
 import logging
 import time
 import asyncio
-from typing import Optional, Union
+from typing import Optional, Union, cast
 
 from ..constants import ConnectionState, SessionState, SessionTransferState, Role
 from ._sender_async import SenderLink
@@ -247,7 +247,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             # calculate the transfer frame encoding size excluding the payload
             delivery.frame["payload"] = b""
             # TODO: encoding a frame would be expensive, we might want to improve depending on the perf test results
-            encoded_frame = encode_frame(TransferFrame(**delivery.frame))[1]
+            encoded_frame = cast(bytes, encode_frame(TransferFrame(**delivery.frame))[1])
             transfer_overhead_size = len(encoded_frame)
 
             # available size for payload per frame is calculated as following:

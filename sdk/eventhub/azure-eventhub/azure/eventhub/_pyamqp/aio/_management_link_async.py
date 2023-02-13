@@ -163,24 +163,24 @@ class ManagementLink(object):  # pylint:disable=too-many-instance-attributes
             for operation in self._pending_operations:
                 if message_delivery.message == operation.message:
                     to_remove_operation = operation
-                    break
-            self._pending_operations.remove(to_remove_operation)
-            # TODO: better error handling
-            #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
-            #  or should there an error mapping which maps the condition to the error type
+                    # break
+                    self._pending_operations.remove(to_remove_operation)
+                    # TODO: better error handling
+                    #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?
+                    #  or should there an error mapping which maps the condition to the error type
 
-            # The callback is defined in management_operation.py
-            await to_remove_operation.on_execute_operation_complete(
-                ManagementExecuteOperationResult.ERROR,
-                None,
-                None,
-                message_delivery.message,
-                error=AMQPException(
-                    condition=state[SEND_DISPOSITION_REJECT][0][0],  # 0 is error condition
-                    description=state[SEND_DISPOSITION_REJECT][0][1],  # 1 is error description
-                    info=state[SEND_DISPOSITION_REJECT][0][2],  # 2 is error info
-                ),
-            )
+                    # The callback is defined in management_operation.py
+                    await to_remove_operation.on_execute_operation_complete(
+                        ManagementExecuteOperationResult.ERROR,
+                        None,
+                        None,
+                        message_delivery.message,
+                        error=AMQPException(
+                            condition=state[SEND_DISPOSITION_REJECT][0][0],  # 0 is error condition
+                            description=state[SEND_DISPOSITION_REJECT][0][1],  # 1 is error description
+                            info=state[SEND_DISPOSITION_REJECT][0][2],  # 2 is error info
+                        ),
+                    )
 
     async def open(self):
         if self.state != ManagementLinkState.IDLE:

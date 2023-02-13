@@ -17,6 +17,7 @@ from typing import (
     Optional,
     List,
     Awaitable,
+    cast
 )
 
 from ._eventprocessor.event_processor import EventProcessor
@@ -159,7 +160,7 @@ class EventHubConsumerClient(
         self._checkpoint_store = kwargs.pop("checkpoint_store", None)
         self._load_balancing_interval = kwargs.pop("load_balancing_interval", None)
         if self._load_balancing_interval is None:
-            self._load_balancing_interval = 10
+            self._load_balancing_interval = 10.0
         self._partition_ownership_expiration_interval = kwargs.pop(
             "partition_ownership_expiration_interval", None
         )
@@ -410,7 +411,7 @@ class EventHubConsumerClient(
                 error_handler=on_error,
                 partition_initialize_handler=on_partition_initialize,
                 partition_close_handler=on_partition_close,
-                load_balancing_interval=self._load_balancing_interval,
+                load_balancing_interval=cast(float, self._load_balancing_interval),
                 load_balancing_strategy=self._load_balancing_strategy,
                 partition_ownership_expiration_interval=self._partition_ownership_expiration_interval,
                 initial_event_position=starting_position

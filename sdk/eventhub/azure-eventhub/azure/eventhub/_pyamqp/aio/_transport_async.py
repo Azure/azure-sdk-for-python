@@ -40,6 +40,7 @@ import struct
 from ssl import SSLError
 from io import BytesIO
 import logging
+from typing import cast
 
 
 
@@ -67,6 +68,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class AsyncTransportMixin:
+
     async def receive_frame(self, timeout=None, **kwargs):
         try:
             header, channel, payload = await asyncio.wait_for(
@@ -217,7 +219,7 @@ class AsyncTransportMixin:
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
         ctx.load_verify_locations(cafile=certifi.where())
-        ctx.check_hostname = check_hostname
+        ctx.check_hostname = cast(bool, check_hostname)
         return ctx
 
 
@@ -509,7 +511,7 @@ class WebSocketTransportAsync(
         if username or password:
             from aiohttp import BasicAuth
 
-            http_proxy_auth = BasicAuth(login=username, password=password)
+            http_proxy_auth = BasicAuth(login=cast(str, username), password=cast(str, password))
 
         self.session = ClientSession()
         if self._custom_endpoint:

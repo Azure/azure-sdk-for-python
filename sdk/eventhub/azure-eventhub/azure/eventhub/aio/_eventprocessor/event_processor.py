@@ -330,7 +330,7 @@ class EventProcessor(
                     await self._process_error(partition_context, error)
                     break
         finally:
-            await asyncio.shield(self._close_consumer(partition_context))
+            await asyncio.shield(self._close_consumer(partition_context)) # type: ignore[reportUnboundVariable]
 
     async def start(self) -> None:
         """Start the EventProcessor.

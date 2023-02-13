@@ -45,7 +45,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 if uamqp_installed:
-    class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync):
+    class UamqpTransportAsync(UamqpTransport, AmqpTransportAsync): # type: ignore[reportUnboundVariable]
         """
         Class which defines uamqp-based methods used by the producer and consumer.
         """

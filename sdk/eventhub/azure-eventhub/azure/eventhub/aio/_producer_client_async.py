@@ -20,6 +20,8 @@ from .._common import EventDataBatch, EventData
 
 if TYPE_CHECKING:
     from ._client_base_async import CredentialTypes
+    from .._transport._base import AmqpTransport
+    from ._transport._base_async import AmqpTransportAsync
 
 SendEventTypes = List[Union[EventData, AmqpAnnotatedMessage]]
 
@@ -228,15 +230,15 @@ class EventHubProducerClient(
             await self._get_partitions()
             await self._get_max_message_size()
             self._buffered_producer_dispatcher = BufferedProducerDispatcher(
-                self._partition_ids,
-                self._on_success,
-                self._on_error,
+                cast(List[str], self._partition_ids),
+                cast(Callable[["SendEventTypes", Optional[str]], Awaitable[None]], self._on_success),
+                cast(Callable[["SendEventTypes", Optional[str], Exception], Awaitable[None]], self._on_error),
                 self._create_producer,
                 self.eventhub_name,
                 self._max_message_size_on_link,
-                max_wait_time=self._max_wait_time,
-                max_buffer_length=self._max_buffer_length,
-                amqp_transport=self._amqp_transport
+                max_wait_time=cast(float, self._max_wait_time),
+                max_buffer_length=cast(int, self._max_buffer_length),
+                amqp_transport=cast(AmqpTransportAsync, self._amqp_transport)
             )
             await self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
 
@@ -282,7 +284,7 @@ class EventHubProducerClient(
 
     async def _buffered_send_event(self, event, **kwargs):
         partition_key = kwargs.get("partition_key")
-        set_event_partition_key(event, partition_key, self._amqp_transport)
+        set_event_partition_key(event, partition_key, cast(AmqpTransport, self._amqp_transport))
         timeout = kwargs.get("timeout")
         timeout_time = time.time() + timeout if timeout else None
         await self._buffered_send(

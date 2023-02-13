@@ -104,7 +104,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
 
     def get_state(self):
         try:
-            raise self._error
+            raise self._error # type: ignore[reportGeneralTypeIssues]
         except TypeError:
             pass
         return self.state
@@ -112,7 +112,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
     def _check_if_closed(self):
         if self._is_closed:
             try:
-                raise self._error
+                raise self._error # type: ignore[reportGeneralTypeIssues]
             except TypeError:
                 raise AMQPConnectionError(condition=ErrorCondition.InternalError, description="Link already closed.")
 
@@ -124,7 +124,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self.state = new_state
         _LOGGER.info("Link state changed: %r -> %r", previous_state, new_state, extra=self.network_trace_params)
         try:
-            await self._on_link_state_change(previous_state, new_state)
+            self._on_link_state_change(previous_state, new_state)
         except TypeError:
             pass
         except Exception as e:  # pylint: disable=broad-except

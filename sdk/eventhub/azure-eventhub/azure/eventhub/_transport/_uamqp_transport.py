@@ -14,7 +14,6 @@ try:
         constants,
         MessageBodyType,
         Message,
-        types,
         SendClient,
         ReceiveClient,
         Source,
@@ -26,6 +25,7 @@ try:
         Connection,
         __version__,
     )
+    from uamqp.types import AMQPSymbol, AMQPLong
     from uamqp.message import (
         MessageHeader,
         MessageProperties,
@@ -84,24 +84,24 @@ if uamqp_installed:
         Class which defines uamqp-based methods used by the producer and consumer.
         """
         # define constants
-        MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES
-        MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES
+        MAX_FRAME_SIZE_BYTES = constants.MAX_FRAME_SIZE_BYTES # type: ignore[reportUnboundVariable]
+        MAX_MESSAGE_LENGTH_BYTES = constants.MAX_MESSAGE_LENGTH_BYTES # type: ignore[reportUnboundVariable]
         TIMEOUT_FACTOR = 1000
         CONNECTION_CLOSING_STATES: Tuple = (  # pylint:disable=protected-access
-                c_uamqp.ConnectionState.CLOSE_RCVD,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.CLOSE_SENT,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.DISCARDING,  # pylint:disable=c-extension-no-member
-                c_uamqp.ConnectionState.END,  # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.CLOSE_RCVD,  # type: ignore[reportUnboundVariable] # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.CLOSE_SENT,  # type: ignore[reportUnboundVariable] # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.DISCARDING,  # type: ignore[reportUnboundVariable] # pylint:disable=c-extension-no-member
+                c_uamqp.ConnectionState.END,  # type: ignore[reportUnboundVariable] # pylint:disable=c-extension-no-member
             )
-        TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}"
+        TRANSPORT_IDENTIFIER = f"{UAMQP_LIBRARY}/{__version__}" # type: ignore[reportUnboundVariable]
 
         # define symbols
-        PRODUCT_SYMBOL = types.AMQPSymbol("product")
-        VERSION_SYMBOL = types.AMQPSymbol("version")
-        FRAMEWORK_SYMBOL = types.AMQPSymbol("framework")
-        PLATFORM_SYMBOL = types.AMQPSymbol("platform")
-        USER_AGENT_SYMBOL = types.AMQPSymbol("user-agent")
-        PROP_PARTITION_KEY_AMQP_SYMBOL = types.AMQPSymbol(PROP_PARTITION_KEY)
+        PRODUCT_SYMBOL = AMQPSymbol("product") # type: ignore[reportUnboundVariable]
+        VERSION_SYMBOL = AMQPSymbol("version") # type: ignore[reportUnboundVariable]
+        FRAMEWORK_SYMBOL = AMQPSymbol("framework") # type: ignore[reportUnboundVariable]
+        PLATFORM_SYMBOL = AMQPSymbol("platform") # type: ignore[reportUnboundVariable]
+        USER_AGENT_SYMBOL = AMQPSymbol("user-agent") # type: ignore[reportUnboundVariable]
+        PROP_PARTITION_KEY_AMQP_SYMBOL = AMQPSymbol(PROP_PARTITION_KEY) # type: ignore[reportUnboundVariable]
 
         @staticmethod
         def build_message(**kwargs):
@@ -127,38 +127,40 @@ if uamqp_installed:
             :rtype: uamqp.Message
             """
             message_header = None
-            header_vals = annotated_message.header.values() if annotated_message.header else None
+            # header_vals = annotated_message.header.values() if annotated_message.header else None
             # If header and non-None header values, create outgoing header.
-            if annotated_message.header and header_vals.count(None) != len(header_vals):
-                message_header = MessageHeader()
-                message_header.delivery_count = annotated_message.header.delivery_count
-                message_header.time_to_live = annotated_message.header.time_to_live
-                message_header.first_acquirer = annotated_message.header.first_acquirer
-                message_header.durable = annotated_message.header.durable
-                message_header.priority = annotated_message.header.priority
+            if annotated_message.header:
+                if annotated_message.header.values().count(None) != len(annotated_message.header.values()):
+                    message_header = MessageHeader()
+                    message_header.delivery_count = annotated_message.header.delivery_count
+                    message_header.time_to_live = annotated_message.header.time_to_live
+                    message_header.first_acquirer = annotated_message.header.first_acquirer
+                    message_header.durable = annotated_message.header.durable
+                    message_header.priority = annotated_message.header.priority
 
             message_properties = None
-            properties_vals = annotated_message.properties.values() if annotated_message.properties else None
+            # properties_vals = annotated_message.properties.values() if annotated_message.properties else None
             # If properties and non-None properties values, create outgoing properties.
-            if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
-                message_properties = MessageProperties(
-                    message_id=annotated_message.properties.message_id,
-                    user_id=annotated_message.properties.user_id,
-                    to=annotated_message.properties.to,
-                    subject=annotated_message.properties.subject,
-                    reply_to=annotated_message.properties.reply_to,
-                    correlation_id=annotated_message.properties.correlation_id,
-                    content_type=annotated_message.properties.content_type,
-                    content_encoding=annotated_message.properties.content_encoding,
-                    creation_time=int(annotated_message.properties.creation_time)
-                        if annotated_message.properties.creation_time else None,
-                    absolute_expiry_time=int(annotated_message.properties.absolute_expiry_time)
-                    if annotated_message.properties.absolute_expiry_time else None,
-                    group_id=annotated_message.properties.group_id,
-                    group_sequence=annotated_message.properties.group_sequence,
-                    reply_to_group_id=annotated_message.properties.reply_to_group_id,
-                    encoding=annotated_message._encoding    # pylint: disable=protected-access
-                )
+            if annotated_message.properties:
+                if annotated_message.properties.values().count(None) != len(annotated_message.properties.values()):
+                    message_properties = MessageProperties(
+                        message_id=annotated_message.properties.message_id,
+                        user_id=annotated_message.properties.user_id,
+                        to=annotated_message.properties.to,
+                        subject=annotated_message.properties.subject,
+                        reply_to=annotated_message.properties.reply_to,
+                        correlation_id=annotated_message.properties.correlation_id,
+                        content_type=annotated_message.properties.content_type,
+                        content_encoding=annotated_message.properties.content_encoding,
+                        creation_time=int(annotated_message.properties.creation_time)
+                            if annotated_message.properties.creation_time else None,
+                        absolute_expiry_time=int(annotated_message.properties.absolute_expiry_time)
+                        if annotated_message.properties.absolute_expiry_time else None,
+                        group_id=annotated_message.properties.group_id,
+                        group_sequence=annotated_message.properties.group_sequence,
+                        reply_to_group_id=annotated_message.properties.reply_to_group_id,
+                        encoding=annotated_message._encoding    # pylint: disable=protected-access
+                    )
 
             # pylint: disable=protected-access
             amqp_body_type = annotated_message.body_type
@@ -239,7 +241,7 @@ if uamqp_installed:
             :param dict[bytes, int] link_properties: The dict of symbols and corresponding values.
             :rtype: dict
             """
-            return {types.AMQPSymbol(symbol): types.AMQPLong(value) for (symbol, value) in link_properties.items()}
+            return {AMQPSymbol(symbol): AMQPLong(value) for (symbol, value) in link_properties.items()}
 
         @staticmethod
         def create_connection(**kwargs):

@@ -45,9 +45,9 @@ class BufferedProducer:
         self._max_wait_time = max_wait_time
         self._on_success = self.failsafe_callback(on_success)
         self._on_error = self.failsafe_callback(on_error)
-        self._last_send_time = None
+        self._last_send_time = 0
         self._running = False
-        self._cur_batch: Optional[EventDataBatch] = None
+        # self._cur_batch: Optional[EventDataBatch] = None
         self._max_message_size_on_link = max_message_size_on_link
         self._check_max_wait_time_future = None
         self.partition_id = partition_id
@@ -55,7 +55,7 @@ class BufferedProducer:
 
     async def start(self):
         async with self._lock:
-            self._cur_batch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
+            self._cur_batch: EventDataBatch = EventDataBatch(self._max_message_size_on_link, amqp_transport=self._amqp_transport)
             self._running = True
             if self._max_wait_time:
                 self._last_send_time = time.time()

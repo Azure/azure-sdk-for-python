@@ -7,7 +7,7 @@ import uuid
 import asyncio
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List
+from typing import TYPE_CHECKING, Callable, Awaitable, Dict, Optional, Union, List, cast
 from functools import partial
 
 from ._client_base_async import ConsumerProducerMixin
@@ -17,6 +17,7 @@ from .._utils import create_properties, event_position_selector
 from .._constants import EPOCH_SYMBOL, TIMEOUT_SYMBOL, RECEIVER_RUNTIME_METRIC_SYMBOL
 
 if TYPE_CHECKING:
+    import datetime
     from typing import Deque
 
     try:
@@ -141,7 +142,7 @@ class EventHubConsumer(
         source = self._amqp_transport.create_source(
             self._source,
             self._offset,
-            event_position_selector(self._offset, self._offset_inclusive),
+            event_position_selector(cast(Union[int, str, datetime.datetime], self._offset), self._offset_inclusive),
         )
         desired_capabilities = (
             [RECEIVER_RUNTIME_METRIC_SYMBOL]
@@ -184,7 +185,7 @@ class EventHubConsumer(
         return event_data
 
     async def receive(
-        self, batch=False, max_batch_size=300, max_wait_time=None
+        self, batch: Optional[bool]=False, max_batch_size: Optional[int]=300, max_wait_time: Optional[float]=None
     ) -> None:
         await self._amqp_transport.receive_messages_async(
             self, batch, max_batch_size, max_wait_time

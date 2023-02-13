@@ -89,42 +89,44 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: pyamqp.Message
         """
         message_header = None
-        header_vals = annotated_message.header.values() if annotated_message.header else None
+        # header_vals = annotated_message.header.values() if annotated_message.header else None
         # If header and non-None header values, create outgoing header.
-        if annotated_message.header and header_vals.count(None) != len(header_vals):
-            message_header = Header(
-                delivery_count=annotated_message.header.delivery_count,
-                ttl=annotated_message.header.time_to_live,
-                first_acquirer=annotated_message.header.first_acquirer,
-                durable=annotated_message.header.durable,
-                priority=annotated_message.header.priority,
-            )
+        if annotated_message.header:
+            if annotated_message.header.values().count(None) != len(annotated_message.header.values()):
+                message_header = Header(
+                    delivery_count=annotated_message.header.delivery_count,
+                    ttl=annotated_message.header.time_to_live,
+                    first_acquirer=annotated_message.header.first_acquirer,
+                    durable=annotated_message.header.durable,
+                    priority=annotated_message.header.priority,
+                )
 
         message_properties = None
-        properties_vals = annotated_message.properties.values() if annotated_message.properties else None
+        # properties_vals = annotated_message.properties.values() if annotated_message.properties else None
         # If properties and non-None properties values, create outgoing properties.
-        if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
-            message_properties = Properties(
-                message_id=annotated_message.properties.message_id,
-                user_id=annotated_message.properties.user_id,
-                to=annotated_message.properties.to,
-                subject=annotated_message.properties.subject,
-                reply_to=annotated_message.properties.reply_to,
-                correlation_id=annotated_message.properties.correlation_id,
-                content_type=annotated_message.properties.content_type,
-                content_encoding=annotated_message.properties.content_encoding,
-                creation_time=int(annotated_message.properties.creation_time)
-                if annotated_message.properties.creation_time
-                else None,
-                absolute_expiry_time=int(
-                    annotated_message.properties.absolute_expiry_time
+        if annotated_message.properties:
+            if annotated_message.properties.values().count(None) != len(annotated_message.properties.values()):
+                message_properties = Properties(
+                    message_id=annotated_message.properties.message_id,
+                    user_id=annotated_message.properties.user_id,
+                    to=annotated_message.properties.to,
+                    subject=annotated_message.properties.subject,
+                    reply_to=annotated_message.properties.reply_to,
+                    correlation_id=annotated_message.properties.correlation_id,
+                    content_type=annotated_message.properties.content_type,
+                    content_encoding=annotated_message.properties.content_encoding,
+                    creation_time=int(annotated_message.properties.creation_time)
+                    if annotated_message.properties.creation_time
+                    else None,
+                    absolute_expiry_time=int(
+                        annotated_message.properties.absolute_expiry_time
+                    )
+                    if annotated_message.properties.absolute_expiry_time
+                    else None,
+                    group_id=annotated_message.properties.group_id,
+                    group_sequence=annotated_message.properties.group_sequence,
+                    reply_to_group_id=annotated_message.properties.reply_to_group_id,
                 )
-                if annotated_message.properties.absolute_expiry_time
-                else None,
-                group_id=annotated_message.properties.group_id,
-                group_sequence=annotated_message.properties.group_sequence,
-                reply_to_group_id=annotated_message.properties.reply_to_group_id,
-            )
 
         message_dict = {
             "header": message_header,

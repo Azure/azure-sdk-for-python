@@ -260,7 +260,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         try:
-            raise self._error
+            raise self._error # type: ignore[reportGeneralTypeIssues]
         except TypeError:
             pass
 
@@ -311,7 +311,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if self._network_trace:
             _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
         try:
-            raise self._error
+            raise self._error # type: ignore[reportGeneralTypeIssues]
         except TypeError:
             pass
         try:
@@ -751,7 +751,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         try:
-            raise self._error
+            raise self._error # type: ignore[reportGeneralTypeIssues]
         except TypeError:
             pass
         try:

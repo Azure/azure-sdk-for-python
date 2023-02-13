@@ -126,7 +126,7 @@ class _SeparateConnectionManager(object):
         pass
 
 
-def get_connection_manager(**kwargs: Any) -> "ConnectionManager":
+def get_connection_manager(**kwargs: Any) -> ConnectionManager:
     connection_mode: _ConnectionMode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
