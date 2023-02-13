@@ -304,6 +304,18 @@ def test_azure_key_credential_policy(http_request):
     pipeline.run(http_request("GET", "https://test_key_credential"))
 
 
+def test_azure_key_credential_policy_raises():
+    """Tests AzureKeyCredential and AzureKeyCredentialPolicy raises with non-string input parameters."""
+    api_key = 1234
+    key_header = 5678
+    with pytest.raises(TypeError):
+        credential = AzureKeyCredential(api_key)
+
+    credential = AzureKeyCredential(str(api_key))
+    with pytest.raises(TypeError):
+        credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+
+
 def test_azure_key_credential_updates():
     """Tests AzureKeyCredential updates"""
     api_key = "original"
