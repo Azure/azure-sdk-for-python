@@ -45,9 +45,8 @@ def run_black(service_dir):
                     print(stdout.decode('utf-8'))
                 exit(1)
 
-            if stdout:
-                if "reformatted" in stdout.decode('utf-8'):
-                    results.append((package_name, False))
+            if stdout and "reformatted" in stdout.decode('utf-8'):
+                results.append((package_name, False))
             else:
                 print(f"black succeeded against {package_name}")
 
