@@ -156,7 +156,9 @@ class TestDoWhile(TestConditionalNodeInPipeline):
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
 
-def assert_foreach(client: MLClient, job_name, source, expected_node):
+def assert_foreach(client: MLClient, job_name, source, expected_node, yaml_node=None):
+    if yaml_node is None:
+        yaml_node = expected_node
     params_override = [{"name": job_name}]
     pipeline_job = load_job(
         source,
@@ -167,23 +169,19 @@ def assert_foreach(client: MLClient, job_name, source, expected_node):
     assert isinstance(created_pipeline_job.jobs["parallel_node"], ParallelFor)
     rest_job_dict = pipeline_job._to_rest_object().as_dict()
     assert rest_job_dict["properties"]["jobs"]["parallel_node"] == expected_node
+    yaml_job_dict = pipeline_job._to_dict()
+    yaml_node.pop("_source", None)
+    assert yaml_job_dict["jobs"]["parallel_node"] == yaml_node
 
 
-@pytest.mark.skip(
-    reason="snapshot upload changes require this test to be re-recorded, but live tests can't be run until parallel_for is available in canary"
-)
-@pytest.mark.skipif(
-    condition=is_live(),
-    # TODO: reopen live test when parallel_for deployed to canary
-    reason="parallel_for is not available in canary."
-)
 class TestParallelFor(TestConditionalNodeInPipeline):
     def test_simple_foreach_string_item(self, client: MLClient, randstr: Callable):
         source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml"
         expected_node = {
             'body': '${{parent.jobs.parallel_body}}',
             'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
-            'type': 'parallel_for'
+            'type': 'parallel_for',
+           '_source': 'YAML.JOB',
         }
 
         assert_foreach(client, randstr("job_name"), source, expected_node)
@@ -193,7 +191,8 @@ class TestParallelFor(TestConditionalNodeInPipeline):
         expected_node = {
             'body': '${{parent.jobs.parallel_body}}',
             'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
-            'type': 'parallel_for'
+            'type': 'parallel_for',
+           '_source': 'YAML.JOB',
         }
         assert_foreach(client, randstr("job_name"), source, expected_node)
 
@@ -203,7 +202,8 @@ class TestParallelFor(TestConditionalNodeInPipeline):
             'body': '${{parent.jobs.parallel_body}}',
             'items': '{"branch1": {"component_in_number": 1}, "branch2": '
                      '{"component_in_number": 2}}',
-            'type': 'parallel_for'
+            'type': 'parallel_for',
+           '_source': 'YAML.JOB',
         }
         assert_foreach(client, randstr("job_name"), source, expected_node)
 
@@ -214,9 +214,70 @@ class TestParallelFor(TestConditionalNodeInPipeline):
             'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
             'outputs': {'component_out_path': {'type': 'literal',
                                                'value': '${{parent.outputs.component_out_path}}'}},
-            'type': 'parallel_for'
+            'type': 'parallel_for',
+            '_source': 'YAML.JOB'
         }
-        assert_foreach(client, randstr("job_name"), source, expected_node)
+        yaml_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'outputs': {'component_out_path': '${{parent.outputs.component_out_path}}'},
+            'type': 'parallel_for',
+           '_source': 'YAML.JOB',
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node, yaml_node)
+
+    def test_assets_in_items(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/control_flow/parallel_for/assets_items.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_path": {"uri": '
+                     '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                     '"job_input_type": "uri_file"}}, {"component_in_path": {"uri": '
+                     '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                     '"job_input_type": "uri_file"}}]',
+            'outputs': {'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'}},
+            'type': 'parallel_for',
+           '_source': 'YAML.JOB',
+        }
+        yaml_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            # items will become json string when dump to avoid removal of empty inputs
+            'items': '[{"component_in_path": "{\'type\': \'uri_file\', \'path\': '
+                     '\'https://dprepdata.blob.core.windows.net/demo/Titanic.csv\'}"}, '
+                     '{"component_in_path": "{\'type\': \'uri_file\', \'path\': '
+                     '\'https://dprepdata.blob.core.windows.net/demo/Titanic.csv\'}"}]',
+            'outputs': {'component_out_path': '${{parent.outputs.component_out_path}}'},
+            'type': 'parallel_for',
+           '_source': 'YAML.JOB',
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node, yaml_node)
+
+    def test_path_on_datastore_in_items(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/control_flow/parallel_for/path_on_ds_items.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_path": {"uri": '
+                     '"azureml://datastores/workspaceblobstore/paths/path/on/datastore/1", '
+                     '"job_input_type": "uri_folder"}}, {"component_in_path": {"uri": '
+                     '"azureml://datastores/workspaceblobstore/paths/path/on/datastore/2", '
+                     '"job_input_type": "uri_folder"}}]',
+            'outputs': {'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'}},
+            'type': 'parallel_for',
+           '_source': 'YAML.JOB',
+        }
+        yaml_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_path": "{\'type\': \'uri_folder\', \'path\': '
+                     '\'azureml://datastores/workspaceblobstore/paths/path/on/datastore/1\'}"}, '
+                     '{"component_in_path": "{\'type\': \'uri_folder\', \'path\': '
+                     '\'azureml://datastores/workspaceblobstore/paths/path/on/datastore/2\'}"}]',
+            'outputs': {'component_out_path': '${{parent.outputs.component_out_path}}'},
+            'type': 'parallel_for',
+           '_source': 'YAML.JOB',
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node, yaml_node)
 
 
 def assert_control_flow_in_pipeline_component(client, component_path, pipeline_path):

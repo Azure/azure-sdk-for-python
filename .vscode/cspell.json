@@ -386,7 +386,8 @@
     "prnumber",
     "yarl",
     "SDDL",
-    "dacl"
+    "dacl",
+    "whls"
   ],
   "overrides": [
     {

@@ -71,6 +71,7 @@ class TestIfElse(TestControlFlowPipeline):
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "conditionnode": {
+                '_source': 'DSL',
                 "condition": "${{parent.jobs.result.outputs.output}}",
                 "false_block": "${{parent.jobs.node1}}",
                 "true_block": "${{parent.jobs.node2}}",
@@ -115,10 +116,12 @@ class TestIfElse(TestControlFlowPipeline):
 
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
-            'conditionnode': {'condition': True,
-                              'false_block': '${{parent.jobs.node1}}',
-                              'true_block': '${{parent.jobs.node2}}',
-                              'type': 'if_else'},
+            'conditionnode': {
+                '_source': 'DSL',
+                'condition': True,
+                'false_block': '${{parent.jobs.node1}}',
+                'true_block': '${{parent.jobs.node2}}',
+                'type': 'if_else'},
             'node1': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
                       'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                          'value': '1'}},
@@ -149,9 +152,11 @@ class TestIfElse(TestControlFlowPipeline):
 
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
-            'conditionnode': {'condition': True,
-                              'false_block': '${{parent.jobs.node1}}',
-                              'type': 'if_else'},
+            'conditionnode': {
+                '_source': 'DSL',
+                'condition': True,
+                'false_block': '${{parent.jobs.node1}}',
+                'type': 'if_else'},
             'node1': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
                       'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                          'value': '1'}},
@@ -208,7 +213,9 @@ class TestIfElse(TestControlFlowPipeline):
 
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
-            'conditionnode': {'condition': '${{parent.jobs.do_while_body_func.outputs.condition}}',
+            'conditionnode': {
+                '_source': 'DSL',
+                'condition': '${{parent.jobs.do_while_body_func.outputs.condition}}',
                               'true_block': '${{parent.jobs.primitive_output_component_true}}',
                               'type': 'if_else'},
             'do_while_body_func': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
@@ -226,7 +233,9 @@ class TestIfElse(TestControlFlowPipeline):
                                                             'value': '${{parent.inputs.str_param}}'}},
                                    'name': 'do_while_body_func',
                                    'type': 'command'},
-            'dowhile': {'body': '${{parent.jobs.do_while_body_func}}',
+            'dowhile': {
+                '_source': 'DSL',
+                'body': '${{parent.jobs.do_while_body_func}}',
                         'condition': 'condition',
                         'limits': {'max_iteration_count': 3},
                         'mapping': {'bool_param_output': ['bool_param'],
@@ -253,14 +262,6 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
 
-@pytest.mark.skip(
-    reason="snapshot upload changes require this test to be re-recorded, but live tests can't be run until parallel_for is available in canary"
-)
-@pytest.mark.skipif(
-    condition=is_live(),
-    # TODO: reopen live test when parallel_for deployed to canary
-    reason="parallel_for is not available in canary."
-)
 class TestParallelForPipeline(TestControlFlowPipeline):
     def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
         hello_world_component = load_component(
@@ -303,10 +304,12 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                                                  'uri': 'https://dprepdata.blob.core.windows.net/demo/Titanic.csv'}},
                 'name': 'parallel_body',
                 'type': 'command'},
-            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
-                              'items': '[{"component_in_number": 1}, '
-                                       '{"component_in_number": 2}]',
-                              'type': 'parallel_for'}
+            'parallel_node': {
+                '_source': 'DSL',
+                'body': '${{parent.jobs.parallel_body}}',
+                'items': '[{"component_in_number": 1}, '
+                         '{"component_in_number": 2}]',
+                'type': 'parallel_for'}
         }
 
     def test_dsl_parallel_for_pipeline_unprovided_input(self, client: MLClient):
@@ -352,10 +355,12 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                                                  'uri': 'https://dprepdata.blob.core.windows.net/demo/Titanic.csv'}},
                 'name': 'parallel_body',
                 'type': 'command'},
-            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
-                              'items': '[{"component_in_number": 1}, '
-                                       '{"component_in_number": 2}]',
-                              'type': 'parallel_for'}
+            'parallel_node': {
+                '_source': 'DSL',
+                'body': '${{parent.jobs.parallel_body}}',
+                'items': '[{"component_in_number": 1}, '
+                         '{"component_in_number": 2}]',
+                'type': 'parallel_for'}
         }
 
     def test_parallel_for_pipeline_with_subgraph(self, client: MLClient):
@@ -403,10 +408,12 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             'parallel_body': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
                               'name': 'parallel_body',
                               'type': 'pipeline'},
-            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
-                              'items': '[{"component_in_number": 1}, '
-                                       '{"component_in_number": 2}]',
-                              'type': 'parallel_for'}
+            'parallel_node': {
+                '_source': 'DSL',
+                'body': '${{parent.jobs.parallel_body}}',
+                'items': '[{"component_in_number": 1}, '
+                         '{"component_in_number": 2}]',
+                'type': 'parallel_for'}
         }
 
     def test_parallel_for_pipeline_subgraph_unprovided_input(self, client: MLClient):
@@ -454,10 +461,12 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             'parallel_body': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
                               'name': 'parallel_body',
                               'type': 'pipeline'},
-            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
-                              'items': '[{"component_in_number": 1}, '
-                                       '{"component_in_number": 2}]',
-                              'type': 'parallel_for'}
+            'parallel_node': {
+                '_source': 'DSL',
+                'body': '${{parent.jobs.parallel_body}}',
+                'items': '[{"component_in_number": 1}, '
+                         '{"component_in_number": 2}]',
+                'type': 'parallel_for'}
         }
 
     def test_parallel_for_pipeline_with_port_outputs(self, client: MLClient):
@@ -502,7 +511,9 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                                   'uri': 'https://dprepdata.blob.core.windows.net/demo/Titanic.csv'}},
                               'name': 'parallel_body',
                               'type': 'command'},
-            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+            'parallel_node': {
+                '_source': 'DSL',
+                'body': '${{parent.jobs.parallel_body}}',
                               'items': '[{"component_in_number": 3}, '
                                        '{"component_in_number": 4}]',
                               'type': 'parallel_for',
@@ -546,7 +557,8 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                                                'value': '${{parent.outputs.component_out_path}}'},
                         'component_out_table': {'type': 'literal',
                                                 'value': '${{parent.outputs.component_out_table}}'}},
-            'type': 'parallel_for'
+            'type': 'parallel_for',
+            '_source': 'DSL',
         }
 
         with include_private_preview_nodes_in_pipeline():
@@ -603,7 +615,8 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                                                  'value': '${{parent.outputs.component_out_number}}'},
                         'component_out_path': {'type': 'literal',
                                                'value': '${{parent.outputs.component_out_path}}'}},
-            'type': 'parallel_for'
+            'type': 'parallel_for',
+            '_source': 'DSL',
         }
 
         # parallel for pipeline component is correctly generated
@@ -640,12 +653,54 @@ class TestParallelForPipeline(TestControlFlowPipeline):
             'parallel_body': {'_source': 'YAML.COMPONENT',
                               'name': 'parallel_body',
                               'type': 'command'},
-            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
-                              'items': '{"silo_0": {}, "silo_1": {}, "silo_2": {}, '
-                                       '"silo_3": {}, "silo_4": {}, "silo_5": {}, '
-                                       '"silo_6": {}, "silo_7": {}, "silo_8": {}, '
-                                       '"silo_9": {}}',
-                              'outputs': {'component_out_path': {'type': 'literal',
-                                                                 'value': '${{parent.outputs.component_out_path}}'}},
-                              'type': 'parallel_for'}
+            'parallel_node': {
+                '_source': 'DSL',
+                'body': '${{parent.jobs.parallel_body}}',
+                'items': '{"silo_0": {}, "silo_1": {}, "silo_2": {}, '
+                         '"silo_3": {}, "silo_4": {}, "silo_5": {}, '
+                         '"silo_6": {}, "silo_7": {}, "silo_8": {}, '
+                         '"silo_9": {}}',
+                'outputs': {'component_out_path': {'type': 'literal',
+                                                   'value': '${{parent.outputs.component_out_path}}'}},
+                'type': 'parallel_for'}
+        }
+
+    def test_parallel_for_pipeline_with_asset_items(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component()
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1, "component_in_path": test_input},
+                    {"component_in_number": 2, "component_in_path": test_input},
+                ]
+            )
+            after_node = hello_world_component(
+                component_in_path=parallel_node.outputs.component_out_path,
+            )
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"]["parallel_node"] == {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_path": {"uri": '
+                     '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                     '"job_input_type": "uri_file"}, '
+                     '"component_in_number": 1}, {"component_in_path": '
+                     '{"uri": '
+                     '"https://dprepdata.blob.core.windows.net/demo/Titanic.csv", '
+                     '"job_input_type": "uri_file"}, '
+                     '"component_in_number": 2}]',
+            'type': 'parallel_for',
+            '_source': 'DSL',
         }

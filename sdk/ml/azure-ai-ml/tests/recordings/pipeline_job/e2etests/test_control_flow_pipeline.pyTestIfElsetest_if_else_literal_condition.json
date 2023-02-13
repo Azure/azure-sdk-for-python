@@ -411,7 +411,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "887",
+        "Content-Length": "910",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -440,7 +440,8 @@
             "conditionnode": {
               "type": "if_else",
               "condition": true,
-              "true_block": "${{parent.jobs.node1}}"
+              "true_block": "${{parent.jobs.node1}}",
+              "_source": "YAML.JOB"
             }
           },
           "outputs": {},
@@ -453,7 +454,7 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
-        "Content-Length": "2860",
+        "Content-Length": "2891",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Sat, 11 Feb 2023 04:35:37 GMT",
         "Expires": "-1",
@@ -537,7 +538,8 @@
             "conditionnode": {
               "type": "if_else",
               "condition": true,
-              "true_block": "${{parent.jobs.node1}}"
+              "true_block": "${{parent.jobs.node1}}",
+              "_source": "YAML.JOB"
             }
           },
           "inputs": {},

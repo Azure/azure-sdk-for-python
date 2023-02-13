@@ -556,7 +556,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "877",
+        "Content-Length": "895",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -586,7 +586,8 @@
             "conditionnode": {
               "type": "if_else",
               "condition": true,
-              "false_block": "${{parent.jobs.node1}}"
+              "false_block": "${{parent.jobs.node1}}",
+              "_source": "DSL"
             }
           },
           "outputs": {},
@@ -681,7 +682,8 @@
             "conditionnode": {
               "type": "if_else",
               "condition": true,
-              "false_block": "${{parent.jobs.node1}}"
+              "false_block": "${{parent.jobs.node1}}",
+              "_source": "DSL"
             }
           },
           "inputs": {},

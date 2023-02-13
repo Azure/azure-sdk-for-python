@@ -2658,3 +2658,41 @@ class TestDSLPipeline(AzureRecordedTestCase):
         node_output = pipeline_job.jobs['node'].outputs.component_out_path
         assert node_output.name == 'a_output'
         assert node_output.version == '1'
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    def test_dsl_pipeline_with_data_transfer_copy_2urifolder(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+
+        pipeline_job = client.jobs.create_or_update(pipeline)
+
+        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+
+        expected_job = {
+            'description': 'submit a pipeline with data transfer copy job',
+             'inputs': {'cosmos_folder': {'job_input_type': 'uri_folder',
+                                          'mode': 'ReadOnlyMount'},
+                        'cosmos_folder_dup': {'job_input_type': 'uri_folder',
+                                              'mode': 'ReadOnlyMount'}},
+             'is_archived': False,
+             'job_type': 'Pipeline',
+             'jobs': {'merge_files': {'data_copy_mode': 'merge_with_overwrite',
+                                      'inputs': {'folder1': {'job_input_type': 'literal',
+                                                             'value': '${{parent.inputs.cosmos_folder}}'},
+                                                 'folder2': {'job_input_type': 'literal',
+                                                             'value': '${{parent.inputs.cosmos_folder_dup}}'}},
+                                      'name': 'merge_files',
+                                      'outputs': {'output_folder': {'type': 'literal',
+                                                                    'value': '${{parent.outputs.merged_blob}}'}},
+                                      'task': 'copy_data',
+                                      'type': 'data_transfer'}},
+             'outputs': {'merged_blob': {'job_output_type': 'uri_folder',
+                                         'mode': 'ReadWriteMount'}},
+             'settings': {'default_compute': 'adftest'},
+             'tags': {}
+        }
+        assert expected_job == actual_job
+

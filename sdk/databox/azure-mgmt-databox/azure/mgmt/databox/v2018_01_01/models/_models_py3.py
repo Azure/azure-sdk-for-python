@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,14 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
-from ._data_box_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AccountCredentialDetails(msrest.serialization.Model):
+class AccountCredentialDetails(_serialization.Model):
     """Credential details of the account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -25,63 +28,61 @@ class AccountCredentialDetails(msrest.serialization.Model):
      as a storage endpoint on the device.
     :vartype account_connection_string: str
     :ivar share_credential_details: Per share level unencrypted access credentials.
-    :vartype share_credential_details: list[~azure.mgmt.databox.models.ShareCredentialDetails]
+    :vartype share_credential_details:
+     list[~azure.mgmt.databox.v2018_01_01.models.ShareCredentialDetails]
     """
 
     _validation = {
-        'account_name': {'readonly': True},
-        'account_connection_string': {'readonly': True},
-        'share_credential_details': {'readonly': True},
+        "account_name": {"readonly": True},
+        "account_connection_string": {"readonly": True},
+        "share_credential_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'account_connection_string': {'key': 'accountConnectionString', 'type': 'str'},
-        'share_credential_details': {'key': 'shareCredentialDetails', 'type': '[ShareCredentialDetails]'},
+        "account_name": {"key": "accountName", "type": "str"},
+        "account_connection_string": {"key": "accountConnectionString", "type": "str"},
+        "share_credential_details": {"key": "shareCredentialDetails", "type": "[ShareCredentialDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AccountCredentialDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.account_name = None
         self.account_connection_string = None
         self.share_credential_details = None
 
 
-class AddressValidationOutput(msrest.serialization.Model):
+class AddressValidationOutput(_serialization.Model):
     """Output of the address validation api.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar validation_status: The address validation status. Possible values include: "Valid",
-     "Invalid", "Ambiguous".
-    :vartype validation_status: str or ~azure.mgmt.databox.models.AddressValidationStatus
+    :ivar validation_status: The address validation status. Known values are: "Valid", "Invalid",
+     and "Ambiguous".
+    :vartype validation_status: str or
+     ~azure.mgmt.databox.v2018_01_01.models.AddressValidationStatus
     :ivar alternate_addresses: List of alternate addresses.
-    :vartype alternate_addresses: list[~azure.mgmt.databox.models.ShippingAddress]
+    :vartype alternate_addresses: list[~azure.mgmt.databox.v2018_01_01.models.ShippingAddress]
     """
 
     _validation = {
-        'validation_status': {'readonly': True},
-        'alternate_addresses': {'readonly': True},
+        "validation_status": {"readonly": True},
+        "alternate_addresses": {"readonly": True},
     }
 
     _attribute_map = {
-        'validation_status': {'key': 'properties.validationStatus', 'type': 'str'},
-        'alternate_addresses': {'key': 'properties.alternateAddresses', 'type': '[ShippingAddress]'},
+        "validation_status": {"key": "properties.validationStatus", "type": "str"},
+        "alternate_addresses": {"key": "properties.alternateAddresses", "type": "[ShippingAddress]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AddressValidationOutput, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.validation_status = None
         self.alternate_addresses = None
 
 
-class ApplianceNetworkConfiguration(msrest.serialization.Model):
+class ApplianceNetworkConfiguration(_serialization.Model):
     """The Network Adapter configuration of a DataBox.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -93,25 +94,23 @@ class ApplianceNetworkConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'mac_address': {'readonly': True},
+        "name": {"readonly": True},
+        "mac_address": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'mac_address': {'key': 'macAddress', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "mac_address": {"key": "macAddress", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ApplianceNetworkConfiguration, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.mac_address = None
 
 
-class ArmBaseObject(msrest.serialization.Model):
+class ArmBaseObject(_serialization.Model):
     """Base class for all objects under resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -125,57 +124,56 @@ class ArmBaseObject(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ArmBaseObject, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.type = None
 
 
-class AvailableSkuRequest(msrest.serialization.Model):
+class AvailableSkuRequest(_serialization.Model):
     """The filters for showing the available skus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar transfer_type: Required. Type of the transfer. Default value: "ImportToAzure".
+    :ivar transfer_type: Type of the transfer. Required. Default value is "ImportToAzure".
     :vartype transfer_type: str
-    :param country: Required. ISO country code. Country for hardware shipment. For codes check:
-     https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements.
-    :type country: str
-    :param location: Required. Location for data transfer. For locations check:
+    :ivar country: ISO country code. Country for hardware shipment. For codes check:
+     https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements. Required.
+    :vartype country: str
+    :ivar location: Location for data transfer. For locations check:
      https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
-    :type location: str
-    :param sku_names: Sku Names to filter for available skus.
-    :type sku_names: list[str or ~azure.mgmt.databox.models.SkuName]
+     Required.
+    :vartype location: str
+    :ivar sku_names: Sku Names to filter for available skus.
+    :vartype sku_names: list[str or ~azure.mgmt.databox.v2018_01_01.models.SkuName]
     """
 
     _validation = {
-        'transfer_type': {'required': True, 'constant': True},
-        'country': {'required': True},
-        'location': {'required': True},
+        "transfer_type": {"required": True, "constant": True},
+        "country": {"required": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'transfer_type': {'key': 'transferType', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'sku_names': {'key': 'skuNames', 'type': '[str]'},
+        "transfer_type": {"key": "transferType", "type": "str"},
+        "country": {"key": "country", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "sku_names": {"key": "skuNames", "type": "[str]"},
     }
 
     transfer_type = "ImportToAzure"
@@ -185,105 +183,115 @@ class AvailableSkuRequest(msrest.serialization.Model):
         *,
         country: str,
         location: str,
-        sku_names: Optional[List[Union[str, "SkuName"]]] = None,
-        **kwargs
-    ):
-        super(AvailableSkuRequest, self).__init__(**kwargs)
+        sku_names: Optional[List[Union[str, "_models.SkuName"]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword country: ISO country code. Country for hardware shipment. For codes check:
+         https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements. Required.
+        :paramtype country: str
+        :keyword location: Location for data transfer. For locations check:
+         https://management.azure.com/subscriptions/SUBSCRIPTIONID/locations?api-version=2018-01-01.
+         Required.
+        :paramtype location: str
+        :keyword sku_names: Sku Names to filter for available skus.
+        :paramtype sku_names: list[str or ~azure.mgmt.databox.v2018_01_01.models.SkuName]
+        """
+        super().__init__(**kwargs)
         self.country = country
         self.location = location
         self.sku_names = sku_names
 
 
-class AvailableSkusResult(msrest.serialization.Model):
+class AvailableSkusResult(_serialization.Model):
     """The available skus operation response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of available skus.
-    :vartype value: list[~azure.mgmt.databox.models.SkuInformation]
-    :param next_link: Link for the next set of skus.
-    :type next_link: str
+    :vartype value: list[~azure.mgmt.databox.v2018_01_01.models.SkuInformation]
+    :ivar next_link: Link for the next set of skus.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SkuInformation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SkuInformation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(AvailableSkusResult, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link for the next set of skus.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class CancellationReason(msrest.serialization.Model):
+class CancellationReason(_serialization.Model):
     """Reason for cancellation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param reason: Required. Reason for cancellation.
-    :type reason: str
+    :ivar reason: Reason for cancellation. Required.
+    :vartype reason: str
     """
 
     _validation = {
-        'reason': {'required': True},
+        "reason": {"required": True},
     }
 
     _attribute_map = {
-        'reason': {'key': 'reason', 'type': 'str'},
+        "reason": {"key": "reason", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        reason: str,
-        **kwargs
-    ):
-        super(CancellationReason, self).__init__(**kwargs)
+    def __init__(self, *, reason: str, **kwargs: Any) -> None:
+        """
+        :keyword reason: Reason for cancellation. Required.
+        :paramtype reason: str
+        """
+        super().__init__(**kwargs)
         self.reason = reason
 
 
-class ContactDetails(msrest.serialization.Model):
+class ContactDetails(_serialization.Model):
     """Contact Details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param contact_name: Required. Contact name of the person.
-    :type contact_name: str
-    :param phone: Required. Phone number of the contact person.
-    :type phone: str
-    :param phone_extension: Phone extension number of the contact person.
-    :type phone_extension: str
-    :param mobile: Mobile number of the contact person.
-    :type mobile: str
-    :param email_list: Required. List of Email-ids to be notified about job progress.
-    :type email_list: list[str]
-    :param notification_preference: Notification preference for a job stage.
-    :type notification_preference: list[~azure.mgmt.databox.models.NotificationPreference]
+    :ivar contact_name: Contact name of the person. Required.
+    :vartype contact_name: str
+    :ivar phone: Phone number of the contact person. Required.
+    :vartype phone: str
+    :ivar phone_extension: Phone extension number of the contact person.
+    :vartype phone_extension: str
+    :ivar mobile: Mobile number of the contact person.
+    :vartype mobile: str
+    :ivar email_list: List of Email-ids to be notified about job progress. Required.
+    :vartype email_list: list[str]
+    :ivar notification_preference: Notification preference for a job stage.
+    :vartype notification_preference:
+     list[~azure.mgmt.databox.v2018_01_01.models.NotificationPreference]
     """
 
     _validation = {
-        'contact_name': {'required': True},
-        'phone': {'required': True},
-        'email_list': {'required': True},
+        "contact_name": {"required": True},
+        "phone": {"required": True},
+        "email_list": {"required": True},
     }
 
     _attribute_map = {
-        'contact_name': {'key': 'contactName', 'type': 'str'},
-        'phone': {'key': 'phone', 'type': 'str'},
-        'phone_extension': {'key': 'phoneExtension', 'type': 'str'},
-        'mobile': {'key': 'mobile', 'type': 'str'},
-        'email_list': {'key': 'emailList', 'type': '[str]'},
-        'notification_preference': {'key': 'notificationPreference', 'type': '[NotificationPreference]'},
+        "contact_name": {"key": "contactName", "type": "str"},
+        "phone": {"key": "phone", "type": "str"},
+        "phone_extension": {"key": "phoneExtension", "type": "str"},
+        "mobile": {"key": "mobile", "type": "str"},
+        "email_list": {"key": "emailList", "type": "[str]"},
+        "notification_preference": {"key": "notificationPreference", "type": "[NotificationPreference]"},
     }
 
     def __init__(
@@ -294,10 +302,25 @@ class ContactDetails(msrest.serialization.Model):
         email_list: List[str],
         phone_extension: Optional[str] = None,
         mobile: Optional[str] = None,
-        notification_preference: Optional[List["NotificationPreference"]] = None,
-        **kwargs
-    ):
-        super(ContactDetails, self).__init__(**kwargs)
+        notification_preference: Optional[List["_models.NotificationPreference"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword contact_name: Contact name of the person. Required.
+        :paramtype contact_name: str
+        :keyword phone: Phone number of the contact person. Required.
+        :paramtype phone: str
+        :keyword phone_extension: Phone extension number of the contact person.
+        :paramtype phone_extension: str
+        :keyword mobile: Mobile number of the contact person.
+        :paramtype mobile: str
+        :keyword email_list: List of Email-ids to be notified about job progress. Required.
+        :paramtype email_list: list[str]
+        :keyword notification_preference: Notification preference for a job stage.
+        :paramtype notification_preference:
+         list[~azure.mgmt.databox.v2018_01_01.models.NotificationPreference]
+        """
+        super().__init__(**kwargs)
         self.contact_name = contact_name
         self.phone = phone
         self.phone_extension = phone_extension
@@ -306,40 +329,43 @@ class ContactDetails(msrest.serialization.Model):
         self.notification_preference = notification_preference
 
 
-class CopyLogDetails(msrest.serialization.Model):
+class CopyLogDetails(_serialization.Model):
     """Details for log generated during copy.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DataBoxAccountCopyLogDetails, DataBoxDiskCopyLogDetails, DataBoxHeavyAccountCopyLogDetails.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DataBoxAccountCopyLogDetails, DataBoxDiskCopyLogDetails, DataBoxHeavyAccountCopyLogDetails
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar copy_log_details_type: Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :ivar copy_log_details_type: Indicates the type of job details. Required. Known values are:
+     "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype copy_log_details_type: str or
+     ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
     """
 
     _validation = {
-        'copy_log_details_type': {'readonly': True},
+        "copy_log_details_type": {"required": True},
     }
 
     _attribute_map = {
-        'copy_log_details_type': {'key': 'copyLogDetailsType', 'type': 'str'},
+        "copy_log_details_type": {"key": "copyLogDetailsType", "type": "str"},
     }
 
     _subtype_map = {
-        'copy_log_details_type': {'DataBox': 'DataBoxAccountCopyLogDetails', 'DataBoxDisk': 'DataBoxDiskCopyLogDetails', 'DataBoxHeavy': 'DataBoxHeavyAccountCopyLogDetails'}
+        "copy_log_details_type": {
+            "DataBox": "DataBoxAccountCopyLogDetails",
+            "DataBoxDisk": "DataBoxDiskCopyLogDetails",
+            "DataBoxHeavy": "DataBoxHeavyAccountCopyLogDetails",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CopyLogDetails, self).__init__(**kwargs)
-        self.copy_log_details_type = None  # type: Optional[str]
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.copy_log_details_type: Optional[str] = None
 
 
-class CopyProgress(msrest.serialization.Model):
+class CopyProgress(_serialization.Model):
     """Copy progress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -349,38 +375,36 @@ class CopyProgress(msrest.serialization.Model):
     :ivar account_id: Id of the account where the data needs to be uploaded.
     :vartype account_id: str
     :ivar bytes_sent_to_cloud: Amount of data uploaded by the job as of now.
-    :vartype bytes_sent_to_cloud: long
+    :vartype bytes_sent_to_cloud: int
     :ivar total_bytes_to_process: Total amount of data to be processed by the job.
-    :vartype total_bytes_to_process: long
+    :vartype total_bytes_to_process: int
     :ivar files_processed: Number of files processed by the job as of now.
-    :vartype files_processed: long
+    :vartype files_processed: int
     :ivar total_files_to_process: Total number of files to be processed by the job.
-    :vartype total_files_to_process: long
+    :vartype total_files_to_process: int
     """
 
     _validation = {
-        'storage_account_name': {'readonly': True},
-        'account_id': {'readonly': True},
-        'bytes_sent_to_cloud': {'readonly': True},
-        'total_bytes_to_process': {'readonly': True},
-        'files_processed': {'readonly': True},
-        'total_files_to_process': {'readonly': True},
+        "storage_account_name": {"readonly": True},
+        "account_id": {"readonly": True},
+        "bytes_sent_to_cloud": {"readonly": True},
+        "total_bytes_to_process": {"readonly": True},
+        "files_processed": {"readonly": True},
+        "total_files_to_process": {"readonly": True},
     }
 
     _attribute_map = {
-        'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'bytes_sent_to_cloud': {'key': 'bytesSentToCloud', 'type': 'long'},
-        'total_bytes_to_process': {'key': 'totalBytesToProcess', 'type': 'long'},
-        'files_processed': {'key': 'filesProcessed', 'type': 'long'},
-        'total_files_to_process': {'key': 'totalFilesToProcess', 'type': 'long'},
+        "storage_account_name": {"key": "storageAccountName", "type": "str"},
+        "account_id": {"key": "accountId", "type": "str"},
+        "bytes_sent_to_cloud": {"key": "bytesSentToCloud", "type": "int"},
+        "total_bytes_to_process": {"key": "totalBytesToProcess", "type": "int"},
+        "files_processed": {"key": "filesProcessed", "type": "int"},
+        "total_files_to_process": {"key": "totalFilesToProcess", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CopyProgress, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.storage_account_name = None
         self.account_id = None
         self.bytes_sent_to_cloud = None
@@ -394,9 +418,12 @@ class DataBoxAccountCopyLogDetails(CopyLogDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar copy_log_details_type: Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar copy_log_details_type: Indicates the type of job details. Required. Known values are:
+     "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype copy_log_details_type: str or
+     ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
     :ivar account_name: Destination account name.
     :vartype account_name: str
     :ivar copy_log_link: Link for copy logs.
@@ -404,23 +431,21 @@ class DataBoxAccountCopyLogDetails(CopyLogDetails):
     """
 
     _validation = {
-        'copy_log_details_type': {'readonly': True},
-        'account_name': {'readonly': True},
-        'copy_log_link': {'readonly': True},
+        "copy_log_details_type": {"required": True},
+        "account_name": {"readonly": True},
+        "copy_log_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'copy_log_details_type': {'key': 'copyLogDetailsType', 'type': 'str'},
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'copy_log_link': {'key': 'copyLogLink', 'type': 'str'},
+        "copy_log_details_type": {"key": "copyLogDetailsType", "type": "str"},
+        "account_name": {"key": "accountName", "type": "str"},
+        "copy_log_link": {"key": "copyLogLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataBoxAccountCopyLogDetails, self).__init__(**kwargs)
-        self.copy_log_details_type = 'DataBox'  # type: str
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.copy_log_details_type: str = "DataBox"
         self.account_name = None
         self.copy_log_link = None
 
@@ -430,9 +455,12 @@ class DataBoxDiskCopyLogDetails(CopyLogDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar copy_log_details_type: Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar copy_log_details_type: Indicates the type of job details. Required. Known values are:
+     "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype copy_log_details_type: str or
+     ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
     :ivar disk_serial_number: Disk Serial Number.
     :vartype disk_serial_number: str
     :ivar error_log_link: Link for copy error logs.
@@ -442,31 +470,29 @@ class DataBoxDiskCopyLogDetails(CopyLogDetails):
     """
 
     _validation = {
-        'copy_log_details_type': {'readonly': True},
-        'disk_serial_number': {'readonly': True},
-        'error_log_link': {'readonly': True},
-        'verbose_log_link': {'readonly': True},
+        "copy_log_details_type": {"required": True},
+        "disk_serial_number": {"readonly": True},
+        "error_log_link": {"readonly": True},
+        "verbose_log_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'copy_log_details_type': {'key': 'copyLogDetailsType', 'type': 'str'},
-        'disk_serial_number': {'key': 'diskSerialNumber', 'type': 'str'},
-        'error_log_link': {'key': 'errorLogLink', 'type': 'str'},
-        'verbose_log_link': {'key': 'verboseLogLink', 'type': 'str'},
+        "copy_log_details_type": {"key": "copyLogDetailsType", "type": "str"},
+        "disk_serial_number": {"key": "diskSerialNumber", "type": "str"},
+        "error_log_link": {"key": "errorLogLink", "type": "str"},
+        "verbose_log_link": {"key": "verboseLogLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataBoxDiskCopyLogDetails, self).__init__(**kwargs)
-        self.copy_log_details_type = 'DataBoxDisk'  # type: str
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.copy_log_details_type: str = "DataBoxDisk"
         self.disk_serial_number = None
         self.error_log_link = None
         self.verbose_log_link = None
 
 
-class DataBoxDiskCopyProgress(msrest.serialization.Model):
+class DataBoxDiskCopyProgress(_serialization.Model):
     """DataBox Disk Copy Progress.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -474,73 +500,72 @@ class DataBoxDiskCopyProgress(msrest.serialization.Model):
     :ivar serial_number: The serial number of the disk.
     :vartype serial_number: str
     :ivar bytes_copied: Bytes copied during the copy of disk.
-    :vartype bytes_copied: long
+    :vartype bytes_copied: int
     :ivar percent_complete: Indicates the percentage completed for the copy of the disk.
     :vartype percent_complete: int
-    :ivar status: The Status of the copy. Possible values include: "NotStarted", "InProgress",
-     "Completed", "CompletedWithErrors", "Failed", "NotReturned".
-    :vartype status: str or ~azure.mgmt.databox.models.CopyStatus
+    :ivar status: The Status of the copy. Known values are: "NotStarted", "InProgress",
+     "Completed", "CompletedWithErrors", "Failed", and "NotReturned".
+    :vartype status: str or ~azure.mgmt.databox.v2018_01_01.models.CopyStatus
     """
 
     _validation = {
-        'serial_number': {'readonly': True},
-        'bytes_copied': {'readonly': True},
-        'percent_complete': {'readonly': True},
-        'status': {'readonly': True},
+        "serial_number": {"readonly": True},
+        "bytes_copied": {"readonly": True},
+        "percent_complete": {"readonly": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'serial_number': {'key': 'serialNumber', 'type': 'str'},
-        'bytes_copied': {'key': 'bytesCopied', 'type': 'long'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'int'},
-        'status': {'key': 'status', 'type': 'str'},
+        "serial_number": {"key": "serialNumber", "type": "str"},
+        "bytes_copied": {"key": "bytesCopied", "type": "int"},
+        "percent_complete": {"key": "percentComplete", "type": "int"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataBoxDiskCopyProgress, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.serial_number = None
         self.bytes_copied = None
         self.percent_complete = None
         self.status = None
 
 
-class JobDetails(msrest.serialization.Model):
+class JobDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Job details.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DataBoxJobDetails, DataBoxDiskJobDetails, DataBoxHeavyJobDetails.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DataBoxJobDetails, DataBoxDiskJobDetails, DataBoxHeavyJobDetails
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
+    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_tera_bytes: int
+    :vartype expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
-    :param contact_details: Required. Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
-    :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :vartype job_stages: list[~azure.mgmt.databox.v2018_01_01.models.JobStages]
+    :ivar contact_details: Contact details for notification and shipping. Required.
+    :vartype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+    :ivar shipping_address: Shipping address of the customer. Required.
+    :vartype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
     :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype delivery_package: ~azure.mgmt.databox.v2018_01_01.models.PackageShippingDetails
     :ivar return_package: Return package shipping details.
-    :vartype return_package: ~azure.mgmt.databox.models.PackageShippingDetails
-    :param destination_account_details: Required. Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :vartype return_package: ~azure.mgmt.databox.v2018_01_01.models.PackageShippingDetails
+    :ivar destination_account_details: Destination account details. Required.
+    :vartype destination_account_details:
+     list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
     :ivar error_details: Error details for failure. This is optional.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
-    :param job_details_type: Required. Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
-    :param preferences: Preferences for the order.
-    :type preferences: ~azure.mgmt.databox.models.Preferences
+    :vartype error_details: list[~azure.mgmt.databox.v2018_01_01.models.JobErrorDetails]
+    :ivar job_details_type: Indicates the type of job details. Required. Known values are:
+     "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype job_details_type: str or ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
+    :ivar preferences: Preferences for the order.
+    :vartype preferences: ~azure.mgmt.databox.v2018_01_01.models.Preferences
     :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list[~azure.mgmt.databox.models.CopyLogDetails]
+    :vartype copy_log_details: list[~azure.mgmt.databox.v2018_01_01.models.CopyLogDetails]
     :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
@@ -548,50 +573,68 @@ class JobDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'job_stages': {'readonly': True},
-        'contact_details': {'required': True},
-        'shipping_address': {'required': True},
-        'delivery_package': {'readonly': True},
-        'return_package': {'readonly': True},
-        'destination_account_details': {'required': True},
-        'error_details': {'readonly': True},
-        'job_details_type': {'required': True},
-        'copy_log_details': {'readonly': True},
-        'reverse_shipment_label_sas_key': {'readonly': True},
-        'chain_of_custody_sas_key': {'readonly': True},
+        "job_stages": {"readonly": True},
+        "contact_details": {"required": True},
+        "shipping_address": {"required": True},
+        "delivery_package": {"readonly": True},
+        "return_package": {"readonly": True},
+        "destination_account_details": {"required": True},
+        "error_details": {"readonly": True},
+        "job_details_type": {"required": True},
+        "copy_log_details": {"readonly": True},
+        "reverse_shipment_label_sas_key": {"readonly": True},
+        "chain_of_custody_sas_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
-        'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
-        'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
-        'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
-        'delivery_package': {'key': 'deliveryPackage', 'type': 'PackageShippingDetails'},
-        'return_package': {'key': 'returnPackage', 'type': 'PackageShippingDetails'},
-        'destination_account_details': {'key': 'destinationAccountDetails', 'type': '[DestinationAccountDetails]'},
-        'error_details': {'key': 'errorDetails', 'type': '[JobErrorDetails]'},
-        'job_details_type': {'key': 'jobDetailsType', 'type': 'str'},
-        'preferences': {'key': 'preferences', 'type': 'Preferences'},
-        'copy_log_details': {'key': 'copyLogDetails', 'type': '[CopyLogDetails]'},
-        'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
-        'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
+        "expected_data_size_in_tera_bytes": {"key": "expectedDataSizeInTeraBytes", "type": "int"},
+        "job_stages": {"key": "jobStages", "type": "[JobStages]"},
+        "contact_details": {"key": "contactDetails", "type": "ContactDetails"},
+        "shipping_address": {"key": "shippingAddress", "type": "ShippingAddress"},
+        "delivery_package": {"key": "deliveryPackage", "type": "PackageShippingDetails"},
+        "return_package": {"key": "returnPackage", "type": "PackageShippingDetails"},
+        "destination_account_details": {"key": "destinationAccountDetails", "type": "[DestinationAccountDetails]"},
+        "error_details": {"key": "errorDetails", "type": "[JobErrorDetails]"},
+        "job_details_type": {"key": "jobDetailsType", "type": "str"},
+        "preferences": {"key": "preferences", "type": "Preferences"},
+        "copy_log_details": {"key": "copyLogDetails", "type": "[CopyLogDetails]"},
+        "reverse_shipment_label_sas_key": {"key": "reverseShipmentLabelSasKey", "type": "str"},
+        "chain_of_custody_sas_key": {"key": "chainOfCustodySasKey", "type": "str"},
     }
 
     _subtype_map = {
-        'job_details_type': {'DataBox': 'DataBoxJobDetails', 'DataBoxDisk': 'DataBoxDiskJobDetails', 'DataBoxHeavy': 'DataBoxHeavyJobDetails'}
+        "job_details_type": {
+            "DataBox": "DataBoxJobDetails",
+            "DataBoxDisk": "DataBoxDiskJobDetails",
+            "DataBoxHeavy": "DataBoxHeavyJobDetails",
+        }
     }
 
     def __init__(
         self,
         *,
-        contact_details: "ContactDetails",
-        shipping_address: "ShippingAddress",
-        destination_account_details: List["DestinationAccountDetails"],
+        contact_details: "_models.ContactDetails",
+        shipping_address: "_models.ShippingAddress",
+        destination_account_details: List["_models.DestinationAccountDetails"],
         expected_data_size_in_tera_bytes: Optional[int] = None,
-        preferences: Optional["Preferences"] = None,
-        **kwargs
-    ):
-        super(JobDetails, self).__init__(**kwargs)
+        preferences: Optional["_models.Preferences"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
+         transferred in this job, in terabytes.
+        :paramtype expected_data_size_in_tera_bytes: int
+        :keyword contact_details: Contact details for notification and shipping. Required.
+        :paramtype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+        :keyword shipping_address: Shipping address of the customer. Required.
+        :paramtype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
+        :keyword destination_account_details: Destination account details. Required.
+        :paramtype destination_account_details:
+         list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
+        :keyword preferences: Preferences for the order.
+        :paramtype preferences: ~azure.mgmt.databox.v2018_01_01.models.Preferences
+        """
+        super().__init__(**kwargs)
         self.expected_data_size_in_tera_bytes = expected_data_size_in_tera_bytes
         self.job_stages = None
         self.contact_details = contact_details
@@ -600,148 +643,178 @@ class JobDetails(msrest.serialization.Model):
         self.return_package = None
         self.destination_account_details = destination_account_details
         self.error_details = None
-        self.job_details_type = None  # type: Optional[str]
+        self.job_details_type: Optional[str] = None
         self.preferences = preferences
         self.copy_log_details = None
         self.reverse_shipment_label_sas_key = None
         self.chain_of_custody_sas_key = None
 
 
-class DataBoxDiskJobDetails(JobDetails):
+class DataBoxDiskJobDetails(JobDetails):  # pylint: disable=too-many-instance-attributes
     """DataBox Disk Job Details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
+    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_tera_bytes: int
+    :vartype expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
-    :param contact_details: Required. Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
-    :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :vartype job_stages: list[~azure.mgmt.databox.v2018_01_01.models.JobStages]
+    :ivar contact_details: Contact details for notification and shipping. Required.
+    :vartype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+    :ivar shipping_address: Shipping address of the customer. Required.
+    :vartype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
     :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype delivery_package: ~azure.mgmt.databox.v2018_01_01.models.PackageShippingDetails
     :ivar return_package: Return package shipping details.
-    :vartype return_package: ~azure.mgmt.databox.models.PackageShippingDetails
-    :param destination_account_details: Required. Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :vartype return_package: ~azure.mgmt.databox.v2018_01_01.models.PackageShippingDetails
+    :ivar destination_account_details: Destination account details. Required.
+    :vartype destination_account_details:
+     list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
     :ivar error_details: Error details for failure. This is optional.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
-    :param job_details_type: Required. Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
-    :param preferences: Preferences for the order.
-    :type preferences: ~azure.mgmt.databox.models.Preferences
+    :vartype error_details: list[~azure.mgmt.databox.v2018_01_01.models.JobErrorDetails]
+    :ivar job_details_type: Indicates the type of job details. Required. Known values are:
+     "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype job_details_type: str or ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
+    :ivar preferences: Preferences for the order.
+    :vartype preferences: ~azure.mgmt.databox.v2018_01_01.models.Preferences
     :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list[~azure.mgmt.databox.models.CopyLogDetails]
+    :vartype copy_log_details: list[~azure.mgmt.databox.v2018_01_01.models.CopyLogDetails]
     :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
-    :param preferred_disks: User preference on what size disks are needed for the job. The map is
+    :ivar preferred_disks: User preference on what size disks are needed for the job. The map is
      from the disk size in TB to the count. Eg. {2,5} means 5 disks of 2 TB size. Key is string but
      will be checked against an int.
-    :type preferred_disks: dict[str, int]
+    :vartype preferred_disks: dict[str, int]
     :ivar copy_progress: Copy progress per disk.
-    :vartype copy_progress: list[~azure.mgmt.databox.models.DataBoxDiskCopyProgress]
+    :vartype copy_progress: list[~azure.mgmt.databox.v2018_01_01.models.DataBoxDiskCopyProgress]
     :ivar disks_and_size_details: Contains the map of disk serial number to the disk size being
      used for the job. Is returned only after the disks are shipped to the customer.
     :vartype disks_and_size_details: dict[str, int]
-    :param passkey: User entered passkey for DataBox Disk job.
-    :type passkey: str
+    :ivar passkey: User entered passkey for DataBox Disk job.
+    :vartype passkey: str
     """
 
     _validation = {
-        'job_stages': {'readonly': True},
-        'contact_details': {'required': True},
-        'shipping_address': {'required': True},
-        'delivery_package': {'readonly': True},
-        'return_package': {'readonly': True},
-        'destination_account_details': {'required': True},
-        'error_details': {'readonly': True},
-        'job_details_type': {'required': True},
-        'copy_log_details': {'readonly': True},
-        'reverse_shipment_label_sas_key': {'readonly': True},
-        'chain_of_custody_sas_key': {'readonly': True},
-        'copy_progress': {'readonly': True},
-        'disks_and_size_details': {'readonly': True},
+        "job_stages": {"readonly": True},
+        "contact_details": {"required": True},
+        "shipping_address": {"required": True},
+        "delivery_package": {"readonly": True},
+        "return_package": {"readonly": True},
+        "destination_account_details": {"required": True},
+        "error_details": {"readonly": True},
+        "job_details_type": {"required": True},
+        "copy_log_details": {"readonly": True},
+        "reverse_shipment_label_sas_key": {"readonly": True},
+        "chain_of_custody_sas_key": {"readonly": True},
+        "copy_progress": {"readonly": True},
+        "disks_and_size_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
-        'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
-        'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
-        'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
-        'delivery_package': {'key': 'deliveryPackage', 'type': 'PackageShippingDetails'},
-        'return_package': {'key': 'returnPackage', 'type': 'PackageShippingDetails'},
-        'destination_account_details': {'key': 'destinationAccountDetails', 'type': '[DestinationAccountDetails]'},
-        'error_details': {'key': 'errorDetails', 'type': '[JobErrorDetails]'},
-        'job_details_type': {'key': 'jobDetailsType', 'type': 'str'},
-        'preferences': {'key': 'preferences', 'type': 'Preferences'},
-        'copy_log_details': {'key': 'copyLogDetails', 'type': '[CopyLogDetails]'},
-        'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
-        'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
-        'preferred_disks': {'key': 'preferredDisks', 'type': '{int}'},
-        'copy_progress': {'key': 'copyProgress', 'type': '[DataBoxDiskCopyProgress]'},
-        'disks_and_size_details': {'key': 'disksAndSizeDetails', 'type': '{int}'},
-        'passkey': {'key': 'passkey', 'type': 'str'},
+        "expected_data_size_in_tera_bytes": {"key": "expectedDataSizeInTeraBytes", "type": "int"},
+        "job_stages": {"key": "jobStages", "type": "[JobStages]"},
+        "contact_details": {"key": "contactDetails", "type": "ContactDetails"},
+        "shipping_address": {"key": "shippingAddress", "type": "ShippingAddress"},
+        "delivery_package": {"key": "deliveryPackage", "type": "PackageShippingDetails"},
+        "return_package": {"key": "returnPackage", "type": "PackageShippingDetails"},
+        "destination_account_details": {"key": "destinationAccountDetails", "type": "[DestinationAccountDetails]"},
+        "error_details": {"key": "errorDetails", "type": "[JobErrorDetails]"},
+        "job_details_type": {"key": "jobDetailsType", "type": "str"},
+        "preferences": {"key": "preferences", "type": "Preferences"},
+        "copy_log_details": {"key": "copyLogDetails", "type": "[CopyLogDetails]"},
+        "reverse_shipment_label_sas_key": {"key": "reverseShipmentLabelSasKey", "type": "str"},
+        "chain_of_custody_sas_key": {"key": "chainOfCustodySasKey", "type": "str"},
+        "preferred_disks": {"key": "preferredDisks", "type": "{int}"},
+        "copy_progress": {"key": "copyProgress", "type": "[DataBoxDiskCopyProgress]"},
+        "disks_and_size_details": {"key": "disksAndSizeDetails", "type": "{int}"},
+        "passkey": {"key": "passkey", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        contact_details: "ContactDetails",
-        shipping_address: "ShippingAddress",
-        destination_account_details: List["DestinationAccountDetails"],
+        contact_details: "_models.ContactDetails",
+        shipping_address: "_models.ShippingAddress",
+        destination_account_details: List["_models.DestinationAccountDetails"],
         expected_data_size_in_tera_bytes: Optional[int] = None,
-        preferences: Optional["Preferences"] = None,
+        preferences: Optional["_models.Preferences"] = None,
         preferred_disks: Optional[Dict[str, int]] = None,
         passkey: Optional[str] = None,
-        **kwargs
-    ):
-        super(DataBoxDiskJobDetails, self).__init__(expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes, contact_details=contact_details, shipping_address=shipping_address, destination_account_details=destination_account_details, preferences=preferences, **kwargs)
-        self.job_details_type = 'DataBoxDisk'  # type: str
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
+         transferred in this job, in terabytes.
+        :paramtype expected_data_size_in_tera_bytes: int
+        :keyword contact_details: Contact details for notification and shipping. Required.
+        :paramtype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+        :keyword shipping_address: Shipping address of the customer. Required.
+        :paramtype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
+        :keyword destination_account_details: Destination account details. Required.
+        :paramtype destination_account_details:
+         list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
+        :keyword preferences: Preferences for the order.
+        :paramtype preferences: ~azure.mgmt.databox.v2018_01_01.models.Preferences
+        :keyword preferred_disks: User preference on what size disks are needed for the job. The map is
+         from the disk size in TB to the count. Eg. {2,5} means 5 disks of 2 TB size. Key is string but
+         will be checked against an int.
+        :paramtype preferred_disks: dict[str, int]
+        :keyword passkey: User entered passkey for DataBox Disk job.
+        :paramtype passkey: str
+        """
+        super().__init__(
+            expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes,
+            contact_details=contact_details,
+            shipping_address=shipping_address,
+            destination_account_details=destination_account_details,
+            preferences=preferences,
+            **kwargs
+        )
+        self.job_details_type: str = "DataBoxDisk"
         self.preferred_disks = preferred_disks
         self.copy_progress = None
         self.disks_and_size_details = None
         self.passkey = passkey
 
 
-class JobSecrets(msrest.serialization.Model):
+class JobSecrets(_serialization.Model):
     """The base class for the secrets.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DataboxJobSecrets, DataBoxDiskJobSecrets, DataBoxHeavyJobSecrets.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DataboxJobSecrets, DataBoxDiskJobSecrets, DataBoxHeavyJobSecrets
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar job_secrets_type: Used to indicate what type of job secrets object.Constant filled by
-     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    :ivar job_secrets_type: Used to indicate what type of job secrets object. Required. Known
+     values are: "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype job_secrets_type: str or ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
     """
 
     _validation = {
-        'job_secrets_type': {'readonly': True},
+        "job_secrets_type": {"required": True},
     }
 
     _attribute_map = {
-        'job_secrets_type': {'key': 'jobSecretsType', 'type': 'str'},
+        "job_secrets_type": {"key": "jobSecretsType", "type": "str"},
     }
 
     _subtype_map = {
-        'job_secrets_type': {'DataBox': 'DataboxJobSecrets', 'DataBoxDisk': 'DataBoxDiskJobSecrets', 'DataBoxHeavy': 'DataBoxHeavyJobSecrets'}
+        "job_secrets_type": {
+            "DataBox": "DataboxJobSecrets",
+            "DataBoxDisk": "DataBoxDiskJobSecrets",
+            "DataBoxHeavy": "DataBoxHeavyJobSecrets",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(JobSecrets, self).__init__(**kwargs)
-        self.job_secrets_type = None  # type: Optional[str]
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.job_secrets_type: Optional[str] = None
 
 
 class DataBoxDiskJobSecrets(JobSecrets):
@@ -749,11 +822,13 @@ class DataBoxDiskJobSecrets(JobSecrets):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar job_secrets_type: Used to indicate what type of job secrets object.Constant filled by
-     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar job_secrets_type: Used to indicate what type of job secrets object. Required. Known
+     values are: "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype job_secrets_type: str or ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
     :ivar disk_secrets: Contains the list of secrets object for that device.
-    :vartype disk_secrets: list[~azure.mgmt.databox.models.DiskSecret]
+    :vartype disk_secrets: list[~azure.mgmt.databox.v2018_01_01.models.DiskSecret]
     :ivar pass_key: PassKey for the disk Job.
     :vartype pass_key: str
     :ivar is_passkey_user_defined: Whether passkey was provided by user.
@@ -761,25 +836,23 @@ class DataBoxDiskJobSecrets(JobSecrets):
     """
 
     _validation = {
-        'job_secrets_type': {'readonly': True},
-        'disk_secrets': {'readonly': True},
-        'pass_key': {'readonly': True},
-        'is_passkey_user_defined': {'readonly': True},
+        "job_secrets_type": {"required": True},
+        "disk_secrets": {"readonly": True},
+        "pass_key": {"readonly": True},
+        "is_passkey_user_defined": {"readonly": True},
     }
 
     _attribute_map = {
-        'job_secrets_type': {'key': 'jobSecretsType', 'type': 'str'},
-        'disk_secrets': {'key': 'diskSecrets', 'type': '[DiskSecret]'},
-        'pass_key': {'key': 'passKey', 'type': 'str'},
-        'is_passkey_user_defined': {'key': 'isPasskeyUserDefined', 'type': 'bool'},
+        "job_secrets_type": {"key": "jobSecretsType", "type": "str"},
+        "disk_secrets": {"key": "diskSecrets", "type": "[DiskSecret]"},
+        "pass_key": {"key": "passKey", "type": "str"},
+        "is_passkey_user_defined": {"key": "isPasskeyUserDefined", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataBoxDiskJobSecrets, self).__init__(**kwargs)
-        self.job_secrets_type = 'DataBoxDisk'  # type: str
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.job_secrets_type: str = "DataBoxDisk"
         self.disk_secrets = None
         self.pass_key = None
         self.is_passkey_user_defined = None
@@ -790,9 +863,12 @@ class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar copy_log_details_type: Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype copy_log_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar copy_log_details_type: Indicates the type of job details. Required. Known values are:
+     "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype copy_log_details_type: str or
+     ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
     :ivar account_name: Destination account name.
     :vartype account_name: str
     :ivar copy_log_link: Link for copy logs.
@@ -800,110 +876,130 @@ class DataBoxHeavyAccountCopyLogDetails(CopyLogDetails):
     """
 
     _validation = {
-        'copy_log_details_type': {'readonly': True},
-        'account_name': {'readonly': True},
-        'copy_log_link': {'readonly': True},
+        "copy_log_details_type": {"required": True},
+        "account_name": {"readonly": True},
+        "copy_log_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'copy_log_details_type': {'key': 'copyLogDetailsType', 'type': 'str'},
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'copy_log_link': {'key': 'copyLogLink', 'type': '[str]'},
+        "copy_log_details_type": {"key": "copyLogDetailsType", "type": "str"},
+        "account_name": {"key": "accountName", "type": "str"},
+        "copy_log_link": {"key": "copyLogLink", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataBoxHeavyAccountCopyLogDetails, self).__init__(**kwargs)
-        self.copy_log_details_type = 'DataBoxHeavy'  # type: str
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.copy_log_details_type: str = "DataBoxHeavy"
         self.account_name = None
         self.copy_log_link = None
 
 
-class DataBoxHeavyJobDetails(JobDetails):
+class DataBoxHeavyJobDetails(JobDetails):  # pylint: disable=too-many-instance-attributes
     """DataBoxHeavy Device Job Details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
+    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_tera_bytes: int
+    :vartype expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
-    :param contact_details: Required. Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
-    :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :vartype job_stages: list[~azure.mgmt.databox.v2018_01_01.models.JobStages]
+    :ivar contact_details: Contact details for notification and shipping. Required.
+    :vartype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+    :ivar shipping_address: Shipping address of the customer. Required.
+    :vartype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
     :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype delivery_package: ~azure.mgmt.databox.v2018_01_01.models.PackageShippingDetails
     :ivar return_package: Return package shipping details.
-    :vartype return_package: ~azure.mgmt.databox.models.PackageShippingDetails
-    :param destination_account_details: Required. Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :vartype return_package: ~azure.mgmt.databox.v2018_01_01.models.PackageShippingDetails
+    :ivar destination_account_details: Destination account details. Required.
+    :vartype destination_account_details:
+     list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
     :ivar error_details: Error details for failure. This is optional.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
-    :param job_details_type: Required. Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
-    :param preferences: Preferences for the order.
-    :type preferences: ~azure.mgmt.databox.models.Preferences
+    :vartype error_details: list[~azure.mgmt.databox.v2018_01_01.models.JobErrorDetails]
+    :ivar job_details_type: Indicates the type of job details. Required. Known values are:
+     "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype job_details_type: str or ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
+    :ivar preferences: Preferences for the order.
+    :vartype preferences: ~azure.mgmt.databox.v2018_01_01.models.Preferences
     :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list[~azure.mgmt.databox.models.CopyLogDetails]
+    :vartype copy_log_details: list[~azure.mgmt.databox.v2018_01_01.models.CopyLogDetails]
     :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
     :ivar copy_progress: Copy progress per account.
-    :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
+    :vartype copy_progress: list[~azure.mgmt.databox.v2018_01_01.models.CopyProgress]
     """
 
     _validation = {
-        'job_stages': {'readonly': True},
-        'contact_details': {'required': True},
-        'shipping_address': {'required': True},
-        'delivery_package': {'readonly': True},
-        'return_package': {'readonly': True},
-        'destination_account_details': {'required': True},
-        'error_details': {'readonly': True},
-        'job_details_type': {'required': True},
-        'copy_log_details': {'readonly': True},
-        'reverse_shipment_label_sas_key': {'readonly': True},
-        'chain_of_custody_sas_key': {'readonly': True},
-        'copy_progress': {'readonly': True},
+        "job_stages": {"readonly": True},
+        "contact_details": {"required": True},
+        "shipping_address": {"required": True},
+        "delivery_package": {"readonly": True},
+        "return_package": {"readonly": True},
+        "destination_account_details": {"required": True},
+        "error_details": {"readonly": True},
+        "job_details_type": {"required": True},
+        "copy_log_details": {"readonly": True},
+        "reverse_shipment_label_sas_key": {"readonly": True},
+        "chain_of_custody_sas_key": {"readonly": True},
+        "copy_progress": {"readonly": True},
     }
 
     _attribute_map = {
-        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
-        'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
-        'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
-        'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
-        'delivery_package': {'key': 'deliveryPackage', 'type': 'PackageShippingDetails'},
-        'return_package': {'key': 'returnPackage', 'type': 'PackageShippingDetails'},
-        'destination_account_details': {'key': 'destinationAccountDetails', 'type': '[DestinationAccountDetails]'},
-        'error_details': {'key': 'errorDetails', 'type': '[JobErrorDetails]'},
-        'job_details_type': {'key': 'jobDetailsType', 'type': 'str'},
-        'preferences': {'key': 'preferences', 'type': 'Preferences'},
-        'copy_log_details': {'key': 'copyLogDetails', 'type': '[CopyLogDetails]'},
-        'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
-        'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
-        'copy_progress': {'key': 'copyProgress', 'type': '[CopyProgress]'},
+        "expected_data_size_in_tera_bytes": {"key": "expectedDataSizeInTeraBytes", "type": "int"},
+        "job_stages": {"key": "jobStages", "type": "[JobStages]"},
+        "contact_details": {"key": "contactDetails", "type": "ContactDetails"},
+        "shipping_address": {"key": "shippingAddress", "type": "ShippingAddress"},
+        "delivery_package": {"key": "deliveryPackage", "type": "PackageShippingDetails"},
+        "return_package": {"key": "returnPackage", "type": "PackageShippingDetails"},
+        "destination_account_details": {"key": "destinationAccountDetails", "type": "[DestinationAccountDetails]"},
+        "error_details": {"key": "errorDetails", "type": "[JobErrorDetails]"},
+        "job_details_type": {"key": "jobDetailsType", "type": "str"},
+        "preferences": {"key": "preferences", "type": "Preferences"},
+        "copy_log_details": {"key": "copyLogDetails", "type": "[CopyLogDetails]"},
+        "reverse_shipment_label_sas_key": {"key": "reverseShipmentLabelSasKey", "type": "str"},
+        "chain_of_custody_sas_key": {"key": "chainOfCustodySasKey", "type": "str"},
+        "copy_progress": {"key": "copyProgress", "type": "[CopyProgress]"},
     }
 
     def __init__(
         self,
         *,
-        contact_details: "ContactDetails",
-        shipping_address: "ShippingAddress",
-        destination_account_details: List["DestinationAccountDetails"],
+        contact_details: "_models.ContactDetails",
+        shipping_address: "_models.ShippingAddress",
+        destination_account_details: List["_models.DestinationAccountDetails"],
         expected_data_size_in_tera_bytes: Optional[int] = None,
-        preferences: Optional["Preferences"] = None,
-        **kwargs
-    ):
-        super(DataBoxHeavyJobDetails, self).__init__(expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes, contact_details=contact_details, shipping_address=shipping_address, destination_account_details=destination_account_details, preferences=preferences, **kwargs)
-        self.job_details_type = 'DataBoxHeavy'  # type: str
+        preferences: Optional["_models.Preferences"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
+         transferred in this job, in terabytes.
+        :paramtype expected_data_size_in_tera_bytes: int
+        :keyword contact_details: Contact details for notification and shipping. Required.
+        :paramtype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+        :keyword shipping_address: Shipping address of the customer. Required.
+        :paramtype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
+        :keyword destination_account_details: Destination account details. Required.
+        :paramtype destination_account_details:
+         list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
+        :keyword preferences: Preferences for the order.
+        :paramtype preferences: ~azure.mgmt.databox.v2018_01_01.models.Preferences
+        """
+        super().__init__(
+            expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes,
+            contact_details=contact_details,
+            shipping_address=shipping_address,
+            destination_account_details=destination_account_details,
+            preferences=preferences,
+            **kwargs
+        )
+        self.job_details_type: str = "DataBoxHeavy"
         self.copy_progress = None
 
 
@@ -912,33 +1008,33 @@ class DataBoxHeavyJobSecrets(JobSecrets):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar job_secrets_type: Used to indicate what type of job secrets object.Constant filled by
-     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar job_secrets_type: Used to indicate what type of job secrets object. Required. Known
+     values are: "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype job_secrets_type: str or ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
     :ivar cabinet_pod_secrets: Contains the list of secret objects for a DataBoxHeavy job.
-    :vartype cabinet_pod_secrets: list[~azure.mgmt.databox.models.DataBoxHeavySecret]
+    :vartype cabinet_pod_secrets: list[~azure.mgmt.databox.v2018_01_01.models.DataBoxHeavySecret]
     """
 
     _validation = {
-        'job_secrets_type': {'readonly': True},
-        'cabinet_pod_secrets': {'readonly': True},
+        "job_secrets_type": {"required": True},
+        "cabinet_pod_secrets": {"readonly": True},
     }
 
     _attribute_map = {
-        'job_secrets_type': {'key': 'jobSecretsType', 'type': 'str'},
-        'cabinet_pod_secrets': {'key': 'cabinetPodSecrets', 'type': '[DataBoxHeavySecret]'},
+        "job_secrets_type": {"key": "jobSecretsType", "type": "str"},
+        "cabinet_pod_secrets": {"key": "cabinetPodSecrets", "type": "[DataBoxHeavySecret]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataBoxHeavyJobSecrets, self).__init__(**kwargs)
-        self.job_secrets_type = 'DataBoxHeavy'  # type: str
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.job_secrets_type: str = "DataBoxHeavy"
         self.cabinet_pod_secrets = None
 
 
-class DataBoxHeavySecret(msrest.serialization.Model):
+class DataBoxHeavySecret(_serialization.Model):
     """The secrets related to a DataBoxHeavy.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -948,35 +1044,35 @@ class DataBoxHeavySecret(msrest.serialization.Model):
     :ivar device_password: Password for out of the box experience on device.
     :vartype device_password: str
     :ivar network_configurations: Network configuration of the appliance.
-    :vartype network_configurations: list[~azure.mgmt.databox.models.ApplianceNetworkConfiguration]
+    :vartype network_configurations:
+     list[~azure.mgmt.databox.v2018_01_01.models.ApplianceNetworkConfiguration]
     :ivar encoded_validation_cert_pub_key: The base 64 encoded public key to authenticate with the
      device.
     :vartype encoded_validation_cert_pub_key: str
     :ivar account_credential_details: Per account level access credentials.
-    :vartype account_credential_details: list[~azure.mgmt.databox.models.AccountCredentialDetails]
+    :vartype account_credential_details:
+     list[~azure.mgmt.databox.v2018_01_01.models.AccountCredentialDetails]
     """
 
     _validation = {
-        'device_serial_number': {'readonly': True},
-        'device_password': {'readonly': True},
-        'network_configurations': {'readonly': True},
-        'encoded_validation_cert_pub_key': {'readonly': True},
-        'account_credential_details': {'readonly': True},
+        "device_serial_number": {"readonly": True},
+        "device_password": {"readonly": True},
+        "network_configurations": {"readonly": True},
+        "encoded_validation_cert_pub_key": {"readonly": True},
+        "account_credential_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'device_serial_number': {'key': 'deviceSerialNumber', 'type': 'str'},
-        'device_password': {'key': 'devicePassword', 'type': 'str'},
-        'network_configurations': {'key': 'networkConfigurations', 'type': '[ApplianceNetworkConfiguration]'},
-        'encoded_validation_cert_pub_key': {'key': 'encodedValidationCertPubKey', 'type': 'str'},
-        'account_credential_details': {'key': 'accountCredentialDetails', 'type': '[AccountCredentialDetails]'},
+        "device_serial_number": {"key": "deviceSerialNumber", "type": "str"},
+        "device_password": {"key": "devicePassword", "type": "str"},
+        "network_configurations": {"key": "networkConfigurations", "type": "[ApplianceNetworkConfiguration]"},
+        "encoded_validation_cert_pub_key": {"key": "encodedValidationCertPubKey", "type": "str"},
+        "account_credential_details": {"key": "accountCredentialDetails", "type": "[AccountCredentialDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataBoxHeavySecret, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.device_serial_number = None
         self.device_password = None
         self.network_configurations = None
@@ -984,125 +1080,146 @@ class DataBoxHeavySecret(msrest.serialization.Model):
         self.account_credential_details = None
 
 
-class DataBoxJobDetails(JobDetails):
+class DataBoxJobDetails(JobDetails):  # pylint: disable=too-many-instance-attributes
     """DataBox Job Details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
+    :ivar expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
      transferred in this job, in terabytes.
-    :type expected_data_size_in_tera_bytes: int
+    :vartype expected_data_size_in_tera_bytes: int
     :ivar job_stages: List of stages that run in the job.
-    :vartype job_stages: list[~azure.mgmt.databox.models.JobStages]
-    :param contact_details: Required. Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
-    :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :vartype job_stages: list[~azure.mgmt.databox.v2018_01_01.models.JobStages]
+    :ivar contact_details: Contact details for notification and shipping. Required.
+    :vartype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+    :ivar shipping_address: Shipping address of the customer. Required.
+    :vartype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
     :ivar delivery_package: Delivery package shipping details.
-    :vartype delivery_package: ~azure.mgmt.databox.models.PackageShippingDetails
+    :vartype delivery_package: ~azure.mgmt.databox.v2018_01_01.models.PackageShippingDetails
     :ivar return_package: Return package shipping details.
-    :vartype return_package: ~azure.mgmt.databox.models.PackageShippingDetails
-    :param destination_account_details: Required. Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :vartype return_package: ~azure.mgmt.databox.v2018_01_01.models.PackageShippingDetails
+    :ivar destination_account_details: Destination account details. Required.
+    :vartype destination_account_details:
+     list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
     :ivar error_details: Error details for failure. This is optional.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
-    :param job_details_type: Required. Indicates the type of job details.Constant filled by server.
-     Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type job_details_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
-    :param preferences: Preferences for the order.
-    :type preferences: ~azure.mgmt.databox.models.Preferences
+    :vartype error_details: list[~azure.mgmt.databox.v2018_01_01.models.JobErrorDetails]
+    :ivar job_details_type: Indicates the type of job details. Required. Known values are:
+     "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype job_details_type: str or ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
+    :ivar preferences: Preferences for the order.
+    :vartype preferences: ~azure.mgmt.databox.v2018_01_01.models.Preferences
     :ivar copy_log_details: List of copy log details.
-    :vartype copy_log_details: list[~azure.mgmt.databox.models.CopyLogDetails]
+    :vartype copy_log_details: list[~azure.mgmt.databox.v2018_01_01.models.CopyLogDetails]
     :ivar reverse_shipment_label_sas_key: Shared access key to download the return shipment label.
     :vartype reverse_shipment_label_sas_key: str
     :ivar chain_of_custody_sas_key: Shared access key to download the chain of custody logs.
     :vartype chain_of_custody_sas_key: str
     :ivar copy_progress: Copy progress per storage account.
-    :vartype copy_progress: list[~azure.mgmt.databox.models.CopyProgress]
+    :vartype copy_progress: list[~azure.mgmt.databox.v2018_01_01.models.CopyProgress]
     """
 
     _validation = {
-        'job_stages': {'readonly': True},
-        'contact_details': {'required': True},
-        'shipping_address': {'required': True},
-        'delivery_package': {'readonly': True},
-        'return_package': {'readonly': True},
-        'destination_account_details': {'required': True},
-        'error_details': {'readonly': True},
-        'job_details_type': {'required': True},
-        'copy_log_details': {'readonly': True},
-        'reverse_shipment_label_sas_key': {'readonly': True},
-        'chain_of_custody_sas_key': {'readonly': True},
-        'copy_progress': {'readonly': True},
+        "job_stages": {"readonly": True},
+        "contact_details": {"required": True},
+        "shipping_address": {"required": True},
+        "delivery_package": {"readonly": True},
+        "return_package": {"readonly": True},
+        "destination_account_details": {"required": True},
+        "error_details": {"readonly": True},
+        "job_details_type": {"required": True},
+        "copy_log_details": {"readonly": True},
+        "reverse_shipment_label_sas_key": {"readonly": True},
+        "chain_of_custody_sas_key": {"readonly": True},
+        "copy_progress": {"readonly": True},
     }
 
     _attribute_map = {
-        'expected_data_size_in_tera_bytes': {'key': 'expectedDataSizeInTeraBytes', 'type': 'int'},
-        'job_stages': {'key': 'jobStages', 'type': '[JobStages]'},
-        'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
-        'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
-        'delivery_package': {'key': 'deliveryPackage', 'type': 'PackageShippingDetails'},
-        'return_package': {'key': 'returnPackage', 'type': 'PackageShippingDetails'},
-        'destination_account_details': {'key': 'destinationAccountDetails', 'type': '[DestinationAccountDetails]'},
-        'error_details': {'key': 'errorDetails', 'type': '[JobErrorDetails]'},
-        'job_details_type': {'key': 'jobDetailsType', 'type': 'str'},
-        'preferences': {'key': 'preferences', 'type': 'Preferences'},
-        'copy_log_details': {'key': 'copyLogDetails', 'type': '[CopyLogDetails]'},
-        'reverse_shipment_label_sas_key': {'key': 'reverseShipmentLabelSasKey', 'type': 'str'},
-        'chain_of_custody_sas_key': {'key': 'chainOfCustodySasKey', 'type': 'str'},
-        'copy_progress': {'key': 'copyProgress', 'type': '[CopyProgress]'},
+        "expected_data_size_in_tera_bytes": {"key": "expectedDataSizeInTeraBytes", "type": "int"},
+        "job_stages": {"key": "jobStages", "type": "[JobStages]"},
+        "contact_details": {"key": "contactDetails", "type": "ContactDetails"},
+        "shipping_address": {"key": "shippingAddress", "type": "ShippingAddress"},
+        "delivery_package": {"key": "deliveryPackage", "type": "PackageShippingDetails"},
+        "return_package": {"key": "returnPackage", "type": "PackageShippingDetails"},
+        "destination_account_details": {"key": "destinationAccountDetails", "type": "[DestinationAccountDetails]"},
+        "error_details": {"key": "errorDetails", "type": "[JobErrorDetails]"},
+        "job_details_type": {"key": "jobDetailsType", "type": "str"},
+        "preferences": {"key": "preferences", "type": "Preferences"},
+        "copy_log_details": {"key": "copyLogDetails", "type": "[CopyLogDetails]"},
+        "reverse_shipment_label_sas_key": {"key": "reverseShipmentLabelSasKey", "type": "str"},
+        "chain_of_custody_sas_key": {"key": "chainOfCustodySasKey", "type": "str"},
+        "copy_progress": {"key": "copyProgress", "type": "[CopyProgress]"},
     }
 
     def __init__(
         self,
         *,
-        contact_details: "ContactDetails",
-        shipping_address: "ShippingAddress",
-        destination_account_details: List["DestinationAccountDetails"],
+        contact_details: "_models.ContactDetails",
+        shipping_address: "_models.ShippingAddress",
+        destination_account_details: List["_models.DestinationAccountDetails"],
         expected_data_size_in_tera_bytes: Optional[int] = None,
-        preferences: Optional["Preferences"] = None,
-        **kwargs
-    ):
-        super(DataBoxJobDetails, self).__init__(expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes, contact_details=contact_details, shipping_address=shipping_address, destination_account_details=destination_account_details, preferences=preferences, **kwargs)
-        self.job_details_type = 'DataBox'  # type: str
+        preferences: Optional["_models.Preferences"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword expected_data_size_in_tera_bytes: The expected size of the data, which needs to be
+         transferred in this job, in terabytes.
+        :paramtype expected_data_size_in_tera_bytes: int
+        :keyword contact_details: Contact details for notification and shipping. Required.
+        :paramtype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+        :keyword shipping_address: Shipping address of the customer. Required.
+        :paramtype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
+        :keyword destination_account_details: Destination account details. Required.
+        :paramtype destination_account_details:
+         list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
+        :keyword preferences: Preferences for the order.
+        :paramtype preferences: ~azure.mgmt.databox.v2018_01_01.models.Preferences
+        """
+        super().__init__(
+            expected_data_size_in_tera_bytes=expected_data_size_in_tera_bytes,
+            contact_details=contact_details,
+            shipping_address=shipping_address,
+            destination_account_details=destination_account_details,
+            preferences=preferences,
+            **kwargs
+        )
+        self.job_details_type: str = "DataBox"
         self.copy_progress = None
 
 
 class DataboxJobSecrets(JobSecrets):
     """The secrets related to a DataBox job.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to Azure.
 
-    :ivar job_secrets_type: Used to indicate what type of job secrets object.Constant filled by
-     server.  Possible values include: "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :vartype job_secrets_type: str or ~azure.mgmt.databox.models.ClassDiscriminator
-    :param pod_secrets: Contains the list of secret objects for a job.
-    :type pod_secrets: list[~azure.mgmt.databox.models.DataBoxSecret]
+    :ivar job_secrets_type: Used to indicate what type of job secrets object. Required. Known
+     values are: "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+    :vartype job_secrets_type: str or ~azure.mgmt.databox.v2018_01_01.models.ClassDiscriminator
+    :ivar pod_secrets: Contains the list of secret objects for a job.
+    :vartype pod_secrets: list[~azure.mgmt.databox.v2018_01_01.models.DataBoxSecret]
     """
 
     _validation = {
-        'job_secrets_type': {'readonly': True},
+        "job_secrets_type": {"required": True},
     }
 
     _attribute_map = {
-        'job_secrets_type': {'key': 'jobSecretsType', 'type': 'str'},
-        'pod_secrets': {'key': 'podSecrets', 'type': '[DataBoxSecret]'},
+        "job_secrets_type": {"key": "jobSecretsType", "type": "str"},
+        "pod_secrets": {"key": "podSecrets", "type": "[DataBoxSecret]"},
     }
 
-    def __init__(
-        self,
-        *,
-        pod_secrets: Optional[List["DataBoxSecret"]] = None,
-        **kwargs
-    ):
-        super(DataboxJobSecrets, self).__init__(**kwargs)
-        self.job_secrets_type = 'DataBox'  # type: str
+    def __init__(self, *, pod_secrets: Optional[List["_models.DataBoxSecret"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword pod_secrets: Contains the list of secret objects for a job.
+        :paramtype pod_secrets: list[~azure.mgmt.databox.v2018_01_01.models.DataBoxSecret]
+        """
+        super().__init__(**kwargs)
+        self.job_secrets_type: str = "DataBox"
         self.pod_secrets = pod_secrets
 
 
-class DataBoxSecret(msrest.serialization.Model):
+class DataBoxSecret(_serialization.Model):
     """The secrets related to a DataBox.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1112,35 +1229,35 @@ class DataBoxSecret(msrest.serialization.Model):
     :ivar device_password: Password for out of the box experience on device.
     :vartype device_password: str
     :ivar network_configurations: Network configuration of the appliance.
-    :vartype network_configurations: list[~azure.mgmt.databox.models.ApplianceNetworkConfiguration]
+    :vartype network_configurations:
+     list[~azure.mgmt.databox.v2018_01_01.models.ApplianceNetworkConfiguration]
     :ivar encoded_validation_cert_pub_key: The base 64 encoded public key to authenticate with the
      device.
     :vartype encoded_validation_cert_pub_key: str
     :ivar account_credential_details: Per account level access credentials.
-    :vartype account_credential_details: list[~azure.mgmt.databox.models.AccountCredentialDetails]
+    :vartype account_credential_details:
+     list[~azure.mgmt.databox.v2018_01_01.models.AccountCredentialDetails]
     """
 
     _validation = {
-        'device_serial_number': {'readonly': True},
-        'device_password': {'readonly': True},
-        'network_configurations': {'readonly': True},
-        'encoded_validation_cert_pub_key': {'readonly': True},
-        'account_credential_details': {'readonly': True},
+        "device_serial_number": {"readonly": True},
+        "device_password": {"readonly": True},
+        "network_configurations": {"readonly": True},
+        "encoded_validation_cert_pub_key": {"readonly": True},
+        "account_credential_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'device_serial_number': {'key': 'deviceSerialNumber', 'type': 'str'},
-        'device_password': {'key': 'devicePassword', 'type': 'str'},
-        'network_configurations': {'key': 'networkConfigurations', 'type': '[ApplianceNetworkConfiguration]'},
-        'encoded_validation_cert_pub_key': {'key': 'encodedValidationCertPubKey', 'type': 'str'},
-        'account_credential_details': {'key': 'accountCredentialDetails', 'type': '[AccountCredentialDetails]'},
+        "device_serial_number": {"key": "deviceSerialNumber", "type": "str"},
+        "device_password": {"key": "devicePassword", "type": "str"},
+        "network_configurations": {"key": "networkConfigurations", "type": "[ApplianceNetworkConfiguration]"},
+        "encoded_validation_cert_pub_key": {"key": "encodedValidationCertPubKey", "type": "str"},
+        "account_credential_details": {"key": "accountCredentialDetails", "type": "[AccountCredentialDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DataBoxSecret, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.device_serial_number = None
         self.device_password = None
         self.network_configurations = None
@@ -1148,42 +1265,45 @@ class DataBoxSecret(msrest.serialization.Model):
         self.account_credential_details = None
 
 
-class DestinationAccountDetails(msrest.serialization.Model):
+class DestinationAccountDetails(_serialization.Model):
     """Details of the destination of the data.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DestinationManagedDiskDetails, DestinationStorageAccountDetails.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DestinationManagedDiskDetails, DestinationStorageAccountDetails
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_destination_type: Required. Data Destination Type.Constant filled by server.
-     Possible values include: "UnknownType", "StorageAccount", "ManagedDisk".
-    :type data_destination_type: str or ~azure.mgmt.databox.models.DataDestinationType
-    :param account_id: Arm Id of the destination where the data has to be moved.
-    :type account_id: str
+    :ivar data_destination_type: Data Destination Type. Required. Known values are: "UnknownType",
+     "StorageAccount", and "ManagedDisk".
+    :vartype data_destination_type: str or
+     ~azure.mgmt.databox.v2018_01_01.models.DataDestinationType
+    :ivar account_id: Arm Id of the destination where the data has to be moved.
+    :vartype account_id: str
     """
 
     _validation = {
-        'data_destination_type': {'required': True},
+        "data_destination_type": {"required": True},
     }
 
     _attribute_map = {
-        'data_destination_type': {'key': 'dataDestinationType', 'type': 'str'},
-        'account_id': {'key': 'accountId', 'type': 'str'},
+        "data_destination_type": {"key": "dataDestinationType", "type": "str"},
+        "account_id": {"key": "accountId", "type": "str"},
     }
 
     _subtype_map = {
-        'data_destination_type': {'ManagedDisk': 'DestinationManagedDiskDetails', 'StorageAccount': 'DestinationStorageAccountDetails'}
+        "data_destination_type": {
+            "ManagedDisk": "DestinationManagedDiskDetails",
+            "StorageAccount": "DestinationStorageAccountDetails",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        account_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(DestinationAccountDetails, self).__init__(**kwargs)
-        self.data_destination_type = None  # type: Optional[str]
+    def __init__(self, *, account_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword account_id: Arm Id of the destination where the data has to be moved.
+        :paramtype account_id: str
+        """
+        super().__init__(**kwargs)
+        self.data_destination_type: Optional[str] = None
         self.account_id = account_id
 
 
@@ -1192,30 +1312,31 @@ class DestinationManagedDiskDetails(DestinationAccountDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_destination_type: Required. Data Destination Type.Constant filled by server.
-     Possible values include: "UnknownType", "StorageAccount", "ManagedDisk".
-    :type data_destination_type: str or ~azure.mgmt.databox.models.DataDestinationType
-    :param account_id: Arm Id of the destination where the data has to be moved.
-    :type account_id: str
-    :param resource_group_id: Required. Destination Resource Group Id where the Compute disks
-     should be created.
-    :type resource_group_id: str
-    :param staging_storage_account_id: Required. Arm Id of the storage account that can be used to
-     copy the vhd for staging.
-    :type staging_storage_account_id: str
+    :ivar data_destination_type: Data Destination Type. Required. Known values are: "UnknownType",
+     "StorageAccount", and "ManagedDisk".
+    :vartype data_destination_type: str or
+     ~azure.mgmt.databox.v2018_01_01.models.DataDestinationType
+    :ivar account_id: Arm Id of the destination where the data has to be moved.
+    :vartype account_id: str
+    :ivar resource_group_id: Destination Resource Group Id where the Compute disks should be
+     created. Required.
+    :vartype resource_group_id: str
+    :ivar staging_storage_account_id: Arm Id of the storage account that can be used to copy the
+     vhd for staging. Required.
+    :vartype staging_storage_account_id: str
     """
 
     _validation = {
-        'data_destination_type': {'required': True},
-        'resource_group_id': {'required': True},
-        'staging_storage_account_id': {'required': True},
+        "data_destination_type": {"required": True},
+        "resource_group_id": {"required": True},
+        "staging_storage_account_id": {"required": True},
     }
 
     _attribute_map = {
-        'data_destination_type': {'key': 'dataDestinationType', 'type': 'str'},
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'resource_group_id': {'key': 'resourceGroupId', 'type': 'str'},
-        'staging_storage_account_id': {'key': 'stagingStorageAccountId', 'type': 'str'},
+        "data_destination_type": {"key": "dataDestinationType", "type": "str"},
+        "account_id": {"key": "accountId", "type": "str"},
+        "resource_group_id": {"key": "resourceGroupId", "type": "str"},
+        "staging_storage_account_id": {"key": "stagingStorageAccountId", "type": "str"},
     }
 
     def __init__(
@@ -1224,10 +1345,20 @@ class DestinationManagedDiskDetails(DestinationAccountDetails):
         resource_group_id: str,
         staging_storage_account_id: str,
         account_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(DestinationManagedDiskDetails, self).__init__(account_id=account_id, **kwargs)
-        self.data_destination_type = 'ManagedDisk'  # type: str
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword account_id: Arm Id of the destination where the data has to be moved.
+        :paramtype account_id: str
+        :keyword resource_group_id: Destination Resource Group Id where the Compute disks should be
+         created. Required.
+        :paramtype resource_group_id: str
+        :keyword staging_storage_account_id: Arm Id of the storage account that can be used to copy the
+         vhd for staging. Required.
+        :paramtype staging_storage_account_id: str
+        """
+        super().__init__(account_id=account_id, **kwargs)
+        self.data_destination_type: str = "ManagedDisk"
         self.resource_group_id = resource_group_id
         self.staging_storage_account_id = staging_storage_account_id
 
@@ -1237,39 +1368,40 @@ class DestinationStorageAccountDetails(DestinationAccountDetails):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param data_destination_type: Required. Data Destination Type.Constant filled by server.
-     Possible values include: "UnknownType", "StorageAccount", "ManagedDisk".
-    :type data_destination_type: str or ~azure.mgmt.databox.models.DataDestinationType
-    :param account_id: Arm Id of the destination where the data has to be moved.
-    :type account_id: str
-    :param storage_account_id: Required. Destination Storage Account Arm Id.
-    :type storage_account_id: str
+    :ivar data_destination_type: Data Destination Type. Required. Known values are: "UnknownType",
+     "StorageAccount", and "ManagedDisk".
+    :vartype data_destination_type: str or
+     ~azure.mgmt.databox.v2018_01_01.models.DataDestinationType
+    :ivar account_id: Arm Id of the destination where the data has to be moved.
+    :vartype account_id: str
+    :ivar storage_account_id: Destination Storage Account Arm Id. Required.
+    :vartype storage_account_id: str
     """
 
     _validation = {
-        'data_destination_type': {'required': True},
-        'storage_account_id': {'required': True},
+        "data_destination_type": {"required": True},
+        "storage_account_id": {"required": True},
     }
 
     _attribute_map = {
-        'data_destination_type': {'key': 'dataDestinationType', 'type': 'str'},
-        'account_id': {'key': 'accountId', 'type': 'str'},
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
+        "data_destination_type": {"key": "dataDestinationType", "type": "str"},
+        "account_id": {"key": "accountId", "type": "str"},
+        "storage_account_id": {"key": "storageAccountId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        storage_account_id: str,
-        account_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(DestinationStorageAccountDetails, self).__init__(account_id=account_id, **kwargs)
-        self.data_destination_type = 'StorageAccount'  # type: str
+    def __init__(self, *, storage_account_id: str, account_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword account_id: Arm Id of the destination where the data has to be moved.
+        :paramtype account_id: str
+        :keyword storage_account_id: Destination Storage Account Arm Id. Required.
+        :paramtype storage_account_id: str
+        """
+        super().__init__(account_id=account_id, **kwargs)
+        self.data_destination_type: str = "StorageAccount"
         self.storage_account_id = storage_account_id
 
 
-class DestinationToServiceLocationMap(msrest.serialization.Model):
+class DestinationToServiceLocationMap(_serialization.Model):
     """Map of destination location to service location.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1281,25 +1413,23 @@ class DestinationToServiceLocationMap(msrest.serialization.Model):
     """
 
     _validation = {
-        'destination_location': {'readonly': True},
-        'service_location': {'readonly': True},
+        "destination_location": {"readonly": True},
+        "service_location": {"readonly": True},
     }
 
     _attribute_map = {
-        'destination_location': {'key': 'destinationLocation', 'type': 'str'},
-        'service_location': {'key': 'serviceLocation', 'type': 'str'},
+        "destination_location": {"key": "destinationLocation", "type": "str"},
+        "service_location": {"key": "serviceLocation", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DestinationToServiceLocationMap, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.destination_location = None
         self.service_location = None
 
 
-class DiskSecret(msrest.serialization.Model):
+class DiskSecret(_serialization.Model):
     """Contains all the secrets of a Disk.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1312,25 +1442,23 @@ class DiskSecret(msrest.serialization.Model):
     """
 
     _validation = {
-        'disk_serial_number': {'readonly': True},
-        'bit_locker_key': {'readonly': True},
+        "disk_serial_number": {"readonly": True},
+        "bit_locker_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'disk_serial_number': {'key': 'diskSerialNumber', 'type': 'str'},
-        'bit_locker_key': {'key': 'bitLockerKey', 'type': 'str'},
+        "disk_serial_number": {"key": "diskSerialNumber", "type": "str"},
+        "bit_locker_key": {"key": "bitLockerKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(DiskSecret, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.disk_serial_number = None
         self.bit_locker_key = None
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """Top level error for the job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1342,25 +1470,23 @@ class Error(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Error, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
 
 
-class JobErrorDetails(msrest.serialization.Model):
+class JobErrorDetails(_serialization.Model):
     """Job Error Details for providing the information and recommended action.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1376,89 +1502,94 @@ class JobErrorDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'error_message': {'readonly': True},
-        'error_code': {'readonly': True},
-        'recommended_action': {'readonly': True},
-        'exception_message': {'readonly': True},
+        "error_message": {"readonly": True},
+        "error_code": {"readonly": True},
+        "recommended_action": {"readonly": True},
+        "exception_message": {"readonly": True},
     }
 
     _attribute_map = {
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'error_code': {'key': 'errorCode', 'type': 'int'},
-        'recommended_action': {'key': 'recommendedAction', 'type': 'str'},
-        'exception_message': {'key': 'exceptionMessage', 'type': 'str'},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "error_code": {"key": "errorCode", "type": "int"},
+        "recommended_action": {"key": "recommendedAction", "type": "str"},
+        "exception_message": {"key": "exceptionMessage", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(JobErrorDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.error_message = None
         self.error_code = None
         self.recommended_action = None
         self.exception_message = None
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Model of the Resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource. This will be one of the supported and
-     registered Azure Regions (e.g. West US, East US, Southeast Asia, etc.). The region of a
-     resource cannot be changed once it is created, but if an identical region is specified on
-     update the request will succeed.
-    :type location: str
-    :param tags: A set of tags. The list of key value pairs that describe the resource. These tags
-     can be used in viewing and grouping this resource (across resource groups).
-    :type tags: dict[str, str]
-    :param sku: Required. The sku type.
-    :type sku: ~azure.mgmt.databox.models.Sku
+    :ivar location: The location of the resource. This will be one of the supported and registered
+     Azure Regions (e.g. West US, East US, Southeast Asia, etc.). The region of a resource cannot be
+     changed once it is created, but if an identical region is specified on update the request will
+     succeed. Required.
+    :vartype location: str
+    :ivar tags: The list of key value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups).
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku type. Required.
+    :vartype sku: ~azure.mgmt.databox.v2018_01_01.models.Sku
     """
 
     _validation = {
-        'location': {'required': True},
-        'sku': {'required': True},
+        "location": {"required": True},
+        "sku": {"required": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
     }
 
     def __init__(
-        self,
-        *,
-        location: str,
-        sku: "Sku",
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+        self, *, location: str, sku: "_models.Sku", tags: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: The location of the resource. This will be one of the supported and
+         registered Azure Regions (e.g. West US, East US, Southeast Asia, etc.). The region of a
+         resource cannot be changed once it is created, but if an identical region is specified on
+         update the request will succeed. Required.
+        :paramtype location: str
+        :keyword tags: The list of key value pairs that describe the resource. These tags can be used
+         in viewing and grouping this resource (across resource groups).
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku type. Required.
+        :paramtype sku: ~azure.mgmt.databox.v2018_01_01.models.Sku
+        """
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
         self.sku = sku
 
 
-class JobResource(Resource):
+class JobResource(Resource):  # pylint: disable=too-many-instance-attributes
     """Job Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param location: Required. The location of the resource. This will be one of the supported and
-     registered Azure Regions (e.g. West US, East US, Southeast Asia, etc.). The region of a
-     resource cannot be changed once it is created, but if an identical region is specified on
-     update the request will succeed.
-    :type location: str
-    :param tags: A set of tags. The list of key value pairs that describe the resource. These tags
-     can be used in viewing and grouping this resource (across resource groups).
-    :type tags: dict[str, str]
-    :param sku: Required. The sku type.
-    :type sku: ~azure.mgmt.databox.models.Sku
+    :ivar location: The location of the resource. This will be one of the supported and registered
+     Azure Regions (e.g. West US, East US, Southeast Asia, etc.). The region of a resource cannot be
+     changed once it is created, but if an identical region is specified on update the request will
+     succeed. Required.
+    :vartype location: str
+    :ivar tags: The list of key value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups).
+    :vartype tags: dict[str, str]
+    :ivar sku: The sku type. Required.
+    :vartype sku: ~azure.mgmt.databox.v2018_01_01.models.Sku
     :ivar name: Name of the object.
     :vartype name: str
     :ivar id: Id of the object.
@@ -1471,63 +1602,77 @@ class JobResource(Resource):
     :vartype is_deletable: bool
     :ivar is_shipping_address_editable: Describes whether the shipping address is editable or not.
     :vartype is_shipping_address_editable: bool
-    :ivar status: Name of the stage which is in progress. Possible values include: "DeviceOrdered",
+    :ivar status: Name of the stage which is in progress. Known values are: "DeviceOrdered",
      "DevicePrepared", "Dispatched", "Delivered", "PickedUp", "AtAzureDC", "DataCopy", "Completed",
      "CompletedWithErrors", "Cancelled", "Failed_IssueReportedAtCustomer",
-     "Failed_IssueDetectedAtAzureDC", "Aborted".
-    :vartype status: str or ~azure.mgmt.databox.models.StageName
+     "Failed_IssueDetectedAtAzureDC", and "Aborted".
+    :vartype status: str or ~azure.mgmt.databox.v2018_01_01.models.StageName
     :ivar start_time: Time at which the job was started in UTC ISO 8601 format.
     :vartype start_time: ~datetime.datetime
     :ivar error: Top level error for the job.
-    :vartype error: ~azure.mgmt.databox.models.Error
-    :param details: Details of a job run. This field will only be sent for expand details filter.
-    :type details: ~azure.mgmt.databox.models.JobDetails
+    :vartype error: ~azure.mgmt.databox.v2018_01_01.models.Error
+    :ivar details: Details of a job run. This field will only be sent for expand details filter.
+    :vartype details: ~azure.mgmt.databox.v2018_01_01.models.JobDetails
     :ivar cancellation_reason: Reason for cancellation.
     :vartype cancellation_reason: str
     """
 
     _validation = {
-        'location': {'required': True},
-        'sku': {'required': True},
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'is_cancellable': {'readonly': True},
-        'is_deletable': {'readonly': True},
-        'is_shipping_address_editable': {'readonly': True},
-        'status': {'readonly': True},
-        'start_time': {'readonly': True},
-        'error': {'readonly': True},
-        'cancellation_reason': {'readonly': True},
+        "location": {"required": True},
+        "sku": {"required": True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "is_cancellable": {"readonly": True},
+        "is_deletable": {"readonly": True},
+        "is_shipping_address_editable": {"readonly": True},
+        "status": {"readonly": True},
+        "start_time": {"readonly": True},
+        "error": {"readonly": True},
+        "cancellation_reason": {"readonly": True},
     }
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'is_cancellable': {'key': 'properties.isCancellable', 'type': 'bool'},
-        'is_deletable': {'key': 'properties.isDeletable', 'type': 'bool'},
-        'is_shipping_address_editable': {'key': 'properties.isShippingAddressEditable', 'type': 'bool'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'error': {'key': 'properties.error', 'type': 'Error'},
-        'details': {'key': 'properties.details', 'type': 'JobDetails'},
-        'cancellation_reason': {'key': 'properties.cancellationReason', 'type': 'str'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "is_cancellable": {"key": "properties.isCancellable", "type": "bool"},
+        "is_deletable": {"key": "properties.isDeletable", "type": "bool"},
+        "is_shipping_address_editable": {"key": "properties.isShippingAddressEditable", "type": "bool"},
+        "status": {"key": "properties.status", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "error": {"key": "properties.error", "type": "Error"},
+        "details": {"key": "properties.details", "type": "JobDetails"},
+        "cancellation_reason": {"key": "properties.cancellationReason", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        sku: "Sku",
+        sku: "_models.Sku",
         tags: Optional[Dict[str, str]] = None,
-        details: Optional["JobDetails"] = None,
-        **kwargs
-    ):
-        super(JobResource, self).__init__(location=location, tags=tags, sku=sku, **kwargs)
+        details: Optional["_models.JobDetails"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: The location of the resource. This will be one of the supported and
+         registered Azure Regions (e.g. West US, East US, Southeast Asia, etc.). The region of a
+         resource cannot be changed once it is created, but if an identical region is specified on
+         update the request will succeed. Required.
+        :paramtype location: str
+        :keyword tags: The list of key value pairs that describe the resource. These tags can be used
+         in viewing and grouping this resource (across resource groups).
+        :paramtype tags: dict[str, str]
+        :keyword sku: The sku type. Required.
+        :paramtype sku: ~azure.mgmt.databox.v2018_01_01.models.Sku
+        :keyword details: Details of a job run. This field will only be sent for expand details filter.
+        :paramtype details: ~azure.mgmt.databox.v2018_01_01.models.JobDetails
+        """
+        super().__init__(location=location, tags=tags, sku=sku, **kwargs)
         self.name = None
         self.id = None
         self.type = None
@@ -1541,110 +1686,124 @@ class JobResource(Resource):
         self.cancellation_reason = None
 
 
-class JobResourceList(msrest.serialization.Model):
+class JobResourceList(_serialization.Model):
     """Job Resource Collection.
 
-    :param value: List of job resources.
-    :type value: list[~azure.mgmt.databox.models.JobResource]
-    :param next_link: Link for the next set of job resources.
-    :type next_link: str
+    :ivar value: List of job resources.
+    :vartype value: list[~azure.mgmt.databox.v2018_01_01.models.JobResource]
+    :ivar next_link: Link for the next set of job resources.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JobResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JobResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["JobResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(JobResourceList, self).__init__(**kwargs)
+        self, *, value: Optional[List["_models.JobResource"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of job resources.
+        :paramtype value: list[~azure.mgmt.databox.v2018_01_01.models.JobResource]
+        :keyword next_link: Link for the next set of job resources.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class JobResourceUpdateParameter(msrest.serialization.Model):
+class JobResourceUpdateParameter(_serialization.Model):
     """The JobResourceUpdateParameter.
 
-    :param tags: A set of tags. The list of key value pairs that describe the resource. These tags
-     can be used in viewing and grouping this resource (across resource groups).
-    :type tags: dict[str, str]
-    :param details: Details of a job to be updated.
-    :type details: ~azure.mgmt.databox.models.UpdateJobDetails
-    :param destination_account_details: Destination account details.
-    :type destination_account_details: list[~azure.mgmt.databox.models.DestinationAccountDetails]
+    :ivar tags: The list of key value pairs that describe the resource. These tags can be used in
+     viewing and grouping this resource (across resource groups).
+    :vartype tags: dict[str, str]
+    :ivar details: Details of a job to be updated.
+    :vartype details: ~azure.mgmt.databox.v2018_01_01.models.UpdateJobDetails
+    :ivar destination_account_details: Destination account details.
+    :vartype destination_account_details:
+     list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'details': {'key': 'properties.details', 'type': 'UpdateJobDetails'},
-        'destination_account_details': {'key': 'properties.destinationAccountDetails', 'type': '[DestinationAccountDetails]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "details": {"key": "properties.details", "type": "UpdateJobDetails"},
+        "destination_account_details": {
+            "key": "properties.destinationAccountDetails",
+            "type": "[DestinationAccountDetails]",
+        },
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        details: Optional["UpdateJobDetails"] = None,
-        destination_account_details: Optional[List["DestinationAccountDetails"]] = None,
-        **kwargs
-    ):
-        super(JobResourceUpdateParameter, self).__init__(**kwargs)
+        details: Optional["_models.UpdateJobDetails"] = None,
+        destination_account_details: Optional[List["_models.DestinationAccountDetails"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: The list of key value pairs that describe the resource. These tags can be used
+         in viewing and grouping this resource (across resource groups).
+        :paramtype tags: dict[str, str]
+        :keyword details: Details of a job to be updated.
+        :paramtype details: ~azure.mgmt.databox.v2018_01_01.models.UpdateJobDetails
+        :keyword destination_account_details: Destination account details.
+        :paramtype destination_account_details:
+         list[~azure.mgmt.databox.v2018_01_01.models.DestinationAccountDetails]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.details = details
         self.destination_account_details = destination_account_details
 
 
-class JobStages(msrest.serialization.Model):
+class JobStages(_serialization.Model):
     """Job stages.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar stage_name: Name of the job stage. Possible values include: "DeviceOrdered",
-     "DevicePrepared", "Dispatched", "Delivered", "PickedUp", "AtAzureDC", "DataCopy", "Completed",
+    :ivar stage_name: Name of the job stage. Known values are: "DeviceOrdered", "DevicePrepared",
+     "Dispatched", "Delivered", "PickedUp", "AtAzureDC", "DataCopy", "Completed",
      "CompletedWithErrors", "Cancelled", "Failed_IssueReportedAtCustomer",
-     "Failed_IssueDetectedAtAzureDC", "Aborted".
-    :vartype stage_name: str or ~azure.mgmt.databox.models.StageName
+     "Failed_IssueDetectedAtAzureDC", and "Aborted".
+    :vartype stage_name: str or ~azure.mgmt.databox.v2018_01_01.models.StageName
     :ivar display_name: Display name of the job stage.
     :vartype display_name: str
-    :ivar stage_status: Status of the job stage. Possible values include: "None", "InProgress",
-     "Succeeded", "Failed", "Cancelled", "Cancelling", "SucceededWithErrors".
-    :vartype stage_status: str or ~azure.mgmt.databox.models.StageStatus
+    :ivar stage_status: Status of the job stage. Known values are: "None", "InProgress",
+     "Succeeded", "Failed", "Cancelled", "Cancelling", and "SucceededWithErrors".
+    :vartype stage_status: str or ~azure.mgmt.databox.v2018_01_01.models.StageStatus
     :ivar stage_time: Time for the job stage in UTC ISO 8601 format.
     :vartype stage_time: ~datetime.datetime
     :ivar job_stage_details: Job Stage Details.
-    :vartype job_stage_details: object
+    :vartype job_stage_details: JSON
     :ivar error_details: Error details for the stage.
-    :vartype error_details: list[~azure.mgmt.databox.models.JobErrorDetails]
+    :vartype error_details: list[~azure.mgmt.databox.v2018_01_01.models.JobErrorDetails]
     """
 
     _validation = {
-        'stage_name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'stage_status': {'readonly': True},
-        'stage_time': {'readonly': True},
-        'job_stage_details': {'readonly': True},
-        'error_details': {'readonly': True},
+        "stage_name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "stage_status": {"readonly": True},
+        "stage_time": {"readonly": True},
+        "job_stage_details": {"readonly": True},
+        "error_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'stage_name': {'key': 'stageName', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'stage_status': {'key': 'stageStatus', 'type': 'str'},
-        'stage_time': {'key': 'stageTime', 'type': 'iso-8601'},
-        'job_stage_details': {'key': 'jobStageDetails', 'type': 'object'},
-        'error_details': {'key': 'errorDetails', 'type': '[JobErrorDetails]'},
+        "stage_name": {"key": "stageName", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "stage_status": {"key": "stageStatus", "type": "str"},
+        "stage_time": {"key": "stageTime", "type": "iso-8601"},
+        "job_stage_details": {"key": "jobStageDetails", "type": "object"},
+        "error_details": {"key": "errorDetails", "type": "[JobErrorDetails]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(JobStages, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.stage_name = None
         self.display_name = None
         self.stage_status = None
@@ -1653,41 +1812,44 @@ class JobStages(msrest.serialization.Model):
         self.error_details = None
 
 
-class NotificationPreference(msrest.serialization.Model):
+class NotificationPreference(_serialization.Model):
     """Notification preference for a job stage.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param stage_name: Required. Name of the stage. Possible values include: "DevicePrepared",
-     "Dispatched", "Delivered", "PickedUp", "AtAzureDC", "DataCopy".
-    :type stage_name: str or ~azure.mgmt.databox.models.NotificationStageName
-    :param send_notification: Required. Notification is required or not.
-    :type send_notification: bool
+    :ivar stage_name: Name of the stage. Required. Known values are: "DevicePrepared",
+     "Dispatched", "Delivered", "PickedUp", "AtAzureDC", and "DataCopy".
+    :vartype stage_name: str or ~azure.mgmt.databox.v2018_01_01.models.NotificationStageName
+    :ivar send_notification: Notification is required or not.
+    :vartype send_notification: bool
     """
 
     _validation = {
-        'stage_name': {'required': True},
-        'send_notification': {'required': True},
+        "stage_name": {"required": True},
+        "send_notification": {"required": True},
     }
 
     _attribute_map = {
-        'stage_name': {'key': 'stageName', 'type': 'str'},
-        'send_notification': {'key': 'sendNotification', 'type': 'bool'},
+        "stage_name": {"key": "stageName", "type": "str"},
+        "send_notification": {"key": "sendNotification", "type": "bool"},
     }
 
     def __init__(
-        self,
-        *,
-        stage_name: Union[str, "NotificationStageName"],
-        send_notification: bool,
-        **kwargs
-    ):
-        super(NotificationPreference, self).__init__(**kwargs)
+        self, *, stage_name: Union[str, "_models.NotificationStageName"], send_notification: bool = True, **kwargs: Any
+    ) -> None:
+        """
+        :keyword stage_name: Name of the stage. Required. Known values are: "DevicePrepared",
+         "Dispatched", "Delivered", "PickedUp", "AtAzureDC", and "DataCopy".
+        :paramtype stage_name: str or ~azure.mgmt.databox.v2018_01_01.models.NotificationStageName
+        :keyword send_notification: Notification is required or not.
+        :paramtype send_notification: bool
+        """
+        super().__init__(**kwargs)
         self.stage_name = stage_name
         self.send_notification = send_notification
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Operation entity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1696,56 +1858,54 @@ class Operation(msrest.serialization.Model):
      {resourceProviderNamespace}/{resourceType}/{read|write|delete|action}.
     :vartype name: str
     :ivar display: Operation display values.
-    :vartype display: ~azure.mgmt.databox.models.OperationDisplay
+    :vartype display: ~azure.mgmt.databox.v2018_01_01.models.OperationDisplay
     :ivar properties: Operation properties.
-    :vartype properties: object
+    :vartype properties: JSON
     :ivar origin: Origin of the operation. Can be : user|system|user,system.
     :vartype origin: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display': {'readonly': True},
-        'properties': {'readonly': True},
-        'origin': {'readonly': True},
+        "name": {"readonly": True},
+        "display": {"readonly": True},
+        "properties": {"readonly": True},
+        "origin": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "properties": {"key": "properties", "type": "object"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Operation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display = None
         self.properties = None
         self.origin = None
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Operation display.
 
-    :param provider: Provider name.
-    :type provider: str
-    :param resource: Resource name.
-    :type resource: str
-    :param operation: Localized name of the operation for display purpose.
-    :type operation: str
-    :param description: Localized description of the operation for display purpose.
-    :type description: str
+    :ivar provider: Provider name.
+    :vartype provider: str
+    :ivar resource: Resource name.
+    :vartype resource: str
+    :ivar operation: Localized name of the operation for display purpose.
+    :vartype operation: str
+    :ivar description: Localized description of the operation for display purpose.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -1755,47 +1915,56 @@ class OperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword provider: Provider name.
+        :paramtype provider: str
+        :keyword resource: Resource name.
+        :paramtype resource: str
+        :keyword operation: Localized name of the operation for display purpose.
+        :paramtype operation: str
+        :keyword description: Localized description of the operation for display purpose.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """Operation Collection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: List of operations.
-    :vartype value: list[~azure.mgmt.databox.models.Operation]
-    :param next_link: Link for the next set of operations.
-    :type next_link: str
+    :vartype value: list[~azure.mgmt.databox.v2018_01_01.models.Operation]
+    :ivar next_link: Link for the next set of operations.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(OperationList, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword next_link: Link for the next set of operations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class PackageShippingDetails(msrest.serialization.Model):
+class PackageShippingDetails(_serialization.Model):
     """Shipping details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1809,87 +1978,83 @@ class PackageShippingDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'carrier_name': {'readonly': True},
-        'tracking_id': {'readonly': True},
-        'tracking_url': {'readonly': True},
+        "carrier_name": {"readonly": True},
+        "tracking_id": {"readonly": True},
+        "tracking_url": {"readonly": True},
     }
 
     _attribute_map = {
-        'carrier_name': {'key': 'carrierName', 'type': 'str'},
-        'tracking_id': {'key': 'trackingId', 'type': 'str'},
-        'tracking_url': {'key': 'trackingUrl', 'type': 'str'},
+        "carrier_name": {"key": "carrierName", "type": "str"},
+        "tracking_id": {"key": "trackingId", "type": "str"},
+        "tracking_url": {"key": "trackingUrl", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PackageShippingDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.carrier_name = None
         self.tracking_id = None
         self.tracking_url = None
 
 
-class Preferences(msrest.serialization.Model):
+class Preferences(_serialization.Model):
     """Preferences related to the order.
 
-    :param preferred_data_center_region:
-    :type preferred_data_center_region: list[str]
+    :ivar preferred_data_center_region:
+    :vartype preferred_data_center_region: list[str]
     """
 
     _attribute_map = {
-        'preferred_data_center_region': {'key': 'preferredDataCenterRegion', 'type': '[str]'},
+        "preferred_data_center_region": {"key": "preferredDataCenterRegion", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        preferred_data_center_region: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(Preferences, self).__init__(**kwargs)
+    def __init__(self, *, preferred_data_center_region: Optional[List[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword preferred_data_center_region:
+        :paramtype preferred_data_center_region: list[str]
+        """
+        super().__init__(**kwargs)
         self.preferred_data_center_region = preferred_data_center_region
 
 
-class ShareCredentialDetails(msrest.serialization.Model):
+class ShareCredentialDetails(_serialization.Model):
     """Credential details of the shares in account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar share_name: Name of the share.
     :vartype share_name: str
-    :ivar share_type: Type of the share. Possible values include: "UnknownType", "HCS",
-     "BlockBlob", "PageBlob", "AzureFile", "ManagedDisk".
-    :vartype share_type: str or ~azure.mgmt.databox.models.ShareDestinationFormatType
+    :ivar share_type: Type of the share. Known values are: "UnknownType", "HCS", "BlockBlob",
+     "PageBlob", "AzureFile", and "ManagedDisk".
+    :vartype share_type: str or ~azure.mgmt.databox.v2018_01_01.models.ShareDestinationFormatType
     :ivar user_name: User name for the share.
     :vartype user_name: str
     :ivar password: Password for the share.
     :vartype password: str
     :ivar supported_access_protocols: Access protocols supported on the device.
-    :vartype supported_access_protocols: list[str or ~azure.mgmt.databox.models.AccessProtocol]
+    :vartype supported_access_protocols: list[str or
+     ~azure.mgmt.databox.v2018_01_01.models.AccessProtocol]
     """
 
     _validation = {
-        'share_name': {'readonly': True},
-        'share_type': {'readonly': True},
-        'user_name': {'readonly': True},
-        'password': {'readonly': True},
-        'supported_access_protocols': {'readonly': True},
+        "share_name": {"readonly": True},
+        "share_type": {"readonly": True},
+        "user_name": {"readonly": True},
+        "password": {"readonly": True},
+        "supported_access_protocols": {"readonly": True},
     }
 
     _attribute_map = {
-        'share_name': {'key': 'shareName', 'type': 'str'},
-        'share_type': {'key': 'shareType', 'type': 'str'},
-        'user_name': {'key': 'userName', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'supported_access_protocols': {'key': 'supportedAccessProtocols', 'type': '[str]'},
+        "share_name": {"key": "shareName", "type": "str"},
+        "share_type": {"key": "shareType", "type": "str"},
+        "user_name": {"key": "userName", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "supported_access_protocols": {"key": "supportedAccessProtocols", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ShareCredentialDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.share_name = None
         self.share_type = None
         self.user_name = None
@@ -1897,48 +2062,53 @@ class ShareCredentialDetails(msrest.serialization.Model):
         self.supported_access_protocols = None
 
 
-class ShipmentPickUpRequest(msrest.serialization.Model):
+class ShipmentPickUpRequest(_serialization.Model):
     """Shipment pick up request details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param start_time: Required. Minimum date after which the pick up should commence, this must be
-     in local time of pick up area.
-    :type start_time: ~datetime.datetime
-    :param end_time: Required. Maximum date before which the pick up should commence, this must be
-     in local time of pick up area.
-    :type end_time: ~datetime.datetime
-    :param shipment_location: Required. Shipment Location in the pickup place. Eg.front desk.
-    :type shipment_location: str
+    :ivar start_time: Minimum date after which the pick up should commence, this must be in local
+     time of pick up area. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: Maximum date before which the pick up should commence, this must be in local
+     time of pick up area. Required.
+    :vartype end_time: ~datetime.datetime
+    :ivar shipment_location: Shipment Location in the pickup place. Eg.front desk. Required.
+    :vartype shipment_location: str
     """
 
     _validation = {
-        'start_time': {'required': True},
-        'end_time': {'required': True},
-        'shipment_location': {'required': True},
+        "start_time": {"required": True},
+        "end_time": {"required": True},
+        "shipment_location": {"required": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'shipment_location': {'key': 'shipmentLocation', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "shipment_location": {"key": "shipmentLocation", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        shipment_location: str,
-        **kwargs
-    ):
-        super(ShipmentPickUpRequest, self).__init__(**kwargs)
+        self, *, start_time: datetime.datetime, end_time: datetime.datetime, shipment_location: str, **kwargs: Any
+    ) -> None:
+        """
+        :keyword start_time: Minimum date after which the pick up should commence, this must be in
+         local time of pick up area. Required.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: Maximum date before which the pick up should commence, this must be in local
+         time of pick up area. Required.
+        :paramtype end_time: ~datetime.datetime
+        :keyword shipment_location: Shipment Location in the pickup place. Eg.front desk. Required.
+        :paramtype shipment_location: str
+        """
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.end_time = end_time
         self.shipment_location = shipment_location
 
 
-class ShipmentPickUpResponse(msrest.serialization.Model):
+class ShipmentPickUpResponse(_serialization.Model):
     """Shipment pick up response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1951,69 +2121,66 @@ class ShipmentPickUpResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'confirmation_number': {'readonly': True},
-        'ready_by_time': {'readonly': True},
+        "confirmation_number": {"readonly": True},
+        "ready_by_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'confirmation_number': {'key': 'confirmationNumber', 'type': 'str'},
-        'ready_by_time': {'key': 'readyByTime', 'type': 'iso-8601'},
+        "confirmation_number": {"key": "confirmationNumber", "type": "str"},
+        "ready_by_time": {"key": "readyByTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ShipmentPickUpResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.confirmation_number = None
         self.ready_by_time = None
 
 
-class ShippingAddress(msrest.serialization.Model):
+class ShippingAddress(_serialization.Model):
     """Shipping address where customer wishes to receive the device.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param street_address1: Required. Street Address line 1.
-    :type street_address1: str
-    :param street_address2: Street Address line 2.
-    :type street_address2: str
-    :param street_address3: Street Address line 3.
-    :type street_address3: str
-    :param city: Name of the City.
-    :type city: str
-    :param state_or_province: Name of the State or Province.
-    :type state_or_province: str
-    :param country: Required. Name of the Country.
-    :type country: str
-    :param postal_code: Required. Postal code.
-    :type postal_code: str
-    :param zip_extended_code: Extended Zip Code.
-    :type zip_extended_code: str
-    :param company_name: Name of the company.
-    :type company_name: str
-    :param address_type: Type of address. Possible values include: "None", "Residential",
-     "Commercial".
-    :type address_type: str or ~azure.mgmt.databox.models.AddressType
+    :ivar street_address1: Street Address line 1. Required.
+    :vartype street_address1: str
+    :ivar street_address2: Street Address line 2.
+    :vartype street_address2: str
+    :ivar street_address3: Street Address line 3.
+    :vartype street_address3: str
+    :ivar city: Name of the City.
+    :vartype city: str
+    :ivar state_or_province: Name of the State or Province.
+    :vartype state_or_province: str
+    :ivar country: Name of the Country. Required.
+    :vartype country: str
+    :ivar postal_code: Postal code. Required.
+    :vartype postal_code: str
+    :ivar zip_extended_code: Extended Zip Code.
+    :vartype zip_extended_code: str
+    :ivar company_name: Name of the company.
+    :vartype company_name: str
+    :ivar address_type: Type of address. Known values are: "None", "Residential", and "Commercial".
+    :vartype address_type: str or ~azure.mgmt.databox.v2018_01_01.models.AddressType
     """
 
     _validation = {
-        'street_address1': {'required': True},
-        'country': {'required': True},
-        'postal_code': {'required': True},
+        "street_address1": {"required": True},
+        "country": {"required": True},
+        "postal_code": {"required": True},
     }
 
     _attribute_map = {
-        'street_address1': {'key': 'streetAddress1', 'type': 'str'},
-        'street_address2': {'key': 'streetAddress2', 'type': 'str'},
-        'street_address3': {'key': 'streetAddress3', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'state_or_province': {'key': 'stateOrProvince', 'type': 'str'},
-        'country': {'key': 'country', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'zip_extended_code': {'key': 'zipExtendedCode', 'type': 'str'},
-        'company_name': {'key': 'companyName', 'type': 'str'},
-        'address_type': {'key': 'addressType', 'type': 'str'},
+        "street_address1": {"key": "streetAddress1", "type": "str"},
+        "street_address2": {"key": "streetAddress2", "type": "str"},
+        "street_address3": {"key": "streetAddress3", "type": "str"},
+        "city": {"key": "city", "type": "str"},
+        "state_or_province": {"key": "stateOrProvince", "type": "str"},
+        "country": {"key": "country", "type": "str"},
+        "postal_code": {"key": "postalCode", "type": "str"},
+        "zip_extended_code": {"key": "zipExtendedCode", "type": "str"},
+        "company_name": {"key": "companyName", "type": "str"},
+        "address_type": {"key": "addressType", "type": "str"},
     }
 
     def __init__(
@@ -2028,10 +2195,33 @@ class ShippingAddress(msrest.serialization.Model):
         state_or_province: Optional[str] = None,
         zip_extended_code: Optional[str] = None,
         company_name: Optional[str] = None,
-        address_type: Optional[Union[str, "AddressType"]] = None,
-        **kwargs
-    ):
-        super(ShippingAddress, self).__init__(**kwargs)
+        address_type: Union[str, "_models.AddressType"] = "None",
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword street_address1: Street Address line 1. Required.
+        :paramtype street_address1: str
+        :keyword street_address2: Street Address line 2.
+        :paramtype street_address2: str
+        :keyword street_address3: Street Address line 3.
+        :paramtype street_address3: str
+        :keyword city: Name of the City.
+        :paramtype city: str
+        :keyword state_or_province: Name of the State or Province.
+        :paramtype state_or_province: str
+        :keyword country: Name of the Country. Required.
+        :paramtype country: str
+        :keyword postal_code: Postal code. Required.
+        :paramtype postal_code: str
+        :keyword zip_extended_code: Extended Zip Code.
+        :paramtype zip_extended_code: str
+        :keyword company_name: Name of the company.
+        :paramtype company_name: str
+        :keyword address_type: Type of address. Known values are: "None", "Residential", and
+         "Commercial".
+        :paramtype address_type: str or ~azure.mgmt.databox.v2018_01_01.models.AddressType
+        """
+        super().__init__(**kwargs)
         self.street_address1 = street_address1
         self.street_address2 = street_address2
         self.street_address3 = street_address3
@@ -2044,45 +2234,54 @@ class ShippingAddress(msrest.serialization.Model):
         self.address_type = address_type
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The Sku.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The sku name. Possible values include: "DataBox", "DataBoxDisk",
+    :ivar name: The sku name. Required. Known values are: "DataBox", "DataBoxDisk", and
      "DataBoxHeavy".
-    :type name: str or ~azure.mgmt.databox.models.SkuName
-    :param display_name: The display name of the sku.
-    :type display_name: str
-    :param family: The sku family.
-    :type family: str
+    :vartype name: str or ~azure.mgmt.databox.v2018_01_01.models.SkuName
+    :ivar display_name: The display name of the sku.
+    :vartype display_name: str
+    :ivar family: The sku family.
+    :vartype family: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "family": {"key": "family", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        name: Union[str, "SkuName"],
+        name: Union[str, "_models.SkuName"],
         display_name: Optional[str] = None,
         family: Optional[str] = None,
-        **kwargs
-    ):
-        super(Sku, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The sku name. Required. Known values are: "DataBox", "DataBoxDisk", and
+         "DataBoxHeavy".
+        :paramtype name: str or ~azure.mgmt.databox.v2018_01_01.models.SkuName
+        :keyword display_name: The display name of the sku.
+        :paramtype display_name: str
+        :keyword family: The sku family.
+        :paramtype family: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display_name = display_name
         self.family = family
 
 
-class SkuCapacity(msrest.serialization.Model):
+class SkuCapacity(_serialization.Model):
     """Capacity of the sku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2094,25 +2293,23 @@ class SkuCapacity(msrest.serialization.Model):
     """
 
     _validation = {
-        'usable': {'readonly': True},
-        'maximum': {'readonly': True},
+        "usable": {"readonly": True},
+        "maximum": {"readonly": True},
     }
 
     _attribute_map = {
-        'usable': {'key': 'usable', 'type': 'str'},
-        'maximum': {'key': 'maximum', 'type': 'str'},
+        "usable": {"key": "usable", "type": "str"},
+        "maximum": {"key": "maximum", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SkuCapacity, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.usable = None
         self.maximum = None
 
 
-class SkuCost(msrest.serialization.Model):
+class SkuCost(_serialization.Model):
     """Describes metadata for retrieving price info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2124,45 +2321,43 @@ class SkuCost(msrest.serialization.Model):
     """
 
     _validation = {
-        'meter_id': {'readonly': True},
-        'meter_type': {'readonly': True},
+        "meter_id": {"readonly": True},
+        "meter_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'meter_id': {'key': 'meterId', 'type': 'str'},
-        'meter_type': {'key': 'meterType', 'type': 'str'},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "meter_type": {"key": "meterType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SkuCost, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.meter_id = None
         self.meter_type = None
 
 
-class SkuInformation(msrest.serialization.Model):
+class SkuInformation(_serialization.Model):
     """Information of the sku.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar sku: The Sku.
-    :vartype sku: ~azure.mgmt.databox.models.Sku
+    :vartype sku: ~azure.mgmt.databox.v2018_01_01.models.Sku
     :ivar enabled: The sku is enabled or not.
     :vartype enabled: bool
     :ivar destination_to_service_location_map: The map of destination location to service location.
     :vartype destination_to_service_location_map:
-     list[~azure.mgmt.databox.models.DestinationToServiceLocationMap]
+     list[~azure.mgmt.databox.v2018_01_01.models.DestinationToServiceLocationMap]
     :ivar capacity: Capacity of the Sku.
-    :vartype capacity: ~azure.mgmt.databox.models.SkuCapacity
+    :vartype capacity: ~azure.mgmt.databox.v2018_01_01.models.SkuCapacity
     :ivar costs: Cost of the Sku.
-    :vartype costs: list[~azure.mgmt.databox.models.SkuCost]
+    :vartype costs: list[~azure.mgmt.databox.v2018_01_01.models.SkuCost]
     :ivar api_versions: Api versions that support this Sku.
     :vartype api_versions: list[str]
-    :ivar disabled_reason: Reason why the Sku is disabled. Possible values include: "None",
-     "Country", "Region", "Feature", "OfferType", "NoSubscriptionInfo".
-    :vartype disabled_reason: str or ~azure.mgmt.databox.models.SkuDisabledReason
+    :ivar disabled_reason: Reason why the Sku is disabled. Known values are: "None", "Country",
+     "Region", "Feature", "OfferType", and "NoSubscriptionInfo".
+    :vartype disabled_reason: str or ~azure.mgmt.databox.v2018_01_01.models.SkuDisabledReason
     :ivar disabled_reason_message: Message for why the Sku is disabled.
     :vartype disabled_reason_message: str
     :ivar required_feature: Required feature to access the sku.
@@ -2170,34 +2365,35 @@ class SkuInformation(msrest.serialization.Model):
     """
 
     _validation = {
-        'sku': {'readonly': True},
-        'enabled': {'readonly': True},
-        'destination_to_service_location_map': {'readonly': True},
-        'capacity': {'readonly': True},
-        'costs': {'readonly': True},
-        'api_versions': {'readonly': True},
-        'disabled_reason': {'readonly': True},
-        'disabled_reason_message': {'readonly': True},
-        'required_feature': {'readonly': True},
+        "sku": {"readonly": True},
+        "enabled": {"readonly": True},
+        "destination_to_service_location_map": {"readonly": True},
+        "capacity": {"readonly": True},
+        "costs": {"readonly": True},
+        "api_versions": {"readonly": True},
+        "disabled_reason": {"readonly": True},
+        "disabled_reason_message": {"readonly": True},
+        "required_feature": {"readonly": True},
     }
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'enabled': {'key': 'enabled', 'type': 'bool'},
-        'destination_to_service_location_map': {'key': 'properties.destinationToServiceLocationMap', 'type': '[DestinationToServiceLocationMap]'},
-        'capacity': {'key': 'properties.capacity', 'type': 'SkuCapacity'},
-        'costs': {'key': 'properties.costs', 'type': '[SkuCost]'},
-        'api_versions': {'key': 'properties.apiVersions', 'type': '[str]'},
-        'disabled_reason': {'key': 'properties.disabledReason', 'type': 'str'},
-        'disabled_reason_message': {'key': 'properties.disabledReasonMessage', 'type': 'str'},
-        'required_feature': {'key': 'properties.requiredFeature', 'type': 'str'},
+        "sku": {"key": "sku", "type": "Sku"},
+        "enabled": {"key": "enabled", "type": "bool"},
+        "destination_to_service_location_map": {
+            "key": "properties.destinationToServiceLocationMap",
+            "type": "[DestinationToServiceLocationMap]",
+        },
+        "capacity": {"key": "properties.capacity", "type": "SkuCapacity"},
+        "costs": {"key": "properties.costs", "type": "[SkuCost]"},
+        "api_versions": {"key": "properties.apiVersions", "type": "[str]"},
+        "disabled_reason": {"key": "properties.disabledReason", "type": "str"},
+        "disabled_reason_message": {"key": "properties.disabledReasonMessage", "type": "str"},
+        "required_feature": {"key": "properties.requiredFeature", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SkuInformation, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.sku = None
         self.enabled = None
         self.destination_to_service_location_map = None
@@ -2209,7 +2405,7 @@ class SkuInformation(msrest.serialization.Model):
         self.required_feature = None
 
 
-class UnencryptedCredentials(msrest.serialization.Model):
+class UnencryptedCredentials(_serialization.Model):
     """Unencrypted credentials for accessing device.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2217,109 +2413,122 @@ class UnencryptedCredentials(msrest.serialization.Model):
     :ivar job_name: Name of the job.
     :vartype job_name: str
     :ivar job_secrets: Secrets related to this job.
-    :vartype job_secrets: ~azure.mgmt.databox.models.JobSecrets
+    :vartype job_secrets: ~azure.mgmt.databox.v2018_01_01.models.JobSecrets
     """
 
     _validation = {
-        'job_name': {'readonly': True},
-        'job_secrets': {'readonly': True},
+        "job_name": {"readonly": True},
+        "job_secrets": {"readonly": True},
     }
 
     _attribute_map = {
-        'job_name': {'key': 'jobName', 'type': 'str'},
-        'job_secrets': {'key': 'jobSecrets', 'type': 'JobSecrets'},
+        "job_name": {"key": "jobName", "type": "str"},
+        "job_secrets": {"key": "jobSecrets", "type": "JobSecrets"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UnencryptedCredentials, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.job_name = None
         self.job_secrets = None
 
 
-class UnencryptedCredentialsList(msrest.serialization.Model):
+class UnencryptedCredentialsList(_serialization.Model):
     """List of unencrypted credentials for accessing device.
 
-    :param value: List of unencrypted credentials.
-    :type value: list[~azure.mgmt.databox.models.UnencryptedCredentials]
-    :param next_link: Link for the next set of unencrypted credentials.
-    :type next_link: str
+    :ivar value: List of unencrypted credentials.
+    :vartype value: list[~azure.mgmt.databox.v2018_01_01.models.UnencryptedCredentials]
+    :ivar next_link: Link for the next set of unencrypted credentials.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[UnencryptedCredentials]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[UnencryptedCredentials]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["UnencryptedCredentials"]] = None,
+        value: Optional[List["_models.UnencryptedCredentials"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(UnencryptedCredentialsList, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: List of unencrypted credentials.
+        :paramtype value: list[~azure.mgmt.databox.v2018_01_01.models.UnencryptedCredentials]
+        :keyword next_link: Link for the next set of unencrypted credentials.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class UpdateJobDetails(msrest.serialization.Model):
+class UpdateJobDetails(_serialization.Model):
     """Job details for update.
 
-    :param contact_details: Contact details for notification and shipping.
-    :type contact_details: ~azure.mgmt.databox.models.ContactDetails
-    :param shipping_address: Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
+    :ivar contact_details: Contact details for notification and shipping.
+    :vartype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+    :ivar shipping_address: Shipping address of the customer.
+    :vartype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
     """
 
     _attribute_map = {
-        'contact_details': {'key': 'contactDetails', 'type': 'ContactDetails'},
-        'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
+        "contact_details": {"key": "contactDetails", "type": "ContactDetails"},
+        "shipping_address": {"key": "shippingAddress", "type": "ShippingAddress"},
     }
 
     def __init__(
         self,
         *,
-        contact_details: Optional["ContactDetails"] = None,
-        shipping_address: Optional["ShippingAddress"] = None,
-        **kwargs
-    ):
-        super(UpdateJobDetails, self).__init__(**kwargs)
+        contact_details: Optional["_models.ContactDetails"] = None,
+        shipping_address: Optional["_models.ShippingAddress"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword contact_details: Contact details for notification and shipping.
+        :paramtype contact_details: ~azure.mgmt.databox.v2018_01_01.models.ContactDetails
+        :keyword shipping_address: Shipping address of the customer.
+        :paramtype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
+        """
+        super().__init__(**kwargs)
         self.contact_details = contact_details
         self.shipping_address = shipping_address
 
 
-class ValidateAddress(msrest.serialization.Model):
+class ValidateAddress(_serialization.Model):
     """The requirements to validate customer address where the device needs to be shipped.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param shipping_address: Required. Shipping address of the customer.
-    :type shipping_address: ~azure.mgmt.databox.models.ShippingAddress
-    :param device_type: Required. Device type to be used for the job. Possible values include:
-     "DataBox", "DataBoxDisk", "DataBoxHeavy".
-    :type device_type: str or ~azure.mgmt.databox.models.SkuName
+    :ivar shipping_address: Shipping address of the customer. Required.
+    :vartype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
+    :ivar device_type: Device type to be used for the job. Required. Known values are: "DataBox",
+     "DataBoxDisk", and "DataBoxHeavy".
+    :vartype device_type: str or ~azure.mgmt.databox.v2018_01_01.models.SkuName
     """
 
     _validation = {
-        'shipping_address': {'required': True},
-        'device_type': {'required': True},
+        "shipping_address": {"required": True},
+        "device_type": {"required": True},
     }
 
     _attribute_map = {
-        'shipping_address': {'key': 'shippingAddress', 'type': 'ShippingAddress'},
-        'device_type': {'key': 'deviceType', 'type': 'str'},
+        "shipping_address": {"key": "shippingAddress", "type": "ShippingAddress"},
+        "device_type": {"key": "deviceType", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        shipping_address: "ShippingAddress",
-        device_type: Union[str, "SkuName"],
-        **kwargs
-    ):
-        super(ValidateAddress, self).__init__(**kwargs)
+        self, *, shipping_address: "_models.ShippingAddress", device_type: Union[str, "_models.SkuName"], **kwargs: Any
+    ) -> None:
+        """
+        :keyword shipping_address: Shipping address of the customer. Required.
+        :paramtype shipping_address: ~azure.mgmt.databox.v2018_01_01.models.ShippingAddress
+        :keyword device_type: Device type to be used for the job. Required. Known values are:
+         "DataBox", "DataBoxDisk", and "DataBoxHeavy".
+        :paramtype device_type: str or ~azure.mgmt.databox.v2018_01_01.models.SkuName
+        """
+        super().__init__(**kwargs)
         self.shipping_address = shipping_address
         self.device_type = device_type

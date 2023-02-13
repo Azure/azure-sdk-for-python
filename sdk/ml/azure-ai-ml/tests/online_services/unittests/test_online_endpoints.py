@@ -447,6 +447,7 @@ class TestOnlineEndpointsOperations:
         pytest.param({"blue": "100", "green": "0"}, {"blue": "100"}),
         pytest.param({"green": "0"}, {}),
         pytest.param({}, {}),
+        pytest.param({"blue": "10", "GREEN": "90"}, {"blue": "10", "green": "90"}),
     ],
 )
 def test_strip_traffic_from_traffic_map(traffic, expected_traffic) -> None:
