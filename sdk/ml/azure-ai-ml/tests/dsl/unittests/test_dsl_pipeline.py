@@ -2697,7 +2697,7 @@ class TestDSLPipeline:
 
         warning_template = (
             "Reserved word {io_name} is used as {io} name in node {node_name}, "
-            "can only be accessed with \"{node_name}.{io}s.{io_name}\""
+            "can only be accessed with \"{node_name}.{io}s[{io_name}]\""
         )
         assert caplog.messages == [
             warning_template.format(io_name="__contains__", io="output", node_name="node"),

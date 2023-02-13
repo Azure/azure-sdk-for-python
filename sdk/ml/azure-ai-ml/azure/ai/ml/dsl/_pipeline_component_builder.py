@@ -482,14 +482,14 @@ class PipelineComponentBuilder:
             for input_name in set(node.inputs) & COMPONENT_IO_KEYWORDS:
                 module_logger.warning(
                     "Reserved word %s is used as input name in node %s, "
-                    "can only be accessed with \"%s.inputs.%s\"",
+                    "can only be accessed with \"%s.inputs[%s]\"",
                     input_name, node.name, node.name, input_name
                 )
         if has_attr_safe(node, "outputs"):
             for output_name in set(node.outputs) & COMPONENT_IO_KEYWORDS:
                 module_logger.warning(
                     "Reserved word %s is used as output name in node %s, "
-                    "can only be accessed with \"%s.outputs.%s\"",
+                    "can only be accessed with \"%s.outputs[%s]\"",
                     output_name, node.name, node.name, output_name
                 )
 
