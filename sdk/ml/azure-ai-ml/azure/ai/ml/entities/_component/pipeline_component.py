@@ -19,7 +19,7 @@ from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentSch
 from azure.ai.ml._utils.utils import is_data_binding_expression, hash_dict
 from azure.ai.ml.constants._common import COMPONENT_TYPE, ARM_ID_PREFIX, ASSET_ARM_ID_REGEX_FORMAT
 from azure.ai.ml.constants._component import ComponentSource, NodeType
-from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
+from azure.ai.ml.constants._job.pipeline import COMPONENT_IO_KEYWORDS, IO_KEYWORD_WARNING_MESSAGE, ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, LoopNode
 from azure.ai.ml.entities._component.component import Component
@@ -150,6 +150,31 @@ class PipelineComponent(Component):
                     message=f"Not supported pipeline job type: {type(node)}",
                 )
 
+        # Validate all nodes IO on keyword
+        validation_result.merge_with(self._validate_keyword_in_node_io())
+
+        return validation_result
+
+    def _validate_keyword_in_node_io(self, parent_node_name=None) -> MutableValidationResult:
+        validation_result = self._create_empty_validation_result()
+        nodes_with_keyword_in_io = []
+        parent_node_name = parent_node_name if parent_node_name else ""
+        for node_name, node in self.jobs.items():
+            # `_customized_validate` will be called for every pipeline component,
+            # so there is no need to validate recursively here.
+            if node.type == NodeType.PIPELINE and isinstance(node._component, PipelineComponent):
+                continue
+            input_set, output_set = set(node.inputs), set(node.outputs)
+            for input_name in input_set & COMPONENT_IO_KEYWORDS:
+                nodes_with_keyword_in_io.append((node_name, "inputs", input_name))
+            for output_name in output_set & COMPONENT_IO_KEYWORDS:
+                nodes_with_keyword_in_io.append((node_name, "outputs", output_name))
+
+        for node_name, input_or_output, io_name in nodes_with_keyword_in_io:
+            validation_result.append_warning(
+                yaml_path=f"jobs.{parent_node_name}{node_name}.{input_or_output}.{io_name}",
+                message=IO_KEYWORD_WARNING_MESSAGE,
+            )
         return validation_result
 
     def _validate_compute_is_set(self, *, parent_node_name=None):
