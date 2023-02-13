@@ -200,7 +200,7 @@ def import_data(
         task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
         **kwargs,
 ) -> DataTransferImport:
-    """Create a DataTransferImport object which can be used inside dsl.pipeline as a function.
+    """Create a DataTransferImport object which can be used inside dsl.pipeline.
 
     :param name: The name of the job.
     :type name: str
@@ -284,7 +284,7 @@ def export_data(
         task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
         **kwargs,
 ) -> DataTransferExport:
-    """Create a DataTransferExport object which can be used inside dsl.pipeline as a function.
+    """Create a DataTransferExport object which can be used inside dsl.pipeline.
 
     :param name: The name of the job.
     :type name: str

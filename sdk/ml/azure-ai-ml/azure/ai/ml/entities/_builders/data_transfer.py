@@ -228,8 +228,8 @@ class DataTransferCopy(DataTransfer):
             data_copy_mode=self.data_copy_mode
         )
 
-    def __call__(self, *args, **kwargs) -> "DataTransfer":
-        """Call Command as a function will return a new instance each time."""
+    def __call__(self, *args, **kwargs) -> "DataTransferCopy":
+        """Call DataTransferCopy as a function will return a new instance each time."""
         if isinstance(self._component, Component):
             # call this to validate inputs
             node = self._component(*args, **kwargs)
@@ -251,7 +251,7 @@ class DataTransferCopy(DataTransfer):
             # Pass through the display name only if the display name is not system generated.
             node.display_name = self.display_name if self.display_name != self.name else None
             return node
-        msg = "copy_data/import_data/export_data can be called as a function only when referenced component is {}, " \
+        msg = "copy_data can be called as a function only when referenced component is {}, " \
               "currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
