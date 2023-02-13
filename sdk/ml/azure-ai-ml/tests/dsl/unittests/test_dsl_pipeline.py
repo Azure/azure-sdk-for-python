@@ -35,6 +35,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     InputOutputModes,
 )
+from azure.ai.ml.constants._job.pipeline import IO_KEYWORD_WARNING_MESSAGE
 from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
 from azure.ai.ml.entities._builders import Command, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -2683,3 +2684,23 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException) as e:
             assert_job_cancel(pipeline, client)
         assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)
+
+    def test_keyword_in_io(self):
+        from test_configs.dsl_pipeline.pipeline_with_keyword_in_node_io.pipeline import pipeline_job
+
+        validation_result = pipeline_job._customized_validate()
+        assert validation_result.passed
+        warnings = validation_result._warnings
+        assert len(warnings) == 3
+        assert (
+            warnings[0].yaml_path == "jobs.pipeline_component_func.jobs.node.outputs.__contains__"
+            and warnings[0].message == IO_KEYWORD_WARNING_MESSAGE
+        )
+        assert (
+            warnings[1].yaml_path == "jobs.upstream_node.outputs.items"
+            and warnings[1].message == IO_KEYWORD_WARNING_MESSAGE
+        )
+        assert (
+            warnings[2].yaml_path == "jobs.downstream_node.inputs.keys"
+            and warnings[2].message == IO_KEYWORD_WARNING_MESSAGE
+        )
