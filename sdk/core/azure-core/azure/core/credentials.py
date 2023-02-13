@@ -58,10 +58,11 @@ T = TypeVar("T", str, Tuple[str, ...])
 
 class AzureKeyCredential(Generic[T]):
     """Credential type used for authenticating to an Azure service.
-        It provides the ability to update the key without creating a new client.
-        :param T key: The key used to authenticate to an Azure service
-        :raises: TypeError
-        """
+    It provides the ability to update the key without creating a new client.
+
+    :param T key: The key used to authenticate to an Azure service
+    :raises: TypeError
+    """
 
     def __init__(self, key: T) -> None:
         if not isinstance(key, (str, Tuple[str, ...])):
