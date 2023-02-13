@@ -11,7 +11,7 @@ import json
 import argparse
 from pathlib import Path
 import shutil
-from typing import Dict, Optional, List, Any, TypeVar, Callable
+from typing import Dict, Optional, List, Any, TypeVar, Callable, Set
 
 from jinja2 import PackageLoader, Environment
 
@@ -79,6 +79,21 @@ def _combine_helper(
             obj.api_versions.append(next_api_version)
         objs.extend(new_objs)
     return objs
+
+def _sort_models_helper(current: "ModelAndEnum", seen_model_names: Set[str]) -> List["ModelAndEnum"]:
+    if current.name in seen_model_names:
+        return []
+    ancestors: List["ModelAndEnum"] = [current]
+    for parent in current.parents or []:
+        if parent.name in seen_model_names:
+            continue
+        seen_model_names.add(parent.name)
+        ancestors = (
+            _sort_models_helper(parent, seen_model_names) + ancestors
+        )
+    seen_model_names.add(current.name)
+    return ancestors
+
 
 
 class Parameter(VersionedObject):
@@ -287,6 +302,10 @@ class Client:
 
 
 class ModelAndEnum(VersionedObject):
+    def __init__(self, code_model: "CodeModel", name: str, *, parents: Optional[List["ModelAndEnum"]]) -> None:
+        super().__init__(code_model, name)
+        self.parents = parents
+
     @property
     def generated_class(self):
         folder_api_version = self.code_model.api_version_to_folder_api_version[self.api_versions[-1]]
@@ -385,6 +404,17 @@ class CodeModel:
                 self.models.append(m)
             else:
                 self.enums.append(m)
+        self._sort_models()
+
+    def _sort_models(self) -> None:
+        seen_model_names: Set[str] = set()
+        sorted_models: List[ModelAndEnum] = []
+        self.models.sort(key=lambda x: x.name.lower())
+        for model in self.models:
+            sorted_models.extend(
+                _sort_models_helper(model, seen_model_names)
+            )
+        self.models = sorted_models
 
 
 class Serializer:
