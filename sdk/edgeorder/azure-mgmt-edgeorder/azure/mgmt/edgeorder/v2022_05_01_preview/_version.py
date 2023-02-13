@@ -6,8 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._edge_order_management_client_operations import EdgeOrderManagementClientOperationsMixin
-
-__all__ = [
-    'EdgeOrderManagementClientOperationsMixin',
-]
+VERSION = "2.0.0"
