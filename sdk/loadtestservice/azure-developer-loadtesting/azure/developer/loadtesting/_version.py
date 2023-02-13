@@ -1,3 +1,6 @@
-from ._generated._version import VERSION
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 
-__all__ = ["VERSION"]
+VERSION = "1.0.0"

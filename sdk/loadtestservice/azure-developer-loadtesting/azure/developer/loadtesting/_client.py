@@ -11,8 +11,8 @@ from typing import Any, TYPE_CHECKING
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import LoadTestingClientConfiguration
-from ._serialization import Deserializer, Serializer
+from ._generated._configuration import LoadTestingClientConfiguration
+from ._generated._serialization import Deserializer, Serializer
 from ._generated.operations import AdministrationOperations, TestRunOperations
 
 if TYPE_CHECKING:
