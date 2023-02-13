@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader
+from devtools_testutils import AzureRecordedTestCase, PowerShellPreparer
 from {{ namespace }} import {{ client_name }}
 
 
@@ -20,7 +20,7 @@ class {{ test_prefix.capitalize() }}Test(AzureRecordedTestCase):
 
 
 {{ test_prefix.capitalize() }}Preparer = functools.partial(
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
     "{{ test_prefix }}",
     {{ test_prefix }}_endpoint="https://myservice.azure.com"
 )
