@@ -2758,7 +2758,6 @@ class TestDSLPipeline:
             "_source": "DSL"
         }
 
-
     def test_register_output_without_name_sdk(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
@@ -2803,3 +2802,29 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException) as e:
             assert_job_cancel(pipeline, client)
         assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)
+
+    def test_pipeline_output_settings_copy(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path.path = "path1"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job2 = my_pipeline()
+
+        pipeline_job1.outputs.component_out_path.path = "new_path"
+
+        # modified pipeline output setting won't affect pipeline component or other nodes.
+        assert pipeline_job1.outputs.component_out_path.path == "new_path"
+        assert pipeline_job1.component.outputs["component_out_path"].path == "path1"
+        assert pipeline_job2.outputs.component_out_path.path == "path1"
+        assert pipeline_job2.component.outputs["component_out_path"].path == "path1"
+
+        # newly create pipeline job instance won't be affected
+        pipeline_job3 = my_pipeline()
+        assert pipeline_job3.outputs.component_out_path.path == "path1"
+        assert pipeline_job3.component.outputs["component_out_path"].path == "path1"

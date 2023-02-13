@@ -439,6 +439,19 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
                 f"but got type: {type(self._data)}."
                 )
 
+    @property
+    def path(self) -> Optional[str]:
+        # For node output path,
+        if hasattr(self._data, "path"):
+            return self._data.path
+        return None
+
+    @path.setter
+    def path(self, path):
+        # For un-configured output, we build a default output entry to store path.
+        self._build_default_data()
+        self._data.path = path
+
     def _assert_name_and_version(self):
         if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):
             raise UserErrorException(

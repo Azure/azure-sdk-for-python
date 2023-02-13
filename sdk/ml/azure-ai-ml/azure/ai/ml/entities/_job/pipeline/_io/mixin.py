@@ -9,6 +9,7 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInput as RestJ
 from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
+from azure.ai.ml.entities._util import copy_output_setting
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
 
 from ..._input_output_helpers import (
@@ -328,6 +329,31 @@ class PipelineIOMixin(PipelineNodeIOMixin):
         input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
         input_dict = GroupInput.restore_flattened_inputs(input_dict)
         return InputsAttrDict(input_dict)
+
+    def _build_outputs_dict_without_meta(self, outputs: Dict[str, Output], none_data=False) -> OutputsAttrDict:
+        """Build an output attribute dict without output definition metadata.
+        For pipeline outputs, it's setting should be copied from node level outputs.
+
+        :param outputs: Node output dict or pipeline component's outputs.
+        :param none_data: Set data to None if True.
+        :return: Built dynamic output attribute dict.
+        """
+        output_dict = {}
+        for key, val in outputs.items():
+            if isinstance(val, Output):
+                output_val = self._build_output(name=key, meta=val, data=val)
+            elif isinstance(val, NodeOutput):
+                output_val = self._build_output(name=key, meta=None, data=None)
+                copy_output_setting(source=val, target=output_val)
+            else:
+                message = "Unsupported output type: {} for pipeline output: {}: {}"
+                raise ValidationException(
+                    message=message.format(type(val), key, val),
+                    no_personal_data_message=message,
+                    target=ErrorTarget.PIPELINE,
+                )
+            output_dict[key] = output_val
+        return OutputsAttrDict(output_dict)
 
     def _build_outputs(self) -> Dict[str, Output]:
         """Build outputs of this pipeline to a dict which maps output to actual

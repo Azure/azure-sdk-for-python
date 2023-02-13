@@ -266,22 +266,20 @@ class PipelineComponentBuilder:
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             output_meta = Output(
-                type=_map_type(meta), description=meta.description, mode=meta.mode, is_control=meta.is_control
+                type=_map_type(meta),
+                description=meta.description,
+                mode=meta.mode,
+                is_control=meta.is_control
             )
             pipeline_output = PipelineOutput(
                 port_name=key,
-                data=None,
+                data=value._data,
+                # TODO: verify if we need to set output meta here
                 meta=output_meta,
                 owner="pipeline",
                 description=self._args_description.get(key, None),
             )
-            value._owner.outputs[value._port_name]._data = PipelineOutput(
-                port_name=key,
-                data=value._data,
-                meta=None,
-                owner="pipeline",
-                description=self._args_description.get(key, None),
-            )
+            value._owner.outputs[value._port_name]._data = pipeline_output
 
             output_dict[key] = pipeline_output
             output_meta_dict[key] = output_meta._to_dict()
