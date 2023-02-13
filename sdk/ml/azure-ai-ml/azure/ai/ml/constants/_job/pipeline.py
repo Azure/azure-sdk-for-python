@@ -61,7 +61,3 @@ COMPONENT_IO_KEYWORDS = {
     "__sizeof__",
     "__hash__",
 }
-IO_KEYWORD_WARNING_MESSAGE = (
-    "Reserved word used as IO name, can only be accessed with syntax \"<node>.inputs[<name>]\" "
-    "or \"<node>.outputs[<name>]\"."
-)

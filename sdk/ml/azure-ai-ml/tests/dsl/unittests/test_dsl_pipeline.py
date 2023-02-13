@@ -1,3 +1,4 @@
+import logging
 import os
 from io import StringIO
 from pathlib import Path
@@ -35,7 +36,6 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     InputOutputModes,
 )
-from azure.ai.ml.constants._job.pipeline import IO_KEYWORD_WARNING_MESSAGE
 from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
 from azure.ai.ml.entities._builders import Command, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
@@ -2685,22 +2685,23 @@ class TestDSLPipeline:
             assert_job_cancel(pipeline, client)
         assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)
 
-    def test_keyword_in_io(self):
-        from test_configs.dsl_pipeline.pipeline_with_keyword_in_node_io.pipeline import pipeline_job
+    def test_validate_pipeline_node_io_name_has_keyword(self, caplog):
+        # Refresh logger for pytest to capture log, otherwise the result is empty.
+        from azure.ai.ml.dsl import _pipeline_component_builder
 
-        validation_result = pipeline_job._customized_validate()
-        assert validation_result.passed
-        warnings = validation_result._warnings
-        assert len(warnings) == 3
-        assert (
-            warnings[0].yaml_path == "jobs.pipeline_component_func.jobs.node.outputs.__contains__"
-            and warnings[0].message == IO_KEYWORD_WARNING_MESSAGE
+        _pipeline_component_builder.module_logger = logging.getLogger(__file__)
+        with caplog.at_level(logging.WARNING):
+            from test_configs.dsl_pipeline.pipeline_with_keyword_in_node_io.pipeline import pipeline_job
+
+            assert pipeline_job._customized_validate().passed
+
+        warning_template = (
+            "Reserved word {io_name} is used as {io} name in node {node_name}, "
+            "can only be accessed with \"{node_name}.{io}s.{io_name}\""
         )
-        assert (
-            warnings[1].yaml_path == "jobs.upstream_node.outputs.items"
-            and warnings[1].message == IO_KEYWORD_WARNING_MESSAGE
-        )
-        assert (
-            warnings[2].yaml_path == "jobs.downstream_node.inputs.keys"
-            and warnings[2].message == IO_KEYWORD_WARNING_MESSAGE
-        )
+        assert caplog.messages == [
+            warning_template.format(io_name="__contains__", io="output", node_name="node"),
+            warning_template.format(io_name="items", io="output", node_name="upstream_node"),
+            warning_template.format(io_name="keys", io="input", node_name="downstream_node"),
+            warning_template.format(io_name="__hash__", io="output", node_name="pipeline_component_func"),
+        ]

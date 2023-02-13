@@ -10,7 +10,8 @@ inner_component = load_component(Path(__file__).parent / "inner_node.yml")
 
 @pipeline
 def pipeline_component_func():
-    node = inner_component()  # noqa: F841
+    node = inner_component()
+    return {"__hash__": node.outputs["__contains__"]}
 
 
 @pipeline
