@@ -9,6 +9,7 @@ from testcase import {{ test_prefix.capitalize() }}Preparer
 from testcase_async import {{ test_prefix.capitalize() }}AsyncTest
 
 
+# For more info about how to write and run test, please refer to https://github.com/Azure/azure-sdk-for-python/wiki/Dataplane-Codegen-Quick-Start-for-Test
 class {{ test_prefix.capitalize() }}SmokeAsyncTest({{ test_prefix.capitalize() }}AsyncTest):
 
     @{{ test_prefix.capitalize() }}Preparer()
