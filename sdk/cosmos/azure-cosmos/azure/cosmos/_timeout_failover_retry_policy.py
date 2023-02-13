@@ -28,27 +28,16 @@ from ..cosmos.documents import _OperationType
 
 class _TimeoutFailoverRetryPolicy(object):
 
-    Max_retry_attempt_count = 1
-    Retry_after_in_milliseconds = 0
-
     def __init__(self, connection_policy, global_endpoint_manager, *args):
         self._max_retry_attempt_count = 120
-        self.current_retry_attempt_count = 0
-        self.retry_after_in_milliseconds = 1000
+        self._max_service_unavailable_retry_count = 1
+        self.retry_after_in_milliseconds = 0
         self.args = args
 
         self.global_endpoint_manager = global_endpoint_manager
         self.failover_retry_count = 0
         self.connection_policy = connection_policy
         self.request = args[0] if args else None
-        # clear previous location-based routing directive
-        if self.request:
-            self.request.clear_route_to_location()
-
-            # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
-            # This enables marking the endpoint unavailability on endpoint failover/unreachability
-            self.location_endpoint = self.global_endpoint_manager.resolve_service_endpoint(self.request)
-            self.request.route_to_location(self.location_endpoint)
 
     def needsRetry(self):
         if self.args:
@@ -57,11 +46,10 @@ class _TimeoutFailoverRetryPolicy(object):
                 return True
         return False
 
-
     def ShouldRetry(self, _exception):
         """Returns true if should retry based on the passed-in exception.
 
-        :param (exceptions.CosmosHttpResponseError instance) exception:
+        :param (exceptions.CosmosHttpResponseError instance) _exception:
         :rtype: boolean
 
         """
@@ -71,7 +59,10 @@ class _TimeoutFailoverRetryPolicy(object):
         if not self.connection_policy.EnableEndpointDiscovery:
             return False
 
-        if self.failover_retry_count >= self.Max_retry_attempt_count:
+        if _exception.status_code == http_constants.StatusCodes.SERVICE_UNAVAILABLE and \
+                self.failover_retry_count >= self._max_service_unavailable_retry_count:
+            return False
+        if self.failover_retry_count >= self._max_retry_attempt_count:
             return False
 
         self.failover_retry_count += 1
