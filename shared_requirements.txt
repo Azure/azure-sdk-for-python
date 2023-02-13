@@ -469,6 +469,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-purview azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-azurestack msrest>=0.7.1
 #override azure-mgmt-quota typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-containerregistry typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-azurestackhci msrest>=0.7.1
 #override azure-mgmt-azurestackhci azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-sqlvirtualmachine msrest>=0.7.1
