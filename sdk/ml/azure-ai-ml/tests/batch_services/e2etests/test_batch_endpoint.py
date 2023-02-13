@@ -9,7 +9,11 @@ from azure.core.exceptions import ResourceNotFoundError
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test", "mock_snapshot_hash")
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_snapshot_hash",
+    "bodiless_matching",
+)
 @pytest.mark.production_experiences_test
 class TestBatchEndpoint(AzureRecordedTestCase):
     def test_batch_endpoint_create(
