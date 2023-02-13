@@ -36,4 +36,4 @@ with producer_client:
     event_data_batch.add(EventData('Single message'))
     producer_client.send_batch(event_data_batch)
 
-print("Send messages in {} seconds.".format(time.time() - start_time))
+print(f"Send messages in {time.time() - start_time} seconds.")

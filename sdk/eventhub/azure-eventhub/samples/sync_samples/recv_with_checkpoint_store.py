@@ -12,8 +12,12 @@ If no partition id is specified, the checkpoint_store are used for load-balance 
 If partition id is specified, the checkpoint_store can only be used for checkpoint.
 """
 import os
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # type: ignore
+
+if TYPE_CHECKING:
+    from azure.eventhub import PartitionContext, EventData
 
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -22,10 +26,10 @@ STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
 
-def on_event(partition_context, event):
+def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
     # Avoid time-consuming operations.
-    print("Received event from partition: {}.".format(partition_context.partition_id))
+    print(f"Received event from partition: {partition_context.partition_id}.")
     partition_context.update_checkpoint(event)
 
 

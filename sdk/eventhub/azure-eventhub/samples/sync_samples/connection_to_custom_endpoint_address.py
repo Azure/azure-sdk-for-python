@@ -10,7 +10,10 @@ Examples to show how to create EventHubProducerClient and EventHubConsumerClient
 """
 
 import os
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, EventData
+if TYPE_CHECKING:
+    from azure.eventhub import EventDataBatch, PartitionContext
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -24,7 +27,7 @@ CUSTOM_ENDPOINT_ADDRESS = 'sb://<custom_endpoint_hostname>:<custom_endpoint_port
 CUSTOM_CA_BUNDLE_PATH = '<your_custom_ca_bundle_file_path>'
 
 
-def producer_connecting_to_custom_endpoint():
+def producer_connecting_to_custom_endpoint() -> None:
     producer_client = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         eventhub_name=EVENTHUB_NAME,
@@ -35,19 +38,19 @@ def producer_connecting_to_custom_endpoint():
     with producer_client:
         # Without specifying partition_id or partition_key
         # the events will be distributed to available partitions via round-robin.
-        event_data_batch = producer_client.create_batch()
+        event_data_batch: EventDataBatch = producer_client.create_batch()
         event_data_batch.add(EventData('Single message'))
         producer_client.send_batch(event_data_batch)
         print("Send a message.")
 
 
-def on_event(partition_context, event):
+def on_event(partition_context: PartitionContext, event: Optional[EventData]):
     # Put your code here.
     # If the operation is i/o intensive, multi-thread will have better performance.
-    print("Received event from partition: {}.".format(partition_context.partition_id))
+    print(f"Received event from partition: {partition_context.partition_id}")
 
 
-def consumer_connecting_to_custom_endpoint():
+def consumer_connecting_to_custom_endpoint() -> None:
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',

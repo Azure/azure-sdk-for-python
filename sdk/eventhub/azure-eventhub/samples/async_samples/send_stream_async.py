@@ -12,15 +12,19 @@ Example to show streaming sending events with different options to an Event Hub 
 import time
 import asyncio
 import os
+from typing import TYPE_CHECKING
 
 from azure.eventhub.aio import EventHubProducerClient
 from azure.eventhub import EventData
+
+if TYPE_CHECKING:
+    from azure.eventhub import EventDataBatch
 
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
-async def run():
+async def run() -> None:
 
     producer = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STR,
@@ -46,4 +50,4 @@ async def run():
 
 start_time = time.time()
 asyncio.run(run())
-print("Send messages in {} seconds.".format(time.time() - start_time))
+print(f"Send messages in {time.time() - start_time} seconds.")

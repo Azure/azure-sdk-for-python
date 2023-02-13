@@ -14,8 +14,11 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 
 import os
 import logging
+from typing import TYPE_CHECKING, List
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # type: ignore
+if TYPE_CHECKING:
+    from azure.eventhub import PartitionContext, EventData
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -26,13 +29,13 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
-def on_event_batch(partition_context, event_batch):
+def on_event_batch(partition_context: PartitionContext, event_batch: List[EventData]) -> None:
     log.info("Partition {}, Received count: {}".format(partition_context.partition_id, len(event_batch)))
     # put your code here
     partition_context.update_checkpoint()
 
 
-def receive_batch():
+def receive_batch() -> None:
     checkpoint_store = BlobCheckpointStore.from_connection_string(STORAGE_CONNECTION_STR, BLOB_CONTAINER_NAME)
     client = EventHubConsumerClient.from_connection_string(
         CONNECTION_STR,

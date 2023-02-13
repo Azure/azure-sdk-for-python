@@ -11,18 +11,22 @@ Examples to show sending events in buffered mode to an Event Hub.
 
 import time
 import os
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub import EventHubProducerClient, EventData
+
+if TYPE_CHECKING:
+    from azure.eventhub import EventDataBatch
 
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
-def on_success(events, pid):
+def on_success(events, pid: Optional[str]) -> None:
     # sending succeeded
     print(events, pid)
 
 
-def on_error(events, pid, error):
+def on_error(events, pid: Optional[str], error: Exception) -> None:
     # sending failed
     print(events, pid, error)
 
@@ -42,15 +46,15 @@ with producer:
     # single events will be batched automatically
     for i in range(10):
         # the method returning indicates the event has been enqueued to the buffer
-        producer.send_event(EventData('Single data {}'.format(i)))
+        producer.send_event(EventData(f'Single data {i}'))
 
-    batch = producer.create_batch()
+    batch: EventDataBatch = producer.create_batch()
     for i in range(10):
-        batch.add(EventData('Single data in batch {}'.format(i)))
+        batch.add(EventData(f'Single data in batch {i}'))
     # alternatively, you can enqueue an EventDataBatch object to the buffer
     producer.send_batch(batch)
 
     # calling flush sends out the events in the buffer immediately
     producer.flush()
 
-print("Send messages in {} seconds.".format(time.time() - start_time))
+print(f"Send messages in {time.time() - start_time} seconds.")

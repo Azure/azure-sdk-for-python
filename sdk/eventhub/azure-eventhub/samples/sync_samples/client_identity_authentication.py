@@ -36,8 +36,11 @@ both to demonstrate the ease of adjusting authentication, and to surface another
 """
 
 import os
+from typing import TYPE_CHECKING
 from azure.eventhub import EventData, EventHubProducerClient
 from azure.identity import EnvironmentCredential
+if TYPE_CHECKING:
+  from azure.eventhub import EventDataBatch
 
 
 fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
@@ -58,7 +61,7 @@ producer = EventHubProducerClient(fully_qualified_namespace=fully_qualified_name
                                   credential=credential)
 
 with producer:
-    event_data_batch = producer.create_batch()
+    event_data_batch: EventDataBatch = producer.create_batch()
     while True:
         try:
             event_data_batch.add(EventData('Message inside EventBatchData'))

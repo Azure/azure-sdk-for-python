@@ -25,7 +25,7 @@ SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
 CONSUMER_GROUP = "$Default"
 
 
-def create_producer_client():
+def create_producer_client() -> None:
     print('Examples showing how to create producer client.')
 
     # Create producer client from connection string.
@@ -60,12 +60,12 @@ def create_producer_client():
     print("Calling producer client get eventhub properties:", producer_client.get_eventhub_properties())
 
 
-def create_consumer_client():
+def create_consumer_client() -> None:
     print('Examples showing how to create consumer client.')
 
     # Create consumer client from connection string.
 
-    consumer_client = EventHubConsumerClient.from_connection_string(
+    consumer_client: EventHubConsumerClient = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STRING,  # connection string contains EventHub name.
         consumer_group=CONSUMER_GROUP
     )

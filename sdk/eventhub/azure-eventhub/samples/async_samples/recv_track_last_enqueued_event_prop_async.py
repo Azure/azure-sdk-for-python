@@ -12,25 +12,27 @@ the last enqueued event properties of specific partition.
 
 import asyncio
 import os
+from typing import TYPE_CHECKING,Optional
 from azure.eventhub.aio import EventHubConsumerClient
+
+if TYPE_CHECKING:
+    from azure.eventhub.aio import PartitionContext
+    from azure.eventhub import EventData
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
-async def on_event(partition_context, event):
-    print("Received events from partition: {}.".format(partition_context.partition_id))
+async def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
+    print(f"Received event from partition {partition_context.partition_id}.")
     # Do some sync or async operations. If the operation is i/o intensive, async will have better performance.
     print(event)
 
-    print("Last enqueued event properties from partition: {} is: {}.".format(
-        partition_context.partition_id,
-        partition_context.last_enqueued_event_properties)
-    )
+    print(f"Last enqueued event properties from partition: {partition_context.partition_id} is: {partition_context.last_enqueued_event_properties}.")
     await partition_context.update_checkpoint(event)
 
 
-async def main():
+async def main() -> None:
     client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group="$default",

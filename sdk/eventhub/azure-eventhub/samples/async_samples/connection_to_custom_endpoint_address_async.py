@@ -11,8 +11,11 @@ Examples to show how to create async EventHubProducerClient and EventHubConsumer
 
 import os
 import asyncio
+from typing import TYPE_CHECKING, Optional, Awaitable
 from azure.eventhub import EventData
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
+if TYPE_CHECKING:
+    from azure.eventhub.aio import PartitionContext
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -26,7 +29,7 @@ CUSTOM_ENDPOINT_ADDRESS = 'sb://<custom_endpoint_hostname>:<custom_endpoint_port
 CUSTOM_CA_BUNDLE_PATH = '<your_custom_ca_bundle_file_path>'
 
 
-async def producer_connecting_to_custom_endpoint():
+async def producer_connecting_to_custom_endpoint() -> None:
     producer_client = EventHubProducerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         eventhub_name=EVENTHUB_NAME,
@@ -43,13 +46,13 @@ async def producer_connecting_to_custom_endpoint():
         print("Send a message.")
 
 
-async def on_event(partition_context, event):
+async def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
     # If the operation is i/o intensive, multi-thread will have better performance.
-    print("Received event from partition: {}.".format(partition_context.partition_id))
+    print(f"Received event from partition: {partition_context.partition_id}")
 
 
-async def consumer_connecting_to_custom_endpoint():
+async def consumer_connecting_to_custom_endpoint() -> None:
     consumer_client = EventHubConsumerClient.from_connection_string(
         conn_str=CONNECTION_STR,
         consumer_group='$Default',

@@ -14,8 +14,12 @@ If partition id is specified, the checkpoint_store can only be used for checkpoi
 """
 import os
 import time
+from typing import TYPE_CHECKING, Dict, Optional
 from azure.eventhub import EventHubConsumerClient
-from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
+from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore # type: ignore
+
+if TYPE_CHECKING:
+    from azure.eventhub import PartitionContext, EventData
 
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
@@ -23,18 +27,18 @@ EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 STORAGE_CONNECTION_STR = os.environ["AZURE_STORAGE_CONN_STR"]
 BLOB_CONTAINER_NAME = "your-blob-container-name"  # Please make sure the blob container resource exists.
 
-partition_last_checkpoint_time = dict()
+partition_last_checkpoint_time: Dict[str, float] = dict()
 checkpoint_time_interval = 15
 
 
-def on_event(partition_context, event):
+def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
     # Avoid time-consuming operations.
     p_id = partition_context.partition_id
-    print("Received event from partition: {}".format(p_id))
+    print(f"Received event from partition: {p_id}")
     now_time = time.time()
     p_id = partition_context.partition_id
-    last_checkpoint_time = partition_last_checkpoint_time.get(p_id)
+    last_checkpoint_time: Optional[float] = partition_last_checkpoint_time.get(p_id)
     if last_checkpoint_time is None or (now_time - last_checkpoint_time) >= checkpoint_time_interval:
         partition_context.update_checkpoint(event)
         partition_last_checkpoint_time[p_id] = now_time

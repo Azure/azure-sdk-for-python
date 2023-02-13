@@ -9,7 +9,10 @@
 An example to show sending and receiving events behind a proxy.
 """
 import os
+from typing import TYPE_CHECKING, Optional
 from azure.eventhub import EventData, EventHubConsumerClient, EventHubProducerClient
+if TYPE_CHECKING:
+    from azure.eventhub import PartitionContext, EventDataBatch
 
 CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
@@ -22,9 +25,9 @@ HTTP_PROXY = {
 }
 
 
-def on_event(partition_context, event):
+def on_event(partition_context: PartitionContext, event: Optional[EventData]) -> None:
     # Put your code here.
-    print("received event from partition: {}.".format(partition_context.partition_id))
+    print(f"received event from partition: {partition_context.partition_id}.")
     print(event)
 
 
@@ -34,7 +37,7 @@ producer_client = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR, eventhub_name=EVENTHUB_NAME, http_proxy=HTTP_PROXY)
 
 with producer_client:
-    event_data_batch = producer_client.create_batch(max_size_in_bytes=10000)
+    event_data_batch: EventDataBatch = producer_client.create_batch(max_size_in_bytes=10000)
     while True:
         try:
             event_data_batch.add(EventData('Message inside EventBatchData'))
