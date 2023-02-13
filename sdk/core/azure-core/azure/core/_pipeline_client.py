@@ -152,7 +152,7 @@ class PipelineClient(PipelineClientBase):
                         index_of_retry = index
                 if index_of_retry == -1:
                     raise ValueError(
-                        "Failed to add per_retry_policies; " "no RetryPolicy found in the supplied list of policies. "
+                        "Failed to add per_retry_policies; no RetryPolicy found in the supplied list of policies. "
                     )
                 policies_1 = policies[: index_of_retry + 1]
                 policies_2 = policies[index_of_retry + 1 :]
