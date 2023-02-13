@@ -14,7 +14,6 @@ if TYPE_CHECKING:
     from azure.core.credentials import (
         AccessToken,
         TokenCredential,
-        GenericKeyCredential,
         AzureSasCredential,
     )
     from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -182,7 +181,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
 
     def __init__(
         self,
-        credential: "GenericKeyCredential",
+        credential: "AzureKeyCredential",
         name: Union[str, Tuple[str, ...]],
         **kwargs  # pylint: disable=unused-argument
     ) -> None:
@@ -190,7 +189,7 @@ class AzureKeyCredentialPolicy(SansIOHTTPPolicy):
         self._credential = credential
         if not name:
             raise ValueError("name can not be None or empty")
-        if not isinstance(name, (str, Tuple)):
+        if not isinstance(name, (str, Tuple[str, ...])):
             raise TypeError("name must be a string or a tuple of strings.")
         self._name = name
 
