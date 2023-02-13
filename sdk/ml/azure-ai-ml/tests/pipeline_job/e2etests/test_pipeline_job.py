@@ -1439,6 +1439,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert node_output.name == 'convert_data_node_output'
         assert node_output.version == '1'
 
+    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
     @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_urifolder(
         self, client: MLClient, randstr: Callable[[str], str]
@@ -1466,6 +1467,7 @@ class TestPipelineJob(AzureRecordedTestCase):
              'type': 'data_transfer'
         }
 
+    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
     @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_urifile(
         self, client: MLClient, randstr: Callable[[str], str]
@@ -1493,6 +1495,7 @@ class TestPipelineJob(AzureRecordedTestCase):
              'type': 'data_transfer'
         }
 
+    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
     @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_data_transfer_copy_2urifolder(
         self, client: MLClient, randstr: Callable[[str], str]
@@ -1523,6 +1526,7 @@ class TestPipelineJob(AzureRecordedTestCase):
              'type': 'data_transfer'
         }
 
+    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
     @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_inline_data_transfer_copy_2urifolder(
         self, client: MLClient, randstr: Callable[[str], str]
@@ -1553,6 +1557,7 @@ class TestPipelineJob(AzureRecordedTestCase):
              'type': 'data_transfer'
         }
 
+    @pytest.mark.skip(reason="Needs to be re-recorded, but recording requires workspace with datafactory compute")
     @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
     def test_pipeline_job_with_inline_data_transfer_copy_mixtype_file(
         self, client: MLClient, randstr: Callable[[str], str]
