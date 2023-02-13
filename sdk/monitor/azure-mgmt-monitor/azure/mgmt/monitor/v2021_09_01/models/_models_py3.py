@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from ... import _serialization
 
@@ -51,8 +51,8 @@ class ActionDetail(_serialization.Model):
         sub_state: Optional[str] = None,
         send_time: Optional[str] = None,
         detail: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword mechanism_type: The mechanism type.
         :paramtype mechanism_type: str
@@ -91,8 +91,12 @@ class ActionGroupList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ActionGroupResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of action groups.
         :paramtype value: list[~$(python-base-namespace).v2021_09_01.models.ActionGroupResource]
@@ -119,7 +123,7 @@ class ActionGroupPatchBody(_serialization.Model):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -166,7 +170,7 @@ class AzureResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -286,8 +290,8 @@ class ActionGroupResource(AzureResource):  # pylint: disable=too-many-instance-a
         azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
         arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
         event_hub_receivers: Optional[List["_models.EventHubReceiver"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -376,7 +380,7 @@ class ArmRoleReceiver(_serialization.Model):
         "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
     }
 
-    def __init__(self, *, name: str, role_id: str, use_common_alert_schema: bool = False, **kwargs):
+    def __init__(self, *, name: str, role_id: str, use_common_alert_schema: bool = False, **kwargs: Any) -> None:
         """
         :keyword name: The name of the arm role receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -441,8 +445,8 @@ class AutomationRunbookReceiver(_serialization.Model):
         name: Optional[str] = None,
         service_uri: Optional[str] = None,
         use_common_alert_schema: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword automation_account_id: The Azure automation account Id which holds this runbook and
          authenticate to Azure resource. Required.
@@ -492,7 +496,7 @@ class AzureAppPushReceiver(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -546,8 +550,8 @@ class AzureFunctionReceiver(_serialization.Model):
         function_name: str,
         http_trigger_url: str,
         use_common_alert_schema: bool = False,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the azure function receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -583,7 +587,9 @@ class Context(_serialization.Model):
         "context_type": {"key": "contextType", "type": "str"},
     }
 
-    def __init__(self, *, notification_source: Optional[str] = None, context_type: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, notification_source: Optional[str] = None, context_type: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword notification_source: The source of the notification request.
         :paramtype notification_source: str
@@ -627,7 +633,7 @@ class EmailReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, use_common_alert_schema: bool = False, **kwargs):
+    def __init__(self, *, name: str, email_address: str, use_common_alert_schema: bool = False, **kwargs: Any) -> None:
         """
         :keyword name: The name of the email receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -661,7 +667,7 @@ class EnableRequest(_serialization.Model):
         "receiver_name": {"key": "receiverName", "type": "str"},
     }
 
-    def __init__(self, *, receiver_name: str, **kwargs):
+    def __init__(self, *, receiver_name: str, **kwargs: Any) -> None:
         """
         :keyword receiver_name: The name of the receiver to resubscribe. Required.
         :paramtype receiver_name: str
@@ -684,7 +690,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -741,8 +747,8 @@ class EventHubReceiver(_serialization.Model):
         subscription_id: str,
         use_common_alert_schema: bool = False,
         tenant_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the Event hub receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -806,8 +812,8 @@ class ItsmReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs
-    ):
+        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the Itsm receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -863,8 +869,8 @@ class LogicAppReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, resource_id: str, callback_url: str, use_common_alert_schema: bool = False, **kwargs
-    ):
+        self, *, name: str, resource_id: str, callback_url: str, use_common_alert_schema: bool = False, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the logic app receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -888,7 +894,10 @@ class NotificationRequestBody(_serialization.Model):  # pylint: disable=too-many
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar alert_type: The name of the supported alert type. Required.
+    :ivar alert_type: The value of the supported alert type. Supported alert type values are:
+     servicehealth, metricstaticthreshold, metricsdynamicthreshold, logalertv2, smartalert,
+     webtestalert, logalertv1numresult, logalertv1metricmeasurement, resourcehealth, activitylog,
+     actualcostbudget, forecastedbudget. Required.
     :vartype alert_type: str
     :ivar email_receivers: The list of email receivers that are part of this action group.
     :vartype email_receivers: list[~$(python-base-namespace).v2021_09_01.models.EmailReceiver]
@@ -957,10 +966,13 @@ class NotificationRequestBody(_serialization.Model):  # pylint: disable=too-many
         azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
         arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
         event_hub_receivers: Optional[List["_models.EventHubReceiver"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword alert_type: The name of the supported alert type. Required.
+        :keyword alert_type: The value of the supported alert type. Supported alert type values are:
+         servicehealth, metricstaticthreshold, metricsdynamicthreshold, logalertv2, smartalert,
+         webtestalert, logalertv1numresult, logalertv1metricmeasurement, resourcehealth, activitylog,
+         actualcostbudget, forecastedbudget. Required.
         :paramtype alert_type: str
         :keyword email_receivers: The list of email receivers that are part of this action group.
         :paramtype email_receivers: list[~$(python-base-namespace).v2021_09_01.models.EmailReceiver]
@@ -1046,7 +1058,7 @@ class SmsReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SMS receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -1100,8 +1112,8 @@ class TestNotificationDetailsResponse(_serialization.Model):
         completed_time: Optional[str] = None,
         created_time: Optional[str] = None,
         action_details: Optional[List["_models.ActionDetail"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword context: The context info.
         :paramtype context: ~$(python-base-namespace).v2021_09_01.models.Context
@@ -1148,7 +1160,7 @@ class VoiceReceiver(_serialization.Model):
         "phone_number": {"key": "phoneNumber", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the voice receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -1211,8 +1223,8 @@ class WebhookReceiver(_serialization.Model):
         object_id: Optional[str] = None,
         identifier_uri: Optional[str] = None,
         tenant_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the webhook receiver. Names must be unique across all receivers
          within an action group. Required.

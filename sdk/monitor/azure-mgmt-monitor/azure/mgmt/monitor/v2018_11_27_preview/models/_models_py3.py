@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -33,7 +33,7 @@ class DataContainer(_serialization.Model):
         "workspace": {"key": "workspace", "type": "WorkspaceInfo"},
     }
 
-    def __init__(self, *, workspace: "_models.WorkspaceInfo", **kwargs):
+    def __init__(self, *, workspace: "_models.WorkspaceInfo", **kwargs: Any) -> None:
         """
         :keyword workspace: Log Analytics workspace information. Required.
         :paramtype workspace: ~$(python-base-namespace).v2018_11_27_preview.models.WorkspaceInfo
@@ -62,7 +62,7 @@ class Error(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: str, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: str, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code identifying the specific error. Required.
         :paramtype code: str
@@ -99,7 +99,7 @@ class ProxyResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -124,7 +124,7 @@ class ResponseWithError(_serialization.Model):
         "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, *, error: "_models.Error", **kwargs):
+    def __init__(self, *, error: "_models.Error", **kwargs: Any) -> None:
         """
         :keyword error: Error information. Required.
         :paramtype error: ~$(python-base-namespace).v2018_11_27_preview.models.Error
@@ -183,8 +183,8 @@ class VMInsightsOnboardingStatus(ProxyResource):
         onboarding_status: Optional[Union[str, "_models.OnboardingStatus"]] = None,
         data_status: Optional[Union[str, "_models.DataStatus"]] = None,
         data: Optional[List["_models.DataContainer"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword resource_id: Azure Resource Manager identifier of the resource whose onboarding status
          is being represented.
@@ -233,7 +233,9 @@ class WorkspaceInfo(_serialization.Model):
         "customer_id": {"key": "properties.customerId", "type": "str"},
     }
 
-    def __init__(self, *, id: str, location: str, customer_id: str, **kwargs):  # pylint: disable=redefined-builtin
+    def __init__(
+        self, *, id: str, location: str, customer_id: str, **kwargs: Any  # pylint: disable=redefined-builtin
+    ) -> None:
         """
         :keyword id: Azure Resource Manager identifier of the Log Analytics Workspace. Required.
         :paramtype id: str
