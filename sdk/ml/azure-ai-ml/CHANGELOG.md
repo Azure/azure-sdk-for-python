@@ -2,7 +2,11 @@
 
 ## 1.5.0 (Unreleased)
 
+
 ### Features Added
+- Added ability to configure new cloud environments in two different ways
+- Setting an environment variable `ARM_CLOUD_METADATA_URL`, the SDK will then follow that URL and look for cloud configurations there
+- Passing in keyword arguments from the command line when creating a new MLClient object
 
 - Added support for `tags` on Compute Resources.
 
@@ -11,7 +15,6 @@
 - Fix experiment name wrongly set to 'Default' when schedule existing job.
 
 ### Other Changes
-
 - Added dependency on `azure-mgmt-resource`
 - Added dependency on `azure-mgmt-resourcegraph`
 

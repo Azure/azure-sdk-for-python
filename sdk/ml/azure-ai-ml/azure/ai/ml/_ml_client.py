@@ -16,11 +16,13 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
 from azure.ai.ml._azure_environments import (
+    EndpointURLS,
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
     _get_registry_discovery_endpoint_from_metadata,
     _set_cloud,
+    _add_cloud_to_environments,
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
@@ -165,6 +167,18 @@ class MLClient:
 
         show_progress = kwargs.pop("show_progress", True)
         self._operation_config = OperationConfig(show_progress=show_progress)
+
+        cloud_config_keys = [
+            "cloud",
+            EndpointURLS.AZURE_PORTAL_ENDPOINT,
+            EndpointURLS.RESOURCE_MANAGER_ENDPOINT,
+            EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT,
+            EndpointURLS.AML_RESOURCE_ID,
+            EndpointURLS.STORAGE_ENDPOINT,
+            EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT
+        ]
+        if set(cloud_config_keys).issubset(kwargs):
+            _add_cloud_to_environments(kwargs)
 
         cloud_name = kwargs.get("cloud", _get_default_cloud_name())
         self._cloud = cloud_name

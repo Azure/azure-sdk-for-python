@@ -431,4 +431,37 @@ class TestMachineLearningClient:
                 registry_name="testfeed",
             )
         message = exception.value.args[0]
-        assert message == "Both workspace_name and registry_name cannot be used together, for the ml_client."
+        assert (
+            message
+            == "Both workspace_name and registry_name cannot be used together, for the ml_client."
+        )
+
+    def test_ml_client_with_cli_config(self, mock_credential):
+        kwargs = {
+            "cloud": "test_cloud",
+            "azure_portal": "https://test.portal.azure.com/",
+            "resource_manager": "https://test.management.azure.com/",
+            "active_directory": "https://test.login.microsoftonline.com/",
+            "aml_resource_id": "https://test.ml.azure.com/",
+            "storage_endpoint": "test.core.windows.net",
+            "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
+        }
+        ml_client = MLClient(
+                credential=mock_credential,
+                subscription_id=Test_Subscription,
+                resource_group_name=Test_Resource_Group,
+                workspace_name="test-ws1",
+                **kwargs,
+            )
+        assert ml_client._cloud == "test_cloud"
+
+        # We shouldn't need to add it to the kwargs a second time, just the cloud name
+        kwargs = {"cloud": "test_cloud"}
+        ml_client = MLClient(
+                credential=mock_credential,
+                subscription_id=Test_Subscription,
+                resource_group_name=Test_Resource_Group,
+                workspace_name="test-ws1",
+                **kwargs,
+            )
+        assert ml_client._cloud == "test_cloud"

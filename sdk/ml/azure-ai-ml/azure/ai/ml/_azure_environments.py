@@ -60,9 +60,6 @@ _environments = {
     },
 }
 
-_requests_pipeline = None
-
-
 def _get_cloud(cloud: str):
     if cloud in _environments:
         return _environments[cloud]
@@ -120,7 +117,6 @@ def _get_base_url_from_metadata(cloud_name: Optional[str] = None, is_local_mfe: 
     base_url = None
     if is_local_mfe:
         base_url = _get_mfe_url_override()
-
     if base_url is None:
         cloud_details = _get_cloud_details(cloud_name)
         base_url = cloud_details.get(EndpointURLS.RESOURCE_MANAGER_ENDPOINT).strip("/")
@@ -283,3 +279,13 @@ def _convert_arm_to_cli(arm_cloud_metadata):
             module_logger.warning("Property on cloud not found in arm cloud metadata: %s", ex)
             continue
     return cli_cloud_metadata_dict
+
+def _add_cloud_to_environments(kwargs):
+    _environments[kwargs["cloud"]] = {
+        EndpointURLS.AZURE_PORTAL_ENDPOINT: kwargs[EndpointURLS.AZURE_PORTAL_ENDPOINT],
+        EndpointURLS.RESOURCE_MANAGER_ENDPOINT: kwargs[EndpointURLS.RESOURCE_MANAGER_ENDPOINT],
+        EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: kwargs[EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT],
+        EndpointURLS.AML_RESOURCE_ID: kwargs[EndpointURLS.AML_RESOURCE_ID],
+        EndpointURLS.STORAGE_ENDPOINT: kwargs[EndpointURLS.STORAGE_ENDPOINT],
+        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: kwargs[EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT],
+    }
