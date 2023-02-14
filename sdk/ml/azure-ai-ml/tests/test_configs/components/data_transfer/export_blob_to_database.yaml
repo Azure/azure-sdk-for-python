@@ -1,0 +1,10 @@
+$schema: http://azureml/sdk-2-0/DataTransferComponent.json
+name: datatransfer_blob_azuresql
+display_name: Data Transfer blob-azuresql
+type: data_transfer
+task: export_data
+inputs:
+  source:
+    type: uri_folder
+sink:
+  type: database
