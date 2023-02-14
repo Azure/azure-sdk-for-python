@@ -37,10 +37,11 @@ from ._connection_manager_async import get_connection_manager
 try:
     from ._transport._uamqp_transport_async import UamqpTransportAsync
 except ImportError:
-    UamqpTransportAsync = None  # type: ignore
+    UamqpTransportAsync = None
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 
 if TYPE_CHECKING:
+    from ._transport._uamqp_transport_async import UamqpTransportAsync
     from .._pyamqp.message import Message
     from .._pyamqp.aio import AMQPClientAsync
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
@@ -54,10 +55,8 @@ if TYPE_CHECKING:
         pass
     from azure.core.credentials_async import AsyncTokenCredential
 
-    try:
-        from typing_extensions import Protocol
-    except ImportError:
-        Protocol = object  # type: ignore
+    from typing_extensions import Protocol
+
 
     class AbstractConsumerProducer(Protocol):
         @property
@@ -107,7 +106,7 @@ if TYPE_CHECKING:
         AzureSasCredential,
         AzureNamedKeyCredential,
     ]
-    
+
     _MIXIN_BASE = AbstractConsumerProducer
 else:
     _MIXIN_BASE = object
@@ -214,7 +213,7 @@ class ClientBaseAsync(ClientBase):
         uamqp_transport = kwargs.get("uamqp_transport", False)
         if uamqp_transport and not UamqpTransportAsync:
             raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.0,<2.0.0`.")
-        self._amqp_transport = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
+        self._amqp_transport: Union[UamqpTransportAsync, PyamqpTransportAsync] = UamqpTransportAsync if uamqp_transport else PyamqpTransportAsync
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredentialAsync(credential)  # type: ignore
         elif isinstance(credential, AzureNamedKeyCredential):

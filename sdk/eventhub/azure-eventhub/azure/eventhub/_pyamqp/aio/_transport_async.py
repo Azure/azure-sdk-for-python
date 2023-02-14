@@ -40,7 +40,7 @@ import struct
 from ssl import SSLError
 from io import BytesIO
 import logging
-from typing import cast
+from typing import cast, Union
 
 
 
@@ -87,7 +87,7 @@ class AsyncTransportMixin:
         ):
             return None, None
 
-    async def read(self, verify_frame_type=0):
+    async def read(self: Union["AsyncTransportMixin", "AsyncTransport"], verify_frame_type=0):
         async with self.socket_lock:
             read_frame_buffer = BytesIO()
             try:
@@ -240,7 +240,7 @@ class AsyncTransport(
         **kwargs,  # pylint: disable=unused-argument
     ):
         self.connected = False
-        self.sock = None
+        self.sock: Union[socket.socket, Any] = None
         self.reader = None
         self.writer = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
@@ -578,9 +578,10 @@ class WebSocketTransportAsync(
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
         async with self.socket_lock:
-            await self.ws.close()
-            await self.session.close()
-            self.connected = False
+            if self.ws is not None:
+                await self.ws.close()
+                await self.session.close()
+                self.connected = False
 
     async def _write(self, s):
         """Completely write a string (byte array) to the peer.
@@ -588,4 +589,5 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        if self.ws is not None:
+            await self.ws.send_bytes(s)

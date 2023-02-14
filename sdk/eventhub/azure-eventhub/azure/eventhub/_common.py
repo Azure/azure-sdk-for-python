@@ -59,14 +59,16 @@ from ._pyamqp.message import Message as pyamqp_Message
 from ._transport._pyamqp_transport import PyamqpTransport
 
 if TYPE_CHECKING:
-    try:
-        from uamqp import (  # pylint: disable=unused-import
-            Message,    # not importing as uamqp_Message, b/c type is exposed to user
-            BatchMessage,
-        )
-    except ImportError:
-        Message = None
-        BatchMessage = None
+    from ._transport._uamqp_transport import UamqpTransport
+    from uamqp import Message, BatchMessage
+    # try:
+    #     from uamqp import (  # pylint: disable=unused-import
+    #         Message,    # not importing as uamqp_Message, b/c type is exposed to user
+    #         BatchMessage,
+    #     )
+    # except ImportError:
+    #     Message = None
+    #     BatchMessage = None
     from ._transport._base import AmqpTransport
 
 MessageContent = TypedDict("MessageContent", {"content": bytes, "content_type": str})
@@ -132,11 +134,11 @@ class EventData(object):
             raise ValueError("EventData cannot be None.")
 
         # Internal usage only for transforming AmqpAnnotatedMessage to outgoing EventData
-        self._raw_amqp_message = AmqpAnnotatedMessage(  # type: ignore
+        self._raw_amqp_message = AmqpAnnotatedMessage(
             data_body=body, annotations={}, application_properties={}
         )
         self._uamqp_message: Optional[Union[LegacyMessage, "Message"]] = None
-        self._message: Union["Message", pyamqp_Message] = None  # type: ignore
+        self._message: Union["Message", pyamqp_Message] = None
         self._raw_amqp_message.header = AmqpMessageHeader()
         self._raw_amqp_message.properties = AmqpMessageProperties()
 
@@ -202,7 +204,7 @@ class EventData(object):
             raise TypeError("`body_type` must be `AmqpMessageBodyType.DATA`.")
         content = bytearray()
         for c in self.body:  # type: ignore
-            content += c  # type: ignore
+            content += c
         content_type = cast(str, self.content_type)
         return {"content": bytes(content), "content_type": content_type}
 
@@ -540,7 +542,7 @@ class EventDataBatch(object):
         partition_key: Optional[Union[str, bytes]] = None,
         **kwargs,
     ) -> None:
-        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
+        self._amqp_transport: Union[UamqpTransport, PyamqpTransport] = kwargs.pop("amqp_transport", PyamqpTransport)
 
         if partition_key and not isinstance(partition_key, (str, bytes)):
             _LOGGER.info(

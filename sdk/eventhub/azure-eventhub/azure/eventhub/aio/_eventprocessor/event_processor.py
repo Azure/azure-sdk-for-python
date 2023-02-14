@@ -122,7 +122,7 @@ class EventProcessor(
 
         self._consumers: Dict[str, EventHubConsumer] = {}
         self._ownership_manager = OwnershipManager(
-            cast("EventHubConsumerClient", self._eventhub_client),
+            self._eventhub_client,
             self._consumer_group,
             self._id,
             self._checkpoint_store,
@@ -280,7 +280,7 @@ class EventProcessor(
             event_received_callback = partial(
                 self._on_event_received, partition_context
             )
-            self._consumers[partition_id] = self.create_consumer(  # type: ignore
+            self._consumers[partition_id] = self.create_consumer( 
                 partition_id,
                 initial_event_position,
                 event_position_inclusive,

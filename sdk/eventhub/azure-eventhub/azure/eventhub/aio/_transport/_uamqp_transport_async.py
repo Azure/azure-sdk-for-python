@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio
 import time
 import logging
-from typing import Union, cast, TYPE_CHECKING, List, Optional
+from typing import Union, cast, TYPE_CHECKING, List, Optional, TypeVar
 
 try:
     from uamqp import (
@@ -19,6 +19,7 @@ try:
         authentication,
         AMQPClientAsync,
         errors,
+        Message
     )
     from uamqp.async_ops import ConnectionAsync
     from ..._transport._uamqp_transport import UamqpTransport
@@ -37,10 +38,12 @@ from ...exceptions import (
 if TYPE_CHECKING:
     from .._client_base_async import ClientBaseAsync, ConsumerProducerMixin
     from ..._common import EventData
-    try:
-        from uamqp import Message
-    except ImportError:
-        Message = None
+    # try:
+    #     from uamqp import Message
+
+
+    # except ImportError:
+    #     Message = None
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -124,9 +127,9 @@ if uamqp_installed:
             await producer._open()
             producer._unsent_events[0].on_send_complete = producer._on_outcome
             UamqpTransportAsync._set_msg_timeout(producer, timeout_time, last_exception, logger)
-            producer._handler.queue_message(*producer._unsent_events)  # type: ignore
-            await producer._handler.wait_async()  # type: ignore
-            producer._unsent_events = producer._handler.pending_messages  # type: ignore
+            producer._handler.queue_message(*producer._unsent_events)
+            await producer._handler.wait_async()
+            producer._unsent_events = producer._handler.pending_messages
             if producer._outcome != constants.MessageSendResult.Ok:
                 if producer._outcome == constants.MessageSendResult.Timeout:
                     producer._condition = OperationTimeoutError("Send operation timed out")
@@ -217,12 +220,11 @@ if uamqp_installed:
                         break
                     except asyncio.CancelledError:  # pylint: disable=try-except-raise
                         raise
-                    except Exception as exception:  # pylint: disable=broad-except
-                        if (
-                            isinstance(exception, errors.LinkDetach)
-                            and exception.condition == constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
+                    except errors.LinkDetach as exception:
+                         if(exception.condition == constants.ErrorCodes.LinkStolen  # pylint: disable=no-member
                         ):
                             raise await consumer._handle_exception(exception)
+                    except Exception as exception:  # pylint: disable=broad-except
                         if not consumer.running:  # exit by close
                             return
                         if consumer._last_received_event:

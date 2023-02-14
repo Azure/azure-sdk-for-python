@@ -194,7 +194,7 @@ class EventHubProducerClient(
             ALL_PARTITIONS: self._create_producer()
         }
         self._max_message_size_on_link = 0
-        self._partition_ids: List[str] = None
+        self._partition_ids: Optional[List[str]] = None
         self._lock = threading.Lock()
         self._buffered_mode = buffered_mode
         self._on_success = on_success

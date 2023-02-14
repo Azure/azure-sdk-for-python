@@ -50,7 +50,7 @@ class BufferedProducerDispatcher:
         self._max_buffer_length = max_buffer_length
         self._amqp_transport = amqp_transport
 
-    async def _get_partition_id(self, partition_id, partition_key):
+    async def _get_partition_id(self, partition_id, partition_key) -> str:
         if partition_id:
             if partition_id not in self._partition_ids:
                 raise ConnectError(

@@ -20,10 +20,10 @@ if TYPE_CHECKING:
         pass
     from ._transport._base import AmqpTransport
 
-    try:
-        from typing_extensions import Protocol
-    except ImportError:
-        Protocol = object  # type: ignore
+    # try:
+    from typing_extensions import Protocol
+    # except ImportError:
+    #     Protocol = object  # type: ignore
 
     @runtime_checkable
     class ConnectionManager(Protocol):
@@ -126,7 +126,7 @@ class _SeparateConnectionManager(object):
         pass
 
 
-def get_connection_manager(**kwargs: Any) -> ConnectionManager:
+def get_connection_manager(**kwargs: Any) -> Union[_SharedConnectionManager, _SeparateConnectionManager]:
     connection_mode: _ConnectionMode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)

@@ -212,13 +212,13 @@ class EventHubProducer(
                     raise ValueError(
                         "The partition_key does not match the one of the EventDataBatch"
                     )
-                wrapper_event_data = event_data  # type:ignore
+                wrapper_event_data = event_data
             else:
                 if partition_key:
                     event_data = _set_partition_key(
                         event_data, partition_key, self._amqp_transport
                     )
-                wrapper_event_data = EventDataBatch._from_batch(  # type: ignore  # pylint: disable=protected-access
+                wrapper_event_data = EventDataBatch._from_batch(  # pylint: disable=protected-access
                     event_data, self._amqp_transport, partition_key
                 )
         return wrapper_event_data

@@ -212,7 +212,7 @@ class EventHubConsumerClient(
         source_url = "amqps://{}{}/ConsumerGroups/{}/Partitions/{}".format(
             self._address.hostname, self._address.path, consumer_group, partition_id
         )
-        handler = EventHubConsumer( # type: ignore
+        handler = EventHubConsumer(
             self,
             source_url,
             on_event_received=on_event_received,

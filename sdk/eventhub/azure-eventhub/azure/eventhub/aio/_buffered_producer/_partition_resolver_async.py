@@ -19,7 +19,7 @@ class PartitionResolver:
         self._partitions_cnt = len(self._partitions)
         self._lock = Lock()
 
-    async def get_next_partition_id(self):
+    async def get_next_partition_id(self) -> str:
         """
         round-robin partition assignment
         """
@@ -28,6 +28,6 @@ class PartitionResolver:
             self._idx %= self._partitions_cnt
             return self._partitions[self._idx]
 
-    async def get_partition_id_by_partition_key(self, partition_key):
+    async def get_partition_id_by_partition_key(self, partition_key) -> str:
         hash_code = generate_hash_code(partition_key)
         return self._partitions[abs(hash_code % self._partitions_cnt)]

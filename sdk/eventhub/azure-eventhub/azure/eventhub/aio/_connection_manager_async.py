@@ -20,10 +20,8 @@ if TYPE_CHECKING:
     except ImportError:
         pass
 
-    try:
-        from typing_extensions import Protocol
-    except ImportError:
-        Protocol = object  # type: ignore
+    from typing_extensions import Protocol
+ 
 
     class ConnectionManager(Protocol):
         async def get_connection(
@@ -123,7 +121,7 @@ class _SeparateConnectionManager(object):
 
 
 def get_connection_manager(**kwargs) -> Union[_SharedConnectionManager, _SeparateConnectionManager]:
-    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)  # type: ignore
+    connection_mode = kwargs.get("connection_mode", _ConnectionMode.SeparateConnection)
     if connection_mode == _ConnectionMode.ShareConnection:
         return _SharedConnectionManager(**kwargs)
     return _SeparateConnectionManager(**kwargs)

@@ -190,7 +190,7 @@ class EventHubProducerClient(
         self._buffered_mode = buffered_mode
         self._on_success = on_success
         self._on_error = on_error
-        self._buffered_producer_dispatcher = None
+        self._buffered_producer_dispatcher: Optional[BufferedProducerDispatcher] = None
         self._max_buffer_length = max_buffer_length
         self._max_wait_time = max_wait_time
         if self._buffered_mode:
@@ -225,6 +225,7 @@ class EventHubProducerClient(
 
     async def _buffered_send(self, events, **kwargs):
         try:
+            self._buffered_producer_dispatcher = cast(BufferedProducerDispatcher, self._buffered_producer_dispatcher)
             await self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
         except AttributeError:
             await self._get_partitions()
@@ -296,8 +297,8 @@ class EventHubProducerClient(
 
     async def _get_partitions(self) -> None:
         if not self._partition_ids:
-            self._partition_ids = await self.get_partition_ids()  # type: ignore
-            for p_id in cast(List[str], self._partition_ids):
+            self._partition_ids = await self.get_partition_ids()
+            for p_id in self._partition_ids:
                 self._producers[p_id] = None
 
     async def _get_max_message_size(self) -> None:
@@ -309,7 +310,7 @@ class EventHubProducerClient(
                 )._open_with_retry()
                 self._max_message_size_on_link = (
                     self._amqp_transport.get_remote_max_message_size(
-                        cast(  # type: ignore
+                        cast(
                         EventHubProducer, self._producers[ALL_PARTITIONS]
                         )._handler
                     )
@@ -353,7 +354,7 @@ class EventHubProducerClient(
             self._config.send_timeout if send_timeout is None else send_timeout
         )
 
-        handler = EventHubProducer( # type: ignore
+        handler = EventHubProducer(
             self,
             target,
             partition=partition_id,

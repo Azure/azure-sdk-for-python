@@ -78,7 +78,7 @@ class EventHubConsumer(
     def __init__(
         self, client: "EventHubConsumerClient", source: str, **kwargs: Any
     ) -> None:
-        event_position: Union[int, str, datetime.datetime] = kwargs.get("event_position", None)
+        event_position = kwargs.get("event_position", None)
         prefetch = kwargs.get("prefetch", 300)
         owner_level = kwargs.get("owner_level", None)
         keep_alive = kwargs.get("keep_alive", None)
@@ -141,7 +141,7 @@ class EventHubConsumer(
         source = self._amqp_transport.create_source(
             self._source,
             self._offset,
-            event_position_selector(self._offset, self._offset_inclusive),
+            event_position_selector(cast(Union[int, str, datetime.datetime], self._offset), self._offset_inclusive),
         )
         desired_capabilities = (
             [RECEIVER_RUNTIME_METRIC_SYMBOL]
@@ -250,7 +250,7 @@ class EventHubConsumer(
             or (deadline <= time.time() and max_wait_time)
         ):
             if batch:
-                events_for_callback = []
+                events_for_callback: EventData = []
                 for _ in range(min(max_batch_size, len(self._message_buffer))):
                     events_for_callback.append(
                         self._next_message_in_buffer()  # pylint: disable=protected-access
