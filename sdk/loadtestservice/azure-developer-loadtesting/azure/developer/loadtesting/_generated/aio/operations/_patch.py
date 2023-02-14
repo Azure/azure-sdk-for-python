@@ -11,7 +11,7 @@ import logging
 from functools import partial
 from typing import List, Optional, Any, IO, Union, Callable, overload
 
-from azure.core.polling import NoPolling, AsyncNoPolling, AsyncPollingMethod, AsyncLROPoller
+from azure.core.polling import AsyncPollingMethod, AsyncLROPoller
 from azure.core.polling._async_poller import PollingReturnType
 from azure.core.tracing.decorator import distributed_trace
 

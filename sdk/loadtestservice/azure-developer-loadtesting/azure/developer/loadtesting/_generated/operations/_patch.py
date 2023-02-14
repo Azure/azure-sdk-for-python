@@ -11,7 +11,7 @@ import time
 from functools import partial
 from typing import List, IO, Optional, Any, Union, overload
 
-from azure.core.polling import NoPolling, PollingMethod, LROPoller
+from azure.core.polling import PollingMethod, LROPoller
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import AdministrationOperations as AdministrationOperationsGenerated, JSON
