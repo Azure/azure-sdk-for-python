@@ -143,7 +143,7 @@ stages:
               Cloud: ${{ cloud.key }}
 
 - ${{ if contains(variables['Build.DefinitionName'], 'tests-weekly')  }}:
-  - stage: Analysis
+  - stage: ${{ cloud.key }}_${{ parameters.JobName }}_Analysis
     dependsOn: []
     jobs:
       - job: 'Analyze'
