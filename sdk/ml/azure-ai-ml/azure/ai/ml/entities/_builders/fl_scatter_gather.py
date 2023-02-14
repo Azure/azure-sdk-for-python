@@ -33,6 +33,7 @@ class FLScatterGather(BaseNode, NodeIOMixin):
     Please do not manually initialize this class.
 
     : TODO Param types
+    : TODO validate that each silo's compute is allowed to l ook at data from the specified input location
     """
 
     def __init__(
