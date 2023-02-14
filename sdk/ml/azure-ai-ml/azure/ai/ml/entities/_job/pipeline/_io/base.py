@@ -339,6 +339,7 @@ class NodeInput(InputOutputBase):
 
 
 class NodeOutput(InputOutputBase, PipelineExpressionMixin):
+    # TODO: store settings in builder
     """Define one output of a Component."""
 
     def __init__(
