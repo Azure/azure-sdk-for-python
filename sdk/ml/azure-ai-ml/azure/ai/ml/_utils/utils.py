@@ -911,6 +911,7 @@ def get_all_enum_values_iter(enum_type):
 
 def write_to_shared_file(file_path: Union[str, PathLike], content: str):
     """Open file with specific mode and return the file object.
+
     :param file_path: Path to the file.
     :param content: Content to write to the file.
     """
