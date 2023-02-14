@@ -164,6 +164,21 @@ class TestIfElse(TestControlFlowPipeline):
                       'type': 'command'}
         }
 
+    def test_registered_component_is_control(self, client: MLClient):
+        primitive_component_with_normal_input_output_v2 = load_component(
+            source="./tests/test_configs/components/do_while_test/primitive_component_with_normal_input_output_v2.yaml"
+        )
+        primitive_component_with_normal_input_output_v2.outputs["bool_param_output"].early_available = True
+        registered_component = client.components.create_or_update(primitive_component_with_normal_input_output_v2)
+        rest_dict = registered_component._to_dict()
+        # Assert is_control with correct bool type
+        assert rest_dict["outputs"] == {
+            "output_data": {"type": "uri_folder"},
+            "bool_param_output": {"type": "boolean", "is_control": True, "early_available": True},
+            "int_param_output": {"type": "integer", "is_control": True},
+            "float_param_output": {"type": "number", "is_control": True},
+            "str_param_output": {"type": "string", "is_control": True}}
+
     def test_do_while_combined_if_else(self, client: MLClient):
         do_while_body_component = load_component(
             source="./tests/test_configs/components/do_while_test/do_while_body_component.yaml"

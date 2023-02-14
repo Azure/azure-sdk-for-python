@@ -615,7 +615,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "2090",
+        "Content-Length": "1939",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -631,43 +631,33 @@
             "command": "mldesigner execute --source entry.py --name primitive_component_with_normal_input_output_v2 --inputs input_data=\u0022${{inputs.input_data}}\u0022 parambool=\u0022${{inputs.parambool}}\u0022 paramint=\u0022${{inputs.paramint}}\u0022 paramfloat=\u0022${{inputs.paramfloat}}\u0022 paramstr=\u0022${{inputs.paramstr}}\u0022 --outputs output_data=\u0022${{outputs.output_data}}\u0022 bool_param_output=\u0022${{outputs.bool_param_output}}\u0022 int_param_output=\u0022${{outputs.int_param_output}}\u0022 float_param_output=\u0022${{outputs.float_param_output}}\u0022 str_param_output=\u0022${{outputs.str_param_output}}\u0022",
             "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/0deb6540-7bdf-44cc-8517-c1eddbb714fc/versions/1",
             "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/CliV2AnonymousEnvironment/versions/6eedff85d2f858b9cd4e12021dbc722e",
-            "name": "do_while_body_component",
+            "name": "primitive_component_with_normal_input_output_v2",
             "tags": {
               "codegenBy": "mldesigner"
             },
             "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
-            "display_name": "do_while_body_component",
+            "display_name": "primitive_component_with_normal_input_output_v2",
             "is_deterministic": true,
             "inputs": {
-              "input_1": {
+              "input_data": {
                 "type": "uri_folder"
               },
-              "input_2": {
-                "type": "uri_folder"
-              },
-              "bool_param": {
+              "parambool": {
                 "type": "boolean"
               },
-              "int_param": {
+              "paramint": {
                 "type": "integer"
               },
-              "float_param": {
+              "paramfloat": {
                 "type": "number"
               },
-              "str_param": {
+              "paramstr": {
                 "type": "string"
               }
             },
             "outputs": {
-              "output_1": {
+              "output_data": {
                 "type": "uri_folder"
-              },
-              "output_2": {
-                "type": "uri_folder"
-              },
-              "condition": {
-                "type": "boolean",
-                "is_control": true
               },
               "bool_param_output": {
                 "type": "boolean",
@@ -732,41 +722,30 @@
               "codegenBy": "mldesigner"
             },
             "inputs": {
-              "input_1": {
+              "input_data": {
                 "type": "uri_folder",
                 "optional": "False"
               },
-              "input_2": {
-                "type": "uri_folder",
-                "optional": "False"
-              },
-              "bool_param": {
+              "parambool": {
                 "type": "boolean",
                 "optional": "False"
               },
-              "int_param": {
+              "paramint": {
                 "type": "integer",
                 "optional": "False"
               },
-              "float_param": {
+              "paramfloat": {
                 "type": "number",
                 "optional": "False"
               },
-              "str_param": {
+              "paramstr": {
                 "type": "string",
                 "optional": "False"
               }
             },
             "outputs": {
-              "output_1": {
+              "output_data": {
                 "type": "uri_folder"
-              },
-              "output_2": {
-                "type": "uri_folder"
-              },
-              "condition": {
-                "type": "boolean",
-                "is_control": "True"
               },
               "bool_param_output": {
                 "type": "boolean",
@@ -790,7 +769,7 @@
             "resources": {
               "instance_count": "1"
             },
-            "command": "mldesigner execute --source entry.py --name do_while_body_component --inputs input_1=\u0022${{inputs.input_1}}\u0022 input_2=\u0022${{inputs.input_2}}\u0022 bool_param=\u0022${{inputs.bool_param}}\u0022 int_param=\u0022${{inputs.int_param}}\u0022 float_param=\u0022${{inputs.float_param}}\u0022 str_param=\u0022${{inputs.str_param}}\u0022 --outputs output_1=\u0022${{outputs.output_1}}\u0022 output_2=\u0022${{outputs.output_2}}\u0022 condition=\u0022${{outputs.condition}}\u0022 bool_param_output=\u0022${{outputs.bool_param_output}}\u0022 int_param_output=\u0022${{outputs.int_param_output}}\u0022 float_param_output=\u0022${{outputs.float_param_output}}\u0022 str_param_output=\u0022${{outputs.str_param_output}}\u0022",
+            "command": "mldesigner execute --source entry.py --name primitive_component_with_normal_input_output_v2 --inputs input_data=\u0022${{inputs.input_data}}\u0022 parambool=\u0022${{inputs.parambool}}\u0022 paramint=\u0022${{inputs.paramint}}\u0022 paramfloat=\u0022${{inputs.paramfloat}}\u0022 paramstr=\u0022${{inputs.paramstr}}\u0022 --outputs output_data=\u0022${{outputs.output_data}}\u0022 bool_param_output=\u0022${{outputs.bool_param_output}}\u0022 int_param_output=\u0022${{outputs.int_param_output}}\u0022 float_param_output=\u0022${{outputs.float_param_output}}\u0022 str_param_output=\u0022${{outputs.str_param_output}}\u0022",
             "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json"
           }
         },
@@ -811,7 +790,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "1939",
+        "Content-Length": "2090",
         "Content-Type": "application/json",
         "User-Agent": "azure-ai-ml/1.5.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.7.9 (Windows-10-10.0.22621-SP0)"
       },
@@ -827,33 +806,43 @@
             "command": "mldesigner execute --source entry.py --name do_while_body_component --inputs input_1=\u0022${{inputs.input_1}}\u0022 input_2=\u0022${{inputs.input_2}}\u0022 bool_param=\u0022${{inputs.bool_param}}\u0022 int_param=\u0022${{inputs.int_param}}\u0022 float_param=\u0022${{inputs.float_param}}\u0022 str_param=\u0022${{inputs.str_param}}\u0022 --outputs output_1=\u0022${{outputs.output_1}}\u0022 output_2=\u0022${{outputs.output_2}}\u0022 condition=\u0022${{outputs.condition}}\u0022 bool_param_output=\u0022${{outputs.bool_param_output}}\u0022 int_param_output=\u0022${{outputs.int_param_output}}\u0022 float_param_output=\u0022${{outputs.float_param_output}}\u0022 str_param_output=\u0022${{outputs.str_param_output}}\u0022",
             "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/0deb6540-7bdf-44cc-8517-c1eddbb714fc/versions/1",
             "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/CliV2AnonymousEnvironment/versions/6eedff85d2f858b9cd4e12021dbc722e",
-            "name": "primitive_component_with_normal_input_output_v2",
+            "name": "do_while_body_component",
             "tags": {
               "codegenBy": "mldesigner"
             },
             "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json",
-            "display_name": "primitive_component_with_normal_input_output_v2",
+            "display_name": "do_while_body_component",
             "is_deterministic": true,
             "inputs": {
-              "input_data": {
+              "input_1": {
                 "type": "uri_folder"
               },
-              "parambool": {
+              "input_2": {
+                "type": "uri_folder"
+              },
+              "bool_param": {
                 "type": "boolean"
               },
-              "paramint": {
+              "int_param": {
                 "type": "integer"
               },
-              "paramfloat": {
+              "float_param": {
                 "type": "number"
               },
-              "paramstr": {
+              "str_param": {
                 "type": "string"
               }
             },
             "outputs": {
-              "output_data": {
+              "output_1": {
                 "type": "uri_folder"
+              },
+              "output_2": {
+                "type": "uri_folder"
+              },
+              "condition": {
+                "type": "boolean",
+                "is_control": true
               },
               "bool_param_output": {
                 "type": "boolean",
@@ -918,30 +907,41 @@
               "codegenBy": "mldesigner"
             },
             "inputs": {
-              "input_data": {
+              "input_1": {
                 "type": "uri_folder",
                 "optional": "False"
               },
-              "parambool": {
+              "input_2": {
+                "type": "uri_folder",
+                "optional": "False"
+              },
+              "bool_param": {
                 "type": "boolean",
                 "optional": "False"
               },
-              "paramint": {
+              "int_param": {
                 "type": "integer",
                 "optional": "False"
               },
-              "paramfloat": {
+              "float_param": {
                 "type": "number",
                 "optional": "False"
               },
-              "paramstr": {
+              "str_param": {
                 "type": "string",
                 "optional": "False"
               }
             },
             "outputs": {
-              "output_data": {
+              "output_1": {
                 "type": "uri_folder"
+              },
+              "output_2": {
+                "type": "uri_folder"
+              },
+              "condition": {
+                "type": "boolean",
+                "is_control": "True"
               },
               "bool_param_output": {
                 "type": "boolean",
@@ -965,7 +965,7 @@
             "resources": {
               "instance_count": "1"
             },
-            "command": "mldesigner execute --source entry.py --name primitive_component_with_normal_input_output_v2 --inputs input_data=\u0022${{inputs.input_data}}\u0022 parambool=\u0022${{inputs.parambool}}\u0022 paramint=\u0022${{inputs.paramint}}\u0022 paramfloat=\u0022${{inputs.paramfloat}}\u0022 paramstr=\u0022${{inputs.paramstr}}\u0022 --outputs output_data=\u0022${{outputs.output_data}}\u0022 bool_param_output=\u0022${{outputs.bool_param_output}}\u0022 int_param_output=\u0022${{outputs.int_param_output}}\u0022 float_param_output=\u0022${{outputs.float_param_output}}\u0022 str_param_output=\u0022${{outputs.str_param_output}}\u0022",
+            "command": "mldesigner execute --source entry.py --name do_while_body_component --inputs input_1=\u0022${{inputs.input_1}}\u0022 input_2=\u0022${{inputs.input_2}}\u0022 bool_param=\u0022${{inputs.bool_param}}\u0022 int_param=\u0022${{inputs.int_param}}\u0022 float_param=\u0022${{inputs.float_param}}\u0022 str_param=\u0022${{inputs.str_param}}\u0022 --outputs output_1=\u0022${{outputs.output_1}}\u0022 output_2=\u0022${{outputs.output_2}}\u0022 condition=\u0022${{outputs.condition}}\u0022 bool_param_output=\u0022${{outputs.bool_param_output}}\u0022 int_param_output=\u0022${{outputs.int_param_output}}\u0022 float_param_output=\u0022${{outputs.float_param_output}}\u0022 str_param_output=\u0022${{outputs.str_param_output}}\u0022",
             "$schema": "https://azuremlschemas.azureedge.net/development/commandComponent.schema.json"
           }
         },
