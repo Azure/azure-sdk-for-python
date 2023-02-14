@@ -40,6 +40,59 @@ class AddressSpace(_serialization.Model):
         super().__init__(**kwargs)
         self.address_prefixes = address_prefixes
 
+class Resource(_serialization.Model):
+    """Common resource representation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    _validation = {
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Resource ID.
+        :paramtype id: str
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags
+
 class ApplicationGateway(Resource):  # pylint: disable=too-many-instance-attributes
     """Application gateway resource.
 
@@ -537,6 +590,25 @@ class ApplicationGatewayBackendAddress(_serialization.Model):
         super().__init__(**kwargs)
         self.fqdn = fqdn
         self.ip_address = ip_address
+
+class SubResource(_serialization.Model):
+    """Reference to another subresource.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    """
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: Resource ID.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
 
 class ApplicationGatewayBackendAddressPool(SubResource):
     """Backend Address Pool of an application gateway.
@@ -5258,59 +5330,6 @@ class PublicIPAddressListResult(_serialization.Model):
         self.value = value
         self.next_link = next_link
 
-class Resource(_serialization.Model):
-    """Common resource representation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Resource ID.
-        :paramtype id: str
-        :keyword location: Resource location.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id = id
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
-
 class Route(SubResource):
     """Route resource.
 
@@ -5759,25 +5778,6 @@ class SecurityRuleListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-class SubResource(_serialization.Model):
-    """Reference to another subresource.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    """
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
-        """
-        :keyword id: Resource ID.
-        :paramtype id: str
-        """
-        super().__init__(**kwargs)
-        self.id = id
 
 class Subnet(SubResource):  # pylint: disable=too-many-instance-attributes
     """Subnet in a virtual network resource.
@@ -23598,6 +23598,25 @@ class PrivateLinkServiceListResult(_serialization.Model):
         self.value = value
         self.next_link = None
 
+class ResourceSet(_serialization.Model):
+    """The base resource set for visibility and auto-approval.
+
+    :ivar subscriptions: The list of subscriptions.
+    :vartype subscriptions: list[str]
+    """
+
+    _attribute_map = {
+        "subscriptions": {"key": "subscriptions", "type": "[str]"},
+    }
+
+    def __init__(self, *, subscriptions: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword subscriptions: The list of subscriptions.
+        :paramtype subscriptions: list[str]
+        """
+        super().__init__(**kwargs)
+        self.subscriptions = subscriptions
+
 class PrivateLinkServicePropertiesAutoApproval(ResourceSet):
     """The auto-approval list of the private link service.
 
@@ -23652,25 +23671,6 @@ class PrivateLinkServiceVisibility(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.visible = visible
-
-class ResourceSet(_serialization.Model):
-    """The base resource set for visibility and auto-approval.
-
-    :ivar subscriptions: The list of subscriptions.
-    :vartype subscriptions: list[str]
-    """
-
-    _attribute_map = {
-        "subscriptions": {"key": "subscriptions", "type": "[str]"},
-    }
-
-    def __init__(self, *, subscriptions: Optional[List[str]] = None, **kwargs):
-        """
-        :keyword subscriptions: The list of subscriptions.
-        :paramtype subscriptions: list[str]
-        """
-        super().__init__(**kwargs)
-        self.subscriptions = subscriptions
 
 class ServiceTagInformation(_serialization.Model):
     """The service tag information.
@@ -23899,6 +23899,54 @@ class VpnClientConnectionHealthDetailListResult(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.value = value
+
+class FirewallPolicyRuleCondition(_serialization.Model):
+    """Properties of a rule.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ApplicationRuleCondition, NatRuleCondition, NetworkRuleCondition
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Name of the rule condition.
+    :vartype name: str
+    :ivar description: Description of the rule condition.
+    :vartype description: str
+    :ivar rule_condition_type: Rule Condition Type. Required. Known values are:
+     "ApplicationRuleCondition", "NetworkRuleCondition", and "NatRuleCondition".
+    :vartype rule_condition_type: str or
+     ~azure.mgmt.network.models.FirewallPolicyRuleConditionType
+    """
+
+    _validation = {
+        "rule_condition_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "rule_condition_type": {"key": "ruleConditionType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "rule_condition_type": {
+            "ApplicationRuleCondition": "ApplicationRuleCondition",
+            "NatRuleCondition": "NatRuleCondition",
+            "NetworkRuleCondition": "NetworkRuleCondition",
+        }
+    }
+
+    def __init__(self, *, name: Optional[str] = None, description: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Name of the rule condition.
+        :paramtype name: str
+        :keyword description: Description of the rule condition.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.description = description
+        self.rule_condition_type: Optional[str] = None
 
 class ApplicationRuleCondition(FirewallPolicyRuleCondition):
     """Rule condition of type application.
@@ -24176,6 +24224,49 @@ class FirewallPolicy(Resource):  # pylint: disable=too-many-instance-attributes
         self.transport_security = transport_security
         self.sku = sku
 
+class FirewallPolicyRule(_serialization.Model):
+    """Properties of a rule.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ApplicationRule, NatRule, NetworkRule
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: Name of the rule.
+    :vartype name: str
+    :ivar description: Description of the rule.
+    :vartype description: str
+    :ivar rule_type: Rule Type. Required. Known values are: "ApplicationRule", "NetworkRule", and
+     "NatRule".
+    :vartype rule_type: str or ~azure.mgmt.network.models.FirewallPolicyRuleType
+    """
+
+    _validation = {
+        "rule_type": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "rule_type": {"key": "ruleType", "type": "str"},
+    }
+
+    _subtype_map = {
+        "rule_type": {"ApplicationRule": "ApplicationRule", "NatRule": "NatRule", "NetworkRule": "NetworkRule"}
+    }
+
+    def __init__(self, *, name: Optional[str] = None, description: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Name of the rule.
+        :paramtype name: str
+        :keyword description: Description of the rule.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.description = description
+        self.rule_type: Optional[str] = None
+
 class FirewallPolicyFilterRule(FirewallPolicyRule):
     """Firewall Policy Filter Rule.
 
@@ -24367,97 +24458,6 @@ class FirewallPolicyNatRuleAction(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.type = type
-
-class FirewallPolicyRule(_serialization.Model):
-    """Properties of a rule.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ApplicationRule, NatRule, NetworkRule
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Name of the rule.
-    :vartype name: str
-    :ivar description: Description of the rule.
-    :vartype description: str
-    :ivar rule_type: Rule Type. Required. Known values are: "ApplicationRule", "NetworkRule", and
-     "NatRule".
-    :vartype rule_type: str or ~azure.mgmt.network.models.FirewallPolicyRuleType
-    """
-
-    _validation = {
-        "rule_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "rule_type": {"key": "ruleType", "type": "str"},
-    }
-
-    _subtype_map = {
-        "rule_type": {"ApplicationRule": "ApplicationRule", "NatRule": "NatRule", "NetworkRule": "NetworkRule"}
-    }
-
-    def __init__(self, *, name: Optional[str] = None, description: Optional[str] = None, **kwargs):
-        """
-        :keyword name: Name of the rule.
-        :paramtype name: str
-        :keyword description: Description of the rule.
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.description = description
-        self.rule_type: Optional[str] = None
-
-class FirewallPolicyRuleCondition(_serialization.Model):
-    """Properties of a rule.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    ApplicationRuleCondition, NatRuleCondition, NetworkRuleCondition
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar name: Name of the rule condition.
-    :vartype name: str
-    :ivar description: Description of the rule condition.
-    :vartype description: str
-    :ivar rule_condition_type: Rule Condition Type. Required. Known values are:
-     "ApplicationRuleCondition", "NetworkRuleCondition", and "NatRuleCondition".
-    :vartype rule_condition_type: str or
-     ~azure.mgmt.network.models.FirewallPolicyRuleConditionType
-    """
-
-    _validation = {
-        "rule_condition_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "rule_condition_type": {"key": "ruleConditionType", "type": "str"},
-    }
-
-    _subtype_map = {
-        "rule_condition_type": {
-            "ApplicationRuleCondition": "ApplicationRuleCondition",
-            "NatRuleCondition": "NatRuleCondition",
-            "NetworkRuleCondition": "NetworkRuleCondition",
-        }
-    }
-
-    def __init__(self, *, name: Optional[str] = None, description: Optional[str] = None, **kwargs):
-        """
-        :keyword name: Name of the rule condition.
-        :paramtype name: str
-        :keyword description: Description of the rule condition.
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.description = description
-        self.rule_condition_type: Optional[str] = None
 
 class FirewallPolicyRuleConditionApplicationProtocol(_serialization.Model):
     """Properties of the application rule protocol.
@@ -29779,6 +29779,54 @@ class EffectiveRoutesParameters(_serialization.Model):
         self.resource_id = resource_id
         self.virtual_wan_resource_type = virtual_wan_resource_type
 
+class FirewallPolicyRuleCollection(_serialization.Model):
+    """Properties of the rule collection.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    FirewallPolicyFilterRuleCollection, FirewallPolicyNatRuleCollection
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar rule_collection_type: The type of the rule collection. Required. Known values are:
+     "FirewallPolicyNatRuleCollection" and "FirewallPolicyFilterRuleCollection".
+    :vartype rule_collection_type: str or
+     ~azure.mgmt.network.models.FirewallPolicyRuleCollectionType
+    :ivar name: The name of the rule collection.
+    :vartype name: str
+    :ivar priority: Priority of the Firewall Policy Rule Collection resource.
+    :vartype priority: int
+    """
+
+    _validation = {
+        "rule_collection_type": {"required": True},
+        "priority": {"maximum": 65000, "minimum": 100},
+    }
+
+    _attribute_map = {
+        "rule_collection_type": {"key": "ruleCollectionType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "priority": {"key": "priority", "type": "int"},
+    }
+
+    _subtype_map = {
+        "rule_collection_type": {
+            "FirewallPolicyFilterRuleCollection": "FirewallPolicyFilterRuleCollection",
+            "FirewallPolicyNatRuleCollection": "FirewallPolicyNatRuleCollection",
+        }
+    }
+
+    def __init__(self, *, name: Optional[str] = None, priority: Optional[int] = None, **kwargs):
+        """
+        :keyword name: The name of the rule collection.
+        :paramtype name: str
+        :keyword priority: Priority of the Firewall Policy Rule Collection resource.
+        :paramtype priority: int
+        """
+        super().__init__(**kwargs)
+        self.rule_collection_type: Optional[str] = None
+        self.name = name
+        self.priority = priority
+
 class FirewallPolicyFilterRuleCollection(FirewallPolicyRuleCollection):
     """Firewall Policy Filter Rule Collection.
 
@@ -29975,54 +30023,6 @@ class FirewallPolicyRuleApplicationProtocol(_serialization.Model):
         super().__init__(**kwargs)
         self.protocol_type = protocol_type
         self.port = port
-
-class FirewallPolicyRuleCollection(_serialization.Model):
-    """Properties of the rule collection.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    FirewallPolicyFilterRuleCollection, FirewallPolicyNatRuleCollection
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar rule_collection_type: The type of the rule collection. Required. Known values are:
-     "FirewallPolicyNatRuleCollection" and "FirewallPolicyFilterRuleCollection".
-    :vartype rule_collection_type: str or
-     ~azure.mgmt.network.models.FirewallPolicyRuleCollectionType
-    :ivar name: The name of the rule collection.
-    :vartype name: str
-    :ivar priority: Priority of the Firewall Policy Rule Collection resource.
-    :vartype priority: int
-    """
-
-    _validation = {
-        "rule_collection_type": {"required": True},
-        "priority": {"maximum": 65000, "minimum": 100},
-    }
-
-    _attribute_map = {
-        "rule_collection_type": {"key": "ruleCollectionType", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "priority": {"key": "priority", "type": "int"},
-    }
-
-    _subtype_map = {
-        "rule_collection_type": {
-            "FirewallPolicyFilterRuleCollection": "FirewallPolicyFilterRuleCollection",
-            "FirewallPolicyNatRuleCollection": "FirewallPolicyNatRuleCollection",
-        }
-    }
-
-    def __init__(self, *, name: Optional[str] = None, priority: Optional[int] = None, **kwargs):
-        """
-        :keyword name: The name of the rule collection.
-        :paramtype name: str
-        :keyword priority: Priority of the Firewall Policy Rule Collection resource.
-        :paramtype priority: int
-        """
-        super().__init__(**kwargs)
-        self.rule_collection_type: Optional[str] = None
-        self.name = name
-        self.priority = priority
 
 class FirewallPolicyRuleCollectionGroup(SubResource):
     """Rule Collection Group resource.
@@ -33089,6 +33089,100 @@ class ActiveConfigurationParameter(_serialization.Model):
         self.regions = regions
         self.skip_token = skip_token
 
+class EffectiveConnectivityConfiguration(_serialization.Model):
+    """The network manager effective connectivity configuration.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Connectivity configuration ID.
+    :vartype id: str
+    :ivar configuration_groups: Effective configuration groups.
+    :vartype configuration_groups: list[~azure.mgmt.network.models.ConfigurationGroup]
+    :ivar description: A description of the connectivity configuration.
+    :vartype description: str
+    :ivar connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
+     "Mesh".
+    :vartype connectivity_topology: str or
+     ~azure.mgmt.network.models.ConnectivityTopology
+    :ivar hubs: List of hubItems.
+    :vartype hubs: list[~azure.mgmt.network.models.Hub]
+    :ivar is_global: Flag if global mesh is supported. Known values are: "False" and "True".
+    :vartype is_global: str or ~azure.mgmt.network.models.IsGlobal
+    :ivar applies_to_groups: Groups for configuration.
+    :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
+    :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
+     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
+     are: "False" and "True".
+    :vartype delete_existing_peering: str or
+     ~azure.mgmt.network.models.DeleteExistingPeering
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "configuration_groups": {"key": "configurationGroups", "type": "[ConfigurationGroup]"},
+        "description": {"key": "properties.description", "type": "str"},
+        "connectivity_topology": {"key": "properties.connectivityTopology", "type": "str"},
+        "hubs": {"key": "properties.hubs", "type": "[Hub]"},
+        "is_global": {"key": "properties.isGlobal", "type": "str"},
+        "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        configuration_groups: Optional[List["_models.ConfigurationGroup"]] = None,
+        description: Optional[str] = None,
+        connectivity_topology: Optional[Union[str, "_models.ConnectivityTopology"]] = None,
+        hubs: Optional[List["_models.Hub"]] = None,
+        is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
+        applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
+        delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Connectivity configuration ID.
+        :paramtype id: str
+        :keyword configuration_groups: Effective configuration groups.
+        :paramtype configuration_groups:
+         list[~azure.mgmt.network.models.ConfigurationGroup]
+        :keyword description: A description of the connectivity configuration.
+        :paramtype description: str
+        :keyword connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
+         "Mesh".
+        :paramtype connectivity_topology: str or
+         ~azure.mgmt.network.models.ConnectivityTopology
+        :keyword hubs: List of hubItems.
+        :paramtype hubs: list[~azure.mgmt.network.models.Hub]
+        :keyword is_global: Flag if global mesh is supported. Known values are: "False" and "True".
+        :paramtype is_global: str or ~azure.mgmt.network.models.IsGlobal
+        :keyword applies_to_groups: Groups for configuration.
+        :paramtype applies_to_groups:
+         list[~azure.mgmt.network.models.ConnectivityGroupItem]
+        :keyword delete_existing_peering: Flag if need to remove current existing peerings. Known
+         values are: "False" and "True".
+        :paramtype delete_existing_peering: str or
+         ~azure.mgmt.network.models.DeleteExistingPeering
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.configuration_groups = configuration_groups
+        self.description = description
+        self.connectivity_topology = connectivity_topology
+        self.hubs = hubs
+        self.is_global = is_global
+        self.applies_to_groups = applies_to_groups
+        self.provisioning_state = None
+        self.delete_existing_peering = delete_existing_peering
+
 class ActiveConnectivityConfiguration(
     EffectiveConnectivityConfiguration
 ):  # pylint: disable=too-many-instance-attributes
@@ -33983,6 +34077,94 @@ class AddressPrefixItem(_serialization.Model):
         self.address_prefix = address_prefix
         self.address_prefix_type = address_prefix_type
 
+class ChildResource(_serialization.Model):
+    """Proxy resource representation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.etag = None
+
+class BaseAdminRule(ChildResource):
+    """Network base admin rule.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AdminRule, DefaultAdminRule
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
+     "Default".
+    :vartype kind: str or ~azure.mgmt.network.models.AdminRuleKind
+    :ivar system_data: The system metadata related to this resource.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "etag": {"readonly": True},
+        "kind": {"required": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+    }
+
+    _subtype_map = {"kind": {"Custom": "AdminRule", "Default": "DefaultAdminRule"}}
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.kind: Optional[str] = None
+        self.system_data = None
+
 class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network admin rule.
 
@@ -34144,57 +34326,6 @@ class AdminRuleListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-class BaseAdminRule(ChildResource):
-    """Network base admin rule.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AdminRule, DefaultAdminRule
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    :ivar kind: Whether the rule is custom or default. Required. Known values are: "Custom" and
-     "Default".
-    :vartype kind: str or ~azure.mgmt.network.models.AdminRuleKind
-    :ivar system_data: The system metadata related to this resource.
-    :vartype system_data: ~azure.mgmt.network.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-        "kind": {"required": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    _subtype_map = {"kind": {"Custom": "AdminRule", "Default": "DefaultAdminRule"}}
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.kind: Optional[str] = None
-        self.system_data = None
 
 class BaseUserRule(ProxyResource):
     """Network base rule.
@@ -34760,100 +34891,6 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
         self.kind: Optional[str] = None
-
-class EffectiveConnectivityConfiguration(_serialization.Model):
-    """The network manager effective connectivity configuration.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Connectivity configuration ID.
-    :vartype id: str
-    :ivar configuration_groups: Effective configuration groups.
-    :vartype configuration_groups: list[~azure.mgmt.network.models.ConfigurationGroup]
-    :ivar description: A description of the connectivity configuration.
-    :vartype description: str
-    :ivar connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
-     "Mesh".
-    :vartype connectivity_topology: str or
-     ~azure.mgmt.network.models.ConnectivityTopology
-    :ivar hubs: List of hubItems.
-    :vartype hubs: list[~azure.mgmt.network.models.Hub]
-    :ivar is_global: Flag if global mesh is supported. Known values are: "False" and "True".
-    :vartype is_global: str or ~azure.mgmt.network.models.IsGlobal
-    :ivar applies_to_groups: Groups for configuration.
-    :vartype applies_to_groups: list[~azure.mgmt.network.models.ConnectivityGroupItem]
-    :ivar provisioning_state: The provisioning state of the connectivity configuration resource.
-     Known values are: "Succeeded", "Updating", "Deleting", and "Failed".
-    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
-    :ivar delete_existing_peering: Flag if need to remove current existing peerings. Known values
-     are: "False" and "True".
-    :vartype delete_existing_peering: str or
-     ~azure.mgmt.network.models.DeleteExistingPeering
-    """
-
-    _validation = {
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "configuration_groups": {"key": "configurationGroups", "type": "[ConfigurationGroup]"},
-        "description": {"key": "properties.description", "type": "str"},
-        "connectivity_topology": {"key": "properties.connectivityTopology", "type": "str"},
-        "hubs": {"key": "properties.hubs", "type": "[Hub]"},
-        "is_global": {"key": "properties.isGlobal", "type": "str"},
-        "applies_to_groups": {"key": "properties.appliesToGroups", "type": "[ConnectivityGroupItem]"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "delete_existing_peering": {"key": "properties.deleteExistingPeering", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        configuration_groups: Optional[List["_models.ConfigurationGroup"]] = None,
-        description: Optional[str] = None,
-        connectivity_topology: Optional[Union[str, "_models.ConnectivityTopology"]] = None,
-        hubs: Optional[List["_models.Hub"]] = None,
-        is_global: Optional[Union[str, "_models.IsGlobal"]] = None,
-        applies_to_groups: Optional[List["_models.ConnectivityGroupItem"]] = None,
-        delete_existing_peering: Optional[Union[str, "_models.DeleteExistingPeering"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword id: Connectivity configuration ID.
-        :paramtype id: str
-        :keyword configuration_groups: Effective configuration groups.
-        :paramtype configuration_groups:
-         list[~azure.mgmt.network.models.ConfigurationGroup]
-        :keyword description: A description of the connectivity configuration.
-        :paramtype description: str
-        :keyword connectivity_topology: Connectivity topology type. Known values are: "HubAndSpoke" and
-         "Mesh".
-        :paramtype connectivity_topology: str or
-         ~azure.mgmt.network.models.ConnectivityTopology
-        :keyword hubs: List of hubItems.
-        :paramtype hubs: list[~azure.mgmt.network.models.Hub]
-        :keyword is_global: Flag if global mesh is supported. Known values are: "False" and "True".
-        :paramtype is_global: str or ~azure.mgmt.network.models.IsGlobal
-        :keyword applies_to_groups: Groups for configuration.
-        :paramtype applies_to_groups:
-         list[~azure.mgmt.network.models.ConnectivityGroupItem]
-        :keyword delete_existing_peering: Flag if need to remove current existing peerings. Known
-         values are: "False" and "True".
-        :paramtype delete_existing_peering: str or
-         ~azure.mgmt.network.models.DeleteExistingPeering
-        """
-        super().__init__(**kwargs)
-        self.id = id
-        self.configuration_groups = configuration_groups
-        self.description = description
-        self.connectivity_topology = connectivity_topology
-        self.hubs = hubs
-        self.is_global = is_global
-        self.applies_to_groups = applies_to_groups
-        self.provisioning_state = None
-        self.delete_existing_peering = delete_existing_peering
 
 class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
     """Network default admin rule.
@@ -37860,43 +37897,6 @@ class BackendAddressInboundNatRulePortMappings(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.inbound_nat_rule_port_mappings = inbound_nat_rule_port_mappings
-
-class ChildResource(_serialization.Model):
-    """Proxy resource representation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource ID.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar etag: A unique read-only string that changes whenever the resource is updated.
-    :vartype etag: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "etag": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-    }
-
-    def __init__(self, **kwargs):
-        """ """
-        super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.etag = None
 
 class Criterion(_serialization.Model):
     """A matching criteria which matches routes based on route prefix, community, and AS path.
