@@ -281,6 +281,9 @@ def _convert_arm_to_cli(arm_cloud_metadata):
     return cli_cloud_metadata_dict
 
 def _add_cloud_to_environments(kwargs):
+    if kwargs["cloud"] in _environments:
+        module_logger.warning("Cannot overwrite existing cloud: %s", kwargs["cloud"])
+        return False
     _environments[kwargs["cloud"]] = {
         EndpointURLS.AZURE_PORTAL_ENDPOINT: kwargs[EndpointURLS.AZURE_PORTAL_ENDPOINT],
         EndpointURLS.RESOURCE_MANAGER_ENDPOINT: kwargs[EndpointURLS.RESOURCE_MANAGER_ENDPOINT],
@@ -289,3 +292,4 @@ def _add_cloud_to_environments(kwargs):
         EndpointURLS.STORAGE_ENDPOINT: kwargs[EndpointURLS.STORAGE_ENDPOINT],
         EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: kwargs[EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT],
     }
+    return True

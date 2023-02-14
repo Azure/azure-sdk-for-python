@@ -169,7 +169,6 @@ class MLClient:
         self._operation_config = OperationConfig(show_progress=show_progress)
 
         cloud_config_keys = [
-            "cloud",
             EndpointURLS.AZURE_PORTAL_ENDPOINT,
             EndpointURLS.RESOURCE_MANAGER_ENDPOINT,
             EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT,
@@ -177,10 +176,18 @@ class MLClient:
             EndpointURLS.STORAGE_ENDPOINT,
             EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT
         ]
-        if set(cloud_config_keys).issubset(kwargs):
-            _add_cloud_to_environments(kwargs)
+        unset_keys = set(cloud_config_keys).difference(kwargs)
+        if "cloud" in kwargs:
+            cloud_name = kwargs["cloud"]
+            if len(unset_keys) == 0:
+                _add_cloud_to_environments(kwargs)
+        else:
+            module_logger.debug(
+                "Missing keys for full cloud config: '%s'.",
+                ','.join(unset_keys),
+            )
+            cloud_name = _get_default_cloud_name()
 
-        cloud_name = kwargs.get("cloud", _get_default_cloud_name())
         self._cloud = cloud_name
         _set_cloud(cloud_name)
         if "cloud" not in kwargs:
