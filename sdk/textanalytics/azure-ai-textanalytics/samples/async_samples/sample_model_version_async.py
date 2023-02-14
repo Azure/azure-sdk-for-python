@@ -70,7 +70,7 @@ async def sample_model_version_async() -> None:
                     print(f"......Entity '{entity.text}' has category '{entity.category}'")
             elif action_result.is_error is True:
                 print("......Is an error with code '{}' and message '{}'".format(
-                    action_result.code, action_result.message
+                    action_result.error.code, action_result.error.message
                 ))
 
 

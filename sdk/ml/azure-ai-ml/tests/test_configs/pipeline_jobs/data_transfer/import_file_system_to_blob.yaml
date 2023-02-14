@@ -1,0 +1,36 @@
+$schema: http://azureml/sdk-2-0/PipelineJob.json
+type: pipeline
+
+description: 'pipeline with data transfer components'
+settings:
+  default_compute: azureml:adftest
+inputs:
+  path_source_s3: test1/*
+  connection_target: azureml:my-s3-connection
+
+jobs:
+  s3_blob:
+    type: data_transfer
+    task: import_data
+    source:
+      type: file_system
+      path: ${{parent.inputs.path_source_s3}}
+      connection: ${{parent.inputs.connection_target}}
+    outputs:
+      sink:
+        type: uri_folder
+        path: azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//
+
+  s3_blob_input:
+    type: data_transfer
+    task: import_data
+    source:
+      type: file_system
+      path: test1/*
+      connection: azureml:my-s3-connection
+    outputs:
+      sink:
+        type: uri_folder
+        path: azureml://datastores/workspaceblobstore/paths/importjob/${{name}}/output_dir/s3//
+
+
