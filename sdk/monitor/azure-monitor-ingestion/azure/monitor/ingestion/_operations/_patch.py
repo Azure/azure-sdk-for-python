@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from io import IOBase
 import logging
 import sys
-from typing import Callable, cast, List, Any, Optional, Union, IO
+from typing import Callable, cast, List, Any, Optional, Union, IO, overload
 
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from .._helpers import _create_gzip_requests, GZIP_MAGIC_NUMBER
@@ -26,6 +26,31 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
 class LogsIngestionClientOperationsMixin(GeneratedOps):
+
+    @overload # type: ignore[override]
+    def upload( # pylint: disable=arguments-renamed, arguments-differ
+        self,
+        rule_id: str,
+        stream_name: str,
+        logs: List[JSON],
+        *,
+        on_error: Optional[Callable[[UploadLogsError], None]] = None,
+        **kwargs: Any
+    ) -> None:
+        ...
+
+    @overload # type: ignore[override]
+    def upload( # pylint: disable=arguments-renamed, arguments-differ
+        self,
+        rule_id: str,
+        stream_name: str,
+        logs: IO,
+        *,
+        on_error: Optional[Callable[[UploadLogsError], None]] = None,
+        **kwargs: Any
+    ) -> None:
+        ...
+
     def upload(  # type: ignore[override] # pylint: disable=arguments-renamed, arguments-differ
         self,
         rule_id: str,
