@@ -107,6 +107,8 @@ class ComputeInstance(Compute):
     :type description: Optional[str], optional
     :param size: Compute Size, defaults to None
     :type size: Optional[str], optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param create_on_behalf_of: defaults to None
     :type create_on_behalf_of: Optional[AssignedUserConfiguration], optional
     :ivar state: defaults to None
@@ -157,6 +159,7 @@ class ComputeInstance(Compute):
         name: str,
         description: Optional[str] = None,
         size: Optional[str] = None,
+        tags: Optional[dict] = None,
         ssh_public_access_enabled: Optional[bool] = None,
         create_on_behalf_of: Optional[AssignedUserConfiguration] = None,
         network_settings: Optional[NetworkSettings] = None,
@@ -180,7 +183,7 @@ class ComputeInstance(Compute):
             location=kwargs.pop("location", None),
             resource_id=kwargs.pop("resource_id", None),
             description=description,
-            tags=kwargs.pop("tags", None),
+            tags=tags,
             **kwargs,
         )
         self.size = size

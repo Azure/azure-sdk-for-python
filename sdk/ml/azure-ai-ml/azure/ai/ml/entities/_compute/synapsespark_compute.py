@@ -97,6 +97,8 @@ class SynapseSparkCompute(Compute):
     :type description: Optional[str], optional
     :param resource_id: ARM resource id of the underlying compute, defaults to None
     :type resource_id: Optional[str], optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
     """
@@ -106,6 +108,7 @@ class SynapseSparkCompute(Compute):
         *,
         name: str,
         description: Optional[str] = None,
+        tags: Optional[dict] = None,
         node_count: Optional[int] = None,
         node_family: Optional[str] = None,
         node_size: Optional[str] = None,
@@ -120,7 +123,7 @@ class SynapseSparkCompute(Compute):
             name=name,
             description=description,
             location=kwargs.pop("location", None),
-            tags=kwargs.pop("tags", None),
+            tags=tags,
             **kwargs
         )
         self.identity = identity

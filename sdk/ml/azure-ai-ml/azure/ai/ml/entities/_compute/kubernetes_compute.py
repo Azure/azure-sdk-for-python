@@ -24,6 +24,8 @@ class KubernetesCompute(Compute):
     :type location: Optional[str], optional
     :param description: Description of the resource.
     :type description: Optional[str], optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param resource_id: ARM resource id of the underlying compute, defaults to None
     :type resource_id: Optional[str], optional
     :param created_on: defaults to None

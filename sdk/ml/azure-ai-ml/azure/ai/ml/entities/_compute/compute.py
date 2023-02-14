@@ -44,7 +44,7 @@ class Compute(Resource, RestTranslatableMixin):
         location: Optional[str] = None,
         description: Optional[str] = None,
         resource_id: Optional[str] = None,
-        tags: Optional[Dict] = None,
+        tags: Optional[dict] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", None)
