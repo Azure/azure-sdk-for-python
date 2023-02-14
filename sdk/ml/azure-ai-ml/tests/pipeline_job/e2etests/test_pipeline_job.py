@@ -1700,6 +1700,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_register_output_yaml_succeed(self, client: MLClient, randstr: Callable[[str], str],):
         register_pipeline_path = "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline_register_output.yml"
         pipeline = load_job(source=register_pipeline_path)
