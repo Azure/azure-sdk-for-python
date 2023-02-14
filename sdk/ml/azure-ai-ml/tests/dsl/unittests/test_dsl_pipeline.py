@@ -1,3 +1,4 @@
+import logging
 import os
 from io import StringIO
 from pathlib import Path
@@ -2804,3 +2805,25 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException) as e:
             assert_job_cancel(pipeline, client)
         assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)
+
+    def test_validate_pipeline_node_io_name_has_keyword(self, caplog):
+        # Refresh logger for pytest to capture log, otherwise the result is empty.
+        from azure.ai.ml.dsl import _pipeline_component_builder
+
+        _pipeline_component_builder.module_logger = logging.getLogger(__file__)
+        with caplog.at_level(logging.WARNING):
+            from test_configs.dsl_pipeline.pipeline_with_keyword_in_node_io.pipeline import pipeline_job
+
+            # validation should pass
+            assert pipeline_job._customized_validate().passed
+
+        warning_template = (
+            "Reserved word \"{io_name}\" is used as {io} name in node \"{node_name}\", "
+            "can only be accessed with '{node_name}.{io}s[\"{io_name}\"]'"
+        )
+        assert caplog.messages == [
+            warning_template.format(io_name="__contains__", io="output", node_name="node"),
+            warning_template.format(io_name="items", io="output", node_name="upstream_node"),
+            warning_template.format(io_name="keys", io="input", node_name="downstream_node"),
+            warning_template.format(io_name="__hash__", io="output", node_name="pipeline_component_func"),
+        ]
