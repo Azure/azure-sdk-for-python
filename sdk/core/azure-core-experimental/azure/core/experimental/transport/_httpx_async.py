@@ -68,7 +68,7 @@ class AsyncHttpXTransport(HttpTransport):
 
     async def close(self) -> None:
         if self.client:
-            await self.client.close()
+            await self.client.aclose()
             self.client = None
     
     async def __enter__(self) -> "AsyncHttpXTransport":
