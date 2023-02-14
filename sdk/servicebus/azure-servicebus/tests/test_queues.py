@@ -1826,7 +1826,11 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
 
             with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = receiver.receive_messages(max_wait_time=5)
-                receiver._handler._link.detach()  # destroy the underlying receiver link
+                # destroy the underlying receiver link
+                if uamqp_transport:
+                    receiver._handler.message_handler.destroy()
+                else:
+                    receiver._handler._link.detach()
                 assert len(messages) == 1
                 receiver.complete_message(messages[0])
 
@@ -2513,6 +2517,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             assert message.body is None
             receiver.complete_message(message)
 
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     def test_send_message_alternate_body_types(self, uamqp_transport, **kwargs):
         with pytest.raises(TypeError):
             message = ServiceBusMessage(body=['1','2'])

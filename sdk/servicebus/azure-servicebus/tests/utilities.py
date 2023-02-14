@@ -68,5 +68,5 @@ def uamqp_transport(use_uamqp=uamqp_available, use_pyamqp=True):
 class ArgPasser:
     def __call__(self, fn):
         def _preparer(test_class, uamqp_transport, **kwargs):
-            fn(test_class, uamqp_transport, **kwargs)
+            fn(test_class, uamqp_transport=uamqp_transport, **kwargs)
         return _preparer
