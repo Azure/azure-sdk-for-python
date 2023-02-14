@@ -30,6 +30,7 @@ from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value,
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
+from azure.ai.ml.entities._util import copy_output_setting
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
@@ -279,11 +280,15 @@ class PipelineComponentBuilder:
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=value._data,
-                # TODO: verify if we need to set output meta here
+                # This is a hack: when parallel_for node outputs promoted to pipeline level,
+                # pipeline outputs type should be same with node levle.
                 meta=output_meta,
                 owner="pipeline",
                 description=self._args_description.get(key, None),
             )
+            # copy node level output setting to pipeline output
+            copy_output_setting(source=value._owner.outputs[value._port_name], target=pipeline_output)
+
             value._owner.outputs[value._port_name]._data = pipeline_output
 
             output_dict[key] = pipeline_output
@@ -467,9 +472,9 @@ class PipelineComponentBuilder:
                     f"{key}: pipeline component output: {actual_output} != annotation output {expected_output}"
                 )
             if expected_description:
-                output_dict[key].description = expected_description
+                output_dict[key]._meta.description = expected_description
             if expected_mode:
-                output_dict[key].mode = expected_mode
+                output_dict[key]._meta.mode = expected_mode
 
         if unmatched_outputs:
             raise UserErrorException(f"{error_prefix}: {unmatched_outputs}")

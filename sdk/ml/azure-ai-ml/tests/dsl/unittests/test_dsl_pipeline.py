@@ -2860,7 +2860,6 @@ class TestDSLPipeline:
         pipeline_job2 = outer_pipeline()
         assert pipeline_job2.outputs.component_out_path.path == "new_path"
 
-
     def test_validate_pipeline_node_io_name_has_keyword(self, caplog):
         # Refresh logger for pytest to capture log, otherwise the result is empty.
         from azure.ai.ml.dsl import _pipeline_component_builder
