@@ -1,12 +1,14 @@
 # Release History
 
-## 7.9.0b2 (Unreleased)
+## 7.9.0b1 (Unreleased)
 
 ### Features Added
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- Fixed a bug where sync and async `ServiceBusAdministrationClient` expected `credential` with `get_token` method returning `AccessToken.token` of type `bytes` and not `str`, now matching the documentation.
 
 ### Other Changes
 
