@@ -77,7 +77,7 @@ class AzureKeyCredential(Generic[T]):
         This can be used when you've regenerated your service key and want
         to update long-lived clients.
         :param T key: The key used to authenticate to an Azure service
-        :raises: ValueError
+        :raises: ValueError or TypeError
         """
         if not key:
             raise ValueError("The key used for updating can not be None or empty")
