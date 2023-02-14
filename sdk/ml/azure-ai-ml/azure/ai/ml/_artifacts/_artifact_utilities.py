@@ -388,7 +388,22 @@ def _get_snapshot_temporary_data_reference(
     workspace: Workspace,
     requests_pipeline: HttpPipeline,
     ) -> Tuple[str, str]:
-    """Make a temporary data reference for an asset and return SAS uri and blob storage uri."""
+    """
+    Make a temporary data reference for an asset and return SAS uri and blob storage uri.
+
+    :param asset_name: Name of the asset to be created
+    :type asset_name: str
+    :param asset_version: Version of the asset to be created
+    :type asset_version: str
+    :param request_headers: Request headers for API call
+    :type request_headers: Dict[str, str]
+    :param workspace: Workspace object
+    :type workspace: azure.ai.ml._restclient.v2022_05_01.models.Workspace
+    :param requests_pipeline: Proxy for sending HTTP requests
+    :type requests_pipeline: azure.ai.ml._utils._http_utils.HttpPipeline
+    :return: Existing asset's name and version, if found
+    :rtype: Tuple[str, str]
+    """
 
     # create temporary data reference
     temporary_data_reference_id = _generate_temporary_data_reference_id()
@@ -430,17 +445,28 @@ def _get_asset_by_hash(
     request_headers: Dict[str, str],
     workspace: Workspace,
     requests_pipeline: HttpPipeline) -> Dict[str, str]:
+    """
+    Check if an asset with the same hash already exists in the workspace. If so, return the asset name and version.
+
+    :param operations: Datastore Operations object from MLClient
+    :type operations: azure.ai.ml.operations._datastore_operations.DatastoreOperations
+    :param hash_str: The hash of the specified local upload
+    :type hash_str: str
+    :param request_headers: Request headers for API call
+    :type request_headers: Dict[str, str]
+    :param workspace: Workspace object
+    :type workspace: azure.ai.ml._restclient.v2022_05_01.models.Workspace
+    :param requests_pipeline: Proxy for sending HTTP requests
+    :type requests_pipeline: azure.ai.ml._utils._http_utils.HttpPipeline
+    :return: Existing asset's name and version, if found
+    :rtype: Optional[Dict[str, str]]
+    """
     existing_asset = {}
     hash_version = get_content_hash_version()
 
     # get workspace credentials
     subscription_id = operations._subscription_id
     resource_group_name = operations._resource_group_name
-
-    # build request to API (API route is implemented at
-    # https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/
-    # ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&
-    # line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
 
     # make sure correct cloud endpoint is used
     cloud_endpoint = _get_cloud_details()['registry_discovery_endpoint']
@@ -449,9 +475,6 @@ def _get_asset_by_hash(
         f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"\
         f"{workspace.name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
 
-    # Response is SnapshotDto which is defined here: https://dev.azure.com/msdata/Vienna/_git/vienna?
-    # path=/src/azureml-api/src/ProjectContent/Contracts/SnapshotDto.cs&version=GBmaster&line=18&
-    # lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
     response = requests_pipeline.get(request_url, headers=request_headers)
     if response.status_code == 404:
         return None
@@ -530,6 +553,14 @@ def _check_and_upload_path(
 
 
 def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
+    """
+    Validate an Artifact's local path and get its resolved path, ignore file, and hash
+
+    :param artifact: Artifact object
+    :type artifact: azure.ai.ml.entities._assets._artifacts.artifact.Artifact
+    :return: Artifact's path, ignorefile, and hash
+    :rtype: Tuple[str, str, str]
+    """
     if (
         hasattr(artifact, "local_path")
         and artifact.local_path is not None
@@ -560,7 +591,21 @@ def _get_existing_snapshot_by_hash(
     asset_hash,
     workspace: Workspace,
     requests_pipeline: HttpPipeline,
-):
+) -> Dict[str, str]:
+    """
+    Check if an asset with the same hash already exists in the workspace. If so, return the asset name and version.
+
+    :param datastore_operation: Datastore Operations object from MLClient
+    :type operations: azure.ai.ml.operations._datastore_operations.DatastoreOperations
+    :param asset_hash: The hash of the specified local upload
+    :type asset_hash: str
+    :param workspace: Workspace object
+    :type workspace: azure.ai.ml._restclient.v2022_05_01.models.Workspace
+    :param requests_pipeline: Proxy for sending HTTP requests
+    :type requests_pipeline: azure.ai.ml._utils._http_utils.HttpPipeline
+    :return: Existing asset's name and version, if found
+    :rtype: Optional[Dict[str, str]]
+    """
     ws_base_url = datastore_operation._operation._client._base_url
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
     request_headers={"Authorization": "Bearer " + token}
@@ -591,6 +636,36 @@ def _upload_snapshot_to_datastore(
     ignore_file: IgnoreFile = IgnoreFile(),
     sas_uri: str = None,  # contains registry sas url
 ) -> ArtifactStorageInfo:
+    """
+    Upload a code snapshot to workspace datastore.
+
+    :param operation_scope: Workspace scope information
+    :type operation_scope: azure.ai.ml._scope_dependent_operations.OperationScope
+    :param datastore_operation: Datastore Operations object from MLClient
+    :type datastore_operation: azure.ai.ml.operations._datastore_operations.DatastoreOperations
+    :param path: The local path of the artifact
+    :type path: Union[str, Path, os.PathLike]
+    :param workspace: Workspace object
+    :type workspace: azure.ai.ml._restclient.v2022_05_01.models.Workspace
+    :param requests_pipeline: Proxy for sending HTTP requests
+    :type requests_pipeline: azure.ai.ml._utils._http_utils.HttpPipeline
+    :param datastore_name: Name of the datastore to upload to
+    :type datastore_name: str
+    :param show_progress: Whether or not to show progress bar during upload, defaults to True
+    :type show_progress: bool
+    :param asset_name: Name of the asset to be created
+    :type asset_name: str
+    :param asset_version: Version of the asset to be created
+    :type asset_version: str
+    :param asset_hash: The hash of the specified local upload
+    :type asset_hash: str
+    :param ignore_file: Information about the path's .gitignore or .amlignore file, if exists
+    :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
+    :param sas_uri: SAS uri for uploading to datastore
+    :type sas_uri: str
+    :return: Uploaded artifact's storage information
+    :rtype: azure.ai.ml.entities._assets._artifacts.artifact.ArtifactStorageInfo
+    """
     ws_base_url = datastore_operation._operation._client._base_url
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
     request_headers={"Authorization": "Bearer " + token}
