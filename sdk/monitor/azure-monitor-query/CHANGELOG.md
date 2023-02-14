@@ -1,14 +1,10 @@
 # Release History
 
-## 1.1.1 (Unreleased)
-
-### Features Added
-
-### Breaking Changes
+## 1.1.1 (2023-02-13)
 
 ### Bugs Fixed
 
-### Other Changes
+- Fixed a bug where the incorrect key `time_stamp` (should be `timeStamp`) was used in the creation of `MetricValue` objects (thanks @jamespic).  ([#28777](https://github.com/Azure/azure-sdk-for-python/pull/28777))
 
 ## 1.1.0 (2023-02-07)
 
