@@ -21,13 +21,13 @@ Alternatively, get the connection string from the Azure Portal.
 You can create a client with a connection string:
 
 ```python
-config = AzureAppConfigurationProvider.load(connection_string="your-connection-string")
+config = load_provider(connection_string="your-connection-string")
 ```
 
 or with AAD:
 
 ```python
-config = AzureAppConfigurationProvider.load(endpoint="your-endpoint", credential=DefaultAzureCredential())
+config = load_provider(endpoint="your-endpoint", credential=DefaultAzureCredential())
 ```
 
 these providers will by default load all configurations with `(No Label)` from your configuration store.
@@ -60,8 +60,7 @@ You can refine or expand the configurations loaded from your store by using `Set
 
 ```python
 selects = {SettingSelector(key_filter="*", label_filter="\0"), SettingSelector(key_filter="*", label_filter="dev")}
-config = AzureAppConfigurationProvider.load(
-    endpoint=endpoint, credential=default_credential, selects=selects)
+config = load_provider(endpoint=endpoint, credential=default_credential, selects=selects)
 ```
 In this example all configuration with empty label and the dev label are loaded. Because the dev selector is listed last, any configurations from dev take priority over those with `(No Label)` when duplicates are found.
 
@@ -71,8 +70,7 @@ You can trim the prefix off of keys by providing a list of trimmed key prefixes 
 
 ```python
 trimmed_key_prefixes={"/application/"}
-config = AzureAppConfigurationProvider.load(
-    endpoint=endpoint, credential=default_credential, trimmed_key_prefixes=trimmed_key_prefixes)
+config = load_provider(endpoint=endpoint, credential=default_credential, trimmed_key_prefixes=trimmed_key_prefixes)
 print(config["message"])
 ```
 
@@ -86,7 +84,7 @@ You can provide `AzureAppConfigurationKeyVaultOptions` with a credential and all
 
 ```python
 key_vault_options = AzureAppConfigurationKeyVaultOptions(credential=default_credential)
-config = AzureAppConfigurationProvider.load(endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
+config = load_provider(endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
 ```
 ### With Clients
 
@@ -96,7 +94,7 @@ You can provide `AzureAppConfigurationKeyVaultOptions` with a list of `SecretCli
 key_vault_options = AzureAppConfigurationKeyVaultOptions(
     secret_clients={SecretClient(
         vault_url=key_vault_uri, credential=default_credential)})
-config = AzureAppConfigurationProvider.load(endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
+config = load_provider(endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
 ```
 
 ### Secret Resolver
@@ -109,8 +107,7 @@ def secret_resolver(uri):
 
 key_vault_options = AzureAppConfigurationKeyVaultOptions(
     secret_resolver=secret_resolver)
-config = AzureAppConfigurationProvider.load(
-    endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
+config = load_provider(endpoint=endpoint, credential=default_credential, key_vault_options=key_vault_options)
 ```
 
 ## Key concepts

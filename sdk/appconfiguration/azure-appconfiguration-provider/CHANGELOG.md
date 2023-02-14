@@ -11,8 +11,10 @@
 * Changes how load works. Moves if from AzureAppConfigurationProvider.load to load_provider.
 * Removed custom Key Vault Error
 * Removed unneeded __repr__ and copy methods.
+* All Feature Flags are added to there own key and have there prefix removed
 
 ### Bugs Fixed
+* Fixed Issue where Key Vault Clients couldn't be set in some situations
 
 ### Other Changes
 * Updated method docs
