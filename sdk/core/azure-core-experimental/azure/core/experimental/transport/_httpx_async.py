@@ -104,7 +104,5 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         else:
             response = await self.client.request(**parameters)
 
-        transport_response =  AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
-        if not stream_response:
-            transport_response.load_body()
-        return transport_response
+        return AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
+        
