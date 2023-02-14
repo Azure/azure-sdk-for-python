@@ -194,6 +194,7 @@ class AzureMLResourceType(object):
     COMPONENT = "components"
     SCHEDULE = "schedules"
     REGISTRY = "registries"
+    FEATURE_STORE = "featurestore"
 
     NAMED_TYPES = {
         JOB,
@@ -354,6 +355,7 @@ class YAMLRefDocLinks:
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
     SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
     REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
+    FEATURE_STORE = "https://aka.ms/ml-cli-v2-workspace-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:

@@ -9,8 +9,8 @@ from typing import Dict, Iterable, Optional, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     EncryptionKeyVaultUpdateProperties,
     EncryptionUpdateProperties,
     WorkspaceUpdateParameters,
@@ -66,7 +66,7 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient102022Preview,
+        service_client: ServiceClient122022Preview,
         all_operations: OperationsContainer,
         credentials: Optional[TokenCredential] = None,
         **kwargs: Dict,
@@ -94,11 +94,15 @@ class WorkspaceOperations:
 
         if scope == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
-                cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs]
+                cls=lambda objs: filter(
+                        lambda ws: ws.kind is None or ws.kind in ["", "Default"], 
+                        [Workspace._from_rest_object(obj) for obj in objs])
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
-            cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
+                cls=lambda objs: filter(
+                        lambda ws: ws.kind is None or ws.kind in ["", "Default"], 
+                        [Workspace._from_rest_object(obj) for obj in objs])
         )
 
     # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
@@ -440,6 +444,11 @@ class WorkspaceOperations:
             _set_val(param["description"], workspace.description)
         _set_val(param["location"], workspace.location)
 
+        if not workspace.kind:
+            _set_val(param["kind"], "Default")
+        else:
+            _set_val(param["kind"], workspace.kind)
+
         _set_val(param["resourceGroupName"], workspace.resource_group)
 
         if workspace.key_vault:
@@ -592,6 +601,16 @@ class WorkspaceOperations:
 
         if workspace.primary_user_assigned_identity:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
+
+        if workspace.feature_store_settings:
+            _set_val(param["feature_store_compute_runtime"],
+                     workspace.feature_store_settings.compute_runtime)
+            _set_val(param["feature_store_offlinestoreconnectionname"],
+                     workspace.feature_store_settings.offline_store_connection_name)
+            _set_val(param["feature_store_onlinestoreconnectionname"],
+                     workspace.feature_store_settings.online_store_connection_name)
+            _set_val(param["feature_store_allowroleassignmentsonresourcegrouplevel"],
+                     workspace.feature_store_settings.allow_role_assignments_on_resource_group_level)
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

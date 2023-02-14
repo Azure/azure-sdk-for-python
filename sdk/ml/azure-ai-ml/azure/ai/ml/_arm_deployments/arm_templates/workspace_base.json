@@ -20,6 +20,13 @@
                 "description": "Friendly name."
             }
         },
+        "kind": {
+            "type": "string",
+            "defaultValue": "Default",
+            "metadata": {
+                "description": "Specifies the Kind of the workspace."
+            }
+        },
         "location": {
             "type": "string",
             "metadata": {
@@ -546,6 +553,7 @@
             "apiVersion": "2022-01-01-preview",
             "tags": "[parameters('tagValues')]",
             "name": "[parameters('workspaceName')]",
+            "kind": "[parameters('kind')]",
             "location": "[parameters('location')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]",
@@ -566,6 +574,14 @@
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "softDeleteEnabled": "[parameters('soft_delete_enabled')]",
                 "allowRecoverSoftDeletedWorkspace": "[parameters('allow_recover_softdeleted_workspace')]",
+                "featurestore": {
+                    "computeruntime": {
+                        "SparkRuntimeVersion": "[parameters('feature_store_compute_runtime')]"
+                    },
+                    "offlinestoreconnectionname": "[parameters('feature_store_offlinestoreconnectionname')]",
+                    "onlinestoreconnectionname": "[parameters('feature_store_onlinestoreconnectionname')]",
+                    "allowroleassignmentsonresourcegrouplevel": "[parameters('feature_store_allowroleassignmentsonresourcegrouplevel')]"
+                },
                 "encryption": {
                     "status": "[parameters('encryption_status')]",
                     "keyVaultProperties": {

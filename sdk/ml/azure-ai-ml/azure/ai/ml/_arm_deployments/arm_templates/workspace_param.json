@@ -11,6 +11,9 @@
     "description": {
         "value": ""
     },
+    "kind": {
+        "value": "Default"
+    },
     "friendlyName": {
         "value": ""
     },

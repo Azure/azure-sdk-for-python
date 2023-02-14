@@ -67,6 +67,7 @@ from azure.ai.ml.operations import (
     DataOperations,
     DatastoreOperations,
     EnvironmentOperations,
+    FeatureStoreOperations,
     JobOperations,
     ModelOperations,
     OnlineDeploymentOperations,
@@ -222,7 +223,7 @@ class MLClient:
             **kwargs,
         )
 
-        self._rp_service_client = ServiceClient102022Preview(
+        self._rp_service_client = ServiceClient122022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
@@ -306,6 +307,14 @@ class MLClient:
             self._credential,
         )
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
+
+        self._featurestores = FeatureStoreOperations(
+            self._rp_service_client,
+            self._operation_container,
+            **app_insights_handler_kwargs,
+        )
+        self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)
+
         self._compute = ComputeOperations(
             self._operation_scope,
             self._operation_config,
@@ -564,6 +573,15 @@ class MLClient:
         :rtype: WorkspaceConnectionsOperations
         """
         return self._workspace_connections
+
+    @property
+    def featurestores(self) -> FeatureStoreOperations:
+        """A collection of featurestore related operations.
+
+        :return: Featurestore operations
+        :rtype: FeatureStoreOperations
+        """
+        return self._featurestores
 
     @property
     def jobs(self) -> JobOperations:
