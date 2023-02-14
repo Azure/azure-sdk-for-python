@@ -5312,58 +5312,6 @@ def build_scenes_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_scenes_search_features_request(collection_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/scenes/collections/{collectionId}:search"
-    path_format_arguments = {
-        "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_scenes_get_stac_feature_request(collection_id: str, feature_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/scenes/collections/{collectionId}/features/{featureId}"
-    path_format_arguments = {
-        "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
-        "featureId": _SERIALIZER.url("feature_id", feature_id, "str"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_scenes_download_request(*, file_path: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -5422,6 +5370,64 @@ def build_scenes_get_satellite_data_ingestion_job_details_request(job_id: str, *
     _url = "/scenes/satellite/ingest-data/{jobId}"
     path_format_arguments = {
         "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_scenes_search_features_request(
+    collection_id: str, *, maxpagesize: int = 10, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/scenes/stac-collections/{collectionId}:search"
+    path_format_arguments = {
+        "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if maxpagesize is not None:
+        _params["maxpagesize"] = _SERIALIZER.query("maxpagesize", maxpagesize, "int", maximum=100, minimum=1)
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int", maximum=2147483647, minimum=1)
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_scenes_get_stac_feature_request(collection_id: str, feature_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/scenes/stac-collections/{collectionId}/features/{featureId}"
+    path_format_arguments = {
+        "collectionId": _SERIALIZER.url("collection_id", collection_id, "str"),
+        "featureId": _SERIALIZER.url("feature_id", feature_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -9336,7 +9342,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -9352,7 +9358,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10037,7 +10043,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10053,7 +10059,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10364,7 +10370,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10380,7 +10386,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10449,7 +10455,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10465,7 +10471,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10493,7 +10499,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10509,7 +10515,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10607,7 +10613,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10623,7 +10629,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10651,7 +10657,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10667,7 +10673,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10758,7 +10764,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10774,7 +10780,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10802,7 +10808,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10818,7 +10824,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -10963,7 +10969,7 @@ class BoundariesOperations:
                         [
                             [
                                 [
-                                    0.0  # Gets or sets coordinates of GeoJSON
+                                    0.0  # Gets or sets Coordinates of GeoJSON
                                       Object."nIt must be an array of polygons, each polygon contains
                                       list of linear rings."nFor Polygons with more than one of these
                                       rings, the first MUST be the exterior ring,"nand any others MUST
@@ -10979,7 +10985,7 @@ class BoundariesOperations:
                 geo_json_object = {
                     "coordinates": [
                         0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
                     ],
                     "type": "Point"
                 }
@@ -28992,469 +28998,6 @@ class ScenesOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    @overload
-    def search_features(
-        self, collection_id: str, search_features_query: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
-        """Search for STAC features by collection id, bbox, intersecting geometry, start and end datetime.
-
-        :param collection_id: Collection Id to be searched. Available Values are: Sentinel_2_L2A,
-         Sentinel_2_L1C. Required.
-        :type collection_id: str
-        :param search_features_query: Query filters. Required.
-        :type search_features_query: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # The input is polymorphic. The following are possible polymorphic inputs based off
-                  discriminator "type":
-
-                # JSON input template for discriminator value "MultiPolygon":
-                geo_json_object = {
-                    "coordinates": [
-                        [
-                            [
-                                [
-                                    0.0  # Gets or sets coordinates of GeoJSON
-                                      Object."nIt must be an array of polygons, each polygon contains
-                                      list of linear rings."nFor Polygons with more than one of these
-                                      rings, the first MUST be the exterior ring,"nand any others MUST
-                                      be interior rings. Required.
-                                ]
-                            ]
-                        ]
-                    ],
-                    "type": "MultiPolygon"
-                }
-
-                # JSON input template for discriminator value "Point":
-                geo_json_object = {
-                    "coordinates": [
-                        0.0  # Gets or sets the coordinate of this point."nIt must be an
-                          array of 2 or 3 elements for a 2D or 3D system respectively. Required.
-                    ],
-                    "type": "Point"
-                }
-
-                # JSON input template for discriminator value "Polygon":
-                geo_json_object = {
-                    "coordinates": [
-                        [
-                            [
-                                0.0  # Gets or sets type of the GeoJSON Object."nIt
-                                  must be an array of linear ring coordinate arrays."nFor Polygons with
-                                  more than one of these rings, the first MUST be the exterior
-                                  ring,"nand any others MUST be interior rings. Required.
-                            ]
-                        ]
-                    ],
-                    "type": "Polygon"
-                }
-
-                # JSON input template you can fill out and use as your body input.
-                search_features_query = {
-                    "endDateTime": "2020-02-20 00:00:00",  # End datetime of the time interval in
-                      which to search for Features. Required.
-                    "startDateTime": "2020-02-20 00:00:00",  # Start datetime of the time
-                      interval in which to search for Features. Required.
-                    "bbox": [
-                        0.0  # Optional. Only features that have a geometry that intersects
-                          the bounding box are selected."nThe bounding box is provided as four numbers.
-                          The coordinate reference system of the values is WGS84 longitude/latitude.
-                    ],
-                    "featureIds": [
-                        "str"  # Optional. Array of feature ids to return.
-                    ],
-                    "intersects": geo_json_object,
-                    "limit": 10,  # Optional. Default value is 10. Maximum number of features
-                      needed (inclusive)."nMinimum = 1, Maximum = 100, Default value = 10.
-                    "next": 0  # Optional. Skip token for getting next set of results.
-                }
-
-                # response body for status code(s): 200
-                response == {
-                    "features": [
-                        {
-                            "assets": {
-                                "str": {
-                                    "href": "str",  # Link to the asset object.
-                                      Required.
-                                    "description": "str",  # Optional. A
-                                      description of the Asset providing additional details, such as
-                                      how it was processed or created.
-                                    "roles": [
-                                        "str"  # Optional. The semantic roles
-                                          of the asset, similar to the use of rel in links.
-                                    ],
-                                    "title": "str",  # Optional. The displayed
-                                      title for clients and users.
-                                    "type": "str"  # Optional. Media type of the
-                                      asset.
-                                }
-                            },
-                            "id": "str",  # Provider identifier. Globally unique ID by
-                              Data provider. Required.
-                            "links": [
-                                {
-                                    "href": "str",  # The actual link in the
-                                      format of an URL. Required.
-                                    "rel": "str",  # Relationship between the
-                                      current document and the linked document. Required.
-                                    "title": "str",  # Optional. A human readable
-                                      title to be used in rendered displays of the link.
-                                    "type": "str"  # Optional. Media type of the
-                                      referenced entity.
-                                }
-                            ],
-                            "properties": {},  # A dictionary of additional metadata for
-                              the item. Required.
-                            "stacVersion": "str",  # The STAC version the Feature
-                              implements. Required.
-                            "type": "str",  # Type of the GeoJSON Object. It's value is
-                              always Feature. Required.
-                            "bbox": [
-                                0.0  # Optional. Bounding box of the feature.
-                            ],
-                            "collection": "str",  # Optional. The id of the STAC
-                              Collection this Feature references.
-                            "geometry": {},  # Optional. Defines the full footprint of
-                              the asset represented by this item."nIts a GeoJSON geometry.
-                            "stacExtensions": [
-                                "str"  # Optional. A list of extensions the Feature
-                                  implements.
-                            ]
-                        }
-                    ],
-                    "returned": 0,  # No of features returned. Required.
-                    "next": 0  # Optional. Merge this next property in next search request"nto
-                      get next set of results.
-                }
-        """
-
-    @overload
-    def search_features(
-        self, collection_id: str, search_features_query: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> JSON:
-        """Search for STAC features by collection id, bbox, intersecting geometry, start and end datetime.
-
-        :param collection_id: Collection Id to be searched. Available Values are: Sentinel_2_L2A,
-         Sentinel_2_L1C. Required.
-        :type collection_id: str
-        :param search_features_query: Query filters. Required.
-        :type search_features_query: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "features": [
-                        {
-                            "assets": {
-                                "str": {
-                                    "href": "str",  # Link to the asset object.
-                                      Required.
-                                    "description": "str",  # Optional. A
-                                      description of the Asset providing additional details, such as
-                                      how it was processed or created.
-                                    "roles": [
-                                        "str"  # Optional. The semantic roles
-                                          of the asset, similar to the use of rel in links.
-                                    ],
-                                    "title": "str",  # Optional. The displayed
-                                      title for clients and users.
-                                    "type": "str"  # Optional. Media type of the
-                                      asset.
-                                }
-                            },
-                            "id": "str",  # Provider identifier. Globally unique ID by
-                              Data provider. Required.
-                            "links": [
-                                {
-                                    "href": "str",  # The actual link in the
-                                      format of an URL. Required.
-                                    "rel": "str",  # Relationship between the
-                                      current document and the linked document. Required.
-                                    "title": "str",  # Optional. A human readable
-                                      title to be used in rendered displays of the link.
-                                    "type": "str"  # Optional. Media type of the
-                                      referenced entity.
-                                }
-                            ],
-                            "properties": {},  # A dictionary of additional metadata for
-                              the item. Required.
-                            "stacVersion": "str",  # The STAC version the Feature
-                              implements. Required.
-                            "type": "str",  # Type of the GeoJSON Object. It's value is
-                              always Feature. Required.
-                            "bbox": [
-                                0.0  # Optional. Bounding box of the feature.
-                            ],
-                            "collection": "str",  # Optional. The id of the STAC
-                              Collection this Feature references.
-                            "geometry": {},  # Optional. Defines the full footprint of
-                              the asset represented by this item."nIts a GeoJSON geometry.
-                            "stacExtensions": [
-                                "str"  # Optional. A list of extensions the Feature
-                                  implements.
-                            ]
-                        }
-                    ],
-                    "returned": 0,  # No of features returned. Required.
-                    "next": 0  # Optional. Merge this next property in next search request"nto
-                      get next set of results.
-                }
-        """
-
-    @distributed_trace
-    def search_features(self, collection_id: str, search_features_query: Union[JSON, IO], **kwargs: Any) -> JSON:
-        """Search for STAC features by collection id, bbox, intersecting geometry, start and end datetime.
-
-        :param collection_id: Collection Id to be searched. Available Values are: Sentinel_2_L2A,
-         Sentinel_2_L1C. Required.
-        :type collection_id: str
-        :param search_features_query: Query filters. Is either a model type or a IO type. Required.
-        :type search_features_query: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "features": [
-                        {
-                            "assets": {
-                                "str": {
-                                    "href": "str",  # Link to the asset object.
-                                      Required.
-                                    "description": "str",  # Optional. A
-                                      description of the Asset providing additional details, such as
-                                      how it was processed or created.
-                                    "roles": [
-                                        "str"  # Optional. The semantic roles
-                                          of the asset, similar to the use of rel in links.
-                                    ],
-                                    "title": "str",  # Optional. The displayed
-                                      title for clients and users.
-                                    "type": "str"  # Optional. Media type of the
-                                      asset.
-                                }
-                            },
-                            "id": "str",  # Provider identifier. Globally unique ID by
-                              Data provider. Required.
-                            "links": [
-                                {
-                                    "href": "str",  # The actual link in the
-                                      format of an URL. Required.
-                                    "rel": "str",  # Relationship between the
-                                      current document and the linked document. Required.
-                                    "title": "str",  # Optional. A human readable
-                                      title to be used in rendered displays of the link.
-                                    "type": "str"  # Optional. Media type of the
-                                      referenced entity.
-                                }
-                            ],
-                            "properties": {},  # A dictionary of additional metadata for
-                              the item. Required.
-                            "stacVersion": "str",  # The STAC version the Feature
-                              implements. Required.
-                            "type": "str",  # Type of the GeoJSON Object. It's value is
-                              always Feature. Required.
-                            "bbox": [
-                                0.0  # Optional. Bounding box of the feature.
-                            ],
-                            "collection": "str",  # Optional. The id of the STAC
-                              Collection this Feature references.
-                            "geometry": {},  # Optional. Defines the full footprint of
-                              the asset represented by this item."nIts a GeoJSON geometry.
-                            "stacExtensions": [
-                                "str"  # Optional. A list of extensions the Feature
-                                  implements.
-                            ]
-                        }
-                    ],
-                    "returned": 0,  # No of features returned. Required.
-                    "next": 0  # Optional. Merge this next property in next search request"nto
-                      get next set of results.
-                }
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(search_features_query, (IO, bytes)):
-            _content = search_features_query
-        else:
-            _json = search_features_query
-
-        request = build_scenes_search_features_request(
-            collection_id=collection_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
-
-        return cast(JSON, deserialized)
-
-    @distributed_trace
-    def get_stac_feature(self, collection_id: str, feature_id: str, **kwargs: Any) -> JSON:
-        """Get a feature(SpatioTemporal Asset Catalog (STAC) Item) for given collection and feature id.
-
-        :param collection_id: Collection Id to be fetched. Available Values are: Sentinel_2_L2A,
-         Sentinel_2_L1C. Required.
-        :type collection_id: str
-        :param feature_id: Feature Id to be fetched. Required.
-        :type feature_id: str
-        :return: JSON object
-        :rtype: JSON
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # response body for status code(s): 200
-                response == {
-                    "assets": {
-                        "str": {
-                            "href": "str",  # Link to the asset object. Required.
-                            "description": "str",  # Optional. A description of the Asset
-                              providing additional details, such as how it was processed or created.
-                            "roles": [
-                                "str"  # Optional. The semantic roles of the asset,
-                                  similar to the use of rel in links.
-                            ],
-                            "title": "str",  # Optional. The displayed title for clients
-                              and users.
-                            "type": "str"  # Optional. Media type of the asset.
-                        }
-                    },
-                    "id": "str",  # Provider identifier. Globally unique ID by Data provider.
-                      Required.
-                    "links": [
-                        {
-                            "href": "str",  # The actual link in the format of an URL.
-                              Required.
-                            "rel": "str",  # Relationship between the current document
-                              and the linked document. Required.
-                            "title": "str",  # Optional. A human readable title to be
-                              used in rendered displays of the link.
-                            "type": "str"  # Optional. Media type of the referenced
-                              entity.
-                        }
-                    ],
-                    "properties": {},  # A dictionary of additional metadata for the item.
-                      Required.
-                    "stacVersion": "str",  # The STAC version the Feature implements. Required.
-                    "type": "str",  # Type of the GeoJSON Object. It's value is always Feature.
-                      Required.
-                    "bbox": [
-                        0.0  # Optional. Bounding box of the feature.
-                    ],
-                    "collection": "str",  # Optional. The id of the STAC Collection this Feature
-                      references.
-                    "geometry": {},  # Optional. Defines the full footprint of the asset
-                      represented by this item."nIts a GeoJSON geometry.
-                    "stacExtensions": [
-                        "str"  # Optional. A list of extensions the Feature implements.
-                    ]
-                }
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-
-        request = build_scenes_get_stac_feature_request(
-            collection_id=collection_id,
-            feature_id=feature_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
-
-        return cast(JSON, deserialized)
-
     @distributed_trace
     def download(self, *, file_path: str, **kwargs: Any) -> Iterator[bytes]:
         """Downloads and returns file Stream as response for the given input filePath.
@@ -29980,6 +29523,502 @@ class ScenesOperations:
 
         request = build_scenes_get_satellite_data_ingestion_job_details_request(
             job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @overload
+    def search_features(
+        self,
+        collection_id: str,
+        search_features_query: JSON,
+        *,
+        maxpagesize: int = 10,
+        skip: Optional[int] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Search for STAC features by collection id, bbox, intersecting geometry, start and end datetime.
+
+        :param collection_id: Collection Id to be searched. Known values are: "Sentinel_2_L2A" and
+         "Sentinel_2_L1C". Required.
+        :type collection_id: str
+        :param search_features_query: Query filters. Required.
+        :type search_features_query: JSON
+        :keyword maxpagesize: Maximum number of features needed (inclusive). Minimum = 1, Maximum =
+         100, Default value = 10. Default value is 10.
+        :paramtype maxpagesize: int
+        :keyword skip: Skip token for getting next set of results. Default value is None.
+        :paramtype skip: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "type":
+
+                # JSON input template for discriminator value "MultiPolygon":
+                geo_json_object = {
+                    "coordinates": [
+                        [
+                            [
+                                [
+                                    0.0  # Gets or sets Coordinates of GeoJSON
+                                      Object."nIt must be an array of polygons, each polygon contains
+                                      list of linear rings."nFor Polygons with more than one of these
+                                      rings, the first MUST be the exterior ring,"nand any others MUST
+                                      be interior rings. Required.
+                                ]
+                            ]
+                        ]
+                    ],
+                    "type": "MultiPolygon"
+                }
+
+                # JSON input template for discriminator value "Point":
+                geo_json_object = {
+                    "coordinates": [
+                        0.0  # Gets or sets the coordinate of this point."nIt must be an
+                          array of 2 or 3 elements for a 2D or 3D system. Required.
+                    ],
+                    "type": "Point"
+                }
+
+                # JSON input template for discriminator value "Polygon":
+                geo_json_object = {
+                    "coordinates": [
+                        [
+                            [
+                                0.0  # Gets or sets type of the GeoJSON Object."nIt
+                                  must be an array of linear ring coordinate arrays."nFor Polygons with
+                                  more than one of these rings, the first MUST be the exterior
+                                  ring,"nand any others MUST be interior rings. Required.
+                            ]
+                        ]
+                    ],
+                    "type": "Polygon"
+                }
+
+                # JSON input template you can fill out and use as your body input.
+                search_features_query = {
+                    "endDateTime": "2020-02-20 00:00:00",  # End datetime of the time interval in
+                      which to search for Features. Required.
+                    "startDateTime": "2020-02-20 00:00:00",  # Start datetime of the time
+                      interval in which to search for Features. Required.
+                    "bbox": [
+                        0.0  # Optional. Only features that have a geometry that intersects
+                          the bounding box are selected."nThe bounding box is provided as four numbers.
+                          The coordinate reference system of the values is WGS84 longitude/latitude.
+                    ],
+                    "featureIds": [
+                        "str"  # Optional. Array of feature ids to return.
+                    ],
+                    "intersects": geo_json_object
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "features": [
+                        {
+                            "assets": {
+                                "str": {
+                                    "href": "str",  # Link to the asset object.
+                                      Required.
+                                    "description": "str",  # Optional. A
+                                      description of the Asset providing additional details, such as
+                                      how it was processed or created.
+                                    "roles": [
+                                        "str"  # Optional. The semantic roles
+                                          of the asset, similar to the use of rel in links.
+                                    ],
+                                    "title": "str",  # Optional. The displayed
+                                      title for clients and users.
+                                    "type": "str"  # Optional. Media type of the
+                                      asset.
+                                }
+                            },
+                            "id": "str",  # Provider identifier. Globally unique ID by
+                              Data provider. Required.
+                            "links": [
+                                {
+                                    "href": "str",  # The actual link in the
+                                      format of an URL. Required.
+                                    "rel": "str",  # Relationship between the
+                                      current document and the linked document. Required.
+                                    "title": "str",  # Optional. A human readable
+                                      title to be used in rendered displays of the link.
+                                    "type": "str"  # Optional. Media type of the
+                                      referenced entity.
+                                }
+                            ],
+                            "properties": {},  # A dictionary of additional metadata for
+                              the item. Required.
+                            "stacVersion": "str",  # The STAC version the Feature
+                              implements. Required.
+                            "type": "str",  # Type of the GeoJSON Object. It's value is
+                              always Feature. Required.
+                            "bbox": [
+                                0.0  # Optional. Bounding box of the feature.
+                            ],
+                            "collection": "str",  # Optional. The id of the STAC
+                              Collection this Feature references.
+                            "geometry": {},  # Optional. Defines the full footprint of
+                              the asset represented by this item."nIts a GeoJSON geometry.
+                            "stacExtensions": [
+                                "str"  # Optional. A list of extensions the Feature
+                                  implements.
+                            ]
+                        }
+                    ],
+                    "nextLink": "str"  # Optional. URL to do the POST request with same
+                      filters,"nto get next set of features.
+                }
+        """
+
+    @overload
+    def search_features(
+        self,
+        collection_id: str,
+        search_features_query: IO,
+        *,
+        maxpagesize: int = 10,
+        skip: Optional[int] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> JSON:
+        """Search for STAC features by collection id, bbox, intersecting geometry, start and end datetime.
+
+        :param collection_id: Collection Id to be searched. Known values are: "Sentinel_2_L2A" and
+         "Sentinel_2_L1C". Required.
+        :type collection_id: str
+        :param search_features_query: Query filters. Required.
+        :type search_features_query: IO
+        :keyword maxpagesize: Maximum number of features needed (inclusive). Minimum = 1, Maximum =
+         100, Default value = 10. Default value is 10.
+        :paramtype maxpagesize: int
+        :keyword skip: Skip token for getting next set of results. Default value is None.
+        :paramtype skip: int
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "features": [
+                        {
+                            "assets": {
+                                "str": {
+                                    "href": "str",  # Link to the asset object.
+                                      Required.
+                                    "description": "str",  # Optional. A
+                                      description of the Asset providing additional details, such as
+                                      how it was processed or created.
+                                    "roles": [
+                                        "str"  # Optional. The semantic roles
+                                          of the asset, similar to the use of rel in links.
+                                    ],
+                                    "title": "str",  # Optional. The displayed
+                                      title for clients and users.
+                                    "type": "str"  # Optional. Media type of the
+                                      asset.
+                                }
+                            },
+                            "id": "str",  # Provider identifier. Globally unique ID by
+                              Data provider. Required.
+                            "links": [
+                                {
+                                    "href": "str",  # The actual link in the
+                                      format of an URL. Required.
+                                    "rel": "str",  # Relationship between the
+                                      current document and the linked document. Required.
+                                    "title": "str",  # Optional. A human readable
+                                      title to be used in rendered displays of the link.
+                                    "type": "str"  # Optional. Media type of the
+                                      referenced entity.
+                                }
+                            ],
+                            "properties": {},  # A dictionary of additional metadata for
+                              the item. Required.
+                            "stacVersion": "str",  # The STAC version the Feature
+                              implements. Required.
+                            "type": "str",  # Type of the GeoJSON Object. It's value is
+                              always Feature. Required.
+                            "bbox": [
+                                0.0  # Optional. Bounding box of the feature.
+                            ],
+                            "collection": "str",  # Optional. The id of the STAC
+                              Collection this Feature references.
+                            "geometry": {},  # Optional. Defines the full footprint of
+                              the asset represented by this item."nIts a GeoJSON geometry.
+                            "stacExtensions": [
+                                "str"  # Optional. A list of extensions the Feature
+                                  implements.
+                            ]
+                        }
+                    ],
+                    "nextLink": "str"  # Optional. URL to do the POST request with same
+                      filters,"nto get next set of features.
+                }
+        """
+
+    @distributed_trace
+    def search_features(
+        self,
+        collection_id: str,
+        search_features_query: Union[JSON, IO],
+        *,
+        maxpagesize: int = 10,
+        skip: Optional[int] = None,
+        **kwargs: Any
+    ) -> JSON:
+        """Search for STAC features by collection id, bbox, intersecting geometry, start and end datetime.
+
+        :param collection_id: Collection Id to be searched. Known values are: "Sentinel_2_L2A" and
+         "Sentinel_2_L1C". Required.
+        :type collection_id: str
+        :param search_features_query: Query filters. Is either a model type or a IO type. Required.
+        :type search_features_query: JSON or IO
+        :keyword maxpagesize: Maximum number of features needed (inclusive). Minimum = 1, Maximum =
+         100, Default value = 10. Default value is 10.
+        :paramtype maxpagesize: int
+        :keyword skip: Skip token for getting next set of results. Default value is None.
+        :paramtype skip: int
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "features": [
+                        {
+                            "assets": {
+                                "str": {
+                                    "href": "str",  # Link to the asset object.
+                                      Required.
+                                    "description": "str",  # Optional. A
+                                      description of the Asset providing additional details, such as
+                                      how it was processed or created.
+                                    "roles": [
+                                        "str"  # Optional. The semantic roles
+                                          of the asset, similar to the use of rel in links.
+                                    ],
+                                    "title": "str",  # Optional. The displayed
+                                      title for clients and users.
+                                    "type": "str"  # Optional. Media type of the
+                                      asset.
+                                }
+                            },
+                            "id": "str",  # Provider identifier. Globally unique ID by
+                              Data provider. Required.
+                            "links": [
+                                {
+                                    "href": "str",  # The actual link in the
+                                      format of an URL. Required.
+                                    "rel": "str",  # Relationship between the
+                                      current document and the linked document. Required.
+                                    "title": "str",  # Optional. A human readable
+                                      title to be used in rendered displays of the link.
+                                    "type": "str"  # Optional. Media type of the
+                                      referenced entity.
+                                }
+                            ],
+                            "properties": {},  # A dictionary of additional metadata for
+                              the item. Required.
+                            "stacVersion": "str",  # The STAC version the Feature
+                              implements. Required.
+                            "type": "str",  # Type of the GeoJSON Object. It's value is
+                              always Feature. Required.
+                            "bbox": [
+                                0.0  # Optional. Bounding box of the feature.
+                            ],
+                            "collection": "str",  # Optional. The id of the STAC
+                              Collection this Feature references.
+                            "geometry": {},  # Optional. Defines the full footprint of
+                              the asset represented by this item."nIts a GeoJSON geometry.
+                            "stacExtensions": [
+                                "str"  # Optional. A list of extensions the Feature
+                                  implements.
+                            ]
+                        }
+                    ],
+                    "nextLink": "str"  # Optional. URL to do the POST request with same
+                      filters,"nto get next set of features.
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(search_features_query, (IO, bytes)):
+            _content = search_features_query
+        else:
+            _json = search_features_query
+
+        request = build_scenes_search_features_request(
+            collection_id=collection_id,
+            maxpagesize=maxpagesize,
+            skip=skip,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        request.url = self._client.format_url(request.url)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace
+    def get_stac_feature(self, collection_id: str, feature_id: str, **kwargs: Any) -> JSON:
+        """Get a feature(SpatioTemporal Asset Catalog (STAC) Item) for given collection and feature id.
+
+        :param collection_id: Collection Id to be fetched. Known values are: "Sentinel_2_L2A" and
+         "Sentinel_2_L1C". Required.
+        :type collection_id: str
+        :param feature_id: Feature Id to be fetched. Required.
+        :type feature_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "assets": {
+                        "str": {
+                            "href": "str",  # Link to the asset object. Required.
+                            "description": "str",  # Optional. A description of the Asset
+                              providing additional details, such as how it was processed or created.
+                            "roles": [
+                                "str"  # Optional. The semantic roles of the asset,
+                                  similar to the use of rel in links.
+                            ],
+                            "title": "str",  # Optional. The displayed title for clients
+                              and users.
+                            "type": "str"  # Optional. Media type of the asset.
+                        }
+                    },
+                    "id": "str",  # Provider identifier. Globally unique ID by Data provider.
+                      Required.
+                    "links": [
+                        {
+                            "href": "str",  # The actual link in the format of an URL.
+                              Required.
+                            "rel": "str",  # Relationship between the current document
+                              and the linked document. Required.
+                            "title": "str",  # Optional. A human readable title to be
+                              used in rendered displays of the link.
+                            "type": "str"  # Optional. Media type of the referenced
+                              entity.
+                        }
+                    ],
+                    "properties": {},  # A dictionary of additional metadata for the item.
+                      Required.
+                    "stacVersion": "str",  # The STAC version the Feature implements. Required.
+                    "type": "str",  # Type of the GeoJSON Object. It's value is always Feature.
+                      Required.
+                    "bbox": [
+                        0.0  # Optional. Bounding box of the feature.
+                    ],
+                    "collection": "str",  # Optional. The id of the STAC Collection this Feature
+                      references.
+                    "geometry": {},  # Optional. Defines the full footprint of the asset
+                      represented by this item."nIts a GeoJSON geometry.
+                    "stacExtensions": [
+                        "str"  # Optional. A list of extensions the Feature implements.
+                    ]
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        request = build_scenes_get_stac_feature_request(
+            collection_id=collection_id,
+            feature_id=feature_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -37387,113 +37426,145 @@ class WeatherDataOperations:
                     },
                     "locations": [
                         {
-                            "data": [
-                                {
-                                    "additionalAttributes": {
-                                        "str": {}  # Optional. A collection
-                                          of key value pairs that belongs to the resource. Each pair
-                                          must not have a key greater than 50 characters and must not
-                                          have a value greater than 250 characters. Note: A maximum of
-                                          100 key value pairs can be provided for a resource and only
-                                          string and numeral values are supported.
-                                    },
-                                    "cloudCover": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "dayOfWeek": "str",  # Optional. Day of week.
-                                    "dayOrNight": "str",  # Optional. This data
-                                      field indicates whether it is daytime or nighttime based on the
-                                      Local Apparent Time of the location.
-                                    "expirationTime": "str",  # Optional.
-                                      Expiration time in Utc format.
-                                    "hasPrecipitation": bool,  # Optional.
-                                      Indicates whether there is precipitation or not.
-                                    "iconCode": "str",  # Optional. This number
-                                      is the key to the weather icon lookup. The data field shows the
-                                      icon number that is matched to represent the observed weather
-                                      conditions.
-                                    "iconCodeExtend": "str",  # Optional. Code
-                                      representing full set sensible weather.
-                                    "pressureMeanSeaLevel": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "relativeHumidity": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperature": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureDewPoint": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureFeelsLike": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureHeatIndex": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureWindChill": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "uvDescription": "str",  # Optional. The UV
-                                      Index Description which complements the UV Index value by
-                                      providing an associated level of risk of skin damage due to
-                                      exposure (-2 = Not Available, -1 = No Report, 0 to 2 = Low, 3 to
-                                      5 = Moderate, 6 to 7 = High, 8 to 10 = Very High, 11 to 16 =
-                                      Extreme).
-                                    "uvIndex": "str",  # Optional. Hourly maximum
-                                      UV index.
-                                    "validTime": "str",  # Optional. Time
-                                      forecast is valid in Utc format.
-                                    "validTimeLocal": "str",  # Optional. Time
-                                      forecast is valid in local apparent time.
-                                    "visibility": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "wetBulbTemperature": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windDirection": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windGust": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windSpeed": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "wxPhraseLong": "str",  # Optional. Hourly
-                                      sensible weather phrase containing longer description.
-                                    "wxPhraseShort": "str"  # Optional. Hourly
-                                      sensible weather phrase containing short description.
-                                }
-                            ],
+                            "data": {
+                                "additionalAttributes": {
+                                    "str": {}  # Optional. A collection of key
+                                      value pairs that belongs to the resource. Each pair must not have
+                                      a key greater than 50 characters and must not have a value
+                                      greater than 250 characters. Note: A maximum of 100 key value
+                                      pairs can be provided for a resource and only string and numeral
+                                      values are supported.
+                                },
+                                "cloudCover": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "dayOfWeek": [
+                                    "str"  # Optional. Day of week.
+                                ],
+                                "dayOrNight": [
+                                    "str"  # Optional. This data field indicates
+                                      whether it is daytime or nighttime based on the Local Apparent
+                                      Time of the location.
+                                ],
+                                "expirationTime": [
+                                    "str"  # Optional. Expiration time in Utc
+                                      format.
+                                ],
+                                "hasPrecipitation": [
+                                    bool  # Optional. Indicates whether there is
+                                      precipitation or not.
+                                ],
+                                "iconCode": [
+                                    "str"  # Optional. This number is the key to
+                                      the weather icon lookup. The data field shows the icon number
+                                      that is matched to represent the observed weather conditions.
+                                ],
+                                "iconCodeExtend": [
+                                    "str"  # Optional. Code representing full set
+                                      sensible weather.
+                                ],
+                                "pressureMeanSeaLevel": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "relativeHumidity": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperature": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureDewPoint": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureFeelsLike": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureHeatIndex": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureWindChill": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "uvDescription": [
+                                    "str"  # Optional. The UV Index Description
+                                      which complements the UV Index value by providing an associated
+                                      level of risk of skin damage due to exposure (-2 = Not Available,
+                                      -1 = No Report, 0 to 2 = Low, 3 to 5 = Moderate, 6 to 7 = High, 8
+                                      to 10 = Very High, 11 to 16 = Extreme).
+                                ],
+                                "uvIndex": [
+                                    "str"  # Optional. Hourly maximum UV index.
+                                ],
+                                "validTime": [
+                                    "str"  # Optional. Time forecast is valid in
+                                      Utc format.
+                                ],
+                                "validTimeLocal": [
+                                    "str"  # Optional. Time forecast is valid in
+                                      local apparent time.
+                                ],
+                                "visibility": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "wetBulbTemperature": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windDirection": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windGust": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windSpeed": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "wxPhraseLong": [
+                                    "str"  # Optional. Hourly sensible weather
+                                      phrase containing longer description.
+                                ],
+                                "wxPhraseShort": [
+                                    "str"  # Optional. Hourly sensible weather
+                                      phrase containing short description.
+                                ]
+                            },
                             "lastRefreshedDateTime": "2020-02-20 00:00:00",  # Optional.
                               Date-time when resource was last requested, sample format:
                               yyyy-MM-ddTHH:mm:ssZ.
@@ -37584,113 +37655,145 @@ class WeatherDataOperations:
                     },
                     "locations": [
                         {
-                            "data": [
-                                {
-                                    "additionalAttributes": {
-                                        "str": {}  # Optional. A collection
-                                          of key value pairs that belongs to the resource. Each pair
-                                          must not have a key greater than 50 characters and must not
-                                          have a value greater than 250 characters. Note: A maximum of
-                                          100 key value pairs can be provided for a resource and only
-                                          string and numeral values are supported.
-                                    },
-                                    "cloudCover": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "dayOfWeek": "str",  # Optional. Day of week.
-                                    "dayOrNight": "str",  # Optional. This data
-                                      field indicates whether it is daytime or nighttime based on the
-                                      Local Apparent Time of the location.
-                                    "expirationTime": "str",  # Optional.
-                                      Expiration time in Utc format.
-                                    "hasPrecipitation": bool,  # Optional.
-                                      Indicates whether there is precipitation or not.
-                                    "iconCode": "str",  # Optional. This number
-                                      is the key to the weather icon lookup. The data field shows the
-                                      icon number that is matched to represent the observed weather
-                                      conditions.
-                                    "iconCodeExtend": "str",  # Optional. Code
-                                      representing full set sensible weather.
-                                    "pressureMeanSeaLevel": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "relativeHumidity": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperature": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureDewPoint": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureFeelsLike": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureHeatIndex": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureWindChill": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "uvDescription": "str",  # Optional. The UV
-                                      Index Description which complements the UV Index value by
-                                      providing an associated level of risk of skin damage due to
-                                      exposure (-2 = Not Available, -1 = No Report, 0 to 2 = Low, 3 to
-                                      5 = Moderate, 6 to 7 = High, 8 to 10 = Very High, 11 to 16 =
-                                      Extreme).
-                                    "uvIndex": "str",  # Optional. Hourly maximum
-                                      UV index.
-                                    "validTime": "str",  # Optional. Time
-                                      forecast is valid in Utc format.
-                                    "validTimeLocal": "str",  # Optional. Time
-                                      forecast is valid in local apparent time.
-                                    "visibility": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "wetBulbTemperature": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windDirection": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windGust": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windSpeed": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "wxPhraseLong": "str",  # Optional. Hourly
-                                      sensible weather phrase containing longer description.
-                                    "wxPhraseShort": "str"  # Optional. Hourly
-                                      sensible weather phrase containing short description.
-                                }
-                            ],
+                            "data": {
+                                "additionalAttributes": {
+                                    "str": {}  # Optional. A collection of key
+                                      value pairs that belongs to the resource. Each pair must not have
+                                      a key greater than 50 characters and must not have a value
+                                      greater than 250 characters. Note: A maximum of 100 key value
+                                      pairs can be provided for a resource and only string and numeral
+                                      values are supported.
+                                },
+                                "cloudCover": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "dayOfWeek": [
+                                    "str"  # Optional. Day of week.
+                                ],
+                                "dayOrNight": [
+                                    "str"  # Optional. This data field indicates
+                                      whether it is daytime or nighttime based on the Local Apparent
+                                      Time of the location.
+                                ],
+                                "expirationTime": [
+                                    "str"  # Optional. Expiration time in Utc
+                                      format.
+                                ],
+                                "hasPrecipitation": [
+                                    bool  # Optional. Indicates whether there is
+                                      precipitation or not.
+                                ],
+                                "iconCode": [
+                                    "str"  # Optional. This number is the key to
+                                      the weather icon lookup. The data field shows the icon number
+                                      that is matched to represent the observed weather conditions.
+                                ],
+                                "iconCodeExtend": [
+                                    "str"  # Optional. Code representing full set
+                                      sensible weather.
+                                ],
+                                "pressureMeanSeaLevel": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "relativeHumidity": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperature": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureDewPoint": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureFeelsLike": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureHeatIndex": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureWindChill": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "uvDescription": [
+                                    "str"  # Optional. The UV Index Description
+                                      which complements the UV Index value by providing an associated
+                                      level of risk of skin damage due to exposure (-2 = Not Available,
+                                      -1 = No Report, 0 to 2 = Low, 3 to 5 = Moderate, 6 to 7 = High, 8
+                                      to 10 = Very High, 11 to 16 = Extreme).
+                                ],
+                                "uvIndex": [
+                                    "str"  # Optional. Hourly maximum UV index.
+                                ],
+                                "validTime": [
+                                    "str"  # Optional. Time forecast is valid in
+                                      Utc format.
+                                ],
+                                "validTimeLocal": [
+                                    "str"  # Optional. Time forecast is valid in
+                                      local apparent time.
+                                ],
+                                "visibility": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "wetBulbTemperature": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windDirection": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windGust": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windSpeed": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "wxPhraseLong": [
+                                    "str"  # Optional. Hourly sensible weather
+                                      phrase containing longer description.
+                                ],
+                                "wxPhraseShort": [
+                                    "str"  # Optional. Hourly sensible weather
+                                      phrase containing short description.
+                                ]
+                            },
                             "lastRefreshedDateTime": "2020-02-20 00:00:00",  # Optional.
                               Date-time when resource was last requested, sample format:
                               yyyy-MM-ddTHH:mm:ssZ.
@@ -37782,113 +37885,145 @@ class WeatherDataOperations:
                     },
                     "locations": [
                         {
-                            "data": [
-                                {
-                                    "additionalAttributes": {
-                                        "str": {}  # Optional. A collection
-                                          of key value pairs that belongs to the resource. Each pair
-                                          must not have a key greater than 50 characters and must not
-                                          have a value greater than 250 characters. Note: A maximum of
-                                          100 key value pairs can be provided for a resource and only
-                                          string and numeral values are supported.
-                                    },
-                                    "cloudCover": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "dayOfWeek": "str",  # Optional. Day of week.
-                                    "dayOrNight": "str",  # Optional. This data
-                                      field indicates whether it is daytime or nighttime based on the
-                                      Local Apparent Time of the location.
-                                    "expirationTime": "str",  # Optional.
-                                      Expiration time in Utc format.
-                                    "hasPrecipitation": bool,  # Optional.
-                                      Indicates whether there is precipitation or not.
-                                    "iconCode": "str",  # Optional. This number
-                                      is the key to the weather icon lookup. The data field shows the
-                                      icon number that is matched to represent the observed weather
-                                      conditions.
-                                    "iconCodeExtend": "str",  # Optional. Code
-                                      representing full set sensible weather.
-                                    "pressureMeanSeaLevel": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "relativeHumidity": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperature": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureDewPoint": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureFeelsLike": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureHeatIndex": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "temperatureWindChill": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "uvDescription": "str",  # Optional. The UV
-                                      Index Description which complements the UV Index value by
-                                      providing an associated level of risk of skin damage due to
-                                      exposure (-2 = Not Available, -1 = No Report, 0 to 2 = Low, 3 to
-                                      5 = Moderate, 6 to 7 = High, 8 to 10 = Very High, 11 to 16 =
-                                      Extreme).
-                                    "uvIndex": "str",  # Optional. Hourly maximum
-                                      UV index.
-                                    "validTime": "str",  # Optional. Time
-                                      forecast is valid in Utc format.
-                                    "validTimeLocal": "str",  # Optional. Time
-                                      forecast is valid in local apparent time.
-                                    "visibility": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "wetBulbTemperature": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windDirection": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windGust": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "windSpeed": {
-                                        "unit": "str",  # Optional. Data
-                                          unit.
-                                        "value": 0.0  # Optional. Data value.
-                                    },
-                                    "wxPhraseLong": "str",  # Optional. Hourly
-                                      sensible weather phrase containing longer description.
-                                    "wxPhraseShort": "str"  # Optional. Hourly
-                                      sensible weather phrase containing short description.
-                                }
-                            ],
+                            "data": {
+                                "additionalAttributes": {
+                                    "str": {}  # Optional. A collection of key
+                                      value pairs that belongs to the resource. Each pair must not have
+                                      a key greater than 50 characters and must not have a value
+                                      greater than 250 characters. Note: A maximum of 100 key value
+                                      pairs can be provided for a resource and only string and numeral
+                                      values are supported.
+                                },
+                                "cloudCover": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "dayOfWeek": [
+                                    "str"  # Optional. Day of week.
+                                ],
+                                "dayOrNight": [
+                                    "str"  # Optional. This data field indicates
+                                      whether it is daytime or nighttime based on the Local Apparent
+                                      Time of the location.
+                                ],
+                                "expirationTime": [
+                                    "str"  # Optional. Expiration time in Utc
+                                      format.
+                                ],
+                                "hasPrecipitation": [
+                                    bool  # Optional. Indicates whether there is
+                                      precipitation or not.
+                                ],
+                                "iconCode": [
+                                    "str"  # Optional. This number is the key to
+                                      the weather icon lookup. The data field shows the icon number
+                                      that is matched to represent the observed weather conditions.
+                                ],
+                                "iconCodeExtend": [
+                                    "str"  # Optional. Code representing full set
+                                      sensible weather.
+                                ],
+                                "pressureMeanSeaLevel": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "relativeHumidity": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperature": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureDewPoint": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureFeelsLike": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureHeatIndex": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "temperatureWindChill": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "uvDescription": [
+                                    "str"  # Optional. The UV Index Description
+                                      which complements the UV Index value by providing an associated
+                                      level of risk of skin damage due to exposure (-2 = Not Available,
+                                      -1 = No Report, 0 to 2 = Low, 3 to 5 = Moderate, 6 to 7 = High, 8
+                                      to 10 = Very High, 11 to 16 = Extreme).
+                                ],
+                                "uvIndex": [
+                                    "str"  # Optional. Hourly maximum UV index.
+                                ],
+                                "validTime": [
+                                    "str"  # Optional. Time forecast is valid in
+                                      Utc format.
+                                ],
+                                "validTimeLocal": [
+                                    "str"  # Optional. Time forecast is valid in
+                                      local apparent time.
+                                ],
+                                "visibility": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "wetBulbTemperature": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windDirection": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windGust": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "windSpeed": {
+                                    "unit": "str",  # Optional. Data unit.
+                                    "values": [
+                                        0.0  # Optional. Data values.
+                                    ]
+                                },
+                                "wxPhraseLong": [
+                                    "str"  # Optional. Hourly sensible weather
+                                      phrase containing longer description.
+                                ],
+                                "wxPhraseShort": [
+                                    "str"  # Optional. Hourly sensible weather
+                                      phrase containing short description.
+                                ]
+                            },
                             "lastRefreshedDateTime": "2020-02-20 00:00:00",  # Optional.
                               Date-time when resource was last requested, sample format:
                               yyyy-MM-ddTHH:mm:ssZ.
@@ -37950,13 +38085,19 @@ class WeatherDataOperations:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
+        response_headers = {}
+        response_headers["x-ms-cache-hit"] = self._deserialize("bool", response.headers.get("x-ms-cache-hit"))
+        response_headers["x-ms-response-latency-in-milliseconds"] = self._deserialize(
+            "int", response.headers.get("x-ms-response-latency-in-milliseconds")
+        )
+
         if response.content:
             deserialized = response.json()
         else:
             deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
 
         return cast(JSON, deserialized)
 
