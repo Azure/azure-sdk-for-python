@@ -107,7 +107,7 @@ class LoadTestingLROPoller(LROPoller):
         self._initial_response = initial_response
         super(LoadTestingLROPoller, self).__init__(client, initial_response, deserialization_callback, polling_method)
 
-    def get_initial_response(self) -> Any:
+    def get_initial_response(self) -> JSON:
         """Return the result of the initial operation.
 
         :return: The result of the initial operation.
@@ -131,10 +131,9 @@ class AdministrationOperations(AdministrationOperationsGenerated):
         file_name: str,
         body: IO,
         *,
-        poll_for_validation_status: bool = True,
         file_type: Optional[str] = None,
         **kwargs: Any
-    ) -> LoadTestingLROPoller:
+    ) -> LoadTestingLROPoller[JSON]:
         """Upload file to the test
 
         :param test_id: Unique id for the test
@@ -145,8 +144,6 @@ class AdministrationOperations(AdministrationOperationsGenerated):
         :type body: IO
         :param file_type: Type of the file to be uploaded
         :type file_type: str
-        :param poll_for_validation_status: If true, polls for validation status of the file, else does not
-        :type poll_for_validation_status: bool
         :return: An instance of LROPoller object to check the validation status of file
         :rtype: ~azure.developer.loadtesting._polling.LoadTestingLROPoller
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -162,13 +159,10 @@ class AdministrationOperations(AdministrationOperationsGenerated):
 
         command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
 
-        if poll_for_validation_status:
-            create_validation_status_polling = ValidationCheckPoller(interval=polling_interval)
-            return LoadTestingLROPoller(
-                command, upload_test_file_operation, lambda *_: None, create_validation_status_polling
-            )
-        else:
-            return LoadTestingLROPoller(command, upload_test_file_operation, lambda *_: None, NoPolling())
+        create_validation_status_polling = ValidationCheckPoller(interval=polling_interval)
+        return LoadTestingLROPoller(
+            command, upload_test_file_operation, lambda *_: None, create_validation_status_polling
+        )
 
 
 class TestRunOperations(TestRunOperationsGenerated):
@@ -185,11 +179,10 @@ class TestRunOperations(TestRunOperationsGenerated):
         test_run_id: str,
         body: JSON,
         *,
-        poll_for_test_run_status=True,
         old_test_run_id: Optional[str] = None,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> LoadTestingLROPoller:
+    ) -> LoadTestingLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -203,8 +196,6 @@ class TestRunOperations(TestRunOperationsGenerated):
          provided, the test will run with the JMX file, configuration and app components from the
          existing test run. You can override the configuration values for new test run in the request
          body. Default value is None.
-        :param poll_for_test_run_status: If true, polls for test run status, else does not
-        :type poll_for_test_run_status: bool
         :paramtype old_test_run_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
@@ -220,11 +211,10 @@ class TestRunOperations(TestRunOperationsGenerated):
         test_run_id: str,
         body: IO,
         *,
-        poll_for_test_run_status=True,
         old_test_run_id: Optional[str] = None,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> LoadTestingLROPoller:
+    ) -> LoadTestingLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -238,8 +228,6 @@ class TestRunOperations(TestRunOperationsGenerated):
          provided, the test will run with the JMX file, configuration and app components from the
          existing test run. You can override the configuration values for new test run in the request
          body. Default value is None.
-        :param poll_for_test_run_status: If true, polls for test run status, else does not
-        :type poll_for_test_run_status: bool
         :paramtype old_test_run_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
@@ -255,10 +243,9 @@ class TestRunOperations(TestRunOperationsGenerated):
         test_run_id: str,
         body: Union[JSON, IO],
         *,
-        poll_for_test_run_status=True,
         old_test_run_id: Optional[str] = None,
         **kwargs: Any
-    ) -> LoadTestingLROPoller:
+    ) -> LoadTestingLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
         Create and start a new test run with the given name.
@@ -272,8 +259,6 @@ class TestRunOperations(TestRunOperationsGenerated):
          provided, the test will run with the JMX file, configuration and app components from the
          existing test run. You can override the configuration values for new test run in the request
          body. Default value is None.
-        :param poll_for_test_run_status: If true, polls for test run status, else does not
-        :type poll_for_test_run_status: bool
         :paramtype old_test_run_id: str
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
@@ -293,13 +278,10 @@ class TestRunOperations(TestRunOperationsGenerated):
 
         command = partial(self.get_test_run, test_run_id=test_run_id)
 
-        if poll_for_test_run_status:
-            create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
-            return LoadTestingLROPoller(
+        create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
+        return LoadTestingLROPoller(
                 command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling
-            )
-        else:
-            return LoadTestingLROPoller(command, create_or_update_test_run_operation, lambda *_: None, NoPolling())
+        )
 
 
 __all__: List[str] = ["AdministrationOperations", "TestRunOperations", "LoadTestingLROPoller"]
