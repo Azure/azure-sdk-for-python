@@ -1700,6 +1700,36 @@ class TestPipelineJob(AzureRecordedTestCase):
         }
 
 
+    def test_register_output_yaml_succeed(self, client: MLClient, randstr: Callable[[str], str],):
+        register_pipeline_path = "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline_register_output.yml"
+        pipeline = load_job(source=register_pipeline_path)
+        # overwrite version
+        random_version = randstr("version")
+        pipeline.outputs.pipeline_job_best_model.version = random_version
+        pipeline.jobs['train_and_evaludate_model1'].outputs.trained_model.version = random_version
+        pipeline.jobs['compare'].outputs.best_model.version = random_version
+        pipeline.jobs['compare'].outputs.best_result.version = random_version
+        pipeline.jobs['compare_2'].outputs.best_model.version = random_version
+        pipeline.jobs['compare_2'].outputs.best_result.version = random_version
+
+        pipeline_job = client.jobs.create_or_update(pipeline)
+        client.jobs.stream(pipeline_job.name)
+
+        def check_name_version_and_register_succeed(output, asset_name):
+            assert output.name == asset_name
+            assert output.version == random_version
+            assert client.data.get(name=asset_name, version=random_version)
+
+        check_name_version_and_register_succeed(pipeline_job.outputs.pipeline_job_best_model, 'pipeline_output_a')
+        check_name_version_and_register_succeed(pipeline_job.jobs['train_and_evaludate_model1'].outputs.trained_model, 'model1_output')
+        check_name_version_and_register_succeed(pipeline_job.jobs['compare_2'].outputs.best_model, 'best_model_2')
+        check_name_version_and_register_succeed(pipeline_job.jobs['compare_2'].outputs.best_result, 'best_result_2')
+
+        # name and version are not rewritten, but the display content in page is the PipelineOutput
+        assert pipeline_job.jobs['compare'].outputs.best_model.name == 'best_model'
+        assert pipeline_job.jobs['compare'].outputs.best_model.version == random_version
+
+
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
