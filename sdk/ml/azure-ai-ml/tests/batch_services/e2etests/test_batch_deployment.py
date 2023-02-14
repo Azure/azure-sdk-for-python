@@ -129,7 +129,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    @pytest.mark.skip(reason="Test timing out consistently - can't re-record, so disabling it")
+    @pytest.mark.skip(reason="TODO (2234936), Test timing out consistently - can't re-record")
     def test_batch_job_download(self, client: MLClient, tmp_path: Path, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> str:
         endpoint_name = rand_batch_name("name")
         endpoint = load_batch_endpoint(
