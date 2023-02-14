@@ -17,7 +17,6 @@ from ._models import (
     OnDisconnectedArgs,
     OnServerDataMessageArgs,
     OnGroupDataMessageArgs,
-    SendToGroupOptions,
     WebPubSubJsonProtocol,
     WebPubSubJsonReliableProtocol,
     SequenceId,
@@ -449,6 +448,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
                 self._call_back(CallBackType.SERVER_MESSAGE, OnServerDataMessageArgs(message))
 
             parsed_message = self._protocol.parse_messages(data)
+            if parsed_message is None:
+                #  None means the message is not recognized.
+                return
             if parsed_message.kind == "connected":
                 handle_connected_message(parsed_message)
             elif parsed_message.kind == "disconnected":
@@ -460,7 +462,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             elif parsed_message.kind == "serverData":
                 handle_server_data_message(parsed_message)
             else:
-                raise Exception(f"unknown message type: {parsed_message.kind}")
+                _LOGGER.warning("unknown message type: {}", parsed_message.kind)
 
         def on_close(_: Any, close_status_code: int, close_msg: str):
             if self._state == WebPubSubClientState.CONNECTED:

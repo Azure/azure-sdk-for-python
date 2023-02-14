@@ -457,7 +457,7 @@ class OnRejoinGroupFailedArgs:
 
 
 class OnConnectedArgs:
-    def __init__(self, connection_id: str, user_id: str) -> None:
+    def __init__(self, connection_id: str, user_id: Optional[str] = None) -> None:
         self.connection_id = connection_id
         self.user_id = user_id
 

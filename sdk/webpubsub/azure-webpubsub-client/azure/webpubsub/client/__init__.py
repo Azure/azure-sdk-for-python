@@ -14,11 +14,10 @@ from ._models import (
     OnServerDataMessageArgs,
     OnGroupDataMessageArgs,
     OnRejoinGroupFailedArgs,
-    WebPubSubProtocolType,
     RetryPolicy,
 )
 
-from ._enums import WebPubSubDataType
+from ._enums import WebPubSubDataType, WebPubSubProtocolType
 
 __version__ = VERSION
 

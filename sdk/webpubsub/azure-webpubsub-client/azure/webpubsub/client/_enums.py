@@ -41,6 +41,7 @@ class CallBackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GROUP_MESSAGE = "group-message"
     REJOIN_GROUP_FAILED = "rejoin-group-failed"
 
+
 class WebPubSubProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JSON = "json.webpubsub.azure.v1"
     JSON_RELIABLE = "json.reliable.webpubsub.azure.v1"
