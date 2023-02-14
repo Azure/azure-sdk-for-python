@@ -10,7 +10,7 @@ import sys
 import logging
 import threading
 import urllib.parse
-import websocket
+import websocket  # type: ignore
 
 from ._models import (
     OnConnectedArgs,
@@ -97,6 +97,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """WebPubSubClient
         :param credential: The url to connect or credential to use when connecting. Required.
         :type credential: str
+        :keyword bool auto_reconnect: Whether to auto reconnect after connection is dropped and not recoverable
+        :keyword bool auto_rejoin_groups: Whether to enable restoring group after reconnecting
+        :keyword azure.webpubsub.client.WebPubSubProtocolType protocol_type: Subprotocol type
+        :keyword azure.webpubsub.client.RetryPolicy message_retry_policy: Retry policy when failing to send message
+        :keyword azure.webpubsub.client.RetryPolicy reconnect_retry_policy: Retry policy when failing to reconnect
         """
         if isinstance(credential, WebPubSubClientCredential):
             self._credential = credential
@@ -196,8 +201,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         :param group_name: The group name. Required.
         :type group_name: str.
-        :param options: The options.
-        :type options: azure.webpubsub.client.JoinGroupOptions.
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         """
 
         def join_group_attempt():
@@ -218,8 +222,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         """Leave the client from group
         :param group_name: The group name. Required.
         :type group_name: str.
-        :param options: The options.
-        :type options: azure.webpubsub.client.LeaveGroupOptions.
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
         """
 
         def leave_group_attempt():
@@ -247,6 +250,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type content: Any.
         :param data_type: The data type. Required.
         :type data_type: Any.
+        :keyword int ack_id: The optional ackId. If not specified, client will generate one.
+        :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage will be returned from the service.
         """
 
         def send_event_attempt():
@@ -278,6 +283,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type content: Any.
         :param data_type: The data type. Required.
         :type data_type: Any.
+        :keyword bool fire_and_forget: If true, the message won't contains ackId and no AckMessage will be returned from the service.
+        :keyword int no_echo: Whether the message needs to echo to sender
         """
 
         def send_to_group_attempt():

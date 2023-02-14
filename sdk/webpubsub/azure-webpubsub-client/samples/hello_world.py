@@ -29,23 +29,28 @@ def on_group_message(msg: OnGroupDataMessageArgs):
         print(f"Received message from {msg.message.group}: {msg.message.data}")
 
 
-service_client = WebPubSubServiceClient.from_connection_string(
-    connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING"), hub="hub"
-)
-url = service_client.get_client_access_token(roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"])["url"]
-print(url)
+def main():
+    service_client = WebPubSubServiceClient.from_connection_string(
+        connection_string=os.getenv("WEBPUBSUB_CONNECTION_STRING"), hub="hub"
+    )
+    url = service_client.get_client_access_token(roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"])["url"]
+    print(url)
 
-client = WebPubSubClient(credential=url, auto_reconnect=False)
-client.on("connected", on_connected)
-client.on("disconnected", on_disconnected)
-client.on("group-message", on_group_message)
+    client = WebPubSubClient(credential=url, auto_reconnect=False)
+    client.on("connected", on_connected)
+    client.on("disconnected", on_disconnected)
+    client.on("group-message", on_group_message)
 
-client.start()
-group_name = "test"
-client.join_group(group_name)
-client.send_to_group(group_name, "hello text", "text", no_echo=False, fire_and_forget=False)
-client.send_to_group(group_name, {"hello": "json"}, "json")
-client.send_to_group(group_name, "hello json", "json")
-content = memoryview("hello binary".encode())
-client.send_to_group(group_name, content, "binary")
-client.stop()
+    client.start()
+    group_name = "test"
+    client.join_group(group_name)
+    client.send_to_group(group_name, "hello text", "text", no_echo=False, fire_and_forget=False)
+    client.send_to_group(group_name, {"hello": "json"}, "json")
+    client.send_to_group(group_name, "hello json", "json")
+    content = memoryview("hello binary".encode())
+    client.send_to_group(group_name, content, "binary")
+    client.stop()
+
+
+if __name__ == "__main__":
+    main()
