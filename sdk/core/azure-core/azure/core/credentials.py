@@ -67,7 +67,7 @@ class AzureKeyCredential(Generic[T]):
     def __init__(self, key: T) -> None:
         if not isinstance(key, (str, tuple)):
             raise TypeError("The key used for authentication must be a string or tuple.")
-        self._key = key
+        self._key: T = key
 
     @property
     def key(self) -> T:
