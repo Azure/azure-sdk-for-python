@@ -246,7 +246,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-eventhub-checkpointstoretable azure-core<2.0.0,>=1.14.0
 #override azure-appconfiguration azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-maintenance msrest>=0.7.1
-#override azure-appconfiguration-provider azure-appconfiguration<2.0.0,>=1.3.0
+#override azure-appconfiguration-provider azure-core<2.0.0,>=1.24.0
+#override azure-appconfiguration-provider azure-appconfiguration<2.0.0,>=1.4.0
 #override azure-appconfiguration-provider azure-keyvault-secrets<5.0.0,>=4.3.0
 #override azure-mgmt-datamigration typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-purview typing-extensions>=4.3.0; python_version<'3.8.0'

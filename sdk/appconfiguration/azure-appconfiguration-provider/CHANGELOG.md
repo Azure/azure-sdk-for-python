@@ -3,15 +3,19 @@
 ## 1.0.0b2 (Unreleased)
 
 ### Features Added
-
+* Added Async Support
+* Added missing methods for Mapping API
 * Made load method properties unordered.
 
 ### Breaking Changes
+* Changes how load works. Moves if from AzureAppConfigurationProvider.load to load_provider.
+* Removed custom Key Vault Error
+* Removed unneeded __repr__ and copy methods.
 
 ### Bugs Fixed
 
 ### Other Changes
-
+* Updated method docs
 * Fixed load doc that used `selector` instead of `selects`.
 * Fixed CLI link in Readme.
 
