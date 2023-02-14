@@ -245,9 +245,9 @@ class EventHubProducerClient(
             self._get_partitions()
             self._get_max_message_size()
             self._buffered_producer_dispatcher = BufferedProducerDispatcher(
-                self._partition_ids,
-                self._on_success,
-                self._on_error,
+                cast(List[str], self._partition_ids),
+                cast(Callable[[SendEventTypes, Optional[str]]], self._on_success),
+                cast(Callable[[SendEventTypes, Optional[str], Exception], None], self._on_error),
                 self._create_producer,
                 self.eventhub_name,
                 self._max_message_size_on_link,

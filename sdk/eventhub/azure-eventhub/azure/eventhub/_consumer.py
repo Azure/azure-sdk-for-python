@@ -8,7 +8,7 @@ import time
 import uuid
 import logging
 from collections import deque
-from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union, cast
+from typing import TYPE_CHECKING, Callable, Dict, Optional, Any, Deque, Union, cast, List
 
 from ._common import EventData
 from ._client_base import ConsumerProducerMixin
@@ -94,7 +94,7 @@ class EventHubConsumer(
         self.handler_ready = False
 
         self._amqp_transport = kwargs.pop("amqp_transport")
-        self._on_event_received: Callable[[EventData], None] = kwargs[
+        self._on_event_received = kwargs[ #Callable[[EventData], None]
             "on_event_received"
         ]
         self._client = client
@@ -250,7 +250,7 @@ class EventHubConsumer(
             or (deadline <= time.time() and max_wait_time)
         ):
             if batch:
-                events_for_callback: EventData = []
+                events_for_callback = []
                 for _ in range(min(max_batch_size, len(self._message_buffer))):
                     events_for_callback.append(
                         self._next_message_in_buffer()  # pylint: disable=protected-access
