@@ -9,20 +9,31 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
-from . import models
+from . import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import EventHubManagementClientConfiguration
-from .operations import ClustersOperations, ConfigurationOperations, ConsumerGroupsOperations, DisasterRecoveryConfigsOperations, EventHubsOperations, NamespacesOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, SchemaRegistryOperations
+from .operations import (
+    ClustersOperations,
+    ConfigurationOperations,
+    ConsumerGroupsOperations,
+    DisasterRecoveryConfigsOperations,
+    EventHubsOperations,
+    NamespacesOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    SchemaRegistryOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class EventHubManagementClient:    # pylint: disable=too-many-instance-attributes
+
+class EventHubManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Event Hubs client for managing Event Hubs Cluster, IPFilter Rules and VirtualNetworkRules
     resources.
 
@@ -49,10 +60,10 @@ class EventHubManagementClient:    # pylint: disable=too-many-instance-attribute
     :vartype consumer_groups: azure.mgmt.eventhub.v2021_11_01.operations.ConsumerGroupsOperations
     :ivar schema_registry: SchemaRegistryOperations operations
     :vartype schema_registry: azure.mgmt.eventhub.v2021_11_01.operations.SchemaRegistryOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Subscription credentials that uniquely identify a Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call.
+     subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -70,30 +81,33 @@ class EventHubManagementClient:    # pylint: disable=too-many-instance-attribute
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = EventHubManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = EventHubManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.configuration = ConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.private_link_resources = PrivateLinkResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.event_hubs = EventHubsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.disaster_recovery_configs = DisasterRecoveryConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.consumer_groups = ConsumerGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schema_registry = SchemaRegistryOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -102,7 +116,7 @@ class EventHubManagementClient:    # pylint: disable=too-many-instance-attribute
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -115,15 +129,12 @@ class EventHubManagementClient:    # pylint: disable=too-many-instance-attribute
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> EventHubManagementClient
+    def __enter__(self) -> "EventHubManagementClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

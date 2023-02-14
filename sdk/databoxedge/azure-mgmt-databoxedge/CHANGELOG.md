@@ -1,5 +1,38 @@
 # Release History
 
+## 2.0.0b1 (2023-02-13)
+
+### Features Added
+
+  - Added operation DevicesOperations.create_or_update
+  - Added operation group DeviceCapacityCheckOperations
+  - Added operation group DeviceCapacityInfoOperations
+  - Added operation group DiagnosticSettingsOperations
+  - Added operation group SupportPackagesOperations
+  - Model DataBoxEdgeDevice has a new parameter data_residency
+  - Model DataBoxEdgeDevice has a new parameter system_data_properties_system_data
+  - Model DataBoxEdgeDeviceExtendedInfo has a new parameter cloud_witness_container_name
+  - Model DataBoxEdgeDeviceExtendedInfo has a new parameter cloud_witness_storage_account_name
+  - Model DataBoxEdgeDeviceExtendedInfo has a new parameter cloud_witness_storage_endpoint
+  - Model DataBoxEdgeDeviceExtendedInfo has a new parameter cluster_witness_type
+  - Model DataBoxEdgeDeviceExtendedInfo has a new parameter file_share_witness_location
+  - Model DataBoxEdgeDeviceExtendedInfo has a new parameter file_share_witness_username
+  - Model DataBoxEdgeDeviceExtendedInfo has a new parameter system_data
+  - Model DataBoxEdgeSku has a new parameter capabilities
+  - Model Order has a new parameter kind
+  - Model Order has a new parameter order_id
+  - Model UpdateDetails has a new parameter friendly_version_number
+  - Model UpdateDetails has a new parameter installation_impact
+  - Model UpdateSummary has a new parameter last_successful_install_job_date_time
+  - Model UpdateSummary has a new parameter last_successful_scan_job_time
+  - Operation UsersOperations.list_by_data_box_edge_device has a new optional parameter filter
+
+### Breaking Changes
+
+  - Operation UsersOperations.list_by_data_box_edge_device no longer has parameter expand
+  - Parameter user_type of model User is now required
+  - Removed operation DevicesOperations.begin_create_or_update
+
 ## 1.0.0 (2021-04-22)
 
 **Features**

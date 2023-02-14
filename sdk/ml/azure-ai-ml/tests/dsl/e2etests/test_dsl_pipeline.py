@@ -2628,3 +2628,92 @@ class TestDSLPipeline(AzureRecordedTestCase):
         node_output = pipeline_job.jobs['node'].outputs.component_out_path
         assert node_output.name == 'a_output'
         assert node_output.version == '1'
+
+    @pytest.mark.skipif(condition=is_live(), reason="need worskspace with datafactory compute")
+    def test_dsl_pipeline_with_data_transfer_copy_2urifolder(self, client: MLClient) -> None:
+        from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.copy_data.pipeline import (
+            generate_dsl_pipeline_from_yaml as data_transfer_job_in_pipeline,
+        )
+
+        pipeline = data_transfer_job_in_pipeline()
+
+        pipeline_job = client.jobs.create_or_update(pipeline)
+
+        actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+
+        expected_job = {
+            'description': 'submit a pipeline with data transfer copy job',
+             'inputs': {'cosmos_folder': {'job_input_type': 'uri_folder',
+                                          'mode': 'ReadOnlyMount'},
+                        'cosmos_folder_dup': {'job_input_type': 'uri_folder',
+                                              'mode': 'ReadOnlyMount'}},
+             'is_archived': False,
+             'job_type': 'Pipeline',
+             'jobs': {'merge_files': {'data_copy_mode': 'merge_with_overwrite',
+                                      'inputs': {'folder1': {'job_input_type': 'literal',
+                                                             'value': '${{parent.inputs.cosmos_folder}}'},
+                                                 'folder2': {'job_input_type': 'literal',
+                                                             'value': '${{parent.inputs.cosmos_folder_dup}}'}},
+                                      'name': 'merge_files',
+                                      'outputs': {'output_folder': {'type': 'literal',
+                                                                    'value': '${{parent.outputs.merged_blob}}'}},
+                                      'task': 'copy_data',
+                                      'type': 'data_transfer'}},
+             'outputs': {'merged_blob': {'job_output_type': 'uri_folder',
+                                         'mode': 'ReadWriteMount'}},
+             'settings': {'default_compute': 'adftest'},
+             'tags': {}
+        }
+        assert expected_job == actual_job
+
+
+    @pytest.mark.disable_mock_code_hash
+    def test_register_output_sdk_succeed(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+
+        @dsl.pipeline()
+        def sub_pipeline():
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = 'sub_pipeline_output'
+            node.outputs.component_out_path.version = 'v1'
+            return {
+                'sub_pipeine_a_output': node.outputs.component_out_path
+            }
+
+        @dsl.pipeline()
+        def register_both_output():
+            # register NodeOutput which is binding to PipelineOutput
+            node = component(component_in_path=component_input)
+            node.outputs.component_out_path.name = 'n1_output'
+            node.outputs.component_out_path.version = 'v1'
+
+            # register NodeOutput which isn't binding to PipelineOutput
+            node_2 = component(component_in_path=component_input)
+            node_2.outputs.component_out_path.name = 'n2_output'
+            node_2.outputs.component_out_path.version = 'v1'
+
+            # register NodeOutput of subgraph
+            sub_node = sub_pipeline()
+            sub_node.outputs.sub_pipeine_a_output.name = 'sub_pipeline'
+            sub_node.outputs.sub_pipeine_a_output.version = 'v1'
+
+            return {
+                'pipeine_a_output': node.outputs.component_out_path
+            }
+
+        pipeline = register_both_output()
+        pipeline.outputs.pipeine_a_output.name = 'p1_output'
+        pipeline.outputs.pipeine_a_output.version = 'v1'
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_job = client.jobs.create_or_update(pipeline)
+        client.jobs.stream(pipeline_job.name)
+
+        def check_name_version_and_register_succeed(output, output_name, output_version):
+            assert output.name == output_name
+            assert output.version == output_version
+            assert client.data.get(name=output_name, version=output_version)
+
+        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, 'p1_output', 'v1')
+        check_name_version_and_register_succeed(pipeline_job.jobs['node_2'].outputs.component_out_path, 'n2_output', 'v1')
+        check_name_version_and_register_succeed(pipeline_job.jobs['sub_node'].outputs.sub_pipeine_a_output, 'sub_pipeline', 'v1')

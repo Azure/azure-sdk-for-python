@@ -63,6 +63,7 @@ class ErrorTarget:
     JOB = "Job"
     COMMAND_JOB = "CommandJob"
     SPARK_JOB = "SparkJob"
+    DATA_TRANSFER_JOB = "DataTransferJob"
     LOCAL_JOB = "LocalJob"
     MODEL = "Model"
     ONLINE_DEPLOYMENT = "OnlineDeployment"
