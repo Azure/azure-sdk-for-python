@@ -777,7 +777,7 @@ class TestComponent(AzureRecordedTestCase):
         }
 
     @pytest.mark.skip(
-        reason="User/tenant/subscription is not allowed to access registry sdk-test to re-record",
+        reason="TODO (2234965) User/tenant/subscription is not allowed to access registry sdk-test to re-record",
     )
     @pytest.mark.skipif(
         condition=not is_live(),
