@@ -279,7 +279,7 @@ class PipelineComponentBuilder:
             )
             pipeline_output = PipelineOutput(
                 port_name=key,
-                data=value._data,
+                data=None,
                 # This is a hack: when parallel_for node outputs promoted to pipeline level,
                 # pipeline outputs type should be same with node levle.
                 meta=output_meta,
