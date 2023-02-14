@@ -29,9 +29,11 @@ app.register_blueprint(multipart_api, url_prefix="/multipart")
 app.register_blueprint(xml_api, url_prefix="/xml")
 app.register_blueprint(headers_api, url_prefix="/headers")
 
-@app.route('/health', methods=['GET'])
+
+@app.route("/health", methods=["GET"])
 def latin_1_charset_utf8():
     return Response(status=200)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
