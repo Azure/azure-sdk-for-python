@@ -7,7 +7,7 @@ The script is to refresh SDK code
 3. Install [Nodejs](https://nodejs.org/en/download/)
 
 # Usage
-Step into root folder of this repo and run:
+Step into root folder of this repo and run cmd with sdk folder:
 ```powershell
 D:\azure-sdk-for-python> python .\scripts\cadl_refresh_sdk\main.py .\sdk\contosowidgetmanager\azure-contosowidgetmanager
 ```
