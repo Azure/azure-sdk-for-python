@@ -257,6 +257,89 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="spark_component_name",
         )
 
+    def test_datatransfer_copy_urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component copy-files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            'inputs': {'folder1': {'type': 'uri_folder', 'optional': False}},
+            'outputs': {'output_folder': {'type': 'uri_folder'}},
+            'is_deterministic': True,
+            'version': '1'
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/copy_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_urifolder",
+        )
+
+    def test_datatransfer_copy_urifile_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component copy uri files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            'inputs': {'folder1': {'type': 'uri_file', 'optional': False}},
+            'outputs': {'output_folder': {'type': 'uri_file'}},
+            'is_deterministic': True,
+            'version': '1'
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/copy_uri_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_urifile",
+        )
+
+    def test_datatransfer_copy_2urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component merge-files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            'inputs': {'folder1': {'type': 'uri_folder', 'optional': False},
+                       'folder2': {'type': 'uri_folder', 'optional': False}},
+            'outputs': {'output_folder': {'type': 'uri_folder'}},
+            'is_deterministic': True,
+            'version': '1'
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/merge_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_2urifolder",
+        )
+
+    def test_datatransfer_copy_mixtype_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component merge mix type files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            'inputs': {'input1': {'type': 'uri_file', 'optional': False},
+                       'input2': {'type': 'uri_file', 'optional': False},
+                       'input3': {'type': 'mltable', 'optional': False}},
+            'outputs': {'output_folder': {'type': 'uri_folder'}},
+            'is_deterministic': True,
+            'version': '1'
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/merge_mixtype_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_mixtype",
+        )
+
     @pytest.mark.parametrize(
         "component_path",
         [
