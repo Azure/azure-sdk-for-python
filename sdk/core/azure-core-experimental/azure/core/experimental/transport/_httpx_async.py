@@ -23,44 +23,50 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+from collections.abc import AsyncIterator
 from httpx import Response, AsyncClient
 from typing import Any, ContextManager, Iterator, Optional
-from azure.core.pipeline.transport import HttpResponse, HttpRequest, HttpTransport
+from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest, AsyncHttpTransport
 
 
-class AsyncHttpXTransportResponse(HttpResponse):
-    async def __init__(self, request: HttpRequest, httpx_response: Response, stream_contextmanager: Optional[ContextManager]) -> None:
-        super().__init__(request, httpx_response)
+class AsyncHttpXTransportResponse(AsyncHttpResponse):
+    def __init__(self, request: HttpRequest, httpx_response: Response, stream_contextmanager: Optional[ContextManager]) -> None:
+        super().__init__(AsyncHttpXTransportResponse, httpx_response)
         self.status_code = httpx_response.status_code
         self.headers = httpx_response.headers
         self.reason = httpx_response.reason_phrase
+        self._content = None
         self.content_type = httpx_response.headers.get('content-type')
         self.stream_contextmanager = stream_contextmanager
     
-    async def body(self) -> bytes:
+    def body(self) -> bytes:
         return self.internal_response.content
 
-    async def stream_download(self, _) -> Iterator[bytes]:
+    def stream_download(self, _) -> Iterator[bytes]:
         return AsyncHttpXStreamDownloadGenerator(_, self)
 
+    async def load_body(self) -> None:
+        if self._content is None:
+            self._content = self.internal_response.content
 
-class AsyncHttpXStreamDownloadGenerator():
-    async def __init__(self, _, response) -> None:
+
+class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
+    def __init__(self, _, response) -> None:
         self.response = response
-        self.iter_bytes_func = self.response.internal_response.iter_bytes()
+        self.iter_bytes_func = self.response.internal_response.aiter_bytes()
 
-    async def __iter__(self) -> 'AsyncHttpXStreamDownloadGenerator':
+    async def __aiter__(self) -> 'AsyncHttpXStreamDownloadGenerator':
         return self
 
-    async def __next__(self):
+    async def __anext__(self):
         try:
-            return next(self.iter_bytes_func)
+            return anext(self.iter_bytes_func)
         except StopIteration:
-            self.response.stream_contextmanager.__exit__()
+            self.response.aclose()
             raise
 
-class AsyncHttpXTransport(HttpTransport):
-    async def __init__(self) -> None:
+class AsyncHttpXTransport(AsyncHttpTransport):
+    def __init__(self) -> None:
         self.client: Optional[AsyncClient] = None
 
     async def open(self) -> None:
@@ -71,11 +77,11 @@ class AsyncHttpXTransport(HttpTransport):
             await self.client.aclose()
             self.client = None
     
-    async def __enter__(self) -> "AsyncHttpXTransport":
+    async def __aenter__(self) -> "AsyncHttpXTransport":
         await self.open()
         return self
     
-    async def __exit__(self, *args) -> None:
+    async def __aexit__(self, *args) -> None:
         await self.close()
 
     async def send(self, request: HttpRequest, **kwargs) -> AsyncHttpXTransportResponse:
@@ -92,9 +98,13 @@ class AsyncHttpXTransport(HttpTransport):
         stream_ctx: Optional[ContextManager] = None
 
         if stream_response:
-            stream_ctx = await self.client.stream(**parameters)
-            response = stream_ctx.__enter__()
+            req = self.client.build_request(**parameters)
+            response = await self.client.send(req, stream=stream_response)
+            stream_ctx = AsyncHttpXStreamDownloadGenerator
         else:
             response = await self.client.request(**parameters)
 
-        return AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
+        transport_response =  AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
+        if not stream_response:
+            transport_response.load_body()
+        return transport_response

@@ -24,19 +24,21 @@
 #
 # --------------------------------------------------------------------------
 from httpx import Response, Client
-from typing import Any, ContextManager, Iterator, Optional
+from typing import ContextManager, Iterator, Optional
 from azure.core.pipeline.transport import HttpResponse, HttpRequest, HttpTransport
 
 
 class HttpXTransportResponse(HttpResponse):
-    def __init__(self, request: HttpRequest, httpx_response: Response, stream_contextmanager: Optional[ContextManager]) -> None:
-        super().__init__(request, httpx_response)
+    def __init__(
+        self, request: HttpRequest, httpx_response: Response, stream_contextmanager: Optional[ContextManager]
+    ) -> None:
+        super().__init__(HttpXTransportResponse, httpx_response)
         self.status_code = httpx_response.status_code
         self.headers = httpx_response.headers
         self.reason = httpx_response.reason_phrase
-        self.content_type = httpx_response.headers.get('content-type')
+        self.content_type = httpx_response.headers.get("content-type")
         self.stream_contextmanager = stream_contextmanager
-    
+
     def body(self) -> bytes:
         return self.internal_response.content
 
@@ -44,20 +46,21 @@ class HttpXTransportResponse(HttpResponse):
         return HttpXStreamDownloadGenerator(_, self)
 
 
-class HttpXStreamDownloadGenerator():
+class HttpXStreamDownloadGenerator:
     def __init__(self, _, response) -> None:
         self.response = response
         self.iter_bytes_func = self.response.internal_response.iter_bytes()
 
-    def __iter__(self) -> 'HttpXStreamDownloadGenerator':
+    def __iter__(self) -> "HttpXStreamDownloadGenerator":
         return self
 
     def __next__(self):
         try:
             return next(self.iter_bytes_func)
-        except StopIteration:
-            self.response.stream_contextmanager.__exit__()
+        except StopIteration as se:
+            self.response.stream_contextmanager.__exit__(None, None, None)
             raise
+
 
 class HttpXTransport(HttpTransport):
     def __init__(self) -> None:
@@ -70,11 +73,11 @@ class HttpXTransport(HttpTransport):
         if self.client:
             self.client.close()
             self.client = None
-    
+
     def __enter__(self) -> "HttpXTransport":
         self.open()
         return self
-    
+
     def __exit__(self, *args) -> None:
         self.close()
 
