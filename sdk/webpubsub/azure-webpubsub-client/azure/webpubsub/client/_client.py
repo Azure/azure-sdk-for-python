@@ -13,16 +13,12 @@ import urllib.parse
 import websocket
 
 from ._models import (
-    WebPubSubClientOptions,
     OnConnectedArgs,
     OnDisconnectedArgs,
     OnServerDataMessageArgs,
     OnGroupDataMessageArgs,
-    SendEventOptions,
-    JoinGroupOptions,
-    LeaveGroupOptions,
     SendToGroupOptions,
-    WebPubSubRetryOptions,
+    WebPubSubJsonProtocol,
     WebPubSubJsonReliableProtocol,
     SequenceId,
     RetryPolicy,
@@ -44,7 +40,7 @@ from ._models import (
     LeaveGroupMessage,
     AckMessageError,
 )
-from ._enums import WebPubSubDataType, WebPubSubClientState, CallBackType
+from ._enums import WebPubSubDataType, WebPubSubClientState, CallBackType, WebPubSubProtocolType
 from ._util import delay
 
 _LOGGER = logging.getLogger(__name__)
@@ -79,36 +75,29 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     @overload
     def __init__(
-        self, credential: WebPubSubClientCredential, options: Optional[WebPubSubClientOptions] = None, **kwargs: Any
+        self, credential: WebPubSubClientCredential, **kwargs: Any
     ) -> None:
         """WebPubSubClient
         :param credential: The credential to use when connecting. Required.
         :type credential: ~azure.webpubsub.client.WebPubSubClientCredential
-        :param options: The client options
-        :type options: ~azure.webpubsub.client.WebPubSubClientOptions
         """
 
     @overload
-    def __init__(self, credential: str, options: Optional[WebPubSubClientOptions] = None, **kwargs: Any) -> None:
+    def __init__(self, credential: str, **kwargs: Any) -> None:
         """WebPubSubClient
         :param credential: The url to connect. Required.
         :type credential: str
-        :param options: The client options
-        :type options: ~azure.webpubsub.client.WebPubSubClientOptions
         """
 
     # pylint: disable=unused-argument
     def __init__(
         self,
         credential: Union[WebPubSubClientCredential, str],
-        options: Optional[WebPubSubClientOptions] = None,
         **kwargs: Any,
     ) -> None:
         """WebPubSubClient
         :param credential: The url to connect or credential to use when connecting. Required.
         :type credential: str
-        :param options: The client options
-        :type options: ~azure.webpubsub.client.WebPubSubClientOptions
         """
         if isinstance(credential, WebPubSubClientCredential):
             self._credential = credential
@@ -117,17 +106,21 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         else:
             raise TypeError("type of credential must be str or WebPubSubClientCredential")
 
-        self._options = options or WebPubSubClientOptions()
-        self._build_default_options()
-        self._message_retry_policy = RetryPolicy(
-            retry_options=self._options.message_retry_options or WebPubSubRetryOptions()
-        )
-        self._reconnect_retry_policy = RetryPolicy(
-            WebPubSubRetryOptions(
-                max_retries=sys.maxsize, retry_delay_in_ms=1000, max_retry_delay_in_ms=30000, mode="Fixed"
-            )
-        )
-        self._protocol = self._options.protocol or WebPubSubJsonReliableProtocol()
+        self._auto_reconnect = kwargs.pop("auto_reconnect", True)
+        self._auto_rejoin_groups = kwargs.pop("auto_rejoin_groups", True)
+        protocol_type = kwargs.pop("protocol_type", WebPubSubProtocolType.JSON_RELIABLE)
+        protocol_map = {
+            WebPubSubProtocolType.JSON: WebPubSubJsonProtocol,
+            WebPubSubProtocolType.JSON_RELIABLE: WebPubSubJsonReliableProtocol,
+        }
+        if protocol_type in protocol_map:
+            self._protocol = protocol_map[protocol_type]()
+        else:
+            self._protocol = WebPubSubJsonReliableProtocol()
+
+        self._message_retry_policy = kwargs.pop("message_retry_policy", RetryPolicy())
+        self._reconnect_retry_policy = kwargs.pop("reconnect_retry_policy", RetryPolicy(max_retries=sys.maxsize))
+
         self._group_map: Dict[str, WebPubSubGroup] = {}
         self._ack_map: Dict[int, SendMessageErrorOptions] = {}
         self._sequence_id = SequenceId()
@@ -199,7 +192,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._group_map[name] = WebPubSubGroup(name=name)
         return self._group_map[name]
 
-    def join_group(self, group_name: str, options: Optional[JoinGroupOptions] = None) -> None:
+    def join_group(self, group_name: str, **kwargs: Any) -> None:
         """Join the client to group.
 
         :param group_name: The group name. Required.
@@ -210,18 +203,19 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         def join_group_attempt():
             group = self._get_or_add_group(group_name)
-            self._join_group_core(group_name, options)
+            self._join_group_core(group_name, **kwargs)
             group.is_joined = True
 
         self._retry(join_group_attempt)
 
-    def _join_group_core(self, group_name: str, options: Optional[JoinGroupOptions] = None) -> None:
+    def _join_group_core(self, group_name: str, **kwargs: Any) -> None:
+        ack_id = kwargs.pop("ack_id", None)
         self._send_message_with_ack_id(
             message_provider=lambda id: JoinGroupMessage(group=group_name, ack_id=id),
-            ack_id=options.ack_id if options else None,
+            ack_id=ack_id,
         )
 
-    def leave_group(self, group_name: str, options: Optional[LeaveGroupOptions] = None) -> None:
+    def leave_group(self, group_name: str, **kwargs: Any) -> None:
         """Leave the client from group
         :param group_name: The group name. Required.
         :type group_name: str.
@@ -231,9 +225,10 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
         def leave_group_attempt():
             group = self._get_or_add_group(group_name)
+            ack_id = kwargs.pop("ack_id", None)
             self._send_message_with_ack_id(
                 message_provider=lambda id: LeaveGroupMessage(group=group_name, ack_id=id),
-                ack_id=options.ack_id if options else None,
+                ack_id=ack_id,
             )
             group.is_joined = False
 
@@ -244,7 +239,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         event_name: str,
         content: Any,
         data_type: WebPubSubDataType,
-        options: Optional[SendEventOptions] = None,
+        **kwargs: Any,
     ) -> None:
         """Send custom event to server
         :param event_name: The event name. Required.
@@ -253,46 +248,29 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type content: Any.
         :param data_type: The data type. Required.
         :type data_type: Any.
-        :param options: The options.
-        :type options: azure.webpubsub.client.SendEventOptions.
         """
 
         def send_event_attempt():
-            fire_and_forget = options.fire_and_forget if options else False
+            fire_and_forget = kwargs.pop("fire_and_forget", False)
+            ack_id = kwargs.pop("ack_id", None)
             if not fire_and_forget:
                 self._send_message_with_ack_id(
                     message_provider=lambda id: SendEventMessage(
                         data_type=data_type, data=content, ack_id=id, event=event_name
-                    )
+                    ),
+                    ack_id=ack_id,
                 )
             else:
                 self._send_message(message=SendEventMessage(data_type=data_type, data=content, event=event_name))
 
         self._retry(send_event_attempt)
 
-    def _send_event_attempt(
-        self,
-        event_name: str,
-        content: Any,
-        data_type: WebPubSubDataType,
-        options: Optional[SendEventOptions] = None,
-    ) -> None:
-        fire_and_forget = options.fire_and_forget if options else False
-        if not fire_and_forget:
-            self._send_message_with_ack_id(
-                message_provider=lambda id: SendEventMessage(
-                    data_type=data_type, data=content, ack_id=id, event=event_name
-                )
-            )
-        else:
-            self._send_message(message=SendEventMessage(data_type=data_type, data=content, event=event_name))
-
     def send_to_group(
         self,
         group_name: str,
         content: Any,
         data_type: WebPubSubDataType,
-        options: Optional[SendToGroupOptions] = None,
+        **kwargs: Any,
     ) -> None:
         """Send message to group.
         :param group_name: The group name. Required.
@@ -301,13 +279,11 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type content: Any.
         :param data_type: The data type. Required.
         :type data_type: Any.
-        :param options: The options.
-        :type options: azure.webpubsub.client.SendToGroupOptions.
         """
 
         def send_to_group_attempt():
-            fire_and_forget = options.fire_and_forget if options else False
-            no_echo = options.no_echo if options else False
+            fire_and_forget = kwargs.pop("fire_and_forget", False)
+            no_echo = kwargs.pop("no_echo", False)
             if not fire_and_forget:
                 self._send_message_with_ack_id(
                     message_provider=lambda id: SendToGroupMessage(
@@ -349,7 +325,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._state = WebPubSubClientState.DISCONNECTED
             raise e
 
-    def _auto_reconnect(self):
+    def _handle_auto_reconnect(self):
         success = False
         attempt = 0
         while not self._is_stopping:
@@ -379,8 +355,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
             CallBackType.DISCONNECTED,
             OnDisconnectedArgs(connection_id=self._connection_id, message=self._last_disconnected_message),
         )
-        if self._options.auto_reconnect:
-            self._auto_reconnect()
+        if self._auto_reconnect:
+            self._handle_auto_reconnect()
         else:
             self._handle_connection_stopped()
 
@@ -437,15 +413,16 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
                 if not self._is_initial_connected:
                     self._is_initial_connected = True
-                    for group_name, group in self._group_map.items():
-                        if group.is_joined:
-                            try:
-                                self._join_group_core(group_name)
-                            except Exception as e:  # pylint: disable=broad-except
-                                self._call_back(
-                                    CallBackType.REJOIN_GROUP_FAILED,
-                                    OnRejoinGroupFailedArgs(group=group_name, error=e),
-                                )
+                    if self._auto_rejoin_groups:
+                        for group_name, group in self._group_map.items():
+                            if group.is_joined:
+                                try:
+                                    self._join_group_core(group_name)
+                                except Exception as e:  # pylint: disable=broad-except
+                                    self._call_back(
+                                        CallBackType.REJOIN_GROUP_FAILED,
+                                        OnRejoinGroupFailedArgs(group=group_name, error=e),
+                                    )
 
                     self._call_back(
                         CallBackType.CONNECTED,
@@ -616,37 +593,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._thread = None
 
         _LOGGER.info("stop client successfully")
-
-    def _build_default_options(self):
-        if self._options.auto_reconnect is None:
-            self._options.auto_reconnect = True
-        if self._options.auto_rejoin_groups is None:
-            self._options.auto_rejoin_groups = True
-        if self._options.protocol is None:
-            self._options.protocol = WebPubSubJsonReliableProtocol()
-
-        self._build_message_retry_options()
-
-    def _build_message_retry_options(self):
-        if self._options.message_retry_options is None:
-            self._options.message_retry_options = WebPubSubRetryOptions()
-        if (
-            self._options.message_retry_options.max_retries is None
-            or self._options.message_retry_options.max_retries < 0
-        ):
-            self._options.message_retry_options.max_retries = 3
-        if (
-            self._options.message_retry_options.retry_delay_in_ms is None
-            or self._options.message_retry_options.retry_delay_in_ms < 0
-        ):
-            self._options.message_retry_options.retry_delay_in_ms = 1000
-        if (
-            self._options.message_retry_options.max_retry_delay_in_ms is None
-            or self._options.message_retry_options.max_retry_delay_in_ms < 0
-        ):
-            self._options.message_retry_options.max_retry_delay_in_ms = 30000
-        if self._options.message_retry_options.mode is None:
-            self._options.message_retry_options.mode = "Fixed"
 
     @overload
     def on(self, event: Literal[CallBackType.CONNECTED], listener: Callable[[OnConnectedArgs], None]) -> None:

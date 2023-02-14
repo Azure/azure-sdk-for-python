@@ -212,22 +212,6 @@ class SequenceAckMessage:
         self.sequence_id = sequence_id
 
 
-class OnConnectedArgs(_model_base.Model):
-    connection_id: str = rest_field(name="connectionId")
-    user_id: str = rest_field(name="userId")
-
-    @overload
-    def __init__(self, *, connection_id: str, user_id: str) -> None:
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class ConnectedMessage:
     def __init__(
         self, connection_id: str, user_id: Optional[str] = None, reconnection_token: Optional[str] = None
@@ -286,12 +270,6 @@ class SendToGroupMessage:
         self.ack_id = ack_id
 
 
-class OnRejoinGroupFailedArgs:
-    def __init__(self, group: str, error: Exception) -> None:
-        self.group = group
-        self.error = error
-
-
 WebPubSubMessage = TypeVar(
     "WebPubSubMessage",
     GroupDataMessage,
@@ -317,7 +295,7 @@ def get_pay_load(data: Any, data_type: WebPubSubDataType) -> Any:
     if data_type in (WebPubSubDataType.BINARY, WebPubSubDataType.PROTOBUF):
         if isinstance(data, memoryview):
             return base64.b64encode(bytes(data)).decode()
-        raise Exception("data must be memoryview when dataType is binary or protobuf") 
+        raise Exception("data must be memoryview when dataType is binary or protobuf")
     raise TypeError(f"Unsupported dataType: {data_type}")
 
 
@@ -439,34 +417,6 @@ class WebPubSubJsonReliableProtocol(WebPubSubClientProtocol):
         self.name = "json.reliable.webpubsub.azure.v1"
 
 
-class WebPubSubRetryOptions:
-    def __init__(
-        self,
-        max_retries: int = sys.maxsize,
-        retry_delay_in_ms: int = 1000,
-        max_retry_delay_in_ms: int = 30000,
-        mode: Literal["Exponential", "Fixed"] = "Fixed",
-    ) -> None:
-        self.max_retries = max_retries
-        self.retry_delay_in_ms = retry_delay_in_ms
-        self.max_retry_delay_in_ms = max_retry_delay_in_ms
-        self.mode = mode
-
-
-class WebPubSubClientOptions:
-    def __init__(
-        self,
-        protocol: Optional[WebPubSubClientProtocol] = None,
-        auto_reconnect: Optional[bool] = None,
-        auto_rejoin_groups: Optional[bool] = None,
-        message_retry_options: Optional[WebPubSubRetryOptions] = None,
-    ) -> None:
-        self.protocol = protocol
-        self.auto_reconnect = auto_reconnect
-        self.auto_rejoin_groups = auto_rejoin_groups
-        self.message_retry_options = message_retry_options
-
-
 class SendMessageErrorOptions:
     def __init__(self, ack_id: Optional[int] = None, error_detail: Optional[AckMessageError] = None) -> None:
         self.ack_id = ack_id
@@ -494,12 +444,6 @@ class OnServerDataMessageArgs:
         self.message = message
 
 
-class CloseEvent:
-    def __init__(self, close_status_code: Optional[int] = None, close_reason: Optional[str] = None) -> None:
-        self.close_status_code = close_status_code
-        self.close_reason = close_reason
-
-
 class OnDisconnectedArgs:
     def __init__(self, connection_id: Optional[str] = None, message: Optional[DisconnectedMessage] = None) -> None:
         self.connection_id = connection_id
@@ -512,49 +456,45 @@ class OnRejoinGroupFailedArgs:
         self.error = error
 
 
-class SendToGroupOptions:
-    def __init__(self, no_echo: bool, fire_and_forget: bool, ack_id: Optional[int] = None) -> None:
-        self.no_echo = no_echo
-        self.fire_and_forget = fire_and_forget
-        self.ack_id = ack_id
+class OnConnectedArgs:
+    def __init__(self, connection_id: str, user_id: str) -> None:
+        self.connection_id = connection_id
+        self.user_id = user_id
 
 
-class SendEventOptions:
-    def __init__(self, fire_and_forget: bool, ack_id: Optional[int] = None) -> None:
-        self.fire_and_forget = fire_and_forget
-        self.ack_id = ack_id
-
-
-class JoinGroupOptions:
-    def __init__(self, ack_id: Optional[int] = None) -> None:
-        self.ack_id = ack_id
-
-
-class LeaveGroupOptions:
-    def __init__(self, ack_id: Optional[int] = None) -> None:
-        self.ack_id = ack_id
+class CloseEvent:
+    def __init__(self, close_status_code: Optional[int] = None, close_reason: Optional[str] = None) -> None:
+        self.close_status_code = close_status_code
+        self.close_reason = close_reason
 
 
 class RetryPolicy:
-    def __init__(self, retry_options: WebPubSubRetryOptions) -> None:
-        self.retry_options = retry_options
+    def __init__(
+        self,
+        max_retries: int = 3,
+        retry_delay_in_ms: int = 1000,
+        max_retry_delay_in_ms: int = 30000,
+        mode: Literal["Exponential", "Fixed"] = "Fixed",
+    ) -> None:
+        self.max_retries = max_retries
+        self.retry_delay_in_ms = retry_delay_in_ms
+        self.max_retry_delay_in_ms = max_retry_delay_in_ms
+        self.mode = mode
         self.max_retries_to_get_max_delay = math.ceil(
-            math.log2(self.retry_options.max_retry_delay_in_ms or 1)
-            - math.log2(self.retry_options.retry_delay_in_ms or 1)
-            + 1
+            math.log2(self.max_retry_delay_in_ms or 1) - math.log2(self.retry_delay_in_ms or 1) + 1
         )
 
     def next_retry_delay_in_ms(self, retry_attempt: int) -> Union[int, None]:
-        if retry_attempt > self.retry_options.max_retries:
+        if retry_attempt > self.max_retries:
             return None
-        if self.retry_options.mode == "Fixed":
-            return self.retry_options.retry_delay_in_ms
+        if self.mode == "Fixed":
+            return self.retry_delay_in_ms
         return self.calculate_exponential_delay(retry_attempt)
 
     def calculate_exponential_delay(self, attempt: int) -> int:
         if attempt >= self.max_retries_to_get_max_delay:
-            return self.retry_options.max_retry_delay_in_ms
-        return (1 << (attempt - 1)) * self.retry_options.retry_delay_in_ms
+            return self.max_retry_delay_in_ms
+        return (1 << (attempt - 1)) * self.retry_delay_in_ms
 
 
 class WebPubSubGroup:

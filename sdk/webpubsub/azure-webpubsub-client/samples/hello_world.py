@@ -3,8 +3,6 @@ from azure.webpubsub.client import WebPubSubClient
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
 from azure.webpubsub.client import (
     OnConnectedArgs,
-    SendToGroupOptions,
-    WebPubSubClientOptions,
     OnGroupDataMessageArgs,
     OnDisconnectedArgs,
 )
@@ -37,7 +35,7 @@ service_client = WebPubSubServiceClient.from_connection_string(
 url = service_client.get_client_access_token(roles=["webpubsub.joinLeaveGroup", "webpubsub.sendToGroup"])["url"]
 print(url)
 
-client = WebPubSubClient(credential=url, options=WebPubSubClientOptions(auto_reconnect=False))
+client = WebPubSubClient(credential=url, auto_reconnect=False)
 client.on("connected", on_connected)
 client.on("disconnected", on_disconnected)
 client.on("group-message", on_group_message)
@@ -45,7 +43,7 @@ client.on("group-message", on_group_message)
 client.start()
 group_name = "test"
 client.join_group(group_name)
-client.send_to_group(group_name, "hello text", "text", SendToGroupOptions(no_echo=False, fire_and_forget=False))
+client.send_to_group(group_name, "hello text", "text", no_echo=False, fire_and_forget=False)
 client.send_to_group(group_name, {"hello": "json"}, "json")
 client.send_to_group(group_name, "hello json", "json")
 content = memoryview("hello binary".encode())
