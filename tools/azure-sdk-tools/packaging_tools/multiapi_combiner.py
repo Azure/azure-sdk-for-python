@@ -80,6 +80,7 @@ def _combine_helper(
         objs.extend(new_objs)
     return objs
 
+
 def _sort_models_helper(current: "ModelAndEnum", seen_model_names: Set[str]) -> List["ModelAndEnum"]:
     if current.name in seen_model_names:
         return []
@@ -87,13 +88,10 @@ def _sort_models_helper(current: "ModelAndEnum", seen_model_names: Set[str]) -> 
     for parent in current.parents:
         if parent.name in seen_model_names:
             continue
+        ancestors = _sort_models_helper(parent, seen_model_names) + ancestors
         seen_model_names.add(parent.name)
-        ancestors = (
-            _sort_models_helper(parent, seen_model_names) + ancestors
-        )
     seen_model_names.add(current.name)
     return ancestors
-
 
 
 class Parameter(VersionedObject):
@@ -319,8 +317,8 @@ class ModelAndEnum(VersionedObject):
     @property
     def parents(self) -> List["ModelAndEnum"]:
         if not self._parents:
-            for parent in self.generated_class.__mro__[1: len(self.generated_class.__mro__) - 2]:
-                self._parents.append(ModelAndEnum(self.code_model, parent.__name__))
+            for parent in self.generated_class.__mro__[1 : len(self.generated_class.__mro__) - 2]:
+                self._parents.append(self.code_model.models[parent.__name__])
         return self._parents
 
 
@@ -342,7 +340,7 @@ class CodeModel:
         self.default_folder_api_version = self.api_version_to_folder_api_version[self.default_api_version]
         self.module_name = pkg_path.stem.replace("-", ".")
         self.operation_groups = self._combine_operation_groups()
-        self.models: List[ModelAndEnum] = []
+        self.models: Dict[str, ModelAndEnum] = {}
         self.enums: List[ModelAndEnum] = []
         self._combine_models_and_enums()
         self.client = Client(self)
@@ -408,18 +406,16 @@ class CodeModel:
         )
         for m in models_and_enums:
             if hasattr(m.generated_class, "from_dict"):
-                self.models.append(m)
+                self.models[m.name] = m
             else:
                 self.enums.append(m)
         self._sort_models()
 
     def _sort_models(self) -> None:
         seen_model_names: Set[str] = set()
-        sorted_models: List[ModelAndEnum] = []
-        for model in self.models:
-            sorted_models.extend(
-                _sort_models_helper(model, seen_model_names)
-            )
+        sorted_models: Dict[str, ModelAndEnum] = {}
+        for model in self.models.values():
+            sorted_models.update({m.name: m for m in _sort_models_helper(model, seen_model_names)})
         self.models = sorted_models
 
 

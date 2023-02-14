@@ -1,5 +1,5 @@
 {{ imports }}
 
-{% for model in code_model.models %}
+{% for model in code_model.models.values() %}
 {{ model.source_code }}
 {% endfor %}
