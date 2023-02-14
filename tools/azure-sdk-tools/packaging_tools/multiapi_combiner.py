@@ -621,6 +621,7 @@ class Serializer:
         # serialize models file
         default_models_module = importlib.import_module(f"{default_models_folder_name}._models_py3")
         imports = inspect.getsource(default_models_module).split("class")[0]
+        imports = modify_relative_imports(r"from (.*) import _serialization", imports)
         with open(f"{models_folder}/_models.py", "w") as fd:
             fd.write(self.env.get_template("models.py.jinja2").render(code_model=self.code_model, imports=imports))
 
@@ -632,6 +633,11 @@ class Serializer:
         if self.code_model.enums:
             with open(f"{models_folder}/_enums.py", "w") as fd:
                 fd.write(self.env.get_template("enums.py.jinja2").render(code_model=self.code_model, imports=imports))
+
+        # serialize patch file
+        with open(f"{models_folder}/_patch.py", "w") as wfd:
+            with open(f"{self.code_model.get_root_of_code(False)}/{default_api_version}/models/_patch.py", "r") as rfd:
+                wfd.write(rfd.read())
 
     def remove_versioned_files(self):
         root_of_code = self.code_model.get_root_of_code(False)
