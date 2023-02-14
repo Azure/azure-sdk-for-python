@@ -2828,3 +2828,25 @@ class TestDSLPipeline:
         pipeline_job3 = my_pipeline()
         assert pipeline_job3.outputs.component_out_path.path == "path1"
         assert pipeline_job3.component.outputs["component_out_path"].path == "path1"
+
+    def test_node_setting_promoted_to_pipeline_level(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path = Output(
+                type="type",
+                mode="mode",
+                # the following settings will be copied to pipeline level
+                path="path",
+                name="name",
+                version="version",
+            )
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        assert pipeline_job1.outputs.component_out_path.path == "path"
+        assert pipeline_job1.outputs.component_out_path.name == "name"
+        assert pipeline_job1.outputs.component_out_path.version == "version"
