@@ -128,6 +128,8 @@ def from_dict_to_rest_io(
                 # add name and version for binding input
                 if io_name or io_version:
                     assert rest_object_class.__name__ == 'JobOutput'
+                    # current code only support dump name and version for JobOutput
+                    # this assert can be deleted if we need to dump name/version for JobInput
                     if io_name:
                         io_bindings[key].update({"name": io_name})
                     if io_version:
@@ -136,6 +138,8 @@ def from_dict_to_rest_io(
                     io_bindings[key] = io_value
             else:
                 if rest_object_class.__name__ == 'JobOutput':
+                    # current code only support dump name and version for JobOutput
+                    # this condition can be deleted if we need to dump name/version for JobInput
                     if 'name' in val.keys():
                         val['asset_name'] = val.pop('name')
                     if 'version' in val.keys():

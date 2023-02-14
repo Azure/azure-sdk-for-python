@@ -2629,17 +2629,16 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert node_output.name == 'a_output'
         assert node_output.version == '1'
 
-    def test_register_output_sdk_succeed(self, client: MLClient, randstr: Callable[[str], str], randint: Callable[[int], int]):
+    @pytest.mark.disable_mock_code_hash
+    def test_register_output_sdk_succeed(self, client: MLClient):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
-
-        random_version = randstr("version")
 
         @dsl.pipeline()
         def sub_pipeline():
             node = component(component_in_path=component_input)
             node.outputs.component_out_path.name = 'sub_pipeline_output'
-            node.outputs.component_out_path.version = random_version
+            node.outputs.component_out_path.version = 'v1'
             return {
                 'sub_pipeine_a_output': node.outputs.component_out_path
             }
@@ -2649,17 +2648,17 @@ class TestDSLPipeline(AzureRecordedTestCase):
             # register NodeOutput which is binding to PipelineOutput
             node = component(component_in_path=component_input)
             node.outputs.component_out_path.name = 'n1_output'
-            node.outputs.component_out_path.version = random_version
+            node.outputs.component_out_path.version = 'v1'
 
             # register NodeOutput which isn't binding to PipelineOutput
             node_2 = component(component_in_path=component_input)
             node_2.outputs.component_out_path.name = 'n2_output'
-            node_2.outputs.component_out_path.version = random_version
+            node_2.outputs.component_out_path.version = 'v1'
 
             # register NodeOutput of subgraph
             sub_node = sub_pipeline()
             sub_node.outputs.sub_pipeine_a_output.name = 'sub_pipeline'
-            sub_node.outputs.sub_pipeine_a_output.version = random_version
+            sub_node.outputs.sub_pipeine_a_output.version = 'v1'
 
             return {
                 'pipeine_a_output': node.outputs.component_out_path
@@ -2667,22 +2666,16 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         pipeline = register_both_output()
         pipeline.outputs.pipeine_a_output.name = 'p1_output'
-        pipeline.outputs.pipeine_a_output.version = random_version
+        pipeline.outputs.pipeine_a_output.version = 'v1'
         pipeline.settings.default_compute = "cpu-cluster"
         pipeline_job = client.jobs.create_or_update(pipeline)
         client.jobs.stream(pipeline_job.name)
 
-        pipeline_output = pipeline_job.outputs.pipeine_a_output
-        assert pipeline_output.name == 'p1_output'
-        assert pipeline_output.version == random_version
-        assert client.data.get(name='p1_output', version=random_version)
+        def check_name_version_and_register_succeed(output, output_name, output_version):
+            assert output.name == output_name
+            assert output.version == output_version
+            assert client.data.get(name=output_name, version=output_version)
 
-        node_output = pipeline_job.jobs['node_2'].outputs.component_out_path
-        assert node_output.name == 'n2_output'
-        assert node_output.version == random_version
-        assert client.data.get(name='n2_output', version=random_version)
-
-        node_output = pipeline_job.jobs['sub_node'].outputs.sub_pipeine_a_output
-        assert node_output.name == 'sub_pipeline'
-        assert node_output.version == random_version
-        assert client.data.get(name='sub_pipeline', version=random_version)
+        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, 'p1_output', 'v1')
+        check_name_version_and_register_succeed(pipeline_job.jobs['node_2'].outputs.component_out_path, 'n2_output', 'v1')
+        check_name_version_and_register_succeed(pipeline_job.jobs['sub_node'].outputs.sub_pipeine_a_output, 'sub_pipeline', 'v1')
