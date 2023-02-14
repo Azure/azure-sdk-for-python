@@ -13,6 +13,7 @@ import argparse
 import os
 import logging
 import sys
+from typing import Optional
 
 from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.parsing import ParsedSetup
@@ -21,42 +22,62 @@ from ci_tools.variables import in_ci
 logging.getLogger().setLevel(logging.INFO)
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
-lint_plugin_path = os.path.join(root_dir, "scripts/pylint_custom_plugin")
+# Add custom pylint plugin to path
+lint_plugin_path = os.path.join(root_dir, "scripts", "pylint_custom_plugin")
+
+
+def get_top_level_module_path(package_dir: Optional[str]) -> Optional[str]:
+    """Tries to return the path to the top level module for the package.
+
+    :param Optional[str] package_dir: Path to package, or None
+
+    :return: None if package_dir is None or package opted out from pylint
+             str path to top level module otherwise
+    """
+    if not package_dir:
+        return None
+
+    pkg_details = ParsedSetup.from_path(os.path.abspath(package_dir))
+    top_level_module = pkg_details.namespace.split(".")[0]
+
+    if in_ci() and not is_check_enabled(package_dir, "pylint"):
+        logging.info(f"Package {pkg_details.name} opts-out of pylint check.")
+        return None
+
+    return os.path.join(package_dir, top_level_module)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Run pylint against target folder. Add a local custom plugin to the path prior to execution. "
+        description="Run pylint against target folder. "
+        "Extra parameters that are not listed below are forwarded to pylint."
     )
+
+    parser.add_argument("--pylint-help", action="store_true", help="Show pylint's help and exit.", required=False)
 
     parser.add_argument(
         "-t",
         "--target",
         dest="target_package",
         help="The target package directory on disk. The target module passed to pylint will be <target_package>/azure.",
-        required=True,
+        required=False,
     )
 
     parser.add_argument(
         "--next",
-        default=False,
+        action="store_true",
         help="Next version of pylint is being tested.",
-        required=False,      
+        required=False,
     )
 
-    args = parser.parse_args()
+    args, pylint_args = parser.parse_known_args()
+    rcFileLocation = os.path.join(root_dir, "eng" if args.next else "", "pylintrc")
+    targetPackagePath = get_top_level_module_path(args.target_package)
 
-    pkg_dir = os.path.abspath(args.target_package)
-    pkg_details = ParsedSetup.from_path(pkg_dir)
-    rcFileLocation = os.path.join(root_dir, "eng/pylintrc") if args.next else os.path.join(root_dir, "pylintrc")
-
-    top_level_module = pkg_details.namespace.split('.')[0]
-
-    if in_ci():
-        if not is_check_enabled(args.target_package, "pylint"):
-            logging.info(
-                f"Package {pkg_details.name} opts-out of pylint check."
-            )
-            exit(0)
+    if targetPackagePath:
+        pylint_args.insert(0, targetPackagePath)
+    if args.pylint_help:
+        pylint_args.insert(0, "--help")
 
     try:
         check_call(
@@ -66,11 +87,9 @@ if __name__ == "__main__":
                 "pylint",
                 "--rcfile={}".format(rcFileLocation),
                 "--output-format=parseable",
-                os.path.join(args.target_package, top_level_module),
+                *pylint_args,
             ]
         )
     except CalledProcessError as e:
-        logging.error(
-            "{} exited with linting error {}".format(pkg_details.name, e.returncode)
-        )
+        logging.error("pylint exited with linting error {}".format(e.returncode))
         exit(1)
