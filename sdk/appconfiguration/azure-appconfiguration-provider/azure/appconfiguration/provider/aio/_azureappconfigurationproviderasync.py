@@ -118,10 +118,10 @@ async def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
                     trimmed_key = config.key[len(trim) :]
                     break
 
-            if config.content_type == SecretReferenceConfigurationSetting._secret_reference_content_type:
+            if isinstance(config, SecretReferenceConfigurationSetting):
                 secret = await _resolve_keyvault_reference(config, key_vault_options, provider)
                 provider._dict[trimmed_key] = secret
-            elif config.content_type == FeatureFlagConfigurationSetting._feature_flag_content_type:
+            elif isinstance(config, FeatureFlagConfigurationSetting):
                 feature_management = provider._dict.get(FEATURE_MANAGEMENT_KEY, {})
                 feature_management[trimmed_key] = config.value
                 if FEATURE_MANAGEMENT_KEY not in provider.keys():
