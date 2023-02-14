@@ -140,12 +140,12 @@ def update_cadl_location(sdk_folder, data, config, folder_name, package_name, in
 
     _LOGGER.info("cadl-location:\n {}".format(json.dumps(metadata, indent=2)))
 
-    package_folder = Path(sdk_folder, folder_name, package_name).expanduser()
-    if not os.path.exists(package_folder):
+    package_folder = Path(sdk_folder) / folder_name / package_name
+    if not package_folder.exists():
         _LOGGER.info(f"Package folder doesn't exist: {package_folder}")
         return
 
-    metadata_file_path = os.path.join(package_folder, "cadl-location.yaml")
+    metadata_file_path = package_folder / "cadl-location.yaml"
     with open(metadata_file_path, "w") as writer:
         yaml.safe_dump(metadata, writer)
     _LOGGER.info(f"Saved metadata to {metadata_file_path}")
