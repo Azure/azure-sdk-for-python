@@ -472,7 +472,7 @@ class TestDSLPipelineWithSpecificNodes:
                                    'type': 'command'}},
                 'outputs': {'pipeline_output1': {'job_output_type': 'uri_folder'},
                             'pipeline_output2': {'job_output_type': 'mlflow_model'},
-                            'pipeline_output3': {'job_output_type': 'mlflow_model'}},
+                            'pipeline_output3': {'job_output_type': 'mlflow_model', 'mode': 'ReadWriteMount'}},
                 'properties': {},
                 'settings': {},
                 'tags': {}
@@ -570,7 +570,10 @@ class TestDSLPipelineWithSpecificNodes:
                                                           'value': '${{parent.outputs.pipeline_output}}'}},
                                    'task': 'copy_data',
                                    'type': 'data_transfer'}},
-                'outputs': {'pipeline_output': {'job_output_type': 'uri_folder'}},
+                'outputs': {'pipeline_output': {
+                    'job_output_type': 'uri_folder',
+                    'uri': 'azureml://datastores/my_blob/paths/merged_blob'
+                }},
                 'properties': {},
                 'settings': {'_source': 'DSL'},
                 'tags': {}}}

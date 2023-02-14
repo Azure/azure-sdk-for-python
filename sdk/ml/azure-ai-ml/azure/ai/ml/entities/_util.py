@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
 import hashlib
 import json
 import os
@@ -463,14 +464,10 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
 def copy_output_setting(source: "NodeOutput", target: "NodeOutput"):
     """Copy node output setting from source to target.
     Currently only path, name, version will be copied."""
+    # pylint: disable=protected-access
     from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
     if not isinstance(source, NodeOutput):
         return
-    # SDK will only copy path, name, version. Type and mode are left empty for service side to resolve.
-    if source.path:
-        target.path = source.path
-    if source.name:
-        target.name = source.name
-    if source.version:
-        target.version = source.version
+    if source._data:
+        target._data = copy.deepcopy(source._data)

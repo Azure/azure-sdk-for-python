@@ -56,6 +56,9 @@ def _data_to_input(data):
 
 
 class InputOutputBase(ABC):
+    # TODO: refine this code, always use _data to store builder level settings and use _meta to store definition
+    # TODO: when _data missing, return value from _meta
+
     def __init__(self, meta: Union[Input, Output], data, default_data=None, **kwargs):
         """Base class of input & output.
 
@@ -339,7 +342,6 @@ class NodeInput(InputOutputBase):
 
 
 class NodeOutput(InputOutputBase, PipelineExpressionMixin):
-    # TODO: store settings in builder
     """Define one output of a Component."""
 
     def __init__(
