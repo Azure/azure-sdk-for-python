@@ -448,9 +448,19 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
 
     @path.setter
     def path(self, path):
-        # For un-configured output, we build a default output entry to store path.
+        # For un-configured output, we build a default data entry for them.
         self._build_default_data()
-        self._data.path = path
+        if hasattr(self._data, "path"):
+            self._data.path = path
+        else:
+            # YAML job will have string output binding and do not support setting path for it.
+            msg = f"{type(self._data)} does not support setting path."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.PIPELINE,
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
     def _assert_name_and_version(self):
         if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):

@@ -340,9 +340,14 @@ class PipelineIOMixin(PipelineNodeIOMixin):
         """
         output_dict = {}
         for key, val in outputs.items():
-            if isinstance(val, Output):
+            if val is None:
+                # For None output, build an empty output builder
+                output_val = self._build_output(name=key, meta=None, data=None)
+            elif isinstance(val, Output):
+                # For output entity, build an output builder with data points to it
                 output_val = self._build_output(name=key, meta=val, data=val)
             elif isinstance(val, NodeOutput):
+                # For output builder, build a new output builder and copy settings from it
                 output_val = self._build_output(name=key, meta=None, data=None)
                 copy_output_setting(source=val, target=output_val)
             else:

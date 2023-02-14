@@ -2843,15 +2843,23 @@ class TestDSLPipeline:
                 mode="mode",
                 # the following settings will be copied to pipeline level
                 path="path",
-                name="name",
-                version="version",
             )
             return node1.outputs
 
         pipeline_job1 = my_pipeline()
         assert pipeline_job1.outputs.component_out_path.path == "path"
-        assert pipeline_job1.outputs.component_out_path.name == "name"
-        assert pipeline_job1.outputs.component_out_path.version == "version"
+
+        @dsl.pipeline()
+        def outer_pipeline():
+            node1 = my_pipeline()
+            assert node1.outputs.component_out_path.path == "path"
+            node1.outputs.component_out_path.path = "new_path"
+            assert node1.outputs.component_out_path.path == "new_path"
+            return node1.outputs
+
+        pipeline_job2 = outer_pipeline()
+        assert pipeline_job2.outputs.component_out_path.path == "new_path"
+
 
     def test_validate_pipeline_node_io_name_has_keyword(self, caplog):
         # Refresh logger for pytest to capture log, otherwise the result is empty.
