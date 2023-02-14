@@ -1181,9 +1181,9 @@ class TestDSLPipelineWithSpecificNodes:
                                    'outputs': {'output1': {'type': 'literal',
                                                            'value': '${{parent.outputs.pipeline_output3}}'}},
                                    'type': 'spark'}},
-                'outputs': {'pipeline_output1': {'job_output_type': 'uri_file'},
+                'outputs': {'pipeline_output1': {'job_output_type': 'uri_file', 'mode': 'Direct'},
                             'pipeline_output2': {'job_output_type': 'uri_folder'},
-                            'pipeline_output3': {'job_output_type': 'uri_folder'}},
+                            'pipeline_output3': {'job_output_type': 'uri_folder', 'mode': 'Direct'}},
                 'properties': {},
                 'settings': {},
                 'tags': {}
@@ -1362,9 +1362,9 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                 },
                 "outputs": {
-                    "pipeline_output1": {"job_output_type": "uri_file"},
+                    "pipeline_output1": {"job_output_type": "uri_file", 'mode': 'Direct'},
                     "pipeline_output2": {"job_output_type": "uri_folder"},
-                    "pipeline_output3": {"job_output_type": "uri_folder"},
+                    "pipeline_output3": {"job_output_type": "uri_folder", 'mode': 'Direct'},
                 },
                 "properties": {},
                 "settings": {},
@@ -2197,8 +2197,8 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                 },
                 "outputs": {
-                    "pipeline_output1": {"job_output_type": "uri_folder"},
-                    "pipeline_output2": {"job_output_type": "uri_folder"},
+                    "pipeline_output1": {"job_output_type": "uri_folder", 'mode': 'ReadWriteMount'},
+                    "pipeline_output2": {"job_output_type": "uri_folder", 'mode': 'ReadWriteMount'},
                 },
                 "properties": {},
                 "settings": {"_source": "DSL"},
@@ -2294,8 +2294,8 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                 },
                 "outputs": {
-                    "pipeline_output1": {"job_output_type": "mlflow_model"},
-                    "pipeline_output2": {"job_output_type": "mlflow_model"},
+                    "pipeline_output1": {"job_output_type": "mlflow_model", 'mode': 'ReadWriteMount'},
+                    "pipeline_output2": {"job_output_type": "mlflow_model", 'mode': 'ReadWriteMount'},
                 },
                 "properties": {},
                 "settings": {"_source": "DSL"},
@@ -2631,8 +2631,8 @@ class TestDSLPipelineWithSpecificNodes:
                     "type": "automl",
                 }
             },
-            # default to uri folder with rwmount
-            "outputs": {"pipeline_job_out_best_model": {"job_output_type": "uri_folder"}},
+            # pipeline level will copy node level type
+            "outputs": {"pipeline_job_out_best_model": {"job_output_type": "mlflow_model"}},
             "properties": {},
             "settings": {"_source": "DSL"},
             "tags": {},
@@ -2640,7 +2640,6 @@ class TestDSLPipelineWithSpecificNodes:
         assert pipeline_dict1 == expected_dict
 
         # in order to get right type, user need to specify it on pipeline level
-        pipeline1.outputs.pipeline_job_out_best_model.type = "mlflow_model"
         pipeline1.outputs.pipeline_job_out_best_model.mode = "rw_mount"
         pipeline_dict2 = pipeline1._to_rest_object().as_dict()
         pipeline_dict2 = pydash.omit(

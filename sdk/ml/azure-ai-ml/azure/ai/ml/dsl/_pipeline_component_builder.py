@@ -473,8 +473,12 @@ class PipelineComponentBuilder:
                 )
             if expected_description:
                 output_dict[key]._meta.description = expected_description
+                # also copy the description to pipeline job
+                output_dict[key].description = expected_description
             if expected_mode:
                 output_dict[key]._meta.mode = expected_mode
+                # also copy the mode to pipeline job
+                output_dict[key].mode = expected_mode
 
         if unmatched_outputs:
             raise UserErrorException(f"{error_prefix}: {unmatched_outputs}")
