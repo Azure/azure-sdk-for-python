@@ -48,7 +48,7 @@ from azure.servicebus.exceptions import (
     MessageSizeExceededError,
     OperationTimeoutError
 )
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer, AzureTestCase
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer, AzureTestCase
 from servicebus_preparer import CachedServiceBusNamespacePreparer, CachedServiceBusQueuePreparer, ServiceBusQueuePreparer
 from utilities import get_logger, print_message, sleep_until_expired
 from mocks_async import MockReceivedMessage, MockReceiver
@@ -56,7 +56,7 @@ from mocks_async import MockReceivedMessage, MockReceiver
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
+class ServiceBusQueueAsyncTests(AzureMgmtRecordedTestCase):
     @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.asyncio
     @pytest.mark.liveTest

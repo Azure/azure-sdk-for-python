@@ -13,7 +13,6 @@ import time
 import uuid
 from datetime import datetime, timedelta
 
-from uamqp.errors import VendorLinkDetach
 from azure.servicebus import (
     ServiceBusMessage,
     ServiceBusReceivedMessage,
@@ -33,7 +32,7 @@ from azure.servicebus.exceptions import (
     MessageAlreadySettled,
     AutoLockRenewTimeout
 )
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusQueuePreparer,
@@ -46,7 +45,7 @@ from utilities import get_logger, print_message
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusAsyncSessionTests(AzureMgmtTestCase):
+class ServiceBusAsyncSessionTests(AzureMgmtRecordedTestCase):
     @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.asyncio
     @pytest.mark.liveTest

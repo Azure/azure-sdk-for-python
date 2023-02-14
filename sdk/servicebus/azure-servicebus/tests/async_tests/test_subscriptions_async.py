@@ -17,7 +17,7 @@ from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredenti
 from azure.servicebus.exceptions import ServiceBusError
 from azure.servicebus._common.constants import ServiceBusSubQueue
 
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer,
@@ -30,7 +30,7 @@ from utilities import get_logger, print_message
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusSubscriptionAsyncTests(AzureMgmtTestCase):
+class ServiceBusSubscriptionAsyncTests(AzureMgmtRecordedTestCase):
     @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.asyncio
     @pytest.mark.liveTest

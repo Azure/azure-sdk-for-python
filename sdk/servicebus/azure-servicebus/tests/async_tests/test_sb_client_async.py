@@ -19,7 +19,7 @@ from azure.servicebus.exceptions import (
     ServiceBusAuthenticationError,
     ServiceBusAuthorizationError
 )
-from devtools_testutils import AzureMgmtTestCase, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, CachedResourceGroupPreparer
 from servicebus_preparer import (
     CachedServiceBusNamespacePreparer, 
     ServiceBusTopicPreparer, 
@@ -34,7 +34,7 @@ from utilities import get_logger
 
 _logger = get_logger(logging.DEBUG)
 
-class ServiceBusClientAsyncTests(AzureMgmtTestCase):
+class ServiceBusClientAsyncTests(AzureMgmtRecordedTestCase):
 
     @pytest.mark.asyncio
     @pytest.mark.liveTest

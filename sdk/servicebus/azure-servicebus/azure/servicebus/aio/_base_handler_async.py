@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
+from ._transport._pyamqp_transport_async import PyamqpTransportAsync
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
 from .._common._configuration import Configuration
 from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
@@ -125,7 +126,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         credential: Union["AsyncTokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
-        self._amqp_transport = kwargs.pop("amqp_transport")
+        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransportAsync)
 
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(

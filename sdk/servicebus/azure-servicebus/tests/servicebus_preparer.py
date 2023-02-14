@@ -1,8 +1,5 @@
 import functools
-import hashlib
-import os
 import time
-from collections import namedtuple
 
 from azure.mgmt.servicebus import ServiceBusManagementClient
 from azure.mgmt.servicebus.models import SBQueue, SBSubscription, AccessRights
@@ -12,7 +9,6 @@ from azure_devtools.scenario_tests.exceptions import AzureTestError
 from devtools_testutils import (
     ResourceGroupPreparer, AzureMgmtPreparer, FakeResource, get_region_override
 )
-
 from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 SERVICEBUS_DEFAULT_AUTH_RULE_NAME = 'RootManageSharedAccessKey'
@@ -76,11 +72,6 @@ class ServiceBusNamespacePreparer(AzureMgmtPreparer):
             self.connection_string = key.primary_connection_string
             self.key_name = key.key_name
             self.primary_key = key.primary_key
-
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
             self.connection_string = 'Endpoint=sb://{}.servicebus.windows.net/;SharedAccessKeyName=test;SharedAccessKey=THISISATESTKEYXXXXXXXXXXXXXXXXXXXXXXXXXXXX='.format(name)
@@ -183,10 +174,6 @@ class ServiceBusTopicPreparer(_ServiceBusChildResourcePreparer):
                         raise
                     time.sleep(3)
 
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
@@ -253,10 +240,6 @@ class ServiceBusSubscriptionPreparer(_ServiceBusChildResourcePreparer):
                         raise
                     time.sleep(3)
 
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
@@ -336,10 +319,6 @@ class ServiceBusQueuePreparer(_ServiceBusChildResourcePreparer):
                         raise
                     time.sleep(3)
 
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
         return {
@@ -401,10 +380,6 @@ class ServiceBusNamespaceAuthorizationRulePreparer(_ServiceBusChildResourcePrepa
             key = self.client.namespaces.list_keys(group.name, namespace.name, name)
             connection_string = key.primary_connection_string
 
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
             connection_string = 'https://microsoft.com'
@@ -472,10 +447,6 @@ class ServiceBusQueueAuthorizationRulePreparer(_ServiceBusChildResourcePreparer)
             key = self.client.queues.list_keys(group.name, namespace.name, queue.name, name)
             connection_string = key.primary_connection_string
 
-            self.test_class_instance.scrubber.register_name_pair(
-                name,
-                self.resource_moniker
-            )
         else:
             self.resource = FakeResource(name=name, id=name)
             connection_string = 'https://microsoft.com'

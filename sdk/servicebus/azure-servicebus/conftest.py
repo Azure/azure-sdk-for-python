@@ -13,9 +13,19 @@ from devtools_testutils.sanitizers import (
     add_oauth_response_sanitizer,
     set_custom_default_matcher
 )
-
-
 collect_ignore = []
+
+try:
+    import uamqp
+    uamqp_transport_params = [True, False]
+    uamqp_transport_ids = ["uamqp", "pyamqp"]
+except (ModuleNotFoundError, ImportError):
+    uamqp_transport_params = [False]
+    uamqp_transport_ids = ["pyamqp"]
+
+@pytest.fixture(scope="session", params=uamqp_transport_params, ids=uamqp_transport_ids, autouse=True)
+def uamqp_transport(request):
+    return request.param
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
@@ -28,6 +38,8 @@ def add_sanitizers(test_proxy):
         regex="(?<=\\/\\/)[a-z-]+(?=\\.servicebus\\.windows\\.net)"
     )
     add_oauth_response_sanitizer()
+
+
 
 # Only run stress tests on request.
 if not any([arg.startswith('test_stress') or arg.endswith('StressTest') for arg in sys.argv]):

@@ -17,6 +17,7 @@ except ImportError:
     from urlparse import urlparse  # type: ignore
 
 from ._pyamqp.utils import generate_sas_token
+from ._transport._pyamqp_transport import PyamqpTransport
 
 from ._common._configuration import Configuration
 from .exceptions import (
@@ -243,7 +244,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         credential: Union["TokenCredential", AzureSasCredential, AzureNamedKeyCredential],
         **kwargs: Any
     ) -> None:
-        self._amqp_transport = kwargs.pop("amqp_transport")
+        self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
 
         # If the user provided http:// or sb://, let's be polite and strip that.
         self.fully_qualified_namespace = strip_protocol_from_uri(

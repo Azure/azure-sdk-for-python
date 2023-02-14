@@ -12,7 +12,7 @@ import pytest
 import time
 from datetime import datetime, timedelta
 
-from devtools_testutils import AzureMgmtTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, CachedResourceGroupPreparer
 
 from azure.servicebus.aio import ServiceBusClient
 from azure.servicebus.aio._base_handler_async import ServiceBusSharedKeyCredential
@@ -28,7 +28,7 @@ from utilities import get_logger, print_message
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusTopicsAsyncTests(AzureMgmtTestCase):
+class ServiceBusTopicsAsyncTests(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
