@@ -23,23 +23,28 @@ from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer
 )
-from utilities import get_logger, print_message
+from utilities import get_logger, print_message, uamqp_transport as uamqp_transport_func, ArgPasser
+
+uamqp_transport_params, uamqp_transport_ids = uamqp_transport_func()
 
 _logger = get_logger(logging.DEBUG)
 
 
-class ServiceBusTopicsAsyncTests(AzureMgmtRecordedTestCase):
+class TestServiceBusTopicsAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.asyncio
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
-    async def test_topic_by_servicebus_client_conn_str_send_basic(self, servicebus_namespace_connection_string, servicebus_topic, **kwargs):
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    async def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, **kwargs):
 
         async with ServiceBusClient.from_connection_string(
             servicebus_namespace_connection_string,
-            logging_enable=False
+            logging_enable=False,
+            uamqp_transport=uamqp_transport
         ) as sb_client:
             async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 message = ServiceBusMessage(b"Sample topic message")
@@ -51,7 +56,9 @@ class ServiceBusTopicsAsyncTests(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
-    async def test_topic_by_sas_token_credential_conn_str_send_basic(self, servicebus_namespace, servicebus_namespace_key_name, servicebus_namespace_primary_key, servicebus_topic, **kwargs):
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    async def test_topic_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
         fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
         async with ServiceBusClient(
             fully_qualified_namespace=fully_qualified_namespace,
@@ -59,7 +66,8 @@ class ServiceBusTopicsAsyncTests(AzureMgmtRecordedTestCase):
                 policy=servicebus_namespace_key_name,
                 key=servicebus_namespace_primary_key
             ),
-            logging_enable=False
+            logging_enable=False,
+            uamqp_transport=uamqp_transport
         ) as sb_client:
             async with sb_client.get_topic_sender(servicebus_topic.name) as sender:
                 message = ServiceBusMessage(b"Sample topic message")

@@ -2453,7 +2453,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
         def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
             raise error.AMQPConnectionError(error.ErrorCondition.ConnectionCloseForced)
 
-        def _hack_sb_receiver_settle_message(self, uamqp_transport, *, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
+        def _hack_sb_receiver_settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
             raise error.AMQPException(error.ErrorCondition.ClientError)
 
         with ServiceBusClient.from_connection_string(

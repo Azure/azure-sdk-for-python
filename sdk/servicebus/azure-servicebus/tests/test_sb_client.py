@@ -422,7 +422,7 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
         credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
         hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
         auth_uri = "sb://{}/{}".format(hostname, servicebus_queue.name)
-        token = credential.get_token(auth_uri).token.decode()
+        token = credential.get_token(auth_uri).token
 
         # Finally let's do it with AzureSasCredential
         credential = AzureSasCredential(token)
@@ -438,7 +438,7 @@ class TestServiceBusClient(AzureMgmtRecordedTestCase):
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
-    def test_client_azure_named_key_credential(self,
+    def test_azure_named_key_credential(self,
                                    uamqp_transport,
                                    *,
                                    servicebus_queue=None,
