@@ -2760,7 +2760,7 @@ class TestDSLPipeline:
             "_source": "DSL"
         }
 
-    def test_register_output_without_name_sdk(self, client: MLClient):
+    def test_register_output_without_name_sdk(self):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
 
@@ -2772,7 +2772,7 @@ class TestDSLPipeline:
         pipeline = register_node_output()
         pipeline.settings.default_compute = "azureml:cpu-cluster"
         with pytest.raises(UserErrorException) as e:   
-            assert_job_cancel(pipeline, client)
+            pipeline._validate()
         assert "Output name is required when output version is specified." in str(e.value)
 
         @dsl.pipeline()
@@ -2786,10 +2786,10 @@ class TestDSLPipeline:
         pipeline.outputs.pipeine_a_output.version = 1
         pipeline.settings.default_compute = "azureml:cpu-cluster"
         with pytest.raises(UserErrorException) as e:
-            assert_job_cancel(pipeline, client)
+            pipeline._validate()
         assert "Output name is required when output version is specified." in str(e.value)
 
-    def test_register_output_with_invalid_name_sdk(self, client: MLClient):
+    def test_register_output_with_invalid_name_sdk(self):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
 
@@ -2802,7 +2802,7 @@ class TestDSLPipeline:
         pipeline = register_node_output()
         pipeline.settings.default_compute = "azureml:cpu-cluster"
         with pytest.raises(UserErrorException) as e:
-            assert_job_cancel(pipeline, client)
+            pipeline._validate()
         assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)
 
     def test_pipeline_output_settings_copy(self):
