@@ -101,6 +101,7 @@ try:
     from ._models_py3 import ComputeInstanceVersion
     from ._models_py3 import ComputeResource
     from ._models_py3 import ComputeResourceSchema
+    from ._models_py3 import ComputeRuntimeDto
     from ._models_py3 import ComputeSchedules
     from ._models_py3 import ComputeSecrets
     from ._models_py3 import ComputeStartStopSchedule
@@ -179,6 +180,7 @@ try:
     from ._models_py3 import FQDNEndpointDetail
     from ._models_py3 import FQDNEndpoints
     from ._models_py3 import FQDNEndpointsProperties
+    from ._models_py3 import FeatureStoreSettings
     from ._models_py3 import FeaturizationSettings
     from ._models_py3 import FlavorData
     from ._models_py3 import ForecastHorizon
@@ -532,6 +534,7 @@ except (SyntaxError, ImportError):
     from ._models import ComputeInstanceVersion  # type: ignore
     from ._models import ComputeResource  # type: ignore
     from ._models import ComputeResourceSchema  # type: ignore
+    from ._models import ComputeRuntimeDto  # type: ignore
     from ._models import ComputeSchedules  # type: ignore
     from ._models import ComputeSecrets  # type: ignore
     from ._models import ComputeStartStopSchedule  # type: ignore
@@ -610,6 +613,7 @@ except (SyntaxError, ImportError):
     from ._models import FQDNEndpointDetail  # type: ignore
     from ._models import FQDNEndpoints  # type: ignore
     from ._models import FQDNEndpointsProperties  # type: ignore
+    from ._models import FeatureStoreSettings  # type: ignore
     from ._models import FeaturizationSettings  # type: ignore
     from ._models import FlavorData  # type: ignore
     from ._models import ForecastHorizon  # type: ignore
@@ -1103,6 +1107,7 @@ __all__ = [
     'ComputeInstanceVersion',
     'ComputeResource',
     'ComputeResourceSchema',
+    'ComputeRuntimeDto',
     'ComputeSchedules',
     'ComputeSecrets',
     'ComputeStartStopSchedule',
@@ -1181,6 +1186,7 @@ __all__ = [
     'FQDNEndpointDetail',
     'FQDNEndpoints',
     'FQDNEndpointsProperties',
+    'FeatureStoreSettings',
     'FeaturizationSettings',
     'FlavorData',
     'ForecastHorizon',

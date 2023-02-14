@@ -23,6 +23,25 @@ settings:
   force_rerun: true
 
 jobs:
+  invalid_condition_body:
+    type: pipeline
+    inputs:
+      job_in_number: ${{parent.inputs.job_in_number}}
+      job_in_number_1: ${{parent.inputs.job_in_number}}
+      job_in_path: ${{parent.inputs.job_in_path}}
+    component: ./components/do_while_body_pipeline_component.yml
+  invalid_condition:
+    type: do_while
+    body: ${{parent.jobs.invalid_condition_body}}
+    limits:
+      max_iteration_count: 5
+    condition: false
+    mapping:
+      output_in_number:
+        - job_in_number
+        - job_in_number_1
+      output_in_path: job_in_path
+
   empty_mapping_body:
     type: pipeline
     component: ./components/do_while_body_pipeline_component.yml
@@ -49,6 +68,23 @@ jobs:
     body: ${{parent.jobs.out_of_range_body}}
     limits:
       max_iteration_count: 1001
+    condition: is_number_larger_than_zero
+    mapping:
+      output_in_number:
+        - job_in_number
+        - job_in_number_1
+      output_in_path: job_in_path
+
+  empty_max_iteration_body:
+    type: pipeline
+    inputs:
+      job_in_number: ${{parent.inputs.job_in_number}}
+      job_in_number_1: ${{parent.inputs.job_in_number}}
+      job_in_path: ${{parent.inputs.job_in_path}}
+    component: ./components/do_while_body_pipeline_component.yml
+  empty_max_iteration_count:
+    type: do_while
+    body: ${{parent.jobs.empty_max_iteration_body}}
     condition: is_number_larger_than_zero
     mapping:
       output_in_number:

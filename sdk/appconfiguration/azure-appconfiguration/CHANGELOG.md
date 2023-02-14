@@ -1,6 +1,6 @@
 # Release History
 
-## 1.4.0b2 (Unreleased)
+## 1.4.1 (Unreleased)
 
 ### Features Added
 
@@ -10,7 +10,7 @@
 
 ### Other Changes
 
-## 1.4.0b1 (2022-02-07)
+## 1.4.0 (2022-02-13)
 
 ### Other Changes
 - Python 2.7 is no longer supported. Please use Python version 3.7 or later.
