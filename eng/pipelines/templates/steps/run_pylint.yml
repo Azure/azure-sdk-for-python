@@ -30,7 +30,6 @@ steps:
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
         --toxenv="pylint"
-        --disablecov
         --filter-type="Omit_management"
     env: ${{ parameters.EnvVars }}
     condition: and(succeededOrFailed(), ne(variables['Skip.Pylint'],'true'))
