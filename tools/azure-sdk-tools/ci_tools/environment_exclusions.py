@@ -82,7 +82,6 @@ MYPY_OPT_OUT = [
     "azure-communication-sms",
     "azure-cosmos",
     "azure-confidentialledger",
-    "azure-containerregistry",
     "azure-mgmt-core",
     "azure-iot-deviceupdate",
     "azure-digitaltwins-core",
@@ -321,6 +320,10 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
 
 # --------------------------------------------------------------------------------------------------------------------
 # DO NOT add packages to the below lists. They are used to omit packages that will never run type checking.
+#
+# For CI exclusion of type checks, look into adding a pyproject.toml, as indicated in the `The pyproject.toml` section
+# of `.doc/eng_sys_checks.md`.
+
 IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
 FILTER_EXCLUSIONS = ["azure-mgmt-core"]
 IGNORE_PACKAGES = [
@@ -343,6 +346,14 @@ IGNORE_PACKAGES = [
 
 
 def is_check_enabled(package_path: str, check: str, default: bool = True) -> bool:
+    """
+    Single-use function to evaluate whether or not a given check should run against a package.
+
+    In order:
+     - Checks <CHECK>_OPT_OUT for package name.
+     - Honors override variable if one is present: <PACKAGE-NAME>_<CHECK>.
+     - Finally falls back to the pyproject.toml at package root (if one exists) for a tools setting enabling/disabling <check>.
+    """
     if package_path.endswith("setup.py"):
         package_path = os.path.dirname(package_path)
 
@@ -365,7 +376,7 @@ def is_check_enabled(package_path: str, check: str, default: bool = True) -> boo
     # now pull the new pyproject.toml configuration
     config = get_config_setting(package_path, check.strip().lower(), True)
 
-    return (config and enabled)
+    return config and enabled
 
 
 def filter_tox_environment_string(namespace_argument: str, package_path: str) -> str:
@@ -379,13 +390,11 @@ def filter_tox_environment_string(namespace_argument: str, package_path: str) ->
     if package_path.endswith("setup.py"):
         package_path = os.path.dirname(package_path)
 
-    package_name = os.path.basename(package_path)
-
     if namespace_argument:
         tox_envs = namespace_argument.strip().split(",")
         filtered_set = []
 
-        for tox_env in tox_envs:
+        for tox_env in [env.strip().lower() for env in tox_envs]:
             if is_check_enabled(package_path, tox_env, True):
                 filtered_set.append(tox_env)
         return ",".join(filtered_set)
@@ -393,9 +402,9 @@ def filter_tox_environment_string(namespace_argument: str, package_path: str) ->
     return namespace_argument
 
 
-def is_ignored_package(package_name: str) -> bool:
+def is_typing_ignored(package_name: str) -> bool:
     """
-    Evaluates a package name and evaluates whether or not tox environments should run against it.
+    Evaluates a package name and evaluates whether or not this package should be ignored when invoking type checking.
     """
     if package_name in IGNORE_PACKAGES:
         return True

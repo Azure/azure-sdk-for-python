@@ -37,6 +37,21 @@ jobs:
     mapping:
       output_in_path: component_in_path
 
+  pipeline_body_node_for_while_true:
+    type: pipeline
+    component: ./components/do_while_body.yml
+    inputs:
+      component_in_number: ${{parent.inputs.component_in_number}}
+      component_in_path: ${{parent.inputs.component_in_path}}
+
+  do_while_true_job_with_pipeline_job:
+    type: do_while
+    body: ${{parent.jobs.pipeline_body_node_for_while_true}}
+    limits:
+      max_iteration_count: 5
+    mapping:
+      output_in_path: component_in_path
+
   command_component_body_node:
     type: command
     component: ./components/basic_component.yml

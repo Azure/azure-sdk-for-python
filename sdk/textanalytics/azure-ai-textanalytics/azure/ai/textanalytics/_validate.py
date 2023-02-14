@@ -30,7 +30,7 @@ def check_for_unsupported_actions_types(*args, **kwargs):
         "2022-10-01-preview":
         [
             "ExtractSummaryAction",
-            "AbstractSummaryAction",
+            "AbstractiveSummaryAction",
         ],
         "2022-05-01":
         [
