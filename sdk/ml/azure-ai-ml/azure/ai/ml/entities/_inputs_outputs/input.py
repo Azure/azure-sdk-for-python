@@ -215,7 +215,6 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
     ):
         super(Input, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
-        # The _port_name will be updated by the annotated variable _port_name.
         self._port_name = None
         self.description = description
 
