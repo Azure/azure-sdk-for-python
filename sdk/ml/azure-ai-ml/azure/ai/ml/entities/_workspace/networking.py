@@ -12,9 +12,7 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import (
     ServiceTagOutboundRule as RestServiceTagOutboundRule,
     ServiceTagOutboundRuleDestination as RestServiceTagOutboundRuleDestination,
 )
-from azure.ai.ml.constants._workspace import (
-    IsolationMode, OutboundRuleCategory, OutboundRuleType
-)
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
 from azure.ai.ml._utils._experimental import experimental
 
@@ -53,9 +51,9 @@ class OutboundRule:
 
 @experimental
 class FqdnDestination(OutboundRule):
-    def __init__(self, destination: str) -> None:
+    def __init__(self, destination: str, category: str = OutboundRuleCategory.USER_DEFINED) -> None:
         self.destination = destination
-        OutboundRule.__init__(self, type=OutboundRuleType.FQDN)
+        OutboundRule.__init__(self, type=OutboundRuleType.FQDN, category=category)
 
     def _to_rest_object(self) -> RestFqdnOutboundRule:
         return RestFqdnOutboundRule(type=self.type, category=self.category, destination=self.destination)
@@ -66,11 +64,17 @@ class FqdnDestination(OutboundRule):
 
 @experimental
 class PrivateEndpointDestination(OutboundRule):
-    def __init__(self, service_resource_id: str, subresource_target: str, spark_enabled: bool = False) -> None:
+    def __init__(
+        self,
+        service_resource_id: str,
+        subresource_target: str,
+        spark_enabled: bool = False,
+        category: str = OutboundRuleCategory.USER_DEFINED,
+    ) -> None:
         self.service_resource_id = service_resource_id
         self.subresource_target = subresource_target
         self.spark_enabled = spark_enabled
-        OutboundRule.__init__(self, OutboundRuleType.PRIVATE_ENDPOINT)
+        OutboundRule.__init__(self, OutboundRuleType.PRIVATE_ENDPOINT, category=category)
 
     def _to_rest_object(self) -> RestPrivateEndpointOutboundRule:
         return RestPrivateEndpointOutboundRule(
@@ -97,11 +101,13 @@ class PrivateEndpointDestination(OutboundRule):
 
 @experimental
 class ServiceTagDestination(OutboundRule):
-    def __init__(self, service_tag: str, protocol: str, port_ranges: str) -> None:
+    def __init__(
+        self, service_tag: str, protocol: str, port_ranges: str, category: str = OutboundRuleCategory.USER_DEFINED
+    ) -> None:
         self.service_tag = service_tag
         self.protocol = protocol
         self.port_ranges = port_ranges
-        OutboundRule.__init__(self, OutboundRuleType.SERVICE_TAG)
+        OutboundRule.__init__(self, OutboundRuleType.SERVICE_TAG, category=category)
 
     def _to_rest_object(self) -> RestServiceTagOutboundRule:
         return RestServiceTagOutboundRule(

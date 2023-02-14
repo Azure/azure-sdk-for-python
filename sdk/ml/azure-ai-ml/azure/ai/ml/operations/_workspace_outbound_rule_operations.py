@@ -23,6 +23,8 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
+from azure.ai.ml._utils.utils import _snake_to_camel
+
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
@@ -87,7 +89,8 @@ class WorkspaceOutboundRuleOperations:
 
         networkDto.outbound_rules = {}
 
-        type = kwargs.get("type", None)  # pylint: disable=redefined-builtin
+        type = _snake_to_camel(kwargs.get("type", None))  # pylint: disable=redefined-builtin
+        type = OutboundRuleType.FQDN if type in ["fqdn", "Fqdn"] else type
         destination = kwargs.get("destination", None)
         service_tag = kwargs.get("service_tag", None)
         protocol = kwargs.get("protocol", None)
