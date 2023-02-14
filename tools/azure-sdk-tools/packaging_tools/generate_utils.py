@@ -128,7 +128,7 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
 
 
 def update_cadl_location(sdk_folder, data, config, folder_name, package_name, input_readme):
-    if "meta" not in config:
+    if "meta" in config:
         return
 
     metadata = {
