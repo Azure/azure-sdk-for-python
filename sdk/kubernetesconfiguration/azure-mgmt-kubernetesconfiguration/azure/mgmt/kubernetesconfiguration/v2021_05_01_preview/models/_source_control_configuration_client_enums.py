@@ -7,20 +7,18 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ClusterTypes(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Cluster types
-    """
+class ClusterTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster types."""
 
     CONNECTED_CLUSTERS = "connectedClusters"
     MANAGED_CLUSTERS = "managedClusters"
 
-class ComplianceStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The compliance state of the configuration.
-    """
+
+class ComplianceStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The compliance state of the configuration."""
 
     PENDING = "Pending"
     COMPLIANT = "Compliant"
@@ -28,62 +26,68 @@ class ComplianceStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INSTALLED = "Installed"
     FAILED = "Failed"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class Enum0(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Enum0(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum0."""
 
     MICROSOFT_CONTAINER_SERVICE = "Microsoft.ContainerService"
     MICROSOFT_KUBERNETES = "Microsoft.Kubernetes"
 
-class Enum1(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Enum1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum1."""
 
     MANAGED_CLUSTERS = "managedClusters"
     CONNECTED_CLUSTERS = "connectedClusters"
 
-class Enum5(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Enum5(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum5."""
 
     MANAGED_CLUSTERS = "managedClusters"
     CONNECTED_CLUSTERS = "connectedClusters"
 
-class LevelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Level of the status.
-    """
+
+class LevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level of the status."""
 
     ERROR = "Error"
     WARNING = "Warning"
     INFORMATION = "Information"
 
-class MessageLevelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Level of the message.
-    """
+
+class MessageLevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level of the message."""
 
     ERROR = "Error"
     WARNING = "Warning"
     INFORMATION = "Information"
 
-class OperatorScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Scope at which the operator will be installed.
-    """
+
+class OperatorScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scope at which the operator will be installed."""
 
     CLUSTER = "cluster"
     NAMESPACE = "namespace"
 
-class OperatorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the operator
-    """
+
+class OperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the operator."""
 
     FLUX = "Flux"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the extension resource.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the extension resource."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -92,9 +96,9 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     DELETING = "Deleting"
 
-class ProvisioningStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the resource provider.
-    """
+
+class ProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the resource provider."""
 
     ACCEPTED = "Accepted"
     DELETING = "Deleting"
