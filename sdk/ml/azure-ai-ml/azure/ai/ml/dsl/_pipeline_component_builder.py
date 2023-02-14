@@ -5,6 +5,7 @@
 # pylint: disable=protected-access
 import copy
 import inspect
+import logging
 import typing
 from collections import OrderedDict
 from inspect import Parameter, signature
@@ -18,6 +19,7 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
+from azure.ai.ml.constants._job.pipeline import COMPONENT_IO_KEYWORDS
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
@@ -26,6 +28,7 @@ from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output, _get_param_with_standard_annotation
 from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value, is_group
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
+from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
@@ -33,6 +36,8 @@ from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, Pi
 from azure.ai.ml.exceptions import UserErrorException
 
 _BUILDER_STACK_MAX_DEPTH = 100
+
+module_logger = logging.getLogger(__name__)
 
 
 class _PipelineComponentBuilderStack:
@@ -390,6 +395,9 @@ class PipelineComponentBuilder:
             final_name = id_name_dict[_id]
             node.name = final_name
             result[final_name] = node
+
+            # Validate IO name of node with correct node name, and log warning if there is keyword.
+            self._validate_keyword_in_node_io(node)
         return result
 
     def _update_inputs(self, pipeline_inputs):
@@ -467,6 +475,23 @@ class PipelineComponentBuilder:
 
         if unmatched_outputs:
             raise UserErrorException(f"{error_prefix}: {unmatched_outputs}")
+
+    @staticmethod
+    def _validate_keyword_in_node_io(node: Union[BaseNode, AutoMLJob]):
+        if has_attr_safe(node, "inputs"):
+            for input_name in set(node.inputs) & COMPONENT_IO_KEYWORDS:
+                module_logger.warning(
+                    "Reserved word \"%s\" is used as input name in node \"%s\", "
+                    "can only be accessed with '%s.inputs[\"%s\"]'",
+                    input_name, node.name, node.name, input_name
+                )
+        if has_attr_safe(node, "outputs"):
+            for output_name in set(node.outputs) & COMPONENT_IO_KEYWORDS:
+                module_logger.warning(
+                    "Reserved word \"%s\" is used as output name in node \"%s\", "
+                    "can only be accessed with '%s.outputs[\"%s\"]'",
+                    output_name, node.name, node.name, output_name
+                )
 
 
 def _build_pipeline_parameter(func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None):

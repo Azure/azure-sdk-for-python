@@ -437,7 +437,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         return value
 
     def _normalize_self_properties(self):
-        # parse value from string to it's original type. eg: "false" -> False
+        # parse value from string to its original type. eg: "false" -> False
         for key in ["min", "max"]:
             if getattr(self, key) is not None:
                 origin_value = getattr(self, key)

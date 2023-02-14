@@ -120,7 +120,7 @@ def sample_analyze_actions() -> None:
 
             elif result.is_error is True:
                 print(
-                    f"...Is an error with code '{result.code}' and message '{result.message}'"
+                    f"...Is an error with code '{result.error.code}' and message '{result.error.message}'"
                 )
 
         print("------------------------------------------")
