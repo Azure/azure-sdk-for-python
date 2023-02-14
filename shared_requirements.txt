@@ -138,6 +138,7 @@ yarl<2.0,>=1.0
 #override azure-mgmt-media typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-core-tracing-opencensus azure-core<2.0.0,>=1.13.0
 #override azure-core-tracing-opentelemetry azure-core<2.0.0,>=1.13.0
+#override azure-mgmt-appplatform typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-billingbenefits msrest>=0.7.1
 #override azure-cosmos azure-core<2.0.0,>=1.23.0
 #override azure-data-tables azure-core<2.0.0,>=1.24.0
@@ -459,7 +460,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-appconfiguration msrest>=0.7.1
 #override azure-mgmt-dnsresolver msrest>=0.7.1
 #override azure-mgmt-devtestlabs typing-extensions>=4.3.0; python_version<'3.8.0'
-#override azure-mgmt-appplatform msrest>=0.6.21
+#override azure-mgmt-appplatform msrest>=0.7.1
 #override azure-mgmt-hybridcompute typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-vmwarecloudsimple typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-cosmosdb msrest>=0.7.1
@@ -613,7 +614,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-dynatrace msrest>=0.7.1
 #override azure-mgmt-dynatrace azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-securitydevops msrest>=0.7.1
-#override azure-mgmt-appplatform azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-appplatform azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-compute azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-servicefabricmanagedclusters msrest>=0.7.1
 #override azure-mgmt-servicefabricmanagedclusters azure-mgmt-core>=1.3.2,<2.0.0
