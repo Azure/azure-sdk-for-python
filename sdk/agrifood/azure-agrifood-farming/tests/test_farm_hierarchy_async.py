@@ -8,6 +8,7 @@ from datetime import datetime
 from dateutil.parser import parse
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils import set_custom_default_matcher
 from testcase_async import FarmBeatsAsyncTestCase
 from testcase import FarmBeatsPowerShellPreparer
 
@@ -16,6 +17,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
     @FarmBeatsPowerShellPreparer()
     @recorded_by_proxy_async
     async def test_party_operations(self, **kwargs):
+        set_custom_default_matcher(ignored_headers="Accept-Encoding")
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         
         # Setup data
