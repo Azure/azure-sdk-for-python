@@ -128,13 +128,7 @@ class AdministrationOperations(AdministrationOperationsGenerated):
 
     @distributed_trace
     def begin_upload_test_file(
-        self,
-        test_id: str,
-        file_name: str,
-        body: IO,
-        *,
-        file_type: Optional[str] = None,
-        **kwargs: Any
+        self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
     ) -> LoadTestingLROPoller[JSON]:
         """Upload file to the test
 
@@ -241,12 +235,7 @@ class TestRunOperations(TestRunOperationsGenerated):
 
     @distributed_trace
     def begin_test_run(
-        self,
-        test_run_id: str,
-        body: Union[JSON, IO],
-        *,
-        old_test_run_id: Optional[str] = None,
-        **kwargs: Any
+        self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
     ) -> LoadTestingLROPoller[JSON]:
         """Create and start a new test run with the given name.
 
@@ -282,7 +271,7 @@ class TestRunOperations(TestRunOperationsGenerated):
 
         create_test_run_polling = TestRunStatusPoller(interval=polling_interval)
         return LoadTestingLROPoller(
-                command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling
+            command, create_or_update_test_run_operation, lambda *_: None, create_test_run_polling
         )
 
 

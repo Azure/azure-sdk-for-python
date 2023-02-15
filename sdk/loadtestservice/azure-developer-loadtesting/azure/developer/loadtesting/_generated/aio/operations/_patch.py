@@ -128,13 +128,7 @@ class AdministrationOperations(AdministrationOperationsGenerated):
 
     @distributed_trace
     async def begin_upload_test_file(
-        self,
-        test_id: str,
-        file_name: str,
-        body: IO,
-        *,
-        file_type: Optional[str] = None,
-        **kwargs: Any
+        self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
     ) -> AsyncLoadTestingLROPoller[JSON]:
         """Upload file to the test
 
@@ -241,12 +235,7 @@ class TestRunOperations(TestRunOperationsGenerated):
 
     @distributed_trace
     async def begin_test_run(
-        self,
-        test_run_id: str,
-        body: Union[JSON, IO],
-        *,
-        old_test_run_id: Optional[str] = None,
-        **kwargs: Any
+        self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
     ) -> AsyncLoadTestingLROPoller[JSON]:
         """Create and start a new test run with the given name.
 

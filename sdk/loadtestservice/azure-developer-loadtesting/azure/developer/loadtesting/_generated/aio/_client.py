@@ -25,9 +25,10 @@ class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :ivar administration: AdministrationOperations operations
-    :vartype administration: azure.developer.loadtesting.aio.operations.AdministrationOperations
+    :vartype administration:
+     azure.developer.loadtesting._generated.aio.operations.AdministrationOperations
     :ivar test_run: TestRunOperations operations
-    :vartype test_run: azure.developer.loadtesting.aio.operations.TestRunOperations
+    :vartype test_run: azure.developer.loadtesting._generated.aio.operations.TestRunOperations
     :param endpoint: URL to perform data plane API operations on the resource. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -81,5 +82,5 @@ class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

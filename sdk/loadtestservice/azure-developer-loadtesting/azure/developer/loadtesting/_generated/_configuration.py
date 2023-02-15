@@ -41,7 +41,7 @@ class LoadTestingClientConfiguration(Configuration):  # pylint: disable=too-many
 
     def __init__(self, endpoint: str, credential: "TokenCredential", **kwargs: Any) -> None:
         super(LoadTestingClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-11-01")  # type: Literal["2022-11-01"]
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", "2022-11-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
@@ -55,10 +55,7 @@ class LoadTestingClientConfiguration(Configuration):  # pylint: disable=too-many
         kwargs.setdefault("sdk_moniker", "developer-loadtesting/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

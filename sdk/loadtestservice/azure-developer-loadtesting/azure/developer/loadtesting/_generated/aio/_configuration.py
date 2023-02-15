@@ -41,7 +41,7 @@ class LoadTestingClientConfiguration(Configuration):  # pylint: disable=too-many
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(LoadTestingClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-11-01")  # type: Literal["2022-11-01"]
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", "2022-11-01")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
