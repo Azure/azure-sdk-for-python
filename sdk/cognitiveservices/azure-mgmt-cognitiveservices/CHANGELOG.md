@@ -1,6 +1,6 @@
 # Release History
 
-## 13.4.0 (2023-01-23)
+## 13.4.0 (2023-02-15)
 
 ### Features Added
 
