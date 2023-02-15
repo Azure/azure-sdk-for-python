@@ -38,10 +38,15 @@ def run_black(service_dir):
 
             if stderr:
                 results.append((package_name, stderr))
+        
+            if out.returncode > 0:
+                print(f"black ran into an unexpected failure while analyzing the code for {package_name}")
+                if stdout:
+                    print(stdout.decode('utf-8'))
+                exit(out.returncode)
 
-            if stdout:
-                if "reformatted" in stdout.decode('utf-8'):
-                    results.append((package_name, False))
+            if stdout and "reformatted" in stdout.decode('utf-8'):
+                results.append((package_name, False))
             else:
                 print(f"black succeeded against {package_name}")
 
