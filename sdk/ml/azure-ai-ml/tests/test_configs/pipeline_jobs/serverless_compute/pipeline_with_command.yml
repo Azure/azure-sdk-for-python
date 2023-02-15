@@ -1,0 +1,16 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: hello_pipeline
+jobs:
+  hello_job:
+    command: echo "hello"
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    resources:
+      instance_type: Standard_D3_v2
+    compute: azureml:serverless
+  world_job:
+    command: echo "world"
+    environment: azureml:AzureML-sklearn-1.0-ubuntu20.04-py38-cpu@latest
+    resources:
+      instance_type: Standard_D3_v2
+    compute: azureml:serverless

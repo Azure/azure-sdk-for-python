@@ -11,6 +11,7 @@ from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants import InputOutputModes
+from azure.ai.ml.constants._common import SERVERLESS_COMPUTE
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Component, Job, PipelineJob
 from azure.ai.ml.entities._builders import Command, Pipeline
@@ -1686,6 +1687,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             'task': 'export_data',
             'type': 'data_transfer'
         }
+
+    def test_serverless_compute_in_pipeline(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_command.yml"
+        pipeline_job = load_job(yaml_path)
+        created_pipeline_job = assert_job_cancel(pipeline_job, client)
+        jobs = created_pipeline_job._to_rest_object().as_dict()["properties"]["jobs"]
+        for job in jobs.values():
+            assert job["computeId"] == SERVERLESS_COMPUTE, job["name"]
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
