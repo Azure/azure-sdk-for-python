@@ -27,7 +27,7 @@ from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType, LROConfigurations
-from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs
+from azure.ai.ml.constants._deployment import EndpointDeploymentLogContainerType, SmallSKUs, DEFAULT_MDC_PATH
 from azure.ai.ml.entities import OnlineDeployment, Data
 from azure.ai.ml.entities._deployment.data_asset import DataAsset
 from azure.ai.ml.exceptions import (
@@ -348,17 +348,17 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         return LocalEndpointMode.VSCodeDevContainer if vscode_debug else LocalEndpointMode.DetachedContainer
 
     def _register_collection_data_assets(self, deployment: OnlineDeployment) -> None:
-        for c in deployment.data_collector.collections:
-            data_name = deployment.endpoint_name + "-" + deployment.name + "-" + c
+        for collection in deployment.data_collector.collections:
+            data_name = deployment.endpoint_name + "-" + deployment.name + "-" + collection
             data_object = Data(
                 name = data_name,
                 path = deployment.data_collector.destination.path
                 if deployment.data_collector.destination and deployment.data_collector.destination.path 
-                else "azureml://datastores/workspaceblobstore/paths/modelDataCollector",
+                else DEFAULT_MDC_PATH,
                 is_anonymous= True
         )
             result = self._all_operations._all_operations[AzureMLResourceType.DATA].create_or_update(data_object)
-            deployment.data_collector.collections[c].data = DataAsset(
+            deployment.data_collector.collections[collection].data = DataAsset(
                 data_id = result.id,
                 path = result.path,
                 name = result.name,
