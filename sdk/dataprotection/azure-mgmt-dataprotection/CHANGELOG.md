@@ -1,5 +1,22 @@
 # Release History
 
+## 1.0.0 (2023-02-15)
+
+### Features Added
+
+  - Model AzureBackupDiscreteRecoveryPoint has a new parameter expiry_time
+  - Model BackupVault has a new parameter feature_settings
+  - Model PatchBackupVaultInput has a new parameter feature_settings
+  - Model TargetDetails has a new parameter target_resource_arm_id
+
+### Breaking Changes
+
+  - Client name is changed from `DataProtectionClient` to `DataProtectionMgmtClient`
+  - Model ResourceGuardResource no longer has parameter identity
+  - Removed operation group BackupInstancesExtensionRoutingOperations
+  - Removed operation group DppResourceGuardProxyOperations
+  - Renamed operation BackupVaultsOperations.delete to BackupVaultsOperations.begin_delete
+
 ## 1.0.0b4 (2023-01-17)
 
 ### Features Added
