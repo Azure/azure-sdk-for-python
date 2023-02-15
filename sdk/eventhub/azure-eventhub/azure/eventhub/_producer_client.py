@@ -240,19 +240,20 @@ class EventHubProducerClient(
 
     def _buffered_send(self, events, **kwargs):
         try:
+            self._buffered_producer_dispatcher = cast(BufferedProducerDispatcher, self._buffered_producer_dispatcher)
             self._buffered_producer_dispatcher.enqueue_events(events, **kwargs)
         except AttributeError:
             self._get_partitions()
             self._get_max_message_size()
             self._buffered_producer_dispatcher = BufferedProducerDispatcher(
                 cast(List[str], self._partition_ids),
-                cast(Callable[[SendEventTypes, Optional[str]]], self._on_success),
+                cast(Callable[[SendEventTypes, Optional[str]], None], self._on_success),
                 cast(Callable[[SendEventTypes, Optional[str], Exception], None], self._on_error),
                 self._create_producer,
                 self.eventhub_name,
                 self._max_message_size_on_link,
-                max_wait_time=self._max_wait_time,
-                max_buffer_length=self._max_buffer_length,
+                max_wait_time=cast(float, self._max_wait_time),
+                max_buffer_length=cast(int, self._max_buffer_length),
                 executor=self._executor,
                 amqp_transport=self._amqp_transport,
             )

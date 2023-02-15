@@ -6,6 +6,7 @@
 
 import logging
 from datetime import datetime
+from typing import Optional
 
 from .utils import utc_now, utc_from_timestamp
 from .management_link import ManagementLink
@@ -83,9 +84,9 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
         token: str,
         token_type: str,
         audience: str,
-        expires_on: datetime = None
+        expires_on: Optional[datetime] = None
     ) -> None:
-        message = Message(  # type: ignore  # TODO: missing positional args header, etc.
+        message = Message(  # TODO: missing positional args header, etc.
             value=token,
             properties=Properties(message_id=self._mgmt_link.next_message_id),  # type: ignore
             application_properties={

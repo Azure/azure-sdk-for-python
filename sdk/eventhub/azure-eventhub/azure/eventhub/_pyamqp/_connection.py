@@ -10,7 +10,7 @@ import time
 from urllib.parse import urlparse
 import socket
 from ssl import SSLError
-from typing import Any, Tuple, Optional, NamedTuple, Union, cast, List, Dict
+from typing import Any, Tuple, Optional, NamedTuple, Union, cast, List, Dict, overload
 
 from ._transport import Transport
 from .sasl import SASLTransport, SASLWithWebSocket
@@ -29,6 +29,8 @@ from .constants import (
 )
 
 from .error import ErrorCondition, AMQPConnectionError, AMQPError
+
+frame_typing = Union[Tuple[int, bytes], Tuple[int, List]]
 
 _LOGGER = logging.getLogger(__name__)
 _CLOSING_STATES = (
@@ -90,6 +92,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
     def __init__(self, endpoint, **kwargs):  # pylint:disable=too-many-statements
         # type(str, Any) -> None
         parsed_url = urlparse(endpoint)
+        if parsed_url.hostname is None:
+            raise ValueError("Hostname is not valid")
         self._hostname = parsed_url.hostname
         endpoint = self._hostname
         if parsed_url.port:
@@ -264,7 +268,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         try:
-            raise self._error
+            raise self._error # type: ignore[reportGeneralTypeIssues]
         except TypeError:
             pass
 
@@ -304,7 +308,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         if self._network_trace:
             _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
         try:
-            raise self._error
+            raise self._error # type: ignore[reportGeneralTypeIssues]
         except TypeError:
             pass
         try:
@@ -557,10 +561,13 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             )
             return
 
+    # @overload
+    # def _process_incoming_frame(self, *args: Union[Optional[int],  Union[Optional[frame_typing],int]]) -> bool:
+    #     ...
     def _process_incoming_frame(    # pylint:disable=too-many-return-statements
         self,
-        channel: int,
-        frame: Optional[Union[bytes, Tuple[int, Tuple[Any, ...]]]]
+        channel: Optional[int],
+        frame: Union[Optional[frame_typing],int],
     ) -> bool:
         """Process an incoming frame, either directly or by passing to the necessary Session.
 
@@ -578,6 +585,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         except TypeError:
             return True  # Empty Frame or socket timeout
         fields = cast(Tuple[Any, ...], fields)
+        channel = cast(int, channel)
         try:
             self._last_frame_received_time = time.time()
             if performative == 20:
@@ -730,7 +738,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :rtype: None
         """
         try:
-            raise self._error
+            raise self._error # type: ignore[reportGeneralTypeIssues]
         except TypeError:
             pass
         try:

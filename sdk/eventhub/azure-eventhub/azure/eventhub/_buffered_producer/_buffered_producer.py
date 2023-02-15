@@ -8,7 +8,7 @@ import queue
 import logging
 from threading import RLock
 from concurrent.futures import ThreadPoolExecutor
-from typing import Optional, Callable, TYPE_CHECKING
+from typing import Optional, Callable, TYPE_CHECKING, cast
 
 from .._producer import EventHubProducer
 from .._common import EventDataBatch
@@ -45,7 +45,7 @@ class BufferedProducer:
         self._max_wait_time = max_wait_time
         self._on_success = self.failsafe_callback(on_success)
         self._on_error = self.failsafe_callback(on_error)
-        self._last_send_time = None
+        self._last_send_time: float = 0
         self._running = False
         self._cur_batch: Optional[EventDataBatch] = None
         self._max_message_size_on_link = max_message_size_on_link
@@ -107,6 +107,7 @@ class BufferedProducer:
             )
         try:
             # add single event into current batch
+            self._cur_batch = cast(EventDataBatch, self._cur_batch)
             self._cur_batch.add(events)
         except AttributeError:  # if the input events is a EventDataBatch, put the whole into the buffer
             # if there are events in cur_batch, enqueue cur_batch to the buffer

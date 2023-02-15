@@ -83,9 +83,9 @@ class UTC(datetime.tzinfo):
 try:
     from datetime import timezone  # pylint: disable=ungrouped-imports
 
-    TZ_UTC = timezone.utc  # type: ignore
+    TZ_UTC = timezone.utc
 except ImportError:
-    TZ_UTC = UTC()  # type: ignore
+    TZ_UTC = UTC()
 
 
 def utc_from_timestamp(timestamp):
@@ -180,6 +180,7 @@ def trace_message(
             with current_span.span(
                 name="Azure.EventHubs.message", kind=SpanKind.PRODUCER, links=[link]
             ) as message_span:
+                message_span = cast(AbstractSpan, message_span)
                 message_span.add_attribute("az.namespace", "Microsoft.EventHub")
                 message = amqp_transport.update_message_app_properties(
                     message,

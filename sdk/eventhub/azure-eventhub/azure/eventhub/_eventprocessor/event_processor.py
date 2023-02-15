@@ -308,7 +308,7 @@ class EventProcessor(
                     err,
                     load_balancing_interval,
                 )
-                self._process_error(None, err)  # type: ignore
+                self._process_error(None, err)
 
             time.sleep(load_balancing_interval)
 

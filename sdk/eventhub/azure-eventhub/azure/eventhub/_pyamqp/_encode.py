@@ -267,10 +267,9 @@ def encode_long(
     <encoding code="0x81" category="fixed" width="8" label="64-bit two's-complement integer in network byte order"/>
     """
     if isinstance(value, datetime):
-        value = (calendar.timegm(value.utctimetuple()) * 1000) + (
+        value = int((calendar.timegm(value.utctimetuple()) * 1000) + (
             value.microsecond / 1000
-        )
-    value = int(value)
+        ))
     try:
         if use_smallest and (-128 <= value <= 127):
             output.extend(_construct(ConstructorBytes.long_small, with_constructor))
@@ -326,7 +325,6 @@ def encode_timestamp(  # pylint:disable=unused-argument
             int,
             (calendar.timegm(value.utctimetuple()) * 1000) + (value.microsecond / 1000),
         )
-    value = int(cast(int, value))
     output.extend(_construct(ConstructorBytes.timestamp, with_constructor))
     output.extend(struct.pack(">q", value))
 
@@ -587,7 +585,7 @@ def encode_fields(value: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     fields = {TYPE: AMQPTypes.map, VALUE: []}
     for key, data in value.items():
         if isinstance(key, str):
-            key = key.encode("utf-8")  # type: ignore
+            key = key.encode("utf-8")
         cast(List, fields[VALUE]).append(({TYPE: AMQPTypes.symbol, VALUE: key}, data))
     return fields
 
@@ -632,9 +630,9 @@ def encode_application_properties(value: Optional[Dict[str, Any]]) -> Dict[str, 
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
-    fields = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
+    fields = {TYPE: AMQPTypes.map, VALUE: List[Any]}
     for key, data in value.items():
-        cast(List, fields[VALUE]).append(({TYPE: AMQPTypes.string, VALUE: key}, data))
+        fields[VALUE].append(({TYPE: AMQPTypes.string, VALUE: key}, data))
     return fields
 
 
@@ -706,14 +704,14 @@ def encode_filter_set(value: Optional[Dict[str, Any]]) -> Dict[str, Any]:
     """
     if not value:
         return {TYPE: AMQPTypes.null, VALUE: None}
-    fields = {TYPE: AMQPTypes.map, VALUE: cast(List, [])}
+    fields = {TYPE: AMQPTypes.map, VALUE: []}
     for name, data in value.items():
         described_filter: Dict[str, Union[Tuple[Dict[str, Any], Any], Optional[str]]]
         if data is None:
             described_filter = {TYPE: AMQPTypes.null, VALUE: None}
         else:
             if isinstance(name, str):
-                name = name.encode("utf-8")  # type: ignore
+                name = name.encode("utf-8")
             try:
                 descriptor, filter_value = data
                 described_filter = {

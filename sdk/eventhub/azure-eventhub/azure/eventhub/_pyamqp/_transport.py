@@ -33,7 +33,7 @@
 # -------------------------------------------------------------------------
 
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, annotations
 
 import errno
 import re
@@ -45,6 +45,7 @@ from contextlib import contextmanager
 from io import BytesIO
 import logging
 from threading import Lock
+from typing import Union, Tuple, List, Any, Optional, cast
 
 import certifi
 
@@ -59,6 +60,7 @@ from .constants import (
 )
 from .error import AuthenticationException, ErrorCondition
 
+frame_typing = Union[Tuple[int, bytes], Tuple[int, List]]
 
 try:
     import fcntl
@@ -161,7 +163,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
     ):
         self._quick_recv = None
         self.connected = False
-        self.sock = None
+        self.sock: Optional[socket.socket] = None
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
@@ -199,7 +201,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         if timeout is None:
             yield self.sock
         else:
-            sock = self.sock
+            sock = cast(socket.socket, self.sock)
             prev = sock.gettimeout()
             if prev != timeout:
                 sock.settimeout(timeout)
@@ -224,7 +226,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
     @contextmanager
     def block(self):
         bocking_timeout = None
-        sock = self.sock
+        sock = cast(socket.socket, self.sock)
         prev = sock.gettimeout()
         if prev != bocking_timeout:
             sock.settimeout(bocking_timeout)
@@ -327,6 +329,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     return
 
     def _init_socket(self, socket_settings, read_timeout):
+        self.sock = cast(socket.socket, self.sock)
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
@@ -372,6 +375,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         if socket_settings:
             tcp_opts.update(socket_settings)
         for opt, val in tcp_opts.items():
+            self.sock = cast(socket.socket, self.sock)
             self.sock.setsockopt(SOL_TCP, opt, val)
 
     def _read(self, n, initial=False, buffer=None, _errnos=None):
@@ -475,7 +479,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     self.connected = False
                 raise
 
-    def receive_frame(self, **kwargs):
+    def receive_frame(self, **kwargs) -> Tuple[Optional[int], Optional[frame_typing]] :
         try:
             header, channel, payload = self.read(**kwargs)
             if not payload:
@@ -619,6 +623,7 @@ class SSLTransport(_AbstractTransport):
         try:
             while toread:
                 try:
+                    self.sock = cast(socket.socket, self.sock)
                     nbytes = self.sock.recv_into(view[length:])
                 except socket.error as exc:
                     # ssl.sock.read may cause a SSLerror without errno
@@ -644,6 +649,7 @@ class SSLTransport(_AbstractTransport):
 
     def _write(self, s):
         """Write a string out to the SSL socket fully."""
+        self.sock = cast(socket.socket, self.sock)
         write = self.sock.send
         while s:
             try:
@@ -738,7 +744,7 @@ class WebSocketTransport(_AbstractTransport):
                 error=exc,
             )
         # TODO: resolve pylance error when type: ignore is removed below, issue #22051
-        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:    # type: ignore
+        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc: 
             self.close()
             raise ConnectionError("Websocket failed to establish connection: %r" % exc) from exc
         except (OSError, IOError, SSLError) as e:
@@ -748,7 +754,7 @@ class WebSocketTransport(_AbstractTransport):
 
     def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-        from websocket import WebSocketTimeoutException
+        from websocket import WebSocketTimeoutException, WebSocket
         try:
             length = 0
             view = buffer or memoryview(bytearray(n))
@@ -757,6 +763,7 @@ class WebSocketTransport(_AbstractTransport):
             n -= nbytes
             try:
                 while n:
+                    self.ws = cast(WebSocket, self.ws)
                     data = self.ws.recv()
                     if len(data) <= n:
                         view[length : length + len(data)] = data
@@ -793,8 +800,9 @@ class WebSocketTransport(_AbstractTransport):
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        from websocket import WebSocketConnectionClosedException, WebSocketTimeoutException
+        from websocket import WebSocketConnectionClosedException, WebSocketTimeoutException, WebSocket
         try:
+            self.ws = cast(WebSocket, self.ws)
             self.ws.send_binary(s)
         except AttributeError:
             raise IOError("Websocket connection has already been closed.")

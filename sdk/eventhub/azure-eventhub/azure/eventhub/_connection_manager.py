@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     # try:
     from typing_extensions import Protocol
     # except ImportError:
-    #     Protocol = object  # type: ignore
+    #     Protocol = object
 
     @runtime_checkable
     class ConnectionManager(Protocol):

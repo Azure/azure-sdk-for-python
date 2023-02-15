@@ -100,7 +100,7 @@ class EventProcessorMixin(object):
         return consumer
 
     @contextmanager
-    def _context(self, links: List[Link]=None) -> Iterator[None]:
+    def _context(self, links: Optional[List[Link]] = None) -> Iterator[None]:
         """Tracing"""
         span_impl_type : Type["AbstractSpan"] = settings.tracing_implementation()
         if span_impl_type is None:
