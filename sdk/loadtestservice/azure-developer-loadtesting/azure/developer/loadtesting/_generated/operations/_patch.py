@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import logging
 import time
 from functools import partial
-from typing import List, IO, Optional, Any, Union, overload
+from typing import List, IO, Optional, Any, Union, overload, Generic, TypeVar
 
 from azure.core.polling import PollingMethod, LROPoller
 from azure.core.tracing.decorator import distributed_trace
@@ -21,10 +21,12 @@ from .._serialization import Serializer
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
+PollingReturnType = TypeVar("PollingReturnType")
+
 logger = logging.getLogger(__name__)
 
 
-class LoadTestingPollingMethod(PollingMethod):
+class LoadTestingPollingMethod(PollingMethod, Generic[PollingReturnType]):
     """Base class for custom sync polling methods."""
 
     def _update_status(self) -> None:
@@ -88,7 +90,7 @@ class TestRunStatusPoller(LoadTestingPollingMethod):
         self._status = self._resource["status"]
 
 
-class LoadTestingLROPoller(LROPoller):
+class LoadTestingLROPoller(LROPoller, Generic[PollingReturnType]):
     """LoadTesting Poller for long-running operations.
 
     :param client: A pipeline service client

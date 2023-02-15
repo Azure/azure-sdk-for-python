@@ -3,6 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from ._client import AdministrationClient, TestRunClient
+from ._client import LoadTestAdministrationClient, LoadTestRunClient
 
-__all__ = ["AdministrationClient", "TestRunClient"]
+__all__ = ["LoadTestAdministrationClient", "LoadTestRunClient"]

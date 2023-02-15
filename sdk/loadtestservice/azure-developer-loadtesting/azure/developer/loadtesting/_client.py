@@ -63,7 +63,7 @@ class _BaseClient:
         self._client.__exit__(*exc_details)
 
 
-class AdministrationClient(_BaseClient, AdministrationOperations):  # pylint: disable=client-accepts-api-version-keyword
+class LoadTestAdministrationClient(_BaseClient, AdministrationOperations):  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :param endpoint: URL to perform data plane API operations on the resource. Required.
@@ -79,7 +79,7 @@ class AdministrationClient(_BaseClient, AdministrationOperations):  # pylint: di
         self._client.__enter__()
         return self
 
-class TestRunClient(_BaseClient, TestRunOperations):  # pylint: disable=client-accepts-api-version-keyword
+class LoadTestRunClient(_BaseClient, TestRunOperations):  # pylint: disable=client-accepts-api-version-keyword
     """These APIs allow end users to create, view and run load tests using Azure Load Test Service.
 
     :param endpoint: URL to perform data plane API operations on the resource. Required.

@@ -9,19 +9,19 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import asyncio
 import logging
 from functools import partial
-from typing import List, Optional, Any, IO, Union, Callable, overload
+from typing import List, Optional, Any, IO, Union, Callable, overload, Generic, TypeVar
 
 from azure.core.polling import AsyncPollingMethod, AsyncLROPoller
-from azure.core.polling._async_poller import PollingReturnType
 from azure.core.tracing.decorator import distributed_trace
 
 from ._operations import AdministrationOperations as AdministrationOperationsGenerated, JSON
 from ._operations import TestRunOperations as TestRunOperationsGenerated
 
+PollingReturnType = TypeVar("PollingReturnType")
 logger = logging.getLogger(__name__)
 
 
-class AsyncLoadTestingPollingMethod(AsyncPollingMethod):
+class AsyncLoadTestingPollingMethod(AsyncPollingMethod, Generic[PollingReturnType]):
     """Base class for custom async polling methods."""
 
     def _update_status(self) -> None:
@@ -83,7 +83,7 @@ class AsyncTestRunStatusPoller(AsyncLoadTestingPollingMethod):
         self._status = self._resource["status"]
 
 
-class AsyncLoadTestingLROPoller(AsyncLROPoller):
+class AsyncLoadTestingLROPoller(AsyncLROPoller, Generic[PollingReturnType]):
     """Async poller for long-running operations.
 
     :param client: A pipeline service client
