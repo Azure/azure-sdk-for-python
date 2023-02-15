@@ -110,6 +110,6 @@ class TestFarmBeatsSatelliteJob(FarmBeatsAsyncTestCase):
         file_path = parse_qs(urlparse(scenes_list[0]["imageFiles"][0]["fileLink"]).query)['filePath'][0]
         file_iter = await client.scenes.download(file_path=file_path)
         file = list([byte async for byte in file_iter])
-        assert file.__sizeof__() == 72
+        assert len(file) == 3
 
         await self.close_client()

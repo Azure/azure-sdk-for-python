@@ -40,7 +40,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         party_response = await client.parties.create_or_update(
             party_id=party_id,
             party=party_request,
-            headers={"Accept-Encoding": "gzip, deflate"}
+            headers={"Accept-Encoding": "gzip, deflate, br"}
         )
 
         # Assert on immediate response
@@ -61,7 +61,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         # Retrieve created object
         retrieved_party = await client.parties.get(
             party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate"})
+            headers={"Accept-Encoding": "gzip, deflate, br"})
 
         # Assert on retrieved object
         assert retrieved_party["id"] == party_id
@@ -73,7 +73,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         updated_party = await client.parties.create_or_update(
             party_id=party_id,
             party=party_request,
-            headers={"Accept-Encoding": "gzip, deflate"}
+            headers={"Accept-Encoding": "gzip, deflate, br"}
         )
 
         # Assert on immediate response
@@ -84,7 +84,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         # Retrieve updated object
         retrieved_party = await client.parties.get(
             party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate"})
+            headers={"Accept-Encoding": "gzip, deflate, br"})
 
         # Assert updated object
         assert retrieved_party == updated_party
@@ -92,12 +92,12 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         # Delete
         await client.parties.delete(
             party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate"})
+            headers={"Accept-Encoding": "gzip, deflate, br"})
 
         # Assert object doesn't exist anymore
         with pytest.raises(ResourceNotFoundError):
             await client.parties.get(
                 party_id=party_id,
-                headers={"Accept-Encoding": "gzip, deflate"})
+                headers={"Accept-Encoding": "gzip, deflate, br"})
         
         await self.close_client()

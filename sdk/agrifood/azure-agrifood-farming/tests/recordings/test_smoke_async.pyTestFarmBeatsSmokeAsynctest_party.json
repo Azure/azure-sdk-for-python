@@ -5,7 +5,7 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
+        "Accept-Encoding": "gzip, deflate, br",
         "Content-Length": "182",
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
@@ -41,7 +41,7 @@
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
+        "Accept-Encoding": "gzip, deflate, br",
         "Content-Length": "165",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
@@ -96,7 +96,7 @@
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
+        "Accept-Encoding": "gzip, deflate, br",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },

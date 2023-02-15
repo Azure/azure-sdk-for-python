@@ -109,4 +109,4 @@ class TestFarmBeatsSatelliteJob(FarmBeatsTestCase):
         file_path = parse_qs(urlparse(scenes_list[0]["imageFiles"][0]["fileLink"]).query)['filePath'][0]
         file_iter = client.scenes.download(file_path=file_path)
         file = list(file_iter)
-        assert file.__sizeof__() == 104
+        assert len(file) == 3
