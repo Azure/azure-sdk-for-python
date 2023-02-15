@@ -81,6 +81,7 @@ class TestUtils:
         def get_int_mode(file_path: str) -> str:
             int_mode = os.stat(file_path).st_mode & 0o777
             return oct(int_mode)
+
         with tempfile.TemporaryDirectory() as temp_dir:
             target_file_path = temp_dir + "/test.txt"
             with open(target_file_path, "w") as f:
@@ -103,7 +104,7 @@ class TestUtils:
                 "l1_2": {
                     "l2": 3,
                 },
-            }
+            },
         }
         assert get_valid_dot_keys_with_wildcard(root, "simple") == ["simple"]
         assert get_valid_dot_keys_with_wildcard(root, "deep.l1.l2") == ["deep.l1.l2"]

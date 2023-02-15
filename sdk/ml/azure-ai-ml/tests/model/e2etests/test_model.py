@@ -29,6 +29,7 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
     file_name.write("content")
     return str(file_name)
 
+
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
@@ -145,10 +146,7 @@ class TestModel(AzureRecordedTestCase):
         client.models.restore(name=name)
         assert name in get_model_list()
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_create_get_download_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = randstr("model_name")
@@ -175,10 +173,7 @@ class TestModel(AzureRecordedTestCase):
         assert os.path.exists(wd)
         assert os.path.exists(f"{wd}/lightgbm_mlflow_model/MLmodel")
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_list_model_registry(self, registry_client: MLClient, randstr: Callable[[], str]) -> None:
         model_path = Path("./tests/test_configs/model/model_full.yml")
         model_name = randstr("model_name")
@@ -197,10 +192,7 @@ class TestModel(AzureRecordedTestCase):
         model_list = [m.name for m in model_list if m is not None]
         assert model.name in model_list
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="Registry uploads do not record well. Investigate later"
-    )
+    @pytest.mark.skipif(condition=not is_live(), reason="Registry uploads do not record well. Investigate later")
     def test_promote_model(self, randstr: Callable[[], str], client: MLClient, registry_client: MLClient) -> None:
         # Create model in workspace
         model_path = Path("./tests/test_configs/model/model_full.yml")

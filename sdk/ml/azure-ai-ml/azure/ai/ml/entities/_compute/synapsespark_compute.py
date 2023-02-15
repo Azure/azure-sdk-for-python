@@ -119,13 +119,7 @@ class SynapseSparkCompute(Compute):
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.SYNAPSESPARK
-        super().__init__(
-            name=name,
-            description=description,
-            location=kwargs.pop("location", None),
-            tags=tags,
-            **kwargs
-        )
+        super().__init__(name=name, description=description, location=kwargs.pop("location", None), tags=tags, **kwargs)
         self.identity = identity
         self.node_count = node_count
         self.node_family = node_family

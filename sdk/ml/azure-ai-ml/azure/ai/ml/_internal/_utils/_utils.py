@@ -11,6 +11,7 @@ from azure.ai.ml.constants._common import InputTypes
 
 def _map_internal_output_type(_meta):
     """Map component output type to valid pipeline output type."""
+
     def _map_primitive_type(_type):
         """Convert double and float to number type."""
         _type = _type.lower()

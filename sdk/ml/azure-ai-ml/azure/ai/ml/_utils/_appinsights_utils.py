@@ -69,7 +69,9 @@ def get_default_resource_group_deployment(deployment_name: str, location: str, s
         "properties": {
             "mode": "Incremental",
             "template": {
-            "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json#",
+                "$schema": (
+                    "https://schema.management.azure.com/schemas/2018-05-01/" + "subscriptionDeploymentTemplate.json#"
+                ),
                 "contentVersion": "1.0.0.1",
                 "parameters": {},
                 "variables": {},
