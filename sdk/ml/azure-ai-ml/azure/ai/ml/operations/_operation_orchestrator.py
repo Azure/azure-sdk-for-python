@@ -263,28 +263,27 @@ class OperationOrchestrator(object):
             if register_asset:
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
-            else:
-                path, ignore_file, _ = _get_snapshot_path_info(code_asset)
-                workspace_info = self._datastore_operation._service_client.workspaces.get(
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    workspace_name=self._operation_scope.workspace_name
-                )
-                uploaded_code_asset = _check_and_upload_snapshot(
-                    artifact=code_asset,
-                    path=path,
-                    ignore_file=ignore_file,
-                    asset_operations=self._code_assets,
-                    workspace=workspace_info,
-                    requests_pipeline=self._code_assets._requests_pipeline,
-                    show_progress=self._operation_config.show_progress,
-                )
-                uploaded_code_asset._id = get_arm_id_with_version(
-                    self._operation_scope,
-                    AzureMLResourceType.CODE,
-                    code_asset.name,
-                    code_asset.version,
-                )
-                return uploaded_code_asset
+            path, ignore_file, _ = _get_snapshot_path_info(code_asset)
+            workspace_info = self._datastore_operation._service_client.workspaces.get(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._operation_scope.workspace_name
+            )
+            uploaded_code_asset = _check_and_upload_snapshot(
+                artifact=code_asset,
+                path=path,
+                ignore_file=ignore_file,
+                asset_operations=self._code_assets,
+                workspace=workspace_info,
+                requests_pipeline=self._code_assets._requests_pipeline,
+                show_progress=self._operation_config.show_progress,
+            )
+            uploaded_code_asset._id = get_arm_id_with_version(
+                self._operation_scope,
+                AzureMLResourceType.CODE,
+                code_asset.name,
+                code_asset.version,
+            )
+            return uploaded_code_asset
         except (MlException, HttpResponseError) as e:
             raise e
         except Exception as e:
