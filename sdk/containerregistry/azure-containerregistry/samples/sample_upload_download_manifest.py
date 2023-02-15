@@ -72,7 +72,7 @@ class UploadDownloadManifest(object):
 
             digest = client.upload_manifest(repository_name, manifest)
             download_result = client.download_manifest(repository_name, digest)
-            print(download_result.data.getvalue().decode())        
+            print(download_result.data.read())        
 
 
 if __name__ == "__main__":
