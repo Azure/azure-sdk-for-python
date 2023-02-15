@@ -20,7 +20,7 @@ class TestPipelineBuilder:
             named_step = component_func(required_input=required_input, optional_input=optional_input)
 
         pipeline_job = pipeline_func(1, 2)
-        assert 'named_step' in pipeline_job.jobs
+        assert "named_step" in pipeline_job.jobs
 
     def test_raise_exception(self):
         @dsl.pipeline
@@ -45,9 +45,9 @@ class TestPipelineBuilder:
 
         mock_obj = MockClass("./some/path")
         pipeline_job = mock_obj.pipeline_func(1, 2)
-        assert 'named_step' in pipeline_job.jobs
-        assert 'self' in pipeline_job.inputs
-        assert pipeline_job.inputs['self'].path == "./some/path"
+        assert "named_step" in pipeline_job.jobs
+        assert "self" in pipeline_job.inputs
+        assert pipeline_job.inputs["self"].path == "./some/path"
 
     def test_node_as_input_output(self):
         component_yaml = components_dir / "helloworld_component.yml"
@@ -57,7 +57,7 @@ class TestPipelineBuilder:
         def base_pipeline_func(input_path: Input, input_number: float = 0.5):
             node1 = component_func(component_in_path=input_path, component_in_number=input_number)
             node2 = component_func(
-                component_in_path=node1.outputs['component_out_path'],
+                component_in_path=node1.outputs["component_out_path"],
                 component_in_number=input_number,
             )
             # return {
@@ -78,8 +78,10 @@ class TestPipelineBuilder:
         base_pipeline_job = base_pipeline_func(Input(path="./tests/test_configs/data"), 0.5)
         pipeline_job = pipeline_func(Input(path="./tests/test_configs/data"), 0.5)
         pipeline_job.display_name = base_pipeline_job.display_name
-        assert pipeline_job._to_rest_object().properties.as_dict() == \
-               base_pipeline_job._to_rest_object().properties.as_dict()
+        assert (
+            pipeline_job._to_rest_object().properties.as_dict()
+            == base_pipeline_job._to_rest_object().properties.as_dict()
+        )
 
     def test_node_as_sub_pipeline_input(self):
         component_yaml = components_dir / "helloworld_component.yml"
@@ -89,18 +91,18 @@ class TestPipelineBuilder:
         def sub_pipeline_func(input_path: Input, input_number: float = 0.5):
             node1 = component_func(component_in_path=input_path, component_in_number=input_number)
             node2 = component_func(
-                component_in_path=node1.outputs['component_out_path'],
+                component_in_path=node1.outputs["component_out_path"],
                 component_in_number=input_number,
             )
             return {
-                'component_out_path': node2.outputs['component_out_path'],
+                "component_out_path": node2.outputs["component_out_path"],
             }
 
         @dsl.pipeline
         def base_pipeline_func(input_path: Input, input_number: float = 0.5):
             node1 = component_func(component_in_path=input_path, component_in_number=input_number)
             node2 = sub_pipeline_func(
-                input_path=node1.outputs['component_out_path'],
+                input_path=node1.outputs["component_out_path"],
                 input_number=input_number,
             )
             # return {
@@ -121,8 +123,10 @@ class TestPipelineBuilder:
         base_pipeline_job = base_pipeline_func(Input(path="./tests/test_configs/data"), 0.5)
         pipeline_job = pipeline_func(Input(path="./tests/test_configs/data"), 0.5)
         pipeline_job.display_name = base_pipeline_job.display_name
-        assert pipeline_job._to_rest_object().properties.as_dict() == \
-               base_pipeline_job._to_rest_object().properties.as_dict()
+        assert (
+            pipeline_job._to_rest_object().properties.as_dict()
+            == base_pipeline_job._to_rest_object().properties.as_dict()
+        )
 
     def test_node_as_sub_pipeline_input_error(self):
         single_output_component_func = load_component(components_dir / "helloworld_component.yml")
@@ -132,11 +136,11 @@ class TestPipelineBuilder:
         def sub_pipeline_func(input_path: Input, input_number: float = 0.5):
             node1 = single_output_component_func(component_in_path=input_path, component_in_number=input_number)
             node2 = single_output_component_func(
-                component_in_path=node1.outputs['component_out_path'],
+                component_in_path=node1.outputs["component_out_path"],
                 component_in_number=input_number,
             )
             return {
-                'component_out_path': node2.outputs['component_out_path'],
+                "component_out_path": node2.outputs["component_out_path"],
             }
 
         @dsl.pipeline
@@ -151,7 +155,6 @@ class TestPipelineBuilder:
             # return node2
 
         with pytest.raises(
-            ValueError,
-            match="Provided input input_path is not a single output node, cannot be used as a node input."
+            ValueError, match="Provided input input_path is not a single output node, cannot be used as a node input."
         ):
             pipeline_func(Input(path="./tests/test_configs/data"), 0.5)
