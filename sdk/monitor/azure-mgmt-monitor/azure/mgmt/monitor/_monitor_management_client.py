@@ -98,10 +98,10 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
         self,
         credential: "TokenCredential",
         subscription_id: str,
-        api_version=None, # type: Optional[str]
+        api_version: Optional[str]=None,
         base_url: str = "https://management.azure.com",
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
         self._config = MonitorManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -145,6 +145,7 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
            * 2021-09-01-preview: :mod:`v2022_02_01_preview.models<azure.mgmt.monitor.v2022_02_01_preview.models>`
            * 2022-04-01: :mod:`v2022_04_01.models<azure.mgmt.monitor.v2022_04_01.models>`
            * 2022-06-01: :mod:`v2022_06_01.models<azure.mgmt.monitor.v2022_06_01.models>`
+           * 2022-08-01-preview: :mod:`v2022_08_01_preview.models<azure.mgmt.monitor.v2022_08_01_preview.models>`
            * 2022-10-01: :mod:`v2022_10_01.models<azure.mgmt.monitor.v2022_10_01.models>`
         """
         if api_version == '2015-04-01':
@@ -227,6 +228,9 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
             return models
         elif api_version == '2022-06-01':
             from .v2022_06_01 import models
+            return models
+        elif api_version == '2022-08-01-preview':
+            from .v2022_08_01_preview import models
             return models
         elif api_version == '2022-10-01':
             from .v2022_10_01 import models
@@ -732,12 +736,15 @@ class MonitorManagementClient(MultiApiClientMixin, _SDKClient):
 
            * 2018-04-16: :class:`ScheduledQueryRulesOperations<azure.mgmt.monitor.v2018_04_16.operations.ScheduledQueryRulesOperations>`
            * 2020-05-01-preview: :class:`ScheduledQueryRulesOperations<azure.mgmt.monitor.v2020_05_01_preview.operations.ScheduledQueryRulesOperations>`
+           * 2022-08-01-preview: :class:`ScheduledQueryRulesOperations<azure.mgmt.monitor.v2022_08_01_preview.operations.ScheduledQueryRulesOperations>`
         """
         api_version = self._get_api_version('scheduled_query_rules')
         if api_version == '2018-04-16':
             from .v2018_04_16.operations import ScheduledQueryRulesOperations as OperationClass
         elif api_version == '2020-05-01-preview':
             from .v2020_05_01_preview.operations import ScheduledQueryRulesOperations as OperationClass
+        elif api_version == '2022-08-01-preview':
+            from .v2022_08_01_preview.operations import ScheduledQueryRulesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'scheduled_query_rules'".format(api_version))
         self._config.api_version = api_version
