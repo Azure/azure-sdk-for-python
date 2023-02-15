@@ -62,7 +62,7 @@ def pipeline(
     **kwargs,
 ):
     """Build a pipeline which contains all component nodes defined in this
-    function. Set AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED to enable multi layer pipeline.
+    function.
 
     .. note::
 

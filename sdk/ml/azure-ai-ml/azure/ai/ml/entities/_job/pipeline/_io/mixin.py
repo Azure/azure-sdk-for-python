@@ -5,8 +5,8 @@
 import copy
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInput as RestJobInput
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.v2022_12_01_preview.models import JobOutput as RestJobOutput
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.exceptions import ErrorTarget, ValidationException
@@ -27,11 +27,11 @@ class NodeIOMixin:
     dynamically."""
 
     def _build_input(self, name, meta: Input, data) -> NodeInput:
-        return NodeInput(name=name, meta=meta, data=data, owner=self)
+        return NodeInput(port_name=name, meta=meta, data=data, owner=self)
 
     def _build_output(self, name, meta: Output, data) -> NodeOutput:
         # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
-        return NodeOutput(name=name, meta=meta, data=data, owner=self)
+        return NodeOutput(port_name=name, meta=meta, data=data, owner=self)
 
     def _get_default_input_val(self, val):  # pylint: disable=unused-argument, no-self-use
         # use None value as data placeholder for unfilled inputs.
@@ -154,10 +154,14 @@ class NodeIOMixin:
         }
         """
         built_inputs = self._build_inputs()
+        return self._input_entity_to_rest_inputs(input_entity=built_inputs)
+
+    @classmethod
+    def _input_entity_to_rest_inputs(cls, input_entity: Dict[str, Input]) -> Dict[str, Dict]:
 
         # Convert io entity to rest io objects
         input_bindings, dataset_literal_inputs = process_sdk_component_job_io(
-            built_inputs, [ComponentJobConstants.INPUT_PATTERN]
+            input_entity, [ComponentJobConstants.INPUT_PATTERN]
         )
 
         # parse input_bindings to InputLiteral(value=str(binding))
@@ -196,7 +200,19 @@ class NodeIOMixin:
             rest_output_bindings[key] = {"value": binding["value"], "type": "literal"}
             if "mode" in binding:
                 rest_output_bindings[key].update({"mode": binding["mode"].value})
-        rest_data_outputs = {name: val.as_dict() for name, val in rest_data_outputs.items()}
+            if "name" in binding:
+                rest_output_bindings[key].update({"name": binding["name"]})
+            if "version" in binding:
+                rest_output_bindings[key].update({"version": binding["version"]})
+
+        def _rename_name_and_version(output_dict):
+            if 'asset_name' in output_dict.keys():
+                output_dict['name'] = output_dict.pop('asset_name')
+            if 'asset_version' in output_dict.keys():
+                output_dict['version'] = output_dict.pop('asset_version')
+            return output_dict
+
+        rest_data_outputs = {name: _rename_name_and_version(val.as_dict()) for name, val in rest_data_outputs.items()}
         rest_data_outputs.update(rest_output_bindings)
         return rest_data_outputs
 
@@ -303,7 +319,7 @@ class PipelineIOMixin(PipelineNodeIOMixin):
 
     def _build_output(self, name, meta: Output, data) -> "PipelineOutput":
         # TODO: settings data to None for un-configured outputs so we won't passing extra fields(eg: default mode)
-        result = PipelineOutput(name=name, meta=meta, data=data, owner=self)
+        result = PipelineOutput(port_name=name, meta=meta, data=data, owner=self)
         # copy mode & description from meta so they won't loss when transform from a pipeline component to pipeline job
         if meta and meta.description:
             result.description = meta.description

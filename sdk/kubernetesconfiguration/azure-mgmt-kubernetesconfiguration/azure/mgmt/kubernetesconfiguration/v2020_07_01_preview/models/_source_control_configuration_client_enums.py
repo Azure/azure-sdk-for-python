@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ComplianceStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The compliance state of the configuration.
-    """
+class ComplianceStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The compliance state of the configuration."""
 
     PENDING = "Pending"
     COMPLIANT = "Compliant"
@@ -21,56 +19,60 @@ class ComplianceStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     INSTALLED = "Installed"
     FAILED = "Failed"
 
-class Enum0(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Enum0(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum0."""
 
     MICROSOFT_CONTAINER_SERVICE = "Microsoft.ContainerService"
     MICROSOFT_KUBERNETES = "Microsoft.Kubernetes"
 
-class Enum1(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Enum1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum1."""
 
     MANAGED_CLUSTERS = "managedClusters"
     CONNECTED_CLUSTERS = "connectedClusters"
 
-class InstallStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of installation of this instance of the extension.
-    """
+
+class InstallStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of installation of this instance of the extension."""
 
     PENDING = "Pending"
     INSTALLED = "Installed"
     FAILED = "Failed"
 
-class LevelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Level of the status.
-    """
+
+class LevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level of the status."""
 
     ERROR = "Error"
     WARNING = "Warning"
     INFORMATION = "Information"
 
-class MessageLevelType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Level of the message.
-    """
+
+class MessageLevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Level of the message."""
 
     ERROR = "Error"
     WARNING = "Warning"
     INFORMATION = "Information"
 
-class OperatorScopeType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Scope at which the operator will be installed.
-    """
+
+class OperatorScopeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Scope at which the operator will be installed."""
 
     CLUSTER = "cluster"
     NAMESPACE = "namespace"
 
-class OperatorType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Type of the operator
-    """
+
+class OperatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the operator."""
 
     FLUX = "Flux"
 
-class ProvisioningStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state of the resource provider.
-    """
+
+class ProvisioningStateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the resource provider."""
 
     ACCEPTED = "Accepted"
     DELETING = "Deleting"
@@ -78,7 +80,8 @@ class ProvisioningStateType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class ResourceIdentityType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the configuration. Type 'SystemAssigned' will use an implicitly
     created identity. Type 'None' will not use Managed Identity for the configuration.
     """

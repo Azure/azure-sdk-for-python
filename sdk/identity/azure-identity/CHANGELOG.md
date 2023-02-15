@@ -1,5 +1,17 @@
 # Release History
 
+## 1.13.0b3 (Unreleased)
+
+### Features Added
+
+- Changed parameter from `instance_discovery` to `disable_instance_discovery` to make it more explicit.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.13.0b2 (2023-02-07)
 
 ### Features Added
