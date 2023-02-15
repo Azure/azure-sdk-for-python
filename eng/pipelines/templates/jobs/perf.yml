@@ -1,4 +1,7 @@
 parameters:
+- name: TimeoutInMinutes
+  type: number
+  default: '360'
 - name: LanguageVersion
   type: string
   default: '3.11'
@@ -27,12 +30,13 @@ parameters:
 extends:
   template: /eng/common/pipelines/templates/jobs/perf.yml
   parameters:
+    TimeoutInMinutes: ${{ parameters.TimeoutInMinutes }}
+    Language: Python
+    LanguageVersion: ${{ parameters.LanguageVersion }}
     Variables:
     - template: /eng/pipelines/templates/variables/globals.yml
     - name: PythonVersion
       value: ${{ parameters.LanguageVersion }}
-    Language: Python
-    LanguageVersion: ${{ parameters.LanguageVersion }}
     InstallLanguageSteps:
     - task: UsePythonVersion@0
       displayName: "Use Python $(PythonVersion)"
