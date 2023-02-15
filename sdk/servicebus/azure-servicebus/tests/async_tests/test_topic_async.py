@@ -23,7 +23,7 @@ from servicebus_preparer import (
     CachedServiceBusNamespacePreparer,
     CachedServiceBusTopicPreparer
 )
-from utilities import get_logger, print_message, uamqp_transport as uamqp_transport_func, ArgPasser
+from utilities import get_logger, print_message, uamqp_transport as uamqp_transport_func, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = uamqp_transport_func()
 
@@ -38,7 +38,7 @@ class TestServiceBusTopicsAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_topic_by_servicebus_client_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_topic=None, **kwargs):
 
         async with ServiceBusClient.from_connection_string(
@@ -57,7 +57,7 @@ class TestServiceBusTopicsAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_topic_by_sas_token_credential_conn_str_send_basic(self, uamqp_transport, *, servicebus_namespace=None, servicebus_namespace_key_name=None, servicebus_namespace_primary_key=None, servicebus_topic=None, **kwargs):
         fully_qualified_namespace = servicebus_namespace.name + '.servicebus.windows.net'
         async with ServiceBusClient(

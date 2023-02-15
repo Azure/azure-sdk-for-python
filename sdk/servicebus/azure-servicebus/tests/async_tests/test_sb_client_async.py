@@ -30,7 +30,7 @@ from servicebus_preparer import (
     CachedServiceBusTopicPreparer,
     CachedServiceBusSubscriptionPreparer
 )
-from utilities import get_logger, uamqp_transport as uamqp_transport_func, ArgPasser
+from utilities import get_logger, uamqp_transport as uamqp_transport_func, ArgPasserAsync
 
 uamqp_transport_params, uamqp_transport_ids = uamqp_transport_func()
 
@@ -45,7 +45,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_sb_client_bad_credentials_async(self, uamqp_transport, *, servicebus_namespace, servicebus_queue, **kwargs):
         client = ServiceBusClient(
             fully_qualified_namespace=servicebus_namespace.name + '.servicebus.windows.net',
@@ -60,7 +60,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_sb_client_bad_namespace_async(self, uamqp_transport, **kwargs):
 
         client = ServiceBusClient(
@@ -78,8 +78,15 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
-    async def test_sb_client_bad_entity_async(self, uamqp_transport):
+    @ArgPasserAsync()
+    async def test_sb_client_bad_entity_async(self, uamqp_transport, *, servicebus_namespace_connection_string=None, **kwargs):
+        client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
+
+        async with client:
+            with pytest.raises(ServiceBusAuthenticationError):
+                async with client.get_queue_sender("invalid") as sender:
+                    await sender.send_messages(ServiceBusMessage("test"))
+
         fake_str = "Endpoint=sb://mock.servicebus.windows.net/;" \
                    "SharedAccessKeyName=mock;SharedAccessKey=mock;EntityPath=mockentity"
         fake_client = ServiceBusClient.from_connection_string(fake_str, uamqp_transport=uamqp_transport)
@@ -117,7 +124,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest', access_rights=[AccessRights.listen])
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_sb_client_readonly_credentials(self, uamqp_transport, *, servicebus_authorization_rule_connection_string=None, servicebus_queue=None, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_authorization_rule_connection_string, uamqp_transport=uamqp_transport)
 
@@ -137,7 +144,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
     @ServiceBusNamespaceAuthorizationRulePreparer(name_prefix='servicebustest', access_rights=[AccessRights.send])
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_sb_client_writeonly_credentials_async(self, uamqp_transport, *, servicebus_authorization_rule_connection_string=None, servicebus_queue=None, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_authorization_rule_connection_string, uamqp_transport=uamqp_transport)
 
@@ -158,10 +165,10 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedResourceGroupPreparer()
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest', dead_lettering_on_message_expiration=True)
-    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
     @CachedServiceBusTopicPreparer(name_prefix='servicebustest')
     @CachedServiceBusSubscriptionPreparer(name_prefix='servicebustest')
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasserAsync()
     async def test_async_sb_client_close_spawned_handlers(self, uamqp_transport, *, servicebus_namespace_connection_string, servicebus_queue, servicebus_topic, servicebus_subscription, **kwargs):
         client = ServiceBusClient.from_connection_string(servicebus_namespace_connection_string, uamqp_transport=uamqp_transport)
 
@@ -254,7 +261,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @ServiceBusQueuePreparer(name_prefix='servicebustest_qtwo', dead_lettering_on_message_expiration=True)
     @ServiceBusQueueAuthorizationRulePreparer(name_prefix='servicebustest_qtwo')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_sb_client_incorrect_queue_conn_str_async(self, uamqp_transport, *, servicebus_queue_authorization_rule_connection_string, servicebus_queue, wrong_queue, **kwargs):
         
         client = ServiceBusClient.from_connection_string(servicebus_queue_authorization_rule_connection_string, uamqp_transport=uamqp_transport)
@@ -309,7 +316,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_client_sas_credential_async(self,
                                    uamqp_transport,
                                    *,
@@ -341,7 +348,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_client_credential_async(self,
                                    uamqp_transport,
                                    *,
@@ -385,7 +392,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_client_azure_sas_credential_async(self,
                                    uamqp_transport,
                                    *,
@@ -416,7 +423,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_azure_named_key_credential_async(self,
                                    uamqp_transport,
                                    *,
@@ -582,7 +589,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
     @CachedServiceBusNamespacePreparer(name_prefix='servicebustest')
     @CachedServiceBusQueuePreparer(name_prefix='servicebustest')
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    @ArgPasser()
+    @ArgPasserAsync()
     async def test_connection_verify_exception_async(self,
                                    uamqp_transport,
                                    *,

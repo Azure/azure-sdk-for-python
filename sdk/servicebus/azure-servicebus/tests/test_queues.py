@@ -1995,19 +1995,28 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             timestamp = calendar.timegm(new_scheduled_time.timetuple()) * 1000
 
         my_frame = [0,0,0]
-        amqp_received_message = Message(
-            data=[b'data'],
-            message_annotations={
-                _X_OPT_PARTITION_KEY: b'r_key',
-                _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
-                _X_OPT_SCHEDULED_ENQUEUE_TIME: timestamp,
-            },
-            properties={}
-        )
         if uamqp_transport:
             amqp_transport = UamqpTransport
+            amqp_received_message = uamqp.message.Message(
+                body=[b'data'],
+                annotations={
+                    _X_OPT_PARTITION_KEY: b'r_key',
+                    _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
+                    _X_OPT_SCHEDULED_ENQUEUE_TIME: timestamp,
+                },
+                properties={}
+            )
         else:
             amqp_transport = PyamqpTransport
+            amqp_received_message = Message(
+                data=[b'data'],
+                message_annotations={
+                    _X_OPT_PARTITION_KEY: b'r_key',
+                    _X_OPT_VIA_PARTITION_KEY: b'r_via_key',
+                    _X_OPT_SCHEDULED_ENQUEUE_TIME: timestamp,
+                },
+                properties={}
+            )
         received_message = ServiceBusReceivedMessage(amqp_received_message, receiver=None, frame=my_frame, amqp_transport=amqp_transport)
         assert received_message.scheduled_enqueue_time_utc == new_scheduled_time
 
@@ -2382,13 +2391,23 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     def test_queue_send_timeout(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         def _hack_amqp_sender_run(self, **kwargs):
             time.sleep(6)  # sleep until timeout
-            try:
+            if uamqp_transport:
+                self.message_handler.work()
+                self._waiting_messages = 0
+                self._pending_messages = self._filter_pending()
+                if self._backoff and not self._waiting_messages:
+                    _logger.info("Client told to backoff - sleeping for %r seconds", self._backoff)
+                    self._connection.sleep(self._backoff)
+                    self._backoff = 0
+                self._connection.work()
+            else:
+                try:
                 # TODO: update for uamqp
-                self._link.update_pending_deliveries()
-                self._connection.listen(wait=self._socket_timeout, **kwargs)
-            except ValueError:
-                self._shutdown = True
-                return False
+                    self._link.update_pending_deliveries()
+                    self._connection.listen(wait=self._socket_timeout, **kwargs)
+                except ValueError:
+                    self._shutdown = True
+                    return False
             return True
 
         with ServiceBusClient.from_connection_string(
@@ -2407,31 +2426,54 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_mgmt_operation_timeout(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        def hack_mgmt_execute(self, message, operation=None, operation_type=None, timeout=0):
-            start_time = time.time()
-            operation_id = str(uuid.uuid4())
-            self._responses[operation_id] = None
-            self._mgmt_error = None
+        if uamqp_transport:
+            def hack_mgmt_execute(self, operation, op_type, message, timeout=0):
+                start_time = self._counter.get_current_ms()
+                operation_id = str(uuid.uuid4())
+                self._responses[operation_id] = None
 
-            time.sleep(6)  # sleep until timeout
-            while not self._responses[operation_id] and not self._mgmt_error:
-                if timeout and timeout > 0:
-                    now = time.time()
-                    if (now - start_time) >= timeout:
-                        raise TimeoutError("Failed to receive mgmt response in {}ms".format(timeout))
-                self._connection.listen()
-            if self._mgmt_error:
-                self._responses.pop(operation_id)
-                raise self._mgmt_error
+                time.sleep(6)  # sleep until timeout
+                while not self._responses[operation_id] and not self.mgmt_error:
+                    if timeout > 0:
+                        now = self._counter.get_current_ms()
+                        if (now - start_time) >= timeout:
+                            raise uamqp.compat.TimeoutException("Failed to receive mgmt response in {}ms".format(timeout))
+                    self.connection.work()
+                if self.mgmt_error:
+                    raise self.mgmt_error
+                response = self._responses.pop(operation_id)
+                return response
 
-            response = self._responses.pop(operation_id)
-            return response
+            original_execute_method = uamqp.mgmt_operation.MgmtOperation.execute
+            # hack the mgmt method on the class, not on an instance, so it needs reset
+        else:
+            def hack_mgmt_execute(self, message, operation=None, operation_type=None, timeout=0):
+                start_time = time.time()
+                operation_id = str(uuid.uuid4())
+                self._responses[operation_id] = None
 
-        original_execute_method = management_operation.ManagementOperation.execute
-        # hack the mgmt method on the class, not on an instance, so it needs reset
+                time.sleep(6)  # sleep until timeout
+                while not self._responses[operation_id] and not self._mgmt_error:
+                    if timeout and timeout > 0:
+                        now = time.time()
+                        if (now - start_time) >= timeout:
+                            raise TimeoutError("Failed to receive mgmt response in {}ms".format(timeout))
+                    self._connection.listen()
+                if self._mgmt_error:
+                    self._responses.pop(operation_id)
+                    raise self._mgmt_error
+
+                response = self._responses.pop(operation_id)
+                return response
+
+            original_execute_method = management_operation.ManagementOperation.execute
+            # hack the mgmt method on the class, not on an instance, so it needs reset
 
         try:
-            management_operation.ManagementOperation.execute = hack_mgmt_execute
+            if uamqp_transport:
+                uamqp.mgmt_operation.MgmtOperation.execute = hack_mgmt_execute
+            else:
+                management_operation.ManagementOperation.execute = hack_mgmt_execute
             with ServiceBusClient.from_connection_string(
                     servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
                 with sb_client.get_queue_sender(servicebus_queue.name) as sender:
@@ -2440,7 +2482,10 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                         sender.schedule_messages(ServiceBusMessage("ServiceBusMessage to be scheduled"), scheduled_time_utc, timeout=5)
         finally:
             # must reset the mgmt execute method, otherwise other test cases would use the hacked execute method, leading to timeout error
-            management_operation.ManagementOperation.execute = original_execute_method
+            if uamqp_transport:
+                uamqp.mgmt_operation.MgmtOperation.execute = original_execute_method
+            else:
+                management_operation.ManagementOperation.execute = original_execute_method
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -2450,36 +2495,59 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
     def test_queue_operation_negative(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
-        def _hack_amqp_message_complete(cls, _, settlement):
-                if settlement == 'completed':
-                    raise RuntimeError()
+        if uamqp_transport:
+            def _hack_amqp_message_complete(cls):
+                raise RuntimeError()
 
-        def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
-            raise error.AMQPConnectionError(error.ErrorCondition.ConnectionCloseForced)
+            def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
+                raise uamqp.errors.AMQPConnectionError()
 
-        def _hack_sb_receiver_settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
-            raise error.AMQPException(error.ErrorCondition.ClientError)
+            def _hack_sb_receiver_settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
+                raise uamqp.errors.AMQPError()
+        else:
+            def _hack_amqp_message_complete(cls, _, settlement):
+                    if settlement == 'completed':
+                        raise RuntimeError()
+
+            def _hack_amqp_mgmt_request(cls, message, operation, op_type=None, node=None, callback=None, **kwargs):
+                raise error.AMQPConnectionError(error.ErrorCondition.ConnectionCloseForced)
+
+            def _hack_sb_receiver_settle_message(self, message, settle_operation, dead_letter_reason=None, dead_letter_error_description=None):
+                raise error.AMQPException(error.ErrorCondition.ClientError)
 
         with ServiceBusClient.from_connection_string(
                 servicebus_namespace_connection_string, logging_enable=False, uamqp_transport=uamqp_transport) as sb_client:
             sender = sb_client.get_queue_sender(servicebus_queue.name)
             receiver = sb_client.get_queue_receiver(servicebus_queue.name, max_wait_time=5)
-            original_settlement = client.ReceiveClient.settle_messages
+            if not uamqp_transport:
+                original_settlement = client.ReceiveClient.settle_messages
             try:
                 with sender, receiver:
                     # negative settlement via receiver link
                     sender.send_messages(ServiceBusMessage("body"), timeout=10)
                     message = receiver.receive_messages()[0]
-                    client.ReceiveClient.settle_messages = types.MethodType(_hack_amqp_message_complete, receiver._handler)
+                    if uamqp_transport:
+                        message._message.accept = types.MethodType(_hack_amqp_message_complete, message._message)
+                    else:
+                        client.ReceiveClient.settle_messages = types.MethodType(_hack_amqp_message_complete, receiver._handler)
                     receiver.complete_message(message)  # settle via mgmt link
 
-                    origin_amqp_client_mgmt_request_method = client.AMQPClient.mgmt_request
-                    try:
-                        client.AMQPClient.mgmt_request = _hack_amqp_mgmt_request
-                        with pytest.raises(ServiceBusConnectionError):
-                            receiver.peek_messages()
-                    finally:
-                        client.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
+                    if uamqp_transport:
+                        origin_amqp_client_mgmt_request_method = uamqp.AMQPClient.mgmt_request
+                        try:
+                            uamqp.AMQPClient.mgmt_request = _hack_amqp_mgmt_request
+                            with pytest.raises(ServiceBusConnectionError):
+                                receiver.peek_messages()
+                        finally:
+                            uamqp.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
+                    else:
+                        origin_amqp_client_mgmt_request_method = client.AMQPClient.mgmt_request
+                        try:
+                            client.AMQPClient.mgmt_request = _hack_amqp_mgmt_request
+                            with pytest.raises(ServiceBusConnectionError):
+                                receiver.peek_messages()
+                        finally:
+                            client.AMQPClient.mgmt_request = origin_amqp_client_mgmt_request_method
 
                     sender.send_messages(ServiceBusMessage("body"), timeout=10)
 
@@ -2494,7 +2562,8 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
                     message = receiver.receive_messages(max_wait_time=6)[0]
                     receiver.complete_message(message)
             finally:
-                client.ReceiveClient.settle_messages = original_settlement
+                if not uamqp_transport:
+                    client.ReceiveClient.settle_messages = original_settlement
 
     @pytest.mark.skip(reason="TODO: iterator support")
     @pytest.mark.liveTest
@@ -2517,8 +2586,7 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
             assert message.body is None
             receiver.complete_message(message)
 
-    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
-    def test_send_message_alternate_body_types(self, uamqp_transport, **kwargs):
+    def test_send_message_alternate_body_types(self, **kwargs):
         with pytest.raises(TypeError):
             message = ServiceBusMessage(body=['1','2'])
         with pytest.raises(TypeError):

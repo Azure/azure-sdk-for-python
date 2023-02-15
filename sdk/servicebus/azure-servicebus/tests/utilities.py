@@ -70,3 +70,10 @@ class ArgPasser:
         def _preparer(test_class, uamqp_transport, **kwargs):
             fn(test_class, uamqp_transport=uamqp_transport, **kwargs)
         return _preparer
+
+class ArgPasserAsync:
+    def __call__(self, fn):
+        async def _preparer(test_class, uamqp_transport, **kwargs):
+            await fn(test_class, uamqp_transport=uamqp_transport, **kwargs)
+        return _preparer
+    
