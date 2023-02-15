@@ -16,18 +16,17 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-7k3br_JxPVu_jQx6GHAcrg\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 08 Feb 2023 17:27:30 GMT",
+        "Date": "Wed, 15 Feb 2023 20:35:21 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Asvidp8XZSpHq2PfBIjO-L4; expires=Fri, 10-Mar-2023 17:27:30 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=PAQABAAEAAAD--DLA3VO7QrddgJg7WevrHgpuN7uY96ckPma8bh9_4sC8rMZ3DHtdDj46dt9_K1ElyQc_4vtivpXGte66pkCFELx6j07-t0AU0V9rZjV86dUwKiJwGlv2PzNwxroHhc0oudPQMOb-x5K-jLxe0CI1kafjuZBxeR2PWE3pXTORGZAIIKVbf8Zf6qxmgNZnRP0gAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAwAAAMY4f9sOAAAA; expires=Fri, 17-Mar-2023 20:35:22 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14601.8 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -105,7 +104,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Asvidp8XZSpHq2PfBIjO-L4; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAwAAAMY4f9sOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -116,15 +115,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 08 Feb 2023 17:27:30 GMT",
+        "Date": "Wed, 15 Feb 2023 20:35:21 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Asvidp8XZSpHq2PfBIjO-L4; expires=Fri, 10-Mar-2023 17:27:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAwAAAMY4f9sOAAAA; expires=Fri, 17-Mar-2023 20:35:22 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14601.8 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -180,11 +179,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
-        "client-request-id": "da2d43b7-d6f8-4212-8401-cdbecf4c76f8",
+        "client-request-id": "d2f895d1-a839-4656-afe6-cbdfded1884e",
         "Connection": "keep-alive",
         "Content-Length": "291",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=Asvidp8XZSpHq2PfBIjO-L4; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAwAAAMY4f9sOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -198,21 +197,21 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "da2d43b7-d6f8-4212-8401-cdbecf4c76f8",
+        "client-request-id": "d2f895d1-a839-4656-afe6-cbdfded1884e",
         "Content-Length": "111",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 08 Feb 2023 17:27:30 GMT",
+        "Date": "Wed, 15 Feb 2023 20:35:21 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=Asvidp8XZSpHq2PfBIjO-L4; expires=Fri, 10-Mar-2023 17:27:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AjW_HC_t705BjPXfPglyArAU3PbiBAAAAMY4f9sOAAAA; expires=Fri, 17-Mar-2023 20:35:22 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14601.8 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -224,7 +223,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-496874?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-49836?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -248,24 +247,26 @@
       "ResponseHeaders": {
         "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Length": "410",
+        "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 08 Feb 2023 17:27:32 GMT",
-        "ETag": "0200e235-0000-0600-0000-63e3db840000",
-        "Location": "https://fakeaccount.farmbeats.azure.net/parties/test-party-496874",
-        "mise-correlation-id": "86007cfb-d5ed-47bd-b9be-3f1037e933ca",
+        "Date": "Wed, 15 Feb 2023 20:35:22 GMT",
+        "ETag": "0100043c-0000-0600-0000-63ed420a0000",
+        "Location": "http://fakeaccount.farmbeats.azure.net/parties/test-party-49836",
+        "mise-correlation-id": "98ef40b4-1f77-4f88-9036-f4948e77ba3b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
         "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
-        "id": "test-party-496874",
-        "eTag": "0200e235-0000-0600-0000-63e3db840000",
+        "id": "test-party-49836",
+        "eTag": "0100043c-0000-0600-0000-63ed420a0000",
         "status": "Sample Status",
-        "createdDateTime": "2023-02-08T17:27:32Z",
-        "modifiedDateTime": "2023-02-08T17:27:32Z",
+        "createdDateTime": "2023-02-15T20:35:22Z",
+        "modifiedDateTime": "2023-02-15T20:35:22Z",
         "name": "Test Party",
         "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -278,7 +279,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-496874?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-49836?api-version=2022-11-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -293,8 +294,8 @@
         "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Content-Security-Policy": "self",
-        "Date": "Wed, 08 Feb 2023 17:27:32 GMT",
-        "mise-correlation-id": "8fa82d02-e207-43f3-a0c2-53368af61c5e",
+        "Date": "Wed, 15 Feb 2023 20:35:23 GMT",
+        "mise-correlation-id": "5b1c8003-ab15-4d31-afa5-faa41011a381",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",

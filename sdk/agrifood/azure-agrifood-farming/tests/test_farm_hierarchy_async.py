@@ -21,7 +21,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         
         # Setup data
-        party_id = "test-party-396735"
+        party_id = "test-party-8563"
         party_request = {
             "name": "Test Party",
             "description": "Party created during testing.",

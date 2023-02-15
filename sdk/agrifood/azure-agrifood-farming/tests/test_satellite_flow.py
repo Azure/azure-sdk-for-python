@@ -18,10 +18,10 @@ class TestFarmBeatsSatelliteJob(FarmBeatsTestCase):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
 
         # Setup data
-        party_id = "test-party-3476"
+        party_id = "test-party-2946"
         common_id_prefix = "satellite-flow-asdf"
         boundary_id = common_id_prefix + "test-boundary"
-        job_id = common_id_prefix + "job-359376"
+        job_id = common_id_prefix + "job-3957"
 
         start_date_time = datetime(2020, 1, 1, tzinfo=Utc())
         end_date_time = datetime(2020, 1, 31, tzinfo=Utc())

@@ -17,7 +17,7 @@ class TestFarmBeatsSmoke(FarmBeatsTestCase):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)
 
-        party_id = "test-party-496874"
+        party_id = "test-party-49836"
 
         party_request = {
             "name": "Test Party",
