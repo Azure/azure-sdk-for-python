@@ -20,6 +20,8 @@ These code samples show common scenario operations with the Azure Container Regi
 |[sample_delete_images.py][delete_images] ([sample_delete_images_async.py][delete_images_async]) | Delete images from a repository |
 |[sample_set_image_properties.py][set_image_properties] ([sample_set_image_properties_async.py][set_image_properties_async]) | Set read/write/delete properties on an image |
 |[sample_list_tags.py][list_tags] ([sample_list_tags_async.py][list_tags_async]) | List tags on an image with anonymous access |
+|[sample_upload_download_blob.py][upload_download_blob] | Upload and download an OCI artifact blob to and from a repository |
+|[sample_upload_download_manifest.py][upload_download_manifest] | Upload and download an OCI manifest to and from a repository |
 
 ### Prerequisites
 * Python 3.7 or later is required to use this package.
@@ -38,7 +40,7 @@ pip install --pre azure-containerregistry
 
 1. Open a terminal window and `cd` to the directory that the samples are saved in.
 2. Set the environment variables specified in the sample file you wish to run.
-3. Follow the usage described in the file, e.g. `python sample_basic_use.py`
+3. Follow the usage described in the file, e.g. `python sample_hello_world.py`
 
 
 ## Next steps
@@ -60,3 +62,5 @@ Check out the [API reference documentation][rest_docs] to learn more about what 
 [set_image_properties_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_set_image_properties_async.py
 [list_tags]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/sample_list_tags.py
 [list_tags_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/async_samples/sample_list_tags_async.py
+[upload_download_blob]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/sample_upload_download_blob.py
+[upload_download_manifest]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/containerregistry/azure-containerregistry/samples/sample_upload_download_manifest.py
