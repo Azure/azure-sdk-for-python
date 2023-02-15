@@ -45,7 +45,9 @@ def build_find_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-12-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-12-01"))
+    api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-11-01-preview")
+    )
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -56,9 +58,7 @@ def build_find_request(
     )  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url(
-            "resource_group_name", resource_group_name, "str", max_length=90, min_length=1
-        ),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "vaultName": _SERIALIZER.url("vault_name", vault_name, "str"),
         "backupInstanceName": _SERIALIZER.url("backup_instance_name", backup_instance_name, "str"),
     }
@@ -108,7 +108,7 @@ class RestorableTimeRangesOperations:
     ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
         """find.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -139,7 +139,7 @@ class RestorableTimeRangesOperations:
     ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
         """find.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -168,7 +168,7 @@ class RestorableTimeRangesOperations:
     ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
         """find.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
+        :param resource_group_name: The name of the resource group where the backup vault is present.
          Required.
         :type resource_group_name: str
         :param vault_name: The name of the backup vault. Required.
@@ -197,7 +197,7 @@ class RestorableTimeRangesOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-12-01"] = kwargs.pop(
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))

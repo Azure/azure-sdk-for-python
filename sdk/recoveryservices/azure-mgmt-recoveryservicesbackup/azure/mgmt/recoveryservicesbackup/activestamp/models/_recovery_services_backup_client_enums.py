@@ -487,6 +487,7 @@ class ProtectedItemState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTION_ERROR = "ProtectionError"
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
+    BACKUPS_SUSPENDED = "BackupsSuspended"
 
 
 class ProtectionIntentItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -509,6 +510,7 @@ class ProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PROTECTION_ERROR = "ProtectionError"
     PROTECTION_STOPPED = "ProtectionStopped"
     PROTECTION_PAUSED = "ProtectionPaused"
+    BACKUPS_SUSPENDED = "BackupsSuspended"
 
 
 class ProtectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):

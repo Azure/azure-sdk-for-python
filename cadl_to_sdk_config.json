@@ -2,8 +2,9 @@
   "dependencies": {
     "@azure-tools/cadl-python": "0.4.17",
     "@autorest/python": "6.2.16",
+    "@azure-tools/cadl-autorest": "~0.24.0",
     "@azure-tools/cadl-azure-core": "~0.24.0",
-    "@azure-tools/cadl-dpg": "~0.25.0-dev.8",
+    "@azure-tools/cadl-dpg": "0.25.0-dev.8",
     "@cadl-lang/compiler": "~0.38.5",
     "@cadl-lang/eslint-config-cadl": "~0.5.0",
     "@cadl-lang/openapi": "~0.38.0",

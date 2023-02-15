@@ -51,9 +51,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-06-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-06-15-preview")
-    )
+    api_version: Literal["2022-09-15"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -101,9 +99,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-06-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-06-15-preview")
-    )
+    api_version: Literal["2022-09-15"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-15"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -147,9 +143,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-06-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-06-15-preview")
-    )
+    api_version: Literal["2022-09-15"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,9 +186,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-06-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-06-15-preview")
-    )
+    api_version: Literal["2022-09-15"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -241,9 +233,7 @@ def build_list_with_keys_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-06-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-06-15-preview")
-    )
+    api_version: Literal["2022-09-15"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -284,9 +274,7 @@ def build_list_by_resource_group_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-06-15-preview"] = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-06-15-preview")
-    )
+    api_version: Literal["2022-09-15"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -360,8 +348,8 @@ class ChannelsOperations:
         :param channel_name: The name of the Channel resource. Known values are: "AlexaChannel",
          "FacebookChannel", "EmailChannel", "KikChannel", "TelegramChannel", "SlackChannel",
          "MsTeamsChannel", "SkypeChannel", "WebChatChannel", "DirectLineChannel", "SmsChannel",
-         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", and
-         "TelephonyChannel". Required.
+         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", "TelephonyChannel",
+         "AcsChatChannel", "SearchAssistant", and "M365Extensions". Required.
         :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
         :param parameters: The parameters to provide for the created bot. Required.
         :type parameters: ~azure.mgmt.botservice.models.BotChannel
@@ -395,8 +383,8 @@ class ChannelsOperations:
         :param channel_name: The name of the Channel resource. Known values are: "AlexaChannel",
          "FacebookChannel", "EmailChannel", "KikChannel", "TelegramChannel", "SlackChannel",
          "MsTeamsChannel", "SkypeChannel", "WebChatChannel", "DirectLineChannel", "SmsChannel",
-         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", and
-         "TelephonyChannel". Required.
+         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", "TelephonyChannel",
+         "AcsChatChannel", "SearchAssistant", and "M365Extensions". Required.
         :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
         :param parameters: The parameters to provide for the created bot. Required.
         :type parameters: IO
@@ -428,8 +416,8 @@ class ChannelsOperations:
         :param channel_name: The name of the Channel resource. Known values are: "AlexaChannel",
          "FacebookChannel", "EmailChannel", "KikChannel", "TelegramChannel", "SlackChannel",
          "MsTeamsChannel", "SkypeChannel", "WebChatChannel", "DirectLineChannel", "SmsChannel",
-         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", and
-         "TelephonyChannel". Required.
+         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", "TelephonyChannel",
+         "AcsChatChannel", "SearchAssistant", and "M365Extensions". Required.
         :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
         :param parameters: The parameters to provide for the created bot. Is either a model type or a
          IO type. Required.
@@ -453,7 +441,7 @@ class ChannelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-06-15-preview"] = kwargs.pop(
+        api_version: Literal["2022-09-15"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -533,8 +521,8 @@ class ChannelsOperations:
         :param channel_name: The name of the Channel resource. Known values are: "AlexaChannel",
          "FacebookChannel", "EmailChannel", "KikChannel", "TelegramChannel", "SlackChannel",
          "MsTeamsChannel", "SkypeChannel", "WebChatChannel", "DirectLineChannel", "SmsChannel",
-         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", and
-         "TelephonyChannel". Required.
+         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", "TelephonyChannel",
+         "AcsChatChannel", "SearchAssistant", and "M365Extensions". Required.
         :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
         :param location: Specifies the location of the resource. Default value is None.
         :type location: str
@@ -566,7 +554,7 @@ class ChannelsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-06-15-preview"] = kwargs.pop(
+        api_version: Literal["2022-09-15"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
@@ -647,7 +635,7 @@ class ChannelsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-06-15-preview"] = kwargs.pop(
+        api_version: Literal["2022-09-15"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -710,7 +698,7 @@ class ChannelsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-06-15-preview"] = kwargs.pop(
+        api_version: Literal["2022-09-15"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.BotChannel] = kwargs.pop("cls", None)
@@ -764,8 +752,8 @@ class ChannelsOperations:
         :param channel_name: The name of the Channel resource. Known values are: "AlexaChannel",
          "FacebookChannel", "EmailChannel", "KikChannel", "TelegramChannel", "SlackChannel",
          "MsTeamsChannel", "SkypeChannel", "WebChatChannel", "DirectLineChannel", "SmsChannel",
-         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", and
-         "TelephonyChannel". Required.
+         "LineChannel", "DirectLineSpeechChannel", "OutlookChannel", "Omnichannel", "TelephonyChannel",
+         "AcsChatChannel", "SearchAssistant", and "M365Extensions". Required.
         :type channel_name: str or ~azure.mgmt.botservice.models.ChannelName
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListChannelWithKeysResponse or the result of cls(response)
@@ -783,7 +771,7 @@ class ChannelsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-06-15-preview"] = kwargs.pop(
+        api_version: Literal["2022-09-15"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ListChannelWithKeysResponse] = kwargs.pop("cls", None)
@@ -842,7 +830,7 @@ class ChannelsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-06-15-preview"] = kwargs.pop(
+        api_version: Literal["2022-09-15"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ChannelResponseList] = kwargs.pop("cls", None)

@@ -9,22 +9,19 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
 from ._configuration import EdgeOrderManagementClientConfiguration
 from ._operations_mixin import EdgeOrderManagementClientOperationsMixin
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse
 
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
@@ -44,9 +41,9 @@ class EdgeOrderManagementClient(EdgeOrderManagementClientOperationsMixin, MultiA
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -68,15 +65,13 @@ class EdgeOrderManagementClient(EdgeOrderManagementClientOperationsMixin, MultiA
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        api_version=None, # type: Optional[str]
-        base_url=None,  # type: Optional[str]
-        profile=KnownProfiles.default, # type: KnownProfiles
-        **kwargs  # type: Any
+        credential: "TokenCredential",
+        subscription_id: str,
+        api_version: Optional[str]=None,
+        base_url: str = "https://management.azure.com",
+        profile: KnownProfiles=KnownProfiles.default,
+        **kwargs: Any
     ):
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = EdgeOrderManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(EdgeOrderManagementClient, self).__init__(
@@ -94,6 +89,7 @@ class EdgeOrderManagementClient(EdgeOrderManagementClientOperationsMixin, MultiA
 
            * 2020-12-01-preview: :mod:`v2020_12_01_preview.models<azure.mgmt.edgeorder.v2020_12_01_preview.models>`
            * 2021-12-01: :mod:`v2021_12_01.models<azure.mgmt.edgeorder.v2021_12_01.models>`
+           * 2022-05-01-preview: :mod:`v2022_05_01_preview.models<azure.mgmt.edgeorder.v2022_05_01_preview.models>`
         """
         if api_version == '2020-12-01-preview':
             from .v2020_12_01_preview import models
@@ -101,7 +97,80 @@ class EdgeOrderManagementClient(EdgeOrderManagementClientOperationsMixin, MultiA
         elif api_version == '2021-12-01':
             from .v2021_12_01 import models
             return models
+        elif api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview import models
+            return models
         raise ValueError("API version {} is not available".format(api_version))
+
+    @property
+    def addresses(self):
+        """Instance depends on the API version:
+
+           * 2022-05-01-preview: :class:`AddressesOperations<azure.mgmt.edgeorder.v2022_05_01_preview.operations.AddressesOperations>`
+        """
+        api_version = self._get_api_version('addresses')
+        if api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview.operations import AddressesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'addresses'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2022-05-01-preview: :class:`Operations<azure.mgmt.edgeorder.v2022_05_01_preview.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview.operations import Operations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def order_items(self):
+        """Instance depends on the API version:
+
+           * 2022-05-01-preview: :class:`OrderItemsOperations<azure.mgmt.edgeorder.v2022_05_01_preview.operations.OrderItemsOperations>`
+        """
+        api_version = self._get_api_version('order_items')
+        if api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview.operations import OrderItemsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'order_items'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def orders(self):
+        """Instance depends on the API version:
+
+           * 2022-05-01-preview: :class:`OrdersOperations<azure.mgmt.edgeorder.v2022_05_01_preview.operations.OrdersOperations>`
+        """
+        api_version = self._get_api_version('orders')
+        if api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview.operations import OrdersOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'orders'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def products_and_configurations(self):
+        """Instance depends on the API version:
+
+           * 2022-05-01-preview: :class:`ProductsAndConfigurationsOperations<azure.mgmt.edgeorder.v2022_05_01_preview.operations.ProductsAndConfigurationsOperations>`
+        """
+        api_version = self._get_api_version('products_and_configurations')
+        if api_version == '2022-05-01-preview':
+            from .v2022_05_01_preview.operations import ProductsAndConfigurationsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'products_and_configurations'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):
         self._client.close()

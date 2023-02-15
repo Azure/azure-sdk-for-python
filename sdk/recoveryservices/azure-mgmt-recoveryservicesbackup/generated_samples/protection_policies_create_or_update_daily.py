@@ -76,6 +76,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/recoveryservicesbackup/resource-manager/Microsoft.RecoveryServices/preview/2022-09-01-preview/examples/AzureStorage/ProtectionPolicies_CreateOrUpdate_Daily.json
+# x-ms-original-file: specification/recoveryservicesbackup/resource-manager/Microsoft.RecoveryServices/stable/2023-01-01/examples/AzureStorage/ProtectionPolicies_CreateOrUpdate_Daily.json
 if __name__ == "__main__":
     main()

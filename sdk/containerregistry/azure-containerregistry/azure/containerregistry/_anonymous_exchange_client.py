@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Dict, Any
+from typing import Any, Union, Optional
 
 from ._exchange_client import ExchangeClientAuthenticationPolicy
 from ._generated import ContainerRegistry
@@ -23,7 +23,7 @@ class AnonymousACRExchangeClient(object):
     """
 
     def __init__(self, endpoint, **kwargs):  # pylint: disable=missing-client-constructor-parameter-credential
-        # type: (str, Dict[str, Any]) -> None
+        # type: (str, Any) -> None
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
@@ -36,21 +36,18 @@ class AnonymousACRExchangeClient(object):
         )
 
     def get_acr_access_token(self, challenge, **kwargs):
-        # type: (str, Dict[str, Any]) -> str
+        # type: (str, Any) -> Optional[str]
         parsed_challenge = _parse_challenge(challenge)
-        parsed_challenge["grant_type"] = TokenGrantType.PASSWORD
         return self.exchange_refresh_token_for_access_token(
-            None,
+            "",
             service=parsed_challenge["service"],
             scope=parsed_challenge["scope"],
             grant_type=TokenGrantType.PASSWORD,
             **kwargs
         )
 
-    def exchange_refresh_token_for_access_token(
-        self, refresh_token=None, service=None, scope=None, grant_type=TokenGrantType.PASSWORD, **kwargs
-    ):
-        # type: (str, str, str, str, Dict[str, Any]) -> str
+    def exchange_refresh_token_for_access_token(self, refresh_token, service, scope, grant_type, **kwargs):
+        # type: (str, str, str, Union[str, TokenGrantType], Any) -> Optional[str]
         access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )

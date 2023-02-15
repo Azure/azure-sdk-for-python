@@ -8,10 +8,16 @@
 
 """
 FILE: ml_samples_authentication_sovereign_cloud.py
+
 DESCRIPTION:
     These samples demonstrate authenticating a client for multiple clouds.
+    
 USAGE:
     python ml_samples_authentication_sovereign_cloud.py
+
+    Set the environment variables with your own values before running the sample:
+    1) AZURE_SUBSCRIPTION_ID - The subscription id.
+    2) RESOURCE_GROUP_NAME - Resource group name.
 
 """
 
@@ -27,8 +33,8 @@ class MLClientSamples(object):
         # Alternately, one can specify the AZURE_TENANT_ID, AZURE_CLIENT_ID, and AZURE_CLIENT_SECRET to use the EnvironmentCredentialClass.
         # The docs above specify all mechanisms which the defaultCredential internally support.
         # Enter details of your subscription
-        subscription_id = "AZURE_SUBSCRIPTION_ID"
-        resource_group = "RESOURCE_GROUP_NAME"
+        subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+        resource_group = os.environ["RESOURCE_GROUP_NAME"]
 
         # Instantiate a MLClient
         from azure.identity import AzureAuthorityHosts, DefaultAzureCredential
