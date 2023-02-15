@@ -17,7 +17,7 @@ from ._generated_models import (
     Setting,
 )
 
-T = TypeVar("T", bool, str)
+SettingValueType = TypeVar("SettingValueType", bound=Union[bool, str])
 
 
 class KeyVaultPermission(object):
@@ -171,14 +171,14 @@ class KeyVaultBackupResult(object):
         return cls(folder_url=deserialized_operation.azure_storage_blob_container_uri)
 
 
-class KeyVaultSetting(Generic[T]):
+class KeyVaultSetting(Generic[SettingValueType]):
     """A Key Vault setting.
 
     :ivar str name: The name of the account setting.
     :ivar value: The value of the pool setting. This is a boolean if `type` is SettingType.BOOLEAN, and a string
         otherwise. If `value` is provided as a string when `type` is SettingType.BOOLEAN, the value will be converted
         into a boolean (True if `value` is "True" (case-insensitive); False otherwise).
-    :vartype value: str or bool
+    :vartype value: SettingValueType
     :ivar type: The type specifier of the value.
     :vartype type: SettingType or None
     """
@@ -187,7 +187,7 @@ class KeyVaultSetting(Generic[T]):
         self,
         *,
         name: str,
-        value: Union[str, bool],
+        value: SettingValueType,
         type: Optional[SettingType] = None,
         **kwargs,  # pylint:disable=unused-argument,redefined-builtin
     ) -> None:
