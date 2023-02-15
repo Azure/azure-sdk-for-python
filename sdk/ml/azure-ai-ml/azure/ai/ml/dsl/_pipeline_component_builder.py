@@ -267,7 +267,7 @@ class PipelineComponentBuilder:
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,
-                # meta is used to create pipeline component, store it here to make sure piepline component and inner
+                # meta is used to create pipeline component, store it here to make sure pipeline component and inner
                 # node output type are consistent
                 meta=output_meta,
                 owner="pipeline",
