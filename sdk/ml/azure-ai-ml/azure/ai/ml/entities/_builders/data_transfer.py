@@ -260,7 +260,7 @@ class DataTransferCopy(DataTransfer):
             # Pass through the display name only if the display name is not system generated.
             node.display_name = self.display_name if self.display_name != self.name else None
             return node
-        msg = "copy_data can be called as a function only when referenced component is {}, " "currently got {}."
+        msg = "copy_data can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(
             message=msg.format(type(Component), self._component),
             no_personal_data_message=msg.format(type(Component), "self._component"),
