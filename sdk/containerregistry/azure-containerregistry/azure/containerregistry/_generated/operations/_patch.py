@@ -6,11 +6,16 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import TYPE_CHECKING
-
+from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
 from msrest import Serializer
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
@@ -20,15 +25,13 @@ from azure.core.utils import case_insensitive_dict
 from .. import models as _models
 from ._operations import AuthenticationOperations as AuthenticationOperationsGenerated
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Callable, Dict, List, Optional, TypeVar, Union
-    T = TypeVar('T')
-    ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+T = TypeVar("T")
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 # fmt: off
+
 
 def build_exchange_aad_access_token_for_acr_refresh_token_request(
     **kwargs  # type: Any
@@ -125,17 +128,17 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         :rtype: ~container_registry.models.AcrRefreshToken
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-07-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/x-www-form-urlencoded"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AcrRefreshToken]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/x-www-form-urlencoded")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AcrRefreshToken]
 
         # Construct form data
         _data = {
@@ -154,14 +157,12 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -169,14 +170,11 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('AcrRefreshToken', pipeline_response)
+        deserialized = self._deserialize("AcrRefreshToken", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
-
 
     @distributed_trace
     def exchange_acr_refresh_token_for_acr_access_token(
@@ -205,17 +203,17 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
         :rtype: ~container_registry.models.AcrAccessToken
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
-        }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-07-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/x-www-form-urlencoded"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.AcrAccessToken]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-07-01"))  # type: str
+        content_type = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/x-www-form-urlencoded")
+        )  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.AcrAccessToken]
 
         # Construct form data
         _data = {
@@ -233,14 +231,12 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             params=_params,
         )
         path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, 'str', skip_quote=True),
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
         response = pipeline_response.http_response
 
@@ -248,15 +244,16 @@ class AuthenticationOperations(AuthenticationOperationsGenerated):
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.AcrErrors, pipeline_response)
             raise HttpResponseError(response=response, model=error)
-
-        deserialized = self._deserialize('AcrAccessToken', pipeline_response)
+        deserialized = self._deserialize("AcrAccessToken", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
-
         return deserialized
-    
-__all__ = ["AuthenticationOperations"]  # type: List[str]  # Add all objects you want publicly available to users at this package level
+
+
+__all__ = [
+    "AuthenticationOperations"
+]  # type: List[str]  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
