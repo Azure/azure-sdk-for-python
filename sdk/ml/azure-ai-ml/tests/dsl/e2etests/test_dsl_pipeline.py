@@ -2082,7 +2082,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                 }
             },
-            "outputs": {"trained_model": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}},
+            "outputs": {"trained_model": {"mode": "Upload", "job_output_type": "uri_folder"}},
             "settings": {},
         }
         assert expected_job == actual_job

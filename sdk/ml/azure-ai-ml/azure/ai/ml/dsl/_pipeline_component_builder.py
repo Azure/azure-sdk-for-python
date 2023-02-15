@@ -267,8 +267,8 @@ class PipelineComponentBuilder:
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,
-                # This is a hack: when parallel_for node outputs promoted to pipeline level,
-                # pipeline outputs type should be same with node levle.
+                # meta is used to create pipeline component, store it here to make sure piepline component and inner
+                # node output type are consistent
                 meta=output_meta,
                 owner="pipeline",
                 description=self._args_description.get(key, None),
