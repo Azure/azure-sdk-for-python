@@ -358,7 +358,7 @@ class PipelineIOMixin(PipelineNodeIOMixin):
 
     def _build_pipeline_outputs_dict(self, outputs: Dict[str, Union[Output, NodeOutput]]) -> OutputsAttrDict:
         """Build an output attribute dict without output definition metadata.
-        For pipeline outputs, it's setting should be copied from node level outputs.
+        For pipeline outputs, its setting should be copied from node level outputs.
 
         :param outputs: Node output dict or pipeline component's outputs.
         :return: Built dynamic output attribute dict.
