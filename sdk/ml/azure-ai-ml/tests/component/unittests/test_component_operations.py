@@ -23,7 +23,7 @@ def mock_component_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2022_05_01: Mock,
-    mock_machinelearning_client: Mock
+    mock_machinelearning_client: Mock,
 ) -> ComponentOperations:
     yield ComponentOperations(
         operation_scope=mock_workspace_scope,

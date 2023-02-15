@@ -88,8 +88,8 @@ class Output(_InputOutputBase):
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the _port_name.
         self._port_name = None
-        self.name = kwargs.pop('name', None)
-        self.version = kwargs.pop('version', None)
+        self.name = kwargs.pop("name", None)
+        self.version = kwargs.pop("version", None)
         self._is_primitive_type = self.type in IOConstants.PRIMITIVE_STR_2_TYPE
         self.description = description
         self.path = path
@@ -108,8 +108,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self):
         """Convert the Output object to a dict."""
-        keys = ["name", "version", "path", "type", "mode",
-                "description", "is_control", "early_available"]
+        keys = ["name", "version", "path", "type", "mode", "description", "is_control", "early_available"]
         result = {key: getattr(self, key) for key in keys}
         return _remove_empty_values(result)
 
@@ -142,6 +141,6 @@ class Output(_InputOutputBase):
             raise UserErrorException(
                 f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
                 f"with a limit of 255 characters."
-                )
+            )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")

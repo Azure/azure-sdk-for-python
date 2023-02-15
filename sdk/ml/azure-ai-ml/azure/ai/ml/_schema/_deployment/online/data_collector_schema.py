@@ -23,7 +23,7 @@ class DataCollectorSchema(metaclass=PatchedSchemaMeta):
     collections = fields.Mapping(fields.Str, NestedField(DeploymentCollectionSchema))
     rolling_rate = StringTransformedEnum(
         required=False,
-        allowed_values=[ RollingRate.MINUTE, RollingRate.DAY, RollingRate.HOUR],
+        allowed_values=[RollingRate.MINUTE, RollingRate.DAY, RollingRate.HOUR],
     )
     destination = NestedField(DestinationSchema)
     sampling_rate = fields.Float()

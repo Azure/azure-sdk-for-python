@@ -45,8 +45,8 @@ def process_sdk_component_job_io(
         if isinstance(io_value, (Input, Output)) and isinstance(io_value.path, str):
             mode = io_value.mode
             path = io_value.path
-            name = io_value.name if hasattr(io_value, 'name') else None
-            version = io_value.version if hasattr(io_value, 'version') else None
+            name = io_value.name if hasattr(io_value, "name") else None
+            version = io_value.version if hasattr(io_value, "version") else None
             if any([re.match(item, path) for item in io_binding_regex_list]):
                 # Yaml syntax requires using ${{}} to enclose inputs and outputs bindings
                 # io_bindings[io_name] = io_value
@@ -127,7 +127,7 @@ def from_dict_to_rest_io(
                         io_bindings[key].update({"mode": INPUT_MOUNT_MAPPING_FROM_REST[io_mode]})
                 # add name and version for binding input
                 if io_name or io_version:
-                    assert rest_object_class.__name__ == 'JobOutput'
+                    assert rest_object_class.__name__ == "JobOutput"
                     # current code only support dump name and version for JobOutput
                     # this assert can be deleted if we need to dump name/version for JobInput
                     if io_name:
@@ -137,13 +137,13 @@ def from_dict_to_rest_io(
                 if not io_mode and not io_name and not io_version:
                     io_bindings[key] = io_value
             else:
-                if rest_object_class.__name__ == 'JobOutput':
+                if rest_object_class.__name__ == "JobOutput":
                     # current code only support dump name and version for JobOutput
                     # this condition can be deleted if we need to dump name/version for JobInput
-                    if 'name' in val.keys():
-                        val['asset_name'] = val.pop('name')
-                    if 'version' in val.keys():
-                        val['asset_version'] = val.pop('version')
+                    if "name" in val.keys():
+                        val["asset_name"] = val.pop("name")
+                    if "version" in val.keys():
+                        val["asset_version"] = val.pop("version")
                 rest_obj = rest_object_class.from_dict(val)
                 rest_io_objects[key] = rest_obj
         else:
