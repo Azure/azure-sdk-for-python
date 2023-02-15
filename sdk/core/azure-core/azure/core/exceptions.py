@@ -164,10 +164,7 @@ class ODataV4Format:
         self.message: Optional[str] = json_object.get(cls.MESSAGE_LABEL)
 
         if not (self.code or self.message):
-            raise ValueError(
-                "Impossible to extract code/message from received JSON:\n"
-                + json.dumps(json_object)
-            )
+            raise ValueError("Impossible to extract code/message from received JSON:\n" + json.dumps(json_object))
 
         # Optional fields
         self.target: Optional[str] = json_object.get(cls.TARGET_LABEL)
@@ -209,9 +206,7 @@ class ODataV4Format:
                 error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
 
         if self.innererror:
-            error_str += "\nInner error: {}".format(
-                json.dumps(self.innererror, indent=4)
-            )
+            error_str += "\nInner error: {}".format(json.dumps(self.innererror, indent=4))
         return error_str
 
 
@@ -236,9 +231,7 @@ class AzureError(Exception):
     def __init__(self, message, *args, **kwargs):
         self.inner_exception = kwargs.get("error")
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
-        self.exc_type = (
-            self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
-        )
+        self.exc_type = self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
         self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)
         self.message = str(message)
         self.continuation_token = kwargs.get("continuation_token")
@@ -310,9 +303,7 @@ class HttpResponseError(AzureError):
             self.model = model
         else:  # autorest azure-core, for KV 1.0, Storage 12.0, etc.
             self.model: Optional[Any] = getattr(self, "error", None)
-        self.error: Optional[ODataV4Format] = self._parse_odata_body(
-            error_format, response
-        )
+        self.error: Optional[ODataV4Format] = self._parse_odata_body(error_format, response)
 
         # By priority, message is:
         # - odatav4 message, OR
@@ -321,16 +312,12 @@ class HttpResponseError(AzureError):
         if self.error:
             message = str(self.error)
         else:
-            message = message or "Operation returned an invalid status '{}'".format(
-                self.reason
-            )
+            message = message or "Operation returned an invalid status '{}'".format(self.reason)
 
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
     @staticmethod
-    def _parse_odata_body(
-        error_format: Type[ODataV4Format], response: "_HttpResponseBase"
-    ) -> Optional[ODataV4Format]:
+    def _parse_odata_body(error_format: Type[ODataV4Format], response: "_HttpResponseBase") -> Optional[ODataV4Format]:
         try:
             odata_json = json.loads(response.text())
             return error_format(odata_json)
@@ -436,18 +423,10 @@ class ODataV4Error(HttpResponseError):
             try:
                 error_node = self.odata_json["error"]
                 self._error_format = self._ERROR_FORMAT(error_node)
-                self.__dict__.update(
-                    {
-                        k: v
-                        for k, v in self._error_format.__dict__.items()
-                        if v is not None
-                    }
-                )
+                self.__dict__.update({k: v for k, v in self._error_format.__dict__.items() if v is not None})
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.info("Received error message was not valid OdataV4 format.")
-                self._error_format = "JSON was invalid for format " + str(
-                    self._ERROR_FORMAT
-                )
+                self._error_format = "JSON was invalid for format " + str(self._ERROR_FORMAT)
 
     def __str__(self):
         if self._error_format:
@@ -465,9 +444,7 @@ class StreamConsumedError(AzureError):
     def __init__(self, response):
         message = (
             "You are attempting to read or stream the content from request {}. "
-            "You have likely already consumed this stream, so it can not be accessed anymore.".format(
-                response.request
-            )
+            "You have likely already consumed this stream, so it can not be accessed anymore.".format(response.request)
         )
         super(StreamConsumedError, self).__init__(message)
 

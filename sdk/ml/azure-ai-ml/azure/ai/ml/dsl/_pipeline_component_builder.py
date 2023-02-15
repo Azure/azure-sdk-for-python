@@ -11,13 +11,12 @@ from collections import OrderedDict
 from inspect import Parameter, signature
 from typing import Callable, Union
 
+from azure.ai.ml._internal._utils._utils import _map_internal_output_type
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
 from azure.ai.ml._utils.utils import (
-    get_all_enum_values_iter,
     is_valid_node_name,
     parse_args_description_from_docstring,
 )
-from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.constants._job.pipeline import COMPONENT_IO_KEYWORDS
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
@@ -260,22 +259,10 @@ class PipelineComponentBuilder:
                     is_control=value.is_control,
                 )
 
-            # hack: map component output type to valid pipeline output type
-            def _map_type(_meta):
-                if type(_meta).__name__ != "InternalOutput":
-                    return _meta.type
-                if _meta.type in list(get_all_enum_values_iter(AssetTypes)):
-                    return _meta.type
-                if _meta.type in ["AnyFile"]:
-                    return AssetTypes.URI_FILE
-                return AssetTypes.URI_FOLDER
-
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             output_meta = Output(
-                type=_map_type(meta),
-                description=meta.description,
-                mode=meta.mode,
-                is_control=meta.is_control
+                type=_map_internal_output_type(meta), description=meta.description,
+                mode=meta.mode, is_control=meta.is_control
             )
             pipeline_output = PipelineOutput(
                 port_name=key,
