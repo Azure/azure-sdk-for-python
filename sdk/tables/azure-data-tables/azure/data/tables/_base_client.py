@@ -234,7 +234,7 @@ class TablesBaseClient(AccountHostsMixin):
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
-        self._client._config.version = get_api_version(kwargs, self._client._config.version) # pylint: disable=protected-access, type: ignore
+        self._client._config.version = get_api_version(kwargs, self._client._config.version) # type: ignore # pylint: disable=protected-access
 
     def __enter__(self):
         self._client.__enter__()
