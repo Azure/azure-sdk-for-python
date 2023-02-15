@@ -184,7 +184,7 @@ class PathClient(AsyncStorageAccountHostsMixin, PathClientBase):
             see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
             #other-client--per-operation-configuration>`_.
         :return: A dictionary of response headers.
-        :keyword encryption_context:
+        :keyword str encryption_context:
             Specifies the encryption context to set on the file.
         :rtype: Dict[str, Union[str, datetime]]
         """
