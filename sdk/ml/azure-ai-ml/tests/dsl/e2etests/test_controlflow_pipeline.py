@@ -1,8 +1,9 @@
 import pytest
+from azure.ai.ml.dsl._group_decorator import group
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
 
-from azure.ai.ml import Input, MLClient, load_component
+from azure.ai.ml import Input, MLClient, load_component, Output
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
 from azure.ai.ml.dsl._do_while import do_while
@@ -172,12 +173,36 @@ class TestIfElse(TestControlFlowPipeline):
         registered_component = client.components.create_or_update(primitive_component_with_normal_input_output_v2)
         rest_dict = registered_component._to_dict()
         # Assert is_control with correct bool type
-        assert rest_dict["outputs"] == {
+        expected_dict = {
             "output_data": {"type": "uri_folder"},
             "bool_param_output": {"type": "boolean", "is_control": True, "early_available": True},
             "int_param_output": {"type": "integer", "is_control": True},
             "float_param_output": {"type": "number", "is_control": True},
             "str_param_output": {"type": "string", "is_control": True}}
+        assert rest_dict["outputs"] == expected_dict
+
+        # Assert on pipeline component
+        @group
+        class ControlOutputGroup:
+            output_data: Output(type="uri_folder")
+            float_param_output: Output(type="number", is_control=True)
+            int_param_output: Output(type="integer", is_control=True)
+            bool_param_output: Output(type="boolean", is_control=True)
+            str_param_output: Output(type="string", is_control=True)
+
+        @pipeline()
+        def test_pipeline_component_control_output() -> ControlOutputGroup:
+            node = primitive_component_with_normal_input_output_v2(
+                input_data=test_input, parambool=True,
+                paramint=2, paramfloat=2.2, paramstr="test"
+            )
+            return node.outputs
+
+        registered_pipeline_component = client.components.create_or_update(test_pipeline_component_control_output)
+        rest_dict = registered_pipeline_component._to_dict()
+        # Update expected dict, early_available will be removed for subgraph output.
+        expected_dict["bool_param_output"] = {"type": "boolean", "is_control": True}
+        assert rest_dict["outputs"] == expected_dict
 
     def test_do_while_combined_if_else(self, client: MLClient):
         do_while_body_component = load_component(

@@ -24,11 +24,11 @@ class MsalCredential:   # pylint: disable=too-many-instance-attributes
             additionally_allowed_tenants: Optional[List[str]] = None,
             allow_broker: Optional[bool] = None,
             authority: Optional[str] = None,
-            instance_discovery: Optional[bool] = None,
+            disable_instance_discovery: Optional[bool] = None,
             tenant_id: Optional[str] = None,
             **kwargs
     ) -> None:
-        self._instance_discovery = instance_discovery
+        self._instance_discovery = None if disable_instance_discovery is None else not disable_instance_discovery
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
         if self._regional_authority and self._regional_authority.lower() in ["tryautodetect", "true"]:

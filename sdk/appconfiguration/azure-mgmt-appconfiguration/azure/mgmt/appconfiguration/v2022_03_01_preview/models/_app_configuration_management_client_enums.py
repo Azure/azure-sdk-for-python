@@ -11,42 +11,42 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionsRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Any action that is required beyond basic workflow (approve/ reject/ disconnect)
-    """
+    """Any action that is required beyond basic workflow (approve/ reject/ disconnect)."""
 
     NONE = "None"
     RECREATE = "Recreate"
 
+
 class ConfigurationResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The resource type to check for name availability.
-    """
+    """The resource type to check for name availability."""
 
     MICROSOFT_APP_CONFIGURATION_CONFIGURATION_STORES = "Microsoft.AppConfiguration/configurationStores"
 
+
 class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private link service connection status.
-    """
+    """The private link service connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates whether the configuration store need to be recovered.
-    """
+    """Indicates whether the configuration store need to be recovered."""
 
     RECOVER = "Recover"
     DEFAULT = "Default"
+
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
@@ -59,9 +59,9 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the configuration store.
-    """
+    """The provisioning state of the configuration store."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -69,6 +69,7 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     CANCELED = "Canceled"
+
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control permission for data plane traffic coming from public networks while private endpoint is
@@ -78,9 +79,9 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class ReplicaProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the replica.
-    """
+    """The provisioning state of the replica."""
 
     CREATING = "Creating"
     SUCCEEDED = "Succeeded"
