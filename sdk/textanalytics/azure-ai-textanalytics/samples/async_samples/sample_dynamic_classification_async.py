@@ -22,14 +22,12 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
-from cgitb import text
-import os
 import asyncio
 
 
 async def sample_dynamic_classification_async() -> None:
     # [START dynamic_classification_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 
@@ -62,7 +60,7 @@ async def sample_dynamic_classification_async() -> None:
                 ))
         elif classification_result.is_error is True:
             print("Document '{}' has an error with code '{}' and message '{}'".format(
-                doc, classification_result.code, classification_result.message
+                doc, classification_result.error.code, classification_result.error.message
             ))
     # [END dynamic_classification_async]
 

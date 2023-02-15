@@ -485,46 +485,30 @@ class TestConfidentialLedgerClient(ConfidentialLedgerTestCase):
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    # The async client makes a non-async call in __init__ to fetch the certificate (can't use await
-    # in __init__), so we'll have to record using the non-async recorder. If the async recorder is
-    # used, non-async calls are not recorded.
-    def test_tls_cert_convenience_aad_user(self, **kwargs):
+    async def test_tls_cert_convenience_aad_user(self, **kwargs):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
 
-        # Create the client directly instead of going through the create_confidentialledger_client
-        # as we don't need any additional setup.
-        credential = self.get_credential(ConfidentialLedgerClient, is_async=True)
-        client = self.create_client_from_credential(
-            ConfidentialLedgerClient,
-            credential=credential,
-            endpoint=confidentialledger_endpoint,
-            ledger_certificate_path=self.network_certificate_path,  # type: ignore
+        client = await self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, is_aad=True
         )
+
         self.tls_cert_convenience_actions(client)
 
     @ConfidentialLedgerPreparer()
     @recorded_by_proxy
-    # The async client makes a non-async call in __init__ to fetch the certificate (can't use await
-    # in __init__), so we'll have to record using the non-async recorder. If the async recorder is
-    # used, non-async calls are not recorded.
-    def test_tls_cert_convenience_cert_user(self, **kwargs):
+    async def test_tls_cert_convenience_cert_user(self, **kwargs):
         os.remove(self.network_certificate_path)  # Remove file so the auto-magic kicks in.
 
         confidentialledger_endpoint = kwargs.pop("confidentialledger_endpoint")
+        confidentialledger_id = kwargs.pop("confidentialledger_id")
 
-        # Create the client directly instead of going through the create_confidentialledger_client
-        # as we don't need any additional setup.
-        certificate_credential = ConfidentialLedgerCertificateCredential(
-            certificate_path=self.user_certificate_path
+        client = await self.create_confidentialledger_client(
+            confidentialledger_endpoint, confidentialledger_id, is_aad=False
         )
-        client = self.create_client_from_credential(
-            ConfidentialLedgerClient,
-            credential=certificate_credential,
-            endpoint=confidentialledger_endpoint,
-            ledger_certificate_path=self.network_certificate_path,  # type: ignore
-        )
+
         self.tls_cert_convenience_actions(client)
 
     def tls_cert_convenience_actions(self, _):

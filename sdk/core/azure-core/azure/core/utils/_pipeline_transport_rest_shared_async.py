@@ -6,12 +6,11 @@
 # --------------------------------------------------------------------------
 import asyncio
 from collections.abc import AsyncIterator
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, List
 from ..pipeline import PipelineContext, PipelineRequest, PipelineResponse
 from ..pipeline._tools_async import await_result as _await_result
 
 if TYPE_CHECKING:
-    from typing import List
     from ..pipeline.policies import SansIOHTTPPolicy
 
 
@@ -31,22 +30,16 @@ class _PartGenerator(AsyncIterator):
             http_response_type=self._default_http_response_type
         )
         if self._response.request.multipart_mixed_info:
-            policies = self._response.request.multipart_mixed_info[
-                1
-            ]  # type: List[SansIOHTTPPolicy]
+            policies: List["SansIOHTTPPolicy"] = self._response.request.multipart_mixed_info[1]
 
             async def parse_responses(response):
                 http_request = response.request
                 context = PipelineContext(None)
                 pipeline_request = PipelineRequest(http_request, context)
-                pipeline_response = PipelineResponse(
-                    http_request, response, context=context
-                )
+                pipeline_response = PipelineResponse(http_request, response, context=context)
 
                 for policy in policies:
-                    await _await_result(
-                        policy.on_response, pipeline_request, pipeline_response
-                    )
+                    await _await_result(policy.on_response, pipeline_request, pipeline_response)
 
             # Not happy to make this code asyncio specific, but that's multipart only for now
             # If we need trio and multipart, let's reinvesitgate that later

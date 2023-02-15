@@ -23,7 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, Union, List, Generic, TypeVar, Dict
+from typing import Any, Union, Generic, TypeVar, List, Dict
 from contextlib import AbstractAsyncContextManager
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
@@ -33,9 +33,7 @@ from ._tools_async import await_result as _await_result
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
 ImplPoliciesType = List[
-    AsyncHTTPPolicy[  # pylint: disable=unsubscriptable-object
-        HTTPRequestType, AsyncHTTPResponseType
-    ]
+    AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]  # pylint: disable=unsubscriptable-object
 ]
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
@@ -103,9 +101,7 @@ class _AsyncTransportRunner(
         )
 
 
-class AsyncPipeline(
-    AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]
-):
+class AsyncPipeline(AbstractAsyncContextManager, Generic[HTTPRequestType, AsyncHTTPResponseType]):
     """Async pipeline implementation.
 
     This is implemented as a context manager, that will activate the context
@@ -154,9 +150,9 @@ class AsyncPipeline(
         if not multipart_mixed_info:
             return
 
-        requests = multipart_mixed_info[0]  # type: List[HTTPRequestType]
-        policies = multipart_mixed_info[1]  # type: List[SansIOHTTPPolicy]
-        pipeline_options = multipart_mixed_info[3]  # type: Dict[str, Any]
+        requests: List[HTTPRequestType] = multipart_mixed_info[0]
+        policies: List[SansIOHTTPPolicy] = multipart_mixed_info[1]
+        pipeline_options: Dict[str, Any] = multipart_mixed_info[3]
 
         async def prepare_requests(req):
             if req.multipart_mixed_info:
@@ -192,9 +188,5 @@ class AsyncPipeline(
         await self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
         pipeline_request = PipelineRequest(request, context)
-        first_node = (
-            self._impl_policies[0]
-            if self._impl_policies
-            else _AsyncTransportRunner(self._transport)
-        )
+        first_node = self._impl_policies[0] if self._impl_policies else _AsyncTransportRunner(self._transport)
         return await first_node.send(pipeline_request)

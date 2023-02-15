@@ -4,7 +4,7 @@
 from azure.ai.ml.entities._builders.do_while import DoWhile
 
 
-def do_while(body, condition, mapping, *, max_iteration_count=None):
+def do_while(body, mapping, max_iteration_count: int, condition=None):
     """Build a do_while node by specifying the loop body, output-input mapping and termination condition.
 
     .. remarks::
@@ -36,15 +36,16 @@ def do_while(body, condition, mapping, *, max_iteration_count=None):
                     input2=do_while_body.outputs.output2
                 )
 
-    :param body: Pipeline job for the do-while loop body.
-    :type body: Pipeline
-    :param condition: Name of boolean output of body as do-while loop condition.
-    :type condition: Output
+    :param body: Pipeline job or command node for the do-while loop body.
+    :type body: Union[Pipeline, Command]
     :param mapping: Output-Input mapping for reach round of the do-while loop.
                     Key is the last round output of the body. Value is the input port for current body.
     :type mapping: Dict[Union[str, Output], Union[str, Input, List]]
     :param max_iteration_count: limits in running the do-while node.
     :type max_iteration_count: int
+    :param condition: Name of a boolean output of body, do-while loop stops if its value is evaluated to be negative;
+                      If not specified, handle as while true.
+    :type condition: Output
     """
     do_while_node = DoWhile(
         body=body,
@@ -52,6 +53,5 @@ def do_while(body, condition, mapping, *, max_iteration_count=None):
         mapping=mapping,
         _from_component_func=True,
     )
-    if max_iteration_count is not None:
-        do_while_node.set_limits(max_iteration_count=max_iteration_count)
+    do_while_node.set_limits(max_iteration_count=max_iteration_count)
     return do_while_node
