@@ -7,7 +7,6 @@ import os
 
 from uuid import uuid4
 from typing import Any, Dict, List, Optional, Mapping, Union
-from typing_extensions import Literal
 try:
     from urllib.parse import parse_qs, quote, urlparse
 except ImportError:
@@ -235,7 +234,7 @@ class TablesBaseClient(AccountHostsMixin):
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
-        self._client._config.version = get_api_version(kwargs, self._client._config.version) # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, self._client._config.version) # pylint: disable=protected-access, type: ignore
 
     def __enter__(self):
         self._client.__enter__()

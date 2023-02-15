@@ -71,7 +71,7 @@ class AsyncTablesBaseClient(AccountHostsMixin):
             policies=kwargs.pop('policies', self._policies),
             **kwargs
         )
-        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access
+        self._client._config.version = get_api_version(kwargs, self._client._config.version)  # pylint: disable=protected-access, type: ignore
 
     async def __aenter__(self):
         await self._client.__aenter__()
