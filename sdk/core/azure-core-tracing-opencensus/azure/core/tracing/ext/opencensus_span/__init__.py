@@ -25,6 +25,7 @@ if TYPE_CHECKING:
     from typing import Dict, Optional, Union, Callable, Sequence, Any
 
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
+
     AttributeValue = Union[
         str,
         bool,
@@ -40,7 +41,7 @@ if TYPE_CHECKING:
 
 __version__ = VERSION
 
-_config_integration.trace_integrations(['threading'])
+_config_integration.trace_integrations(["threading"])
 
 
 class OpenCensusSpan(HttpSpanMixin, object):
@@ -61,20 +62,26 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :paramtype links: list[~azure.core.tracing.Link]
         """
         tracer = self.get_current_tracer()
-        value = kwargs.pop('kind', None)
+        value = kwargs.pop("kind", None)
         kind = (
-            OpenCensusSpanKind.CLIENT if value == SpanKind.CLIENT else
-            OpenCensusSpanKind.CLIENT if value == SpanKind.PRODUCER else # No producer in opencensus
-            OpenCensusSpanKind.SERVER if value == SpanKind.SERVER else
-            OpenCensusSpanKind.CLIENT if value == SpanKind.CONSUMER else # No consumer in opencensus
-            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.INTERNAL else # No internal in opencensus
-            OpenCensusSpanKind.UNSPECIFIED if value == SpanKind.UNSPECIFIED else
-            None
-        ) # type: SpanKind
+            OpenCensusSpanKind.CLIENT
+            if value == SpanKind.CLIENT
+            else OpenCensusSpanKind.CLIENT
+            if value == SpanKind.PRODUCER
+            else OpenCensusSpanKind.SERVER  # No producer in opencensus
+            if value == SpanKind.SERVER
+            else OpenCensusSpanKind.CLIENT
+            if value == SpanKind.CONSUMER
+            else OpenCensusSpanKind.UNSPECIFIED  # No consumer in opencensus
+            if value == SpanKind.INTERNAL
+            else OpenCensusSpanKind.UNSPECIFIED  # No internal in opencensus
+            if value == SpanKind.UNSPECIFIED
+            else None
+        )  # type: SpanKind
         if value and kind is None:
             raise ValueError("Kind {} is not supported in OpenCensus".format(value))
 
-        links = kwargs.pop('links', None)
+        links = kwargs.pop("links", None)
         self._span_instance = span or tracer.start_span(name=name, **kwargs)
         if kind is not None:
             self._span_instance.span_kind = kind
@@ -84,11 +91,8 @@ class OpenCensusSpan(HttpSpanMixin, object):
                 for link in links:
                     ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(link.headers)
                     self._span_instance.add_link(
-                        Link(
-                            trace_id=ctx.trace_id,
-                            span_id=ctx.span_id,
-                            attributes=link.attributes
-                        ))
+                        Link(trace_id=ctx.trace_id, span_id=ctx.span_id, attributes=link.attributes)
+                    )
             except AttributeError:
                 # we will just send the links as is if it's not ~azure.core.tracing.Link without any validation
                 # assuming user knows what they are doing.
@@ -121,10 +125,13 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """Get the span kind of this span."""
         value = self.span_instance.span_kind
         return (
-            SpanKind.CLIENT if value == OpenCensusSpanKind.CLIENT else
-            SpanKind.SERVER if value == OpenCensusSpanKind.SERVER else
-            SpanKind.UNSPECIFIED if value == OpenCensusSpanKind.UNSPECIFIED else
-            None
+            SpanKind.CLIENT
+            if value == OpenCensusSpanKind.CLIENT
+            else SpanKind.SERVER
+            if value == OpenCensusSpanKind.SERVER
+            else SpanKind.UNSPECIFIED
+            if value == OpenCensusSpanKind.UNSPECIFIED
+            else None
         )
 
     _KIND_MAPPING = {
@@ -171,7 +178,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :return: A key value pair dictionary
         """
         tracer_from_context = self.get_current_tracer()
-        temp_headers = {} # type: Dict[str, str]
+        temp_headers = {}  # type: Dict[str, str]
         if tracer_from_context is not None:
             ctx = tracer_from_context.span_context
             try:
@@ -205,7 +212,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :return: a traceparent string
         :rtype: str
         """
-        return self.to_header()['traceparent']
+        return self.to_header()["traceparent"]
 
     @classmethod
     def link(cls, traceparent, attributes=None):
@@ -216,9 +223,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         :param traceparent: A complete traceparent
         :type traceparent: str
         """
-        cls.link_from_headers({
-            'traceparent': traceparent
-        }, attributes)
+        cls.link_from_headers({"traceparent": traceparent}, attributes)
 
     @classmethod
     def link_from_headers(cls, headers, attributes=None):
@@ -231,11 +236,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
         """
         ctx = trace_context_http_header_format.TraceContextPropagator().from_headers(headers)
         current_span = cls.get_current_span()
-        current_span.add_link(Link(
-            trace_id=ctx.trace_id,
-            span_id=ctx.span_id,
-            attributes=attributes
-        ))
+        current_span.add_link(Link(trace_id=ctx.trace_id, span_id=ctx.span_id, attributes=attributes))
 
     @classmethod
     def get_current_span(cls):
@@ -268,8 +269,7 @@ class OpenCensusSpan(HttpSpanMixin, object):
     @classmethod
     def change_context(cls, span):
         # type: (Span) -> ContextManager
-        """Change the context for the life of this context manager.
-        """
+        """Change the context for the life of this context manager."""
         original_span = cls.get_current_span()
         try:
             execution_context.set_current_span(span)

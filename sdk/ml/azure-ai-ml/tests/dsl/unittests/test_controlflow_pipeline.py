@@ -1,6 +1,7 @@
 import pytest
 
 from azure.ai.ml import Input, load_component
+from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._parallel_for import parallel_for
 from azure.ai.ml.exceptions import ValidationException
@@ -17,6 +18,10 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestControlFlowPipelineUT:
+    pass
+
+
+class CustomizedObject:
     pass
 
 
@@ -97,7 +102,29 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
                     # invalid JSON string items
                     '[{"component_in_number": 1}, {}]',
                     "Items should have same keys with body inputs"
-            )
+            ),
+            (
+                    # unsupported item value type
+                    [
+                        {"component_in_number": CustomizedObject()},
+                    ],
+                    "Unsupported type"
+            ),
+            (
+                    # local file input
+                    [{"component_in_path": Input(path="./tests/test_configs/components/helloworld_component.yml")}],
+                    "Local file input"
+            ),
+            (
+                    # empty path
+                    [{"component_in_path": Input(path=None)}],
+                    "Input path not provided"
+            ),
+            (
+                    # dict Input
+                    [{"component_in_path": {"job_input_path": "azureml://path/to/file"}}],
+                    "Unsupported type"
+            ),
         ],
     )
     def test_dsl_parallel_for_pipeline_illegal_items_content(self, items, error_message):
@@ -303,3 +330,23 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         pipeline_component = my_job.component
         rest_component = pipeline_component._to_rest_object().as_dict()
         assert rest_component["properties"]["component_spec"]["outputs"] == {'output': component_out_dict}
+
+    def test_parallel_for_source(self):
+        basic_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml",
+        )
+
+        @pipeline
+        def my_pipeline():
+            body = basic_component(component_in_path=Input(path="test_path1"))
+
+            foreach_node = parallel_for(
+                body=body,
+                items={
+                    "iter1": {"component_in_number": 1},
+                    "iter2": {"component_in_number": 2}
+                }
+            )
+
+        my_job = my_pipeline()
+        assert my_job.jobs["foreach_node"]._source == ComponentSource.DSL

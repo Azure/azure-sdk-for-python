@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import copy
+import enum
 import os
 import shutil
 import tempfile
@@ -13,7 +14,9 @@ import pydash
 import pytest
 import yaml
 from pytest_mock import MockFixture
-from test_utilities.utils import parse_local_path
+
+from azure.ai.ml._internal._utils import yaml_safe_load_with_base_resolver
+from test_utilities.utils import parse_local_path, build_temp_folder
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
@@ -25,6 +28,15 @@ from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
+
+
+class AdditionalIncludesCheckFunc(enum.Enum):
+    """Enum for additional includes check function"""
+    SKIP = 0
+    SELF_IS_FILE = 1
+    PARENT_EXISTS = 2
+    NOT_EXISTS = 3
+    NO_PARENT = 4
 
 
 @pytest.mark.usefixtures("enable_internal_components")
@@ -40,6 +52,15 @@ class TestComponent:
         from azure.ai.ml.entities._validate_funcs import validate_component
         validation_result = validate_component(yaml_path)
         assert validation_result.passed, repr(validation_result)
+
+    def test_component_inputs_with_bool_and_date_value(self):
+        yaml_path = r"tests/test_configs/internal/command-component/command-linux/" \
+                    r"component_with_bool_and_data_input/component.yaml"
+        component = load_component(yaml_path)
+        assert component.inputs["bool_input"].default == "true"
+        assert component.inputs["enum_input"].default == "true"
+        assert component.inputs["enum_input"].enum == ["true", "false"]
+        assert component.inputs["date_input"].default == "2023-01-01"
 
     def test_specific_error_message_on_load_from_dict(self):
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
@@ -72,6 +93,7 @@ class TestComponent:
             "tags": {"category": "Component Tutorial", "contact": "amldesigner@microsoft.com"},
             "type": "CommandComponent",
             "$schema": "https://componentsdk.azureedge.net/jsonschema/CommandComponent.json",
+            "_source": "CLASS",
             "version": "0.0.1",
             "display_name": "0.0.1",
             "is_deterministic": True,
@@ -130,6 +152,7 @@ class TestComponent:
             "tags": {"org": "bing", "project": "relevance"},
             "type": "ScopeComponent",
             "$schema": "https://componentsdk.azureedge.net/jsonschema/CommandComponent.json",
+            "_source": "CLASS",
             "version": "85b54741.0bf9.4734.a5bb.0e469c7bf792",
             "display_name": "Convert Text to StructureStream",
             "is_deterministic": True,
@@ -198,19 +221,22 @@ class TestComponent:
         for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float", "integer"]:
                 if "enum" in input_port:
-                    input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
+                    input_port["enum"] = list(map(lambda x: str(x).lower() if isinstance(x, bool) else str(x), input_port["enum"]))
                 if "default" in input_port:
-                    input_port["default"] = str(input_port["default"])
+                    input_port["default"] = str(input_port["default"]).lower() if isinstance(input_port["default"], bool) else str(input_port["default"])
 
         # code will be dumped as absolute path
         if "code" in expected_dict:
             expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
 
         assert entity._to_dict() == expected_dict
+
+        expected_rest_object = copy.deepcopy(expected_dict)
+        expected_rest_object["_source"] = "YAML.COMPONENT"
         rest_obj = entity._to_rest_object()
-        assert rest_obj.properties.component_spec == expected_dict
+        assert rest_obj.properties.component_spec == expected_rest_object
 
         # inherit input type map from Component._from_rest_object
         for input_port in expected_dict.get("inputs", {}).values():
@@ -347,43 +373,141 @@ class TestComponent:
         assert component._validate().passed, repr(component._validate())
         # resolve
         with component._resolve_local_code() as code:
-            code_path = code.path
+            code_path: Path = code.path
             assert code_path.is_dir()
-            assert (code_path / "LICENSE").exists()
-            assert (code_path / "library.zip").exists()
+            assert (code_path / "LICENSE").is_file()
+            assert (code_path / "library.zip").is_file()
             assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
-            assert (code_path / "library1" / "hello.py").exists()
-            assert (code_path / "library1" / "world.py").exists()
+            assert (code_path / "library1" / "hello.py").is_file()
+            assert (code_path / "library1" / "world.py").is_file()
+            assert not (code_path / "helloworld_additional_includes.additional_includes").exists()
 
         assert not code_path.is_dir()
 
-    def test_additional_includes_ignore(self) -> None:
-        origin_test_configs_dir = Path("./tests/test_configs/internal/")
-        with tempfile.TemporaryDirectory() as test_configs_dir:
-            for dir_name in ["component_with_additional_includes", "additional_includes"]:
-                shutil.copytree(origin_test_configs_dir / dir_name, Path(test_configs_dir) / dir_name)
-
+    @pytest.mark.parametrize(
+        "test_files",
+        [
+            pytest.param(
+                [
+                    ("component_with_additional_includes/.amlignore", "test_ignore/*\nlibrary1/ignore.py", AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("component_with_additional_includes/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    # will be saved to library1/ignore.py, should be ignored
+                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    # will be saved to library1/ignore.py/a.py, should be ignored
+                    # TODO: can't create with the same name?
+                    # ("additional_includes/library1/ignore.py/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    # will be saved to library1/test_ignore, should be kept
+                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                ],
+                id="amlignore",
+            ),
+            pytest.param(
+                [
+                    # additional_includes for other spec, should be kept
+                    ("component_with_additional_includes/x.additional_includes", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("additional_includes/library1/x.additional_includes", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("additional_includes/library1/test/x.additional_includes", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    # additional_includes in a different level, should be kept
+                    (
+                        "component_with_additional_includes/library2/helloworld_additional_includes.additional_includes",
+                        None,
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                    (
+                        "component_with_additional_includes/library2/library/helloworld_additional_includes.additional_includes",
+                        None,
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                    # additional_includes in a different level in additional includes, should be kept
+                    (
+                        "additional_includes/library1/helloworld_additional_includes.additional_includes",
+                        None,
+                        AdditionalIncludesCheckFunc.SELF_IS_FILE,
+                    ),
+                ],
+                id="additional_includes",
+            ),
+            pytest.param(
+                [
+                    ("component_with_additional_includes/hello.py", None, AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("component_with_additional_includes/test_code/.amlignore", "hello.py", AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    ("component_with_additional_includes/test_code/hello.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    # shall we keep the empty folder?
+                    ("component_with_additional_includes/test_code/a/hello.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                ],
+                id="amlignore_subfolder",
+            ),
+            pytest.param(
+                [
+                    ("additional_includes/library1/.amlignore", "test_ignore\nignore.py",
+                     AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    # will be saved to library1/ignore.py, should be ignored
+                    ("additional_includes/library1/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    # will be saved to library1/ignore.py/a.py, should be ignored
+                    # TODO: can't create with the same name?
+                    # ("additional_includes/library1/ignore.py/a.py", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    # will be saved to library1/test_ignore, should be kept
+                    ("additional_includes/library1/test_ignore/a.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                ],
+                id="amlignore_in_additional_includes_folder",
+            ),
+            pytest.param(
+                [
+                    ("additional_includes/library1/test_ignore/.amlignore", "ignore.py",
+                     AdditionalIncludesCheckFunc.SELF_IS_FILE),
+                    # will be saved to library1/ignore.py, should be ignored
+                    ("additional_includes/library1/test_ignore/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                    (
+                    "additional_includes/library1/test_ignore/ignore.py", None, AdditionalIncludesCheckFunc.NOT_EXISTS),
+                ],
+                id="amlignore_in_additional_includes_subfolder",
+            ),
+            pytest.param(
+                [
+                    ("component_with_additional_includes/__pycache__/a.pyc", None,
+                     AdditionalIncludesCheckFunc.NO_PARENT),
+                    ("component_with_additional_includes/test/__pycache__/a.pyc", None,
+                     AdditionalIncludesCheckFunc.NO_PARENT),
+                    ("additional_includes/library1/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                    ("additional_includes/library1/test/__pycache__/a.pyc", None, AdditionalIncludesCheckFunc.NO_PARENT),
+                ],
+                id="pycache",
+            ),
+        ]
+    )
+    def test_additional_includes_advanced(self, test_files) -> None:
+        with build_temp_folder(
+            source_base_dir="./tests/test_configs/internal/",
+            relative_dirs_to_copy=[
+                "component_with_additional_includes",
+                "additional_includes"
+            ],
+            extra_files_to_create={file: content for file, content, _ in test_files}
+        ) as test_configs_dir:
             yaml_path = Path(test_configs_dir) / "component_with_additional_includes" / "helloworld_additional_includes.yml"
-            additional_includes_dir = Path(test_configs_dir) / "additional_includes"
 
             component: InternalComponent = load_component(source=yaml_path)
-            # create some files/folders expected to ignore
-            code_pycache = yaml_path.parent / "__pycache__"
-            additional_includes_ignore = additional_includes_dir / "library1" / "x.additional_includes"
-            additional_includes_pycache = additional_includes_dir / "library1" / "__pycache__"
-            code_pycache.mkdir()
 
-            (code_pycache / "a.pyc").touch()
-            additional_includes_ignore.touch()
-
-            additional_includes_pycache.mkdir()
-            (additional_includes_pycache / "a.pyc").touch()
             # resolve and check snapshot directory
             with component._resolve_local_code() as code:
-                code_path = code.path
-                assert not (code_path / "__pycache__").exists()
-                assert not (code_path / "library1" / "x.additional_includes").exists()
-                assert not (code_path / "library1" / "__pycache__").exists()
+                for file, content, check_func in test_files:
+                    # original file is based on test_configs_dir, need to remove the leading
+                    # "component_with_additional_includes" or "additional_includes" to get the relative path
+                    resolved_file_path = Path(os.path.join(code.path, *Path(file).parts[1:]))
+                    if check_func == AdditionalIncludesCheckFunc.NO_PARENT:
+                        assert not resolved_file_path.parent.exists(), f"{file} should not have parent"
+                    elif check_func == AdditionalIncludesCheckFunc.SELF_IS_FILE:
+                        assert resolved_file_path.is_file(), f"{file} is not a file"
+                        if content is not None:
+                            assert resolved_file_path.read_text() == content, f"{file} content is not expected"
+                    elif check_func == AdditionalIncludesCheckFunc.PARENT_EXISTS:
+                        assert resolved_file_path.parent.is_dir(), f"{file} should have parent"
+                    elif check_func == AdditionalIncludesCheckFunc.NOT_EXISTS:
+                        assert not resolved_file_path.exists(), f"{file} should not exist"
+                    elif check_func == AdditionalIncludesCheckFunc.SKIP:
+                        pass
+                    else:
+                        raise ValueError(f"Unknown check func: {check_func}")
 
     def test_additional_includes_merge_folder(self) -> None:
         yaml_path = (
@@ -394,12 +518,12 @@ class TestComponent:
         with component._resolve_local_code() as code:
             code_path = code.path
             # first folder
-            assert (code_path / "library1" / "__init__.py").exists()
-            assert (code_path / "library1" / "hello.py").exists()
+            assert (code_path / "library1" / "__init__.py").is_file()
+            assert (code_path / "library1" / "hello.py").is_file()
             # second folder content
             assert (code_path / "library1" / "utils").is_dir()
-            assert (code_path / "library1" / "utils" / "__init__.py").exists()
-            assert (code_path / "library1" / "utils" / "salute.py").exists()
+            assert (code_path / "library1" / "utils" / "__init__.py").is_file()
+            assert (code_path / "library1" / "utils" / "salute.py").is_file()
 
     @pytest.mark.parametrize(
         "yaml_path,has_additional_includes",
@@ -430,8 +554,8 @@ class TestComponent:
                     "helloworld_invalid_additional_includes_zip_file_not_found.yml",
                     "no_code_and_additional_includes",
                 ]:
-                    assert (code_path / path).exists()
-                assert (code_path / "LICENSE").exists()
+                    assert (code_path / path).is_file() if ".yml" in path else (code_path / path).is_dir()
+                assert (code_path / "LICENSE").is_file()
             else:
                 # additional includes not specified, code should be specified path (default yaml folder)
                 yaml_dict = load_yaml(yaml_path)
@@ -584,8 +708,8 @@ class TestComponent:
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
-                # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
-                "param_string_with_yes_value": {"default": "True", "type": "string"},
+                # yes will be converted to true in YAML 1.2, but we will load it as "yes" for backward compatibility
+                "param_string_with_yes_value": {"default": "yes", "type": "string"},
                 "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
             },
             "outputs": {
@@ -686,4 +810,41 @@ class TestComponent:
             with component._resolve_local_code() as code:
                 # ANONYMOUS_COMPONENT_TEST_PARAMS[0] is the test params for simple-command
                 assert code.name == ANONYMOUS_COMPONENT_TEST_PARAMS[0][1]
+
+    def test_component_serialization_corner_case(self):
+        yaml_path = "./tests/test_configs/internal/command-component-serialization-core-case/component_spec.yaml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component
+        rest_object = component._to_rest_object()
+        assert rest_object.properties.component_spec == {
+            '$schema': 'https://componentsdk.azureedge.net/jsonschema/CommandComponent.json',
+            '_source': 'YAML.COMPONENT',
+            'command': 'echo {inputs.input_float} && echo {inputs.delimiter}',
+            'display_name': 'Hello Command',
+            'environment': {'name': 'AzureML-Designer', 'os': 'Linux'},
+            'inputs': {
+                'input_float': {
+                    'default': '1',  # previously this is 1.0
+                    'optional': False,
+                    'type': 'Float'
+                },
+                'input_boolean': {
+                    'default': 'False',
+                    'optional': False,
+                    'type': 'Boolean'
+                },
+                'delimiter': {
+                    'default': '\t',
+                    'optional': True,
+                    'type': 'String'
+                },
+            },
+            'is_deterministic': True,
+            'name': 'hello_command',
+            'type': 'CommandComponent',
+            'version': '0.10',  # previously this is 0.1
+            "datatransfer": {
+                "cloud_type": "aether"
+            }
+        }
 

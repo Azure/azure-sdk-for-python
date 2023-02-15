@@ -99,7 +99,11 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :rtype: None
         """
         await self._blob_lease_client.acquire(lease_duration=lease_duration, **kwargs)
@@ -133,7 +137,11 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         await self._blob_lease_client.renew(**kwargs)
@@ -165,7 +173,11 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         await self._blob_lease_client.release(**kwargs)
@@ -196,7 +208,11 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
         :keyword ~azure.core.MatchConditions match_condition:
             The match condition to use upon the etag.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: None
         """
         await self._blob_lease_client.change(proposed_lease_id=proposed_lease_id, **kwargs)
@@ -236,7 +252,11 @@ class DataLakeLeaseClient(DataLakeLeaseClientBase):  # pylint: disable=client-ac
             Specify this header to perform the operation only if
             the resource has not been modified since the specified date/time.
         :keyword int timeout:
-            The timeout parameter is expressed in seconds.
+            Sets the server-side timeout for the operation in seconds. For more details see
+            https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
+            This value is not tracked or validated on the client. To configure client-side network timesouts
+            see `here <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-file-datalake
+            #other-client--per-operation-configuration>`_.
         :return: Approximate time remaining in the lease period, in seconds.
         :rtype: int
         """

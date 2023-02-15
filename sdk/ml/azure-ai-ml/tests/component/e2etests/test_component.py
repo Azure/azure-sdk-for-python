@@ -257,6 +257,89 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="spark_component_name",
         )
 
+    def test_datatransfer_copy_urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component copy-files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            'inputs': {'folder1': {'type': 'uri_folder', 'optional': False}},
+            'outputs': {'output_folder': {'type': 'uri_folder'}},
+            'is_deterministic': True,
+            'version': '1'
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/copy_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_urifolder",
+        )
+
+    def test_datatransfer_copy_urifile_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component copy uri files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            'inputs': {'folder1': {'type': 'uri_file', 'optional': False}},
+            'outputs': {'output_folder': {'type': 'uri_file'}},
+            'is_deterministic': True,
+            'version': '1'
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/copy_uri_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_urifile",
+        )
+
+    def test_datatransfer_copy_2urifolder_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component merge-files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            'inputs': {'folder1': {'type': 'uri_folder', 'optional': False},
+                       'folder2': {'type': 'uri_folder', 'optional': False}},
+            'outputs': {'output_folder': {'type': 'uri_folder'}},
+            'is_deterministic': True,
+            'version': '1'
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/merge_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_2urifolder",
+        )
+
+    def test_datatransfer_copy_mixtype_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
+        expected_dict = {
+            "$schema": "http://azureml/sdk-2-0/DataTransferComponent.json",
+            "display_name": "Data Transfer Component merge mix type files",
+            "type": "data_transfer",
+            "task": "copy_data",
+            'inputs': {'input1': {'type': 'uri_file', 'optional': False},
+                       'input2': {'type': 'uri_file', 'optional': False},
+                       'input3': {'type': 'mltable', 'optional': False}},
+            'outputs': {'output_folder': {'type': 'uri_folder'}},
+            'is_deterministic': True,
+            'version': '1'
+        }
+        assert_component_basic_workflow(
+            client=client,
+            randstr=randstr,
+            path="./tests/test_configs/components/data_transfer/merge_mixtype_files.yaml",
+            expected_dict=expected_dict,
+            omit_fields=["name", "creation_context", "id"],
+            recorded_component_name="datatransfer_copy_mixtype",
+        )
+
     @pytest.mark.parametrize(
         "component_path",
         [
@@ -511,9 +594,6 @@ class TestComponent(AzureRecordedTestCase):
         tensorflow_component_resource = client.components.create_or_update(component_entity)
         assert tensorflow_component_resource.distribution.__dict__ == tensorflow_distribution(has_strs=True)
 
-    @pytest.mark.skip(
-        "Could not rerecord the test , errors: (UserError) Failed to update component test_81585734883"
-    )
     def test_command_component_create_autoincrement(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component_name")
         params_override = [{"name": component_name}]
@@ -611,15 +691,21 @@ class TestComponent(AzureRecordedTestCase):
     def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_resource = client.components.create_or_update(command_component, is_anonymous=True)
-        assert component_resource.name == ANONYMOUS_COMPONENT_NAME
+        assert component_resource.name == command_component.name
+        assert component_resource.version == command_component.version
+
+        anonymous_name, _, anonymous_version = component_resource.id.split("/")[-3:]
+        assert anonymous_name == ANONYMOUS_COMPONENT_NAME
         # version calculation has been moved to the server side
-        # assert component_resource.version == command_component.version
-        component = client.components.get(component_resource.name, component_resource.version)
+
+        component = client.components.get(anonymous_name, anonymous_version)
         # TODO 1807731: enable this check after server-side fix
         omit_fields = ["creation_context"]
         assert pydash.omit(component_resource._to_dict(), *omit_fields) == pydash.omit(
             component._to_dict(), *omit_fields
         )
+        assert component.name == command_component.name
+        assert component.version == command_component.version
         assert component._source == "REMOTE.WORKSPACE.COMPONENT"
 
     def test_component_archive_restore_version(self, client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -726,9 +812,10 @@ class TestComponent(AzureRecordedTestCase):
         )
         assert component.jobs["component_a_job"].compute == "${{parent.inputs.node_compute}}"
         # Assert E2E
+        component_name = randstr("component_name")
         rest_pipeline_component = create_component(
             client,
-            component_name=randstr("component_name"),
+            component_name=component_name,
             path=component_path,
         )
         assert rest_pipeline_component is not None
@@ -760,11 +847,18 @@ class TestComponent(AzureRecordedTestCase):
             "type": "pipeline",
         }
         assert component_dict == expected_dict
-        # below line is expected to raise KeyError in live test, it will pass after related changes deployed to canary
-        jobs_dict = rest_pipeline_component._to_dict()["jobs"]
-        # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
-        assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
-        assert jobs_dict["component_a_job"]["type"] == "command"
+        rest_dict = rest_pipeline_component._to_dict()
+        if "jobs" in rest_dict:
+            # below line is expected to raise KeyError in live test,
+            # it will pass after related changes deployed to canary
+            jobs_dict = rest_dict["jobs"]
+            # Assert full componentId extra azureml prefix has been removed and parsed to versioned arm id correctly.
+            assert "azureml:azureml_anonymous" in jobs_dict["component_a_job"]["component"]
+            assert jobs_dict["component_a_job"]["type"] == "command"
+            # Assert component show result
+            rest_pipeline_component2 = client.components.get(name=component_name, version="1")
+            jobs_dict2 = rest_pipeline_component2._to_dict()["jobs"]
+            assert jobs_dict == jobs_dict2
 
     def test_helloworld_nested_pipeline_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_path = "./tests/test_configs/components/helloworld_nested_pipeline_component.yml"

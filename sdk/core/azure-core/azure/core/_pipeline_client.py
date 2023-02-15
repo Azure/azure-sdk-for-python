@@ -27,7 +27,6 @@
 import logging
 from collections.abc import Iterable
 from typing import (
-    Any,
     TypeVar,
     TYPE_CHECKING,
 )
@@ -153,8 +152,7 @@ class PipelineClient(PipelineClientBase):
                         index_of_retry = index
                 if index_of_retry == -1:
                     raise ValueError(
-                        "Failed to add per_retry_policies; "
-                        "no RetryPolicy found in the supplied list of policies. "
+                        "Failed to add per_retry_policies; no RetryPolicy found in the supplied list of policies. "
                     )
                 policies_1 = policies[: index_of_retry + 1]
                 policies_2 = policies[index_of_retry + 1 :]
@@ -169,8 +167,7 @@ class PipelineClient(PipelineClientBase):
 
         return Pipeline(transport, policies)
 
-    def send_request(self, request, **kwargs):
-        # type: (HTTPRequestType, Any) -> HTTPResponseType
+    def send_request(self, request: "HTTPRequestType", **kwargs) -> "HTTPResponseType":
         """Method that runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -187,9 +184,7 @@ class PipelineClient(PipelineClientBase):
         """
         stream = kwargs.pop("stream", False)  # want to add default value
         return_pipeline_response = kwargs.pop("_return_pipeline_response", False)
-        pipeline_response = self._pipeline.run(
-            request, stream=stream, **kwargs
-        )  # pylint: disable=protected-access
+        pipeline_response = self._pipeline.run(request, stream=stream, **kwargs)  # pylint: disable=protected-access
         if return_pipeline_response:
             return pipeline_response
         return pipeline_response.http_response

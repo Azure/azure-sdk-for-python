@@ -27,7 +27,7 @@ import abc
 import base64
 import json
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Any, Union
+from typing import TYPE_CHECKING, Optional, Any, Union, Tuple, Callable, Dict
 
 from ..exceptions import HttpResponseError, DecodeError
 from . import PollingMethod
@@ -84,8 +84,7 @@ class OperationFailed(Exception):
     pass
 
 
-def _as_json(response):
-    # type: (ResponseType) -> dict
+def _as_json(response: "ResponseType") -> Dict[str, Any]:
     """Assuming this is not empty, return the content as JSON.
 
     Result/exceptions is not determined if you call this method without testing _is_empty.
@@ -98,8 +97,7 @@ def _as_json(response):
         raise DecodeError("Error occurred in deserializing the response body.")
 
 
-def _raise_if_bad_http_status_and_method(response):
-    # type: (ResponseType) -> None
+def _raise_if_bad_http_status_and_method(response: "ResponseType") -> None:
     """Check response status code is valid.
 
     Must be 200, 201, 202, or 204.
@@ -109,15 +107,10 @@ def _raise_if_bad_http_status_and_method(response):
     code = response.status_code
     if code in {200, 201, 202, 204}:
         return
-    raise BadStatus(
-        "Invalid return status {!r} for {!r} operation".format(
-            code, response.request.method
-        )
-    )
+    raise BadStatus("Invalid return status {!r} for {!r} operation".format(code, response.request.method))
 
 
-def _is_empty(response):
-    # type: (ResponseType) -> bool
+def _is_empty(response: "ResponseType") -> bool:
     """Check if response body contains meaningful content.
 
     :rtype: bool
@@ -137,20 +130,17 @@ class LongRunningOperation(ABC):
     """
 
     @abc.abstractmethod
-    def can_poll(self, pipeline_response):
-        # type: (PipelineResponseType) -> bool
+    def can_poll(self, pipeline_response: "PipelineResponseType") -> bool:
         """Answer if this polling method could be used."""
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_polling_url(self):
-        # type: () -> str
+    def get_polling_url(self) -> str:
         """Return the polling URL."""
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def set_initial_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def set_initial_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -158,14 +148,12 @@ class LongRunningOperation(ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Return the status string extracted from this response."""
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[str]
+    def get_final_get_url(self, pipeline_response: "PipelineResponseType") -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
         :rtype: str
@@ -195,9 +183,7 @@ class OperationResourcePolling(LongRunningOperation):
      https://aka.ms/azsdk/autorest/openapi/lro-options
     """
 
-    def __init__(
-        self, operation_location_header="operation-location", *, lro_options=None
-    ):
+    def __init__(self, operation_location_header="operation-location", *, lro_options=None):
         self._operation_location_header = operation_location_header
 
         # Store the initial URLs
@@ -211,20 +197,17 @@ class OperationResourcePolling(LongRunningOperation):
         response = pipeline_response.http_response
         return self._operation_location_header in response.headers
 
-    def get_polling_url(self):
-        # type: () -> str
+    def get_polling_url(self) -> str:
         """Return the polling URL."""
         return self._async_url
 
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[str]
+    def get_final_get_url(self, pipeline_response: "PipelineResponseType") -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
         :rtype: str
         """
         if (
-            self._lro_options.get(_LroOption.FINAL_STATE_VIA)
-            == _FinalStateViaOption.LOCATION_FINAL_STATE
+            self._lro_options.get(_LroOption.FINAL_STATE_VIA) == _FinalStateViaOption.LOCATION_FINAL_STATE
             and self._location_url
         ):
             return self._location_url
@@ -253,8 +236,7 @@ class OperationResourcePolling(LongRunningOperation):
 
         return None
 
-    def set_initial_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def set_initial_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -268,16 +250,14 @@ class OperationResourcePolling(LongRunningOperation):
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def _set_async_url_if_present(self, response):
-        # type: (ResponseType) -> None
+    def _set_async_url_if_present(self, response: "ResponseType") -> None:
         self._async_url = response.headers[self._operation_location_header]
 
         location_url = response.headers.get("location")
         if location_url:
             self._location_url = location_url
 
-    def get_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process the latest status update retrieved from an "Operation-Location" header.
 
         :param azure.core.pipeline.PipelineResponse response: The response to extract the status.
@@ -285,9 +265,7 @@ class OperationResourcePolling(LongRunningOperation):
         """
         response = pipeline_response.http_response
         if _is_empty(response):
-            raise BadResponse(
-                "The response from long running operation does not contain a body."
-            )
+            raise BadResponse("The response from long running operation does not contain a body.")
 
         body = _as_json(response)
         status = body.get("status")
@@ -302,27 +280,23 @@ class LocationPolling(LongRunningOperation):
     def __init__(self):
         self._location_url = None
 
-    def can_poll(self, pipeline_response):
-        # type: (PipelineResponseType) -> bool
+    def can_poll(self, pipeline_response: "PipelineResponseType") -> bool:
         """Answer if this polling method could be used."""
         response = pipeline_response.http_response
         return "location" in response.headers
 
-    def get_polling_url(self):
-        # type: () -> str
+    def get_polling_url(self) -> str:
         """Return the polling URL."""
         return self._location_url
 
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[str]
+    def get_final_get_url(self, pipeline_response: "PipelineResponseType") -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
         :rtype: str
         """
         return None
 
-    def set_initial_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def set_initial_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process first response after initiating long running operation.
 
         :param azure.core.pipeline.PipelineResponse response: initial REST call response.
@@ -335,8 +309,7 @@ class LocationPolling(LongRunningOperation):
             return "InProgress"
         raise OperationFailed("Operation failed or canceled")
 
-    def get_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process the latest status update retrieved from a 'location' header.
 
         :param azure.core.pipeline.PipelineResponse response: latest REST call response.
@@ -354,18 +327,15 @@ class StatusCheckPolling(LongRunningOperation):
     if not other polling are detected and status code is 2xx.
     """
 
-    def can_poll(self, pipeline_response):
-        # type: (PipelineResponseType) -> bool
+    def can_poll(self, pipeline_response: "PipelineResponseType") -> bool:
         """Answer if this polling method could be used."""
         return True
 
-    def get_polling_url(self):
-        # type: () -> str
+    def get_polling_url(self) -> str:
         """Return the polling URL."""
         raise ValueError("This polling doesn't support polling")
 
-    def set_initial_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def set_initial_status(self, pipeline_response: "PipelineResponseType") -> str:
         """Process first response after initiating long running
         operation and set self.status attribute.
 
@@ -373,12 +343,10 @@ class StatusCheckPolling(LongRunningOperation):
         """
         return "Succeeded"
 
-    def get_status(self, pipeline_response):
-        # type: (PipelineResponseType) -> str
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         return "Succeeded"
 
-    def get_final_get_url(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[str]
+    def get_final_get_url(self, pipeline_response: "PipelineResponseType") -> Optional[str]:
         """If a final GET is needed, returns the URL.
 
         :rtype: str
@@ -398,12 +366,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
     """
 
     def __init__(
-        self,
-        timeout=30,
-        lro_algorithms=None,
-        lro_options=None,
-        path_format_arguments=None,
-        **operation_config
+        self, timeout=30, lro_algorithms=None, lro_options=None, path_format_arguments=None, **operation_config
     ):
         self._lro_algorithms = lro_algorithms or [
             OperationResourcePolling(lro_options=lro_options),
@@ -427,9 +390,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         :rtype: str
         """
         if not self._operation:
-            raise ValueError(
-                "set_initial_status was never called. Did you give this instance to a poller?"
-            )
+            raise ValueError("set_initial_status was never called. Did you give this instance to a poller?")
         return self._status
 
     def finished(self):
@@ -472,42 +433,32 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             raise HttpResponseError(response=initial_response.http_response, error=err)
         except BadResponse as err:
             self._status = "Failed"
-            raise HttpResponseError(
-                response=initial_response.http_response, message=str(err), error=err
-            )
+            raise HttpResponseError(response=initial_response.http_response, message=str(err), error=err)
         except OperationFailed as err:
             raise HttpResponseError(response=initial_response.http_response, error=err)
 
-    def get_continuation_token(self):
-        # type() -> str
+    def get_continuation_token(self) -> str:
         import pickle
 
         return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
 
     @classmethod
-    def from_continuation_token(cls, continuation_token, **kwargs):
-        # type(str, Any) -> Tuple
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
         try:
             client = kwargs["client"]
         except KeyError:
-            raise ValueError(
-                "Need kwarg 'client' to be recreated from continuation_token"
-            )
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
 
         try:
             deserialization_callback = kwargs["deserialization_callback"]
         except KeyError:
-            raise ValueError(
-                "Need kwarg 'deserialization_callback' to be recreated from continuation_token"
-            )
+            raise ValueError("Need kwarg 'deserialization_callback' to be recreated from continuation_token")
 
         import pickle
 
         initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
         # Restore the transport in the context
-        initial_response.context.transport = (
-            client._pipeline._transport  # pylint: disable=protected-access
-        )
+        initial_response.context.transport = client._pipeline._transport  # pylint: disable=protected-access
         return client, initial_response, deserialization_callback
 
     def run(self):
@@ -516,9 +467,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
 
         except BadStatus as err:
             self._status = "Failed"
-            raise HttpResponseError(
-                response=self._pipeline_response.http_response, error=err
-            )
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
         except BadResponse as err:
             self._status = "Failed"
@@ -529,9 +478,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             )
 
         except OperationFailed as err:
-            raise HttpResponseError(
-                response=self._pipeline_response.http_response, error=err
-            )
+            raise HttpResponseError(response=self._pipeline_response.http_response, error=err)
 
     def _poll(self):
         """Poll status of operation so long as operation is incomplete and
@@ -557,8 +504,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             self._pipeline_response = self.request_status(final_get_url)
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
-    def _parse_resource(self, pipeline_response):
-        # type: (PipelineResponseType) -> Optional[Any]
+    def _parse_resource(self, pipeline_response: "PipelineResponseType") -> Optional[Any]:
         """Assuming this response is a resource, use the deserialization callback to parse it.
         If body is empty, assuming no resource to return.
         """
@@ -592,9 +538,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         self._status = self._operation.get_status(self._pipeline_response)
 
     def _get_request_id(self):
-        return self._pipeline_response.http_response.request.headers[
-            "x-ms-client-request-id"
-        ]
+        return self._pipeline_response.http_response.request.headers["x-ms-client-request-id"]
 
     def request_status(self, status_link):
         """Do a simple GET to this status link.
@@ -604,9 +548,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
         :rtype: azure.core.pipeline.PipelineResponse
         """
         if self._path_format_arguments:
-            status_link = self._client.format_url(
-                status_link, **self._path_format_arguments
-            )
+            status_link = self._client.format_url(status_link, **self._path_format_arguments)
         # Re-inject 'x-ms-client-request-id' while polling
         if "request_id" not in self._operation_config:
             self._operation_config["request_id"] = self._get_request_id()
@@ -616,9 +558,7 @@ class LROBasePolling(PollingMethod):  # pylint: disable=too-many-instance-attrib
             from azure.core.rest import HttpRequest as RestHttpRequest
 
             request = RestHttpRequest("GET", status_link)
-            return self._client.send_request(
-                request, _return_pipeline_response=True, **self._operation_config
-            )
+            return self._client.send_request(request, _return_pipeline_response=True, **self._operation_config)
         # if I am a azure.core.pipeline.transport.HttpResponse
         request = self._client.get(status_link)
         return self._client._pipeline.run(  # pylint: disable=protected-access

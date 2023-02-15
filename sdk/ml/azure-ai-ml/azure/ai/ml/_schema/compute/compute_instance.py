@@ -13,6 +13,7 @@ from ..core.fields import ExperimentalField, NestedField, StringTransformedEnum
 from .compute import ComputeSchema, IdentitySchema, NetworkSettingsSchema
 from .schedule import ComputeSchedulesSchema
 from .setup_scripts import SetupScriptsSchema
+from .custom_applications import CustomApplicationsSchema
 
 
 class ComputeInstanceSshSettingsSchema(PathAwareSchema):
@@ -68,6 +69,7 @@ class ComputeInstanceSchema(ComputeSchema):
     identity = ExperimentalField(NestedField(IdentitySchema))
     idle_time_before_shutdown = ExperimentalField(fields.Str())
     idle_time_before_shutdown_minutes = ExperimentalField(fields.Int())
+    custom_applications = ExperimentalField(fields.List(NestedField(CustomApplicationsSchema)))
     setup_scripts = ExperimentalField(NestedField(SetupScriptsSchema))
     os_image_metadata = ExperimentalField(
         NestedField(OsImageMetadataSchema, dump_only=True)

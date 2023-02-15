@@ -28,7 +28,7 @@ import json
 import logging
 import sys
 
-from typing import Callable, Any, Dict, Optional, List, Union, Type, TYPE_CHECKING
+from typing import Callable, Any, Optional, Union, Type, List, Dict, TYPE_CHECKING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,8 +58,7 @@ __all__ = [
 ]
 
 
-def raise_with_traceback(exception, *args, **kwargs):
-    # type: (Callable, Any, Any) -> None
+def raise_with_traceback(exception: Callable, *args, **kwargs) -> None:
     """Raise exception with a specified traceback.
     This MUST be called inside a "except" clause.
 
@@ -81,7 +80,7 @@ def raise_with_traceback(exception, *args, **kwargs):
         raise error
 
 
-class ErrorMap(object):
+class ErrorMap:
     """Error Map class. To be used in map_error method, behaves like a dictionary.
     It returns the error type if it is found in custom_error_map. Or return default_error
 
@@ -110,7 +109,7 @@ def map_error(status_code, response, error_map):
     raise error
 
 
-class ODataV4Format(object):
+class ODataV4Format:
     """Class to describe OData V4 error format.
 
     http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Toc372793091
@@ -155,35 +154,30 @@ class ODataV4Format(object):
     DETAILS_LABEL = "details"
     INNERERROR_LABEL = "innererror"
 
-    def __init__(self, json_object):
+    def __init__(self, json_object: Dict[str, Any]):
         if "error" in json_object:
             json_object = json_object["error"]
-        cls = self.__class__  # type: Type[ODataV4Format]
+        cls: Type[ODataV4Format] = self.__class__
 
         # Required fields, but assume they could be missing still to be robust
-        self.code = json_object.get(cls.CODE_LABEL)  # type: Optional[str]
-        self.message = json_object.get(cls.MESSAGE_LABEL)  # type: Optional[str]
+        self.code: Optional[str] = json_object.get(cls.CODE_LABEL)
+        self.message: Optional[str] = json_object.get(cls.MESSAGE_LABEL)
 
         if not (self.code or self.message):
-            raise ValueError(
-                "Impossible to extract code/message from received JSON:\n"
-                + json.dumps(json_object)
-            )
+            raise ValueError("Impossible to extract code/message from received JSON:\n" + json.dumps(json_object))
 
         # Optional fields
-        self.target = json_object.get(cls.TARGET_LABEL)  # type: Optional[str]
+        self.target: Optional[str] = json_object.get(cls.TARGET_LABEL)
 
         # details is recursive of this very format
-        self.details = []  # type: List[ODataV4Format]
+        self.details: List[ODataV4Format] = []
         for detail_node in json_object.get(cls.DETAILS_LABEL) or []:
             try:
                 self.details.append(self.__class__(detail_node))
             except Exception:  # pylint: disable=broad-except
                 pass
 
-        self.innererror = json_object.get(
-            cls.INNERERROR_LABEL, {}
-        )  # type: Dict[str, Any]
+        self.innererror: Dict[str, Any] = json_object.get(cls.INNERERROR_LABEL, {})
 
     @property
     def error(self):
@@ -198,9 +192,8 @@ class ODataV4Format(object):
     def __str__(self):
         return "({}) {}\n{}".format(self.code, self.message, self.message_details())
 
-    def message_details(self):
+    def message_details(self) -> str:
         """Return a detailled string of the error."""
-        # () -> str
         error_str = "Code: {}".format(self.code)
         error_str += "\nMessage: {}".format(self.message)
         if self.target:
@@ -213,9 +206,7 @@ class ODataV4Format(object):
                 error_str += "\n".join("\t" + s for s in str(error_obj).splitlines())
 
         if self.innererror:
-            error_str += "\nInner error: {}".format(
-                json.dumps(self.innererror, indent=4)
-            )
+            error_str += "\nInner error: {}".format(json.dumps(self.innererror, indent=4))
         return error_str
 
 
@@ -240,9 +231,7 @@ class AzureError(Exception):
     def __init__(self, message, *args, **kwargs):
         self.inner_exception = kwargs.get("error")
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
-        self.exc_type = (
-            self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
-        )
+        self.exc_type = self.exc_type.__name__ if self.exc_type else type(self.inner_exception)
         self.exc_msg = "{}, {}: {}".format(message, self.exc_type, self.exc_value)
         self.message = str(message)
         self.continuation_token = kwargs.get("continuation_token")
@@ -309,16 +298,12 @@ class HttpResponseError(AzureError):
 
         # old autorest are setting "error" before calling __init__, so it might be there already
         # transferring into self.model
-        model = kwargs.pop("model", None)  # type: Optional[msrest.serialization.Model]
+        model: Optional[Any] = kwargs.pop("model", None)
         if model is not None:  # autorest v5
             self.model = model
         else:  # autorest azure-core, for KV 1.0, Storage 12.0, etc.
-            self.model = getattr(
-                self, "error", None
-            )  # type: Optional[msrest.serialization.Model]
-        self.error = self._parse_odata_body(
-            error_format, response
-        )  # type: Optional[ODataV4Format]
+            self.model: Optional[Any] = getattr(self, "error", None)
+        self.error: Optional[ODataV4Format] = self._parse_odata_body(error_format, response)
 
         # By priority, message is:
         # - odatav4 message, OR
@@ -327,15 +312,12 @@ class HttpResponseError(AzureError):
         if self.error:
             message = str(self.error)
         else:
-            message = message or "Operation returned an invalid status '{}'".format(
-                self.reason
-            )
+            message = message or "Operation returned an invalid status '{}'".format(self.reason)
 
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 
     @staticmethod
-    def _parse_odata_body(error_format, response):
-        # type: (Type[ODataV4Format], _HttpResponseBase) -> Optional[ODataV4Format]
+    def _parse_odata_body(error_format: Type[ODataV4Format], response: "_HttpResponseBase") -> Optional[ODataV4Format]:
         try:
             odata_json = json.loads(response.text())
             return error_format(odata_json)
@@ -415,11 +397,9 @@ class ODataV4Error(HttpResponseError):
 
     _ERROR_FORMAT = ODataV4Format
 
-    def __init__(self, response, **kwargs):
-        # type: (_HttpResponseBase, Any) -> None
-
+    def __init__(self, response: "_HttpResponseBase", **kwargs) -> None:
         # Ensure field are declared, whatever can happen afterwards
-        self.odata_json = None  # type: Optional[Dict[str, Any]]
+        self.odata_json: Optional[Dict[str, Any]] = None
         try:
             self.odata_json = json.loads(response.text())
             odata_message = self.odata_json.setdefault("error", {}).get("message")
@@ -427,34 +407,26 @@ class ODataV4Error(HttpResponseError):
             # If the body is not JSON valid, just stop now
             odata_message = None
 
-        self.code = None  # type: Optional[str]
-        self.message = kwargs.get("message", odata_message)  # type: Optional[str]
-        self.target = None  # type: Optional[str]
-        self.details = []  # type: Optional[List[Any]]
-        self.innererror = {}  # type: Optional[Dict[str, Any]]
+        self.code: Optional[str] = None
+        self.message: Optional[str] = kwargs.get("message", odata_message)
+        self.target: Optional[str] = None
+        self.details: Optional[List[Any]] = []
+        self.innererror: Optional[Dict[str, Any]] = {}
 
         if self.message and "message" not in kwargs:
             kwargs["message"] = self.message
 
         super(ODataV4Error, self).__init__(response=response, **kwargs)
 
-        self._error_format = None  # type: Optional[Union[str, ODataV4Format]]
+        self._error_format: Optional[Union[str, ODataV4Format]] = None
         if self.odata_json:
             try:
                 error_node = self.odata_json["error"]
                 self._error_format = self._ERROR_FORMAT(error_node)
-                self.__dict__.update(
-                    {
-                        k: v
-                        for k, v in self._error_format.__dict__.items()
-                        if v is not None
-                    }
-                )
+                self.__dict__.update({k: v for k, v in self._error_format.__dict__.items() if v is not None})
             except Exception:  # pylint: disable=broad-except
                 _LOGGER.info("Received error message was not valid OdataV4 format.")
-                self._error_format = "JSON was invalid for format " + str(
-                    self._ERROR_FORMAT
-                )
+                self._error_format = "JSON was invalid for format " + str(self._ERROR_FORMAT)
 
     def __str__(self):
         if self._error_format:
@@ -472,9 +444,7 @@ class StreamConsumedError(AzureError):
     def __init__(self, response):
         message = (
             "You are attempting to read or stream the content from request {}. "
-            "You have likely already consumed this stream, so it can not be accessed anymore.".format(
-                response.request
-            )
+            "You have likely already consumed this stream, so it can not be accessed anymore.".format(response.request)
         )
         super(StreamConsumedError, self).__init__(message)
 

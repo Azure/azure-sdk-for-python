@@ -11,17 +11,15 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import KeyVaultManagementClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -42,9 +40,9 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -71,7 +69,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
         api_version: Optional[str] = None,
         base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
-        **kwargs  # type: Any
+        **kwargs: Any
     ) -> None:
         self._config = KeyVaultManagementClientConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
@@ -146,6 +144,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import KeysOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'keys'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -171,6 +170,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import ManagedHsmsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'managed_hsms'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -193,6 +193,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import MHSMPrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'mhsm_private_endpoint_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -215,6 +216,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import MHSMPrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'mhsm_private_link_resources'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -249,6 +251,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -280,6 +283,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import PrivateEndpointConnectionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_endpoint_connections'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -311,6 +315,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import PrivateLinkResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'private_link_resources'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -333,6 +338,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import SecretsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'secrets'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -367,6 +373,7 @@ class KeyVaultManagementClient(MultiApiClientMixin, _SDKClient):
             from ..v2022_07_01.aio.operations import VaultsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'vaults'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

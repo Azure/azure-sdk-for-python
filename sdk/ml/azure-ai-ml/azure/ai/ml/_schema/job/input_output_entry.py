@@ -13,6 +13,8 @@ from azure.ai.ml._schema.core.fields import (
     StringTransformedEnum,
     UnionField,
     LocalPathField,
+    NestedField,
+    VersionField,
 )
 
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
@@ -21,6 +23,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     InputOutputModes,
 )
+from azure.ai.ml.constants._component import ExternalDataType
 
 module_logger = logging.getLogger(__name__)
 
@@ -134,6 +137,8 @@ class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
 
 
 class OutputSchema(PathAwareSchema):
+    name = fields.Str()
+    version = VersionField()
     mode = StringTransformedEnum(
         allowed_values=[
             InputOutputModes.MOUNT,
@@ -169,3 +174,77 @@ class OutputSchema(PathAwareSchema):
             return data
         # Assists with union schema
         raise ValidationError("OutputSchema needs type Output to dump")
+
+
+class StoredProcedureParamsSchema(metaclass=PatchedSchemaMeta):
+    name = fields.Str()
+    value = fields.Str()
+    type = fields.Str()
+
+    @pre_dump
+    def check_dict(self, data, **kwargs):
+        for key in self.dump_fields.keys():  # pylint: disable=no-member
+            if data.get(key, None) is None:
+                msg = "StoredProcedureParams must have a {!r} value."
+                raise ValidationError(msg.format(key))
+        return data
+
+
+class DatabaseSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=[
+            ExternalDataType.DATABASE
+        ],
+        required=True
+    )
+    table_name = fields.Str()
+    query = fields.Str(
+        metadata={
+            "description": "The sql query command."
+        },
+    )
+    stored_procedure = fields.Str()
+    stored_procedure_params = fields.List(NestedField(StoredProcedureParamsSchema))
+
+    connection = fields.Str(required=True)
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.data_transfer import Database
+
+        return Database(**data)
+
+    @pre_dump
+    def check_dict(self, data, **kwargs):
+        from azure.ai.ml.data_transfer import Database
+
+        if isinstance(data, Database):
+            return data
+        msg = "DatabaseSchema needs type Database to dump, but got {!r}."
+        raise ValidationError(msg.format(type(data)))
+
+
+class FileSystemSchema(metaclass=PatchedSchemaMeta):
+    type = StringTransformedEnum(
+        allowed_values=[
+            ExternalDataType.FILE_SYSTEM,
+        ],
+    )
+    path = fields.Str()
+
+    connection = fields.Str(required=True)
+
+    @post_load
+    def make(self, data, **kwargs):
+        from azure.ai.ml.data_transfer import FileSystem
+
+        return FileSystem(**data)
+
+    @pre_dump
+    def check_dict(self, data, **kwargs):
+        from azure.ai.ml.data_transfer import FileSystem
+
+        if isinstance(data, FileSystem):
+            return data
+        msg = "FileSystemSchema needs type FileSystem to dump, but got {!r}."
+        raise ValidationError(msg.format(type(data)))
