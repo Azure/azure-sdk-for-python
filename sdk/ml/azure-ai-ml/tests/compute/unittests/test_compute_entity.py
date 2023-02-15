@@ -70,6 +70,8 @@ class TestComputeEntity:
         )
         assert rest_intermediate.properties.properties.enable_node_public_ip
         assert rest_intermediate.location == compute.location
+        assert rest_intermediate.tags is not None
+        assert rest_intermediate.tags["test"] == "true"
 
         serializer = Serializer({"ComputeResource": ComputeResource})
         body = serializer.body(rest_intermediate, "ComputeResource")
@@ -148,7 +150,8 @@ class TestComputeEntity:
 
     def test_compute_instance_load_from_rest(self):
         compute_instance: ComputeInstance = load_compute(
-            "tests/test_configs/compute/compute-ci-unit.yaml"
+            source="tests/test_configs/compute/compute-ci-unit.yaml",
+            params_override=[{"tags.test1": "test"}, {"tags.test2":"true"}, {"tags.test3":"0"}]
         )
        
         compute_instance._set_full_subnet_name("subscription_id", "resource_group_name")
@@ -159,6 +162,10 @@ class TestComputeEntity:
         )
         assert compute_instance2.last_operation == compute_instance.last_operation
         assert compute_instance2.services == compute_instance.services
+        assert compute_instance2.tags is not None
+        assert compute_instance2.tags["test1"] == "test"
+        assert compute_instance2.tags["test2"] == "true"
+        assert compute_instance2.tags["test3"] == "0"
 
     def test_compute_instance_with_image_metadata(self):
         os_image_metadata = ImageMetadata(
