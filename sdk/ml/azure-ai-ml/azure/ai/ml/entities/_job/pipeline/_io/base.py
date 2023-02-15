@@ -56,6 +56,9 @@ def _data_to_input(data):
 
 
 class InputOutputBase(ABC):
+    # TODO: refine this code, always use _data to store builder level settings and use _meta to store definition
+    # TODO: when _data missing, return value from _meta
+
     def __init__(self, meta: Union[Input, Output], data, default_data=None, **kwargs):
         """Base class of input & output.
 
@@ -438,6 +441,29 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
                 f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
                 f"but got type: {type(self._data)}."
                 )
+
+    @property
+    def path(self) -> Optional[str]:
+        # For node output path,
+        if hasattr(self._data, "path"):
+            return self._data.path
+        return None
+
+    @path.setter
+    def path(self, path):
+        # For un-configured output, we build a default data entry for them.
+        self._build_default_data()
+        if hasattr(self._data, "path"):
+            self._data.path = path
+        else:
+            # YAML job will have string output binding and do not support setting path for it.
+            msg = f"{type(self._data)} does not support setting path."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.PIPELINE,
+                error_category=ErrorCategory.USER_ERROR,
+            )
 
     def _assert_name_and_version(self):
         if self.name and not (re.match("^[A-Za-z0-9_-]*$", self.name) and len(self.name) <= 255):

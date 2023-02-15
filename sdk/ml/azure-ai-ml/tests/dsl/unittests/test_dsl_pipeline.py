@@ -1360,7 +1360,7 @@ class TestDSLPipeline:
                         },
                     }
                 },
-                "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
+                "outputs": {"trained_model": {"job_output_type": "uri_folder", 'mode': 'Upload'}},
                 "settings": {},
             }
         }
@@ -2804,6 +2804,155 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException) as e:
             pipeline._validate()
         assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)
+
+    def test_pipeline_output_settings_copy(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path.path = "path1"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job2 = my_pipeline()
+
+        pipeline_job1.outputs.component_out_path.path = "new_path"
+
+        # modified pipeline output setting won't affect pipeline component or other nodes.
+        assert pipeline_job1.outputs.component_out_path.path == "new_path"
+        assert pipeline_job1.component.outputs["component_out_path"].path == "path1"
+        assert pipeline_job2.outputs.component_out_path.path == "path1"
+        assert pipeline_job2.component.outputs["component_out_path"].path == "path1"
+
+        # newly create pipeline job instance won't be affected
+        pipeline_job3 = my_pipeline()
+        assert pipeline_job3.outputs.component_out_path.path == "path1"
+        assert pipeline_job3.component.outputs["component_out_path"].path == "path1"
+
+    def test_node_path_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path = Output(
+                # the following settings will be copied to pipeline level
+                path="path",
+            )
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        assert pipeline_job1.outputs.component_out_path.path == "path"
+
+        @dsl.pipeline()
+        def outer_pipeline():
+            node1 = my_pipeline()
+            assert node1.outputs.component_out_path.path == "path"
+            node1.outputs.component_out_path.path = "new_path"
+            assert node1.outputs.component_out_path.path == "new_path"
+            return node1.outputs
+
+        pipeline_job2 = outer_pipeline()
+        assert pipeline_job2.outputs.component_out_path.path == "new_path"
+
+    def test_node_output_type_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        params_override = [{"outputs": {
+            "component_out_path": {"type": "uri_file"}
+        }}]
+        component_func1 = load_component(source=component_yaml, params_override=params_override)
+
+        # without node level setting, node should have same type with component
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        assert pipeline_job1.outputs.component_out_path.type == "uri_file"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "uri_file"
+
+        # when node level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            node1.outputs.component_out_path.type = "mlflow_model"
+            assert node1.outputs.component_out_path.type == "mlflow_model"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.type == "mlflow_model"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "mlflow_model"
+
+        # when pipeline level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            node1.outputs.component_out_path.type = "mlflow_model"
+            assert node1.outputs.component_out_path.type == "mlflow_model"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job1.outputs.component_out_path.type = "custom_model"
+        assert pipeline_job1.outputs.component_out_path.type == "custom_model"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "custom_model"
+
+    def test_node_output_mode_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        params_override = [{"outputs": {
+            "component_out_path": {"mode": "mount", "type": "uri_file"}
+        }}]
+        component_func1 = load_component(source=component_yaml, params_override=params_override)
+
+        # without node level setting, node should have same type with component
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.mode == "mount"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "ReadWriteMount"
+
+        # when node level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            node1.outputs.component_out_path.mode = "upload"
+            assert node1.outputs.component_out_path.mode == "upload"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.mode == "upload"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "Upload"
+
+        # when pipeline level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            node1.outputs.component_out_path.mode = "upload"
+            assert node1.outputs.component_out_path.mode == "upload"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job1.outputs.component_out_path.mode = "direct"
+        assert pipeline_job1.outputs.component_out_path.mode == "direct"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "Direct"
 
     def test_validate_pipeline_node_io_name_has_keyword(self, caplog):
         # Refresh logger for pytest to capture log, otherwise the result is empty.
