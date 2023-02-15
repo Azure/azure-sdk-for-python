@@ -16,7 +16,6 @@ from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
 from azure.ai.ml._azure_environments import (
-    EndpointURLS,
     CloudArgumentKeys,
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,

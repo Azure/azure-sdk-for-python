@@ -22,7 +22,7 @@ from azure.ai.ml import (
     load_workspace,
     load_workspace_connection,
 )
-from azure.ai.ml._azure_environments import AzureEnvironments
+from azure.ai.ml._azure_environments import _get_default_cloud_name, AzureEnvironments 
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 from azure.ai.ml.exceptions import ValidationException
@@ -456,7 +456,7 @@ class TestMachineLearningClient:
             workspace_name="test-ws1",
             **kwargs,
         )
-        assert ml_client._cloud == "AzureCloud"
+        assert _get_default_cloud_name() == "AzureCloud"
         assert ml_client._base_url != "https://test.management.azure.com"
         
         # This full cloud config should be added fine
@@ -478,7 +478,7 @@ class TestMachineLearningClient:
             workspace_name="test-ws1",
             **kwargs,
         )
-        assert ml_client._cloud == "test_cloud"
+        assert _get_default_cloud_name() == "test_cloud"
         assert ml_client._base_url == "https://test.management.azure.com"
 
         # We shouldn't need to add it to the kwargs a second time, just the cloud name
