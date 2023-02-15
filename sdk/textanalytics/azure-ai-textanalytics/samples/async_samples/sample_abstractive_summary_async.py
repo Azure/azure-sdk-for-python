@@ -25,13 +25,12 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
-import os
 import asyncio
 
 
 async def sample_abstractive_summarization_async() -> None:
     # [START abstractive_summary_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 

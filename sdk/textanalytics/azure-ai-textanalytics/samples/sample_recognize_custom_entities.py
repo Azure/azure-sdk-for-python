@@ -25,11 +25,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_recognize_custom_entities() -> None:
     # [START recognize_custom_entities]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 
