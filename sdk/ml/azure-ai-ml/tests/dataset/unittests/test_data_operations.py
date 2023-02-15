@@ -29,9 +29,8 @@ from unittest.mock import ANY
 
 @pytest.fixture
 def mock_datastore_operation(
-        mock_workspace_scope: OperationScope,
-        mock_operation_config: OperationConfig,
-        mock_aml_services_2022_10_01: Mock) -> DatastoreOperations:
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01: Mock
+) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
@@ -79,8 +78,7 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
         name="testFileData",
         version="3",
         relative_path="path",
-        datastore_arm_id=
-        "/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
+        datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
         container_name="containerName",
     )
 
@@ -88,37 +86,27 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
 # @pytest.fixture
 def mock_sas_uri(**kwargs) -> Mock:
     return "test_sas_uri"
+
+
 @pytest.mark.unittest
-@patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
-       new=mock_artifact_storage)
-@patch("azure.ai.ml._utils._registry_utils.get_sas_uri_for_registry_asset",
-       new=mock_sas_uri)
+@patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
+@patch("azure.ai.ml._utils._registry_utils.get_sas_uri_for_registry_asset", new=mock_sas_uri)
 @patch.object(Data, "_from_rest_object", new=Mock())
 @patch.object(Data, "_from_container_rest_object", new=Mock())
 @pytest.mark.data_experiences_test
 class TestDataOperations:
-
     def test_list(self, mock_data_operations: DataOperations) -> None:
-        mock_data_operations._operation.list.return_value = [
-            Mock(Data) for _ in range(10)
-        ]
-        mock_data_operations._container_operation.list.return_value = [
-            Mock(Data) for _ in range(10)
-        ]
+        mock_data_operations._operation.list.return_value = [Mock(Data) for _ in range(10)]
+        mock_data_operations._container_operation.list.return_value = [Mock(Data) for _ in range(10)]
         result = mock_data_operations.list()
         assert isinstance(result, Iterable)
         mock_data_operations._container_operation.list.assert_called_once()
         mock_data_operations.list(name="random_name")
         mock_data_operations._operation.list.assert_called_once()
 
-    def test_list_in_registry(
-            self, mock_data_operations_in_registry: DataOperations) -> None:
-        mock_data_operations_in_registry._operation.list.return_value = [
-            Mock(Data) for _ in range(10)
-        ]
-        mock_data_operations_in_registry._container_operation.list.return_value = [
-            Mock(Data) for _ in range(10)
-        ]
+    def test_list_in_registry(self, mock_data_operations_in_registry: DataOperations) -> None:
+        mock_data_operations_in_registry._operation.list.return_value = [Mock(Data) for _ in range(10)]
+        mock_data_operations_in_registry._container_operation.list.return_value = [Mock(Data) for _ in range(10)]
         mock_data_operations_in_registry.list(name="random_name")
         mock_data_operations_in_registry._operation.list.assert_called_once_with(
             name="random_name",
@@ -128,14 +116,9 @@ class TestDataOperations:
             cls=ANY,
         )
 
-    def test_list_in_registry_no_name(
-            self, mock_data_operations_in_registry: DataOperations) -> None:
-        mock_data_operations_in_registry._operation.list.return_value = [
-            Mock(Data) for _ in range(10)
-        ]
-        mock_data_operations_in_registry._container_operation.list.return_value = [
-            Mock(Data) for _ in range(10)
-        ]
+    def test_list_in_registry_no_name(self, mock_data_operations_in_registry: DataOperations) -> None:
+        mock_data_operations_in_registry._operation.list.return_value = [Mock(Data) for _ in range(10)]
+        mock_data_operations_in_registry._container_operation.list.return_value = [Mock(Data) for _ in range(10)]
         mock_data_operations_in_registry.list()
         mock_data_operations_in_registry._container_operation.list.assert_called_once_with(
             resource_group_name=Test_Resource_Group,
@@ -144,40 +127,27 @@ class TestDataOperations:
             cls=ANY,
         )
 
-    def test_get_with_version(self,
-                              mock_data_operations: DataOperations) -> None:
+    def test_get_with_version(self, mock_data_operations: DataOperations) -> None:
         name_only = "some_name"
         version = "1"
         data_asset = Data(name=name_only, version=version)
-        with patch.object(ItemPaged,
-                          "next"), patch.object(Data,
-                                                "_from_rest_object",
-                                                return_value=data_asset):
+        with patch.object(ItemPaged, "next"), patch.object(Data, "_from_rest_object", return_value=data_asset):
             mock_data_operations.get(name_only, version)
         mock_data_operations._operation.get.assert_called_once_with(
-            name=name_only,
-            version=version,
-            resource_group_name=Test_Resource_Group,
-            workspace_name=Test_Workspace_Name)
+            name=name_only, version=version, resource_group_name=Test_Resource_Group, workspace_name=Test_Workspace_Name
+        )
 
-    def test_get_in_registry_with_version(
-            self, mock_data_operations_in_registry: DataOperations) -> None:
+    def test_get_in_registry_with_version(self, mock_data_operations_in_registry: DataOperations) -> None:
         name_only = "some_name"
         version = "1"
         data_asset = Data(name=name_only, version=version)
-        with patch.object(ItemPaged,
-                          "next"), patch.object(Data,
-                                                "_from_rest_object",
-                                                return_value=data_asset):
+        with patch.object(ItemPaged, "next"), patch.object(Data, "_from_rest_object", return_value=data_asset):
             mock_data_operations_in_registry.get(name_only, version)
         mock_data_operations_in_registry._operation.get.assert_called_once_with(
-            name=name_only,
-            version=version,
-            resource_group_name=Test_Resource_Group,
-            registry_name=Test_Registry_Name)
+            name=name_only, version=version, resource_group_name=Test_Resource_Group, registry_name=Test_Registry_Name
+        )
 
-    def test_get_no_version(self,
-                            mock_data_operations: DataOperations) -> None:
+    def test_get_no_version(self, mock_data_operations: DataOperations) -> None:
         name = "random_name"
         with pytest.raises(Exception) as ex:
             mock_data_operations.get(name=name)
@@ -190,18 +160,17 @@ class TestDataOperations:
     ) -> None:
         data_path = "./tests/test_configs/dataset/data_local_path.yaml"
         with patch(
-                "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
-                return_value=ArtifactStorageInfo(
-                    name="testFileData",
-                    version="3",
-                    relative_path="path",
-                    datastore_arm_id=
-                    "/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
-                    container_name="containerName",
-                ),
+            "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore",
+            return_value=ArtifactStorageInfo(
+                name="testFileData",
+                version="3",
+                relative_path="path",
+                datastore_arm_id="/subscriptions/mock/resourceGroups/mock/providers/Microsoft.MachineLearningServices/workspaces/mock/datastores/datastore_id",
+                container_name="containerName",
+            ),
         ) as mock_thing, patch(
-                "azure.ai.ml.operations._data_operations.Data._from_rest_object",
-                return_value=None,
+            "azure.ai.ml.operations._data_operations.Data._from_rest_object",
+            return_value=None,
         ):
             data = load_data(source=data_path)
             path = Path(data._base_path, data.path).resolve()
@@ -220,8 +189,7 @@ class TestDataOperations:
                 ignore_file=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
-        assert "version='1'" in str(
-            mock_data_operations._operation.create_or_update.call_args)
+        assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
 
     def test_create_or_update_in_registry(
         self,
@@ -233,14 +201,11 @@ class TestDataOperations:
         data_path = "./tests/test_configs/dataset/data_local_path.yaml"
         data = load_data(source=data_path)
         with patch(
-                "azure.ai.ml.operations._data_operations._check_and_upload_path",
-                return_value=(data, "indicatorfile.txt"),
-        ), patch(
-                "azure.ai.ml.operations._data_operations.Data._from_rest_object",
-                return_value=data
-        ), patch(
-                "azure.ai.ml.operations._data_operations.get_sas_uri_for_registry_asset",
-                return_value="test_sas_uri") as mock_sas_uri:
+            "azure.ai.ml.operations._data_operations._check_and_upload_path",
+            return_value=(data, "indicatorfile.txt"),
+        ), patch("azure.ai.ml.operations._data_operations.Data._from_rest_object", return_value=data), patch(
+            "azure.ai.ml.operations._data_operations.get_sas_uri_for_registry_asset", return_value="test_sas_uri"
+        ) as mock_sas_uri:
             mock_data_operations_in_registry.create_or_update(data)
             mock_sas_uri.assert_called_once()
             mock_data_operations_in_registry._operation.begin_create_or_update.assert_called_once_with(
@@ -248,7 +213,8 @@ class TestDataOperations:
                 version="1",
                 registry_name=Test_Registry_Name,
                 resource_group_name=Test_Resource_Group,
-                body=ANY)
+                body=ANY,
+            )
 
     def test_create_with_mltable_pattern_path(
         self,
@@ -304,7 +270,9 @@ class TestDataOperations:
 
         with pytest.raises(Exception) as ex:
             load_data("tests/test_configs/dataset/data_missing_path_test.yml")
-        assert REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA) in str(ex.value)
+        assert REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT.format(YAMLRefDocSchemaNames.DATA, YAMLRefDocLinks.DATA) in str(
+            ex.value
+        )
 
     @patch("azure.ai.ml.operations._data_operations.read_local_mltable_metadata_contents")
     @patch("azure.ai.ml.operations._data_operations.read_remote_mltable_metadata_contents")
