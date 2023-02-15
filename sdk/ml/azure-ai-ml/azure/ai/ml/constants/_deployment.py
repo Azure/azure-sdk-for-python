@@ -25,3 +25,4 @@ class EndpointDeploymentLogContainerType(object):
     STORAGE_INITIALIZER = "storage-initializer"
 
 SmallSKUs = ["standard_ds1_v2", "standard_ds2_v2"]
+DEFAULT_MDC_PATH = "azureml://datastores/workspaceblobstore/paths/modelDataCollector"
