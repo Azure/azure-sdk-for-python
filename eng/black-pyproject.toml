@@ -3,6 +3,6 @@ line-length = 120
 extend-exclude = '''
 # Exclude some directories from formatting (note the slashes surrounding the pattern)
 /(
-  _restclient
+  azure/ai/ml/_restclient
 )/
 '''
