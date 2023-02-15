@@ -6,15 +6,20 @@
 
 from typing import IO, AnyStr, Dict, Optional, Union
 
-from azure.ai.ml.entities._workspace.workspace import Workspace, CustomerManagedKey, FeatureStoreSettings
+from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
+from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntimeDto
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 
 
-class FeatureStore(Workspace):
+class FeatureStore:
     def __init__(
         self,
         *,
         name: str,
+        spark_runtime_version: Optional[str] = None,
+        offline_store: Optional[str] = None,
+        online_store: Optional[str] = None,
+        allow_role_assignments_on_resource_group_level: bool = False,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -30,10 +35,17 @@ class FeatureStore(Workspace):
         public_network_access: Optional[str] = None,
         identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
-        feature_store_settings: FeatureStoreSettings,
         **kwargs,
     ):
-        super().__init__(
+        feature_store_settings = FeatureStoreSettings(
+            compute_runtime=ComputeRuntimeDto(
+                spark_runtime_version=spark_runtime_version
+            ),
+            offline_store_connection_name=offline_store,
+            online_store_connection_name=online_store,
+            allow_role_assignments_on_resource_group_level=allow_role_assignments_on_resource_group_level
+        )
+        Workspace(
             name=name,
             description=description,
             tags=tags,
@@ -53,4 +65,16 @@ class FeatureStore(Workspace):
             primary_user_assigned_identity=primary_user_assigned_identity,
             feature_store_settings=feature_store_settings,
             ** kwargs
+        )
+
+    @classmethod
+    def _from_rest_object(cls, rest_obj: RestWorkspace) -> "FeatureStore":
+
+        if not rest_obj:
+            return None
+
+        workspace_object = Workspace._from_rest_object(rest_obj)
+
+        return FeatureStore(
+            name=workspace_object.name
         )

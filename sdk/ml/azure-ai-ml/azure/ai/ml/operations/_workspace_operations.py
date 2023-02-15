@@ -603,14 +603,17 @@ class WorkspaceOperations:
             _set_val(param["primaryUserAssignedIdentity"], workspace.primary_user_assigned_identity)
 
         if workspace.feature_store_settings:
-            _set_val(param["feature_store_compute_runtime"],
-                     workspace.feature_store_settings.compute_runtime)
-            _set_val(param["feature_store_offlinestoreconnectionname"],
-                     workspace.feature_store_settings.offline_store_connection_name)
-            _set_val(param["feature_store_onlinestoreconnectionname"],
-                     workspace.feature_store_settings.online_store_connection_name)
-            _set_val(param["feature_store_allowroleassignmentsonresourcegrouplevel"],
-                     workspace.feature_store_settings.allow_role_assignments_on_resource_group_level)
+            _set_val(param["spark_runtime_version"],
+                    workspace.feature_store_settings.compute_runtime.spark_runtime_version
+                    if workspace.feature_store_settings.compute_runtime.spark_runtime_version else '')
+            _set_val(param["offline_store_connection_name"],
+                     workspace.feature_store_settings.offline_store_connection_name 
+                     if workspace.feature_store_settings.offline_store_connection_name else '')
+            _set_val(param["online_store_connection_name"],
+                     workspace.feature_store_settings.online_store_connection_name
+                     if workspace.feature_store_settings.online_store_connection_name else '')
+            _set_val(param["allow_role_assignments_on_resource_group_level"],
+                     "true" if workspace.feature_store_settings.allow_role_assignments_on_resource_group_level else "false")
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

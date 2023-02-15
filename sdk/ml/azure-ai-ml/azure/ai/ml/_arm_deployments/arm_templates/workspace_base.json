@@ -393,6 +393,37 @@
             "metadata": {
                 "description": "ARM identifier of primary user assigned managed identity, in case multiple ones are specified. Also the default managed identity for clusterless compute."
             }
+        },
+        "spark_runtime_version": {
+            "type": "string",
+            "metadata": {
+                "description": "spark version to be used by all feature sets"
+            }
+        },
+        "offline_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store offline store config"
+            }
+        },
+        "online_store_connection_name": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Feature store online store config"
+            }
+        },
+        "allow_role_assignments_on_resource_group_level": {
+            "type": "string",
+            "defaultValue": "false",
+            "allowedValues": [
+                "false",
+                "true"
+            ],
+            "metadata": {
+                "description": "Whether to allow role assignments on resource group level"
+            }
         }
     },
     "variables": {
@@ -574,14 +605,6 @@
                 "publicNetworkAccess": "[parameters('publicNetworkAccess')]",
                 "softDeleteEnabled": "[parameters('soft_delete_enabled')]",
                 "allowRecoverSoftDeletedWorkspace": "[parameters('allow_recover_softdeleted_workspace')]",
-                "featurestore": {
-                    "computeruntime": {
-                        "SparkRuntimeVersion": "[parameters('feature_store_compute_runtime')]"
-                    },
-                    "offlinestoreconnectionname": "[parameters('feature_store_offlinestoreconnectionname')]",
-                    "onlinestoreconnectionname": "[parameters('feature_store_onlinestoreconnectionname')]",
-                    "allowroleassignmentsonresourcegrouplevel": "[parameters('feature_store_allowroleassignmentsonresourcegrouplevel')]"
-                },
                 "encryption": {
                     "status": "[parameters('encryption_status')]",
                     "keyVaultProperties": {
@@ -592,7 +615,15 @@
                     "storageAccountArmId": "[parameters('encryption_storage_resourceid')]",
                     "SearchAccountArmId": "[parameters('encryption_search_resourceid')]"
                 },
-                "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]"
+                "primaryUserAssignedIdentity": "[parameters('primaryUserAssignedIdentity')]",
+                "featurestore": {
+                    "computeruntime": {
+                        "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
+                    },
+                    "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
+                    "onlinestoreconnectionname": "[parameters('online_store_connection_name')]",
+                    "allowroleassignmentsonresourcegrouplevel": "[parameters('allow_role_assignments_on_resource_group_level')]"
+                }
             }
         },
         {

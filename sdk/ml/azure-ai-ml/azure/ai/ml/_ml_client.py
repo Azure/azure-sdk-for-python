@@ -309,6 +309,7 @@ class MLClient:
         self._operation_container.add(AzureMLResourceType.WORKSPACE, self._workspaces)
 
         self._featurestores = FeatureStoreOperations(
+            self._operation_scope,
             self._rp_service_client,
             self._operation_container,
             **app_insights_handler_kwargs,

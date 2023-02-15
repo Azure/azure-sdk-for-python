@@ -118,5 +118,17 @@
     },
     "primaryUserAssignedIdentity": {
         "value": ""
+    },
+    "spark_runtime_version" : {
+        "value": ""
+    },
+    "offline_store_connection_name" : {
+        "value": ""
+    },
+    "online_store_connection_name" : {
+        "value": ""
+    },
+    "allow_role_assignments_on_resource_group_level" : {
+        "value": "false"
     }
 }

@@ -13,7 +13,7 @@ class FeatureStoreSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        compute_runtime: Optional["ComputeRuntimeDto"] = None,
+        compute_runtime: ComputeRuntimeDto,
         offline_store_connection_name: Optional[str] = None,
         online_store_connection_name: Optional[str] = None,
         allow_role_assignments_on_resource_group_level: Optional[bool] = None,
