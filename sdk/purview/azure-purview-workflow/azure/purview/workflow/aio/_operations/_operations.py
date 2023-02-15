@@ -29,7 +29,6 @@ from azure.core.utils import case_insensitive_dict
 from ..._operations._operations import (
     build_purview_workflow_approve_approval_task_request,
     build_purview_workflow_cancel_workflow_run_request,
-    build_purview_workflow_claim_dsar_task_request_request,
     build_purview_workflow_create_or_replace_workflow_request,
     build_purview_workflow_delete_workflow_request,
     build_purview_workflow_get_workflow_request,
@@ -40,9 +39,8 @@ from ..._operations._operations import (
     build_purview_workflow_list_workflows_request,
     build_purview_workflow_reassign_workflow_task_request,
     build_purview_workflow_reject_approval_task_request,
-    build_purview_workflow_release_dsar_task_request_request,
     build_purview_workflow_submit_user_requests_request,
-    build_purview_workflow_update_task_request_request,
+    build_purview_workflow_update_task_status_request,
 )
 from .._vendor import PurviewWorkflowClientMixinABC
 
@@ -69,28 +67,28 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
 
                 # response body for status code(s): 200
                 response == {
-                    "createdBy": "str",  # The person who created the workflow. Required.
-                    "createdTime": "2020-02-20 00:00:00",  # The created time of workflow.
-                      Required.
                     "description": "str",  # Description of a workflow. Required.
                     "id": "str",  # The id of workflow. Required.
                     "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
                     "name": "str",  # The name of a workflow. Required.
                     "triggers": [
                         {
                             "type": "str",  # Required. Known values are:
                               "when_term_creation_is_requested", "when_term_deletion_is_requested",
                               "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", "when_asset_update_is_requested",
-                              "when_dsar_deletion_is_requested", and "when_dsar_export_is_requested".
+                              "when_data_access_grant_is_requested", and
+                              "when_asset_update_is_requested".
                             "underCollection": "str",  # Optional. The collection name.
                             "underGlossary": "str",  # Optional. The glossary guid.
                             "underGlossaryHierarchy": "str"  # Optional. Glossary term
                               hierarchy path.
                         }
                     ],
-                    "updatedBy": "str"  # The person who updated the workflow. Required.
+                    "createdBy": "str",  # Optional. The person who created the workflow.
+                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
+                      workflow.
+                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
+                    "updatedBy": "str"  # Optional. The person who updated the workflow.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -183,28 +181,28 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                 response == {
                     "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines steps
                       to be executed in a workflow run and their order. Required.
-                    "createdBy": "str",  # The person who created the workflow. Required.
-                    "createdTime": "2020-02-20 00:00:00",  # The created time of workflow.
-                      Required.
                     "description": "str",  # Description of a workflow. Required.
                     "id": "str",  # The id of workflow. Required.
                     "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
                     "name": "str",  # The name of a workflow. Required.
                     "triggers": [
                         {
                             "type": "str",  # Required. Known values are:
                               "when_term_creation_is_requested", "when_term_deletion_is_requested",
                               "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", "when_asset_update_is_requested",
-                              "when_dsar_deletion_is_requested", and "when_dsar_export_is_requested".
+                              "when_data_access_grant_is_requested", and
+                              "when_asset_update_is_requested".
                             "underCollection": "str",  # Optional. The collection name.
                             "underGlossary": "str",  # Optional. The glossary guid.
                             "underGlossaryHierarchy": "str"  # Optional. Glossary term
                               hierarchy path.
                         }
                     ],
-                    "updatedBy": "str"  # The person who updated the workflow. Required.
+                    "createdBy": "str",  # Optional. The person who created the workflow.
+                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
+                      workflow.
+                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
+                    "updatedBy": "str"  # Optional. The person who updated the workflow.
                 }
         """
         error_map = {
@@ -286,8 +284,8 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                             "type": "str",  # Required. Known values are:
                               "when_term_creation_is_requested", "when_term_deletion_is_requested",
                               "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", "when_asset_update_is_requested",
-                              "when_dsar_deletion_is_requested", and "when_dsar_export_is_requested".
+                              "when_data_access_grant_is_requested", and
+                              "when_asset_update_is_requested".
                             "underCollection": "str",  # Optional. The collection name.
                             "underGlossary": "str",  # Optional. The glossary guid.
                             "underGlossaryHierarchy": "str"  # Optional. Glossary term
@@ -302,28 +300,28 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                 response == {
                     "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines steps
                       to be executed in a workflow run and their order. Required.
-                    "createdBy": "str",  # The person who created the workflow. Required.
-                    "createdTime": "2020-02-20 00:00:00",  # The created time of workflow.
-                      Required.
                     "description": "str",  # Description of a workflow. Required.
                     "id": "str",  # The id of workflow. Required.
                     "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
                     "name": "str",  # The name of a workflow. Required.
                     "triggers": [
                         {
                             "type": "str",  # Required. Known values are:
                               "when_term_creation_is_requested", "when_term_deletion_is_requested",
                               "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", "when_asset_update_is_requested",
-                              "when_dsar_deletion_is_requested", and "when_dsar_export_is_requested".
+                              "when_data_access_grant_is_requested", and
+                              "when_asset_update_is_requested".
                             "underCollection": "str",  # Optional. The collection name.
                             "underGlossary": "str",  # Optional. The glossary guid.
                             "underGlossaryHierarchy": "str"  # Optional. Glossary term
                               hierarchy path.
                         }
                     ],
-                    "updatedBy": "str"  # The person who updated the workflow. Required.
+                    "createdBy": "str",  # Optional. The person who created the workflow.
+                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
+                      workflow.
+                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
+                    "updatedBy": "str"  # Optional. The person who updated the workflow.
                 }
         """
 
@@ -356,28 +354,28 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                 response == {
                     "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines steps
                       to be executed in a workflow run and their order. Required.
-                    "createdBy": "str",  # The person who created the workflow. Required.
-                    "createdTime": "2020-02-20 00:00:00",  # The created time of workflow.
-                      Required.
                     "description": "str",  # Description of a workflow. Required.
                     "id": "str",  # The id of workflow. Required.
                     "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
                     "name": "str",  # The name of a workflow. Required.
                     "triggers": [
                         {
                             "type": "str",  # Required. Known values are:
                               "when_term_creation_is_requested", "when_term_deletion_is_requested",
                               "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", "when_asset_update_is_requested",
-                              "when_dsar_deletion_is_requested", and "when_dsar_export_is_requested".
+                              "when_data_access_grant_is_requested", and
+                              "when_asset_update_is_requested".
                             "underCollection": "str",  # Optional. The collection name.
                             "underGlossary": "str",  # Optional. The glossary guid.
                             "underGlossaryHierarchy": "str"  # Optional. Glossary term
                               hierarchy path.
                         }
                     ],
-                    "updatedBy": "str"  # The person who updated the workflow. Required.
+                    "createdBy": "str",  # Optional. The person who created the workflow.
+                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
+                      workflow.
+                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
+                    "updatedBy": "str"  # Optional. The person who updated the workflow.
                 }
         """
 
@@ -406,28 +404,28 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                 response == {
                     "actionDag": {},  # The action DAG(Directed Acyclic Graph), it defines steps
                       to be executed in a workflow run and their order. Required.
-                    "createdBy": "str",  # The person who created the workflow. Required.
-                    "createdTime": "2020-02-20 00:00:00",  # The created time of workflow.
-                      Required.
                     "description": "str",  # Description of a workflow. Required.
                     "id": "str",  # The id of workflow. Required.
                     "isEnabled": bool,  # Whether the workflow is enabled or not. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
                     "name": "str",  # The name of a workflow. Required.
                     "triggers": [
                         {
                             "type": "str",  # Required. Known values are:
                               "when_term_creation_is_requested", "when_term_deletion_is_requested",
                               "when_term_update_is_requested", "when_terms_import_is_requested",
-                              "when_data_access_grant_is_requested", "when_asset_update_is_requested",
-                              "when_dsar_deletion_is_requested", and "when_dsar_export_is_requested".
+                              "when_data_access_grant_is_requested", and
+                              "when_asset_update_is_requested".
                             "underCollection": "str",  # Optional. The collection name.
                             "underGlossary": "str",  # Optional. The glossary guid.
                             "underGlossaryHierarchy": "str"  # Optional. Glossary term
                               hierarchy path.
                         }
                     ],
-                    "updatedBy": "str"  # The person who updated the workflow. Required.
+                    "createdBy": "str",  # Optional. The person who created the workflow.
+                    "createdTime": "2020-02-20 00:00:00",  # Optional. The created time of
+                      workflow.
+                    "lastUpdateTime": "2020-02-20 00:00:00",  # Optional. The last update time.
+                    "updatedBy": "str"  # Optional. The person who updated the workflow.
                 }
         """
         error_map = {
@@ -563,7 +561,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                               want to submit. Required.
                             "type": "str"  # The operation type. Required. Known values
                               are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", "GrantDataAccess", "DSARDelete", and "DSARExport".
+                              "UpdateAsset", and "GrantDataAccess".
                         }
                     ],
                     "comment": "str"  # Optional. The comment when submit a user request.
@@ -577,7 +575,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                               want to submit. Required.
                             "type": "str",  # The operation type. Required. Known values
                               are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", "GrantDataAccess", "DSARDelete", and "DSARExport".
+                              "UpdateAsset", and "GrantDataAccess".
                             "workflowRunIds": [
                                 "str"  # Optional. The list of operations user want
                                   to submit, each operation matches one Purview API call and will do
@@ -622,7 +620,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                               want to submit. Required.
                             "type": "str",  # The operation type. Required. Known values
                               are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", "GrantDataAccess", "DSARDelete", and "DSARExport".
+                              "UpdateAsset", and "GrantDataAccess".
                             "workflowRunIds": [
                                 "str"  # Optional. The list of operations user want
                                   to submit, each operation matches one Purview API call and will do
@@ -666,7 +664,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                               want to submit. Required.
                             "type": "str",  # The operation type. Required. Known values
                               are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                              "UpdateAsset", "GrantDataAccess", "DSARDelete", and "DSARExport".
+                              "UpdateAsset", and "GrantDataAccess".
                             "workflowRunIds": [
                                 "str"  # Optional. The list of operations user want
                                   to submit, each operation matches one Purview API call and will do
@@ -744,7 +742,6 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
         time_window: Optional[str] = None,
         orderby: Optional[str] = None,
         run_statuses: Optional[List[str]] = None,
-        user_request_ids: Optional[List[str]] = None,
         workflow_ids: Optional[List[str]] = None,
         **kwargs: Any
     ) -> AsyncIterable[JSON]:
@@ -759,8 +756,6 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
         :paramtype orderby: str
         :keyword run_statuses: Filter workflow runs by workflow run status. Default value is None.
         :paramtype run_statuses: list[str]
-        :keyword user_request_ids: Filter items by user request id list. Default value is None.
-        :paramtype user_request_ids: list[str]
         :keyword workflow_ids: Filter items by workflow id list. Default value is None.
         :paramtype workflow_ids: list[str]
         :return: An iterator like instance of JSON object
@@ -779,7 +774,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                           to update. Required.
                         "type": "str"  # The workflow run payload type. Required. Known
                           values are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                          "UpdateAsset", "GrantDataAccess", "DSARDelete", and "DSARExport".
+                          "UpdateAsset", and "GrantDataAccess".
                     },
                     "startTime": "2020-02-20 00:00:00",  # Workflow run start time. Required.
                     "status": "str",  # The status. Required. Known values are: "NotStarted",
@@ -814,7 +809,6 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                     time_window=time_window,
                     orderby=orderby,
                     run_statuses=run_statuses,
-                    user_request_ids=user_request_ids,
                     workflow_ids=workflow_ids,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -908,7 +902,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                           to update. Required.
                         "type": "str"  # The workflow run payload type. Required. Known
                           values are: "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms",
-                          "UpdateAsset", "GrantDataAccess", "DSARDelete", and "DSARExport".
+                          "UpdateAsset", and "GrantDataAccess".
                     },
                     "startTime": "2020-02-20 00:00:00",  # Optional. Workflow run start time.
                     "status": "str",  # Optional. The status. Known values are: "NotStarted",
@@ -1125,8 +1119,8 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                         "targetValue": "str",  # The target value of entity which user want
                           to involve workflow to update. Required.
                         "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset",
-                          "GrantDataAccess", "DSARDelete", and "DSARExport".
+                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset", and
+                          "GrantDataAccess".
                         "payload": {}  # Optional. The payload of the task.
                     },
                     "requestor": "str",  # The person who submitted the user request. Required.
@@ -1136,7 +1130,16 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                     "approvalDetail": {
                         "approvalType": "str",  # The approval type of an approval task.
                           Required. Known values are: "PendingOnAny" and "PendingOnAll".
-                        "approvers": {},  # The list of approvers with reply. Required.
+                        "approvers": {
+                            "str": {
+                                "reply": "str",  # The response for an approval task.
+                                  Required. Known values are: "Approved", "Rejected", and "Pending".
+                                "comment": "str",  # Optional. The comment of
+                                  approving or rejecting an approval request.
+                                "responseTime": "2020-02-20 00:00:00"  # Optional.
+                                  The reply time of approver to a workflow task.
+                            }
+                        },
                         "status": "str"  # The status of an approval task. Required. Known
                           values are: "Pending", "Approved", "Rejected", and "Canceled".
                     },
@@ -1163,73 +1166,6 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                     "title": "str"  # Optional. The workflow task title.
                 }
 
-                # JSON input template for discriminator value "DsarTask":
-                workflow_task = {
-                    "createdTime": "2020-02-20 00:00:00",  # The created time. Required.
-                    "id": "str",  # The workflow task id. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
-                    "payload": {
-                        "targetValue": "str",  # The target value of entity which user want
-                          to involve workflow to update. Required.
-                        "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset",
-                          "GrantDataAccess", "DSARDelete", and "DSARExport".
-                        "payload": {}  # Optional. The payload of the task.
-                    },
-                    "requestor": "str",  # The person who submitted the user request. Required.
-                    "type": "DsarTask",
-                    "workflowId": "str",  # The workflow id. Required.
-                    "workflowRunId": "str",  # The workflow run id. Required.
-                    "expiryInfo": {
-                        "expirySettings": {
-                            "expireAfter": {},  # The time of expiry. Required.
-                            "notifyOnExpiration": [
-                                "str"  # Optional. Required.
-                            ]
-                        },
-                        "expiryTime": "2020-02-20 00:00:00",  # The expiry time. Required.
-                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",  # The next
-                          expiry notification time. Required.
-                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"  # Optional. The
-                          last expiry notification time.
-                    },
-                    "reminderInfo": {
-                        "nextRemindTime": "2020-02-20 00:00:00",  # The next remind time.
-                          Required.
-                        "reminderSettings": {},  # The reminder settings. Required.
-                        "lastRemindTime": "2020-02-20 00:00:00"  # Optional. The last update
-                          time.
-                    },
-                    "taskDetail": {
-                        "approvers": [
-                            "str"  # The list of approvers. Required.
-                        ],
-                        "assignedTo": [
-                            "str"  # The users or groups were assigned the dsar task.
-                              Required.
-                        ],
-                        "changeHistory": [
-                            {
-                                "change": {},  # The changes made on this task.
-                                  Required.
-                                "type": "str",  # Required. Known values are:
-                                  "ApproveApproval", "RejectApproval", "Reassign", "ChangeTaskStatus",
-                                  "ClaimTask", and "ReleaseTask".
-                                "updatedBy": "str",  # Required.
-                                "updatedTime": "2020-02-20 00:00:00"  # Required.
-                            }
-                        ],
-                        "dsarId": "str",  # The dsar id. Required.
-                        "dsarTaskId": "str",  # The dsar task id. Required.
-                        "status": "str",  # The dsar task status. Required. Known values are:
-                          "NotStarted", "InProgress", "Completed", "NotApplicable", "Approved", and
-                          "Reopened".
-                        "taskBody": "str",  # The dsar task body. Required.
-                        "claimedBy": "str"  # Optional. The user who claimed the dsar task.
-                    },
-                    "title": "str"  # Optional. The workflow task title.
-                }
-
                 # JSON input template for discriminator value "SimpleTask":
                 workflow_task = {
                     "createdTime": "2020-02-20 00:00:00",  # The created time. Required.
@@ -1239,8 +1175,8 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                         "targetValue": "str",  # The target value of entity which user want
                           to involve workflow to update. Required.
                         "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset",
-                          "GrantDataAccess", "DSARDelete", and "DSARExport".
+                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset", and
+                          "GrantDataAccess".
                         "payload": {}  # Optional. The payload of the task.
                     },
                     "requestor": "str",  # The person who submitted the user request. Required.
@@ -1273,15 +1209,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                               Required.
                         ],
                         "changeHistory": [
-                            {
-                                "change": {},  # The changes made on this task.
-                                  Required.
-                                "type": "str",  # Required. Known values are:
-                                  "ApproveApproval", "RejectApproval", "Reassign", "ChangeTaskStatus",
-                                  "ClaimTask", and "ReleaseTask".
-                                "updatedBy": "str",  # Required.
-                                "updatedTime": "2020-02-20 00:00:00"  # Required.
-                            }
+                            {}  # Required.
                         ],
                         "status": "str",  # Simple task status. Required. Known values are:
                           "NotStarted", "InProgress", "Completed", and "Canceled".
@@ -1397,8 +1325,8 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                         "targetValue": "str",  # The target value of entity which user want
                           to involve workflow to update. Required.
                         "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset",
-                          "GrantDataAccess", "DSARDelete", and "DSARExport".
+                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset", and
+                          "GrantDataAccess".
                         "payload": {}  # Optional. The payload of the task.
                     },
                     "requestor": "str",  # The person who submitted the user request. Required.
@@ -1408,7 +1336,16 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                     "approvalDetail": {
                         "approvalType": "str",  # The approval type of an approval task.
                           Required. Known values are: "PendingOnAny" and "PendingOnAll".
-                        "approvers": {},  # The list of approvers with reply. Required.
+                        "approvers": {
+                            "str": {
+                                "reply": "str",  # The response for an approval task.
+                                  Required. Known values are: "Approved", "Rejected", and "Pending".
+                                "comment": "str",  # Optional. The comment of
+                                  approving or rejecting an approval request.
+                                "responseTime": "2020-02-20 00:00:00"  # Optional.
+                                  The reply time of approver to a workflow task.
+                            }
+                        },
                         "status": "str"  # The status of an approval task. Required. Known
                           values are: "Pending", "Approved", "Rejected", and "Canceled".
                     },
@@ -1435,73 +1372,6 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                     "title": "str"  # Optional. The workflow task title.
                 }
 
-                # JSON input template for discriminator value "DsarTask":
-                workflow_task = {
-                    "createdTime": "2020-02-20 00:00:00",  # The created time. Required.
-                    "id": "str",  # The workflow task id. Required.
-                    "lastUpdateTime": "2020-02-20 00:00:00",  # The last update time. Required.
-                    "payload": {
-                        "targetValue": "str",  # The target value of entity which user want
-                          to involve workflow to update. Required.
-                        "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset",
-                          "GrantDataAccess", "DSARDelete", and "DSARExport".
-                        "payload": {}  # Optional. The payload of the task.
-                    },
-                    "requestor": "str",  # The person who submitted the user request. Required.
-                    "type": "DsarTask",
-                    "workflowId": "str",  # The workflow id. Required.
-                    "workflowRunId": "str",  # The workflow run id. Required.
-                    "expiryInfo": {
-                        "expirySettings": {
-                            "expireAfter": {},  # The time of expiry. Required.
-                            "notifyOnExpiration": [
-                                "str"  # Optional. Required.
-                            ]
-                        },
-                        "expiryTime": "2020-02-20 00:00:00",  # The expiry time. Required.
-                        "nextExpiryNotificationTime": "2020-02-20 00:00:00",  # The next
-                          expiry notification time. Required.
-                        "lastExpiryNotificationTime": "2020-02-20 00:00:00"  # Optional. The
-                          last expiry notification time.
-                    },
-                    "reminderInfo": {
-                        "nextRemindTime": "2020-02-20 00:00:00",  # The next remind time.
-                          Required.
-                        "reminderSettings": {},  # The reminder settings. Required.
-                        "lastRemindTime": "2020-02-20 00:00:00"  # Optional. The last update
-                          time.
-                    },
-                    "taskDetail": {
-                        "approvers": [
-                            "str"  # The list of approvers. Required.
-                        ],
-                        "assignedTo": [
-                            "str"  # The users or groups were assigned the dsar task.
-                              Required.
-                        ],
-                        "changeHistory": [
-                            {
-                                "change": {},  # The changes made on this task.
-                                  Required.
-                                "type": "str",  # Required. Known values are:
-                                  "ApproveApproval", "RejectApproval", "Reassign", "ChangeTaskStatus",
-                                  "ClaimTask", and "ReleaseTask".
-                                "updatedBy": "str",  # Required.
-                                "updatedTime": "2020-02-20 00:00:00"  # Required.
-                            }
-                        ],
-                        "dsarId": "str",  # The dsar id. Required.
-                        "dsarTaskId": "str",  # The dsar task id. Required.
-                        "status": "str",  # The dsar task status. Required. Known values are:
-                          "NotStarted", "InProgress", "Completed", "NotApplicable", "Approved", and
-                          "Reopened".
-                        "taskBody": "str",  # The dsar task body. Required.
-                        "claimedBy": "str"  # Optional. The user who claimed the dsar task.
-                    },
-                    "title": "str"  # Optional. The workflow task title.
-                }
-
                 # JSON input template for discriminator value "SimpleTask":
                 workflow_task = {
                     "createdTime": "2020-02-20 00:00:00",  # The created time. Required.
@@ -1511,8 +1381,8 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                         "targetValue": "str",  # The target value of entity which user want
                           to involve workflow to update. Required.
                         "type": "str",  # The task payload type. Required. Known values are:
-                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset",
-                          "GrantDataAccess", "DSARDelete", and "DSARExport".
+                          "CreateTerm", "UpdateTerm", "DeleteTerm", "ImportTerms", "UpdateAsset", and
+                          "GrantDataAccess".
                         "payload": {}  # Optional. The payload of the task.
                     },
                     "requestor": "str",  # The person who submitted the user request. Required.
@@ -1545,15 +1415,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                               Required.
                         ],
                         "changeHistory": [
-                            {
-                                "change": {},  # The changes made on this task.
-                                  Required.
-                                "type": "str",  # Required. Known values are:
-                                  "ApproveApproval", "RejectApproval", "Reassign", "ChangeTaskStatus",
-                                  "ClaimTask", and "ReleaseTask".
-                                "updatedBy": "str",  # Required.
-                                "updatedTime": "2020-02-20 00:00:00"  # Required.
-                            }
+                            {}  # Required.
                         ],
                         "status": "str",  # Simple task status. Required. Known values are:
                           "NotStarted", "InProgress", "Completed", and "Canceled".
@@ -1951,7 +1813,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
             return cls(pipeline_response, None, {})
 
     @overload
-    async def update_task_request(  # pylint: disable=inconsistent-return-statements
+    async def update_task_status(  # pylint: disable=inconsistent-return-statements
         self, task_id: str, task_update_command: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Update the status of a workflow task request.
@@ -1973,14 +1835,14 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
                 # JSON input template you can fill out and use as your body input.
                 task_update_command = {
                     "newStatus": "str",  # The new status will be used to update the task.
-                      Required. Known values are: "Not Started", "In Progress", "Completed", and
+                      Required. Known values are: "NotStarted", "InProgress", "Completed", and
                       "Canceled".
                     "comment": "str"  # Optional. The comment when update a task.
                 }
         """
 
     @overload
-    async def update_task_request(  # pylint: disable=inconsistent-return-statements
+    async def update_task_status(  # pylint: disable=inconsistent-return-statements
         self, task_id: str, task_update_command: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Update the status of a workflow task request.
@@ -1998,7 +1860,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
         """
 
     @distributed_trace_async
-    async def update_task_request(  # pylint: disable=inconsistent-return-statements
+    async def update_task_status(  # pylint: disable=inconsistent-return-statements
         self, task_id: str, task_update_command: Union[JSON, IO], **kwargs: Any
     ) -> None:
         """Update the status of a workflow task request.
@@ -2037,229 +1899,7 @@ class PurviewWorkflowClientOperationsMixin(PurviewWorkflowClientMixinABC):
         else:
             _json = task_update_command
 
-        request = build_purview_workflow_update_task_request_request(
-            task_id=task_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @overload
-    async def claim_dsar_task_request(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, dsar_task_claim_command: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Claim a DSAR task request.
-
-        :param task_id: The task id. Required.
-        :type task_id: str
-        :param dsar_task_claim_command: Request body of claiming DSAR task request. Required.
-        :type dsar_task_claim_command: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                dsar_task_claim_command = {
-                    "comment": "str"  # Optional. The comment when claiming a DSAR task.
-                }
-        """
-
-    @overload
-    async def claim_dsar_task_request(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, dsar_task_claim_command: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Claim a DSAR task request.
-
-        :param task_id: The task id. Required.
-        :type task_id: str
-        :param dsar_task_claim_command: Request body of claiming DSAR task request. Required.
-        :type dsar_task_claim_command: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def claim_dsar_task_request(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, dsar_task_claim_command: Union[JSON, IO], **kwargs: Any
-    ) -> None:
-        """Claim a DSAR task request.
-
-        :param task_id: The task id. Required.
-        :type task_id: str
-        :param dsar_task_claim_command: Request body of claiming DSAR task request. Is either a model
-         type or a IO type. Required.
-        :type dsar_task_claim_command: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(dsar_task_claim_command, (IO, bytes)):
-            _content = dsar_task_claim_command
-        else:
-            _json = dsar_task_claim_command
-
-        request = build_purview_workflow_claim_dsar_task_request_request(
-            task_id=task_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
-
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @overload
-    async def release_dsar_task_request(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, dsar_task_release_command: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Release a DSAR task request.
-
-        :param task_id: The task id. Required.
-        :type task_id: str
-        :param dsar_task_release_command: Request body of releasing DSAR task request. Required.
-        :type dsar_task_release_command: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                dsar_task_release_command = {
-                    "comment": "str"  # Optional. The comment when releasing a DSAR task.
-                }
-        """
-
-    @overload
-    async def release_dsar_task_request(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, dsar_task_release_command: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Release a DSAR task request.
-
-        :param task_id: The task id. Required.
-        :type task_id: str
-        :param dsar_task_release_command: Request body of releasing DSAR task request. Required.
-        :type dsar_task_release_command: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def release_dsar_task_request(  # pylint: disable=inconsistent-return-statements
-        self, task_id: str, dsar_task_release_command: Union[JSON, IO], **kwargs: Any
-    ) -> None:
-        """Release a DSAR task request.
-
-        :param task_id: The task id. Required.
-        :type task_id: str
-        :param dsar_task_release_command: Request body of releasing DSAR task request. Is either a
-         model type or a IO type. Required.
-        :type dsar_task_release_command: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(dsar_task_release_command, (IO, bytes)):
-            _content = dsar_task_release_command
-        else:
-            _json = dsar_task_release_command
-
-        request = build_purview_workflow_release_dsar_task_request_request(
+        request = build_purview_workflow_update_task_status_request(
             task_id=task_id,
             content_type=content_type,
             api_version=self._config.api_version,
