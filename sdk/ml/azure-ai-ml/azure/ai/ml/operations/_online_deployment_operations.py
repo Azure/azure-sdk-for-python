@@ -353,7 +353,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
             data_object = Data(
                 name = data_name,
                 path = deployment.data_collector.destination.path
-                if deployment.data_collector.destination and deployment.data_collector.destination.path 
+                if deployment.data_collector.destination and deployment.data_collector.destination.path
                 else DEFAULT_MDC_PATH,
                 is_anonymous= True
         )
