@@ -107,6 +107,8 @@ class ComputeInstance(Compute):
     :type description: Optional[str], optional
     :param size: Compute Size, defaults to None
     :type size: Optional[str], optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     :param create_on_behalf_of: defaults to None
     :type create_on_behalf_of: Optional[AssignedUserConfiguration], optional
     :ivar state: defaults to None
@@ -157,6 +159,7 @@ class ComputeInstance(Compute):
         name: str,
         description: Optional[str] = None,
         size: Optional[str] = None,
+        tags: Optional[dict] = None,
         ssh_public_access_enabled: Optional[bool] = None,
         create_on_behalf_of: Optional[AssignedUserConfiguration] = None,
         network_settings: Optional[NetworkSettings] = None,
@@ -180,6 +183,7 @@ class ComputeInstance(Compute):
             location=kwargs.pop("location", None),
             resource_id=kwargs.pop("resource_id", None),
             description=description,
+            tags=tags,
             **kwargs,
         )
         self.size = size
@@ -310,6 +314,7 @@ class ComputeInstance(Compute):
             identity=(
                 self.identity._to_compute_rest_object() if self.identity else None
             ),
+            tags=self.tags,
         )
 
     def _to_dict(self) -> Dict:
@@ -403,6 +408,7 @@ class ComputeInstance(Compute):
             description=prop.description,
             location=rest_obj.location,
             resource_id=prop.resource_id,
+            tags=rest_obj.tags if rest_obj.tags else None,
             provisioning_state=prop.provisioning_state,
             provisioning_errors=prop.provisioning_errors[0].error.code
             if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
