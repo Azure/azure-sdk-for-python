@@ -258,13 +258,9 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
     def tox_env_str_to_set(env_str: str) -> set:
         return set(env.strip().lower() for env in env_str.split(","))
 
-    def all_checks_run_pytest(s: set) -> bool:
-        """Returns true if all checks in the set run pytest and accept args for it"""
-        # This will return True for when s is the empty set, since the default
-        # tox environment runs pytest
-        return s.issubset(
-            {"whl_no_aio", "sdist", "develop", "devtest", "latestdependency", "mindependency", "whl", "sdist"}
-        )
+    def any_check_rejects_pytest_args(s: set) -> bool:
+        """Returns true if any check in the set accepts posargs but not for pytest"""
+        return not s.isdisjoint({"apistub", "pylint", "next-pylint"})
 
     for index, package_dir in enumerate(targeted_packages):
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
@@ -327,7 +323,7 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
             if parsed_args.dest_dir:
                 local_options_array.extend(["--out-path", parsed_args.dest_dir])
 
-        if all_checks_run_pytest(check_set):
+        if not any_check_rejects_pytest_args(check_set):
             local_options_array = options_array[:]
 
             # Get code coverage params for current package
