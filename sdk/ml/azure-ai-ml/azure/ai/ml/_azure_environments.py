@@ -32,6 +32,9 @@ class EndpointURLS:  # pylint: disable=too-few-public-methods,no-init
     STORAGE_ENDPOINT = "storage_endpoint"
     REGISTRY_DISCOVERY_ENDPOINT = "registry_discovery_endpoint"
 
+class CloudArgumentKeys:
+    CLOUD_METADATA = "cloud_metadata"
+
 
 _environments = {
     AzureEnvironments.ENV_DEFAULT: {
@@ -282,14 +285,16 @@ def _convert_arm_to_cli(arm_cloud_metadata):
 
 def _add_cloud_to_environments(kwargs):
     if kwargs["cloud"] in _environments:
-        module_logger.warning("Cannot overwrite existing cloud: %s", kwargs["cloud"])
-        return False
+        raise AttributeError("Cannot overwrite existing cloud: %s", kwargs["cloud"])
+    cloud_metadata = kwargs[CloudArgumentKeys.CLOUD_METADATA]
+    if cloud_metadata is None:
+        raise LookupError("%s not present in kwargs, no environment to add!", CloudArgumentKeys.CLOUD_METADATA)
     _environments[kwargs["cloud"]] = {
-        EndpointURLS.AZURE_PORTAL_ENDPOINT: kwargs[EndpointURLS.AZURE_PORTAL_ENDPOINT],
-        EndpointURLS.RESOURCE_MANAGER_ENDPOINT: kwargs[EndpointURLS.RESOURCE_MANAGER_ENDPOINT],
-        EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: kwargs[EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT],
-        EndpointURLS.AML_RESOURCE_ID: kwargs[EndpointURLS.AML_RESOURCE_ID],
-        EndpointURLS.STORAGE_ENDPOINT: kwargs[EndpointURLS.STORAGE_ENDPOINT],
-        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: kwargs[EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT],
+        EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud_metadata[EndpointURLS.AZURE_PORTAL_ENDPOINT],
+        EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud_metadata[EndpointURLS.RESOURCE_MANAGER_ENDPOINT],
+        EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: cloud_metadata[EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT],
+        EndpointURLS.AML_RESOURCE_ID: cloud_metadata[EndpointURLS.AML_RESOURCE_ID],
+        EndpointURLS.STORAGE_ENDPOINT: cloud_metadata[EndpointURLS.STORAGE_ENDPOINT],
+        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: cloud_metadata[EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT],
     }
-    return True
+    

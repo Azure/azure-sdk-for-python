@@ -17,6 +17,7 @@ from azure.core.polling import LROPoller
 
 from azure.ai.ml._azure_environments import (
     EndpointURLS,
+    CloudArgumentKeys,
     _get_base_url_from_metadata,
     _get_cloud_information_from_metadata,
     _get_default_cloud_name,
@@ -168,24 +169,22 @@ class MLClient:
         show_progress = kwargs.pop("show_progress", True)
         self._operation_config = OperationConfig(show_progress=show_progress)
 
-        cloud_config_keys = [
-            EndpointURLS.AZURE_PORTAL_ENDPOINT,
-            EndpointURLS.RESOURCE_MANAGER_ENDPOINT,
-            EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT,
-            EndpointURLS.AML_RESOURCE_ID,
-            EndpointURLS.STORAGE_ENDPOINT,
-            EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT
-        ]
-        unset_keys = set(cloud_config_keys).difference(kwargs)
         if "cloud" in kwargs:
             cloud_name = kwargs["cloud"]
-            if len(unset_keys) == 0:
-                _add_cloud_to_environments(kwargs)
+            if CloudArgumentKeys.CLOUD_METADATA in kwargs:
+                try:
+                    _add_cloud_to_environments(kwargs)
+                except AttributeError as e:
+                    module_logger.debug("Cloud already exists: %s",e)
+                except LookupError as e:
+                    module_logger.debug("Missing keyword: %s", e)
+            else:
+                module_logger.debug(
+                    "%s key not found in kwargs",
+                    CloudArgumentKeys.CLOUD_METADATA
+                )
         else:
-            module_logger.debug(
-                "Missing keys for full cloud config: '%s'.",
-                ','.join(unset_keys),
-            )
+            module_logger.debug("cloud key not found in kwargs")
             cloud_name = _get_default_cloud_name()
 
         self._cloud = cloud_name
