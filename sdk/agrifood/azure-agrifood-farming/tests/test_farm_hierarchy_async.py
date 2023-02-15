@@ -39,7 +39,8 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         # Create
         party_response = await client.parties.create_or_update(
             party_id=party_id,
-            party=party_request
+            party=party_request,
+            headers={"Accept-Encoding": "gzip, deflate"}
         )
 
         # Assert on immediate response
@@ -58,7 +59,9 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         assert type(parse(party_response["modifiedDateTime"])) is datetime
 
         # Retrieve created object
-        retrieved_party = await client.parties.get(party_id=party_id)
+        retrieved_party = await client.parties.get(
+            party_id=party_id,
+            headers={"Accept-Encoding": "gzip, deflate"})
 
         # Assert on retrieved object
         assert retrieved_party["id"] == party_id
@@ -69,7 +72,8 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         # Update
         updated_party = await client.parties.create_or_update(
             party_id=party_id,
-            party=party_request
+            party=party_request,
+            headers={"Accept-Encoding": "gzip, deflate"}
         )
 
         # Assert on immediate response
@@ -78,16 +82,22 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         assert updated_party["createdDateTime"] == party_response["createdDateTime"]
 
         # Retrieve updated object
-        retrieved_party = await client.parties.get(party_id=party_id)
+        retrieved_party = await client.parties.get(
+            party_id=party_id,
+            headers={"Accept-Encoding": "gzip, deflate"})
 
         # Assert updated object
         assert retrieved_party == updated_party
 
         # Delete
-        await client.parties.delete(party_id=party_id)
+        await client.parties.delete(
+            party_id=party_id,
+            headers={"Accept-Encoding": "gzip, deflate"})
 
         # Assert object doesn't exist anymore
         with pytest.raises(ResourceNotFoundError):
-            await client.parties.get(party_id=party_id)
+            await client.parties.get(
+                party_id=party_id,
+                headers={"Accept-Encoding": "gzip, deflate"})
         
         await self.close_client()
