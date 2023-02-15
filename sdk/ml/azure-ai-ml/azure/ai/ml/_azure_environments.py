@@ -284,11 +284,12 @@ def _convert_arm_to_cli(arm_cloud_metadata):
     return cli_cloud_metadata_dict
 
 def _add_cloud_to_environments(kwargs):
-    if kwargs["cloud"] in _environments:
-        raise AttributeError("Cannot overwrite existing cloud: %s", kwargs["cloud"])
+    cloud_name = kwargs["cloud"]
+    if cloud_name in _environments:
+        raise AttributeError(f"Cannot overwrite existing cloud: {cloud_name}")
     cloud_metadata = kwargs[CloudArgumentKeys.CLOUD_METADATA]
     if cloud_metadata is None:
-        raise LookupError("%s not present in kwargs, no environment to add!", CloudArgumentKeys.CLOUD_METADATA)
+        raise LookupError(f"{CloudArgumentKeys.CLOUD_METADATA} not present in kwargs, no environment to add!")
     _environments[kwargs["cloud"]] = {
         EndpointURLS.AZURE_PORTAL_ENDPOINT: cloud_metadata[EndpointURLS.AZURE_PORTAL_ENDPOINT],
         EndpointURLS.RESOURCE_MANAGER_ENDPOINT: cloud_metadata[EndpointURLS.RESOURCE_MANAGER_ENDPOINT],

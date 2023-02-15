@@ -440,12 +440,14 @@ class TestMachineLearningClient:
         # This cloud config should not work and it should NOT overwrite the hardcoded AzureCloud 
         kwargs = {
             "cloud": "AzureCloud",
-            "azure_portal": "https://test.portal.azure.com/",
-            "resource_manager": "https://test.management.azure.com/",
-            "active_directory": "https://test.login.microsoftonline.com/",
-            "aml_resource_id": "https://test.ml.azure.com/",
-            "storage_endpoint": "test.core.windows.net",
-            "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
+            "cloud_metadata": {
+                "azure_portal": "https://test.portal.azure.com/",
+                "resource_manager": "https://test.management.azure.com/",
+                "active_directory": "https://test.login.microsoftonline.com/",
+                "aml_resource_id": "https://test.ml.azure.com/",
+                "storage_endpoint": "test.core.windows.net",
+                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
+            }
         }
         ml_client = MLClient(
             credential=mock_credential,
@@ -460,12 +462,14 @@ class TestMachineLearningClient:
         # This full cloud config should be added fine
         kwargs = {
             "cloud": "test_cloud",
-            "azure_portal": "https://test.portal.azure.com/",
-            "resource_manager": "https://test.management.azure.com/",
-            "active_directory": "https://test.login.microsoftonline.com/",
-            "aml_resource_id": "https://test.ml.azure.com/",
-            "storage_endpoint": "test.core.windows.net",
-            "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
+            "cloud_metadata": {
+                "azure_portal": "https://test.portal.azure.com/",
+                "resource_manager": "https://test.management.azure.com/",
+                "active_directory": "https://test.login.microsoftonline.com/",
+                "aml_resource_id": "https://test.ml.azure.com/",
+                "storage_endpoint": "test.core.windows.net",
+                "registry_discovery_endpoint": "https://test.eastus.api.azureml.ms/"
+            }
         }
         ml_client = MLClient(
             credential=mock_credential,
