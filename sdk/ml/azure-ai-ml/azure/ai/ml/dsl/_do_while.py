@@ -58,6 +58,9 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
     def _infer_and_update_body_input_from_mapping():
         # pylint: disable=protected-access
         for output_name, body_input in mapping.items():
+            # if loop body output type is not specified, skip as we have no place to infer
+            if body.outputs[output_name].type is None:
+                continue
             # if input type is specified, no need to infer and skip
             if body_input.type is not None:
                 continue
