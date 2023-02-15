@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._job.pipeline._io import NodeOutput
 
 
 def do_while(body, mapping, max_iteration_count: int, condition=None):
@@ -58,6 +59,9 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
     def _infer_and_update_body_input_from_mapping():
         # pylint: disable=protected-access
         for output_name, body_input in mapping.items():
+            # handle case that mapping key is a NodeOutput
+            if isinstance(output_name, NodeOutput):
+                output_name = output_name.port_name
             # if loop body output type is not specified, skip as we have no place to infer
             if body.outputs[output_name].type is None:
                 continue
