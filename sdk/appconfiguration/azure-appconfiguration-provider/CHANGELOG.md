@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b2 (Unreleased)
+## 1.0.0b2 (2023-02-15)
 
 ### Features Added
 * Added Async Support
