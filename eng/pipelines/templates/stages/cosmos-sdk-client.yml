@@ -18,9 +18,6 @@ parameters:
   type: boolean
   default: false
 
-variables:
-  - template: /eng/pipelines/templates/variables/globals.yml
-
 stages:
   - template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
     parameters:
