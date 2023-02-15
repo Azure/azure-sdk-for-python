@@ -44,7 +44,7 @@ class TestLoadTestAdministrationClient(LoadtestingAsyncTest):
     async def setup_upload_test_file(self, endpoint):
         client = self.create_administration_client(endpoint)
         self.setup_file_name = "sample.jmx"
-        await client.begin_upload_test_file(self.setup_load_test_id, "sample.jmx", open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"), poll_for_validation_status=False)
+        await client.begin_upload_test_file(self.setup_load_test_id, "sample.jmx", open(os.path.join(Path(__file__).resolve().parent, "sample.jmx"), "rb"))
 
     async def setup_app_components(self, endpoint, resource_id):
         client = self.create_administration_client(endpoint)
