@@ -231,7 +231,7 @@ ANONYMOUS_COMPONENT_TEST_PARAMS = [
     (
         "additional-includes/component_spec.yaml",
         # Please DO NOT change the expected snapshot id unless you are sure you have changed the component spec
-        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048",
+        "1dc8271a-9184-df03-c9a5-afac8dcdcf26",
     ),
     # TODO(2076035): skip tests related to zip additional includes for now
     # (
