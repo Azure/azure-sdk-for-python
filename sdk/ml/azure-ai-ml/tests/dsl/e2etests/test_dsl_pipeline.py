@@ -2082,6 +2082,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                 }
             },
+            # mode will be copied to pipeline level
             "outputs": {"trained_model": {"mode": "Upload", "job_output_type": "uri_folder"}},
             "settings": {},
         }
@@ -2137,6 +2138,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                 }
             },
+            # pipeline level output setting taking effect
             "outputs": {"trained_model": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}},
             "settings": {},
         }
