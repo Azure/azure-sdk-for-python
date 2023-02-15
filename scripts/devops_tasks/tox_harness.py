@@ -250,31 +250,29 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
     if parsed_args.mark_arg:
         options_array.extend(["-m", "{}".format(parsed_args.mark_arg)])
 
+    local_options_array = []
     tox_command_tuples = []
-    check_set = set([env.strip().lower() for env in parsed_args.tox_env.strip().split(",")])
+    check_set = set()
     skipped_tox_checks = {}
+
+    def tox_env_str_to_set(env_str: str) -> set:
+        return set(env.strip().lower() for env in env_str.split(","))
+
+    def all_checks_run_pytest(s: set) -> bool:
+        """Returns true if all checks in the set run pytest and accept args for it"""
+        # This will return True for when s is the empty set, since the default
+        # tox environment runs pytest
+        return s.issubset(
+            {"whl_no_aio", "sdist", "develop", "devtest", "latestdependency", "mindependency", "whl", "sdist"}
+        )
 
     for index, package_dir in enumerate(targeted_packages):
         destination_tox_ini = os.path.join(package_dir, "tox.ini")
         destination_dev_req = os.path.join(package_dir, "dev_requirements.txt")
 
         tox_execution_array = [sys.executable, "-m", "tox"]
-
-        local_options_array = options_array[:]
-
-        # Get code coverage params for current package
         package_name = os.path.basename(package_dir)
-        coverage_commands = create_code_coverage_params(parsed_args, package_name)
-        local_options_array.extend(coverage_commands)
 
-        pkg_egg_info_name = "{}.egg-info".format(package_name.replace("-", "_"))
-        local_options_array.extend(["--ignore", pkg_egg_info_name])
-
-        # if we are targeting only packages that are management plane, it is a possibility
-        # that no tests running is an acceptable situation
-        # we explicitly handle this here.
-        if is_error_code_5_allowed(package_dir, package_name):
-            local_options_array.append("--suppress-no-test-exit-code")
 
         # if not present, re-use base
         if not os.path.exists(destination_tox_ini) or (
@@ -303,16 +301,13 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
 
         if parsed_args.tox_env:
             filtered_tox_environment_set = filter_tox_environment_string(parsed_args.tox_env, package_dir)
-            filtered_set = set([env.strip().lower() for env in filtered_tox_environment_set.strip().split(",")])
+            unfiltered_set = tox_env_str_to_set(parsed_args.tox_env)
+            check_set = tox_env_str_to_set(filtered_tox_environment_set)
 
-            if filtered_set != check_set:
-                skipped_environments = check_set - filtered_set
-                if in_ci() and skipped_environments:
-                    for check in skipped_environments:
-                        if check not in skipped_tox_checks:
-                            skipped_tox_checks[check] = []
-
-                    skipped_tox_checks[check].append(package_name)
+            if in_ci():
+                skipped_environments = unfiltered_set - check_set
+                for check in skipped_environments:
+                    skipped_tox_checks.setdefault(check, list()).append(package_name)
 
             if not filtered_tox_environment_set:
                 logging.info(
@@ -331,6 +326,22 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
             local_options_array = []
             if parsed_args.dest_dir:
                 local_options_array.extend(["--out-path", parsed_args.dest_dir])
+
+        if all_checks_run_pytest(check_set):
+            local_options_array = options_array[:]
+
+            # Get code coverage params for current package
+            coverage_commands = create_code_coverage_params(parsed_args, package_name)
+            local_options_array.extend(coverage_commands)
+
+            pkg_egg_info_name = "{}.egg-info".format(package_name.replace("-", "_"))
+            local_options_array.extend(["--ignore", pkg_egg_info_name])
+
+            # if we are targeting only packages that are management plane, it is a possibility
+            # that no tests running is an acceptable situation
+            # we explicitly handle this here.
+            if is_error_code_5_allowed(package_dir, package_name):
+                local_options_array.append("--suppress-no-test-exit-code")
 
         if local_options_array:
             tox_execution_array.extend(["--"] + local_options_array)
