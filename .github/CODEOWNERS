@@ -921,6 +921,5 @@
 /eng/                                                                @scbedd @weshaggard @benbp
 
 # Add owners for notifications for specific pipelines
-/eng/pipelines/templates/jobs/perf.yml                               @mikeharder @annatisch @pvaneck
 /eng/pipelines/templates/jobs/tests-nightly-python.yml               @lmazuel @mccoyp
 /eng/pipelines/aggregate-reports.yml                                 @lmazuel @mccoyp @YalinLi0312
