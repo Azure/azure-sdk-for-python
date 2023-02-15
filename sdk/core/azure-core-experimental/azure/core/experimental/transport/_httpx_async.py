@@ -24,14 +24,14 @@
 #
 # --------------------------------------------------------------------------
 from collections.abc import AsyncIterator
-from httpx import Response, AsyncClient
+import httpx
 from typing import Any, ContextManager, Iterator, Optional
 from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest, AsyncHttpTransport
 
 
 class AsyncHttpXTransportResponse(AsyncHttpResponse):
-    def __init__(self, request: HttpRequest, httpx_response: Response, stream_contextmanager: Optional[ContextManager]) -> None:
-        super().__init__(AsyncHttpXTransportResponse, httpx_response)
+    def __init__(self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]) -> None:
+        super().__init__(request, httpx_response)
         self.status_code = httpx_response.status_code
         self.headers = httpx_response.headers
         self.reason = httpx_response.reason_phrase
@@ -42,12 +42,11 @@ class AsyncHttpXTransportResponse(AsyncHttpResponse):
     def body(self) -> bytes:
         return self.internal_response.content
 
-    def stream_download(self, _) -> Iterator[bytes]:
+    def stream_download(self, _) -> AsyncIterator[bytes]:
         return AsyncHttpXStreamDownloadGenerator(_, self)
 
     async def load_body(self) -> None:
-        if self._content is None:
-            self._content = self.internal_response.content
+        self._content = self.internal_response.content
 
 
 class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
@@ -55,22 +54,25 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
         self.response = response
         self.iter_bytes_func = self.response.internal_response.aiter_bytes()
 
+    async def __len__(self) -> int:
+        return self.response.internal_response.headers['content-length']
+
     async def __aiter__(self) -> 'AsyncHttpXStreamDownloadGenerator':
         return self
 
     async def __anext__(self):
         try:
             return anext(self.iter_bytes_func)
-        except StopIteration:
-            self.response.aclose()
+        except StopAsyncIteration:
+            self.response.internal_response.close()
             raise
 
 class AsyncHttpXTransport(AsyncHttpTransport):
     def __init__(self) -> None:
-        self.client: Optional[AsyncClient] = None
+        self.client: Optional[httpx.AsyncClient] = None
 
     async def open(self) -> None:
-        self.client = AsyncClient()
+        self.client = httpx.AsyncClient()
 
     async def close(self) -> None:
         if self.client:
@@ -100,9 +102,9 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         if stream_response:
             req = self.client.build_request(**parameters)
             response = await self.client.send(req, stream=stream_response)
-            stream_ctx = AsyncHttpXStreamDownloadGenerator
+            stream_ctx = response.iter_bytes()
         else:
             response = await self.client.request(**parameters)
 
         return AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
-        
+    

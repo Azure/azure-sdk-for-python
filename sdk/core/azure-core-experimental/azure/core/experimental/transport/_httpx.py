@@ -23,16 +23,16 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from httpx import Response, Client
+import httpx
 from typing import ContextManager, Iterator, Optional
 from azure.core.pipeline.transport import HttpResponse, HttpRequest, HttpTransport
 
 
 class HttpXTransportResponse(HttpResponse):
     def __init__(
-        self, request: HttpRequest, httpx_response: Response, stream_contextmanager: Optional[ContextManager]
+        self, request: HttpRequest, httpx_response: httpx.Response, stream_contextmanager: Optional[ContextManager]
     ) -> None:
-        super().__init__(HttpXTransportResponse, httpx_response)
+        super().__init__(request, httpx_response)
         self.status_code = httpx_response.status_code
         self.headers = httpx_response.headers
         self.reason = httpx_response.reason_phrase
@@ -64,10 +64,10 @@ class HttpXStreamDownloadGenerator:
 
 class HttpXTransport(HttpTransport):
     def __init__(self) -> None:
-        self.client: Optional[Client] = None
+        self.client: Optional[httpx.Client] = None
 
     def open(self) -> None:
-        self.client = Client()
+        self.client = httpx.Client()
 
     def close(self) -> None:
         if self.client:
@@ -81,7 +81,7 @@ class HttpXTransport(HttpTransport):
     def __exit__(self, *args) -> None:
         self.close()
 
-    def send(self, request: HttpRequest, **kwargs) -> HttpXTransportResponse:
+    def send(self, request: HttpRequest, **kwargs) -> HttpResponse:
         stream_response = kwargs.pop("stream", False)
         parameters = {
             "method": request.method,
@@ -101,3 +101,4 @@ class HttpXTransport(HttpTransport):
             response = self.client.request(**parameters)
 
         return HttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
+    
