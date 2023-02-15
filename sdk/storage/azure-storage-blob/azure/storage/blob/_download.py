@@ -577,7 +577,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             The number of bytes to download from the stream. Leave unsepcified
             or set to -1 to download all bytes.
         :returns:
-            The requsted data as bytes or a string if encoding was speicified. If
+            The requested data as bytes or a string if encoding was speicified. If
             the return value is empty, there is no more data to read.
         :rtype: T
         """
@@ -651,7 +651,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         Read the entire contents of this blob.
         This operation is blocking until all data is downloaded.
 
-        :returns: The requsted data as bytes or a string if encoding was speicified.
+        :returns: The requested data as bytes or a string if encoding was speicified.
         :rtype: T
         """
         stream = BytesIO()
