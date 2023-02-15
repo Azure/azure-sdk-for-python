@@ -382,7 +382,7 @@
               "project": "relevance"
             },
             "version": "0.0.1",
-            "$schema": "https://component00000.azureedge.net/jsonschema/ScopeComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json",
             "display_name": "Convert Text to StructureStream",
             "is_deterministic": true,
             "inputs": {
@@ -448,7 +448,7 @@
           "isArchived": false,
           "isAnonymous": true,
           "componentSpec": {
-            "$schema": "https://component00000.azureedge.net/jsonschema/ScopeComponent.json",
+            "$schema": "https://componentsdk.azureedge.net/jsonschema/ScopeComponent.json",
             "name": "convert2ss",
             "version": "0.0.1",
             "display_name": "Convert Text to StructureStream",
