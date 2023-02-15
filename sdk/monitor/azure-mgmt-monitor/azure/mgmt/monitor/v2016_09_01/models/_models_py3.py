@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -31,7 +31,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -63,7 +63,7 @@ class LocalizableString(_serialization.Model):
         "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs):
+    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: the invariant value. Required.
         :paramtype value: str
@@ -106,8 +106,8 @@ class LogSettings(_serialization.Model):
         enabled: bool,
         category: Optional[str] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category: Name of a Diagnostic Log category for a resource type this setting is
          applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
@@ -166,8 +166,8 @@ class Metric(_serialization.Model):
         data: List["_models.MetricValue"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: the id, resourceId, of the metric.
         :paramtype id: str
@@ -208,7 +208,7 @@ class MetricCollection(_serialization.Model):
         "value": {"key": "value", "type": "[Metric]"},
     }
 
-    def __init__(self, *, value: List["_models.Metric"], **kwargs):
+    def __init__(self, *, value: List["_models.Metric"], **kwargs: Any) -> None:
         """
         :keyword value: the value of the collection. Required.
         :paramtype value: list[~$(python-base-namespace).v2016_09_01.models.Metric]
@@ -247,8 +247,8 @@ class MetricSettings(_serialization.Model):
         time_grain: datetime.timedelta,
         enabled: bool,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_grain: the timegrain of the metric in ISO8601 format. Required.
         :paramtype time_grain: ~datetime.timedelta
@@ -305,8 +305,8 @@ class MetricValue(_serialization.Model):
         maximum: Optional[float] = None,
         total: Optional[float] = None,
         count: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword time_stamp: the timestamp for the metric value in ISO 8601 format. Required.
         :paramtype time_stamp: ~datetime.datetime
@@ -365,7 +365,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -402,7 +402,7 @@ class RetentionPolicy(_serialization.Model):
         "days": {"key": "days", "type": "int"},
     }
 
-    def __init__(self, *, enabled: bool, days: int, **kwargs):
+    def __init__(self, *, enabled: bool, days: int, **kwargs: Any) -> None:
         """
         :keyword enabled: a value indicating whether the retention policy is enabled. Required.
         :paramtype enabled: bool
@@ -484,8 +484,8 @@ class ServiceDiagnosticSettingsResource(Resource):  # pylint: disable=too-many-i
         metrics: Optional[List["_models.MetricSettings"]] = None,
         logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -564,8 +564,8 @@ class ServiceDiagnosticSettingsResourcePatch(_serialization.Model):
         metrics: Optional[List["_models.MetricSettings"]] = None,
         logs: Optional[List["_models.LogSettings"]] = None,
         workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
