@@ -2251,10 +2251,13 @@ class QueryFormat(_serialization.Model):
 class QueryRequest(_serialization.Model):
     """Groups the set of query request settings.
 
+    Variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
-    :ivar query_type: Required. The type of the provided query expression. Required. "SQL"
-    :vartype query_type: str or ~azure.storage.blob.models.QueryRequestQueryType
+    :ivar query_type: Required. The type of the provided query expression. Required. Default value
+     is "SQL".
+    :vartype query_type: str
     :ivar expression: The query expression in SQL. The maximum size of the query expression is
      256KiB. Required.
     :vartype expression: str
@@ -2265,7 +2268,7 @@ class QueryRequest(_serialization.Model):
     """
 
     _validation = {
-        "query_type": {"required": True},
+        "query_type": {"required": True, "constant": True},
         "expression": {"required": True},
     }
 
@@ -2277,18 +2280,17 @@ class QueryRequest(_serialization.Model):
     }
     _xml_map = {"name": "QueryRequest"}
 
+    query_type = "SQL"
+
     def __init__(
         self,
         *,
-        query_type: Union[str, "_models.QueryRequestQueryType"],
         expression: str,
         input_serialization: Optional["_models.QuerySerialization"] = None,
         output_serialization: Optional["_models.QuerySerialization"] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword query_type: Required. The type of the provided query expression. Required. "SQL"
-        :paramtype query_type: str or ~azure.storage.blob.models.QueryRequestQueryType
         :keyword expression: The query expression in SQL. The maximum size of the query expression is
          256KiB. Required.
         :paramtype expression: str
@@ -2298,7 +2300,6 @@ class QueryRequest(_serialization.Model):
         :paramtype output_serialization: ~azure.storage.blob.models.QuerySerialization
         """
         super().__init__(**kwargs)
-        self.query_type = query_type
         self.expression = expression
         self.input_serialization = input_serialization
         self.output_serialization = output_serialization

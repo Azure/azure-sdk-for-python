@@ -43,7 +43,6 @@ def build_create_request(
     url: str,
     *,
     content_length: int,
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     blob_content_type: Optional[str] = None,
     blob_content_encoding: Optional[str] = None,
@@ -73,6 +72,7 @@ def build_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -155,10 +155,8 @@ def build_create_request(
 def build_append_block_request(
     url: str,
     *,
-    comp: Union[str, _models.Enum37],
     content_length: int,
     content: IO,
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     transactional_content_md5: Optional[bytes] = None,
     transactional_content_crc64: Optional[bytes] = None,
@@ -180,7 +178,9 @@ def build_append_block_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -245,10 +245,8 @@ def build_append_block_request(
 def build_append_block_from_url_request(
     url: str,
     *,
-    comp: Union[str, _models.Enum37],
     source_url: str,
     content_length: int,
-    version: Union[str, _models.Enum2],
     source_range: Optional[str] = None,
     source_content_md5: Optional[bytes] = None,
     source_contentcrc64: Optional[bytes] = None,
@@ -277,6 +275,8 @@ def build_append_block_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -360,8 +360,6 @@ def build_append_block_from_url_request(
 def build_seal_request(
     url: str,
     *,
-    comp: Union[str, _models.Enum38],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     lease_id: Optional[str] = None,
@@ -375,6 +373,8 @@ def build_seal_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    comp: Literal["seal"] = kwargs.pop("comp", _params.pop("comp", "seal"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -554,7 +554,6 @@ class AppendBlobOperations:
         request = build_create_request(
             url=self._config.url,
             content_length=content_length,
-            version=self._config.version,
             timeout=timeout,
             blob_content_type=_blob_content_type,
             blob_content_encoding=_blob_content_encoding,
@@ -579,6 +578,7 @@ class AppendBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             blob_type=blob_type,
+            version=self._config.version,
             template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
@@ -626,7 +626,6 @@ class AppendBlobOperations:
     @distributed_trace
     def append_block(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum37],
         content_length: int,
         body: IO,
         timeout: Optional[int] = None,
@@ -644,8 +643,6 @@ class AppendBlobOperations:
         The Append Block operation is permitted only if the blob was created with x-ms-blob-type set to
         AppendBlob. Append Block is supported only on version 2015-02-21 version or later.
 
-        :param comp: comp. "appendblock" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum37
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param body: Initial data. Required.
@@ -676,6 +673,9 @@ class AppendBlobOperations:
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "appendblock". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -690,8 +690,9 @@ class AppendBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -728,9 +729,7 @@ class AppendBlobOperations:
 
         request = build_append_block_request(
             url=self._config.url,
-            comp=comp,
             content_length=content_length,
-            version=self._config.version,
             timeout=timeout,
             transactional_content_md5=transactional_content_md5,
             transactional_content_crc64=transactional_content_crc64,
@@ -747,7 +746,9 @@ class AppendBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
             content_type=content_type,
+            version=self._config.version,
             content=_content,
             template_url=self.append_block.metadata["url"],
             headers=_headers,
@@ -804,7 +805,6 @@ class AppendBlobOperations:
     @distributed_trace
     def append_block_from_url(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum37],
         source_url: str,
         content_length: int,
         source_range: Optional[str] = None,
@@ -827,8 +827,6 @@ class AppendBlobOperations:
         the blob was created with x-ms-blob-type set to AppendBlob. Append Block is supported only on
         version 2015-02-21 version or later.
 
-        :param comp: comp. "appendblock" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum37
         :param source_url: Specify a URL to the copy source. Required.
         :type source_url: str
         :param content_length: The length of the request. Required.
@@ -870,6 +868,9 @@ class AppendBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :keyword comp: comp. Default value is "appendblock". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -884,8 +885,9 @@ class AppendBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _encryption_key = None
@@ -929,10 +931,8 @@ class AppendBlobOperations:
 
         request = build_append_block_from_url_request(
             url=self._config.url,
-            comp=comp,
             source_url=source_url,
             content_length=content_length,
-            version=self._config.version,
             source_range=source_range,
             source_content_md5=source_content_md5,
             source_contentcrc64=source_contentcrc64,
@@ -956,6 +956,8 @@ class AppendBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            comp=comp,
+            version=self._config.version,
             template_url=self.append_block_from_url.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1008,7 +1010,6 @@ class AppendBlobOperations:
     @distributed_trace
     def seal(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum38],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1019,8 +1020,6 @@ class AppendBlobOperations:
         """The Seal operation seals the Append Blob to make it read-only. Seal is supported only on
         version 2019-12-12 version or later.
 
-        :param comp: comp. "seal" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum38
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1037,6 +1036,9 @@ class AppendBlobOperations:
         :param append_position_access_conditions: Parameter group. Default value is None.
         :type append_position_access_conditions:
          ~azure.storage.blob.models.AppendPositionAccessConditions
+        :keyword comp: comp. Default value is "seal". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1051,8 +1053,9 @@ class AppendBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["seal"] = kwargs.pop("comp", _params.pop("comp", "seal"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1073,8 +1076,6 @@ class AppendBlobOperations:
 
         request = build_seal_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             lease_id=_lease_id,
@@ -1083,6 +1084,8 @@ class AppendBlobOperations:
             if_match=_if_match,
             if_none_match=_if_none_match,
             append_position=_append_position,
+            comp=comp,
+            version=self._config.version,
             template_url=self.seal.metadata["url"],
             headers=_headers,
             params=_params,

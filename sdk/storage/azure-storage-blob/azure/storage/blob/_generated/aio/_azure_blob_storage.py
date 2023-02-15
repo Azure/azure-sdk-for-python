@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Union
+from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -43,17 +43,17 @@ class AzureBlobStorage:  # pylint: disable=client-accepts-api-version-keyword
     :param url: The URL of the service account, container, or blob that is the target of the
      desired operation. Required.
     :type url: str
-    :param version: Specifies the version of the operation to use for this request. "2021-12-02"
-     Required.
-    :type version: str or ~azure.storage.blob.models.Enum2
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2021-12-02". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, url: str, version: Union[str, _models.Enum2], base_url: str = "", **kwargs: Any
+        self, url: str, base_url: str = "", **kwargs: Any
     ) -> None:
-        self._config = AzureBlobStorageConfiguration(url=url, version=version, **kwargs)
+        self._config = AzureBlobStorageConfiguration(url=url, **kwargs)
         self._client = AsyncPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}

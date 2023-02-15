@@ -203,7 +203,6 @@ class PageBlobOperations:
             url=self._config.url,
             content_length=content_length,
             blob_content_length=blob_content_length,
-            version=self._config.version,
             timeout=timeout,
             tier=tier,
             blob_content_type=_blob_content_type,
@@ -230,6 +229,7 @@ class PageBlobOperations:
             immutability_policy_mode=immutability_policy_mode,
             legal_hold=legal_hold,
             blob_type=blob_type,
+            version=self._config.version,
             template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
@@ -277,7 +277,6 @@ class PageBlobOperations:
     @distributed_trace_async
     async def upload_pages(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum34],
         content_length: int,
         body: IO,
         transactional_content_md5: Optional[bytes] = None,
@@ -294,8 +293,6 @@ class PageBlobOperations:
     ) -> None:
         """The Upload Pages operation writes a range of pages to a page blob.
 
-        :param comp: comp. "page" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum34
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param body: Initial data. Required.
@@ -328,6 +325,9 @@ class PageBlobOperations:
          ~azure.storage.blob.models.SequenceNumberAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "page". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword page_write: Required. You may specify one of the following options:
 
 
@@ -352,8 +352,9 @@ class PageBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
         page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -395,9 +396,7 @@ class PageBlobOperations:
 
         request = build_upload_pages_request(
             url=self._config.url,
-            comp=comp,
             content_length=content_length,
-            version=self._config.version,
             transactional_content_md5=transactional_content_md5,
             transactional_content_crc64=transactional_content_crc64,
             timeout=timeout,
@@ -416,8 +415,10 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
             page_write=page_write,
             content_type=content_type,
+            version=self._config.version,
             content=_content,
             template_url=self.upload_pages.metadata["url"],
             headers=_headers,
@@ -471,7 +472,6 @@ class PageBlobOperations:
     @distributed_trace_async
     async def clear_pages(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum34],
         content_length: int,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
@@ -485,8 +485,6 @@ class PageBlobOperations:
     ) -> None:
         """The Clear Pages operation clears a set of pages from a page blob.
 
-        :param comp: comp. "page" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum34
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -511,6 +509,9 @@ class PageBlobOperations:
          ~azure.storage.blob.models.SequenceNumberAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "page". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword page_write: Required. You may specify one of the following options:
 
 
@@ -535,8 +536,9 @@ class PageBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
         page_write: Literal["clear"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "clear"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -576,9 +578,7 @@ class PageBlobOperations:
 
         request = build_clear_pages_request(
             url=self._config.url,
-            comp=comp,
             content_length=content_length,
-            version=self._config.version,
             timeout=timeout,
             range=range,
             lease_id=_lease_id,
@@ -595,7 +595,9 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
             page_write=page_write,
+            version=self._config.version,
             template_url=self.clear_pages.metadata["url"],
             headers=_headers,
             params=_params,
@@ -639,7 +641,6 @@ class PageBlobOperations:
     @distributed_trace_async
     async def upload_pages_from_url(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum34],
         source_url: str,
         source_range: str,
         content_length: int,
@@ -660,8 +661,6 @@ class PageBlobOperations:
         """The Upload Pages operation writes a range of pages to a page blob where the contents are read
         from a URL.
 
-        :param comp: comp. "page" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum34
         :param source_url: Specify a URL to the copy source. Required.
         :type source_url: str
         :param source_range: Bytes of source data in the specified range. The length of this range
@@ -704,6 +703,9 @@ class PageBlobOperations:
         :param source_modified_access_conditions: Parameter group. Default value is None.
         :type source_modified_access_conditions:
          ~azure.storage.blob.models.SourceModifiedAccessConditions
+        :keyword comp: comp. Default value is "page". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword page_write: Required. You may specify one of the following options:
 
 
@@ -728,8 +730,9 @@ class PageBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["page"] = kwargs.pop("comp", _params.pop("comp", "page"))
         page_write: Literal["update"] = kwargs.pop("page_write", _headers.pop("x-ms-page-write", "update"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -778,12 +781,10 @@ class PageBlobOperations:
 
         request = build_upload_pages_from_url_request(
             url=self._config.url,
-            comp=comp,
             source_url=source_url,
             source_range=source_range,
             content_length=content_length,
             range=range,
-            version=self._config.version,
             source_content_md5=source_content_md5,
             source_contentcrc64=source_contentcrc64,
             timeout=timeout,
@@ -806,7 +807,9 @@ class PageBlobOperations:
             source_if_none_match=_source_if_none_match,
             request_id_parameter=request_id_parameter,
             copy_source_authorization=copy_source_authorization,
+            comp=comp,
             page_write=page_write,
+            version=self._config.version,
             template_url=self.upload_pages_from_url.metadata["url"],
             headers=_headers,
             params=_params,
@@ -856,7 +859,6 @@ class PageBlobOperations:
     @distributed_trace_async
     async def get_page_ranges(
         self,
-        comp: Union[str, _models.Enum35],
         snapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         range: Optional[str] = None,
@@ -870,8 +872,6 @@ class PageBlobOperations:
         """The Get Page Ranges operation returns the list of valid page ranges for a page blob or snapshot
         of a page blob.
 
-        :param comp: comp. "pagelist" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum35
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -907,6 +907,9 @@ class PageBlobOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "pagelist". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PageList or the result of cls(response)
         :rtype: ~azure.storage.blob.models.PageList
@@ -921,8 +924,9 @@ class PageBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["pagelist"] = kwargs.pop("comp", _params.pop("comp", "pagelist"))
         cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -942,8 +946,6 @@ class PageBlobOperations:
 
         request = build_get_page_ranges_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             range=range,
@@ -956,6 +958,8 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             marker=marker,
             maxresults=maxresults,
+            comp=comp,
+            version=self._config.version,
             template_url=self.get_page_ranges.metadata["url"],
             headers=_headers,
             params=_params,
@@ -999,7 +1003,6 @@ class PageBlobOperations:
     @distributed_trace_async
     async def get_page_ranges_diff(
         self,
-        comp: Union[str, _models.Enum35],
         snapshot: Optional[str] = None,
         timeout: Optional[int] = None,
         prevsnapshot: Optional[str] = None,
@@ -1015,8 +1018,6 @@ class PageBlobOperations:
         """The Get Page Ranges Diff operation returns the list of valid page ranges for a page blob that
         were changed between target blob and previous snapshot.
 
-        :param comp: comp. "pagelist" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum35
         :param snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see :code:`<a
@@ -1064,6 +1065,9 @@ class PageBlobOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "pagelist". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: PageList or the result of cls(response)
         :rtype: ~azure.storage.blob.models.PageList
@@ -1078,8 +1082,9 @@ class PageBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["pagelist"] = kwargs.pop("comp", _params.pop("comp", "pagelist"))
         cls: ClsType[_models.PageList] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1099,8 +1104,6 @@ class PageBlobOperations:
 
         request = build_get_page_ranges_diff_request(
             url=self._config.url,
-            comp=comp,
-            version=self._config.version,
             snapshot=snapshot,
             timeout=timeout,
             prevsnapshot=prevsnapshot,
@@ -1115,6 +1118,8 @@ class PageBlobOperations:
             request_id_parameter=request_id_parameter,
             marker=marker,
             maxresults=maxresults,
+            comp=comp,
+            version=self._config.version,
             template_url=self.get_page_ranges_diff.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1158,7 +1163,6 @@ class PageBlobOperations:
     @distributed_trace_async
     async def resize(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum1],
         blob_content_length: int,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1170,8 +1174,6 @@ class PageBlobOperations:
     ) -> None:
         """Resize the Blob.
 
-        :param comp: comp. "properties" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum1
         :param blob_content_length: This header specifies the maximum size for the page blob, up to 1
          TB. The page blob size must be aligned to a 512-byte boundary. Required.
         :type blob_content_length: int
@@ -1192,6 +1194,9 @@ class PageBlobOperations:
         :type cpk_scope_info: ~azure.storage.blob.models.CpkScopeInfo
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1206,8 +1211,9 @@ class PageBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1237,9 +1243,7 @@ class PageBlobOperations:
 
         request = build_resize_request(
             url=self._config.url,
-            comp=comp,
             blob_content_length=blob_content_length,
-            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             encryption_key=_encryption_key,
@@ -1252,6 +1256,8 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            version=self._config.version,
             template_url=self.resize.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1291,7 +1297,6 @@ class PageBlobOperations:
     @distributed_trace_async
     async def update_sequence_number(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum1],
         sequence_number_action: Union[str, _models.SequenceNumberActionType],
         timeout: Optional[int] = None,
         blob_sequence_number: int = 0,
@@ -1302,8 +1307,6 @@ class PageBlobOperations:
     ) -> None:
         """Update the sequence number of the blob.
 
-        :param comp: comp. "properties" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum1
         :param sequence_number_action: Required if the x-ms-blob-sequence-number header is set for the
          request. This property applies to page blobs only. This property indicates how the service
          should modify the blob's sequence number. Known values are: "max", "update", and "increment".
@@ -1326,6 +1329,9 @@ class PageBlobOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1340,8 +1346,9 @@ class PageBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1361,9 +1368,7 @@ class PageBlobOperations:
 
         request = build_update_sequence_number_request(
             url=self._config.url,
-            comp=comp,
             sequence_number_action=sequence_number_action,
-            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             if_modified_since=_if_modified_since,
@@ -1373,6 +1378,8 @@ class PageBlobOperations:
             if_tags=_if_tags,
             blob_sequence_number=blob_sequence_number,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            version=self._config.version,
             template_url=self.update_sequence_number.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1412,7 +1419,6 @@ class PageBlobOperations:
     @distributed_trace_async
     async def copy_incremental(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum36],
         copy_source: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1425,8 +1431,6 @@ class PageBlobOperations:
         the original snapshot and can be read or copied from as usual. This API is supported since REST
         version 2016-05-31.
 
-        :param comp: comp. "incrementalcopy" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum36
         :param copy_source: Specifies the name of the source page blob snapshot. This value is a URL of
          up to 2 KB in length that specifies a page blob snapshot. The value should be URL-encoded as it
          would appear in a request URI. The source blob must either be public or must be authenticated
@@ -1443,6 +1447,9 @@ class PageBlobOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "incrementalcopy". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1457,8 +1464,9 @@ class PageBlobOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["incrementalcopy"] = kwargs.pop("comp", _params.pop("comp", "incrementalcopy"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _if_modified_since = None
@@ -1475,9 +1483,7 @@ class PageBlobOperations:
 
         request = build_copy_incremental_request(
             url=self._config.url,
-            comp=comp,
             copy_source=copy_source,
-            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
@@ -1485,6 +1491,8 @@ class PageBlobOperations:
             if_none_match=_if_none_match,
             if_tags=_if_tags,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            version=self._config.version,
             template_url=self.copy_incremental.metadata["url"],
             headers=_headers,
             params=_params,

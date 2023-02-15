@@ -42,8 +42,6 @@ _SERIALIZER.client_side_validation = False
 def build_create_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
     access: Optional[Union[str, _models.PublicAccessType]] = None,
@@ -55,6 +53,8 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -94,8 +94,6 @@ def build_create_request(
 def build_get_properties_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -104,6 +102,8 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -133,8 +133,6 @@ def build_get_properties_request(
 def build_delete_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -145,6 +143,8 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -178,9 +178,6 @@ def build_delete_request(
 def build_set_metadata_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum12],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     metadata: Optional[Dict[str, str]] = None,
@@ -191,6 +188,9 @@ def build_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -225,9 +225,6 @@ def build_set_metadata_request(
 def build_get_access_policy_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum13],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
@@ -236,6 +233,9 @@ def build_get_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -266,9 +266,6 @@ def build_get_access_policy_request(
 def build_set_access_policy_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum13],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     access: Optional[Union[str, _models.PublicAccessType]] = None,
@@ -281,7 +278,10 @@ def build_set_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -320,9 +320,6 @@ def build_set_access_policy_request(
 def build_restore_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum14],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     deleted_container_name: Optional[str] = None,
@@ -332,6 +329,9 @@ def build_restore_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -368,10 +368,7 @@ def build_restore_request(
 def build_rename_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum15],
     source_container_name: str,
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     source_lease_id: Optional[str] = None,
@@ -380,6 +377,9 @@ def build_rename_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -411,11 +411,8 @@ def build_rename_request(
 def build_submit_batch_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum9],
     content_length: int,
     content: IO,
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     **kwargs: Any
@@ -423,7 +420,10 @@ def build_submit_batch_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["batch"] = kwargs.pop("comp", _params.pop("comp", "batch"))
     multipart_content_type: Optional[str] = kwargs.pop("multipart_content_type", _headers.pop("Content-Type", None))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -455,9 +455,6 @@ def build_submit_batch_request(
 def build_filter_blobs_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum10],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     where: Optional[str] = None,
@@ -469,6 +466,9 @@ def build_filter_blobs_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -505,9 +505,6 @@ def build_filter_blobs_request(
 def build_acquire_lease_request(
     url: str,
     *,
-    comp: Union[str, _models.Enum16],
-    restype: Union[str, _models.Enum11],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     duration: Optional[int] = None,
     proposed_lease_id: Optional[str] = None,
@@ -519,7 +516,10 @@ def build_acquire_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -557,10 +557,7 @@ def build_acquire_lease_request(
 def build_release_lease_request(
     url: str,
     *,
-    comp: Union[str, _models.Enum16],
-    restype: Union[str, _models.Enum11],
     lease_id: str,
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -570,7 +567,10 @@ def build_release_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -605,10 +605,7 @@ def build_release_lease_request(
 def build_renew_lease_request(
     url: str,
     *,
-    comp: Union[str, _models.Enum16],
-    restype: Union[str, _models.Enum11],
     lease_id: str,
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -618,7 +615,10 @@ def build_renew_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -653,9 +653,6 @@ def build_renew_lease_request(
 def build_break_lease_request(
     url: str,
     *,
-    comp: Union[str, _models.Enum16],
-    restype: Union[str, _models.Enum11],
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     break_period: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
@@ -666,7 +663,10 @@ def build_break_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -702,11 +702,8 @@ def build_break_lease_request(
 def build_change_lease_request(
     url: str,
     *,
-    comp: Union[str, _models.Enum16],
-    restype: Union[str, _models.Enum11],
     lease_id: str,
     proposed_lease_id: str,
-    version: Union[str, _models.Enum2],
     timeout: Optional[int] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -716,7 +713,10 @@ def build_change_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
     action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -752,9 +752,6 @@ def build_change_lease_request(
 def build_list_blob_flat_segment_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum5],
-    version: Union[str, _models.Enum2],
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
@@ -766,6 +763,9 @@ def build_list_blob_flat_segment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -802,10 +802,7 @@ def build_list_blob_flat_segment_request(
 def build_list_blob_hierarchy_segment_request(
     url: str,
     *,
-    restype: Union[str, _models.Enum11],
-    comp: Union[str, _models.Enum5],
     delimiter: str,
-    version: Union[str, _models.Enum2],
     prefix: Optional[str] = None,
     marker: Optional[str] = None,
     maxresults: Optional[int] = None,
@@ -817,6 +814,9 @@ def build_list_blob_hierarchy_segment_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+    comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -851,17 +851,13 @@ def build_list_blob_hierarchy_segment_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_account_info_request(
-    url: str,
-    *,
-    restype: Union[str, _models.Enum8],
-    comp: Union[str, _models.Enum1],
-    version: Union[str, _models.Enum2],
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
+    comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -905,7 +901,6 @@ class ContainerOperations:
     @distributed_trace
     def create(  # pylint: disable=inconsistent-return-statements
         self,
-        restype: Union[str, _models.Enum11],
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         access: Optional[Union[str, _models.PublicAccessType]] = None,
@@ -916,8 +911,6 @@ class ContainerOperations:
         """creates a new container under the specified account. If the container with the same name
         already exists, the operation fails.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -940,6 +933,9 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param container_cpk_scope_info: Parameter group. Default value is None.
         :type container_cpk_scope_info: ~azure.storage.blob.models.ContainerCpkScopeInfo
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -954,8 +950,9 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _default_encryption_scope = None
@@ -966,14 +963,14 @@ class ContainerOperations:
 
         request = build_create_request(
             url=self._config.url,
-            restype=restype,
-            version=self._config.version,
             timeout=timeout,
             metadata=metadata,
             access=access,
             request_id_parameter=request_id_parameter,
             default_encryption_scope=_default_encryption_scope,
             prevent_encryption_scope_override=_prevent_encryption_scope_override,
+            restype=restype,
+            version=self._config.version,
             template_url=self.create.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1010,7 +1007,6 @@ class ContainerOperations:
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
         self,
-        restype: Union[str, _models.Enum11],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1019,8 +1015,6 @@ class ContainerOperations:
         """returns all user-defined metadata and system properties for the specified container. The data
         returned does not include the container's list of blobs.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1032,6 +1026,9 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1046,8 +1043,9 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1056,11 +1054,11 @@ class ContainerOperations:
 
         request = build_get_properties_request(
             url=self._config.url,
-            restype=restype,
-            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            version=self._config.version,
             template_url=self.get_properties.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1117,7 +1115,6 @@ class ContainerOperations:
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
         self,
-        restype: Union[str, _models.Enum11],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1127,8 +1124,6 @@ class ContainerOperations:
         """operation marks the specified container for deletion. The container and any blobs contained
         within it are later deleted during garbage collection.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1142,6 +1137,9 @@ class ContainerOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1156,8 +1154,9 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1171,13 +1170,13 @@ class ContainerOperations:
 
         request = build_delete_request(
             url=self._config.url,
-            restype=restype,
-            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            version=self._config.version,
             template_url=self.delete.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1212,8 +1211,6 @@ class ContainerOperations:
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum12],
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
         request_id_parameter: Optional[str] = None,
@@ -1223,10 +1220,6 @@ class ContainerOperations:
     ) -> None:
         """operation sets one or more user-defined name-value pairs for the specified container.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "metadata" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum12
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1248,6 +1241,12 @@ class ContainerOperations:
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "metadata". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1262,8 +1261,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1275,14 +1276,14 @@ class ContainerOperations:
 
         request = build_set_metadata_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             metadata=metadata,
             if_modified_since=_if_modified_since,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.set_metadata.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1319,8 +1320,6 @@ class ContainerOperations:
     @distributed_trace
     def get_access_policy(
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum13],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1329,10 +1328,6 @@ class ContainerOperations:
         """gets the permissions for the specified container. The permissions indicate whether container
         data may be accessed publicly.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "acl" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum13
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1344,6 +1339,12 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param lease_access_conditions: Parameter group. Default value is None.
         :type lease_access_conditions: ~azure.storage.blob.models.LeaseAccessConditions
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
+         in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: list of SignedIdentifier or the result of cls(response)
         :rtype: list[~azure.storage.blob.models.SignedIdentifier]
@@ -1358,8 +1359,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
         cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         _lease_id = None
@@ -1368,12 +1371,12 @@ class ContainerOperations:
 
         request = build_get_access_policy_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.get_access_policy.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1417,8 +1420,6 @@ class ContainerOperations:
     @distributed_trace
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum13],
         timeout: Optional[int] = None,
         access: Optional[Union[str, _models.PublicAccessType]] = None,
         request_id_parameter: Optional[str] = None,
@@ -1430,10 +1431,6 @@ class ContainerOperations:
         """sets the permissions for the specified container. The permissions indicate whether blobs in a
         container may be accessed publicly.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "acl" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum13
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1452,6 +1449,12 @@ class ContainerOperations:
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
         :param container_acl: the acls for the container. Default value is None.
         :type container_acl: list[~azure.storage.blob.models.SignedIdentifier]
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "acl". Note that overriding this default value may result
+         in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1466,8 +1469,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1489,16 +1494,16 @@ class ContainerOperations:
 
         request = build_set_access_policy_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             lease_id=_lease_id,
             access=access,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
             content_type=content_type,
+            version=self._config.version,
             content=_content,
             template_url=self.set_access_policy.metadata["url"],
             headers=_headers,
@@ -1536,8 +1541,6 @@ class ContainerOperations:
     @distributed_trace
     def restore(  # pylint: disable=inconsistent-return-statements
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum14],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         deleted_container_name: Optional[str] = None,
@@ -1546,10 +1549,6 @@ class ContainerOperations:
     ) -> None:
         """Restores a previously-deleted container.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "undelete" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum14
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1565,6 +1564,12 @@ class ContainerOperations:
         :param deleted_container_version: Optional.  Version 2019-12-12 and later.  Specifies the
          version of the deleted container to restore. Default value is None.
         :type deleted_container_version: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "undelete". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1579,19 +1584,21 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_restore_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             deleted_container_name=deleted_container_name,
             deleted_container_version=deleted_container_version,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.restore.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1626,8 +1633,6 @@ class ContainerOperations:
     @distributed_trace
     def rename(  # pylint: disable=inconsistent-return-statements
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum15],
         source_container_name: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1636,10 +1641,6 @@ class ContainerOperations:
     ) -> None:
         """Renames an existing container.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "rename" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum15
         :param source_container_name: Required.  Specifies the name of the container to rename.
          Required.
         :type source_container_name: str
@@ -1655,6 +1656,12 @@ class ContainerOperations:
         :param source_lease_id: A lease ID for the source path. If specified, the source path must have
          an active lease and the lease ID must match. Default value is None.
         :type source_lease_id: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "rename". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -1669,19 +1676,21 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["rename"] = kwargs.pop("comp", _params.pop("comp", "rename"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_rename_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
             source_container_name=source_container_name,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             source_lease_id=source_lease_id,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.rename.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1716,8 +1725,6 @@ class ContainerOperations:
     @distributed_trace
     def submit_batch(
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum9],
         content_length: int,
         body: IO,
         timeout: Optional[int] = None,
@@ -1726,10 +1733,6 @@ class ContainerOperations:
     ) -> Iterator[bytes]:
         """The Batch operation allows multiple API calls to be embedded into a single HTTP request.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "batch" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum9
         :param content_length: The length of the request. Required.
         :type content_length: int
         :param body: Initial data. Required.
@@ -1743,6 +1746,12 @@ class ContainerOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "batch". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: Iterator of the response bytes or the result of cls(response)
         :rtype: Iterator[bytes]
@@ -1757,8 +1766,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["batch"] = kwargs.pop("comp", _params.pop("comp", "batch"))
         multipart_content_type: str = kwargs.pop(
             "multipart_content_type", _headers.pop("Content-Type", "application/xml")
         )
@@ -1768,13 +1779,13 @@ class ContainerOperations:
 
         request = build_submit_batch_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
             content_length=content_length,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
             multipart_content_type=multipart_content_type,
+            version=self._config.version,
             content=_content,
             template_url=self.submit_batch.metadata["url"],
             headers=_headers,
@@ -1811,8 +1822,6 @@ class ContainerOperations:
     @distributed_trace
     def filter_blobs(
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum10],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         where: Optional[str] = None,
@@ -1824,10 +1833,6 @@ class ContainerOperations:
         """The Filter Blobs operation enables callers to list blobs in a container whose tags match a
         given search expression.  Filter blobs searches within the given container.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "blobs" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum10
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1857,6 +1862,12 @@ class ContainerOperations:
         :param include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
         :type include: list[str or ~azure.storage.blob.models.FilterBlobsIncludeItem]
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "blobs". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: FilterBlobSegment or the result of cls(response)
         :rtype: ~azure.storage.blob.models.FilterBlobSegment
@@ -1871,21 +1882,23 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["blobs"] = kwargs.pop("comp", _params.pop("comp", "blobs"))
         cls: ClsType[_models.FilterBlobSegment] = kwargs.pop("cls", None)
 
         request = build_filter_blobs_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
             where=where,
             marker=marker,
             maxresults=maxresults,
             include=include,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.filter_blobs.metadata["url"],
             headers=_headers,
             params=_params,
@@ -1924,8 +1937,6 @@ class ContainerOperations:
     @distributed_trace
     def acquire_lease(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum16],
-        restype: Union[str, _models.Enum11],
         timeout: Optional[int] = None,
         duration: Optional[int] = None,
         proposed_lease_id: Optional[str] = None,
@@ -1936,10 +1947,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param comp: comp. "lease" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum16
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -1959,6 +1966,12 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
         :keyword action: Describes what lease action to take. Default value is "acquire". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
@@ -1976,8 +1989,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1989,16 +2004,16 @@ class ContainerOperations:
 
         request = build_acquire_lease_request(
             url=self._config.url,
-            comp=comp,
-            restype=restype,
-            version=self._config.version,
             timeout=timeout,
             duration=duration,
             proposed_lease_id=proposed_lease_id,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            restype=restype,
             action=action,
+            version=self._config.version,
             template_url=self.acquire_lease.metadata["url"],
             headers=_headers,
             params=_params,
@@ -2036,8 +2051,6 @@ class ContainerOperations:
     @distributed_trace
     def release_lease(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum16],
-        restype: Union[str, _models.Enum11],
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -2047,10 +2060,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param comp: comp. "lease" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum16
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
         :param lease_id: Specifies the current lease ID on the resource. Required.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2064,6 +2073,12 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
         :keyword action: Describes what lease action to take. Default value is "release". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
@@ -2081,8 +2096,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -2094,15 +2111,15 @@ class ContainerOperations:
 
         request = build_release_lease_request(
             url=self._config.url,
-            comp=comp,
-            restype=restype,
             lease_id=lease_id,
-            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            restype=restype,
             action=action,
+            version=self._config.version,
             template_url=self.release_lease.metadata["url"],
             headers=_headers,
             params=_params,
@@ -2139,8 +2156,6 @@ class ContainerOperations:
     @distributed_trace
     def renew_lease(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum16],
-        restype: Union[str, _models.Enum11],
         lease_id: str,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -2150,10 +2165,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param comp: comp. "lease" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum16
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
         :param lease_id: Specifies the current lease ID on the resource. Required.
         :type lease_id: str
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
@@ -2167,6 +2178,12 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
         :keyword action: Describes what lease action to take. Default value is "renew". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
@@ -2184,8 +2201,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -2197,15 +2216,15 @@ class ContainerOperations:
 
         request = build_renew_lease_request(
             url=self._config.url,
-            comp=comp,
-            restype=restype,
             lease_id=lease_id,
-            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            restype=restype,
             action=action,
+            version=self._config.version,
             template_url=self.renew_lease.metadata["url"],
             headers=_headers,
             params=_params,
@@ -2243,8 +2262,6 @@ class ContainerOperations:
     @distributed_trace
     def break_lease(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum16],
-        restype: Union[str, _models.Enum11],
         timeout: Optional[int] = None,
         break_period: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -2254,10 +2271,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param comp: comp. "lease" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum16
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
         :param timeout: The timeout parameter is expressed in seconds. For more information, see
          :code:`<a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
@@ -2277,6 +2290,12 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
         :keyword action: Describes what lease action to take. Default value is "break". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
@@ -2294,8 +2313,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -2307,15 +2328,15 @@ class ContainerOperations:
 
         request = build_break_lease_request(
             url=self._config.url,
-            comp=comp,
-            restype=restype,
-            version=self._config.version,
             timeout=timeout,
             break_period=break_period,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            restype=restype,
             action=action,
+            version=self._config.version,
             template_url=self.break_lease.metadata["url"],
             headers=_headers,
             params=_params,
@@ -2353,8 +2374,6 @@ class ContainerOperations:
     @distributed_trace
     def change_lease(  # pylint: disable=inconsistent-return-statements
         self,
-        comp: Union[str, _models.Enum16],
-        restype: Union[str, _models.Enum11],
         lease_id: str,
         proposed_lease_id: str,
         timeout: Optional[int] = None,
@@ -2365,10 +2384,6 @@ class ContainerOperations:
         """[Update] establishes and manages a lock on a container for delete operations. The lock duration
         can be 15 to 60 seconds, or can be infinite.
 
-        :param comp: comp. "lease" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum16
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
         :param lease_id: Specifies the current lease ID on the resource. Required.
         :type lease_id: str
         :param proposed_lease_id: Proposed lease ID, in a GUID string format. The Blob service returns
@@ -2386,6 +2401,12 @@ class ContainerOperations:
         :type request_id_parameter: str
         :param modified_access_conditions: Parameter group. Default value is None.
         :type modified_access_conditions: ~azure.storage.blob.models.ModifiedAccessConditions
+        :keyword comp: comp. Default value is "lease". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
         :keyword action: Describes what lease action to take. Default value is "change". Note that
          overriding this default value may result in unsupported behavior.
         :paramtype action: str
@@ -2403,8 +2424,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
         action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -2416,16 +2439,16 @@ class ContainerOperations:
 
         request = build_change_lease_request(
             url=self._config.url,
-            comp=comp,
-            restype=restype,
             lease_id=lease_id,
             proposed_lease_id=proposed_lease_id,
-            version=self._config.version,
             timeout=timeout,
             if_modified_since=_if_modified_since,
             if_unmodified_since=_if_unmodified_since,
             request_id_parameter=request_id_parameter,
+            comp=comp,
+            restype=restype,
             action=action,
+            version=self._config.version,
             template_url=self.change_lease.metadata["url"],
             headers=_headers,
             params=_params,
@@ -2463,8 +2486,6 @@ class ContainerOperations:
     @distributed_trace
     def list_blob_flat_segment(
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum5],
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
         maxresults: Optional[int] = None,
@@ -2475,10 +2496,6 @@ class ContainerOperations:
     ) -> _models.ListBlobsFlatSegmentResponse:
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "list" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum5
         :param prefix: Filters the results to return only containers whose name begins with the
          specified prefix. Default value is None.
         :type prefix: str
@@ -2508,6 +2525,12 @@ class ContainerOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListBlobsFlatSegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.blob.models.ListBlobsFlatSegmentResponse
@@ -2522,21 +2545,23 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
         cls: ClsType[_models.ListBlobsFlatSegmentResponse] = kwargs.pop("cls", None)
 
         request = build_list_blob_flat_segment_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
-            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
             include=include,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.list_blob_flat_segment.metadata["url"],
             headers=_headers,
             params=_params,
@@ -2576,8 +2601,6 @@ class ContainerOperations:
     @distributed_trace
     def list_blob_hierarchy_segment(
         self,
-        restype: Union[str, _models.Enum11],
-        comp: Union[str, _models.Enum5],
         delimiter: str,
         prefix: Optional[str] = None,
         marker: Optional[str] = None,
@@ -2589,10 +2612,6 @@ class ContainerOperations:
     ) -> _models.ListBlobsHierarchySegmentResponse:
         """[Update] The List Blobs operation returns a list of the blobs under the specified container.
 
-        :param restype: restype. "container" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum11
-        :param comp: comp. "list" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum5
         :param delimiter: When the request includes this parameter, the operation returns a BlobPrefix
          element in the response body that acts as a placeholder for all blobs whose names begin with
          the same substring up to the appearance of the delimiter character. The delimiter may be a
@@ -2627,6 +2646,12 @@ class ContainerOperations:
          limit that is recorded in the analytics logs when storage analytics logging is enabled. Default
          value is None.
         :type request_id_parameter: str
+        :keyword restype: restype. Default value is "container". Note that overriding this default
+         value may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "list". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: ListBlobsHierarchySegmentResponse or the result of cls(response)
         :rtype: ~azure.storage.blob.models.ListBlobsHierarchySegmentResponse
@@ -2641,22 +2666,24 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["container"] = kwargs.pop("restype", _params.pop("restype", "container"))
+        comp: Literal["list"] = kwargs.pop("comp", _params.pop("comp", "list"))
         cls: ClsType[_models.ListBlobsHierarchySegmentResponse] = kwargs.pop("cls", None)
 
         request = build_list_blob_hierarchy_segment_request(
             url=self._config.url,
-            restype=restype,
-            comp=comp,
             delimiter=delimiter,
-            version=self._config.version,
             prefix=prefix,
             marker=marker,
             maxresults=maxresults,
             include=include,
             timeout=timeout,
             request_id_parameter=request_id_parameter,
+            restype=restype,
+            comp=comp,
+            version=self._config.version,
             template_url=self.list_blob_hierarchy_segment.metadata["url"],
             headers=_headers,
             params=_params,
@@ -2694,15 +2721,15 @@ class ContainerOperations:
     list_blob_hierarchy_segment.metadata = {"url": "{url}/{containerName}"}
 
     @distributed_trace
-    def get_account_info(  # pylint: disable=inconsistent-return-statements
-        self, restype: Union[str, _models.Enum8], comp: Union[str, _models.Enum1], **kwargs: Any
-    ) -> None:
+    def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Returns the sku name and account kind.
 
-        :param restype: restype. "account" Required.
-        :type restype: str or ~azure.storage.blob.models.Enum8
-        :param comp: comp. "properties" Required.
-        :type comp: str or ~azure.storage.blob.models.Enum1
+        :keyword restype: restype. Default value is "account". Note that overriding this default value
+         may result in unsupported behavior.
+        :paramtype restype: str
+        :keyword comp: comp. Default value is "properties". Note that overriding this default value may
+         result in unsupported behavior.
+        :paramtype comp: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: None or the result of cls(response)
         :rtype: None
@@ -2717,8 +2744,10 @@ class ContainerOperations:
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_get_account_info_request(
