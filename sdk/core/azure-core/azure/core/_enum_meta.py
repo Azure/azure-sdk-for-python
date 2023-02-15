@@ -45,9 +45,7 @@ class CaseInsensitiveEnumMeta(EnumMeta):
 
     def __getitem__(cls, name: str) -> Any:
         # disabling pylint bc of pylint bug https://github.com/PyCQA/astroid/issues/713
-        return super(  # pylint: disable=no-value-for-parameter
-            CaseInsensitiveEnumMeta, cls
-        ).__getitem__(name.upper())
+        return super(CaseInsensitiveEnumMeta, cls).__getitem__(name.upper())  # pylint: disable=no-value-for-parameter
 
     def __getattr__(cls, name: str) -> Enum:
         """Return the enum member matching `name`

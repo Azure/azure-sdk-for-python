@@ -29,16 +29,17 @@ import sys
 
 if sys.version_info >= (3, 7):
     __all__ = [
-        'PyodideTransport',
+        "PyodideTransport",
     ]
 
     def __dir__():
         return __all__
 
     def __getattr__(name):
-        if name == 'PyodideTransport':
+        if name == "PyodideTransport":
             try:
                 from ._pyodide import PyodideTransport
+
                 return PyodideTransport
             except ImportError:
                 raise ImportError("pyodide package is not installed")
