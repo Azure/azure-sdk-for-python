@@ -149,6 +149,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         ):
             client.jobs.create_or_update(pipeline_job)
 
+    @pytest.mark.usefixtures("mock_anon_component_version")
     def test_pipeline_job_with_inline_component_create(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
@@ -585,6 +586,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component_id = pipeline_job.jobs["hello_world_component_inline"].component
         self.assert_component_is_anonymous(client, created_component_id)
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_create_with_distribution_component(
         self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
@@ -1371,6 +1373,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert created_pipeline_job.settings.default_compute == singularity_compute_id
         assert created_pipeline_job.jobs["hello_job"].compute == singularity_compute_id
 
+    @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_register_output_yaml(self, client: MLClient, randstr: Callable[[str], str],):
         # only register pipeline output
         register_pipeline_output_path = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_name_version.yaml"
