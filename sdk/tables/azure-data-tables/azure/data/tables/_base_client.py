@@ -276,7 +276,7 @@ class TablesBaseClient(AccountHostsMixin):
         elif credential is not None:
             raise TypeError("Unsupported credential: {}".format(credential))
 
-    def _batch_send(self, table_name: str, *reqs: List[HttpRequest], **kwargs) -> List[Mapping[str, Any]]:
+    def _batch_send(self, table_name: str, *reqs: HttpRequest, **kwargs) -> List[Mapping[str, Any]]:
         """Given a series of request, do a Storage batch call."""
         # Pop it here, so requests doesn't feel bad about additional kwarg
         policies = [StorageHeadersPolicy()]
