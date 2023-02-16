@@ -20,7 +20,7 @@ from azure.ai.ml.constants import JobType
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._assets._artifacts.model import Model
-from azure.ai.ml.entities._builders.fl_test_builders import merge_comp
+from .subcomponents import merge_comp
 
 # TODO: Determine if this should inherit ControlFlowNode, LoopNode, BaseNode, or something else.
 # Argument in favor of BaseNode - this Node DOES have I/O, unlike CFNode apparently.
@@ -138,7 +138,7 @@ class FLScatterGather(BaseNode, NodeIOMixin):
         is then inputted into the user-provided aggregation component. Returns the executed aggregation component.
         '''
 
-        outputs = {}
+        siloed_outputs = {}
         for i in range(len(self.silo_configs)):
             silo_config = self.silo_configs[i]
             # TODO input modified shared_silo_kwargs to include updated model and such
@@ -151,23 +151,26 @@ class FLScatterGather(BaseNode, NodeIOMixin):
 
             # Extract user-specified outputs from the silo component, rename them as needed, annotate them with the silo's index, then jam them all into the
             # variable-length internal component's input list. 
-            #siloed_outputs.update({"{}_{}".format(k,i) : v for k,v in FLScatterGather._extract_outputs(executed_silo_component.outputs, self.silo_to_aggregation_argument_map).items()})
-            outputs["input_{}".format(i)] = executed_silo_component.outputs["silo_output"]
-
-        executed_merge_component = merge_comp(**outputs, index=i)
-        test = merge_comp(index2=i)
-        import pdb; pdb.set_trace()
+            siloed_outputs.update({"{}_{}".format(k,i) : v for k,v in FLScatterGather._extract_outputs(executed_silo_component.outputs, self.silo_to_aggregation_argument_map).items()})
+        # BIIIIG TODO: For some reason, including this file in the __init__ causes a circular import exception on the first attempted import
+        # The second import succeeds, but then causes a silent failure where the MLDEsigner component just... does work.
+        # The statement below will produce a ComponentExecutor object instead of the actual component.
+        # TODO Also, I'm not sure if a single merge component can handle merging multiple distinct outputs (aka if each silo produces 2 things that need to be merged into 2 inputs for the agg component)
+        # We might need 1 merge component per reduced output.
+        executed_merge_component = merge_comp(**siloed_outputs, index=i)
         # TODO continue to make use of silo_to_aggregation_argument_map to send outputs form
         # merge comp to aggregation_comp
         # TODO input modified aggregation_kwargs that includes merge_comp outputs
         agg_inputs = {}
         agg_inputs.update(self.aggregation_kwargs)
+        # merge_comp always has a single output called "output"
+        agg_inputs.update({[x for x in self.silo_to_aggregation_argument_map.values()][0] : executed_merge_component.outputs["output"]}) # TODO QUICK HACK FIX ASAP make this able to handle more than 1 reduced argument
         # agg_inputs.update(executed_merge_component.outputs)
         executed_aggregation_component = self.aggregation_component(**agg_inputs)
 
         if self.aggregation_config is not None:
             # internal merge component is also siloed to wherever the aggregation component lives.
-            # FLScatterGather._apply_siloing_to_executed_component(executed_merge_component, self.aggregation_config)
+            FLScatterGather._apply_siloing_to_executed_component(executed_merge_component, self.aggregation_config)
             FLScatterGather._apply_siloing_to_executed_component(executed_aggregation_component, self.aggregation_config)
             # TODO make use of these functions instead of unrecursive compute datastore/compute setting
             #FLScatterGather._anchor_step_in_silo(pipeline_step=executed_merge_component, compute=self.aggregation_config.compute, output_datastore=self.aggregation_config.datastore)

@@ -9,8 +9,8 @@ from .parallel import Parallel
 from .pipeline import Pipeline
 from .spark import Spark
 from .sweep import Sweep
-from .fl_scatter_gather import FLScatterGather
-from .subcomponents import merge_comp
+#rom .fl_scatter_gather import FLScatterGather
+#from .subcomponents import merge_comp
 from .data_transfer import DataTransfer, DataTransferCopy, DataTransferImport, DataTransferExport
 
 __all__ = [
@@ -27,6 +27,4 @@ __all__ = [
     "DataTransferCopy",
     "DataTransferImport",
     "DataTransferExport",
-    "FLScatterGather", 
-    "merge_comp",
 ]
