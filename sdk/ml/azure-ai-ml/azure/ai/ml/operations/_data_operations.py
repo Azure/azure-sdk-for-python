@@ -45,7 +45,9 @@ from azure.ai.ml._utils._registry_utils import (
     get_sas_uri_for_registry_asset,
 )
 from azure.ai.ml._utils.utils import is_url
-from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes, ASSET_ID_FORMAT, AzureMLResourceType
+from azure.ai.ml.constants._common import (
+    MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes, ASSET_ID_FORMAT,
+    AzureMLResourceType)
 from azure.ai.ml.entities._assets import Data, WorkspaceAssetReference
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
