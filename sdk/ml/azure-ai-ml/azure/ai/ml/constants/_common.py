@@ -217,6 +217,7 @@ WORKSPACE_REG_NOT_INCLUDED_ERROR_MESSAGE = (
     " to learn more about registries."
 )
 
+
 class AzureMLResourceType(object):
     CODE = "codes"
     COMPUTE = "computes"
