@@ -43,7 +43,7 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_storage_client
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
-from azure.ai.ml.entities._assets import Model, WorkspaceAssetReference
+from azure.ai.ml.entities import Model, WorkspaceModelReference
 from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -89,12 +89,12 @@ class ModelOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Model.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
-        self, model: Union[Model, WorkspaceAssetReference]
+        self, model: Union[Model, WorkspaceModelReference]
     ) -> Model:  # TODO: Are we going to implement job_name?
         """Returns created or updated model asset.
 
         :param model: Model asset object.
-        :type model: ~azure.ai.ml.entities.Model
+        :type model: ~azure.ai.ml.entities.Model or ~azure.ai.ml.entities.WorkspaceModelReference
         :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Model artifact path is
             already linked to another asset
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
@@ -120,7 +120,7 @@ class ModelOperations(_ScopeDependentOperations):
 
             if self._registry_name:
                 # Case of copy model to registry
-                if isinstance(model, WorkspaceAssetReference):
+                if isinstance(model, WorkspaceModelReference):
                     # verify that model is not already in registry
                     try:
                         self._model_versions_operation.get(
@@ -464,9 +464,9 @@ class ModelOperations(_ScopeDependentOperations):
     # pylint: disable=no-self-use
     def _prepare_to_copy(
         self, model: Model, name: Optional[str] = None, version: Optional[str] = None
-    ) -> WorkspaceAssetReference:
+    ) -> WorkspaceModelReference:
 
-        """Returns WorkspaceAssetReference
+        """Returns WorkspaceModelReference
         to copy a registered model to registry given the asset id
 
         :param model: Registered model
@@ -492,7 +492,7 @@ class ModelOperations(_ScopeDependentOperations):
             model.version,
         )
 
-        return WorkspaceAssetReference(
+        return WorkspaceModelReference(
             name=name if name else model.name,
             version=version if version else model.version,
             asset_id=asset_id,
