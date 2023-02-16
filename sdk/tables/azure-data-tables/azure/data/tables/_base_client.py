@@ -76,7 +76,7 @@ def get_api_version(kwargs: Dict[str, Any], default: str) -> str:
 class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
-        account_url: Any,
+        account_url: str,
         credential: Optional[Union[AzureNamedKeyCredential, AzureSasCredential, TokenCredential]] = None,
         **kwargs
     ) -> None:
