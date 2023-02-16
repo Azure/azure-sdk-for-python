@@ -13,7 +13,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_12_01_preview.models import JobInputType as JobInputType10
+from azure.ai.ml._restclient.v2023_02_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,

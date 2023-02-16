@@ -6,7 +6,7 @@
 
 from typing import Any, Dict, Iterable, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview import AzureMachineLearningWorkspaces as ServiceClient122022Preview
+from azure.ai.ml._restclient.v2023_02_01_preview import AzureMachineLearningWorkspaces as ServiceClient022023Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -33,7 +33,7 @@ class ComputeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient122022Preview,
+        service_client: ServiceClient022023Preview,
         **kwargs: Dict,
     ):
         super(ComputeOperations, self).__init__(operation_scope, operation_config)
