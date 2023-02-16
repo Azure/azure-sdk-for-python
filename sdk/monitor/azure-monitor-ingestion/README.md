@@ -133,7 +133,7 @@ except HttpResponseError as e:
 
 ### Upload with custom error handling
 
-To upload logs with custom error handling, you can pass a callback function to the `on_error` parameter of the `upload` method. The callback function will be called for each error that occurs during the upload and should expect one argument that corresponds to an `UploadLogsError` object. This object contains the error encountered and the list of logs that failed to upload.
+To upload logs with custom error handling, you can pass a callback function to the `on_error` parameter of the `upload` method. The callback function will be called for each error that occurs during the upload and should expect one argument that corresponds to an `LogsUploadError` object. This object contains the error encountered and the list of logs that failed to upload.
 
 ```python
 # Example 1: Collect all logs that failed to upload.
