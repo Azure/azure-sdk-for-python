@@ -96,15 +96,11 @@ class WorkspaceOperations:
 
         if scope == Scope.SUBSCRIPTION:
             return self._operation.list_by_subscription(
-                cls=lambda objs: filter(
-                        lambda ws: ws.kind is None or ws.kind in ["", "Default"], 
-                        [Workspace._from_rest_object(obj) for obj in objs])
+                cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
             )
         return self._operation.list_by_resource_group(
             self._resource_group_name,
-                cls=lambda objs: filter(
-                        lambda ws: ws.kind is None or ws.kind in ["", "Default"], 
-                        [Workspace._from_rest_object(obj) for obj in objs])
+            cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
         )
 
     # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
