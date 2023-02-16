@@ -14,7 +14,7 @@ from azure.mgmt.search import SearchManagementClient
     pip install azure-identity
     pip install azure-mgmt-search
 # USAGE
-    python private_endpoint_connection_get.py
+    python get_private_endpoint_connection.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2020-03-13/examples/GetPrivateEndpointConnection.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/GetPrivateEndpointConnection.json
 if __name__ == "__main__":
     main()
