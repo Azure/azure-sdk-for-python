@@ -42,3 +42,23 @@ class NodeBuilder4(BaseNode, NodeIOMixin):
             compute= None,
             experiment_name= None,
         )
+
+
+
+    def custom_fl_data_path(
+        datastore_name, output_name, unique_id="${{name}}", iteration_num="${{iteration_num}}"
+    ):
+        """Produces a path to store the data during FL training.
+        Args:
+            datastore_name (str): name of the Azure ML datastore
+            output_name (str): a name unique to this output
+            unique_id (str): a unique id for the run (default: inject run id with ${{name}})
+            iteration_num (str): an iteration number if relevant
+        Returns:
+            data_path (str): direct url to the data path to store the data
+        """
+        data_path = f"azureml://datastores/{datastore_name}/paths/federated_learning/{output_name}/{unique_id}/"
+        if iteration_num is not None:
+            data_path += f"iteration_{iteration_num}/"
+
+        return data_path

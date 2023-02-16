@@ -12,4 +12,5 @@ from .node5 import Node5
 from .node6 import Node6
 from .node7 import Node7
 
+
 __all__ = ["Node1", "Node2", "Node3", "Node4", "Node5", "Node6", "Node7"]

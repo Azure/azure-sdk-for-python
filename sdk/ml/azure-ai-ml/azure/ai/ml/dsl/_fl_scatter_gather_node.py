@@ -10,6 +10,7 @@ from azure.ai.ml.entities._builders.fl_scatter_gather import FLScatterGather
 from azure.ai.ml.entities._assets.federated_learning_silo import FederatedLearningSilo
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._assets._artifacts.model import Model
+from azure.ai.ml.entities._component.component import Component
 
 # This should be the implementation of what's used in the spec here: https://github.com/Azure/azureml_run_specification/blob/aims/flspec/specs/federated-learning/examples/sdk/1_preprocessing.py#L189
 # General idea, this node will be used to warp code snippets into in a scatter gather loop
@@ -43,17 +44,20 @@ from azure.ai.ml.entities._assets._artifacts.model import Model
 #     - And for p-for: https://azureml-pipelines-doc-1p.azurewebsites.net/features/control_flow/parallel_for.html
 #  - change output to be... whatever the standard output of a model training step is.
 # 
+# TODO decide on default values for this, and revove defaults from either here or builder.
 def fl_scatter_gather(
     *, 
-    initial_model: Model,
     silo_configs: List[FederatedLearningSilo],
-    aggregation_config: Dict,
-    silo_component: PipelineComponent,
-    aggregation_component: PipelineComponent,
-    silo_to_aggregation_argument_map: Dict,
-    max_iterations: int,
-    shared_silo_kwargs: Dict = None,
-    aggregation_kwargs: Dict = None,
+    silo_component: Component,
+    aggregation_component: Component,
+    shared_silo_kwargs: Dict = {},
+    aggregation_config: FederatedLearningSilo = None,
+    aggregation_kwargs: Dict = {},
+    silo_to_aggregation_argument_map: Dict = {},
+    aggregation_to_silo_argument_map: Dict = {},
+    max_iterations: int = 1,
+    pass_iteration_to_copmonents: bool = False,
+    pass_index_to_silo_copmonents: bool = False,
     **kwargs,
 ):
     """
@@ -80,12 +84,16 @@ def fl_scatter_gather(
     # Like most nodes, this is just a wrapper around a node builder entity initializer.
     return FLScatterGather(
         silo_configs=silo_configs,
-        aggregation_config=aggregation_config,
         silo_component=silo_component,
         aggregation_component=aggregation_component,
-        silo_to_aggregation_argument_map=silo_to_aggregation_argument_map
-        max_iterations=max_iterations,
         shared_silo_kwargs=shared_silo_kwargs,
+        aggregation_config=aggregation_config, 
         aggregation_kwargs=aggregation_kwargs,
+        silo_to_aggregation_argument_map=silo_to_aggregation_argument_map,
+        aggregation_to_silo_argument_map=aggregation_to_silo_argument_map,
+        max_iterations=max_iterations,
+        pass_iteration_to_copmonents=pass_iteration_to_copmonents,
+        pass_index_to_silo_copmonents=pass_index_to_silo_copmonents,
+        **kwargs,
     )
         

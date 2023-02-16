@@ -9,5 +9,7 @@ from .parallel import Parallel
 from .pipeline import Pipeline
 from .spark import Spark
 from .sweep import Sweep
+from .fl_scatter_gather import FLScatterGather
+from .subcomponents import merge_comp
 
-__all__ = ["BaseNode", "Sweep", "Parallel", "Command", "Import", "Spark", "Pipeline", "parse_inputs_outputs", "DoWhile"]
+__all__ = ["BaseNode", "Sweep", "Parallel", "Command", "Import", "Spark", "Pipeline", "parse_inputs_outputs", "DoWhile", "FLScatterGather", "merge_comp"]
