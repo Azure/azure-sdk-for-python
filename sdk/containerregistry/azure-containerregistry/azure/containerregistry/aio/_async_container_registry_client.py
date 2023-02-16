@@ -546,17 +546,15 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     def update_repository_properties(
-        self, repository: str, properties: RepositoryProperties, **kwargs
-    ) -> RepositoryProperties:
-        ...
-
-    @overload
-    def update_repository_properties(self, repository: str, **kwargs) -> RepositoryProperties:
-        ...
-
-    @distributed_trace_async
-    async def update_repository_properties(
-        self, *args: Union[str, RepositoryProperties], **kwargs
+        self,
+        repository: str,
+        properties: RepositoryProperties,
+        *,
+        can_delete: Optional[bool] = None,
+        can_list: Optional[bool] = None,
+        can_read: Optional[bool] = None,
+        can_write: Optional[bool] = None,
+        **kwargs
     ) -> RepositoryProperties:
         """Set the permission properties of a repository.
 
@@ -573,6 +571,36 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
+        ...
+
+    @overload
+    def update_repository_properties(
+        self,
+        repository: str,
+        *,
+        can_delete: Optional[bool] = None,
+        can_list: Optional[bool] = None,
+        can_read: Optional[bool] = None,
+        can_write: Optional[bool] = None,
+        **kwargs) -> RepositoryProperties:
+        """Set the permission properties of a repository.
+
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Name of the repository.
+        :keyword bool can_delete: Delete permissions for a repository.
+        :keyword bool can_list: List permissions for a repository.
+        :keyword bool can_read: Read permissions for a repository.
+        :keyword bool can_write: Write permissions for a repository.
+        :rtype: ~azure.containerregistry.RepositoryProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
+        """
+        ...
+
+    @distributed_trace_async
+    async def update_repository_properties(
+        self, *args: Union[str, RepositoryProperties], **kwargs
+    ) -> RepositoryProperties:
         repository = str(args[0])
         properties = None
         if len(args) == 2:
@@ -593,19 +621,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     async def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, properties: ArtifactManifestProperties, **kwargs
-    ) -> ArtifactManifestProperties:
-        ...
-
-    @overload
-    async def update_manifest_properties(
-        self, repository: str, tag_or_digest: str, **kwargs
-    ) -> ArtifactManifestProperties:
-        ...
-
-    @distributed_trace_async
-    async def update_manifest_properties(
-        self, *args: Union[str, ArtifactManifestProperties], **kwargs
+        self,
+        repository: str,
+        tag_or_digest: str,
+        properties: ArtifactManifestProperties,
+        *,
+        can_delete: Optional[bool] = None,
+        can_list: Optional[bool] = None,
+        can_read: Optional[bool] = None,
+        can_write: Optional[bool] = None,
+        **kwargs
     ) -> ArtifactManifestProperties:
         """Set the permission properties for a manifest.
 
@@ -616,6 +641,50 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param properties: The property's values to be set. This is a positional-only
          parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactManifestProperties
+        :keyword bool can_delete: Delete permissions for a manifest.
+        :keyword bool can_list: List permissions for a manifest.
+        :keyword bool can_read: Read permissions for a manifest.
+        :keyword bool can_write: Write permissions for a manifest.
+        :rtype: ~azure.containerregistry.ArtifactManifestProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry import ArtifactManifestProperties
+            from azure.containerregistry.aio import ContainerRegistryClient
+            from azure.identity.aio import DefaultAzureCredential
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            manifest_properties = ArtifactManifestProperties(can_delete=False, can_list=False, can_read=False, can_write=False)
+            async for artifact in client.list_manifest_properties("my_repository"):
+                received_properties = await client.update_manifest_properties(
+                    "my_repository",
+                    artifact.digest,
+                    manifest_properties,
+                )
+        """
+        ...
+
+    @overload
+    async def update_manifest_properties(
+        self,
+        repository: str,
+        tag_or_digest: str,
+        *,
+        can_delete: Optional[bool] = None,
+        can_list: Optional[bool] = None,
+        can_read: Optional[bool] = None,
+        can_write: Optional[bool] = None,
+        **kwargs
+    ) -> ArtifactManifestProperties:
+        """Set the permission properties for a manifest.
+
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Repository the manifest belongs to.
+        :param str tag_or_digest: Tag or digest of the manifest.
         :keyword bool can_delete: Delete permissions for a manifest.
         :keyword bool can_list: List permissions for a manifest.
         :keyword bool can_read: Read permissions for a manifest.
@@ -641,6 +710,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     can_write=False,
                 )
         """
+        ...
+
+    @distributed_trace_async
+    async def update_manifest_properties(
+        self, *args: Union[str, ArtifactManifestProperties], **kwargs
+    ) -> ArtifactManifestProperties:
         repository = str(args[0])
         tag_or_digest = str(args[1])
         properties = None
@@ -670,17 +745,16 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @overload
     async def update_tag_properties(
-        self, repository: str, tag: str, properties: ArtifactTagProperties, **kwargs
-    ) -> ArtifactTagProperties:
-        ...
-
-    @overload
-    async def update_tag_properties(self, repository: str, tag: str, **kwargs) -> ArtifactTagProperties:
-        ...
-
-    @distributed_trace_async
-    async def update_tag_properties(
-        self, *args: Union[str, ArtifactTagProperties], **kwargs
+        self,
+        repository: str,
+        tag: str,
+        properties: ArtifactTagProperties,
+        *,
+        can_delete: Optional[bool] = None,
+        can_list: Optional[bool] = None,
+        can_read: Optional[bool] = None,
+        can_write: Optional[bool] = None,
+        **kwargs
     ) -> ArtifactTagProperties:
         """Set the permission properties for a tag.
 
@@ -691,6 +765,49 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :param properties: The property's values to be set. This is a positional-only
          parameter. Please provide either this or individual keyword parameters.
         :type properties: ~azure.containerregistry.ArtifactTagProperties
+        :keyword bool can_delete: Delete permissions for a tag.
+        :keyword bool can_list: List permissions for a tag.
+        :keyword bool can_read: Read permissions for a tag.
+        :keyword bool can_write: Write permissions for a tag.
+        :rtype: ~azure.containerregistry.ArtifactTagProperties
+        :raises: ~azure.core.exceptions.ResourceNotFoundError
+
+        Example
+
+        .. code-block:: python
+
+            from azure.containerregistry import ArtifactTagProperties
+            from azure.containerregistry.aio import ContainerRegistryClient
+            from azure.identity.aio import DefaultAzureCredential
+            endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
+            client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
+            tag_properties = ArtifactTagProperties(can_delete=False, can_list=False, can_read=False, can_write=False)
+            received = await client.update_tag_properties(
+                "my_repository",
+                "latest",
+                tag_properties,
+            )
+        """
+        ...
+
+    @overload
+    async def update_tag_properties(
+        self,
+        repository: str,
+        tag: str,
+        *,
+        can_delete: Optional[bool] = None,
+        can_list: Optional[bool] = None,
+        can_read: Optional[bool] = None,
+        can_write: Optional[bool] = None,
+        **kwargs
+    ) -> ArtifactTagProperties:
+        """Set the permission properties for a tag.
+
+        The updatable properties include: `can_delete`, `can_list`, `can_read`, and `can_write`.
+
+        :param str repository: Repository the tag belongs to.
+        :param str tag: Tag to set properties for.
         :keyword bool can_delete: Delete permissions for a tag.
         :keyword bool can_list: List permissions for a tag.
         :keyword bool can_read: Read permissions for a tag.
@@ -716,6 +833,12 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 can_write=False
             )
         """
+        ...
+
+    @distributed_trace_async
+    async def update_tag_properties(
+        self, *args: Union[str, ArtifactTagProperties], **kwargs
+    ) -> ArtifactTagProperties:
         repository = str(args[0])
         tag = str(args[1])
         properties = None
