@@ -13,28 +13,28 @@ from azure.core import CaseInsensitiveEnumMeta
 class AlertNotifications(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether to send security alerts notifications to the security contact."""
 
-    #: Get notifications on new alerts
     ON = "On"
-    #: Don't get notifications on new alerts
+    """Get notifications on new alerts"""
     OFF = "Off"
+    """Don't get notifications on new alerts"""
 
 
 class AlertsToAdmins(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether to send security alerts notifications to subscription admins."""
 
-    #: Send notification on new alerts to the subscription's admins
     ON = "On"
-    #: Don't send notification on new alerts to the subscription's admins
+    """Send notification on new alerts to the subscription's admins"""
     OFF = "Off"
+    """Don't send notification on new alerts to the subscription's admins"""
 
 
 class AutoProvision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes what kind of security agent provisioning action to take."""
 
-    #: Install missing security agent on VMs automatically
     ON = "On"
-    #: Do not install security agent on the VMs automatically
+    """Install missing security agent on VMs automatically"""
     OFF = "Off"
+    """Do not install security agent on the VMs automatically"""
 
 
 class InformationProtectionPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):

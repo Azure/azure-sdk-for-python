@@ -4,7 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 
-FEATURE_MANAGEMENT_KEY = "FeatureManagement"
+FEATURE_MANAGEMENT_KEY = "FeatureManagementFeatureFlags"
+FEATURE_FLAG_PREFIX = ".appconfig.featureflag/"
 
 RequestTracingDisabledEnvironmentVariable = "AZURE_APP_CONFIGURATION_TRACING_DISABLED"
 AzureFunctionEnvironmentVariable = "FUNCTIONS_EXTENSION_VERSION"

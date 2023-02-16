@@ -11,7 +11,6 @@ from collections import OrderedDict
 from inspect import Parameter, signature
 from typing import Callable, Union
 
-from azure.ai.ml._internal._utils._utils import _map_internal_output_type
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
 from azure.ai.ml._utils.utils import (
     is_valid_node_name,
@@ -258,6 +257,13 @@ class PipelineComponentBuilder:
                     description=value.description,
                     is_control=value.is_control,
                 )
+
+            # Hack: map internal output type to pipeline output type
+            def _map_internal_output_type(_meta):
+                """Map component output type to valid pipeline output type."""
+                if type(_meta).__name__ != "InternalOutput":
+                    return _meta.type
+                return _meta.map_pipeline_output_type()
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             output_meta = Output(

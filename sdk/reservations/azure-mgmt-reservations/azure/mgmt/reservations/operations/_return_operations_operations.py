@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -19,10 +19,12 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
+from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models
 from .._serialization import Serializer
@@ -43,7 +45,7 @@ def build_post_request(reservation_order_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+    api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -85,74 +87,9 @@ class ReturnOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    def post(
-        self,
-        reservation_order_id: str,
-        body: _models.RefundRequest,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.RefundResponse:
-        """Return a reservation.
-
-        Return a reservation.
-
-        :param reservation_order_id: Order Id of the reservation. Required.
-        :type reservation_order_id: str
-        :param body: Information needed for returning reservation. Required.
-        :type body: ~azure.mgmt.reservations.models.RefundRequest
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RefundResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.reservations.models.RefundResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def post(
-        self, reservation_order_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.RefundResponse:
-        """Return a reservation.
-
-        Return a reservation.
-
-        :param reservation_order_id: Order Id of the reservation. Required.
-        :type reservation_order_id: str
-        :param body: Information needed for returning reservation. Required.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RefundResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.reservations.models.RefundResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def post(
+    def _post_initial(
         self, reservation_order_id: str, body: Union[_models.RefundRequest, IO], **kwargs: Any
     ) -> _models.RefundResponse:
-        """Return a reservation.
-
-        Return a reservation.
-
-        :param reservation_order_id: Order Id of the reservation. Required.
-        :type reservation_order_id: str
-        :param body: Information needed for returning reservation. Is either a model type or a IO type.
-         Required.
-        :type body: ~azure.mgmt.reservations.models.RefundRequest or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RefundResponse or the result of cls(response)
-        :rtype: ~azure.mgmt.reservations.models.RefundResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -164,7 +101,7 @@ class ReturnOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-03-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-03-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.RefundResponse] = kwargs.pop("cls", None)
 
@@ -182,7 +119,7 @@ class ReturnOperations:
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self.post.metadata["url"],
+            template_url=self._post_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -210,4 +147,147 @@ class ReturnOperations:
 
         return deserialized
 
-    post.metadata = {"url": "/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/return"}
+    _post_initial.metadata = {"url": "/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/return"}
+
+    @overload
+    def begin_post(
+        self,
+        reservation_order_id: str,
+        body: _models.RefundRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.RefundResponse]:
+        """Return a reservation.
+
+        Return a reservation and get refund information.
+
+        :param reservation_order_id: Order Id of the reservation. Required.
+        :type reservation_order_id: str
+        :param body: Information needed for returning reservation. Required.
+        :type body: ~azure.mgmt.reservations.models.RefundRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either RefundResponse or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.RefundResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_post(
+        self, reservation_order_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[_models.RefundResponse]:
+        """Return a reservation.
+
+        Return a reservation and get refund information.
+
+        :param reservation_order_id: Order Id of the reservation. Required.
+        :type reservation_order_id: str
+        :param body: Information needed for returning reservation. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either RefundResponse or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.RefundResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_post(
+        self, reservation_order_id: str, body: Union[_models.RefundRequest, IO], **kwargs: Any
+    ) -> LROPoller[_models.RefundResponse]:
+        """Return a reservation.
+
+        Return a reservation and get refund information.
+
+        :param reservation_order_id: Order Id of the reservation. Required.
+        :type reservation_order_id: str
+        :param body: Information needed for returning reservation. Is either a model type or a IO type.
+         Required.
+        :type body: ~azure.mgmt.reservations.models.RefundRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either RefundResponse or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.reservations.models.RefundResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.RefundResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._post_initial(
+                reservation_order_id=reservation_order_id,
+                body=body,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = self._deserialize("RefundResponse", pipeline_response)
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)
+            return deserialized
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_post.metadata = {"url": "/providers/Microsoft.Capacity/reservationOrders/{reservationOrderId}/return"}

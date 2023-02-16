@@ -27,7 +27,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         client = self.build_provider_aad(appconfiguration_endpoint_string)
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
-        assert client["FeatureManagement"][".appconfig.featureflag/Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
+        assert client["FeatureManagementFeatureFlags"]["Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
 
     # method: provider_trimmed_key_prefixes
     @recorded_by_proxy
@@ -39,7 +39,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         assert client["my_json"]["key"] == "value"
         assert client["trimmed"] == "key"
         assert "test.trimmed" not in client
-        assert client["FeatureManagement"][".appconfig.featureflag/Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
+        assert client["FeatureManagementFeatureFlags"]["Alpha"] == '{\"enabled\": false, \"conditions\": {\"client_filters\": []}}'
 
     # method: provider_selectors
     @recorded_by_proxy
@@ -49,4 +49,4 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
         client = self.build_provider_aad(appconfiguration_endpoint_string, selects=selects)
         assert client["message"] == "test"
         assert "test.trimmed" not in client
-        assert "FeatureManagement" not in client
+        assert "FeatureManagementFeatureFlags" not in client

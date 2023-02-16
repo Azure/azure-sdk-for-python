@@ -13,7 +13,7 @@ else:
 JSON = Mapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class UploadLogsError:
+class LogsUploadError:
     """Error information for a failed upload to Azure Monitor.
 
     :param error: The error that occured during the upload.
