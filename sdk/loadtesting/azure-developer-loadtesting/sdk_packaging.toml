@@ -1,7 +1,7 @@
 [packaging]
 package_name = "azure-developer-loadtesting"
 package_nspkg = "azure-developer-nspkg"
-package_pprint_name = "MyService Management"
+package_pprint_name = "Load Testing"
 package_doc_id = ""
 is_stable = false
 is_arm = true
