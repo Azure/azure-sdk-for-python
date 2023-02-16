@@ -78,61 +78,6 @@ class WorkspaceOutboundRuleOperations:
         module_logger.info("Delete request initiated for outbound rule: %s\n", outbound_rule_name)
         return poller
 
-    def set(self, resource_group: str, ws_name: str, outbound_rule_name: str, **kwargs) -> LROPoller:
-        workspace_name = self._check_workspace_name(ws_name)
-        resource_group = kwargs.get("resource_group") or self._resource_group_name
-
-        networkDto = self._network_operation.get(resource_group, workspace_name)
-
-        if outbound_rule_name in networkDto.outbound_rules.keys():
-            module_logger.info("Updating the existing rule: %s\n", outbound_rule_name)
-
-        networkDto.outbound_rules = {}
-
-        type = _snake_to_camel(kwargs.get("type", None))  # pylint: disable=redefined-builtin
-        type = OutboundRuleType.FQDN if type in ["fqdn", "Fqdn"] else type
-        destination = kwargs.get("destination", None)
-        service_tag = kwargs.get("service_tag", None)
-        protocol = kwargs.get("protocol", None)
-        port_ranges = kwargs.get("port_ranges", None)
-        service_resource_id = kwargs.get("service_resource_id", None)
-        subresource_target = kwargs.get("subresource_target", None)
-        spark = kwargs.get("spark_enabled", None)
-        spark_enabled = False
-        if (spark in ["True","true","T","t",True]):
-            spark_enabled = True
-
-        rule = None
-
-        if type == OutboundRuleType.FQDN:
-            rule = FqdnOutboundRule(type=type, category=OutboundRuleCategory.USER_DEFINED, destination=destination)
-        if type == OutboundRuleType.SERVICE_TAG:
-            destination = ServiceTagOutboundRuleDestination(
-                service_tag=service_tag, protocol=protocol, port_ranges=port_ranges
-            )
-            rule = ServiceTagOutboundRule(
-                type=type, category=OutboundRuleCategory.USER_DEFINED, destination=destination
-            )
-        if type == OutboundRuleType.PRIVATE_ENDPOINT:
-            destination = PrivateEndpointOutboundRuleDestination(
-                service_resource_id=service_resource_id,
-                subresource_target=subresource_target,
-                spark_enabled=spark_enabled,
-            )
-            rule = PrivateEndpointOutboundRule(
-                type=type, category=OutboundRuleCategory.USER_DEFINED, destination=destination
-            )
-
-        networkDto.outbound_rules[outbound_rule_name] = rule
-
-        poller = self._network_operation.begin_update(
-            resource_group_name=resource_group,
-            workspace_name=workspace_name,
-            body=networkDto,
-        )
-        module_logger.info("Set (create or update) request initiated for outbound rule: %s\n", outbound_rule_name)
-        return poller
-
     def _check_workspace_name(self, name) -> str:
         workspace_name = name or self._default_workspace_name
         if not workspace_name:
