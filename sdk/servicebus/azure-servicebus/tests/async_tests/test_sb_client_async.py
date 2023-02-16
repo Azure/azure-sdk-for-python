@@ -333,7 +333,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         token = (await credential.get_token(auth_uri)).token
 
         # Finally let's do it with SAS token + conn str
-        token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token.decode())
+        token_conn_str = "Endpoint=sb://{}/;SharedAccessSignature={};".format(hostname, token)
 
         client = ServiceBusClient.from_connection_string(token_conn_str, uamqp_transport=uamqp_transport)
         async with client:
@@ -406,7 +406,7 @@ class TestServiceBusClientAsync(AzureMgmtRecordedTestCase):
         credential = ServiceBusSharedKeyCredential(servicebus_namespace_key_name, servicebus_namespace_primary_key)
         hostname = "{}.servicebus.windows.net".format(servicebus_namespace.name)
         auth_uri = "sb://{}/{}".format(hostname, servicebus_queue.name)
-        token = (await credential.get_token(auth_uri)).token.decode()
+        token = (await credential.get_token(auth_uri)).token
 
         credential = AzureSasCredential(token)
 

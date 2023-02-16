@@ -44,7 +44,7 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         if self.http_proxy or self.transport_type == TransportType.AmqpOverWebsocket:
             self.transport_type = TransportType.AmqpOverWebsocket
             self.connection_port = DEFAULT_AMQP_WSS_PORT
-            if amqp_transport == PyamqpTransport:
+            if issubclass(amqp_transport, PyamqpTransport):
                 self.hostname += "/$servicebus/websocket"
 
         # custom end point

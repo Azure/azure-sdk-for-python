@@ -438,7 +438,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         """
 
         target = kwargs.pop("target")
-
         return SendClient(
             config.hostname,
             target,

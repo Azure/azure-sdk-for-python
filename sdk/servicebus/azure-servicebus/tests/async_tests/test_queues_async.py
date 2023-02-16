@@ -1589,7 +1589,11 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
 
             async with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
                 messages = await receiver.receive_messages(max_wait_time=5)
-                await receiver._handler._link.detach()  # destroy the underlying receiver link
+                # destroy the underlying receiver link
+                if uamqp_transport:
+                    await receiver._handler.message_handler.destroy_async()
+                else:
+                    await receiver._handler._link.detach()
                 assert len(messages) == 1
                 await receiver.complete_message(messages[0])
 
@@ -1742,7 +1746,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
             def message_content():
                 for i in range(20):
                     yield ServiceBusMessage(
-                        body="ServiceBusMessage no. {}".format(i),
+                        body=f"ServiceBusMessage no. {i}",
                         subject='1st'
                     )
 
@@ -1973,12 +1977,22 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
     async def test_async_queue_send_timeout(self, uamqp_transport, *, servicebus_namespace_connection_string=None, servicebus_queue=None, **kwargs):
         async def _hack_amqp_sender_run_async(self, **kwargs):
             time.sleep(6)  # sleep until timeout
-            try:
-                await self._link.update_pending_deliveries()
-                await self._connection.listen(wait=self._socket_timeout, **kwargs)
-            except ValueError:
-                self._shutdown = True
-                return False
+            if uamqp_transport:
+                await self.message_handler.work_async()
+                self._waiting_messages = 0
+                self._pending_messages = self._filter_pending()
+                if self._backoff and not self._waiting_messages:
+                    _logger.info("Client told to backoff - sleeping for %r seconds", self._backoff)
+                    await self._connection.sleep_async(self._backoff)
+                    self._backoff = 0
+                await self._connection.work_async()
+            else:
+                try:
+                    await self._link.update_pending_deliveries()
+                    await self._connection.listen(wait=self._socket_timeout, **kwargs)
+                except ValueError:
+                    self._shutdown = True
+                    return False
             return True
 
         async with ServiceBusClient.from_connection_string(
@@ -2099,7 +2113,7 @@ class TestServiceBusQueueAsync(AzureMgmtRecordedTestCase):
                     await sender.send_messages(ServiceBusMessage("body"), timeout=5)
                     message = (await receiver.receive_messages(max_wait_time=10))[0]
                     if uamqp_transport:
-                        message.message.accept = types.MethodType(_hack_amqp_message_complete, message.message)
+                        message._message.accept = types.MethodType(_hack_amqp_message_complete, message._message)
                     else:
                         ReceiveClientAsync.settle_messages_async = types.MethodType(_hack_amqp_message_complete, receiver._handler)
                     await receiver.complete_message(message)  # settle via mgmt link

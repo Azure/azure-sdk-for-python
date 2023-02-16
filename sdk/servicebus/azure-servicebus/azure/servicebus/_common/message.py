@@ -1131,7 +1131,7 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
     def locked_until_utc(self) -> Optional[datetime.datetime]:
         """
         The UTC datetime until which the message will be locked in the queue/subscription.
-        When the lock expires, delivery count of hte message is incremented and the message
+        When the lock expires, delivery count of the message is incremented and the message
         is again available for retrieval.
 
         :rtype: datetime.datetime
