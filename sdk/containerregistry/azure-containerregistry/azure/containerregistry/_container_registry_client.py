@@ -995,13 +995,13 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
     @distributed_trace
-    def download_blob(self, repository: str, digest: str, **kwargs) -> Optional[DownloadBlobResult]:
+    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobResult:
         """Download a blob that is part of an artifact.
 
         :param str repository: Name of the repository
         :param str digest: The digest of the blob to download.
-        :returns: DownloadBlobResult or None when the download result is empty.
-        :rtype: ~azure.containerregistry.DownloadBlobResult or None
+        :returns: DownloadBlobResult
+        :rtype: ~azure.containerregistry.DownloadBlobResult
         :raises ValueError: If the parameter repository or digest is None.
         """
         try:
@@ -1013,13 +1013,11 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 raise ValueError("The parameter repository and digest cannot be None.")
             raise
 
-        if deserialized:
-            blob_content = b''
-            for chunk in deserialized:
-                if chunk:
-                    blob_content += chunk
-            return DownloadBlobResult(data=BytesIO(blob_content), digest=digest)
-        return None
+        blob_content = b''
+        for chunk in deserialized: # type: ignore
+            if chunk:
+                blob_content += chunk
+        return DownloadBlobResult(data=BytesIO(blob_content), digest=digest)
 
     @distributed_trace
     def delete_manifest(self, repository: str, tag_or_digest: str, **kwargs) -> None:
