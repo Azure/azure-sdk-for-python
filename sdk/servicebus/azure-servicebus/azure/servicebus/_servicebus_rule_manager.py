@@ -1,12 +1,13 @@
 import threading
 import time
 from uamqp import AMQPClient, types, Message
+from uamqp.message import MessageProperties
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
 from typing import TYPE_CHECKING, Any, Optional, Union
-from azure.servicebus._common.constants import CONSUMER_IDENTIFIER, ServiceBusReceiveMode, ServiceBusToAMQPReceiveModeMap
+from azure.core.paging import ItemPaged
+from azure.servicebus._common.constants import CONSUMER_IDENTIFIER, MGMT_REQUEST_ADD_RULE, MGMT_REQUEST_RULE_DESCRIPTION, MGMT_REQUEST_RULE_NAME, ServiceBusReceiveMode, ServiceBusToAMQPReceiveModeMap
 from azure.servicebus.management import TrueRuleFilter, CorrelationRuleFilter, SqlRuleFilter, SqlRuleAction, RuleProperties
-from azure.core.async_paging import AsyncItemPaged
 from azure.servicebus._common.utils import create_authentication, get_receive_links, receive_trace_context_manager
 from ._base_handler import BaseHandler
 
@@ -21,10 +22,7 @@ class ServiceBusRuleManager(
     BaseHandler
 ):  # pylint: disable=too-many-instance-attributes
     """The ServiceBusRuleManager class defines a high level interface for
-    managing rules from the Azure Service Bus Topic Subscription.
-
-    The two primary channels for message receipt are `receive()` to make a single request for messages,
-    and `for message in receiver:` to continuously receive incoming messages in an ongoing fashion.
+    managing rules on a specific topic subscription. The rule manager requires only Listen claims
 
     **Please use the `get_rule_manager` method of ~azure.servicebus.ServiceBusClient to create a
     ServiceBusRuleManager instance.**
@@ -294,15 +292,59 @@ class ServiceBusRuleManager(
         # type: () -> None
         super(ServiceBusRuleManager, self).close()
         self._message_iter = None  # pylint: disable=attribute-defined-outside-init
+        
+    def create_rule(
+        self,
+        rule_name: str,
+        *,
+        filter: Union[  # pylint: disable=redefined-builtin
+            CorrelationRuleFilter, SqlRuleFilter
+        ]=TrueRuleFilter(),
+        action: Optional[SqlRuleAction] = None,
+        **kwargs: Any):
+        """Create a rule for a topic subscription.
 
-    def create_rule(self, rule_name: str, filter: Union[CorrelationRuleFilter, SqlRuleFilter]=TrueRuleFilter(), action: Optional[SqlRuleAction] = None,**kwargs: Any) -> None:
+        :param rule_name: Name of the rule.
+        :type rule_name: str
+        :keyword filter: The filter of the rule. The default value is ~azure.servicebus.management.TrueRuleFilter
+        :paramtype filter: Union[~azure.servicebus.management.CorrelationRuleFilter,
+         ~azure.servicebus.management.SqlRuleFilter]
+        :keyword action: The action of the rule.
+        :paramtype action: Optional[~azure.servicebus.management.SqlRuleAction]
+        :rtype: None
+        """
+       
+        amqp_body = {
+            MGMT_REQUEST_RULE_NAME: rule_name,
+            MGMT_REQUEST_RULE_DESCRIPTION: filter # TODO, function to take filter and convert it to AMQP value
+        }
+        amqp_rule_message = Message(body=amqp_body)
+        amqp_rule_message.application_properties = {
+            'operation': MGMT_REQUEST_ADD_RULE,
+        }
+
+        self._handler.mgmt_request(amqp_rule_message, b'CREATE')
+    
         pass
 
     def delete_rule(self, rule_name: str, **kwargs: Any) -> None:
+        """Delete a topic subscription rule.
+
+        :param str rule_name: The to-be-deleted rule.
+        :rtype: None
+        """
         pass
 
-    def list_rules(**kwargs: Any)-> AsyncItemPaged[RuleProperties]:
-        pass
+    def list_rules(**kwargs: Any) -> ItemPaged[RuleProperties]:
+         """List the rules of a topic subscription.
+
+        :param str topic_name: The topic that owns the subscription.
+        :param str subscription_name: The subscription that
+         owns the rules.
+        :returns: An iterable (auto-paging) response of RuleProperties.
+        :rtype: ~azure.core.paging.ItemPaged[RuleProperties]
+        """
+         pass
 
     
 
