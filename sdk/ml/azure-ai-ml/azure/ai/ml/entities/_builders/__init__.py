@@ -11,5 +11,22 @@ from .spark import Spark
 from .sweep import Sweep
 from .fl_scatter_gather import FLScatterGather
 from .subcomponents import merge_comp
+from .data_transfer import DataTransfer, DataTransferCopy, DataTransferImport, DataTransferExport
 
-__all__ = ["BaseNode", "Sweep", "Parallel", "Command", "Import", "Spark", "Pipeline", "parse_inputs_outputs", "DoWhile", "FLScatterGather", "merge_comp"]
+__all__ = [
+    "BaseNode",
+    "Sweep",
+    "Parallel",
+    "Command",
+    "Import",
+    "Spark",
+    "Pipeline",
+    "parse_inputs_outputs",
+    "DoWhile",
+    "DataTransfer",
+    "DataTransferCopy",
+    "DataTransferImport",
+    "DataTransferExport",
+    "FLScatterGather", 
+    "merge_comp",
+]

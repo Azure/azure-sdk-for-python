@@ -18,14 +18,13 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
-import os
 import asyncio
-from azure.core.exceptions import HttpResponseError
 
 
 async def sample_analyze_healthcare_entities_with_cancellation_async() -> None:
     # [START analyze_healthcare_entities_with_cancellation_async]
+    import os
+    from azure.core.exceptions import HttpResponseError
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 

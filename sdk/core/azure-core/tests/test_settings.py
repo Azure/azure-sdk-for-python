@@ -204,16 +204,12 @@ class TestStandardSettings(object):
     def test_defaults(self):
         val = m.settings.defaults
         # assert isinstance(val, tuple)
-        defaults = m.settings.config(
-            log_level=20, tracing_enabled=False, tracing_implementation=None
-        )
+        defaults = m.settings.config(log_level=20, tracing_enabled=False, tracing_implementation=None)
         assert val.log_level == defaults.log_level
         assert val.tracing_enabled == defaults.tracing_enabled
         assert val.tracing_implementation == defaults.tracing_implementation
         os.environ["AZURE_LOG_LEVEL"] = "debug"
-        defaults = m.settings.config(
-            log_level=20, tracing_enabled=False, tracing_implementation=None
-        )
+        defaults = m.settings.config(log_level=20, tracing_enabled=False, tracing_implementation=None)
         assert val.log_level == defaults.log_level
         assert val.tracing_enabled == defaults.tracing_enabled
         assert val.tracing_implementation == defaults.tracing_implementation

@@ -315,7 +315,7 @@ class TestCommandComponent:
             data=component_entity._to_dict(),
             context={
                 "source_path": test_path,
-            }
+            },
         )
         assert recreated_component._to_dict() == component_entity._to_dict()
 
