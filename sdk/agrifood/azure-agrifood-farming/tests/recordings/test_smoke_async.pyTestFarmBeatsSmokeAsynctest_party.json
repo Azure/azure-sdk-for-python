@@ -5,7 +5,7 @@
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Encoding": "gzip, deflate",
         "Content-Length": "182",
         "Content-Type": "application/x-www-form-urlencoded",
         "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
@@ -16,17 +16,17 @@
         "Cache-Control": "no-store, no-cache",
         "Content-Length": "92",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:35:28 GMT",
+        "Date": "Thu, 16 Feb 2023 00:26:52 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AjW_HC_t705BjPXfPglyArAU3PbiBQAAAMY4f9sOAAAA; expires=Fri, 17-Mar-2023 20:35:28 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AiMJ7ocJFlRNi33NV7_PVIsU3PbiAwAAAAJvf9sOAAAA; expires=Sat, 18-Mar-2023 00:26:53 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -37,11 +37,11 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-3956?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-3957?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Encoding": "gzip, deflate",
         "Content-Length": "165",
         "Content-Type": "application/merge-patch\u002Bjson",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
@@ -63,10 +63,10 @@
         "Content-Encoding": "gzip",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:35:29 GMT",
-        "ETag": "0000b332-0000-0600-0000-63ed42110000",
-        "Location": "http://fakeaccount.farmbeats.azure.net/parties/test-party-3956",
-        "mise-correlation-id": "808e8246-0cf9-443e-9e7d-3952eba15b56",
+        "Date": "Thu, 16 Feb 2023 00:26:53 GMT",
+        "ETag": "0100cb11-0000-0600-0000-63ed784d0000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/test-party-3957",
+        "mise-correlation-id": "ae34ae1d-f1b8-425e-b08d-32882f2938fd",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -75,11 +75,11 @@
         "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
-        "id": "test-party-3956",
-        "eTag": "0000b332-0000-0600-0000-63ed42110000",
+        "id": "test-party-3957",
+        "eTag": "0100cb11-0000-0600-0000-63ed784d0000",
         "status": "Sample Status",
-        "createdDateTime": "2023-02-15T20:35:29Z",
-        "modifiedDateTime": "2023-02-15T20:35:29Z",
+        "createdDateTime": "2023-02-16T00:26:53Z",
+        "modifiedDateTime": "2023-02-16T00:26:53Z",
         "name": "Test Party",
         "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -92,11 +92,11 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-3956?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-3957?api-version=2022-11-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate, br",
+        "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
@@ -106,8 +106,8 @@
         "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Content-Security-Policy": "self",
-        "Date": "Wed, 15 Feb 2023 20:35:29 GMT",
-        "mise-correlation-id": "d1b00e86-bf21-49ae-959b-dcf158a702e7",
+        "Date": "Thu, 16 Feb 2023 00:26:54 GMT",
+        "mise-correlation-id": "9b933d5b-fba6-4dc9-b04e-c66bcd6abbf8",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",

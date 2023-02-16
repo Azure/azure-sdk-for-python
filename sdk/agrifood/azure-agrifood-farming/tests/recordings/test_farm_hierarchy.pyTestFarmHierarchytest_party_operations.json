@@ -16,18 +16,20 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
+        "Content-Encoding": "br",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-zqg-PcKELjTrLcHHVbw2UQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:13 GMT",
+        "Date": "Thu, 16 Feb 2023 00:25:29 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjW_HC_t705BjPXfPglyArA; expires=Fri, 17-Mar-2023 20:34:14 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=PAQABAAEAAAD--DLA3VO7QrddgJg7WevrMY_c8nIu-Fqu3-WLqGgK1ZOt0zHJFswSrZWbMdN5IfUNmXXSkoVSQYvkgInd40f-U0eNof5PuSwlGadif6pVb3iJKh9sbFgcFba-MhmtJ1YCy3n_P8X1WeZ9pa63ZSUARWONG6FEs3ow29dtRuY3wPgAz8ycyxcVBxZa6-46XeggAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AiMJ7ocJFlRNi33NV7_PVIs; expires=Sat, 18-Mar-2023 00:25:30 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=PAQABAAEAAAD--DLA3VO7QrddgJg7WevrX5VTLtNq9sKp25YWOuTsN-4WIUNRpCIiyvtH7zOtOL4_zIsYy2QhyxAZVLJTywoeNKOE8ieLE5RMTGChIkc90BKzxIsy1HcCWk6sk_fa2qk3mI8k7m6e0MAP5hw4FFJtK2sack_Wzg98oWaEbBLwW0xFQo5uFD3c2ZF8k1G8yHkgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -105,7 +107,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AjW_HC_t705BjPXfPglyArA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AiMJ7ocJFlRNi33NV7_PVIs; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -115,16 +117,18 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
+        "Content-Encoding": "br",
+        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-GmG7jIyszMAR2V8jAZv3RQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:13 GMT",
+        "Date": "Thu, 16 Feb 2023 00:25:29 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjW_HC_t705BjPXfPglyArA; expires=Fri, 17-Mar-2023 20:34:14 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AiMJ7ocJFlRNi33NV7_PVIs; expires=Sat, 18-Mar-2023 00:25:30 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -180,11 +184,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
-        "client-request-id": "ac5017ed-24e0-4ffb-ab32-d25c6d6b7a5c",
+        "client-request-id": "82944626-7bff-481f-9367-dc7916c34c60",
         "Connection": "keep-alive",
         "Content-Length": "291",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AjW_HC_t705BjPXfPglyArA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AiMJ7ocJFlRNi33NV7_PVIs; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -198,15 +202,16 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "ac5017ed-24e0-4ffb-ab32-d25c6d6b7a5c",
+        "client-request-id": "82944626-7bff-481f-9367-dc7916c34c60",
         "Content-Length": "111",
+        "Content-Encoding": "br",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:14 GMT",
+        "Date": "Thu, 16 Feb 2023 00:25:30 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAQAAAMY4f9sOAAAA; expires=Fri, 17-Mar-2023 20:34:14 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AiMJ7ocJFlRNi33NV7_PVIs; expires=Sat, 18-Mar-2023 00:25:31 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -224,7 +229,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-2847?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-39574?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -251,10 +256,10 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:18 GMT",
-        "ETag": "1f0056f4-0000-0600-0000-63ed41ca0000",
-        "Location": "http://fakeaccount.farmbeats.azure.net/parties/test-party-2847",
-        "mise-correlation-id": "80cf57e0-6aa0-491f-ad3e-021571fc4ac7",
+        "Date": "Thu, 16 Feb 2023 00:25:32 GMT",
+        "ETag": "0100c811-0000-0600-0000-63ed77fc0000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/test-party-39574",
+        "mise-correlation-id": "1997fc4d-86e8-4a93-b6ff-32085a712a79",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -263,11 +268,11 @@
         "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
-        "id": "test-party-2847",
-        "eTag": "1f0056f4-0000-0600-0000-63ed41ca0000",
+        "id": "test-party-39574",
+        "eTag": "0100c811-0000-0600-0000-63ed77fc0000",
         "status": "Sample Status",
-        "createdDateTime": "2023-02-15T20:34:18Z",
-        "modifiedDateTime": "2023-02-15T20:34:18Z",
+        "createdDateTime": "2023-02-16T00:25:32Z",
+        "modifiedDateTime": "2023-02-16T00:25:32Z",
         "name": "Test Party",
         "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -280,7 +285,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-2847?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-39574?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -296,9 +301,9 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:21 GMT",
-        "ETag": "1f0056f4-0000-0600-0000-63ed41ca0000",
-        "mise-correlation-id": "0777fea7-3864-4119-9c36-2b0aff94a58b",
+        "Date": "Thu, 16 Feb 2023 00:25:33 GMT",
+        "ETag": "0100c811-0000-0600-0000-63ed77fc0000",
+        "mise-correlation-id": "fdc90d22-10d7-429e-bf83-e8e261c9800c",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -307,11 +312,11 @@
         "x-ms-throttle-information": "100"
       },
       "ResponseBody": {
-        "id": "test-party-2847",
-        "eTag": "1f0056f4-0000-0600-0000-63ed41ca0000",
+        "id": "test-party-39574",
+        "eTag": "0100c811-0000-0600-0000-63ed77fc0000",
         "status": "Sample Status",
-        "createdDateTime": "2023-02-15T20:34:18Z",
-        "modifiedDateTime": "2023-02-15T20:34:18Z",
+        "createdDateTime": "2023-02-16T00:25:32Z",
+        "modifiedDateTime": "2023-02-16T00:25:32Z",
         "name": "Test Party",
         "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -324,7 +329,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-2847?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-39574?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -351,9 +356,9 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:23 GMT",
-        "ETag": "1f007ff4-0000-0600-0000-63ed41ce0000",
-        "mise-correlation-id": "534cedce-f907-4000-b4f4-0e9ddc2db75c",
+        "Date": "Thu, 16 Feb 2023 00:25:33 GMT",
+        "ETag": "0100c911-0000-0600-0000-63ed77fd0000",
+        "mise-correlation-id": "2eed256a-4373-41eb-8e3a-eaec1c1e5c3b",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -362,11 +367,11 @@
         "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
-        "id": "test-party-2847",
-        "eTag": "1f007ff4-0000-0600-0000-63ed41ce0000",
+        "id": "test-party-39574",
+        "eTag": "0100c911-0000-0600-0000-63ed77fd0000",
         "status": "Sample Status",
-        "createdDateTime": "2023-02-15T20:34:18Z",
-        "modifiedDateTime": "2023-02-15T20:34:22Z",
+        "createdDateTime": "2023-02-16T00:25:32Z",
+        "modifiedDateTime": "2023-02-16T00:25:33Z",
         "name": "Test Party Updated",
         "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -379,7 +384,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-2847?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-39574?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -395,9 +400,9 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:23 GMT",
-        "ETag": "1f007ff4-0000-0600-0000-63ed41ce0000",
-        "mise-correlation-id": "a1b48075-c3af-4b7e-8727-0598450d7501",
+        "Date": "Thu, 16 Feb 2023 00:25:34 GMT",
+        "ETag": "0100c911-0000-0600-0000-63ed77fd0000",
+        "mise-correlation-id": "bd5bc912-6eca-4ce0-95b1-b481ce57422c",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -406,11 +411,11 @@
         "x-ms-throttle-information": "100"
       },
       "ResponseBody": {
-        "id": "test-party-2847",
-        "eTag": "1f007ff4-0000-0600-0000-63ed41ce0000",
+        "id": "test-party-39574",
+        "eTag": "0100c911-0000-0600-0000-63ed77fd0000",
         "status": "Sample Status",
-        "createdDateTime": "2023-02-15T20:34:18Z",
-        "modifiedDateTime": "2023-02-15T20:34:22Z",
+        "createdDateTime": "2023-02-16T00:25:32Z",
+        "modifiedDateTime": "2023-02-16T00:25:33Z",
         "name": "Test Party Updated",
         "description": "Party created during testing.",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -423,7 +428,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-2847?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-39574?api-version=2022-11-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -438,8 +443,9 @@
         "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
         "Content-Security-Policy": "self",
-        "Date": "Wed, 15 Feb 2023 20:34:30 GMT",
-        "mise-correlation-id": "424a5840-58b8-48ec-ab42-c98265606c04",
+        "Content-Encoding": "br",
+        "Date": "Thu, 16 Feb 2023 00:25:35 GMT",
+        "mise-correlation-id": "1f9fd7c2-b349-4c9f-b34d-6ca471720c82",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "SAMEORIGIN",
@@ -448,7 +454,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-2847?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-39574?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -463,7 +469,7 @@
         "Connection": "keep-alive",
         "Content-Encoding": "br",
         "Content-Type": "application/json",
-        "Date": "Wed, 15 Feb 2023 20:34:30 GMT",
+        "Date": "Thu, 16 Feb 2023 00:25:35 GMT",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -473,9 +479,9 @@
       "ResponseBody": {
         "error": {
           "code": "ResourceNotFound",
-          "message": "Resource \u0027Party\u0027 with id \u0027test-party-2847\u0027 does not exist."
+          "message": "Resource \u0027Party\u0027 with id \u0027test-party-39574\u0027 does not exist."
         },
-        "traceId": "0HMOFA8TG01H1:00000004"
+        "traceId": "0HMOFA8TG01HG:00000004"
       }
     }
   ],

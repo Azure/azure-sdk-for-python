@@ -21,7 +21,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         
         # Setup data
-        party_id = "test-party-8563"
+        party_id = "test-party-25486"
         party_request = {
             "name": "Test Party",
             "description": "Party created during testing.",
@@ -39,8 +39,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         # Create
         party_response = await client.parties.create_or_update(
             party_id=party_id,
-            party=party_request,
-            headers={"Accept-Encoding": "gzip, deflate, br"}
+            party=party_request
         )
 
         # Assert on immediate response
@@ -60,8 +59,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
 
         # Retrieve created object
         retrieved_party = await client.parties.get(
-            party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate, br"})
+            party_id=party_id)
 
         # Assert on retrieved object
         assert retrieved_party["id"] == party_id
@@ -72,8 +70,7 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
         # Update
         updated_party = await client.parties.create_or_update(
             party_id=party_id,
-            party=party_request,
-            headers={"Accept-Encoding": "gzip, deflate, br"}
+            party=party_request
         )
 
         # Assert on immediate response
@@ -83,21 +80,18 @@ class TestFarmHierarchyAsync(FarmBeatsAsyncTestCase):
 
         # Retrieve updated object
         retrieved_party = await client.parties.get(
-            party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate, br"})
+            party_id=party_id)
 
         # Assert updated object
         assert retrieved_party == updated_party
 
         # Delete
         await client.parties.delete(
-            party_id=party_id,
-            headers={"Accept-Encoding": "gzip, deflate, br"})
+            party_id=party_id)
 
         # Assert object doesn't exist anymore
         with pytest.raises(ResourceNotFoundError):
             await client.parties.get(
-                party_id=party_id,
-                headers={"Accept-Encoding": "gzip, deflate, br"})
+                party_id=party_id)
         
         await self.close_client()

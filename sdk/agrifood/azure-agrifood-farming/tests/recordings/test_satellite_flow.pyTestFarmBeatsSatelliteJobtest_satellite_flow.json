@@ -16,16 +16,17 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
+        "Content-Encoding": "br",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:34 GMT",
+        "Date": "Thu, 16 Feb 2023 00:25:38 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAgAAAMY4f9sOAAAA; expires=Fri, 17-Mar-2023 20:34:35 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AiMJ7ocJFlRNi33NV7_PVIs; expires=Sat, 18-Mar-2023 00:25:38 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - SEASLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +104,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAgAAAMY4f9sOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AiMJ7ocJFlRNi33NV7_PVIs; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +115,16 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:35 GMT",
+        "Content-Encoding": "br",
+        "Date": "Thu, 16 Feb 2023 00:25:38 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAgAAAMY4f9sOAAAA; expires=Fri, 17-Mar-2023 20:34:35 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AiMJ7ocJFlRNi33NV7_PVIs; expires=Sat, 18-Mar-2023 00:25:38 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - SEASLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -178,11 +180,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
-        "client-request-id": "e0b4cb01-1f43-4653-aaf4-2f13c1ce704e",
+        "client-request-id": "3790fe67-c216-4e30-a32a-a78b5b6871a9",
         "Connection": "keep-alive",
         "Content-Length": "291",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAgAAAMY4f9sOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AiMJ7ocJFlRNi33NV7_PVIs; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.13.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -196,22 +198,22 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "e0b4cb01-1f43-4653-aaf4-2f13c1ce704e",
+        "client-request-id": "3790fe67-c216-4e30-a32a-a78b5b6871a9",
         "Content-Length": "111",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-YFs6-8Jd0LBZG0IusKHfjQ\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027 \u0027report-sample\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:35 GMT",
+        "Content-Encoding": "br",
+        "Date": "Thu, 16 Feb 2023 00:25:39 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AjW_HC_t705BjPXfPglyArAU3PbiAwAAAMY4f9sOAAAA; expires=Fri, 17-Mar-2023 20:34:36 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AiMJ7ocJFlRNi33NV7_PVIsU3PbiAQAAAAJvf9sOAAAA; expires=Sat, 18-Mar-2023 00:25:39 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14649.17 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14649.17 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -223,7 +225,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-2946?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-39735?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -241,10 +243,10 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:36 GMT",
-        "ETag": "00005465-0000-0600-0000-63ed41dc0000",
-        "Location": "http://fakeaccount.farmbeats.azure.net/parties/test-party-2946",
-        "mise-correlation-id": "f7772847-0490-4b51-a504-1b240730bf2b",
+        "Date": "Thu, 16 Feb 2023 00:25:39 GMT",
+        "ETag": "04003e12-0000-0600-0000-63ed78030000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/test-party-39735",
+        "mise-correlation-id": "5a208cf1-369e-4742-8ca1-057aef545df4",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -253,16 +255,16 @@
         "x-ms-throttle-information": "1000"
       },
       "ResponseBody": {
-        "id": "test-party-2946",
-        "eTag": "00005465-0000-0600-0000-63ed41dc0000",
-        "createdDateTime": "2023-02-15T20:34:36Z",
-        "modifiedDateTime": "2023-02-15T20:34:36Z",
+        "id": "test-party-39735",
+        "eTag": "04003e12-0000-0600-0000-63ed78030000",
+        "createdDateTime": "2023-02-16T00:25:39Z",
+        "modifiedDateTime": "2023-02-16T00:25:39Z",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
         "modifiedBy": "9002b50e-dc98-445e-a865-72dce38ecafd"
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-2946/boundaries/satellite-flow-asdftest-boundary?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/parties/test-party-39735/boundaries/satellite-flow-asdftest-boundary?api-version=2022-11-01-preview",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -319,10 +321,10 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:41 GMT",
-        "ETag": "00005565-0000-0600-0000-63ed41e10000",
-        "Location": "http://fakeaccount.farmbeats.azure.net/parties/test-party-2946/boundaries/satellite-flow-asdftest-boundary",
-        "mise-correlation-id": "1b139ee0-e6c2-4bd4-a3ce-fbdc274cccf0",
+        "Date": "Thu, 16 Feb 2023 00:25:40 GMT",
+        "ETag": "04003f12-0000-0600-0000-63ed78040000",
+        "Location": "http://bb-prod-wcus-1.farmbeats.azure.net/parties/test-party-39735/boundaries/satellite-flow-asdftest-boundary",
+        "mise-correlation-id": "fa164729-e9fe-4174-9cd9-266bd963aebf",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -397,16 +399,16 @@
             ]
           ]
         },
-        "partyId": "test-party-2946",
+        "partyId": "test-party-39735",
         "area": {
           "unit": "Acre",
           "value": 60.405
         },
         "id": "satellite-flow-asdftest-boundary",
-        "eTag": "00005565-0000-0600-0000-63ed41e10000",
+        "eTag": "04003f12-0000-0600-0000-63ed78040000",
         "status": "\u003Cstring\u003E",
-        "createdDateTime": "2023-02-15T20:34:41Z",
-        "modifiedDateTime": "2023-02-15T20:34:41Z",
+        "createdDateTime": "2023-02-16T00:25:40Z",
+        "modifiedDateTime": "2023-02-16T00:25:40Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E",
         "createdBy": "9002b50e-dc98-445e-a865-72dce38ecafd",
@@ -414,20 +416,20 @@
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-3957?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-390576?api-version=2022-11-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate, br",
         "Connection": "keep-alive",
-        "Content-Length": "344",
+        "Content-Length": "345",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-agrifood-farming/1.0.0b2 Python/3.10.7 (Windows-10-10.0.22000-SP0)"
       },
       "RequestBody": {
         "boundaryId": "satellite-flow-asdftest-boundary",
         "endDateTime": "2020-01-31T00:00:00Z",
-        "partyId": "test-party-2946",
+        "partyId": "test-party-39735",
         "startDateTime": "2020-01-01T00:00:00Z",
         "provider": "Microsoft",
         "source": "Sentinel_2_L2A",
@@ -452,10 +454,10 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:42 GMT",
-        "Location": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-3957?api-version=2022-11-01-preview",
-        "mise-correlation-id": "da87a5fb-347a-441d-b246-11be0196d7f7",
-        "operation-location": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-3957?api-version=2022-11-01-preview",
+        "Date": "Thu, 16 Feb 2023 00:25:41 GMT",
+        "Location": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-390576?api-version=2022-11-01-preview",
+        "mise-correlation-id": "05b6b35c-f01d-4764-af5e-f7301253a07e",
+        "operation-location": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-390576?api-version=2022-11-01-preview",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -464,7 +466,7 @@
         "x-ms-throttle-information": "1284"
       },
       "ResponseBody": {
-        "partyId": "test-party-2946",
+        "partyId": "test-party-39735",
         "boundaryId": "satellite-flow-asdftest-boundary",
         "startDateTime": "2020-01-01T00:00:00Z",
         "endDateTime": "2020-01-31T00:00:00Z",
@@ -481,16 +483,16 @@
             10.0
           ]
         },
-        "id": "satellite-flow-asdfjob-3957",
+        "id": "satellite-flow-asdfjob-390576",
         "status": "Waiting",
-        "message": "Created job \u0027satellite-flow-asdfjob-3957\u0027 to fetch satellite data for boundary \u0027satellite-flow-asdftest-boundary\u0027 from startDate \u002701/01/2020\u0027 to endDate \u002701/31/2020\u0027 (both inclusive).",
-        "createdDateTime": "2023-02-15T20:34:42Z",
+        "message": "Created job \u0027satellite-flow-asdfjob-390576\u0027 to fetch satellite data for boundary \u0027satellite-flow-asdftest-boundary\u0027 from startDate \u002701/01/2020\u0027 to endDate \u002701/31/2020\u0027 (both inclusive).",
+        "createdDateTime": "2023-02-16T00:25:41Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E"
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-3957?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-390576?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -506,8 +508,8 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:34:43 GMT",
-        "mise-correlation-id": "287545ca-8789-4c25-b7aa-837252e374d2",
+        "Date": "Thu, 16 Feb 2023 00:25:42 GMT",
+        "mise-correlation-id": "a2783c6e-e4f4-4a65-96db-5f0a40c28ddf",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -516,7 +518,7 @@
         "x-ms-throttle-information": "100"
       },
       "ResponseBody": {
-        "partyId": "test-party-2946",
+        "partyId": "test-party-39735",
         "boundaryId": "satellite-flow-asdftest-boundary",
         "startDateTime": "2020-01-01T00:00:00Z",
         "endDateTime": "2020-01-31T00:00:00Z",
@@ -533,18 +535,18 @@
             10.0
           ]
         },
-        "id": "satellite-flow-asdfjob-3957",
+        "id": "satellite-flow-asdfjob-390576",
         "status": "Waiting",
-        "message": "Created job \u0027satellite-flow-asdfjob-3957\u0027 to fetch satellite data for boundary \u0027satellite-flow-asdftest-boundary\u0027 from startDate \u002701/01/2020\u0027 to endDate \u002701/31/2020\u0027 (both inclusive).",
-        "createdDateTime": "2023-02-15T20:34:42Z",
-        "lastActionDateTime": "2023-02-15T20:34:42Z",
-        "startTime": "2023-02-15T20:34:42Z",
+        "message": "Created job \u0027satellite-flow-asdfjob-390576\u0027 to fetch satellite data for boundary \u0027satellite-flow-asdftest-boundary\u0027 from startDate \u002701/01/2020\u0027 to endDate \u002701/31/2020\u0027 (both inclusive).",
+        "createdDateTime": "2023-02-16T00:25:41Z",
+        "lastActionDateTime": "2023-02-16T00:25:41Z",
+        "startTime": "2023-02-16T00:25:41Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E"
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-3957?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-390576?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -560,8 +562,8 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:35:14 GMT",
-        "mise-correlation-id": "312c5f37-8155-4386-a931-33e692532465",
+        "Date": "Thu, 16 Feb 2023 00:26:12 GMT",
+        "mise-correlation-id": "075eaa69-3c2c-480e-acf2-0660e7d61bb6",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -570,7 +572,7 @@
         "x-ms-throttle-information": "100"
       },
       "ResponseBody": {
-        "partyId": "test-party-2946",
+        "partyId": "test-party-39735",
         "boundaryId": "satellite-flow-asdftest-boundary",
         "startDateTime": "2020-01-01T00:00:00Z",
         "endDateTime": "2020-01-31T00:00:00Z",
@@ -587,20 +589,20 @@
             10.0
           ]
         },
-        "id": "satellite-flow-asdfjob-3957",
+        "id": "satellite-flow-asdfjob-390576",
         "status": "Succeeded",
-        "durationInSeconds": 20.3275413,
+        "durationInSeconds": 11.8298263,
         "message": "Satellite data is available for 12 days from provider in the requested date range. Successfully fetched data for 12 days.",
-        "createdDateTime": "2023-02-15T20:34:42Z",
-        "lastActionDateTime": "2023-02-15T20:35:02Z",
-        "startTime": "2023-02-15T20:34:42Z",
-        "endTime": "2023-02-15T20:35:02Z",
+        "createdDateTime": "2023-02-16T00:25:41Z",
+        "lastActionDateTime": "2023-02-16T00:25:52Z",
+        "startTime": "2023-02-16T00:25:41Z",
+        "endTime": "2023-02-16T00:25:52Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E"
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-3957?api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/satellite/ingest-data/satellite-flow-asdfjob-390576?api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -616,8 +618,8 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:35:15 GMT",
-        "mise-correlation-id": "0db53960-f8e2-4255-b329-8a69682a360f",
+        "Date": "Thu, 16 Feb 2023 00:26:12 GMT",
+        "mise-correlation-id": "1e1f21c7-cfb7-4265-9f69-ec1fe959375a",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -626,7 +628,7 @@
         "x-ms-throttle-information": "100"
       },
       "ResponseBody": {
-        "partyId": "test-party-2946",
+        "partyId": "test-party-39735",
         "boundaryId": "satellite-flow-asdftest-boundary",
         "startDateTime": "2020-01-01T00:00:00Z",
         "endDateTime": "2020-01-31T00:00:00Z",
@@ -643,20 +645,20 @@
             10.0
           ]
         },
-        "id": "satellite-flow-asdfjob-3957",
+        "id": "satellite-flow-asdfjob-390576",
         "status": "Succeeded",
-        "durationInSeconds": 20.3275413,
+        "durationInSeconds": 11.8298263,
         "message": "Satellite data is available for 12 days from provider in the requested date range. Successfully fetched data for 12 days.",
-        "createdDateTime": "2023-02-15T20:34:42Z",
-        "lastActionDateTime": "2023-02-15T20:35:02Z",
-        "startTime": "2023-02-15T20:34:42Z",
-        "endTime": "2023-02-15T20:35:02Z",
+        "createdDateTime": "2023-02-16T00:25:41Z",
+        "lastActionDateTime": "2023-02-16T00:25:52Z",
+        "startTime": "2023-02-16T00:25:41Z",
+        "endTime": "2023-02-16T00:25:52Z",
         "name": "\u003Cstring\u003E",
         "description": "\u003Cstring\u003E"
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft\u0026partyId=test-party-2946\u0026boundaryId=satellite-flow-asdftest-boundary\u0026source=Sentinel_2_L2A\u0026startDateTime=2020-01-01T00%3A00%3A00.000Z\u0026endDateTime=2020-01-31T00%3A00%3A00.000Z\u0026maxCloudCoveragePercentage=100.0\u0026maxDarkPixelCoveragePercentage=100.0\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes?provider=Microsoft\u0026partyId=test-party-39735\u0026boundaryId=satellite-flow-asdftest-boundary\u0026source=Sentinel_2_L2A\u0026startDateTime=2020-01-01T00%3A00%3A00.000Z\u0026endDateTime=2020-01-31T00%3A00%3A00.000Z\u0026maxCloudCoveragePercentage=100.0\u0026maxDarkPixelCoveragePercentage=100.0\u0026api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -672,8 +674,8 @@
         "Content-Encoding": "br",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Wed, 15 Feb 2023 20:35:15 GMT",
-        "mise-correlation-id": "3cbb01f3-53c1-4609-b3c7-091249a9b316",
+        "Date": "Thu, 16 Feb 2023 00:26:13 GMT",
+        "mise-correlation-id": "cd0cb562-6ad0-43f7-9058-b164d8d4c963",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
@@ -689,7 +691,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-30%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-30%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -699,9 +701,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.635833740234375,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "581bb7f1-35dc-ed73-799f-c57dd00b587f",
-            "eTag": "00005765-0000-0600-0000-63ed41f30000"
+            "partyId": "test-party-39735",
+            "id": "67e45b18-a927-94de-5a3c-111d458deaed",
+            "eTag": "0000f733-0000-0600-0000-63ed780f0000"
           },
           {
             "sceneDateTime": "2020-01-28T00:00:00Z",
@@ -709,7 +711,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-28%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-28%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -719,9 +721,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.5881445407867432,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "a64cb49a-23d5-4f28-7bd6-64bc19aa122d",
-            "eTag": "00005665-0000-0600-0000-63ed41f30000"
+            "partyId": "test-party-39735",
+            "id": "c3367570-0212-fd30-5224-c1bb94a857f1",
+            "eTag": "0000f633-0000-0600-0000-63ed780f0000"
           },
           {
             "sceneDateTime": "2020-01-25T00:00:00Z",
@@ -729,7 +731,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-25%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-25%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -739,9 +741,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.5896583795547485,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "81b7b05e-d059-ce76-9a9d-63e5e3278229",
-            "eTag": "00006165-0000-0600-0000-63ed41f60000"
+            "partyId": "test-party-39735",
+            "id": "305ce2fc-9f38-2ff4-8dae-0361d68076dd",
+            "eTag": "00000134-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-23T00:00:00Z",
@@ -749,7 +751,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-23%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-23%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -759,9 +761,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.5230016112327576,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "853634ef-2f12-afb1-af50-14cce6aa305b",
-            "eTag": "00006065-0000-0600-0000-63ed41f60000"
+            "partyId": "test-party-39735",
+            "id": "789216c9-3c36-7307-0381-a19f83d795b9",
+            "eTag": "00000034-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-20T00:00:00Z",
@@ -769,7 +771,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-20%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-20%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -779,9 +781,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.6815409064292908,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "c44e0cef-2476-06f6-c987-5a0873c21985",
-            "eTag": "00005f65-0000-0600-0000-63ed41f50000"
+            "partyId": "test-party-39735",
+            "id": "22a4ac86-c120-353e-1df7-776d1f3cc834",
+            "eTag": "0000ff33-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-18T00:00:00Z",
@@ -789,7 +791,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-18%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-18%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -799,9 +801,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.6772042512893677,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "08312356-4122-97ba-19c4-9a74e488c987",
-            "eTag": "00005e65-0000-0600-0000-63ed41f50000"
+            "partyId": "test-party-39735",
+            "id": "56d1122e-d540-4264-b4a9-9a83d1d019de",
+            "eTag": "0000fe33-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-15T00:00:00Z",
@@ -809,7 +811,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-15%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-15%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -819,9 +821,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": -0.005950259510427713,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "f0dd4d80-28e2-9fdd-7bc2-14f2d62ce914",
-            "eTag": "00005c65-0000-0600-0000-63ed41f50000"
+            "partyId": "test-party-39735",
+            "id": "5539297f-40a6-a2f3-8470-e0d0dada93b9",
+            "eTag": "0000fd33-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-13T00:00:00Z",
@@ -829,7 +831,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-13%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-13%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -839,9 +841,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.40305525064468384,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "c1da26b3-77b7-c14d-be25-21a5513b3e19",
-            "eTag": "00005d65-0000-0600-0000-63ed41f50000"
+            "partyId": "test-party-39735",
+            "id": "bd8465fe-d07a-add6-9f7c-294f3a6fbe6c",
+            "eTag": "0000fc33-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-10T00:00:00Z",
@@ -849,7 +851,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-10%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-10%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -859,9 +861,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.6626869440078735,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "13d19a16-6608-4cc5-3c1d-867647d6fce9",
-            "eTag": "00005a65-0000-0600-0000-63ed41f50000"
+            "partyId": "test-party-39735",
+            "id": "0219ded3-300f-8226-ca1b-f81879e0b6cb",
+            "eTag": "0000fa33-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-08T00:00:00Z",
@@ -869,7 +871,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-08%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-08%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -879,9 +881,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.18780821561813354,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "70e68abd-2c84-345a-6a9b-824e312c5311",
-            "eTag": "00005b65-0000-0600-0000-63ed41f50000"
+            "partyId": "test-party-39735",
+            "id": "76a1ee2e-8b3c-8932-cdd8-651f627b2674",
+            "eTag": "0000fb33-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-05T00:00:00Z",
@@ -889,7 +891,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-05%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-05%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -899,9 +901,9 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.6943548917770386,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "a2422f90-05ad-1c42-f87d-375029902386",
-            "eTag": "00005865-0000-0600-0000-63ed41f50000"
+            "partyId": "test-party-39735",
+            "id": "c9f91433-02b4-06f8-209f-b897731cd88c",
+            "eTag": "0000f933-0000-0600-0000-63ed78100000"
           },
           {
             "sceneDateTime": "2020-01-03T00:00:00Z",
@@ -909,7 +911,7 @@
             "source": "Sentinel_2_L2A",
             "imageFiles": [
               {
-                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-2946%2fsatellite-flow-asdftest-boundary%2f2020-01-03%2f00-00-00%2fndvi_10.tif",
+                "fileLink": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?api-version=2022-11-01-preview\u0026filePath=Microsoft%2fSentinel_2_L2A%2ftest-party-39735%2fsatellite-flow-asdftest-boundary%2f2020-01-03%2f00-00-00%2fndvi_10.tif",
                 "name": "NDVI",
                 "resolution": 10.0
               }
@@ -919,15 +921,15 @@
             "darkPixelPercentage": 0.0,
             "ndviMedianValue": 0.5072696208953857,
             "boundaryId": "satellite-flow-asdftest-boundary",
-            "partyId": "test-party-2946",
-            "id": "5f7e3401-00de-2862-cc03-e84aadde0121",
-            "eTag": "00005965-0000-0600-0000-63ed41f50000"
+            "partyId": "test-party-39735",
+            "id": "6a409557-1303-92e4-e230-4aedcedec621",
+            "eTag": "0000f833-0000-0600-0000-63ed78100000"
           }
         ]
       }
     },
     {
-      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?filePath=Microsoft%2FSentinel_2_L2A%2Ftest-party-2946%2Fsatellite-flow-asdftest-boundary%2F2020-01-30%2F00-00-00%2Fndvi_10.tif\u0026api-version=2022-11-01-preview",
+      "RequestUri": "https://fakeaccount.farmbeats.azure.net/scenes/downloadFiles?filePath=Microsoft%2FSentinel_2_L2A%2Ftest-party-39735%2Fsatellite-flow-asdftest-boundary%2F2020-01-30%2F00-00-00%2Fndvi_10.tif\u0026api-version=2022-11-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json, application/octet-stream",
@@ -942,9 +944,10 @@
         "Connection": "keep-alive",
         "Content-Disposition": "attachment; filename=\u0022ndvi_10.tif\u0022",
         "Content-Security-Policy": "self",
+        "Content-Encoding": "br",
         "Content-Type": "application/octet-stream",
-        "Date": "Wed, 15 Feb 2023 20:35:16 GMT",
-        "mise-correlation-id": "bc2326b9-0c54-4e72-ac4d-3226bcff52c9",
+        "Date": "Thu, 16 Feb 2023 00:26:14 GMT",
+        "mise-correlation-id": "d63b2966-ade9-499a-b539-f512f4f7d55a",
         "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",

@@ -271,6 +271,45 @@ for scene in scenes:
     print(f"Scene has the bands {bands_str}")
 ```
 
+## Troubleshooting
+
+### General
+
+The FarmBeats client will raise exceptions defined in [Azure Core][azure_core] if you call `.raise_for_status()` on your responses.
+
+### Logging
+
+This library uses the standard
+[logging][python_logging] library for logging.
+Basic information about HTTP sessions (URLs, headers, etc.) is logged at INFO
+level.
+
+Detailed DEBUG level logging, including request/response bodies and unredacted
+headers, can be enabled on a client with the `logging_enable` keyword argument:
+
+```python
+import sys
+import logging
+from azure.identity import DefaultAzureCredential
+from azure.agrifood.farming import FarmBeatsClient
+# Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+# Configure a console output
+handler = logging.StreamHandler(stream=sys.stdout)
+logger.addHandler(handler)
+endpoint = "https://<my-account-name>.farmbeats.azure.net"
+credential = DefaultAzureCredential()
+# This client will log detailed information about its HTTP sessions, at DEBUG level
+client = FarmBeatsClient(endpoint=endpoint, credential=credential, logging_enable=True)
+```
+
+Similarly, `logging_enable` can enable detailed logging for a single call,
+even when it isn't enabled for the client:
+```python
+client.crops.get(crop_id="crop_id", logging_enable=True)
+```
+
 ## Next steps
 
 ### Additional documentation
