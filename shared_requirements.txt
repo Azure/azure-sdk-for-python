@@ -788,6 +788,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-developer-loadtesting azure-core<2.0.0,>=1.24.0
 #override azure-developer-loadtesting isodate<1.0.0,>=0.6.1
 #override azure-developer-loadtesting typing-extensions>=4.3.0
+#override azure-developer-loadtesting msrest>=0.7.1
+#override azure-developer-loadtesting azure-mgmt-core<2.0.0,>=1.3.2
 #override azure-mgmt-datalake-analytics msrest>=0.7.1
 #override azure-mgmt-iothubprovisioningservices typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-datalake-analytics azure-mgmt-core>=1.3.2,<2.0.0

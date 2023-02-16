@@ -20,7 +20,7 @@ USAGE:
     4)  RESOURCE_ID - resource id of resource to connect
     5)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
-from azure.developer.loadtesting import LoadTestingClient
+from azure.developer.loadtesting import LoadTestAdministrationClient
 
 # for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
 # -loadtesting/README.md
@@ -35,12 +35,12 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 RESOURCE_ID = os.environ["RESOURCE_ID"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
 APP_COMPONENT = "my-new-app-component"
 
-result = client.administration.create_or_update_app_components(
+result = client.create_or_update_app_components(
     TEST_ID,
     {
         "components": {
