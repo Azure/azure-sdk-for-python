@@ -76,7 +76,7 @@ class ACRExchangeClient(object):
 
     def exchange_aad_token_for_refresh_token(self, service, **kwargs):
         # type: (str, Any) -> str
-        refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token(
+        refresh_token = self._client.authentication.exchange_aad_access_token_for_acr_refresh_token( # type: ignore
             grant_type=PostContentSchemaGrantType.ACCESS_TOKEN,
             service=service,
             access_token=self._credential.get_token(*self.credential_scopes).token,
@@ -86,7 +86,7 @@ class ACRExchangeClient(object):
 
     def exchange_refresh_token_for_access_token(self, refresh_token, service, scope, **kwargs):
         # type: (str, str, str, Any) -> Optional[str]
-        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
+        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token( # type: ignore
             service=service, scope=scope, refresh_token=refresh_token, **kwargs
         )
         return access_token.access_token

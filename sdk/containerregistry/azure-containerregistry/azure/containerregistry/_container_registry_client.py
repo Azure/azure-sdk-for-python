@@ -415,7 +415,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs).manifest,
+            self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs).manifest, # type: ignore
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -442,7 +442,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_tag_properties(repository, tag, **kwargs).tag,
+            self._client.container_registry.get_tag_properties(repository, tag, **kwargs).tag, # type: ignore
             repository=repository,
         )
 
@@ -641,7 +641,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.update_manifest_properties(
+            self._client.container_registry.update_manifest_properties( # type: ignore
                 repository,
                 tag_or_digest,
                 value=properties._to_generated(),  # pylint: disable=protected-access
@@ -712,7 +712,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.update_tag_attributes(
+            self._client.container_registry.update_tag_attributes( # type: ignore
                 repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             ).tag,
             repository=repository

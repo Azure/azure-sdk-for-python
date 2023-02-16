@@ -390,7 +390,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            (await self._client.container_registry.get_manifest_properties(
+            (await self._client.container_registry.get_manifest_properties( # type: ignore
                 repository, tag_or_digest, **kwargs)).manifest,
             repository_name=repository,
             registry=self._endpoint,
@@ -418,7 +418,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties = await client.get_tag_properties("my_repository", tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            (await self._client.container_registry.get_tag_properties(repository, tag, **kwargs)).tag,
+            (await self._client.container_registry.get_tag_properties(repository, tag, **kwargs)).tag, # type: ignore
             repository=repository,
         )
 
@@ -666,7 +666,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = await self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            (await self._client.container_registry.update_manifest_properties(
+            (await self._client.container_registry.update_manifest_properties( # type: ignore
                 repository,
                 tag_or_digest,
                 value=properties._to_generated(),  # pylint: disable=protected-access
@@ -738,7 +738,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         properties.can_write = kwargs.pop("can_write", properties.can_write)
 
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            (await self._client.container_registry.update_tag_attributes(
+            (await self._client.container_registry.update_tag_attributes( # type: ignore
                 repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
             )).tag,
             repository=repository

@@ -41,7 +41,7 @@ class ContainerRegistryBaseClient(object):
         # type: (str, Optional[TokenCredential], Any) -> None
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
-            credential="" if credential is None else credential,
+            credential=credential or "", # type: ignore
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=self._auth_policy,

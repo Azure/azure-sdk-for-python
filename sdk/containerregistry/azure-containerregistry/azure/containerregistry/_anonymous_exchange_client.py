@@ -28,7 +28,7 @@ class AnonymousACRExchangeClient(object):
             endpoint = "https://" + endpoint
         self._endpoint = endpoint
         self._client = ContainerRegistry(
-            credential="",
+            credential="", # type: ignore
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=ExchangeClientAuthenticationPolicy(),
@@ -48,7 +48,7 @@ class AnonymousACRExchangeClient(object):
 
     def exchange_refresh_token_for_access_token(self, refresh_token, service, scope, grant_type, **kwargs):
         # type: (str, str, str, Union[str, TokenGrantType], Any) -> Optional[str]
-        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token(
+        access_token = self._client.authentication.exchange_acr_refresh_token_for_acr_access_token( # type: ignore
             service=service, scope=scope, refresh_token=refresh_token, grant_type=grant_type, **kwargs
         )
         return access_token.access_token
