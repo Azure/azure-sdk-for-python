@@ -59,13 +59,14 @@ class EmailMultipleRecipientSample(object):
                     {"email": self.second_recipient_address, "displayName": "Customer Name 2"}
                 ]
             },
-            "sender": self.sender_address
+            "senderEmail": self.sender_address
         }
 
         try:
             # sending the email message
-            response = email_client.send(message)
-            print("Message ID: " + response['messageId'])
+            poller = email_client.begin_send(message)
+            response = poller.result()
+            print("Operation ID: " + response['id'])
         except HttpResponseError as ex:
             print(ex)
             pass

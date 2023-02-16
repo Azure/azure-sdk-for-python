@@ -33,13 +33,3 @@ title: Azure Communication Email Service
 use-extension:
   "@autorest/python": "6.1.1"
 ```
-
-### Remove the LRO property from SEND
-
-```yaml
-directive:
-  - from: swagger-document
-    where: '$.paths["/emails:send"].post'
-    transform: >
-      $["x-ms-long-running-operation"] = false
-```

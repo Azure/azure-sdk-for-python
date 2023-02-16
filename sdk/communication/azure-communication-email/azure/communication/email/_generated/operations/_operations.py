@@ -18,6 +18,8 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
+from azure.core.polling import LROPoller, NoPolling, PollingMethod
+from azure.core.polling.base_polling import LROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
@@ -37,7 +39,7 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_email_get_send_status_request(message_id: str, **kwargs: Any) -> HttpRequest:
+def build_email_get_operation_status_request(operation_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -45,9 +47,9 @@ def build_email_get_send_status_request(message_id: str, **kwargs: Any) -> HttpR
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/emails/{messageId}/status"
+    _url = "/emails/operations/{operationId}"
     path_format_arguments = {
-        "messageId": _SERIALIZER.url("message_id", message_id, "str"),
+        "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -65,8 +67,7 @@ def build_email_send_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    repeatability_request_id = kwargs.pop("repeatability_request_id")  # type: str
-    repeatability_first_sent = kwargs.pop("repeatability_first_sent")  # type: str
+    operation_id = kwargs.pop("operation_id", _headers.pop("Operation-Id", None))  # type: Optional[str]
     client_request_id = kwargs.pop(
         "client_request_id", _headers.pop("x-ms-client-request-id", None)
     )  # type: Optional[str]
@@ -81,12 +82,8 @@ def build_email_send_request(**kwargs: Any) -> HttpRequest:
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers["repeatability-request-id"] = _SERIALIZER.header(
-        "repeatability_request_id", repeatability_request_id, "str"
-    )
-    _headers["repeatability-first-sent"] = _SERIALIZER.header(
-        "repeatability_first_sent", repeatability_first_sent, "str"
-    )
+    if operation_id is not None:
+        _headers["Operation-Id"] = _SERIALIZER.header("operation_id", operation_id, "str")
     if client_request_id is not None:
         _headers["x-ms-client-request-id"] = _SERIALIZER.header("client_request_id", client_request_id, "str")
     if content_type is not None:
@@ -114,14 +111,14 @@ class EmailOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_send_status(self, message_id: str, **kwargs: Any) -> JSON:
-        """Gets the status of a message sent previously.
+    def get_operation_status(self, operation_id: str, **kwargs: Any) -> JSON:
+        """Gets the status of the email send operation.
 
-        Gets the status of a message sent previously.
+        Gets the status of the email send operation.
 
-        :param message_id: System generated message id (GUID) returned from a previous call to send
-         email. Required.
-        :type message_id: str
+        :param operation_id: ID of the long running operation (GUID) returned from a previous call to
+         send email. Required.
+        :type operation_id: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -131,10 +128,18 @@ class EmailOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "messageId": "str",  # System generated id of an email message sent.
-                      Required.
-                    "status": "str"  # The type indicating the status of a request. Required.
-                      Known values are: "queued", "outForDelivery", and "dropped".
+                    "id": "str",  # The unique id of the operation. Required.
+                    "status": "str",  # Status of operation. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
+                    "error": {
+                        "code": "str",  # The error code. Required.
+                        "message": "str",  # The error message. Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": ...,
+                        "target": "str"  # Optional. The error target.
+                    }
                 }
         """
         error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
@@ -145,8 +150,8 @@ class EmailOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_email_get_send_status_request(
-            message_id=message_id,
+        request = build_email_get_operation_status_request(
+            operation_id=operation_id,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -167,7 +172,71 @@ class EmailOperations:
             raise HttpResponseError(response=response)
 
         response_headers = {}
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        response_headers["retry-after"] = self._deserialize("int", response.headers.get("retry-after"))
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+
+        return cast(JSON, deserialized)
+
+    def _send_initial(
+        self,
+        message: Union[JSON, IO],
+        *,
+        operation_id: Optional[str] = None,
+        client_request_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> JSON:
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(message, (IO, bytes)):
+            _content = message
+        else:
+            _json = message
+
+        request = build_email_send_request(
+            operation_id=operation_id,
+            client_request_id=client_request_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["retry-after"] = self._deserialize("int", response.headers.get("retry-after"))
 
         if response.content:
             deserialized = response.json()
@@ -180,42 +249,39 @@ class EmailOperations:
         return cast(JSON, deserialized)
 
     @overload
-    def send(  # pylint: disable=inconsistent-return-statements
+    def begin_send(
         self,
         message: JSON,
         *,
-        repeatability_request_id: str,
-        repeatability_first_sent: str,
+        operation_id: Optional[str] = None,
         client_request_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
+    ) -> LROPoller[JSON]:
         """Queues an email message to be sent to one or more recipients.
 
         Queues an email message to be sent to one or more recipients.
 
         :param message: Message payload for sending an email. Required.
         :type message: JSON
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated, globally unique for all time, identifier for the request. It
-         is recommended to use version 4 (random) UUIDs. Required.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: Must be sent by clients to specify that a request is
-         repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
-         was first created in the IMF-fix date form of HTTP-date as defined in RFC7231. eg- Tue, 26 Mar
-         2019 16:06:51 GMT. Required.
-        :paramtype repeatability_first_sent: str
+        :keyword operation_id: This is the ID used by the status monitor for this long running
+         operation. Default value is None.
+        :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.
         :paramtype client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -273,58 +339,89 @@ class EmailOperations:
                         }
                     ]
                 }
+
+                # response body for status code(s): 202
+                response == {
+                    "id": "str",  # The unique id of the operation. Required.
+                    "status": "str",  # Status of operation. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
+                    "error": {
+                        "code": "str",  # The error code. Required.
+                        "message": "str",  # The error message. Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": ...,
+                        "target": "str"  # Optional. The error target.
+                    }
+                }
         """
 
     @overload
-    def send(  # pylint: disable=inconsistent-return-statements
+    def begin_send(
         self,
         message: IO,
         *,
-        repeatability_request_id: str,
-        repeatability_first_sent: str,
+        operation_id: Optional[str] = None,
         client_request_id: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> None:
+    ) -> LROPoller[JSON]:
         """Queues an email message to be sent to one or more recipients.
 
         Queues an email message to be sent to one or more recipients.
 
         :param message: Message payload for sending an email. Required.
         :type message: IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated, globally unique for all time, identifier for the request. It
-         is recommended to use version 4 (random) UUIDs. Required.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: Must be sent by clients to specify that a request is
-         repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
-         was first created in the IMF-fix date form of HTTP-date as defined in RFC7231. eg- Tue, 26 Mar
-         2019 16:06:51 GMT. Required.
-        :paramtype repeatability_first_sent: str
+        :keyword operation_id: This is the ID used by the status monitor for this long running
+         operation. Default value is None.
+        :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.
         :paramtype client_request_id: str
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 202
+                response == {
+                    "id": "str",  # The unique id of the operation. Required.
+                    "status": "str",  # Status of operation. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
+                    "error": {
+                        "code": "str",  # The error code. Required.
+                        "message": "str",  # The error message. Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": ...,
+                        "target": "str"  # Optional. The error target.
+                    }
+                }
         """
 
     @distributed_trace
-    def send(  # pylint: disable=inconsistent-return-statements
+    def begin_send(
         self,
         message: Union[JSON, IO],
         *,
-        repeatability_request_id: str,
-        repeatability_first_sent: str,
+        operation_id: Optional[str] = None,
         client_request_id: Optional[str] = None,
         **kwargs: Any
-    ) -> None:
+    ) -> LROPoller[JSON]:
         """Queues an email message to be sent to one or more recipients.
 
         Queues an email message to be sent to one or more recipients.
@@ -332,77 +429,105 @@ class EmailOperations:
         :param message: Message payload for sending an email. Is either a model type or a IO type.
          Required.
         :type message: JSON or IO
-        :keyword repeatability_request_id: If specified, the client directs that the request is
-         repeatable; that is, that the client can make the request multiple times with the same
-         Repeatability-Request-Id and get back an appropriate response without the server executing the
-         request multiple times. The value of the Repeatability-Request-Id is an opaque string
-         representing a client-generated, globally unique for all time, identifier for the request. It
-         is recommended to use version 4 (random) UUIDs. Required.
-        :paramtype repeatability_request_id: str
-        :keyword repeatability_first_sent: Must be sent by clients to specify that a request is
-         repeatable. Repeatability-First-Sent is used to specify the date and time at which the request
-         was first created in the IMF-fix date form of HTTP-date as defined in RFC7231. eg- Tue, 26 Mar
-         2019 16:06:51 GMT. Required.
-        :paramtype repeatability_first_sent: str
+        :keyword operation_id: This is the ID used by the status monitor for this long running
+         operation. Default value is None.
+        :paramtype operation_id: str
         :keyword client_request_id: Tracking ID sent with the request to help with debugging. Default
          value is None.
         :paramtype client_request_id: str
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :return: None
-        :rtype: None
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns JSON object
+        :rtype: ~azure.core.polling.LROPoller[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
 
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 202
+                response == {
+                    "id": "str",  # The unique id of the operation. Required.
+                    "status": "str",  # Status of operation. Required. Known values are:
+                      "NotStarted", "Running", "Succeeded", "Failed", and "Canceled".
+                    "error": {
+                        "code": "str",  # The error code. Required.
+                        "message": "str",  # The error message. Required.
+                        "details": [
+                            ...
+                        ],
+                        "innererror": ...,
+                        "target": "str"  # Optional. The error target.
+                    }
+                }
+        """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._send_initial(  # type: ignore
+                message=message,
+                operation_id=operation_id,
+                client_request_id=client_request_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
 
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(message, (IO, bytes)):
-            _content = message
-        else:
-            _json = message
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["retry-after"] = self._deserialize("int", response.headers.get("retry-after"))
 
-        request = build_email_send_request(
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            client_request_id=client_request_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)
+            return deserialized
+
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Repeatability-Result"] = self._deserialize(
-            "str", response.headers.get("Repeatability-Result")
-        )
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)
+        if polling is True:
+            polling_method = cast(
+                PollingMethod,
+                LROBasePolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "azure-async-operation"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)

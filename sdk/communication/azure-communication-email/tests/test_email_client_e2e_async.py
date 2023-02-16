@@ -33,8 +33,9 @@ class TestEmailClient(AzureRecordedTestCase):
         }
 
         async with email_client:
-            response = await email_client.send(message)
-            assert response['messageId'] is not None
+            poller = await email_client.begin_send(message)
+            response = await poller.result()
+            assert response['status'] == "Succeeded"
 
     @email_decorator_async
     @recorded_by_proxy_async
@@ -62,8 +63,10 @@ class TestEmailClient(AzureRecordedTestCase):
         }
 
         async with email_client:
-            response = await email_client.send(message)
-            assert response['messageId'] is not None
+            poller = await email_client.begin_send(message)
+            response = await poller.result()
+            assert response['status'] == "Succeeded"
+
 
     @email_decorator_async
     @recorded_by_proxy_async
@@ -94,38 +97,9 @@ class TestEmailClient(AzureRecordedTestCase):
         }
 
         async with email_client:
-            response = await email_client.send(message)
-            assert response['messageId'] is not None
-
-    @email_decorator_async
-    @recorded_by_proxy_async
-    async def test_check_message_status(self):
-        email_client = EmailClient.from_connection_string(self.communication_connection_string)
-
-        message = {
-            "content": {
-                "subject": "This is the subject",
-                "plainText": "This is the body",
-            },
-            "recipients": {
-                "to": [
-                    {
-                        "email": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ]
-            },
-            "sender": self.sender_address
-        }
-
-        async with email_client:
-            response = await email_client.send(message)
-            message_id = response['messageId']
-            if message_id is not None:
-                message_status_response = await email_client.get_send_status(message_id)
-                assert message_status_response['status'] is not None
-            else:
-                assert False
+            poller = await email_client.begin_send(message)
+            response = await poller.result()
+            assert response['status'] == "Succeeded"
 
     @email_decorator_async
     @recorded_by_proxy_async
@@ -155,5 +129,7 @@ class TestEmailClient(AzureRecordedTestCase):
         }
 
         async with email_client:
-            response = await email_client.send(message)
-            assert response['messageId'] is not None
+            poller = await email_client.begin_send(message)
+            response = await poller.result()
+            assert response['status'] == "Succeeded"
+
