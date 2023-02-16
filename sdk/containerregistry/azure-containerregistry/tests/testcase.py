@@ -139,8 +139,8 @@ def get_audience(authority: str) -> str:
 def import_image(authority, repository, tags, registry_name):
     logger.warning(f"Import image authority: {authority}")
     sub_id = os.environ.get("CONTAINERREGISTRY_SUBSCRIPTION_ID")
-    tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
-    client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
+    tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID")
+    client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID")
     client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET")
     credential = ClientSecretCredential(
         tenant_id=tenant_id, client_id=client_id, client_secret=client_secret, authority=authority
