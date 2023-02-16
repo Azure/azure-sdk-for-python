@@ -258,12 +258,12 @@ class PipelineComponentBuilder:
                     is_control=value.is_control,
                 )
 
-            # Hack: map internal output type to v2 type
+            # Hack: map internal output type to pipeline output type
             def _map_internal_output_type(_meta):
                 """Map component output type to valid pipeline output type."""
                 if type(_meta).__name__ != "InternalOutput":
                     return _meta.type
-                return _meta.map_output_type()
+                return _meta.map_pipeline_output_type()
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             output_meta = Output(

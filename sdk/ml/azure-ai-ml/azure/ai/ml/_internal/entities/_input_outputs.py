@@ -132,8 +132,8 @@ class InternalOutput(Output):
             return _output
         return InternalOutput(**_output)
 
-    def map_output_type(self):
-        """Map output type to v2 output type."""
+    def map_pipeline_output_type(self):
+        """Map output type to pipeline output type."""
 
         def _map_primitive_type(_type):
             """Convert double and float to number type."""
