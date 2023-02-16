@@ -562,5 +562,6 @@ class TestDSLPipelineSamples:
         omit_fields = [
             "properties.display_name",
             "properties.jobs.merge_files.componentId",
+            "properties.jobs.blob_azuresql.inputs.source.uri",
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
