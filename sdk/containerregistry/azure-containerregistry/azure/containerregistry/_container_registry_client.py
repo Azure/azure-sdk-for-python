@@ -52,6 +52,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self,
         endpoint: str,
         credential: Optional[TokenCredential] = None,
+        *,
+        audience: str = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
         **kwargs
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
@@ -85,9 +87,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             raise ValueError(
                 f"Unsupported API version '{api_version}'. Please select from:\n{supported_versions}"
             )
-        audience = kwargs.pop("audience", None)
-        if not audience:
-            audience = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
         defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
