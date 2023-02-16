@@ -14,7 +14,7 @@ from azure.mgmt.storagecache import StorageCacheManagementClient
     pip install azure-identity
     pip install azure-mgmt-storagecache
 # USAGE
-    python caches_list_by_resource_group.py
+    python storage_targets_restore_defaults.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,14 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.caches.list_by_resource_group(
+    response = client.storage_targets.begin_restore_defaults(
         resource_group_name="scgroup",
-    )
-    for item in response:
-        print(item)
+        cache_name="sc",
+        storage_target_name="st1",
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-01-01/examples/Caches_ListByResourceGroup.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2023-01-01/examples/StorageTargets_RestoreDefaults.json
 if __name__ == "__main__":
     main()
