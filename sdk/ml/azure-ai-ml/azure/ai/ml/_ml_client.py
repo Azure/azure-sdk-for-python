@@ -781,7 +781,7 @@ class MLClient:
         :param entity: The resource to create or update.
         :type entity: typing.Union[~azure.ai.ml.entities.Job
             , ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component
-            , ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceAssetReference]
+            , ~azure.ai.ml.entities.Datastore]
         :return: The created or updated resource.
         :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
             , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]

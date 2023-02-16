@@ -6,6 +6,7 @@
 Main areas include managing compute targets, creating/managing workspaces and jobs, and submitting/accessing
 model, runs and run output/logging etc.
 """
+# pylint: disable=naming-mismatch
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from azure.ai.ml._restclient.v2022_10_01.models import CreatedByType
