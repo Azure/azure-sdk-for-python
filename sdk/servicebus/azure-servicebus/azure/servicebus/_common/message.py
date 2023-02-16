@@ -856,10 +856,6 @@ class ServiceBusReceivedMessage(ServiceBusMessage):
             return True
         return False
 
-    #def _to_outgoing_message(self) -> ServiceBusMessage:
-    #    # pylint: disable=protected-access
-    #    return ServiceBusMessage(body=None, message=self.raw_amqp_message._to_outgoing_amqp_message())
-
     def __repr__(self) -> str:  # pylint: disable=too-many-branches,too-many-statements
         # pylint: disable=bare-except
         message_repr = "body={}".format(

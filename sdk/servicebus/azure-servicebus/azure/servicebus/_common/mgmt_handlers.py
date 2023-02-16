@@ -47,6 +47,7 @@ def message_lock_renew_op(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
+        # TODO: will this always be body type ValueType?
         return message.value
 
     amqp_transport._handle_amqp_mgmt_error( # pylint: disable=protected-access

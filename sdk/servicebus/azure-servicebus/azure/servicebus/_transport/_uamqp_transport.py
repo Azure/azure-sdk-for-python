@@ -597,6 +597,7 @@ if uamqp_installed:
                 debug=network_trace,  # pylint:disable=protected-access
                 error_policy=retry_policy,
                 prefetch=link_credit,
+                auto_complete=False,
                 receive_settle_mode=UamqpTransport.ServiceBusToAMQPReceiveModeMap[receive_mode],
                 send_settle_mode=constants.SenderSettleMode.Settled
                 if receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
