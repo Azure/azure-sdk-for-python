@@ -8,10 +8,9 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
-from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -20,49 +19,778 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse
+from azure.core.pipeline.transport import HttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
-from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ...operations._operations import (
-    build_administration_begin_upload_test_file_request,
-    build_administration_create_or_update_app_components_request,
-    build_administration_create_or_update_server_metrics_config_request,
-    build_administration_create_or_update_test_request,
-    build_administration_delete_test_file_request,
-    build_administration_delete_test_request,
-    build_administration_get_app_components_request,
-    build_administration_get_server_metrics_config_request,
-    build_administration_get_test_file_request,
-    build_administration_get_test_request,
-    build_administration_list_test_files_request,
-    build_administration_list_tests_request,
-    build_test_run_begin_test_run_request,
-    build_test_run_create_or_update_app_components_request,
-    build_test_run_create_or_update_server_metrics_config_request,
-    build_test_run_delete_test_run_request,
-    build_test_run_get_app_components_request,
-    build_test_run_get_metric_definitions_request,
-    build_test_run_get_metric_namespaces_request,
-    build_test_run_get_server_metrics_config_request,
-    build_test_run_get_test_run_file_request,
-    build_test_run_get_test_run_request,
-    build_test_run_list_metric_dimension_values_request,
-    build_test_run_list_metrics_request,
-    build_test_run_list_test_runs_request,
-    build_test_run_stop_test_run_request,
-)
+from .._serialization import Serializer
+from .._vendor import _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+
+_SERIALIZER = Serializer()
+_SERIALIZER.client_side_validation = False
+
+
+def build_administration_create_or_update_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_delete_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_get_test_request(test_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_list_tests_request(
+    *,
+    orderby: Optional[str] = None,
+    search: Optional[str] = None,
+    last_modified_start_time: Optional[datetime.datetime] = None,
+    last_modified_end_time: Optional[datetime.datetime] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests"
+
+    # Construct parameters
+    if orderby is not None:
+        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+    if search is not None:
+        _params["search"] = _SERIALIZER.query("search", search, "str")
+    if last_modified_start_time is not None:
+        _params["lastModifiedStartTime"] = _SERIALIZER.query(
+            "last_modified_start_time", last_modified_start_time, "iso-8601"
+        )
+    if last_modified_end_time is not None:
+        _params["lastModifiedEndTime"] = _SERIALIZER.query("last_modified_end_time", last_modified_end_time, "iso-8601")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_begin_upload_test_file_request(
+    test_id: str, file_name: str, *, content: IO, file_type: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/files/{fileName}"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if file_type is not None:
+        _params["fileType"] = _SERIALIZER.query("file_type", file_type, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
+def build_administration_get_test_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/files/{fileName}"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_delete_test_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/files/{fileName}"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_list_test_files_request(test_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/files"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_create_or_update_app_components_request(test_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/app-components"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_get_app_components_request(test_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/app-components"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_create_or_update_server_metrics_config_request(test_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/server-metrics-config"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_administration_get_server_metrics_config_request(test_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/server-metrics-config"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_begin_test_run_request(
+    test_run_id: str, *, old_test_run_id: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if old_test_run_id is not None:
+        _params["oldTestRunId"] = _SERIALIZER.query("old_test_run_id", old_test_run_id, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_delete_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_get_test_run_file_request(test_run_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/files/{fileName}"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_list_test_runs_request(
+    *,
+    orderby: Optional[str] = None,
+    search: Optional[str] = None,
+    test_id: Optional[str] = None,
+    execution_from: Optional[datetime.datetime] = None,
+    execution_to: Optional[datetime.datetime] = None,
+    status: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs"
+
+    # Construct parameters
+    if orderby is not None:
+        _params["orderby"] = _SERIALIZER.query("orderby", orderby, "str")
+    if search is not None:
+        _params["search"] = _SERIALIZER.query("search", search, "str")
+    if test_id is not None:
+        _params["testId"] = _SERIALIZER.query("test_id", test_id, "str")
+    if execution_from is not None:
+        _params["executionFrom"] = _SERIALIZER.query("execution_from", execution_from, "iso-8601")
+    if execution_to is not None:
+        _params["executionTo"] = _SERIALIZER.query("execution_to", execution_to, "iso-8601")
+    if status is not None:
+        _params["status"] = _SERIALIZER.query("status", status, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_stop_test_run_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}:stop"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_list_metric_namespaces_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/metric-namespaces"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_list_metric_definitions_request(
+    test_run_id: str, *, metric_namespace: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/metric-definitions"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_list_metrics_request(
+    test_run_id: str,
+    *,
+    metricname: str,
+    metric_namespace: str,
+    timespan: str,
+    aggregation: Optional[str] = None,
+    interval: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/metrics"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if aggregation is not None:
+        _params["aggregation"] = _SERIALIZER.query("aggregation", aggregation, "str")
+    if interval is not None:
+        _params["interval"] = _SERIALIZER.query("interval", interval, "str")
+    _params["metricname"] = _SERIALIZER.query("metricname", metricname, "str")
+    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_list_metric_dimension_values_request(
+    test_run_id: str,
+    name: str,
+    *,
+    metricname: str,
+    metric_namespace: str,
+    timespan: str,
+    interval: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/metric-dimensions/{name}/values"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if interval is not None:
+        _params["interval"] = _SERIALIZER.query("interval", interval, "str")
+    _params["metricname"] = _SERIALIZER.query("metricname", metricname, "str")
+    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_create_or_update_app_components_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/app-components"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_get_app_components_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/app-components"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_create_or_update_server_metrics_config_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/server-metrics-config"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_test_run_get_server_metrics_config_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: Literal["2022-11-01"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/server-metrics-config"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class AdministrationOperations:
@@ -71,11 +799,11 @@ class AdministrationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.developer.loadtesting._generated.aio.LoadTestingClient`'s
+        :class:`~azure.developer.loadtesting.LoadTestingClient`'s
         :attr:`administration` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -83,7 +811,7 @@ class AdministrationOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_or_update_test(
+    def create_or_update_test(
         self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Create a new test or update an existing test.
@@ -439,7 +1167,7 @@ class AdministrationOperations:
         """
 
     @overload
-    async def create_or_update_test(
+    def create_or_update_test(
         self, test_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Create a new test or update an existing test.
@@ -628,8 +1356,8 @@ class AdministrationOperations:
                 }
         """
 
-    @distributed_trace_async
-    async def create_or_update_test(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace
+    def create_or_update_test(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Create a new test or update an existing test.
 
         Create a new test or update an existing test.
@@ -637,7 +1365,7 @@ class AdministrationOperations:
         :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
-        :param body: Load test model. Is either a JSON type or a IO type. Required.
+        :param body: Load test model. Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
@@ -648,172 +1376,6 @@ class AdministrationOperations:
 
         Example:
             .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "certificate": {
-                        "name": "str",  # Optional. Name of the certificate.
-                        "type": "str",  # Optional. Type of certificate. "AKV_CERT_URI"
-                        "value": "str"  # Optional. The value of the certificate for
-                          respective type.
-                    },
-                    "createdBy": "str",  # Optional. The user that created.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
-                      datetime(ISO 8601 literal format).
-                    "description": "str",  # Optional. The test description.
-                    "displayName": "str",  # Optional. Display name of a test.
-                    "environmentVariables": {
-                        "str": "str"  # Optional. Environment variables which are defined as
-                          a set of <name,value> pairs.
-                    },
-                    "inputArtifacts": {
-                        "additionalFileInfo": [
-                            {
-                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
-                                  Expiry time of the file (ISO 8601 literal format).
-                                "fileName": "str",  # Optional. Name of the file.
-                                "fileType": "str",  # Optional. File type. Known
-                                  values are: "JMX_FILE", "USER_PROPERTIES", and
-                                  "ADDITIONAL_ARTIFACTS".
-                                "url": "str",  # Optional. File URL.
-                                "validationFailureDetails": "str",  # Optional.
-                                  Validation failure error details.
-                                "validationStatus": "str"  # Optional. Validation
-                                  status of the file. Known values are: "NOT_VALIDATED",
-                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
-                                  and "VALIDATION_NOT_REQUIRED".
-                            }
-                        ],
-                        "configFileInfo": {
-                            "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
-                              time of the file (ISO 8601 literal format).
-                            "fileName": "str",  # Optional. Name of the file.
-                            "fileType": "str",  # Optional. File type. Known values are:
-                              "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "url": "str",  # Optional. File URL.
-                            "validationFailureDetails": "str",  # Optional. Validation
-                              failure error details.
-                            "validationStatus": "str"  # Optional. Validation status of
-                              the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
-                              "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
-                              "VALIDATION_NOT_REQUIRED".
-                        },
-                        "inputArtifactsZipFileInfo": {
-                            "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
-                              time of the file (ISO 8601 literal format).
-                            "fileName": "str",  # Optional. Name of the file.
-                            "fileType": "str",  # Optional. File type. Known values are:
-                              "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "url": "str",  # Optional. File URL.
-                            "validationFailureDetails": "str",  # Optional. Validation
-                              failure error details.
-                            "validationStatus": "str"  # Optional. Validation status of
-                              the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
-                              "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
-                              "VALIDATION_NOT_REQUIRED".
-                        },
-                        "testScriptFileInfo": {
-                            "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
-                              time of the file (ISO 8601 literal format).
-                            "fileName": "str",  # Optional. Name of the file.
-                            "fileType": "str",  # Optional. File type. Known values are:
-                              "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "url": "str",  # Optional. File URL.
-                            "validationFailureDetails": "str",  # Optional. Validation
-                              failure error details.
-                            "validationStatus": "str"  # Optional. Validation status of
-                              the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
-                              "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
-                              "VALIDATION_NOT_REQUIRED".
-                        },
-                        "userPropFileInfo": {
-                            "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
-                              time of the file (ISO 8601 literal format).
-                            "fileName": "str",  # Optional. Name of the file.
-                            "fileType": "str",  # Optional. File type. Known values are:
-                              "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "url": "str",  # Optional. File URL.
-                            "validationFailureDetails": "str",  # Optional. Validation
-                              failure error details.
-                            "validationStatus": "str"  # Optional. Validation status of
-                              the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
-                              "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
-                              "VALIDATION_NOT_REQUIRED".
-                        }
-                    },
-                    "keyvaultReferenceIdentityId": "str",  # Optional. Resource Id of the managed
-                      identity referencing the Key vault.
-                    "keyvaultReferenceIdentityType": "str",  # Optional. Type of the managed
-                      identity referencing the Key vault.
-                    "lastModifiedBy": "str",  # Optional. The user that last modified.
-                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
-                      datetime(ISO 8601 literal format).
-                    "loadTestConfiguration": {
-                        "engineInstances": 0,  # Optional. The number of engine instances to
-                          execute load test. Supported values are in range of 1-45. Required for
-                          creating a new test.
-                        "optionalLoadTestConfig": {
-                            "duration": 0,  # Optional. Test run duration.
-                            "endpointUrl": "str",  # Optional. Test URL. Provide the
-                              complete HTTP URL. For example,
-                              http://contoso-app.azurewebsites.net/login.
-                            "rampUpTime": 0,  # Optional. Ramp up time.
-                            "virtualUsers": 0  # Optional. No of concurrent virtual
-                              users.
-                        },
-                        "quickStartTest": False,  # Optional. Default value is False. If
-                          true, optionalLoadTestConfig is required and JMX script for the load test is
-                          not required to upload.
-                        "splitAllCSVs": False  # Optional. Default value is False. If false,
-                          Azure Load Testing copies and processes your input files unmodified across
-                          all test engine instances. If true, Azure Load Testing splits the CSV input
-                          data evenly across all engine instances. If you provide multiple CSV files,
-                          each file will be split evenly.
-                    },
-                    "passFailCriteria": {
-                        "passFailMetrics": {
-                            "str": {
-                                "action": "continue",  # Optional. Default value is
-                                  "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "continue" and "stop".
-                                "actualValue": 0.0,  # Optional. The actual value of
-                                  the client metric for the test run.
-                                "aggregate": "str",  # Optional. The aggregation
-                                  function to be applied on the client metric. Allowed functions -
-                                  "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
-                                  "u2018min"u2019, "u2018max"u2019 - for response_time_ms and latency
-                                  metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
-                                  for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
-                                "clientMetric": "str",  # Optional. The client metric
-                                  on which the criteria should be applied. Known values are:
-                                  "response_time_ms", "latency", "error", "requests", and
-                                  "requests_per_sec".
-                                "condition": "str",  # Optional. The comparison
-                                  operator. Supported types "u2018>"u2019, "u2018<"u2019.
-                                "requestName": "str",  # Optional. Request name for
-                                  which the Pass fail criteria has to be applied.
-                                "result": "str",  # Optional. Outcome of the test
-                                  run. Known values are: "passed", "undetermined", and "failed".
-                                "value": 0.0  # Optional. The value to compare with
-                                  the client metric. Allowed values - "u2018error : [0.0 , 100.0] unit-
-                                  % "u2019, response_time_ms and latency : any integer value unit- ms.
-                            }
-                        }
-                    },
-                    "secrets": {
-                        "str": {
-                            "type": "str",  # Optional. Type of secret. Known values are:
-                              "AKV_SECRET_URI" and "SECRET_VALUE".
-                            "value": "str"  # Optional. The value of the secret for the
-                              respective type.
-                        }
-                    },
-                    "subnetId": "str",  # Optional. Subnet ID on which the load test instances
-                      should run.
-                    "testId": "str"  # Optional. Unique test name as identifier.
-                }
 
                 # response body for status code(s): 200, 201
                 response == {
@@ -992,8 +1554,8 @@ class AdministrationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1015,9 +1577,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1040,12 +1602,12 @@ class AdministrationOperations:
                 deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return cast(JSON, deserialized)  # type: ignore
+        return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def delete_test(self, test_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_test(self, test_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a test by its name.
 
         Delete a test by its name.
@@ -1068,7 +1630,7 @@ class AdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_administration_delete_test_request(
             test_id=test_id,
@@ -1079,9 +1641,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1094,8 +1656,8 @@ class AdministrationOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace_async
-    async def get_test(self, test_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_test(self, test_id: str, **kwargs: Any) -> JSON:
         """Get load test details by test name.
 
         Get load test details by test name.
@@ -1287,7 +1849,7 @@ class AdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_administration_get_test_request(
             test_id=test_id,
@@ -1298,9 +1860,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1329,7 +1891,7 @@ class AdministrationOperations:
         last_modified_start_time: Optional[datetime.datetime] = None,
         last_modified_end_time: Optional[datetime.datetime] = None,
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """Get all load tests by the fully qualified resource Id e.g
         subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
 
@@ -1350,7 +1912,7 @@ class AdministrationOperations:
          range to filter tests. Default value is None.
         :paramtype last_modified_end_time: ~datetime.datetime
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1525,7 +2087,7 @@ class AdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1552,7 +2114,7 @@ class AdministrationOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 # make call to next link with the client's api-version
@@ -1572,21 +2134,21 @@ class AdministrationOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1597,10 +2159,10 @@ class AdministrationOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def begin_upload_test_file(
+    @distributed_trace
+    def begin_upload_test_file(
         self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Upload input file for a given test name. File size can't be more than 50 MB. Existing file with
@@ -1654,8 +2216,8 @@ class AdministrationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         _content = body
 
@@ -1672,9 +2234,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1694,8 +2256,8 @@ class AdministrationOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_test_file(self, test_id: str, file_name: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_test_file(self, test_id: str, file_name: str, **kwargs: Any) -> JSON:
         """Get test file by the file name.
 
         Get test file by the file name.
@@ -1738,7 +2300,7 @@ class AdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_administration_get_test_file_request(
             test_id=test_id,
@@ -1750,9 +2312,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1772,8 +2334,8 @@ class AdministrationOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def delete_test_file(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_test_file(  # pylint: disable=inconsistent-return-statements
         self, test_id: str, file_name: str, **kwargs: Any
     ) -> None:
         """Delete file by the file name for a test.
@@ -1800,7 +2362,7 @@ class AdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_administration_delete_test_file_request(
             test_id=test_id,
@@ -1812,9 +2374,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1828,7 +2390,7 @@ class AdministrationOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list_test_files(self, test_id: str, **kwargs: Any) -> AsyncIterable[JSON]:
+    def list_test_files(self, test_id: str, **kwargs: Any) -> Iterable[JSON]:
         """Get all test files.
 
         Get all test files.
@@ -1837,7 +2399,7 @@ class AdministrationOperations:
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1861,7 +2423,7 @@ class AdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1885,7 +2447,7 @@ class AdministrationOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 # make call to next link with the client's api-version
@@ -1905,21 +2467,21 @@ class AdministrationOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1930,10 +2492,10 @@ class AdministrationOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @overload
-    async def create_or_update_app_components(
+    def create_or_update_app_components(
         self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an app component (collection of azure resources) to a test.
@@ -2015,7 +2577,7 @@ class AdministrationOperations:
         """
 
     @overload
-    async def create_or_update_app_components(
+    def create_or_update_app_components(
         self, test_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an app component (collection of azure resources) to a test.
@@ -2067,8 +2629,8 @@ class AdministrationOperations:
                 }
         """
 
-    @distributed_trace_async
-    async def create_or_update_app_components(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace
+    def create_or_update_app_components(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Associate an app component (collection of azure resources) to a test.
 
         Associate an app component (collection of azure resources) to a test.
@@ -2076,7 +2638,7 @@ class AdministrationOperations:
         :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
-        :param body: App Component model. Is either a JSON type or a IO type. Required.
+        :param body: App Component model. Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
@@ -2087,35 +2649,6 @@ class AdministrationOperations:
 
         Example:
             .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "components": {
-                        "str": {
-                            "displayName": "str",  # Optional. Azure resource display
-                              name.
-                            "kind": "str",  # Optional. Kind of Azure resource type.
-                            "resourceGroup": "str",  # Optional. Resource group name of
-                              the Azure resource.
-                            "resourceId": "str",  # Optional. fully qualified resource Id
-                              e.g
-                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
-                            "resourceName": "str",  # Optional. Azure resource name,
-                              required while creating the app component.
-                            "resourceType": "str",  # Optional. Azure resource type,
-                              required while creating the app component.
-                            "subscriptionId": "str"  # Optional. Subscription Id of the
-                              Azure resource.
-                        }
-                    },
-                    "createdBy": "str",  # Optional. The user that created.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
-                      datetime(ISO 8601 literal format).
-                    "lastModifiedBy": "str",  # Optional. The user that last modified.
-                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
-                      datetime(ISO 8601 literal format).
-                    "testId": "str"  # Optional. Test identifier.
-                }
 
                 # response body for status code(s): 200, 201
                 response == {
@@ -2157,8 +2690,8 @@ class AdministrationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -2180,9 +2713,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2205,12 +2738,12 @@ class AdministrationOperations:
                 deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return cast(JSON, deserialized)  # type: ignore
+        return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_app_components(self, test_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_app_components(self, test_id: str, **kwargs: Any) -> JSON:
         """Get associated app component (collection of azure resources) for the given test.
 
         Get associated app component (collection of azure resources) for the given test.
@@ -2265,7 +2798,7 @@ class AdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_administration_get_app_components_request(
             test_id=test_id,
@@ -2276,9 +2809,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2299,7 +2832,7 @@ class AdministrationOperations:
         return cast(JSON, deserialized)
 
     @overload
-    async def create_or_update_server_metrics_config(
+    def create_or_update_server_metrics_config(
         self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test.
@@ -2371,7 +2904,7 @@ class AdministrationOperations:
         """
 
     @overload
-    async def create_or_update_server_metrics_config(
+    def create_or_update_server_metrics_config(
         self, test_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test.
@@ -2418,8 +2951,8 @@ class AdministrationOperations:
                 }
         """
 
-    @distributed_trace_async
-    async def create_or_update_server_metrics_config(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace
+    def create_or_update_server_metrics_config(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Configure server metrics for a test.
 
         Configure server metrics for a test.
@@ -2427,7 +2960,7 @@ class AdministrationOperations:
         :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
-        :param body: Server metric configuration model. Is either a JSON type or a IO type. Required.
+        :param body: Server metric configuration model. Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
@@ -2438,30 +2971,6 @@ class AdministrationOperations:
 
         Example:
             .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "createdBy": "str",  # Optional. The user that created.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
-                      datetime(ISO 8601 literal format).
-                    "lastModifiedBy": "str",  # Optional. The user that last modified.
-                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
-                      datetime(ISO 8601 literal format).
-                    "metrics": {
-                        "str": {
-                            "aggregation": "str",  # Metric aggregation. Required.
-                            "metricNamespace": "str",  # Metric name space. Required.
-                            "name": "str",  # The invariant value of metric name.
-                              Required.
-                            "resourceId": "str",  # Azure resource id. Required.
-                            "resourceType": "str",  # Azure resource type. Required.
-                            "displayDescription": "str",  # Optional. Metric description.
-                            "id": "str",  # Optional. Unique name for metric.
-                            "unit": "str"  # Optional. Metric unit.
-                        }
-                    },
-                    "testId": "str"  # Optional. Test identifier.
-                }
 
                 # response body for status code(s): 200, 201
                 response == {
@@ -2498,8 +3007,8 @@ class AdministrationOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -2521,9 +3030,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2546,12 +3055,12 @@ class AdministrationOperations:
                 deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return cast(JSON, deserialized)  # type: ignore
+        return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> JSON:
         """List server metrics configuration for the given test.
 
         List server metrics configuration for the given test.
@@ -2601,7 +3110,7 @@ class AdministrationOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_administration_get_server_metrics_config_request(
             test_id=test_id,
@@ -2612,9 +3121,9 @@ class AdministrationOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2641,11 +3150,11 @@ class TestRunOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.developer.loadtesting._generated.aio.LoadTestingClient`'s
+        :class:`~azure.developer.loadtesting.LoadTestingClient`'s
         :attr:`test_run` attribute.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
@@ -2653,7 +3162,7 @@ class TestRunOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def begin_test_run(
+    def begin_test_run(
         self,
         test_run_id: str,
         body: JSON,
@@ -3176,7 +3685,7 @@ class TestRunOperations:
         """
 
     @overload
-    async def begin_test_run(
+    def begin_test_run(
         self,
         test_run_id: str,
         body: IO,
@@ -3454,8 +3963,8 @@ class TestRunOperations:
                 }
         """
 
-    @distributed_trace_async
-    async def begin_test_run(
+    @distributed_trace
+    def begin_test_run(
         self, test_run_id: str, body: Union[JSON, IO], *, old_test_run_id: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Create and start a new test run with the given name.
@@ -3465,7 +3974,7 @@ class TestRunOperations:
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param body: Load test run model. Is either a JSON type or a IO type. Required.
+        :param body: Load test run model. Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword old_test_run_id: Existing test run identifier that should be rerun, if this is
          provided, the test will run with the JMX file, configuration and app components from the
@@ -3481,250 +3990,6 @@ class TestRunOperations:
 
         Example:
             .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "certificate": {
-                        "name": "str",  # Optional. Name of the certificate.
-                        "type": "str",  # Optional. Type of certificate. "AKV_CERT_URI"
-                        "value": "str"  # Optional. The value of the certificate for
-                          respective type.
-                    },
-                    "createdBy": "str",  # Optional. The user that created.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
-                      datetime(ISO 8601 literal format).
-                    "description": "str",  # Optional. The test run description.
-                    "displayName": "str",  # Optional. Display name of a testRun.
-                    "duration": 0,  # Optional. Test run duration in milliseconds.
-                    "endDateTime": "2020-02-20 00:00:00",  # Optional. The test run end
-                      DateTime(ISO 8601 literal format).
-                    "environmentVariables": {
-                        "str": "str"  # Optional. Environment variables which are defined as
-                          a set of <name,value> pairs.
-                    },
-                    "errorDetails": [
-                        {
-                            "message": "str"  # Optional. Error details in case test run
-                              was not successfully run.
-                        }
-                    ],
-                    "executedDateTime": "2020-02-20 00:00:00",  # Optional. Test run initiated
-                      time.
-                    "lastModifiedBy": "str",  # Optional. The user that last modified.
-                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
-                      datetime(ISO 8601 literal format).
-                    "loadTestConfiguration": {
-                        "engineInstances": 0,  # Optional. The number of engine instances to
-                          execute load test. Supported values are in range of 1-45. Required for
-                          creating a new test.
-                        "optionalLoadTestConfig": {
-                            "duration": 0,  # Optional. Test run duration.
-                            "endpointUrl": "str",  # Optional. Test URL. Provide the
-                              complete HTTP URL. For example,
-                              http://contoso-app.azurewebsites.net/login.
-                            "rampUpTime": 0,  # Optional. Ramp up time.
-                            "virtualUsers": 0  # Optional. No of concurrent virtual
-                              users.
-                        },
-                        "quickStartTest": False,  # Optional. Default value is False. If
-                          true, optionalLoadTestConfig is required and JMX script for the load test is
-                          not required to upload.
-                        "splitAllCSVs": False  # Optional. Default value is False. If false,
-                          Azure Load Testing copies and processes your input files unmodified across
-                          all test engine instances. If true, Azure Load Testing splits the CSV input
-                          data evenly across all engine instances. If you provide multiple CSV files,
-                          each file will be split evenly.
-                    },
-                    "passFailCriteria": {
-                        "passFailMetrics": {
-                            "str": {
-                                "action": "continue",  # Optional. Default value is
-                                  "continue". Action taken after the threshold is met. Default is
-                                  "u2018continue"u2019. Known values are: "continue" and "stop".
-                                "actualValue": 0.0,  # Optional. The actual value of
-                                  the client metric for the test run.
-                                "aggregate": "str",  # Optional. The aggregation
-                                  function to be applied on the client metric. Allowed functions -
-                                  "u2018percentage"u2019 - for error metric , "u2018avg"u2019,
-                                  "u2018p50"u2019, "u2018p90"u2019, "u2018p95"u2019, "u2018p99"u2019,
-                                  "u2018min"u2019, "u2018max"u2019 - for response_time_ms and latency
-                                  metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
-                                  for requests. Known values are: "count", "percentage", "avg", "p50",
-                                  "p90", "p95", "p99", "min", and "max".
-                                "clientMetric": "str",  # Optional. The client metric
-                                  on which the criteria should be applied. Known values are:
-                                  "response_time_ms", "latency", "error", "requests", and
-                                  "requests_per_sec".
-                                "condition": "str",  # Optional. The comparison
-                                  operator. Supported types "u2018>"u2019, "u2018<"u2019.
-                                "requestName": "str",  # Optional. Request name for
-                                  which the Pass fail criteria has to be applied.
-                                "result": "str",  # Optional. Outcome of the test
-                                  run. Known values are: "passed", "undetermined", and "failed".
-                                "value": 0.0  # Optional. The value to compare with
-                                  the client metric. Allowed values - "u2018error : [0.0 , 100.0] unit-
-                                  % "u2019, response_time_ms and latency : any integer value unit- ms.
-                            }
-                        }
-                    },
-                    "portalUrl": "str",  # Optional. Portal url.
-                    "secrets": {
-                        "str": {
-                            "type": "str",  # Optional. Type of secret. Known values are:
-                              "AKV_SECRET_URI" and "SECRET_VALUE".
-                            "value": "str"  # Optional. The value of the secret for the
-                              respective type.
-                        }
-                    },
-                    "startDateTime": "2020-02-20 00:00:00",  # Optional. The test run start
-                      DateTime(ISO 8601 literal format).
-                    "status": "str",  # Optional. The test run status. Known values are:
-                      "ACCEPTED", "NOTSTARTED", "PROVISIONING", "PROVISIONED", "CONFIGURING",
-                      "CONFIGURED", "EXECUTING", "EXECUTED", "DEPROVISIONING", "DEPROVISIONED", "DONE",
-                      "CANCELLING", "CANCELLED", "FAILED", "VALIDATION_SUCCESS", and
-                      "VALIDATION_FAILURE".
-                    "subnetId": "str",  # Optional. Subnet ID on which the load test instances
-                      should run.
-                    "testArtifacts": {
-                        "inputArtifacts": {
-                            "additionalFileInfo": [
-                                {
-                                    "expireDateTime": "2020-02-20 00:00:00",  #
-                                      Optional. Expiry time of the file (ISO 8601 literal format).
-                                    "fileName": "str",  # Optional. Name of the
-                                      file.
-                                    "fileType": "str",  # Optional. File type.
-                                      Known values are: "JMX_FILE", "USER_PROPERTIES", and
-                                      "ADDITIONAL_ARTIFACTS".
-                                    "url": "str",  # Optional. File URL.
-                                    "validationFailureDetails": "str",  #
-                                      Optional. Validation failure error details.
-                                    "validationStatus": "str"  # Optional.
-                                      Validation status of the file. Known values are: "NOT_VALIDATED",
-                                      "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
-                                      "VALIDATION_INITIATED", and "VALIDATION_NOT_REQUIRED".
-                                }
-                            ],
-                            "configFileInfo": {
-                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
-                                  Expiry time of the file (ISO 8601 literal format).
-                                "fileName": "str",  # Optional. Name of the file.
-                                "fileType": "str",  # Optional. File type. Known
-                                  values are: "JMX_FILE", "USER_PROPERTIES", and
-                                  "ADDITIONAL_ARTIFACTS".
-                                "url": "str",  # Optional. File URL.
-                                "validationFailureDetails": "str",  # Optional.
-                                  Validation failure error details.
-                                "validationStatus": "str"  # Optional. Validation
-                                  status of the file. Known values are: "NOT_VALIDATED",
-                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
-                                  and "VALIDATION_NOT_REQUIRED".
-                            },
-                            "inputArtifactsZipFileInfo": {
-                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
-                                  Expiry time of the file (ISO 8601 literal format).
-                                "fileName": "str",  # Optional. Name of the file.
-                                "fileType": "str",  # Optional. File type. Known
-                                  values are: "JMX_FILE", "USER_PROPERTIES", and
-                                  "ADDITIONAL_ARTIFACTS".
-                                "url": "str",  # Optional. File URL.
-                                "validationFailureDetails": "str",  # Optional.
-                                  Validation failure error details.
-                                "validationStatus": "str"  # Optional. Validation
-                                  status of the file. Known values are: "NOT_VALIDATED",
-                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
-                                  and "VALIDATION_NOT_REQUIRED".
-                            },
-                            "testScriptFileInfo": {
-                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
-                                  Expiry time of the file (ISO 8601 literal format).
-                                "fileName": "str",  # Optional. Name of the file.
-                                "fileType": "str",  # Optional. File type. Known
-                                  values are: "JMX_FILE", "USER_PROPERTIES", and
-                                  "ADDITIONAL_ARTIFACTS".
-                                "url": "str",  # Optional. File URL.
-                                "validationFailureDetails": "str",  # Optional.
-                                  Validation failure error details.
-                                "validationStatus": "str"  # Optional. Validation
-                                  status of the file. Known values are: "NOT_VALIDATED",
-                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
-                                  and "VALIDATION_NOT_REQUIRED".
-                            },
-                            "userPropFileInfo": {
-                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
-                                  Expiry time of the file (ISO 8601 literal format).
-                                "fileName": "str",  # Optional. Name of the file.
-                                "fileType": "str",  # Optional. File type. Known
-                                  values are: "JMX_FILE", "USER_PROPERTIES", and
-                                  "ADDITIONAL_ARTIFACTS".
-                                "url": "str",  # Optional. File URL.
-                                "validationFailureDetails": "str",  # Optional.
-                                  Validation failure error details.
-                                "validationStatus": "str"  # Optional. Validation
-                                  status of the file. Known values are: "NOT_VALIDATED",
-                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
-                                  and "VALIDATION_NOT_REQUIRED".
-                            }
-                        },
-                        "outputArtifacts": {
-                            "logsFileInfo": {
-                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
-                                  Expiry time of the file (ISO 8601 literal format).
-                                "fileName": "str",  # Optional. Name of the file.
-                                "fileType": "str",  # Optional. File type. Known
-                                  values are: "JMX_FILE", "USER_PROPERTIES", and
-                                  "ADDITIONAL_ARTIFACTS".
-                                "url": "str",  # Optional. File URL.
-                                "validationFailureDetails": "str",  # Optional.
-                                  Validation failure error details.
-                                "validationStatus": "str"  # Optional. Validation
-                                  status of the file. Known values are: "NOT_VALIDATED",
-                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
-                                  and "VALIDATION_NOT_REQUIRED".
-                            },
-                            "resultFileInfo": {
-                                "expireDateTime": "2020-02-20 00:00:00",  # Optional.
-                                  Expiry time of the file (ISO 8601 literal format).
-                                "fileName": "str",  # Optional. Name of the file.
-                                "fileType": "str",  # Optional. File type. Known
-                                  values are: "JMX_FILE", "USER_PROPERTIES", and
-                                  "ADDITIONAL_ARTIFACTS".
-                                "url": "str",  # Optional. File URL.
-                                "validationFailureDetails": "str",  # Optional.
-                                  Validation failure error details.
-                                "validationStatus": "str"  # Optional. Validation
-                                  status of the file. Known values are: "NOT_VALIDATED",
-                                  "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
-                                  and "VALIDATION_NOT_REQUIRED".
-                            }
-                        }
-                    },
-                    "testId": "str",  # Optional. Associated test Id.
-                    "testResult": "str",  # Optional. Test result for pass/Fail criteria used
-                      during the test run. Known values are: "PASSED", "NOT_APPLICABLE", and "FAILED".
-                    "testRunId": "str",  # Optional. Unique test run name as identifier.
-                    "testRunStatistics": {
-                        "str": {
-                            "errorCount": 0.0,  # Optional. Error count.
-                            "errorPct": 0.0,  # Optional. Error percentage.
-                            "maxResTime": 0.0,  # Optional. Max response time.
-                            "meanResTime": 0.0,  # Optional. Mean response time.
-                            "medianResTime": 0.0,  # Optional. Median response time.
-                            "minResTime": 0.0,  # Optional. Minimum response time.
-                            "pct1ResTime": 0.0,  # Optional. 90 percentile response time.
-                            "pct2ResTime": 0.0,  # Optional. 95 percentile response time.
-                            "pct3ResTime": 0.0,  # Optional. 99 percentile response time.
-                            "receivedKBytesPerSec": 0.0,  # Optional. Received network
-                              bytes.
-                            "sampleCount": 0.0,  # Optional. Sampler count.
-                            "sentKBytesPerSec": 0.0,  # Optional. Send network bytes.
-                            "throughput": 0.0,  # Optional. Throughput.
-                            "transaction": "str"  # Optional. Transaction name.
-                        }
-                    },
-                    "virtualUsers": 0  # Optional. Number of virtual users, for which test has
-                      been run.
-                }
 
                 # response body for status code(s): 200, 201
                 response == {
@@ -3981,8 +4246,8 @@ class TestRunOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -4005,9 +4270,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4030,12 +4295,12 @@ class TestRunOperations:
                 deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return cast(JSON, deserialized)  # type: ignore
+        return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_test_run(self, test_run_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_test_run(self, test_run_id: str, **kwargs: Any) -> JSON:
         """Get test run details by name.
 
         Get test run details by name.
@@ -4305,7 +4570,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_test_run_get_test_run_request(
             test_run_id=test_run_id,
@@ -4316,9 +4581,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4338,8 +4603,8 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def delete_test_run(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace
+    def delete_test_run(  # pylint: disable=inconsistent-return-statements
         self, test_run_id: str, **kwargs: Any
     ) -> None:
         """Delete a test run by its name.
@@ -4364,7 +4629,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_test_run_delete_test_run_request(
             test_run_id=test_run_id,
@@ -4375,9 +4640,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4390,8 +4655,8 @@ class TestRunOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace_async
-    async def get_test_run_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_test_run_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> JSON:
         """Get test run file by file name.
 
         Get test run file by file name.
@@ -4434,7 +4699,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_test_run_get_test_run_file_request(
             test_run_id=test_run_id,
@@ -4446,9 +4711,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4479,7 +4744,7 @@ class TestRunOperations:
         execution_to: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """Get all test runs with given filters.
 
         Get all test runs with given filters.
@@ -4502,7 +4767,7 @@ class TestRunOperations:
         :keyword status: Comma separated list of test run status. Default value is None.
         :paramtype status: str
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -4755,7 +5020,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -4784,7 +5049,7 @@ class TestRunOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 # make call to next link with the client's api-version
@@ -4804,21 +5069,21 @@ class TestRunOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -4829,10 +5094,10 @@ class TestRunOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def stop_test_run(self, test_run_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def stop_test_run(self, test_run_id: str, **kwargs: Any) -> JSON:
         """Stop test run by name.
 
         Stop test run by name.
@@ -5102,7 +5367,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_test_run_stop_test_run_request(
             test_run_id=test_run_id,
@@ -5113,9 +5378,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5135,8 +5400,8 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def list_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> JSON:
         """List the metric namespaces for a load test run.
 
         List the metric namespaces for a load test run.
@@ -5172,9 +5437,9 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_test_run_get_metric_namespaces_request(
+        request = build_test_run_list_metric_namespaces_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5183,9 +5448,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5205,8 +5470,8 @@ class TestRunOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_metric_definitions(self, test_run_id: str, *, metric_namespace: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def list_metric_definitions(self, test_run_id: str, *, metric_namespace: str, **kwargs: Any) -> JSON:
         """List the metric definitions for a load test run.
 
         List the metric definitions for a load test run.
@@ -5272,9 +5537,9 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_test_run_get_metric_definitions_request(
+        request = build_test_run_list_metric_definitions_request(
             test_run_id=test_run_id,
             metric_namespace=metric_namespace,
             api_version=self._config.api_version,
@@ -5284,9 +5549,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -5319,7 +5584,7 @@ class TestRunOperations:
         interval: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -5345,7 +5610,7 @@ class TestRunOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5395,7 +5660,7 @@ class TestRunOperations:
         interval: Optional[str] = None,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -5421,7 +5686,7 @@ class TestRunOperations:
          Default value is "application/json".
         :paramtype content_type: str
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5457,7 +5722,7 @@ class TestRunOperations:
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[JSON]:
+    ) -> Iterable[JSON]:
         """List the metric values for a load test run.
 
         List the metric values for a load test run.
@@ -5465,7 +5730,7 @@ class TestRunOperations:
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param body: Metric dimension filter. Is either a JSON type or a IO type. Default value is
+        :param body: Metric dimension filter. Is either a model type or a IO type. Default value is
          None.
         :type body: JSON or IO
         :keyword metricname: Metric name. Required.
@@ -5484,24 +5749,11 @@ class TestRunOperations:
          Default value is None.
         :paramtype content_type: str
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "filters": [
-                        {
-                            "name": "str",  # Optional. The dimension name.
-                            "values": [
-                                "str"  # Optional. The dimension values. Maximum
-                                  values can be 20.
-                            ]
-                        }
-                    ]
-                }
 
                 # response body for status code(s): 200
                 response == {
@@ -5523,8 +5775,8 @@ class TestRunOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -5566,7 +5818,7 @@ class TestRunOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 # make call to next link with the client's api-version
@@ -5586,21 +5838,21 @@ class TestRunOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -5611,7 +5863,7 @@ class TestRunOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def list_metric_dimension_values(
@@ -5624,7 +5876,7 @@ class TestRunOperations:
         timespan: str,
         interval: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[str]:
+    ) -> Iterable[str]:
         """List the dimension values for the given metric dimension name.
 
         List the dimension values for the given metric dimension name.
@@ -5645,7 +5897,7 @@ class TestRunOperations:
          "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
         :paramtype interval: str
         :return: An iterator like instance of str
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
+        :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -5657,7 +5909,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         error_map = {
             401: ClientAuthenticationError,
@@ -5686,7 +5938,7 @@ class TestRunOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
                 # make call to next link with the client's api-version
@@ -5706,21 +5958,21 @@ class TestRunOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             return request
 
-        async def extract_data(pipeline_response):
+        def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
 
-        async def get_next(next_link=None):
+        def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -5731,10 +5983,10 @@ class TestRunOperations:
 
             return pipeline_response
 
-        return AsyncItemPaged(get_next, extract_data)
+        return ItemPaged(get_next, extract_data)
 
     @overload
-    async def create_or_update_app_components(
+    def create_or_update_app_components(
         self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an app component (collection of azure resources) to a test run.
@@ -5816,7 +6068,7 @@ class TestRunOperations:
         """
 
     @overload
-    async def create_or_update_app_components(
+    def create_or_update_app_components(
         self, test_run_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an app component (collection of azure resources) to a test run.
@@ -5868,8 +6120,8 @@ class TestRunOperations:
                 }
         """
 
-    @distributed_trace_async
-    async def create_or_update_app_components(self, test_run_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace
+    def create_or_update_app_components(self, test_run_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Associate an app component (collection of azure resources) to a test run.
 
         Associate an app component (collection of azure resources) to a test run.
@@ -5877,7 +6129,7 @@ class TestRunOperations:
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param body: App Component model. Is either a JSON type or a IO type. Required.
+        :param body: App Component model. Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
@@ -5888,35 +6140,6 @@ class TestRunOperations:
 
         Example:
             .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "components": {
-                        "str": {
-                            "displayName": "str",  # Optional. Azure resource display
-                              name.
-                            "kind": "str",  # Optional. Kind of Azure resource type.
-                            "resourceGroup": "str",  # Optional. Resource group name of
-                              the Azure resource.
-                            "resourceId": "str",  # Optional. fully qualified resource Id
-                              e.g
-                              subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
-                            "resourceName": "str",  # Optional. Azure resource name,
-                              required while creating the app component.
-                            "resourceType": "str",  # Optional. Azure resource type,
-                              required while creating the app component.
-                            "subscriptionId": "str"  # Optional. Subscription Id of the
-                              Azure resource.
-                        }
-                    },
-                    "createdBy": "str",  # Optional. The user that created.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
-                      datetime(ISO 8601 literal format).
-                    "lastModifiedBy": "str",  # Optional. The user that last modified.
-                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
-                      datetime(ISO 8601 literal format).
-                    "testRunId": "str"  # Optional. Test run identifier.
-                }
 
                 # response body for status code(s): 200, 201
                 response == {
@@ -5958,8 +6181,8 @@ class TestRunOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -5981,9 +6204,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6006,12 +6229,12 @@ class TestRunOperations:
                 deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return cast(JSON, deserialized)  # type: ignore
+        return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_app_components(self, test_run_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_app_components(self, test_run_id: str, **kwargs: Any) -> JSON:
         """Get associated app component (collection of azure resources) for the given test run.
 
         Get associated app component (collection of azure resources) for the given test run.
@@ -6066,7 +6289,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_test_run_get_app_components_request(
             test_run_id=test_run_id,
@@ -6077,9 +6300,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6100,7 +6323,7 @@ class TestRunOperations:
         return cast(JSON, deserialized)
 
     @overload
-    async def create_or_update_server_metrics_config(
+    def create_or_update_server_metrics_config(
         self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test run.
@@ -6172,7 +6395,7 @@ class TestRunOperations:
         """
 
     @overload
-    async def create_or_update_server_metrics_config(
+    def create_or_update_server_metrics_config(
         self, test_run_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Configure server metrics for a test run.
@@ -6219,10 +6442,8 @@ class TestRunOperations:
                 }
         """
 
-    @distributed_trace_async
-    async def create_or_update_server_metrics_config(
-        self, test_run_id: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> JSON:
+    @distributed_trace
+    def create_or_update_server_metrics_config(self, test_run_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Configure server metrics for a test run.
 
         Configure server metrics for a test run.
@@ -6230,7 +6451,7 @@ class TestRunOperations:
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param body: Server metric configuration model. Is either a JSON type or a IO type. Required.
+        :param body: Server metric configuration model. Is either a model type or a IO type. Required.
         :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Known values are:
          'application/merge-patch+json'. Default value is None.
@@ -6241,30 +6462,6 @@ class TestRunOperations:
 
         Example:
             .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "createdBy": "str",  # Optional. The user that created.
-                    "createdDateTime": "2020-02-20 00:00:00",  # Optional. The creation
-                      datetime(ISO 8601 literal format).
-                    "lastModifiedBy": "str",  # Optional. The user that last modified.
-                    "lastModifiedDateTime": "2020-02-20 00:00:00",  # Optional. The last Modified
-                      datetime(ISO 8601 literal format).
-                    "metrics": {
-                        "str": {
-                            "aggregation": "str",  # Metric aggregation. Required.
-                            "metricNamespace": "str",  # Metric name space. Required.
-                            "name": "str",  # The invariant value of metric name.
-                              Required.
-                            "resourceId": "str",  # Azure resource id. Required.
-                            "resourceType": "str",  # Azure resource type. Required.
-                            "displayDescription": "str",  # Optional. Metric description.
-                            "id": "str",  # Optional. Unique name for metric.
-                            "unit": "str"  # Optional. Metric unit.
-                        }
-                    },
-                    "testRunId": "str"  # Optional. Test run identifier.
-                }
 
                 # response body for status code(s): 200, 201
                 response == {
@@ -6301,8 +6498,8 @@ class TestRunOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -6324,9 +6521,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -6349,12 +6546,12 @@ class TestRunOperations:
                 deserialized = None
 
         if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})
 
-        return cast(JSON, deserialized)  # type: ignore
+        return cast(JSON, deserialized)
 
-    @distributed_trace_async
-    async def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace
+    def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> JSON:
         """List server metrics configuration for the given test run.
 
         List server metrics configuration for the given test run.
@@ -6404,7 +6601,7 @@ class TestRunOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[JSON] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_test_run_get_server_metrics_config_request(
             test_run_id=test_run_id,
@@ -6415,9 +6612,9 @@ class TestRunOperations:
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 

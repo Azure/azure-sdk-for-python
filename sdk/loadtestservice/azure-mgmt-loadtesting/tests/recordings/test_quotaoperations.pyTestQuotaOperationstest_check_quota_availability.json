@@ -17,12 +17,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 04:36:13 GMT",
+        "Date": "Sun, 08 Jan 2023 16:38:47 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - SEASLR2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -111,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 04:36:13 GMT",
+        "Date": "Sun, 08 Jan 2023 16:38:47 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14649.17 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -172,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "2be6d41a-442b-4d08-85bf-b77c05bcb353",
+        "client-request-id": "bcdbe128-ce37-4681-aff2-e672c7e78aeb",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -190,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "2be6d41a-442b-4d08-85bf-b77c05bcb353",
+        "client-request-id": "bcdbe128-ce37-4681-aff2-e672c7e78aeb",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 04:36:13 GMT",
+        "Date": "Sun, 08 Jan 2023 16:38:47 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -201,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14649.17 - SEASLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14357.7 - KRSLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -219,7 +219,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-mgmt-loadtesting/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-mgmt-loadtesting/1.0.0b1 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -227,18 +227,18 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 04:36:14 GMT",
+        "Date": "Sun, 08 Jan 2023 16:38:47 GMT",
         "Expires": "-1",
-        "mise-correlation-id": "927287f2-6432-48a5-bb56-210933d911dc",
+        "mise-correlation-id": "5fe94d54-5002-486c-8151-c6f0215d9416",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d5dda1e4-c3f5-4524-ba6e-2506bededa04",
+        "x-ms-correlation-request-id": "663d6226-8977-4f69-9d9c-ce8d68111cf6",
         "x-ms-providerhub-traffic": "True",
-        "x-ms-ratelimit-remaining-subscription-reads": "11961",
-        "x-ms-routing-request-id": "JIOINDIACENTRAL:20230216T043614Z:d5dda1e4-c3f5-4524-ba6e-2506bededa04"
+        "x-ms-ratelimit-remaining-subscription-reads": "11997",
+        "x-ms-routing-request-id": "SOUTHINDIA:20230108T163848Z:663d6226-8977-4f69-9d9c-ce8d68111cf6"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/providers/Microsoft.LoadTestService/locations/westus2/quotas/maxEngineInstancesPerTestRun",
@@ -259,7 +259,7 @@
         "Connection": "keep-alive",
         "Content-Length": "32",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-mgmt-loadtesting/1.0.0 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-mgmt-loadtesting/1.0.0b1 Python/3.10.7 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -271,18 +271,18 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Feb 2023 04:36:15 GMT",
+        "Date": "Sun, 08 Jan 2023 16:38:48 GMT",
         "Expires": "-1",
-        "mise-correlation-id": "b00ff8bc-47ef-405a-b6d7-fb2ce76f5a88",
+        "mise-correlation-id": "5698bfc1-aad7-494f-ac2c-fe107acae0e1",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "4cddeaaf-860e-4898-a496-16cf73e76192",
+        "x-ms-correlation-request-id": "f12fdd8b-70a4-4971-9d59-2a7904d4c632",
         "x-ms-providerhub-traffic": "True",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
-        "x-ms-routing-request-id": "JIOINDIACENTRAL:20230216T043615Z:4cddeaaf-860e-4898-a496-16cf73e76192"
+        "x-ms-routing-request-id": "SOUTHINDIA:20230108T163848Z:f12fdd8b-70a4-4971-9d59-2a7904d4c632"
       },
       "ResponseBody": {
         "properties": {

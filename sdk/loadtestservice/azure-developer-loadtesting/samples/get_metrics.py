@@ -19,7 +19,7 @@ USAGE:
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
-from azure.developer.loadtesting import LoadTestRunClient
+from azure.developer.loadtesting import LoadTestingClient
 
 # for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
 # -loadtesting/README.md
@@ -36,23 +36,23 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestRunClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-sdk-test-id"
-TEST_RUN_ID = "some-test-run-id"
+TEST_RUN_ID = "my-sdk-load-test-run-id"
 
-test_run_response = client.get_test_run(TEST_RUN_ID)
+test_run_response = client.test_run.get_test_run(TEST_RUN_ID)
 
 # get a list of metric namespaces for a given test run
-metric_namespaces = client.get_metric_namespaces(TEST_RUN_ID)
+metric_namespaces = client.test_run.list_metric_namespaces(TEST_RUN_ID)
 print(metric_namespaces)
 
 # get a list of metric definitions for a given test run and metric namespace
-metric_definitions = client.get_metric_definitions(TEST_RUN_ID, metric_namespace=metric_namespaces["value"][0]["name"])
+metric_definitions = client.test_run.list_metric_definitions(TEST_RUN_ID, metric_namespace=metric_namespaces["value"][0]["name"])
 print(metric_definitions)
 
 # fetch metrics for a test run using metric definition and namespace
-metrics = client.list_metrics(
+metrics = client.test_run.list_metrics(
     TEST_RUN_ID,
     metricname=metric_definitions["value"][0]["name"],
     metric_namespace=metric_namespaces["value"][0]["name"],

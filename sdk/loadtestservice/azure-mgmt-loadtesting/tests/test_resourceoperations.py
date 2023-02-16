@@ -48,7 +48,7 @@ class TestResourceOperations(AzureMgmtRecordedTestCase):
             os.environ.get("CLIENT_OID", None) if self.is_live else DEFAULT_SANITIZER
         )
 
-    @ResourceGroupPreparer(name_prefix="altpysdk")
+    @ResourceGroupPreparer(name_prefix="pysdk")
     @recorded_by_proxy
     def test_load_test_resource_operations(self, resource_group):
 

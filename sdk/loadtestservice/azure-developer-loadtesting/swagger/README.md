@@ -3,7 +3,7 @@
 ```yaml
 input-file: https://github.com/Azure/azure-rest-api-specs/blob/main/specification/loadtestservice/data-plane/Microsoft.LoadTestService/stable/2022-11-01/loadtestservice.json
 output-folder: ../
-namespace: azure.developer.loadtesting._generated
+namespace: azure.developer.loadtesting
 package-name: azure-developer-loadtesting
 license-header: MICROSOFT_MIT_NO_VERSION
 title: LoadTestingClient
@@ -19,13 +19,7 @@ directive:
   - from: swagger-document
     where: $["paths"]["/test-runs/{testRunId}"].patch
     transform: $["operationId"] = "LoadTestRun_BeginTestRun";
-  - from: swagger-document
-    where: $["paths"]["/test-runs/{testRunId}/metric-namespaces"].get
-    transform: $["operationId"] = "LoadTestRun_GetMetricNamespaces";
-  - from: swagger-document
-    where: $["paths"]["/test-runs/{testRunId}/metric-definitions"].get
-    transform: $["operationId"] = "LoadTestRun_GetMetricDefinitions";
-  
+    
   - from: swagger-document
     where: '$.paths.*[?(@.tags=="Test")]'
     transform: >
