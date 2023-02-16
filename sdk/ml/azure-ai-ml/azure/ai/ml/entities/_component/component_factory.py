@@ -18,8 +18,11 @@ from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
-    DataTransferImportComponent, DataTransferExportComponent
+from azure.ai.ml.entities._component.datatransfer_component import (
+    DataTransferCopyComponent,
+    DataTransferImportComponent,
+    DataTransferExportComponent,
+)
 from azure.ai.ml.entities._util import get_type_from_spec
 
 

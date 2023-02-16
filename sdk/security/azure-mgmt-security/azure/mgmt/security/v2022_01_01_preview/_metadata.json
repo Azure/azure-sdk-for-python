@@ -19,13 +19,8 @@
                 "signature": "credential: \"TokenCredential\",",
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
-                "required": true
-            },
-            "subscription_id": {
-                "signature": "subscription_id: str,",
-                "description": "Azure subscription ID. Required.",
-                "docstring_type": "str",
-                "required": true
+                "required": true,
+                "method_location": "positional"
             }
         },
         "async": {
@@ -34,36 +29,33 @@
                 "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
-            },
-            "subscription_id": {
-                "signature": "subscription_id: str,",
-                "description": "Azure subscription ID. Required.",
-                "docstring_type": "str",
-                "required": true
             }
         },
         "constant": {
         },
-        "call": "credential, subscription_id",
+        "call": "credential",
         "service_client_specific": {
             "sync": {
                 "api_version": {
-                    "signature": "api_version=None, # type: Optional[str]",
+                    "signature": "api_version: Optional[str]=None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "base_url": {
                     "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "profile": {
-                    "signature": "profile=KnownProfiles.default, # type: KnownProfiles",
+                    "signature": "profile: KnownProfiles=KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 }
             },
             "async": {
@@ -71,19 +63,22 @@
                     "signature": "api_version: Optional[str] = None,",
                     "description": "API version to use if no profile is provided, or if missing in profile.",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "base_url": {
                     "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 },
                 "profile": {
                     "signature": "profile: KnownProfiles = KnownProfiles.default,",
                     "description": "A profile definition, from KnownProfiles to dict.",
                     "docstring_type": "azure.profiles.KnownProfiles",
-                    "required": false
+                    "required": false,
+                    "method_location": "positional"
                 }
             }
         }
@@ -97,12 +92,7 @@
         "async_imports": "{\"regular\": {\"azurecore\": {\"azure.core.configuration\": [\"Configuration\"], \"azure.core.pipeline\": [\"policies\"], \"azure.mgmt.core.policies\": [\"ARMHttpLoggingPolicy\", \"AsyncARMChallengeAuthenticationPolicy\"]}, \"local\": {\".._version\": [\"VERSION\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "operation_groups": {
-        "governance_rule": "GovernanceRuleOperations",
         "governance_rules": "GovernanceRulesOperations",
-        "security_connector_governance_rule": "SecurityConnectorGovernanceRuleOperations",
-        "security_connector_governance_rules": "SecurityConnectorGovernanceRulesOperations",
-        "subscription_governance_rules_execute_status": "SubscriptionGovernanceRulesExecuteStatusOperations",
-        "security_connector_governance_rules_execute_status": "SecurityConnectorGovernanceRulesExecuteStatusOperations",
         "governance_assignments": "GovernanceAssignmentsOperations"
     }
 }
