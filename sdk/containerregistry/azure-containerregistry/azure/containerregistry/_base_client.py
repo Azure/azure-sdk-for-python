@@ -28,8 +28,8 @@ class ContainerRegistryBaseClient(object):
     """Base class for ContainerRegistryClient
 
     :param str endpoint: Azure Container Registry endpoint
-    :param credential: AAD Token for authenticating requests with Azure
-    :type credential: ~azure.identity.DefaultTokenCredential
+    :param credential: AAD Token for authenticating requests with Azure, or None in anonymous access
+    :type credential: ~azure.identity.DefaultTokenCredential or None
     :keyword credential_scopes: URL for credential authentication if different from the default
     :paramtype credential_scopes: List[str]
     :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
@@ -41,7 +41,7 @@ class ContainerRegistryBaseClient(object):
         # type: (str, Optional[TokenCredential], Any) -> None
         self._auth_policy = ContainerRegistryChallengePolicy(credential, endpoint, **kwargs)
         self._client = ContainerRegistry(
-            credential=credential,
+            credential="" if credential is None else credential,
             url=endpoint,
             sdk_moniker=USER_AGENT,
             authentication_policy=self._auth_policy,

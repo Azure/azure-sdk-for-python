@@ -415,7 +415,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             tag_or_digest = self._get_digest_from_tag(repository, tag_or_digest)
 
         return ArtifactManifestProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs),
+            self._client.container_registry.get_manifest_properties(repository, tag_or_digest, **kwargs).manifest,
             repository_name=repository,
             registry=self._endpoint,
         )
@@ -442,7 +442,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties = client.get_tag_properties("my_repository", tag.name)
         """
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
-            self._client.container_registry.get_tag_properties(repository, tag, **kwargs),
+            self._client.container_registry.get_tag_properties(repository, tag, **kwargs).tag,
             repository=repository,
         )
 
@@ -646,7 +646,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_or_digest,
                 value=properties._to_generated(),  # pylint: disable=protected-access
                 **kwargs
-            ),
+            ).manifest,
             repository_name=repository,
             registry=self._endpoint
         )
@@ -714,7 +714,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         return ArtifactTagProperties._from_generated(  # pylint: disable=protected-access
             self._client.container_registry.update_tag_attributes(
                 repository, tag, value=properties._to_generated(), **kwargs  # pylint: disable=protected-access
-            ),
+            ).tag,
             repository=repository
         )
 

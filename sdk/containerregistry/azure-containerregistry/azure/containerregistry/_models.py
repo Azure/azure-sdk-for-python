@@ -11,8 +11,6 @@ from typing import TYPE_CHECKING, Any, List
 from azure.core import CaseInsensitiveEnumMeta
 
 from ._generated.models import (
-    ArtifactTagProperties as GeneratedArtifactTagProperties,
-    ArtifactManifestProperties as GeneratedArtifactManifestProperties,
     ContainerRepositoryProperties as GeneratedRepositoryProperties,
     RepositoryWriteableProperties,
     TagWriteableProperties,
@@ -21,9 +19,8 @@ from ._generated.models import (
 from ._helpers import _host_only, _is_tag, _strip_alg
 
 if TYPE_CHECKING:
-    from typing import IO
     from datetime import datetime
-    from ._generated.models import ManifestAttributesBase, OCIManifest
+    from ._generated.models import ManifestAttributesBase, TagAttributesBase
 
 
 class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-attributes
@@ -68,21 +65,20 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (GeneratedArtifactManifestProperties,  Any) -> ArtifactManifestProperties
+        # type: (ManifestAttributesBase,  Any) -> ArtifactManifestProperties
         return cls(
-            cpu_architecture=generated.architecture,
+            architecture=generated.architecture,
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             operating_system=generated.operating_system,
             size_in_bytes=generated.size,
             tags=generated.tags,
-            can_delete=generated.can_delete,
-            can_read=generated.can_read,
-            can_write=generated.can_write,
-            can_list=generated.can_list,
+            can_delete=generated.changeable_attributes.can_delete,
+            can_read=generated.changeable_attributes.can_read,
+            can_write=generated.changeable_attributes.can_write,
+            can_list=generated.changeable_attributes.can_list,
             repository_name=kwargs.get("repository_name", None),
-            registry=kwargs.get("registry", None),
         )
 
     def _to_generated(self):
@@ -137,7 +133,13 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     @property
     def fully_qualified_reference(self):
         # type: () -> str
-        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
+        return "{}/{}{}{}".format(
+            _host_only(self._registry),
+            self._repository_name,
+            ":" if _is_tag(self._digest) else "@",
+            _strip_alg(self._digest)
+        )
+        # return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
 
 
 class RepositoryProperties(object):
@@ -176,10 +178,10 @@ class RepositoryProperties(object):
             name=generated.name,
             manifest_count=generated.manifest_count,
             tag_count=generated.tag_count,
-            can_delete=generated.can_delete,
-            can_read=generated.can_read,
-            can_write=generated.can_write,
-            can_list=generated.can_list,
+            can_delete=generated.changeable_attributes.can_delete,
+            can_read=generated.changeable_attributes.can_read,
+            can_write=generated.changeable_attributes.can_write,
+            can_list=generated.changeable_attributes.can_list,
         )
 
     def _to_generated(self):
@@ -254,16 +256,16 @@ class ArtifactTagProperties(object):
 
     @classmethod
     def _from_generated(cls, generated, **kwargs):
-        # type: (GeneratedArtifactTagProperties, Any) -> ArtifactTagProperties
+        # type: (TagAttributesBase, Any) -> ArtifactTagProperties
         return cls(
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
             name=generated.name,
-            can_delete=generated.can_delete,
-            can_read=generated.can_read,
-            can_write=generated.can_write,
-            can_list=generated.can_list,
+            can_delete=generated.changeable_attributes.can_delete,
+            can_read=generated.changeable_attributes.can_read,
+            can_write=generated.changeable_attributes.can_write,
+            can_list=generated.changeable_attributes.can_list,
             repository_name=kwargs.get("repository_name", None),
         )
 
