@@ -1,8 +1,11 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2023-02-16)
+## 1.3.0b1 (2023-02-16)
 
+### Other Changes
 
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
 
 ## 1.2.0 (2023-01-17)
 
