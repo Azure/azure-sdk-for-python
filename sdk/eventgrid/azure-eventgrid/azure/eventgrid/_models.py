@@ -8,7 +8,7 @@ import datetime as dt
 import uuid
 from msrest.serialization import UTC
 from ._messaging_shared import _get_json_content
-from ._generated.models import (
+from ._generated.models._models import (
     EventGridEvent as InternalEventGridEvent,
 )
 
