@@ -1,3 +1,4 @@
+import logging
 import os
 from io import StringIO
 from pathlib import Path
@@ -36,7 +37,7 @@ from azure.ai.ml.constants._common import (
     InputOutputModes,
 )
 from azure.ai.ml.entities import Component, Data, JobResourceConfiguration, PipelineJob
-from azure.ai.ml.entities._builders import Command, Spark
+from azure.ai.ml.entities._builders import Command, Spark, DataTransferCopy
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 from azure.ai.ml.exceptions import (
@@ -1359,7 +1360,7 @@ class TestDSLPipeline:
                         },
                     }
                 },
-                "outputs": {"trained_model": {"job_output_type": "uri_folder"}},
+                "outputs": {"trained_model": {"job_output_type": "uri_folder", 'mode': 'Upload'}},
                 "settings": {},
             }
         }
@@ -2198,6 +2199,7 @@ class TestDSLPipeline:
 
         pipeline_job = pipeline_func_consume_expression(int_param=1)
         assert pipeline_job.jobs["control_node"]._to_rest_object() == {
+            '_source': 'DSL',
             "type": "if_else",
             "condition": "${{parent.jobs.expression_component.outputs.output}}",
             "true_block": "${{parent.jobs.node1}}",
@@ -2321,6 +2323,126 @@ class TestDSLPipeline:
             },
             "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
             "settings": {"_source": "DSL"},
+        }
+
+    def test_dsl_pipeline_with_data_transfer_copy_node(self) -> None:
+        merge_files = load_component(
+            "./tests/test_configs/components/data_transfer/copy_files.yaml"
+        )
+
+        @dsl.pipeline(description="submit a pipeline with data transfer copy job")
+        def data_transfer_copy_pipeline_from_yaml(folder1):
+            copy_files_node = merge_files(folder1=folder1)
+            return {"output": copy_files_node.outputs.output_folder}
+
+        dsl_pipeline: PipelineJob = data_transfer_copy_pipeline_from_yaml(
+            folder1=Input(
+                path="azureml://datastores/my_cosmos/paths/source_cosmos",
+                type=AssetTypes.URI_FOLDER,
+            ),
+        )
+        dsl_pipeline.outputs.output.path = "azureml://datastores/my_blob/paths/merged_blob"
+
+        data_transfer_copy_node = dsl_pipeline.jobs["copy_files_node"]
+        job_data_path_input = data_transfer_copy_node.inputs["folder1"]._meta
+        assert job_data_path_input
+        data_transfer_copy_node_dict = data_transfer_copy_node._to_dict()
+
+        data_transfer_copy_node_rest_obj = data_transfer_copy_node._to_rest_object()
+        regenerated_data_transfer_copy_node = DataTransferCopy._from_rest_object(data_transfer_copy_node_rest_obj)
+
+        data_transfer_copy_node_dict_from_rest = regenerated_data_transfer_copy_node._to_dict()
+        omit_fields = []
+        assert pydash.omit(data_transfer_copy_node_dict, *omit_fields) == pydash.omit(data_transfer_copy_node_dict_from_rest, *omit_fields)
+        omit_fields = [
+            "jobs.copy_files_node.componentId",
+        ]
+        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            'description': 'submit a pipeline with data transfer copy job',
+            'display_name': 'data_transfer_copy_pipeline_from_yaml',
+            'inputs': {'folder1': {'job_input_type': 'uri_folder',
+                                   'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+            'is_archived': False,
+            'job_type': 'Pipeline',
+            'jobs': {'copy_files_node': {'_source': 'YAML.COMPONENT',
+                                          'data_copy_mode': 'merge_with_overwrite',
+                                           'inputs': {'folder1': {'job_input_type': 'literal',
+                                                                  'value': '${{parent.inputs.folder1}}'}},
+                                           'name': 'copy_files_node',
+                                           'outputs': {'output_folder': {'type': 'literal',
+                                                                         'value': '${{parent.outputs.output}}'}},
+                                           'task': 'copy_data',
+                                           'type': 'data_transfer'}},
+            'outputs': {'output': {'job_output_type': 'uri_folder',
+                                   'uri': 'azureml://datastores/my_blob/paths/merged_blob'}},
+            'properties': {},
+            'settings': {'_source': 'DSL'},
+            'tags': {}
+        }
+
+    def test_dsl_pipeline_with_data_transfer_merge_node(self) -> None:
+        merge_files = load_component(
+            "./tests/test_configs/components/data_transfer/merge_files.yaml"
+        )
+
+        @dsl.pipeline(description="submit a pipeline with data transfer copy job")
+        def data_transfer_copy_pipeline_from_yaml(folder1, folder2):
+            merge_files_node = merge_files(folder1=folder1, folder2=folder2)
+            return {"output": merge_files_node.outputs.output_folder}
+
+        dsl_pipeline: PipelineJob = data_transfer_copy_pipeline_from_yaml(
+            folder1=Input(
+                path="azureml://datastores/my_cosmos/paths/source_cosmos",
+                type=AssetTypes.URI_FOLDER,
+            ),
+            folder2=Input(
+                path="azureml://datastores/my_cosmos/paths/source_cosmos",
+                type=AssetTypes.URI_FOLDER,
+            ),
+        )
+        dsl_pipeline.outputs.output.path = "azureml://datastores/my_blob/paths/merged_blob"
+
+        data_transfer_copy_node = dsl_pipeline.jobs["merge_files_node"]
+        job_data_path_input = data_transfer_copy_node.inputs["folder1"]._meta
+        assert job_data_path_input
+        data_transfer_copy_node_dict = data_transfer_copy_node._to_dict()
+
+        data_transfer_copy_node_rest_obj = data_transfer_copy_node._to_rest_object()
+        regenerated_data_transfer_copy_node = DataTransferCopy._from_rest_object(data_transfer_copy_node_rest_obj)
+
+        data_transfer_copy_node_dict_from_rest = regenerated_data_transfer_copy_node._to_dict()
+        omit_fields = []
+        assert pydash.omit(data_transfer_copy_node_dict, *omit_fields) == pydash.omit(data_transfer_copy_node_dict_from_rest, *omit_fields)
+        omit_fields = [
+            "jobs.merge_files_node.componentId",
+        ]
+        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            'description': 'submit a pipeline with data transfer copy job',
+            'display_name': 'data_transfer_copy_pipeline_from_yaml',
+            'inputs': {'folder1': {'job_input_type': 'uri_folder',
+                                   'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'},
+                       'folder2': {'job_input_type': 'uri_folder',
+                                   'uri': 'azureml://datastores/my_cosmos/paths/source_cosmos'}},
+            'is_archived': False,
+            'job_type': 'Pipeline',
+            'jobs': {'merge_files_node': {'_source': 'YAML.COMPONENT',
+                                          'data_copy_mode': 'merge_with_overwrite',
+                                           'inputs': {'folder1': {'job_input_type': 'literal',
+                                                                  'value': '${{parent.inputs.folder1}}'},
+                                                      'folder2': {'job_input_type': 'literal',
+                                                                  'value': '${{parent.inputs.folder2}}'}},
+                                           'name': 'merge_files_node',
+                                           'outputs': {'output_folder': {'type': 'literal',
+                                                                         'value': '${{parent.outputs.output}}'}},
+                                           'task': 'copy_data',
+                                           'type': 'data_transfer'}},
+            'outputs': {'output': {'job_output_type': 'uri_folder',
+                                   'uri': 'azureml://datastores/my_blob/paths/merged_blob'}},
+            'properties': {},
+            'settings': {'_source': 'DSL'},
+            'tags': {}
         }
 
     def test_node_sweep_with_optional_input(self) -> None:
@@ -2638,8 +2760,7 @@ class TestDSLPipeline:
             "_source": "DSL"
         }
 
-
-    def test_register_output_without_name_sdk(self, client: MLClient):
+    def test_register_output_without_name_sdk(self):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
 
@@ -2651,7 +2772,7 @@ class TestDSLPipeline:
         pipeline = register_node_output()
         pipeline.settings.default_compute = "azureml:cpu-cluster"
         with pytest.raises(UserErrorException) as e:   
-            assert_job_cancel(pipeline, client)
+            pipeline._validate()
         assert "Output name is required when output version is specified." in str(e.value)
 
         @dsl.pipeline()
@@ -2665,10 +2786,10 @@ class TestDSLPipeline:
         pipeline.outputs.pipeine_a_output.version = 1
         pipeline.settings.default_compute = "azureml:cpu-cluster"
         with pytest.raises(UserErrorException) as e:
-            assert_job_cancel(pipeline, client)
+            pipeline._validate()
         assert "Output name is required when output version is specified." in str(e.value)
 
-    def test_register_output_with_invalid_name_sdk(self, client: MLClient):
+    def test_register_output_with_invalid_name_sdk(self):
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
 
@@ -2681,5 +2802,176 @@ class TestDSLPipeline:
         pipeline = register_node_output()
         pipeline.settings.default_compute = "azureml:cpu-cluster"
         with pytest.raises(UserErrorException) as e:
-            assert_job_cancel(pipeline, client)
+            pipeline._validate()
         assert 'The output name @ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.' in str(e.value)
+
+    def test_pipeline_output_settings_copy(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path.path = "path1"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job2 = my_pipeline()
+
+        pipeline_job1.outputs.component_out_path.path = "new_path"
+
+        # modified pipeline output setting won't affect pipeline component or other nodes.
+        assert pipeline_job1.outputs.component_out_path.path == "new_path"
+        assert pipeline_job1.component.outputs["component_out_path"].path == "path1"
+        assert pipeline_job2.outputs.component_out_path.path == "path1"
+        assert pipeline_job2.component.outputs["component_out_path"].path == "path1"
+
+        # newly create pipeline job instance won't be affected
+        pipeline_job3 = my_pipeline()
+        assert pipeline_job3.outputs.component_out_path.path == "path1"
+        assert pipeline_job3.component.outputs["component_out_path"].path == "path1"
+
+    def test_node_path_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml)
+
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            node1.outputs.component_out_path = Output(
+                # the following settings will be copied to pipeline level
+                path="path",
+            )
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        assert pipeline_job1.outputs.component_out_path.path == "path"
+
+        @dsl.pipeline()
+        def outer_pipeline():
+            node1 = my_pipeline()
+            assert node1.outputs.component_out_path.path == "path"
+            node1.outputs.component_out_path.path = "new_path"
+            assert node1.outputs.component_out_path.path == "new_path"
+            return node1.outputs
+
+        pipeline_job2 = outer_pipeline()
+        assert pipeline_job2.outputs.component_out_path.path == "new_path"
+
+    def test_node_output_type_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        params_override = [{"outputs": {
+            "component_out_path": {"type": "uri_file"}
+        }}]
+        component_func1 = load_component(source=component_yaml, params_override=params_override)
+
+        # without node level setting, node should have same type with component
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        assert pipeline_job1.outputs.component_out_path.type == "uri_file"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "uri_file"
+
+        # when node level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            node1.outputs.component_out_path.type = "mlflow_model"
+            assert node1.outputs.component_out_path.type == "mlflow_model"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.type == "mlflow_model"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "mlflow_model"
+
+        # when pipeline level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            assert node1.outputs.component_out_path.type == "uri_file"
+            node1.outputs.component_out_path.type = "mlflow_model"
+            assert node1.outputs.component_out_path.type == "mlflow_model"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job1.outputs.component_out_path.type = "custom_model"
+        assert pipeline_job1.outputs.component_out_path.type == "custom_model"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["job_output_type"] == "custom_model"
+
+    def test_node_output_mode_promotion(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        params_override = [{"outputs": {
+            "component_out_path": {"mode": "mount", "type": "uri_file"}
+        }}]
+        component_func1 = load_component(source=component_yaml, params_override=params_override)
+
+        # without node level setting, node should have same type with component
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.mode == "mount"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "ReadWriteMount"
+
+        # when node level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            node1.outputs.component_out_path.mode = "upload"
+            assert node1.outputs.component_out_path.mode == "upload"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        # assert pipeline_job1.outputs.component_out_path.mode == "upload"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "Upload"
+
+        # when pipeline level has setting, node should respect the setting
+        @dsl.pipeline()
+        def my_pipeline():
+            node1 = component_func1(component_in_number=1)
+            # assert node1.outputs.component_out_path.mode == "mount"
+            node1.outputs.component_out_path.mode = "upload"
+            assert node1.outputs.component_out_path.mode == "upload"
+            return node1.outputs
+
+        pipeline_job1 = my_pipeline()
+        pipeline_job1.outputs.component_out_path.mode = "direct"
+        assert pipeline_job1.outputs.component_out_path.mode == "direct"
+        pipeline_dict = pipeline_job1._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["outputs"]["component_out_path"]["mode"] == "Direct"
+
+    def test_validate_pipeline_node_io_name_has_keyword(self, caplog):
+        # Refresh logger for pytest to capture log, otherwise the result is empty.
+        from azure.ai.ml.dsl import _pipeline_component_builder
+
+        _pipeline_component_builder.module_logger = logging.getLogger(__file__)
+        with caplog.at_level(logging.WARNING):
+            from test_configs.dsl_pipeline.pipeline_with_keyword_in_node_io.pipeline import pipeline_job
+
+            # validation should pass
+            assert pipeline_job._customized_validate().passed
+
+        warning_template = (
+            "Reserved word \"{io_name}\" is used as {io} name in node \"{node_name}\", "
+            "can only be accessed with '{node_name}.{io}s[\"{io_name}\"]'"
+        )
+        assert caplog.messages == [
+            warning_template.format(io_name="__contains__", io="output", node_name="node"),
+            warning_template.format(io_name="items", io="output", node_name="upstream_node"),
+            warning_template.format(io_name="keys", io="input", node_name="downstream_node"),
+            warning_template.format(io_name="__hash__", io="output", node_name="pipeline_component_func"),
+        ]
