@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access
 
+import time
 from typing import Dict, Iterable, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
@@ -14,10 +15,10 @@ from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import Scope
 from azure.ai.ml.entities import Workspace, FeatureStore
 from azure.core.credentials import TokenCredential
-from azure.core.polling import LROPoller
+from azure.core.polling import LROPoller, PollingMethod
 from azure.core.tracing.decorator import distributed_trace
 from ._workspace_operations import WorkspaceOperations
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, ArmConstants, LROConfigurations, Scope, WorkspaceResourceConstants
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -97,11 +98,22 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
+        create_poller = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
             get_feature_store_poller=True,
             *kwargs
+        )
+
+        def callback(): 
+            print("Feature store operation callback!!")
+            pass
+
+        return LROPoller(
+            self._workspace_operation._client,
+            None,
+            lambda *x, **y: None,
+            CustomArmTemplateDeploymentPollingMethod(create_poller, callback)
         )
 
     # @monitor_with_activity(logger, "FeatureStore.BeginUpdate", ActivityType.PUBLICAPI)
@@ -155,3 +167,43 @@ class FeatureStoreOperations():
             delete_dependent_resources=delete_dependent_resources,
             **kwargs
         )
+
+
+class CustomArmTemplateDeploymentPollingMethod(PollingMethod):
+    def __init__(self, poller, func) -> None:
+        self.poller = poller
+        self.func = func
+        super().__init__()
+
+    def resource(self):
+        error = None
+        try:
+            while not self.poller.done():
+                time.sleep(LROConfigurations.SLEEP_TIME)
+
+            if self.poller._exception is not None:
+                error = self.poller._exception
+
+        except Exception as e:  # pylint: disable=broad-except
+            error = e
+        finally:
+            # one last check to make sure all print statements make it
+            if not isinstance(error, KeyboardInterrupt):
+                # total_duration = self.poller.result().properties.duration
+                total_duration = 100
+
+        if error is not None:
+            raise error
+        return self.func()
+
+    def initialize(self, *args, **kwargs):
+        pass
+
+    def finished(self):
+        pass
+
+    def run(self):
+        pass
+
+    def status(self):
+        pass
