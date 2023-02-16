@@ -28,6 +28,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: easm
+    TestProxy: true
     Artifacts:
     - name: azure-easm
       safeName: azureeasm
