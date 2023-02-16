@@ -224,8 +224,8 @@ class PolicyAssignmentsOperations:
         :type scope: str
         :param policy_assignment_name: The name of the policy assignment. Required.
         :type policy_assignment_name: str
-        :param parameters: Parameters for the policy assignment. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for the policy assignment. Is either a PolicyAssignment type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.
@@ -760,8 +760,8 @@ class PolicyAssignmentsOperations:
          '/{scope}/providers/Microsoft.Authorization/policyAssignments/{policy-assignment-name}'.
          Required.
         :type policy_assignment_id: str
-        :param parameters: Parameters for policy assignment. Is either a model type or a IO type.
-         Required.
+        :param parameters: Parameters for policy assignment. Is either a PolicyAssignment type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyAssignment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.
@@ -965,8 +965,8 @@ class PolicySetDefinitionsOperations:
 
         :param policy_set_definition_name: The name of the policy set definition to create. Required.
         :type policy_set_definition_name: str
-        :param parameters: The policy set definition properties. Is either a model type or a IO type.
-         Required.
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
@@ -1428,8 +1428,8 @@ class PolicySetDefinitionsOperations:
         :type policy_set_definition_name: str
         :param management_group_id: The ID of the management group. Required.
         :type management_group_id: str
-        :param parameters: The policy set definition properties. Is either a model type or a IO type.
-         Required.
+        :param parameters: The policy set definition properties. Is either a PolicySetDefinition type
+         or a IO type. Required.
         :type parameters: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicySetDefinition or
          IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
@@ -1778,8 +1778,8 @@ class PolicyDefinitionsOperations:
 
         :param policy_definition_name: The name of the policy definition to create. Required.
         :type policy_definition_name: str
-        :param parameters: The policy definition properties. Is either a model type or a IO type.
-         Required.
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.
@@ -2081,8 +2081,8 @@ class PolicyDefinitionsOperations:
         :type policy_definition_name: str
         :param management_group_id: The ID of the management group. Required.
         :type management_group_id: str
-        :param parameters: The policy definition properties. Is either a model type or a IO type.
-         Required.
+        :param parameters: The policy definition properties. Is either a PolicyDefinition type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.resource.policy.v2017_06_01_preview.models.PolicyDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json',
          'text/json'. Default value is None.
