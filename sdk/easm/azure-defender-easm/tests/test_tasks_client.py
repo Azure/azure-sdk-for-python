@@ -8,7 +8,7 @@ from testcase import EasmTest, EasmParameterProvider
 from devtools_testutils import recorded_by_proxy
 
 class TestEasmTaskClient(EasmTest):
-    existing_task_id = '64649a09-8c9d-482c-9f72-85766b45a244'
+    existing_task_id = '7cf2c2d9-8125-4043-a82c-b86baa2c60fd'
     time_format = '%Y-%m-%dT%H:%M:%S.%f%z'
 
     @EasmParameterProvider()

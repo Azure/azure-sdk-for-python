@@ -33,5 +33,5 @@ class TestEasmReportClient(EasmTest):
     @recorded_by_proxy
     def test_report_summarize(self, easm_endpoint, easm_resource_group, easm_subscription_id, easm_workspace):
         client = self.create_client(endpoint=easm_endpoint, resource_group=easm_resource_group, subscription_id=easm_subscription_id, workspace=easm_workspace)
-        summary = client.reports.summarize(body={'metrics': [self.metric]})
+        summary = client.reports.summary(body={'metrics': [self.metric]})
         assert summary['assetSummaries']
