@@ -471,8 +471,8 @@ class OpenShiftClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the OpenShift cluster resource. Required.
         :type resource_name: str
-        :param parameters: The OpenShift cluster resource. Is either a model type or a IO type.
-         Required.
+        :param parameters: The OpenShift cluster resource. Is either a OpenShiftCluster type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2020_04_30.models.OpenShiftCluster or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -819,8 +819,8 @@ class OpenShiftClustersOperations:
         :type resource_group_name: str
         :param resource_name: The name of the OpenShift cluster resource. Required.
         :type resource_name: str
-        :param parameters: The OpenShift cluster resource. Is either a model type or a IO type.
-         Required.
+        :param parameters: The OpenShift cluster resource. Is either a OpenShiftClusterUpdate type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.redhatopenshift.v2020_04_30.models.OpenShiftClusterUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
