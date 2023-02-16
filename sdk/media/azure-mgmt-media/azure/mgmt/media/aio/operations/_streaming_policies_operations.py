@@ -317,7 +317,8 @@ class StreamingPoliciesOperations:
         :type account_name: str
         :param streaming_policy_name: The Streaming Policy name. Required.
         :type streaming_policy_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a StreamingPolicy type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.media.models.StreamingPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

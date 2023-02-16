@@ -43,7 +43,7 @@ def build_list_request(resource_group_name: str, account_name: str, subscription
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -74,7 +74,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -146,7 +146,7 @@ class PrivateLinkResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
         cls: ClsType[_models.PrivateLinkResourceListResult] = kwargs.pop("cls", None)
 
         request = build_list_request(
@@ -212,7 +212,7 @@ class PrivateLinkResourcesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
         cls: ClsType[_models.PrivateLinkResource] = kwargs.pop("cls", None)
 
         request = build_get_request(

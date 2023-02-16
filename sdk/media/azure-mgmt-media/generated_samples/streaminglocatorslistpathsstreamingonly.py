@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.streaming_locators.list_paths(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         streaming_locator_name="secureStreamingLocator",
     )

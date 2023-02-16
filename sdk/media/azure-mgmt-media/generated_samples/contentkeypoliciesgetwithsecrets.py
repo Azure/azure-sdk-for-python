@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.content_key_policies.get_policy_properties_with_secrets(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         content_key_policy_name="PolicyWithMultipleOptions",
     )

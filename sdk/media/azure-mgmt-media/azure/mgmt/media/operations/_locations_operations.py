@@ -43,7 +43,7 @@ def build_check_name_availability_request(location_name: str, subscription_id: s
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+    api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -146,7 +146,8 @@ class LocationsOperations:
 
         :param location_name: Location name. Required.
         :type location_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a CheckNameAvailabilityInput type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.media.models.CheckNameAvailabilityInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -167,7 +168,7 @@ class LocationsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.EntityNameAvailabilityCheckOutput] = kwargs.pop("cls", None)
 

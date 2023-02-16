@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.assets.create_or_update(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         asset_name="ClimbingMountLogan",
         parameters={

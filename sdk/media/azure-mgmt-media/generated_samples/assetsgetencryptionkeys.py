@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.assets.get_encryption_key(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         asset_name="ClimbingMountSaintHelens",
     )

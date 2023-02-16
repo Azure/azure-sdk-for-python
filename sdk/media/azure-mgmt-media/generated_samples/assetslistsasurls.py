@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.assets.list_container_sas(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         asset_name="ClimbingMountBaker",
         parameters={"expiryTime": "2018-01-01T10:00:00.007Z", "permissions": "ReadWrite"},

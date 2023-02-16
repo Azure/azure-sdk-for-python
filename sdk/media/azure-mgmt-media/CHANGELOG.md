@@ -1,5 +1,16 @@
 # Release History
 
+## 10.3.0 (2023-02-16)
+
+### Features Added
+
+  - Added operation LiveEventsOperations.begin_list_get_status
+  - Added operation LiveEventsOperations.begin_list_get_stream_events
+  - Added operation LiveEventsOperations.begin_list_get_track_ingest_heartbeats
+  - Model LiveEventInput has a new parameter timed_metadata_endpoints
+  - Model MediaService has a new parameter minimum_tls_version
+  - Model MediaServiceUpdate has a new parameter minimum_tls_version
+
 ## 10.2.0 (2023-01-12)
 
 ### Features Added

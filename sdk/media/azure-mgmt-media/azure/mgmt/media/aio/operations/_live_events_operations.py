@@ -36,6 +36,9 @@ from ...operations._live_events_operations import (
     build_create_request,
     build_delete_request,
     build_get_request,
+    build_list_get_status_request,
+    build_list_get_stream_events_request,
+    build_list_get_track_ingest_heartbeats_request,
     build_list_request,
     build_operation_location_request,
     build_reset_request,
@@ -52,7 +55,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class LiveEventsOperations:
+class LiveEventsOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -90,7 +93,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.LiveEventListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -182,7 +185,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.LiveEvent] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -240,7 +243,7 @@ class LiveEventsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LiveEvent] = kwargs.pop("cls", None)
 
@@ -406,8 +409,8 @@ class LiveEventsOperations:
         :type account_name: str
         :param live_event_name: The name of the live event, maximum length is 32. Required.
         :type live_event_name: str
-        :param parameters: Live event properties needed for creation. Is either a model type or a IO
-         type. Required.
+        :param parameters: Live event properties needed for creation. Is either a LiveEvent type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.media.models.LiveEvent or IO
         :param auto_start: The flag indicates if the resource should be automatically started on
          creation. Default value is None.
@@ -431,7 +434,7 @@ class LiveEventsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LiveEvent] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -497,7 +500,7 @@ class LiveEventsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LiveEvent] = kwargs.pop("cls", None)
 
@@ -647,8 +650,8 @@ class LiveEventsOperations:
         :type account_name: str
         :param live_event_name: The name of the live event, maximum length is 32. Required.
         :type live_event_name: str
-        :param parameters: Live event properties needed for patch. Is either a model type or a IO type.
-         Required.
+        :param parameters: Live event properties needed for patch. Is either a LiveEvent type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.media.models.LiveEvent or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -669,7 +672,7 @@ class LiveEventsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LiveEvent] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -729,7 +732,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -793,7 +796,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -848,7 +851,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_allocate_request(
@@ -912,7 +915,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -967,7 +970,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_start_request(
@@ -1032,7 +1035,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1092,7 +1095,7 @@ class LiveEventsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
@@ -1238,7 +1241,8 @@ class LiveEventsOperations:
         :type account_name: str
         :param live_event_name: The name of the live event, maximum length is 32. Required.
         :type live_event_name: str
-        :param parameters: LiveEvent stop parameters. Is either a model type or a IO type. Required.
+        :param parameters: LiveEvent stop parameters. Is either a LiveEventActionInput type or a IO
+         type. Required.
         :type parameters: ~azure.mgmt.media.models.LiveEventActionInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1258,7 +1262,7 @@ class LiveEventsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1316,7 +1320,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_reset_request(
@@ -1382,7 +1386,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1423,6 +1427,591 @@ class LiveEventsOperations:
         "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/liveEvents/{liveEventName}/reset"
     }
 
+    async def _list_get_status_initial(
+        self, resource_group_name: str, account_name: str, live_event_name: str, **kwargs: Any
+    ) -> Optional[_models.LiveEventGetStatusResult]:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+        cls: ClsType[Optional[_models.LiveEventGetStatusResult]] = kwargs.pop("cls", None)
+
+        request = build_list_get_status_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            live_event_name=live_event_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self._list_get_status_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 304]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("LiveEventGetStatusResult", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    _list_get_status_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/liveEvents/{liveEventName}/getStatus"
+    }
+
+    @distributed_trace_async
+    async def begin_list_get_status(
+        self, resource_group_name: str, account_name: str, live_event_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[AsyncIterable["_models.LiveEventStatus"]]:
+        """Get status of one live event.
+
+        Gets status telemetry of a live event.
+
+        :param resource_group_name: The name of the resource group within the Azure subscription.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name. Required.
+        :type account_name: str
+        :param live_event_name: The name of the live event, maximum length is 32. Required.
+        :type live_event_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns an iterator like instance of either
+         LiveEventGetStatusResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.media.models.LiveEventStatus]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+        cls: ClsType[_models.LiveEventGetStatusResult] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_get_status_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    live_event_name=live_event_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    template_url=self.begin_list_get_status.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                request = HttpRequest("GET", next_link)
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("LiveEventGetStatusResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._list_get_status_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                live_event_name=live_event_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            async def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                return await get_next(next_link)
+
+            return AsyncItemPaged(internal_get_next, extract_data)
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_list_get_status.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/liveEvents/{liveEventName}/getStatus"
+    }
+
+    async def _list_get_stream_events_initial(
+        self, resource_group_name: str, account_name: str, live_event_name: str, **kwargs: Any
+    ) -> Optional[_models.LiveEventGetStreamEventsResult]:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+        cls: ClsType[Optional[_models.LiveEventGetStreamEventsResult]] = kwargs.pop("cls", None)
+
+        request = build_list_get_stream_events_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            live_event_name=live_event_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self._list_get_stream_events_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 304]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("LiveEventGetStreamEventsResult", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    _list_get_stream_events_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/liveEvents/{liveEventName}/getStreamEvents"
+    }
+
+    @distributed_trace_async
+    async def begin_list_get_stream_events(
+        self, resource_group_name: str, account_name: str, live_event_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[AsyncIterable["_models.LiveEventStreamEvent"]]:
+        """Get stream events of one live event.
+
+        Get stream events telemetry of a live event.
+
+        :param resource_group_name: The name of the resource group within the Azure subscription.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name. Required.
+        :type account_name: str
+        :param live_event_name: The name of the live event, maximum length is 32. Required.
+        :type live_event_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns an iterator like instance of either
+         LiveEventGetStreamEventsResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.media.models.LiveEventStreamEvent]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+        cls: ClsType[_models.LiveEventGetStreamEventsResult] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_get_stream_events_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    live_event_name=live_event_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    template_url=self.begin_list_get_stream_events.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                request = HttpRequest("GET", next_link)
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("LiveEventGetStreamEventsResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._list_get_stream_events_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                live_event_name=live_event_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            async def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                return await get_next(next_link)
+
+            return AsyncItemPaged(internal_get_next, extract_data)
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_list_get_stream_events.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/liveEvents/{liveEventName}/getStreamEvents"
+    }
+
+    async def _list_get_track_ingest_heartbeats_initial(
+        self, resource_group_name: str, account_name: str, live_event_name: str, **kwargs: Any
+    ) -> Optional[_models.LiveEventGetTrackIngestHeartbeatsResult]:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+        cls: ClsType[Optional[_models.LiveEventGetTrackIngestHeartbeatsResult]] = kwargs.pop("cls", None)
+
+        request = build_list_get_track_ingest_heartbeats_request(
+            resource_group_name=resource_group_name,
+            account_name=account_name,
+            live_event_name=live_event_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            template_url=self._list_get_track_ingest_heartbeats_initial.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202, 304]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = None
+        response_headers = {}
+        if response.status_code == 200:
+            deserialized = self._deserialize("LiveEventGetTrackIngestHeartbeatsResult", pipeline_response)
+
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)
+
+        return deserialized
+
+    _list_get_track_ingest_heartbeats_initial.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/liveEvents/{liveEventName}/getTrackIngestHeartbeats"
+    }
+
+    @distributed_trace_async
+    async def begin_list_get_track_ingest_heartbeats(
+        self, resource_group_name: str, account_name: str, live_event_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[AsyncIterable["_models.LiveEventTrackEvent"]]:
+        """Get track events of one live event.
+
+        Get track ingest heartbeat events telemetry of a live event.
+
+        :param resource_group_name: The name of the resource group within the Azure subscription.
+         Required.
+        :type resource_group_name: str
+        :param account_name: The Media Services account name. Required.
+        :type account_name: str
+        :param live_event_name: The name of the live event, maximum length is 32. Required.
+        :type live_event_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns an iterator like instance of either
+         LiveEventGetTrackIngestHeartbeatsResult or the result of cls(response)
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.media.models.LiveEventTrackEvent]]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
+        cls: ClsType[_models.LiveEventGetTrackIngestHeartbeatsResult] = kwargs.pop("cls", None)
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_get_track_ingest_heartbeats_request(
+                    resource_group_name=resource_group_name,
+                    account_name=account_name,
+                    live_event_name=live_event_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    template_url=self.begin_list_get_track_ingest_heartbeats.metadata["url"],
+                    headers=_headers,
+                    params=_params,
+                )
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+
+            else:
+                request = HttpRequest("GET", next_link)
+                request = _convert_request(request)
+                request.url = self._client.format_url(request.url)
+                request.method = "GET"
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("LiveEventGetTrackIngestHeartbeatsResult", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._list_get_track_ingest_heartbeats_initial(
+                resource_group_name=resource_group_name,
+                account_name=account_name,
+                live_event_name=live_event_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            async def internal_get_next(next_link=None):
+                if next_link is None:
+                    return pipeline_response
+                return await get_next(next_link)
+
+            return AsyncItemPaged(internal_get_next, extract_data)
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    begin_list_get_track_ingest_heartbeats.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Media/mediaservices/{accountName}/liveEvents/{liveEventName}/getTrackIngestHeartbeats"
+    }
+
     @distributed_trace_async
     async def async_operation(
         self, resource_group_name: str, account_name: str, operation_id: str, **kwargs: Any
@@ -1454,7 +2043,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.AsyncOperationResult] = kwargs.pop("cls", None)
 
         request = build_async_operation_request(
@@ -1525,7 +2114,7 @@ class LiveEventsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[Optional[_models.LiveEvent]] = kwargs.pop("cls", None)
 
         request = build_operation_location_request(

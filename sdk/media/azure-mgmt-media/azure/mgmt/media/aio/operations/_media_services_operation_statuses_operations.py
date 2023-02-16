@@ -81,7 +81,7 @@ class MediaServicesOperationStatusesOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2021-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-11-01"))
+        api_version: Literal["2023-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2023-01-01"))
         cls: ClsType[_models.MediaServiceOperationStatus] = kwargs.pop("cls", None)
 
         request = build_get_request(

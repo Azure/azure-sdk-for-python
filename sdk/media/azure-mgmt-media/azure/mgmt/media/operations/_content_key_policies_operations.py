@@ -524,7 +524,8 @@ class ContentKeyPoliciesOperations:
         :type account_name: str
         :param content_key_policy_name: The Content Key Policy name. Required.
         :type content_key_policy_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a ContentKeyPolicy type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.media.models.ContentKeyPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -750,7 +751,8 @@ class ContentKeyPoliciesOperations:
         :type account_name: str
         :param content_key_policy_name: The Content Key Policy name. Required.
         :type content_key_policy_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a ContentKeyPolicy type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.media.models.ContentKeyPolicy or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -319,7 +319,7 @@ class AssetsOperations:
         :type account_name: str
         :param asset_name: The Asset name. Required.
         :type asset_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a Asset type or a IO type. Required.
         :type parameters: ~azure.mgmt.media.models.Asset or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -545,7 +545,7 @@ class AssetsOperations:
         :type account_name: str
         :param asset_name: The Asset name. Required.
         :type asset_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a Asset type or a IO type. Required.
         :type parameters: ~azure.mgmt.media.models.Asset or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -705,7 +705,8 @@ class AssetsOperations:
         :type account_name: str
         :param asset_name: The Asset name. Required.
         :type asset_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a ListContainerSasInput type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.media.models.ListContainerSasInput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.asset_filters.create_or_update(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         asset_name="ClimbingMountRainer",
         filter_name="newAssetFilter",

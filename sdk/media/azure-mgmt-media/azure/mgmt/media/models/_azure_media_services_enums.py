@@ -13,28 +13,28 @@ from azure.core import CaseInsensitiveEnumMeta
 class AacAudioProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The encoding profile to be used when encoding audio with AAC."""
 
-    #: Specifies that the output audio is to be encoded into AAC Low Complexity profile (AAC-LC).
     AAC_LC = "AacLc"
-    #: Specifies that the output audio is to be encoded into HE-AAC v1 profile.
+    """Specifies that the output audio is to be encoded into AAC Low Complexity profile (AAC-LC)."""
     HE_AAC_V1 = "HeAacV1"
-    #: Specifies that the output audio is to be encoded into HE-AAC v2 profile.
+    """Specifies that the output audio is to be encoded into HE-AAC v1 profile."""
     HE_AAC_V2 = "HeAacV2"
+    """Specifies that the output audio is to be encoded into HE-AAC v2 profile."""
 
 
 class AccountEncryptionKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of key used to encrypt the Account Key."""
 
-    #: The Account Key is encrypted with a System Key.
     SYSTEM_KEY = "SystemKey"
-    #: The Account Key is encrypted with a Customer Key.
+    """The Account Key is encrypted with a System Key."""
     CUSTOMER_KEY = "CustomerKey"
+    """The Account Key is encrypted with a Customer Key."""
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the action type."""
 
-    #: An internal action.
     INTERNAL = "Internal"
+    """An internal action."""
 
 
 class AnalysisResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -56,22 +56,22 @@ class AnalysisResolution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AssetContainerPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The permissions to set on the SAS URL."""
 
-    #: The SAS URL will allow read access to the container.
     READ = "Read"
-    #: The SAS URL will allow read and write access to the container.
+    """The SAS URL will allow read access to the container."""
     READ_WRITE = "ReadWrite"
-    #: The SAS URL will allow read, write and delete access to the container.
+    """The SAS URL will allow read and write access to the container."""
     READ_WRITE_DELETE = "ReadWriteDelete"
+    """The SAS URL will allow read, write and delete access to the container."""
 
 
 class AssetStorageEncryptionFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Asset encryption format. One of None or MediaStorageEncryption."""
 
-    #: The Asset does not use client-side storage encryption (this is the only allowed value for new
-    #: Assets).
     NONE = "None"
-    #: The Asset is encrypted with Media Services client-side encryption.
+    """The Asset does not use client-side storage encryption (this is the only allowed value for new
+    #: Assets)."""
     MEDIA_STORAGE_CLIENT_ENCRYPTION = "MediaStorageClientEncryption"
+    """The Asset is encrypted with Media Services client-side encryption."""
 
 
 class AsyncOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -85,16 +85,16 @@ class AsyncOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class AttributeFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of AttributeFilter to apply to the TrackAttribute in order to select the tracks."""
 
-    #: All tracks will be included.
     ALL = "All"
-    #: The first track will be included when the attribute is sorted in descending order.  Generally
-    #: used to select the largest bitrate.
+    """All tracks will be included."""
     TOP = "Top"
-    #: The first track will be included when the attribute is sorted in ascending order.  Generally
-    #: used to select the smallest bitrate.
+    """The first track will be included when the attribute is sorted in descending order.  Generally
+    #: used to select the largest bitrate."""
     BOTTOM = "Bottom"
-    #: Any tracks that have an attribute equal to the value given will be included.
+    """The first track will be included when the attribute is sorted in ascending order.  Generally
+    #: used to select the smallest bitrate."""
     VALUE_EQUALS = "ValueEquals"
+    """Any tracks that have an attribute equal to the value given will be included."""
 
 
 class AudioAnalysisMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -102,29 +102,29 @@ class AudioAnalysisMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AudioAnalysisMode would be chosen.
     """
 
-    #: Performs all operations included in the Basic mode, additionally performing language detection
-    #: and speaker diarization.
     STANDARD = "Standard"
-    #: This mode performs speech-to-text transcription and generation of a VTT subtitle/caption file.
+    """Performs all operations included in the Basic mode, additionally performing language detection
+    #: and speaker diarization."""
+    BASIC = "Basic"
+    """This mode performs speech-to-text transcription and generation of a VTT subtitle/caption file.
     #: The output of this mode includes an Insights JSON file including only the keywords,
     #: transcription,and timing information. Automatic language detection and speaker diarization are
-    #: not included in this mode.
-    BASIC = "Basic"
+    #: not included in this mode."""
 
 
 class BlurType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Blur type."""
 
-    #: Box: debug filter, bounding box only
     BOX = "Box"
-    #: Low: box-car blur filter
+    """Box: debug filter, bounding box only"""
     LOW = "Low"
-    #: Med: Gaussian blur filter
+    """Low: box-car blur filter"""
     MED = "Med"
-    #: High: Confuse blur filter
+    """Med: Gaussian blur filter"""
     HIGH = "High"
-    #: Black: Black out filter
+    """High: Confuse blur filter"""
     BLACK = "Black"
+    """Black: Black out filter"""
 
 
 class ChannelMapping(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -132,22 +132,22 @@ class ChannelMapping(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     stereo or multi-channel audio tracks.
     """
 
-    #: The Front Left Channel.
     FRONT_LEFT = "FrontLeft"
-    #: The Front Right Channel.
+    """The Front Left Channel."""
     FRONT_RIGHT = "FrontRight"
-    #: The Center Channel.
+    """The Front Right Channel."""
     CENTER = "Center"
-    #: Low Frequency Effects Channel.  Sometimes referred to as the subwoofer.
+    """The Center Channel."""
     LOW_FREQUENCY_EFFECTS = "LowFrequencyEffects"
-    #: The Back Left Channel.  Sometimes referred to as the Left Surround Channel.
+    """Low Frequency Effects Channel.  Sometimes referred to as the subwoofer."""
     BACK_LEFT = "BackLeft"
-    #: The Back Right Channel.  Sometimes referred to as the Right Surround Channel.
+    """The Back Left Channel.  Sometimes referred to as the Left Surround Channel."""
     BACK_RIGHT = "BackRight"
-    #: The Left Stereo channel.  Sometimes referred to as Down Mix Left.
+    """The Back Right Channel.  Sometimes referred to as the Right Surround Channel."""
     STEREO_LEFT = "StereoLeft"
-    #: The Right Stereo channel.  Sometimes referred to as Down Mix Right.
+    """The Left Stereo channel.  Sometimes referred to as Down Mix Left."""
     STEREO_RIGHT = "StereoRight"
+    """The Right Stereo channel.  Sometimes referred to as Down Mix Right."""
 
 
 class Complexity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -155,80 +155,80 @@ class Complexity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Example: set Complexity as Speed for faster encoding but less compression efficiency.
     """
 
-    #: Configures the encoder to use settings optimized for faster encoding. Quality is sacrificed to
-    #: decrease encoding time.
     SPEED = "Speed"
-    #: Configures the encoder to use settings that achieve a balance between speed and quality.
+    """Configures the encoder to use settings optimized for faster encoding. Quality is sacrificed to
+    #: decrease encoding time."""
     BALANCED = "Balanced"
-    #: Configures the encoder to use settings optimized to produce higher quality output at the
-    #: expense of slower overall encode time.
+    """Configures the encoder to use settings that achieve a balance between speed and quality."""
     QUALITY = "Quality"
+    """Configures the encoder to use settings optimized to produce higher quality output at the
+    #: expense of slower overall encode time."""
 
 
 class ContentKeyPolicyFairPlayRentalAndLeaseKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rental and lease key type."""
 
-    #: Represents a ContentKeyPolicyFairPlayRentalAndLeaseKeyType that is unavailable in current API
-    #: version.
     UNKNOWN = "Unknown"
-    #: Key duration is not specified.
+    """Represents a ContentKeyPolicyFairPlayRentalAndLeaseKeyType that is unavailable in current API
+    #: version."""
     UNDEFINED = "Undefined"
-    #: Dual expiry for offline rental.
+    """Key duration is not specified."""
     DUAL_EXPIRY = "DualExpiry"
-    #: Content key can be persisted with an unlimited duration
+    """Dual expiry for offline rental."""
     PERSISTENT_UNLIMITED = "PersistentUnlimited"
-    #: Content key can be persisted and the valid duration is limited by the Rental Duration value
+    """Content key can be persisted with an unlimited duration"""
     PERSISTENT_LIMITED = "PersistentLimited"
+    """Content key can be persisted and the valid duration is limited by the Rental Duration value"""
 
 
 class ContentKeyPolicyPlayReadyContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The PlayReady content type."""
 
-    #: Represents a ContentKeyPolicyPlayReadyContentType that is unavailable in current API version.
     UNKNOWN = "Unknown"
-    #: Unspecified content type.
+    """Represents a ContentKeyPolicyPlayReadyContentType that is unavailable in current API version."""
     UNSPECIFIED = "Unspecified"
-    #: Ultraviolet download content type.
+    """Unspecified content type."""
     ULTRA_VIOLET_DOWNLOAD = "UltraVioletDownload"
-    #: Ultraviolet streaming content type.
+    """Ultraviolet download content type."""
     ULTRA_VIOLET_STREAMING = "UltraVioletStreaming"
+    """Ultraviolet streaming content type."""
 
 
 class ContentKeyPolicyPlayReadyLicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The license type."""
 
-    #: Represents a ContentKeyPolicyPlayReadyLicenseType that is unavailable in current API version.
     UNKNOWN = "Unknown"
-    #: Non persistent license.
+    """Represents a ContentKeyPolicyPlayReadyLicenseType that is unavailable in current API version."""
     NON_PERSISTENT = "NonPersistent"
-    #: Persistent license. Allows offline playback.
+    """Non persistent license."""
     PERSISTENT = "Persistent"
+    """Persistent license. Allows offline playback."""
 
 
 class ContentKeyPolicyPlayReadyUnknownOutputPassingOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Configures Unknown output handling settings of the license."""
 
-    #: Represents a ContentKeyPolicyPlayReadyUnknownOutputPassingOption that is unavailable in current
-    #: API version.
     UNKNOWN = "Unknown"
-    #: Passing the video portion of protected content to an Unknown Output is not allowed.
+    """Represents a ContentKeyPolicyPlayReadyUnknownOutputPassingOption that is unavailable in current
+    #: API version."""
     NOT_ALLOWED = "NotAllowed"
-    #: Passing the video portion of protected content to an Unknown Output is allowed.
+    """Passing the video portion of protected content to an Unknown Output is not allowed."""
     ALLOWED = "Allowed"
-    #: Passing the video portion of protected content to an Unknown Output is allowed but with
-    #: constrained resolution.
+    """Passing the video portion of protected content to an Unknown Output is allowed."""
     ALLOWED_WITH_VIDEO_CONSTRICTION = "AllowedWithVideoConstriction"
+    """Passing the video portion of protected content to an Unknown Output is allowed but with
+    #: constrained resolution."""
 
 
 class ContentKeyPolicyRestrictionTokenType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of token."""
 
-    #: Represents a ContentKeyPolicyRestrictionTokenType that is unavailable in current API version.
     UNKNOWN = "Unknown"
-    #: Simple Web Token.
+    """Represents a ContentKeyPolicyRestrictionTokenType that is unavailable in current API version."""
     SWT = "Swt"
-    #: JSON Web Token.
+    """Simple Web Token."""
     JWT = "Jwt"
+    """JSON Web Token."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -243,114 +243,114 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The behavior for IP access control in Key Delivery."""
 
-    #: All public IP addresses are allowed.
     ALLOW = "Allow"
-    #: Public IP addresses are blocked.
+    """All public IP addresses are allowed."""
     DENY = "Deny"
+    """Public IP addresses are blocked."""
 
 
 class DeinterlaceMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The deinterlacing mode. Defaults to AutoPixelAdaptive."""
 
-    #: Disables de-interlacing of the source video.
     OFF = "Off"
-    #: Apply automatic pixel adaptive de-interlacing on each frame in the input video.
+    """Disables de-interlacing of the source video."""
     AUTO_PIXEL_ADAPTIVE = "AutoPixelAdaptive"
+    """Apply automatic pixel adaptive de-interlacing on each frame in the input video."""
 
 
 class DeinterlaceParity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The field parity for de-interlacing, defaults to Auto."""
 
-    #: Automatically detect the order of fields
     AUTO = "Auto"
-    #: Apply top field first processing of input video.
+    """Automatically detect the order of fields"""
     TOP_FIELD_FIRST = "TopFieldFirst"
-    #: Apply bottom field first processing of input video.
+    """Apply top field first processing of input video."""
     BOTTOM_FIELD_FIRST = "BottomFieldFirst"
+    """Apply bottom field first processing of input video."""
 
 
 class EncoderNamedPreset(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The built-in preset to be used for encoding videos."""
 
-    #: Produces an MP4 file where the video is encoded with H.264 codec at 2200 kbps and a picture
-    #: height of 480 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
     H264_SINGLE_BITRATE_SD = "H264SingleBitrateSD"
-    #: Produces an MP4 file where the video is encoded with H.264 codec at 4500 kbps and a picture
-    #: height of 720 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    """Produces an MP4 file where the video is encoded with H.264 codec at 2200 kbps and a picture
+    #: height of 480 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps."""
     H264_SINGLE_BITRATE720_P = "H264SingleBitrate720p"
-    #: Produces an MP4 file where the video is encoded with H.264 codec at 6750 kbps and a picture
-    #: height of 1080 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    """Produces an MP4 file where the video is encoded with H.264 codec at 4500 kbps and a picture
+    #: height of 720 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps."""
     H264_SINGLE_BITRATE1080_P = "H264SingleBitrate1080p"
-    #: Produces a set of GOP aligned MP4 files with H.264 video and stereo AAC audio. Auto-generates a
+    """Produces an MP4 file where the video is encoded with H.264 codec at 6750 kbps and a picture
+    #: height of 1080 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps."""
+    ADAPTIVE_STREAMING = "AdaptiveStreaming"
+    """Produces a set of GOP aligned MP4 files with H.264 video and stereo AAC audio. Auto-generates a
     #: bitrate ladder based on the input resolution, bitrate and frame rate. The auto-generated preset
     #: will never exceed the input resolution. For example, if the input is 720p, output will remain
-    #: 720p at best.
-    ADAPTIVE_STREAMING = "AdaptiveStreaming"
-    #: Produces a single MP4 file containing only AAC stereo audio encoded at 192 kbps.
+    #: 720p at best."""
     AAC_GOOD_QUALITY_AUDIO = "AACGoodQualityAudio"
-    #: Produces a single MP4 file containing only DD(Digital Dolby) stereo audio encoded at 192 kbps.
+    """Produces a single MP4 file containing only AAC stereo audio encoded at 192 kbps."""
     DD_GOOD_QUALITY_AUDIO = "DDGoodQualityAudio"
-    #: Exposes an experimental preset for content-aware encoding. Given any input content, the service
+    """Produces a single MP4 file containing only DD(Digital Dolby) stereo audio encoded at 192 kbps."""
+    CONTENT_AWARE_ENCODING_EXPERIMENTAL = "ContentAwareEncodingExperimental"
+    """Exposes an experimental preset for content-aware encoding. Given any input content, the service
     #: attempts to automatically determine the optimal number of layers, appropriate bitrate and
     #: resolution settings for delivery by adaptive streaming. The underlying algorithms will continue
-    #: to evolve over time. The output will contain MP4 files with video and audio interleaved.
-    CONTENT_AWARE_ENCODING_EXPERIMENTAL = "ContentAwareEncodingExperimental"
-    #: Produces a set of GOP-aligned MP4s by using content-aware encoding. Given any input content,
-    #: the service performs an initial lightweight analysis of the input content, and uses the results
-    #: to determine the optimal number of layers, appropriate bitrate and resolution settings for
-    #: delivery by adaptive streaming. This preset is particularly effective for low and medium
-    #: complexity videos, where the output files will be at lower bitrates but at a quality that still
-    #: delivers a good experience to viewers. The output will contain MP4 files with video and audio
-    #: interleaved.
+    #: to evolve over time. The output will contain MP4 files with video and audio interleaved."""
     CONTENT_AWARE_ENCODING = "ContentAwareEncoding"
-    #: Copy all video and audio streams from the input asset as non-interleaved video and audio output
-    #: files. This preset can be used to clip an existing asset or convert a group of key frame (GOP)
-    #: aligned MP4 files as an asset that can be streamed.
-    COPY_ALL_BITRATE_NON_INTERLEAVED = "CopyAllBitrateNonInterleaved"
-    #: Produces a set of 8 GOP-aligned MP4 files, ranging from 6000 kbps to 400 kbps, and stereo AAC
-    #: audio. Resolution starts at 1080p and goes down to 180p.
-    H264_MULTIPLE_BITRATE1080_P = "H264MultipleBitrate1080p"
-    #: Produces a set of 6 GOP-aligned MP4 files, ranging from 3400 kbps to 400 kbps, and stereo AAC
-    #: audio. Resolution starts at 720p and goes down to 180p.
-    H264_MULTIPLE_BITRATE720_P = "H264MultipleBitrate720p"
-    #: Produces a set of 5 GOP-aligned MP4 files, ranging from 1900kbps to 400 kbps, and stereo AAC
-    #: audio. Resolution starts at 480p and goes down to 240p.
-    H264_MULTIPLE_BITRATE_SD = "H264MultipleBitrateSD"
-    #: Produces a set of GOP-aligned MP4s by using content-aware encoding. Given any input content,
+    """Produces a set of GOP-aligned MP4s by using content-aware encoding. Given any input content,
     #: the service performs an initial lightweight analysis of the input content, and uses the results
     #: to determine the optimal number of layers, appropriate bitrate and resolution settings for
     #: delivery by adaptive streaming. This preset is particularly effective for low and medium
     #: complexity videos, where the output files will be at lower bitrates but at a quality that still
     #: delivers a good experience to viewers. The output will contain MP4 files with video and audio
-    #: interleaved.
+    #: interleaved."""
+    COPY_ALL_BITRATE_NON_INTERLEAVED = "CopyAllBitrateNonInterleaved"
+    """Copy all video and audio streams from the input asset as non-interleaved video and audio output
+    #: files. This preset can be used to clip an existing asset or convert a group of key frame (GOP)
+    #: aligned MP4 files as an asset that can be streamed."""
+    H264_MULTIPLE_BITRATE1080_P = "H264MultipleBitrate1080p"
+    """Produces a set of 8 GOP-aligned MP4 files, ranging from 6000 kbps to 400 kbps, and stereo AAC
+    #: audio. Resolution starts at 1080p and goes down to 180p."""
+    H264_MULTIPLE_BITRATE720_P = "H264MultipleBitrate720p"
+    """Produces a set of 6 GOP-aligned MP4 files, ranging from 3400 kbps to 400 kbps, and stereo AAC
+    #: audio. Resolution starts at 720p and goes down to 180p."""
+    H264_MULTIPLE_BITRATE_SD = "H264MultipleBitrateSD"
+    """Produces a set of 5 GOP-aligned MP4 files, ranging from 1900kbps to 400 kbps, and stereo AAC
+    #: audio. Resolution starts at 480p and goes down to 240p."""
     H265_CONTENT_AWARE_ENCODING = "H265ContentAwareEncoding"
-    #: Produces a set of GOP aligned MP4 files with H.265 video and stereo AAC audio. Auto-generates a
+    """Produces a set of GOP-aligned MP4s by using content-aware encoding. Given any input content,
+    #: the service performs an initial lightweight analysis of the input content, and uses the results
+    #: to determine the optimal number of layers, appropriate bitrate and resolution settings for
+    #: delivery by adaptive streaming. This preset is particularly effective for low and medium
+    #: complexity videos, where the output files will be at lower bitrates but at a quality that still
+    #: delivers a good experience to viewers. The output will contain MP4 files with video and audio
+    #: interleaved."""
+    H265_ADAPTIVE_STREAMING = "H265AdaptiveStreaming"
+    """Produces a set of GOP aligned MP4 files with H.265 video and stereo AAC audio. Auto-generates a
     #: bitrate ladder based on the input resolution, bitrate and frame rate. The auto-generated preset
     #: will never exceed the input resolution. For example, if the input is 720p, output will remain
-    #: 720p at best.
-    H265_ADAPTIVE_STREAMING = "H265AdaptiveStreaming"
-    #: Produces an MP4 file where the video is encoded with H.265 codec at 1800 kbps and a picture
-    #: height of 720 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    #: 720p at best."""
     H265_SINGLE_BITRATE720_P = "H265SingleBitrate720p"
-    #: Produces an MP4 file where the video is encoded with H.265 codec at 3500 kbps and a picture
-    #: height of 1080 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    """Produces an MP4 file where the video is encoded with H.265 codec at 1800 kbps and a picture
+    #: height of 720 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps."""
     H265_SINGLE_BITRATE1080_P = "H265SingleBitrate1080p"
-    #: Produces an MP4 file where the video is encoded with H.265 codec at 9500 kbps and a picture
-    #: height of 2160 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps.
+    """Produces an MP4 file where the video is encoded with H.265 codec at 3500 kbps and a picture
+    #: height of 1080 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps."""
     H265_SINGLE_BITRATE4_K = "H265SingleBitrate4K"
+    """Produces an MP4 file where the video is encoded with H.265 codec at 9500 kbps and a picture
+    #: height of 2160 pixels, and the stereo audio is encoded with AAC-LC codec at 128 kbps."""
 
 
 class EncryptionScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Encryption scheme."""
 
-    #: NoEncryption scheme
     NO_ENCRYPTION = "NoEncryption"
-    #: EnvelopeEncryption scheme
+    """NoEncryption scheme"""
     ENVELOPE_ENCRYPTION = "EnvelopeEncryption"
-    #: CommonEncryptionCenc scheme
+    """EnvelopeEncryption scheme"""
     COMMON_ENCRYPTION_CENC = "CommonEncryptionCenc"
-    #: CommonEncryptionCbcs scheme
+    """CommonEncryptionCenc scheme"""
     COMMON_ENCRYPTION_CBCS = "CommonEncryptionCbcs"
+    """CommonEncryptionCbcs scheme"""
 
 
 class EntropyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -358,10 +358,10 @@ class EntropyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     is appropriate for the profile and level.
     """
 
-    #: Context Adaptive Binary Arithmetic Coder (CABAC) entropy encoding.
     CABAC = "Cabac"
-    #: Context Adaptive Variable Length Coder (CAVLC) entropy encoding.
+    """Context Adaptive Binary Arithmetic Coder (CABAC) entropy encoding."""
     CAVLC = "Cavlc"
+    """Context Adaptive Variable Length Coder (CAVLC) entropy encoding."""
 
 
 class FaceRedactorMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -374,81 +374,81 @@ class FaceRedactorMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     require redaction.
     """
 
-    #: Analyze mode detects faces and outputs a metadata file with the results. Allows editing of the
-    #: metadata file before faces are blurred with Redact mode.
     ANALYZE = "Analyze"
-    #: Redact mode consumes the metadata file from Analyze mode and redacts the faces found.
+    """Analyze mode detects faces and outputs a metadata file with the results. Allows editing of the
+    #: metadata file before faces are blurred with Redact mode."""
     REDACT = "Redact"
-    #: Combined mode does the Analyze and Redact steps in one pass when editing the analyzed faces is
-    #: not desired.
+    """Redact mode consumes the metadata file from Analyze mode and redacts the faces found."""
     COMBINED = "Combined"
+    """Combined mode does the Analyze and Redact steps in one pass when editing the analyzed faces is
+    #: not desired."""
 
 
 class FilterTrackPropertyCompareOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The track property condition operation."""
 
-    #: The equal operation.
     EQUAL = "Equal"
-    #: The not equal operation.
+    """The equal operation."""
     NOT_EQUAL = "NotEqual"
+    """The not equal operation."""
 
 
 class FilterTrackPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The track property type."""
 
-    #: The unknown track property type.
     UNKNOWN = "Unknown"
-    #: The type.
+    """The unknown track property type."""
     TYPE = "Type"
-    #: The name.
+    """The type."""
     NAME = "Name"
-    #: The language.
+    """The name."""
     LANGUAGE = "Language"
-    #: The fourCC.
+    """The language."""
     FOUR_CC = "FourCC"
-    #: The bitrate.
+    """The fourCC."""
     BITRATE = "Bitrate"
+    """The bitrate."""
 
 
 class H264Complexity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tells the encoder how to choose its encoding settings. The default value is Balanced."""
 
-    #: Tells the encoder to use settings that are optimized for faster encoding. Quality is sacrificed
-    #: to decrease encoding time.
     SPEED = "Speed"
-    #: Tells the encoder to use settings that achieve a balance between speed and quality.
+    """Tells the encoder to use settings that are optimized for faster encoding. Quality is sacrificed
+    #: to decrease encoding time."""
     BALANCED = "Balanced"
-    #: Tells the encoder to use settings that are optimized to produce higher quality output at the
-    #: expense of slower overall encode time.
+    """Tells the encoder to use settings that achieve a balance between speed and quality."""
     QUALITY = "Quality"
+    """Tells the encoder to use settings that are optimized to produce higher quality output at the
+    #: expense of slower overall encode time."""
 
 
 class H264RateControlMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The video rate control mode."""
 
-    #: Average Bitrate (ABR) mode that hits the target bitrate: Default mode.
     ABR = "ABR"
-    #: Constant Bitrate (CBR) mode that tightens bitrate variations around target bitrate.
+    """Average Bitrate (ABR) mode that hits the target bitrate: Default mode."""
     CBR = "CBR"
-    #: Constant Rate Factor (CRF) mode that targets at constant subjective quality.
+    """Constant Bitrate (CBR) mode that tightens bitrate variations around target bitrate."""
     CRF = "CRF"
+    """Constant Rate Factor (CRF) mode that targets at constant subjective quality."""
 
 
 class H264VideoProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """We currently support Baseline, Main, High, High422, High444. Default is Auto."""
 
-    #: Tells the encoder to automatically determine the appropriate H.264 profile.
     AUTO = "Auto"
-    #: Baseline profile
+    """Tells the encoder to automatically determine the appropriate H.264 profile."""
     BASELINE = "Baseline"
-    #: Main profile
+    """Baseline profile"""
     MAIN = "Main"
-    #: High profile.
+    """Main profile"""
     HIGH = "High"
-    #: High 4:2:2 profile.
+    """High profile."""
     HIGH422 = "High422"
-    #: High 4:4:4 predictive profile.
+    """High 4:2:2 profile."""
     HIGH444 = "High444"
+    """High 4:4:4 predictive profile."""
 
 
 class H265Complexity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -457,26 +457,26 @@ class H265Complexity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     relatively larger file but is faster and more economical. The default value is Balanced.
     """
 
-    #: Tells the encoder to use settings that are optimized for faster encoding. Quality is sacrificed
-    #: to decrease encoding time.
     SPEED = "Speed"
-    #: Tells the encoder to use settings that achieve a balance between speed and quality.
+    """Tells the encoder to use settings that are optimized for faster encoding. Quality is sacrificed
+    #: to decrease encoding time."""
     BALANCED = "Balanced"
-    #: Tells the encoder to use settings that are optimized to produce higher quality output at the
-    #: expense of slower overall encode time.
+    """Tells the encoder to use settings that achieve a balance between speed and quality."""
     QUALITY = "Quality"
+    """Tells the encoder to use settings that are optimized to produce higher quality output at the
+    #: expense of slower overall encode time."""
 
 
 class H265VideoProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """We currently support Main. Default is Auto."""
 
-    #: Tells the encoder to automatically determine the appropriate H.265 profile.
     AUTO = "Auto"
-    #: Main profile
-    #: (https://x265.readthedocs.io/en/default/cli.html?highlight=profile#profile-level-tier)
+    """Tells the encoder to automatically determine the appropriate H.265 profile."""
     MAIN = "Main"
-    #: Main 10 profile (https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding#Main_10)
+    """Main profile
+    #: (https://x265.readthedocs.io/en/default/cli.html?highlight=profile#profile-level-tier)"""
     MAIN10 = "Main10"
+    """Main 10 profile (https://en.wikipedia.org/wiki/High_Efficiency_Video_Coding#Main_10)"""
 
 
 class InsightsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -489,12 +489,12 @@ class InsightsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     conditions would error out.
     """
 
-    #: Generate audio only insights. Ignore video even if present. Fails if no audio is present.
     AUDIO_INSIGHTS_ONLY = "AudioInsightsOnly"
-    #: Generate video only insights. Ignore audio if present. Fails if no video is present.
+    """Generate audio only insights. Ignore video even if present. Fails if no audio is present."""
     VIDEO_INSIGHTS_ONLY = "VideoInsightsOnly"
-    #: Generate both audio and video insights. Fails if either audio or video Insights fail.
+    """Generate video only insights. Ignore audio if present. Fails if no video is present."""
     ALL_INSIGHTS = "AllInsights"
+    """Generate both audio and video insights. Fails if either audio or video Insights fail."""
 
 
 class InterleaveOutput(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -503,61 +503,61 @@ class InterleaveOutput(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     and video-only outputs in separate MP4 files.
     """
 
-    #: The output is video-only or audio-only.
     NON_INTERLEAVED_OUTPUT = "NonInterleavedOutput"
-    #: The output includes both audio and video.
+    """The output is video-only or audio-only."""
     INTERLEAVED_OUTPUT = "InterleavedOutput"
+    """The output includes both audio and video."""
 
 
 class JobErrorCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Helps with categorization of errors."""
 
-    #: The error is service related.
     SERVICE = "Service"
-    #: The error is download related.
+    """The error is service related."""
     DOWNLOAD = "Download"
-    #: The error is upload related.
+    """The error is download related."""
     UPLOAD = "Upload"
-    #: The error is configuration related.
+    """The error is upload related."""
     CONFIGURATION = "Configuration"
-    #: The error is related to data in the input files.
+    """The error is configuration related."""
     CONTENT = "Content"
-    #: The error is related to account information.
+    """The error is related to data in the input files."""
     ACCOUNT = "Account"
+    """The error is related to account information."""
 
 
 class JobErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Error code describing the error."""
 
-    #: Fatal service error, please contact support.
     SERVICE_ERROR = "ServiceError"
-    #: Transient error, please retry, if retry is unsuccessful, please contact support.
+    """Fatal service error, please contact support."""
     SERVICE_TRANSIENT_ERROR = "ServiceTransientError"
-    #: While trying to download the input files, the files were not accessible, please check the
-    #: availability of the source.
+    """Transient error, please retry, if retry is unsuccessful, please contact support."""
     DOWNLOAD_NOT_ACCESSIBLE = "DownloadNotAccessible"
-    #: While trying to download the input files, there was an issue during transfer (storage service,
-    #: network errors), see details and check your source.
+    """While trying to download the input files, the files were not accessible, please check the
+    #: availability of the source."""
     DOWNLOAD_TRANSIENT_ERROR = "DownloadTransientError"
-    #: While trying to upload the output files, the destination was not reachable, please check the
-    #: availability of the destination.
+    """While trying to download the input files, there was an issue during transfer (storage service,
+    #: network errors), see details and check your source."""
     UPLOAD_NOT_ACCESSIBLE = "UploadNotAccessible"
-    #: While trying to upload the output files, there was an issue during transfer (storage service,
-    #: network errors), see details and check your destination.
+    """While trying to upload the output files, the destination was not reachable, please check the
+    #: availability of the destination."""
     UPLOAD_TRANSIENT_ERROR = "UploadTransientError"
-    #: There was a problem with the combination of input files and the configuration settings applied,
-    #: fix the configuration settings and retry with the same input, or change input to match the
-    #: configuration.
+    """While trying to upload the output files, there was an issue during transfer (storage service,
+    #: network errors), see details and check your destination."""
     CONFIGURATION_UNSUPPORTED = "ConfigurationUnsupported"
-    #: There was a problem with the input content (for example: zero byte files, or
-    #: corrupt/non-decodable files), check the input files.
+    """There was a problem with the combination of input files and the configuration settings applied,
+    #: fix the configuration settings and retry with the same input, or change input to match the
+    #: configuration."""
     CONTENT_MALFORMED = "ContentMalformed"
-    #: There was a problem with the format of the input (not valid media file, or an unsupported
-    #: file/codec), check the validity of the input files.
+    """There was a problem with the input content (for example: zero byte files, or
+    #: corrupt/non-decodable files), check the input files."""
     CONTENT_UNSUPPORTED = "ContentUnsupported"
-    #: There was an error verifying to the account identity. Check and fix the identity configurations
-    #: and retry. If unsuccessful, please contact support.
+    """There was a problem with the format of the input (not valid media file, or an unsupported
+    #: file/codec), check the validity of the input files."""
     IDENTITY_UNSUPPORTED = "IdentityUnsupported"
+    """There was an error verifying to the account identity. Check and fix the identity configurations
+    #: and retry. If unsuccessful, please contact support."""
 
 
 class JobRetry(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -565,32 +565,32 @@ class JobRetry(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Azure support via Azure Portal.
     """
 
-    #: Issue needs to be investigated and then the job resubmitted with corrections or retried once
-    #: the underlying issue has been corrected.
     DO_NOT_RETRY = "DoNotRetry"
-    #: Issue may be resolved after waiting for a period of time and resubmitting the same Job.
+    """Issue needs to be investigated and then the job resubmitted with corrections or retried once
+    #: the underlying issue has been corrected."""
     MAY_RETRY = "MayRetry"
+    """Issue may be resolved after waiting for a period of time and resubmitting the same Job."""
 
 
 class JobState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Describes the state of the JobOutput."""
 
-    #: The job was canceled. This is a final state for the job.
     CANCELED = "Canceled"
-    #: The job is in the process of being canceled. This is a transient state for the job.
+    """The job was canceled. This is a final state for the job."""
     CANCELING = "Canceling"
-    #: The job has encountered an error. This is a final state for the job.
+    """The job is in the process of being canceled. This is a transient state for the job."""
     ERROR = "Error"
-    #: The job is finished. This is a final state for the job.
+    """The job has encountered an error. This is a final state for the job."""
     FINISHED = "Finished"
-    #: The job is processing. This is a transient state for the job.
+    """The job is finished. This is a final state for the job."""
     PROCESSING = "Processing"
-    #: The job is in a queued state, waiting for resources to become available. This is a transient
-    #: state.
+    """The job is processing. This is a transient state for the job."""
     QUEUED = "Queued"
-    #: The job is being scheduled to run on an available resource. This is a transient state, between
-    #: queued and processing states.
+    """The job is in a queued state, waiting for resources to become available. This is a transient
+    #: state."""
     SCHEDULED = "Scheduled"
+    """The job is being scheduled to run on an available resource. This is a transient state, between
+    #: queued and processing states."""
 
 
 class LiveEventEncodingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -601,23 +601,36 @@ class LiveEventEncodingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     information. This property cannot be modified after the live event is created.
     """
 
-    #: This is the same as PassthroughStandard, please see description below. This enumeration value
-    #: is being deprecated.
     NONE = "None"
-    #: A contribution live encoder sends a single bitrate stream to the live event and Media Services
-    #: creates multiple bitrate streams. The output cannot exceed 720p in resolution.
+    """This is the same as PassthroughStandard, please see description below. This enumeration value
+    #: is being deprecated."""
     STANDARD = "Standard"
-    #: A contribution live encoder sends a single bitrate stream to the live event and Media Services
-    #: creates multiple bitrate streams. The output cannot exceed 1080p in resolution.
+    """A contribution live encoder sends a single bitrate stream to the live event and Media Services
+    #: creates multiple bitrate streams. The output cannot exceed 720p in resolution."""
     PREMIUM1080_P = "Premium1080p"
-    #: The ingested stream passes through the live event from the contribution encoder without any
-    #: further processing. In the PassthroughBasic mode, ingestion is limited to up to 5Mbps and only
-    #: 1 concurrent live output is allowed. Live transcription is not available.
+    """A contribution live encoder sends a single bitrate stream to the live event and Media Services
+    #: creates multiple bitrate streams. The output cannot exceed 1080p in resolution."""
     PASSTHROUGH_BASIC = "PassthroughBasic"
-    #: The ingested stream passes through the live event from the contribution encoder without any
-    #: further processing. Live transcription is available. Ingestion bitrate limits are much higher
-    #: and up to 3 concurrent live outputs are allowed.
+    """The ingested stream passes through the live event from the contribution encoder without any
+    #: further processing. In the PassthroughBasic mode, ingestion is limited to up to 5Mbps and only
+    #: 1 concurrent live output is allowed. Live transcription is not available."""
     PASSTHROUGH_STANDARD = "PassthroughStandard"
+    """The ingested stream passes through the live event from the contribution encoder without any
+    #: further processing. Live transcription is available. Ingestion bitrate limits are much higher
+    #: and up to 3 concurrent live outputs are allowed."""
+
+
+class LiveEventHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Health status of last 20 seconds."""
+
+    EXCELLENT = "Excellent"
+    """Incoming bitrate >= 75% of target bitrate AND no Ingest warning and error AND ABS(IngestDrift)
+    #: is equal to 0."""
+    GOOD = "Good"
+    """Incoming bitrate >= 20% AND no Ingest Error or warning exception discontinuities which gap < 10
+    #: seconds."""
+    POOR = "Poor"
+    """Otherwise."""
 
 
 class LiveEventInputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -625,10 +638,10 @@ class LiveEventInputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     updated.
     """
 
-    #: Smooth Streaming input will be sent by the contribution encoder to the live event.
     FRAGMENTED_MP4 = "FragmentedMP4"
-    #: RTMP input will be sent by the contribution encoder to the live event.
+    """Smooth Streaming input will be sent by the contribution encoder to the live event."""
     RTMP = "RTMP"
+    """RTMP input will be sent by the contribution encoder to the live event."""
 
 
 class LiveEventResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -636,67 +649,163 @@ class LiveEventResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     more information.
     """
 
-    #: This is the initial state of the live event after creation (unless autostart was set to true.)
-    #: No billing occurs in this state. In this state, the live event properties can be updated but
-    #: streaming is not allowed.
     STOPPED = "Stopped"
-    #: Allocate action was called on the live event and resources are being provisioned for this live
-    #: event. Once allocation completes successfully, the live event will transition to StandBy state.
+    """This is the initial state of the live event after creation (unless autostart was set to true.)
+    #: No billing occurs in this state. In this state, the live event properties can be updated but
+    #: streaming is not allowed."""
     ALLOCATING = "Allocating"
-    #: Live event resources have been provisioned and is ready to start. Billing occurs in this state.
-    #: Most properties can still be updated, however ingest or streaming is not allowed during this
-    #: state.
+    """Allocate action was called on the live event and resources are being provisioned for this live
+    #: event. Once allocation completes successfully, the live event will transition to StandBy state."""
     STAND_BY = "StandBy"
-    #: The live event is being started and resources are being allocated. No billing occurs in this
-    #: state. Updates or streaming are not allowed during this state. If an error occurs, the live
-    #: event returns to the Stopped state.
+    """Live event resources have been provisioned and is ready to start. Billing occurs in this state.
+    #: Most properties can still be updated, however ingest or streaming is not allowed during this
+    #: state."""
     STARTING = "Starting"
-    #: The live event resources have been allocated, ingest and preview URLs have been generated, and
-    #: it is capable of receiving live streams. At this point, billing is active. You must explicitly
-    #: call Stop on the live event resource to halt further billing.
+    """The live event is being started and resources are being allocated. No billing occurs in this
+    #: state. Updates or streaming are not allowed during this state. If an error occurs, the live
+    #: event returns to the Stopped state."""
     RUNNING = "Running"
-    #: The live event is being stopped and resources are being de-provisioned. No billing occurs in
-    #: this transient state. Updates or streaming are not allowed during this state.
+    """The live event resources have been allocated, ingest and preview URLs have been generated, and
+    #: it is capable of receiving live streams. At this point, billing is active. You must explicitly
+    #: call Stop on the live event resource to halt further billing."""
     STOPPING = "Stopping"
-    #: The live event is being deleted. No billing occurs in this transient state. Updates or
-    #: streaming are not allowed during this state.
+    """The live event is being stopped and resources are being de-provisioned. No billing occurs in
+    #: this transient state. Updates or streaming are not allowed during this state."""
     DELETING = "Deleting"
+    """The live event is being deleted. No billing occurs in this transient state. Updates or
+    #: streaming are not allowed during this state."""
+
+
+class LiveEventState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Current state of the live event. See https://go.microsoft.com/fwlink/?linkid=2139012 for more
+    information.
+    """
+
+    STOPPED = "Stopped"
+    """This is the initial state of the live event after creation (unless autostart was set to true.)
+    #: No billing occurs in this state. In this state, the live event properties can be updated but
+    #: streaming is not allowed."""
+    RUNNING = "Running"
+    """The live event resources have been allocated, ingest and preview URLs have been generated, and
+    #: it is capable of receiving live streams. At this point, billing is active. You must explicitly
+    #: call Stop on the live event resource to halt further billing."""
+
+
+class LiveEventStreamEventLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Event level."""
+
+    CRITICAL = "Critical"
+    ERROR = "Error"
+    WARNING = "Warning"
+    INFORMATION = "Information"
+
+
+class LiveEventStreamEventMaxTimeMediaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The media type of the larger timestamp of two fragments compared."""
+
+    AUDIO = "Audio"
+    VIDEO = "Video"
+
+
+class LiveEventStreamEventMediaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the track."""
+
+    AUDIO = "audio"
+    VIDEO = "video"
+
+
+class LiveEventStreamEventMinTimeMediaType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The media type of the smaller timestamp of two fragments compared."""
+
+    AUDIO = "Audio"
+    VIDEO = "Video"
+
+
+class LiveEventStreamEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the stream event. Format: StreamEvent/{eventType}."""
+
+    STREAM_EVENT_BEGIN_INGEST = "StreamEvent/BeginIngest"
+    """Ingest session begins."""
+    STREAM_EVENT_END_INGEST = "StreamEvent/EndIngest"
+    """Ingest session ends."""
+    STREAM_EVENT_FIRST_CHUNK_RECEIVED = "StreamEvent/FirstChunkReceived"
+    """First fragment received on ingest media track."""
+    STREAM_EVENT_CHUNK_DROPPED = "StreamEvent/ChunkDropped"
+    """Fragment dropped."""
+    STREAM_EVENT_UNALIGNED_KEY_FRAMES = "StreamEvent/UnalignedKeyFrames"
+    """Unaligned video keyframes detected."""
+    STREAM_EVENT_UNALIGNED_PRESENTATION = "StreamEvent/UnalignedPresentation"
+    """Unaligned presentation detected, meaning two fragments across two quality levels are not time
+    #: aligned."""
+    STREAM_EVENT_DISCONTINUITY = "StreamEvent/Discontinuity"
+    """Timestamp discontinuity detected."""
+    STREAM_EVENT_INVALID_CONNECTION = "StreamEvent/InvalidConnection"
+    """Ingest session denied."""
+
+
+class LiveEventTrackEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the track event."""
+
+    TRACK_EVENT_INGEST_HEARTBEAT = "TrackEvent/IngestHeartbeat"
+    """Track heartbeat received."""
+
+
+class LiveEventTrackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the track."""
+
+    AUDIO = "audio"
+    VIDEO = "video"
 
 
 class LiveOutputResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource state of the live output."""
 
-    #: Live output is being created. No content is archived in the asset until the live output is in
-    #: running state.
     CREATING = "Creating"
-    #: Live output is running and archiving live streaming content to the asset if there is valid
-    #: input from a contribution encoder.
+    """Live output is being created. No content is archived in the asset until the live output is in
+    #: running state."""
     RUNNING = "Running"
-    #: Live output is being deleted. The live asset is being converted from live to on-demand asset.
-    #: Any streaming URLs created on the live output asset continue to work.
+    """Live output is running and archiving live streaming content to the asset if there is valid
+    #: input from a contribution encoder."""
     DELETING = "Deleting"
+    """Live output is being deleted. The live asset is being converted from live to on-demand asset.
+    #: Any streaming URLs created on the live output asset continue to work."""
 
 
 class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The metric aggregation type."""
 
-    #: The average.
     AVERAGE = "Average"
-    #: The count of a number of items, usually requests.
+    """The average."""
     COUNT = "Count"
-    #: The sum.
+    """The count of a number of items, usually requests."""
     TOTAL = "Total"
+    """The sum."""
 
 
 class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The metric unit."""
 
-    #: The number of bytes.
     BYTES = "Bytes"
-    #: The count.
+    """The number of bytes."""
     COUNT = "Count"
-    #: The number of milliseconds.
+    """The count."""
     MILLISECONDS = "Milliseconds"
+    """The number of milliseconds."""
+
+
+class MinimumTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The minimum TLS version allowed for this account's requests. This is an optional property. If
+    unspecified, a secure default value will be used.
+    """
+
+    TLS10 = "Tls10"
+    """Minimum TLS version is TLS 1.0."""
+    TLS11 = "Tls11"
+    """Minimum TLS version is TLS 1.1."""
+    TLS12 = "Tls12"
+    """Minimum TLS version is TLS 1.2."""
+    TLS13 = "Tls13"
+    """Minimum TLS version is TLS 1.3."""
 
 
 class OnErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -706,12 +815,12 @@ class OnErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     'ContinueJob'. The default is 'StopProcessingJob'.
     """
 
-    #: Tells the service that if this TransformOutput fails, then any other incomplete
-    #: TransformOutputs can be stopped.
     STOP_PROCESSING_JOB = "StopProcessingJob"
-    #: Tells the service that if this TransformOutput fails, then allow any other TransformOutput to
-    #: continue.
+    """Tells the service that if this TransformOutput fails, then any other incomplete
+    #: TransformOutputs can be stopped."""
     CONTINUE_JOB = "ContinueJob"
+    """Tells the service that if this TransformOutput fails, then allow any other TransformOutput to
+    #: continue."""
 
 
 class Priority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -719,13 +828,13 @@ class Priority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     that the service uses for processing TransformOutputs. The default priority is Normal.
     """
 
-    #: Used for TransformOutputs that can be generated after Normal and High priority
-    #: TransformOutputs.
     LOW = "Low"
-    #: Used for TransformOutputs that can be generated at Normal priority.
+    """Used for TransformOutputs that can be generated after Normal and High priority
+    #: TransformOutputs."""
     NORMAL = "Normal"
-    #: Used for TransformOutputs that should take precedence over others.
+    """Used for TransformOutputs that can be generated at Normal priority."""
     HIGH = "High"
+    """Used for TransformOutputs that should take precedence over others."""
 
 
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -746,129 +855,129 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the Media Services account."""
+    """Provisioning state of the asset track."""
 
-    #: Provisioning state failed.
     FAILED = "Failed"
-    #: Provisioning state in progress.
+    """Provisioning state failed."""
     IN_PROGRESS = "InProgress"
-    #: Provisioning state succeeded.
+    """Provisioning state in progress."""
     SUCCEEDED = "Succeeded"
+    """Provisioning state succeeded."""
 
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether or not public network access is allowed for resources under the Media Services account."""
 
-    #: Public network access is enabled.
     ENABLED = "Enabled"
-    #: Public network access is disabled.
+    """Public network access is enabled."""
     DISABLED = "Disabled"
+    """Public network access is disabled."""
 
 
 class Rotation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rotation, if any, to be applied to the input video, before it is encoded. Default is Auto."""
 
-    #: Automatically detect and rotate as needed.
     AUTO = "Auto"
-    #: Do not rotate the video.  If the output format supports it, any metadata about rotation is kept
-    #: intact.
+    """Automatically detect and rotate as needed."""
     NONE = "None"
-    #: Do not rotate the video but remove any metadata about the rotation.
+    """Do not rotate the video.  If the output format supports it, any metadata about rotation is kept
+    #: intact."""
     ROTATE0 = "Rotate0"
-    #: Rotate 90 degrees clockwise.
+    """Do not rotate the video but remove any metadata about the rotation."""
     ROTATE90 = "Rotate90"
-    #: Rotate 180 degrees clockwise.
+    """Rotate 90 degrees clockwise."""
     ROTATE180 = "Rotate180"
-    #: Rotate 270 degrees clockwise.
+    """Rotate 180 degrees clockwise."""
     ROTATE270 = "Rotate270"
+    """Rotate 270 degrees clockwise."""
 
 
 class SecurityLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The security level."""
 
-    #: Represents a SecurityLevel that is unavailable in current API version.
     UNKNOWN = "Unknown"
-    #: For clients under development or test. No protection against unauthorized use.
+    """Represents a SecurityLevel that is unavailable in current API version."""
     SL150 = "SL150"
-    #: For hardened devices and applications consuming commercial content. Software or hardware
-    #: protection.
+    """For clients under development or test. No protection against unauthorized use."""
     SL2000 = "SL2000"
-    #: For hardened devices only. Hardware protection.
+    """For hardened devices and applications consuming commercial content. Software or hardware
+    #: protection."""
     SL3000 = "SL3000"
+    """For hardened devices only. Hardware protection."""
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the storage account."""
 
-    #: The primary storage account for the Media Services account.
     PRIMARY = "Primary"
-    #: A secondary storage account for the Media Services account.
+    """The primary storage account for the Media Services account."""
     SECONDARY = "Secondary"
+    """A secondary storage account for the Media Services account."""
 
 
 class StorageAuthentication(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StorageAuthentication."""
 
-    #: System authentication.
     SYSTEM = "System"
-    #: Managed Identity authentication.
+    """System authentication."""
     MANAGED_IDENTITY = "ManagedIdentity"
+    """Managed Identity authentication."""
 
 
 class StreamingEndpointResourceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource state of the streaming endpoint."""
 
-    #: The initial state of a streaming endpoint after creation. Content is not ready to be streamed
-    #: from this endpoint.
     STOPPED = "Stopped"
-    #: The streaming endpoint is transitioning to the running state.
+    """The initial state of a streaming endpoint after creation. Content is not ready to be streamed
+    #: from this endpoint."""
     STARTING = "Starting"
-    #: The streaming endpoint is running. It is able to stream content to clients
+    """The streaming endpoint is transitioning to the running state."""
     RUNNING = "Running"
-    #: The streaming endpoint is transitioning to the stopped state.
+    """The streaming endpoint is running. It is able to stream content to clients"""
     STOPPING = "Stopping"
-    #: The streaming endpoint is being deleted.
+    """The streaming endpoint is transitioning to the stopped state."""
     DELETING = "Deleting"
-    #: The streaming endpoint is increasing or decreasing scale units.
+    """The streaming endpoint is being deleted."""
     SCALING = "Scaling"
+    """The streaming endpoint is increasing or decreasing scale units."""
 
 
 class StreamingLocatorContentKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Encryption type of Content Key."""
 
-    #: Common Encryption using CENC
     COMMON_ENCRYPTION_CENC = "CommonEncryptionCenc"
-    #: Common Encryption using CBCS
+    """Common Encryption using CENC"""
     COMMON_ENCRYPTION_CBCS = "CommonEncryptionCbcs"
-    #: Envelope Encryption
+    """Common Encryption using CBCS"""
     ENVELOPE_ENCRYPTION = "EnvelopeEncryption"
+    """Envelope Encryption"""
 
 
 class StreamingPolicyStreamingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Streaming protocol."""
 
-    #: HLS protocol
     HLS = "Hls"
-    #: DASH protocol
+    """HLS protocol"""
     DASH = "Dash"
-    #: SmoothStreaming protocol
+    """DASH protocol"""
     SMOOTH_STREAMING = "SmoothStreaming"
-    #: Download protocol
+    """SmoothStreaming protocol"""
     DOWNLOAD = "Download"
+    """Download protocol"""
 
 
 class StreamOptionsFlag(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StreamOptionsFlag."""
 
-    #: Live streaming with no special latency optimizations.
     DEFAULT = "Default"
-    #: The live event provides lower end to end latency by reducing its internal buffers.
+    """Live streaming with no special latency optimizations."""
     LOW_LATENCY = "LowLatency"
-    #: The live event is optimized for end to end latency. This option is only available for encoding
+    """The live event provides lower end to end latency by reducing its internal buffers."""
+    LOW_LATENCY_V2 = "LowLatencyV2"
+    """The live event is optimized for end to end latency. This option is only available for encoding
     #: live events with RTMP input. The outputs can be streamed using HLS or DASH formats. The
     #: outputs' archive or DVR rewind length is limited to 6 hours. Use "LowLatency" stream option for
-    #: all other scenarios.
-    LOW_LATENCY_V2 = "LowLatencyV2"
+    #: all other scenarios."""
 
 
 class StretchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -876,70 +985,70 @@ class StretchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     resolution(s). Default is AutoSize.
     """
 
-    #: Strictly respect the output resolution without considering the pixel aspect ratio or display
-    #: aspect ratio of the input video.
     NONE = "None"
-    #: Override the output resolution, and change it to match the display aspect ratio of the input,
+    """Strictly respect the output resolution without considering the pixel aspect ratio or display
+    #: aspect ratio of the input video."""
+    AUTO_SIZE = "AutoSize"
+    """Override the output resolution, and change it to match the display aspect ratio of the input,
     #: without padding. For example, if the input is 1920x1080 and the encoding preset asks for
     #: 1280x1280, then the value in the preset is overridden, and the output will be at 1280x720,
-    #: which maintains the input aspect ratio of 16:9.
-    AUTO_SIZE = "AutoSize"
-    #: Pad the output (with either letterbox or pillar box) to honor the output resolution, while
+    #: which maintains the input aspect ratio of 16:9."""
+    AUTO_FIT = "AutoFit"
+    """Pad the output (with either letterbox or pillar box) to honor the output resolution, while
     #: ensuring that the active video region in the output has the same aspect ratio as the input. For
     #: example, if the input is 1920x1080 and the encoding preset asks for 1280x1280, then the output
     #: will be at 1280x1280, which contains an inner rectangle of 1280x720 at aspect ratio of 16:9,
-    #: and pillar box regions 280 pixels wide at the left and right.
-    AUTO_FIT = "AutoFit"
+    #: and pillar box regions 280 pixels wide at the left and right."""
 
 
 class TrackAttribute(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The TrackAttribute to filter the tracks by."""
 
-    #: The bitrate of the track.
     BITRATE = "Bitrate"
-    #: The language of the track.
+    """The bitrate of the track."""
     LANGUAGE = "Language"
+    """The language of the track."""
 
 
 class TrackPropertyCompareOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Track property condition operation."""
 
-    #: Unknown track property compare operation
     UNKNOWN = "Unknown"
-    #: Equal operation
+    """Unknown track property compare operation"""
     EQUAL = "Equal"
+    """Equal operation"""
 
 
 class TrackPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Track property type."""
 
-    #: Unknown track property
     UNKNOWN = "Unknown"
-    #: Track FourCC
+    """Unknown track property"""
     FOUR_CC = "FourCC"
+    """Track FourCC"""
 
 
 class VideoSyncMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Video Sync Mode."""
 
-    #: This is the default method. Chooses between Cfr and Vfr depending on muxer capabilities. For
-    #: output format MP4, the default mode is Cfr.
     AUTO = "Auto"
-    #: The presentation timestamps on frames are passed through from the input file to the output file
+    """This is the default method. Chooses between Cfr and Vfr depending on muxer capabilities. For
+    #: output format MP4, the default mode is Cfr."""
+    PASSTHROUGH = "Passthrough"
+    """The presentation timestamps on frames are passed through from the input file to the output file
     #: writer. Recommended when the input source has variable frame rate, and are attempting to
     #: produce multiple layers for adaptive streaming in the output which have aligned GOP boundaries.
     #: Note: if two or more frames in the input have duplicate timestamps, then the output will also
-    #: have the same behavior
-    PASSTHROUGH = "Passthrough"
-    #: Input frames will be repeated and/or dropped as needed to achieve exactly the requested
-    #: constant frame rate. Recommended when the output frame rate is explicitly set at a specified
-    #: value
+    #: have the same behavior"""
     CFR = "Cfr"
-    #: Similar to the Passthrough mode, but if the input has frames that have duplicate timestamps,
+    """Input frames will be repeated and/or dropped as needed to achieve exactly the requested
+    #: constant frame rate. Recommended when the output frame rate is explicitly set at a specified
+    #: value"""
+    VFR = "Vfr"
+    """Similar to the Passthrough mode, but if the input has frames that have duplicate timestamps,
     #: then only one frame is passed through to the output, and others are dropped. Recommended when
     #: the number of output frames is expected to be equal to the number of input frames. For example,
-    #: the output is used to calculate a quality metric like PSNR against the input
-    VFR = "Vfr"
+    #: the output is used to calculate a quality metric like PSNR against the input"""
 
 
 class Visibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -948,7 +1057,7 @@ class Visibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     text will not be available to the client. The default value is "Visible".
     """
 
-    #: The track is hidden to video player.
     HIDDEN = "Hidden"
-    #: The track is visible to video player.
+    """The track is hidden to video player."""
     VISIBLE = "Visible"
+    """The track is visible to video player."""

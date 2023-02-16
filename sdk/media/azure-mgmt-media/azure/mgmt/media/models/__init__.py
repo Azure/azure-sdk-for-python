@@ -134,6 +134,11 @@ from ._models_py3 import LiveEvent
 from ._models_py3 import LiveEventActionInput
 from ._models_py3 import LiveEventEncoding
 from ._models_py3 import LiveEventEndpoint
+from ._models_py3 import LiveEventGetStatusResult
+from ._models_py3 import LiveEventGetStreamEventsResult
+from ._models_py3 import LiveEventGetTrackIngestHeartbeatsResult
+from ._models_py3 import LiveEventIngestInterruption
+from ._models_py3 import LiveEventIngestion
 from ._models_py3 import LiveEventInput
 from ._models_py3 import LiveEventInputAccessControl
 from ._models_py3 import LiveEventInputTrackSelection
@@ -141,6 +146,13 @@ from ._models_py3 import LiveEventListResult
 from ._models_py3 import LiveEventOutputTranscriptionTrack
 from ._models_py3 import LiveEventPreview
 from ._models_py3 import LiveEventPreviewAccessControl
+from ._models_py3 import LiveEventStatus
+from ._models_py3 import LiveEventStreamEvent
+from ._models_py3 import LiveEventStreamEventData
+from ._models_py3 import LiveEventTimedMetadataEndpoint
+from ._models_py3 import LiveEventTrackEvent
+from ._models_py3 import LiveEventTrackEventData
+from ._models_py3 import LiveEventTrackStatus
 from ._models_py3 import LiveEventTranscription
 from ._models_py3 import LiveOutput
 from ._models_py3 import LiveOutputListResult
@@ -261,11 +273,21 @@ from ._azure_media_services_enums import JobErrorCode
 from ._azure_media_services_enums import JobRetry
 from ._azure_media_services_enums import JobState
 from ._azure_media_services_enums import LiveEventEncodingType
+from ._azure_media_services_enums import LiveEventHealthStatus
 from ._azure_media_services_enums import LiveEventInputProtocol
 from ._azure_media_services_enums import LiveEventResourceState
+from ._azure_media_services_enums import LiveEventState
+from ._azure_media_services_enums import LiveEventStreamEventLevel
+from ._azure_media_services_enums import LiveEventStreamEventMaxTimeMediaType
+from ._azure_media_services_enums import LiveEventStreamEventMediaType
+from ._azure_media_services_enums import LiveEventStreamEventMinTimeMediaType
+from ._azure_media_services_enums import LiveEventStreamEventType
+from ._azure_media_services_enums import LiveEventTrackEventType
+from ._azure_media_services_enums import LiveEventTrackType
 from ._azure_media_services_enums import LiveOutputResourceState
 from ._azure_media_services_enums import MetricAggregationType
 from ._azure_media_services_enums import MetricUnit
+from ._azure_media_services_enums import MinimumTlsVersion
 from ._azure_media_services_enums import OnErrorType
 from ._azure_media_services_enums import Priority
 from ._azure_media_services_enums import PrivateEndpointConnectionProvisioningState
@@ -419,6 +441,11 @@ __all__ = [
     "LiveEventActionInput",
     "LiveEventEncoding",
     "LiveEventEndpoint",
+    "LiveEventGetStatusResult",
+    "LiveEventGetStreamEventsResult",
+    "LiveEventGetTrackIngestHeartbeatsResult",
+    "LiveEventIngestInterruption",
+    "LiveEventIngestion",
     "LiveEventInput",
     "LiveEventInputAccessControl",
     "LiveEventInputTrackSelection",
@@ -426,6 +453,13 @@ __all__ = [
     "LiveEventOutputTranscriptionTrack",
     "LiveEventPreview",
     "LiveEventPreviewAccessControl",
+    "LiveEventStatus",
+    "LiveEventStreamEvent",
+    "LiveEventStreamEventData",
+    "LiveEventTimedMetadataEndpoint",
+    "LiveEventTrackEvent",
+    "LiveEventTrackEventData",
+    "LiveEventTrackStatus",
     "LiveEventTranscription",
     "LiveOutput",
     "LiveOutputListResult",
@@ -545,11 +579,21 @@ __all__ = [
     "JobRetry",
     "JobState",
     "LiveEventEncodingType",
+    "LiveEventHealthStatus",
     "LiveEventInputProtocol",
     "LiveEventResourceState",
+    "LiveEventState",
+    "LiveEventStreamEventLevel",
+    "LiveEventStreamEventMaxTimeMediaType",
+    "LiveEventStreamEventMediaType",
+    "LiveEventStreamEventMinTimeMediaType",
+    "LiveEventStreamEventType",
+    "LiveEventTrackEventType",
+    "LiveEventTrackType",
     "LiveOutputResourceState",
     "MetricAggregationType",
     "MetricUnit",
+    "MinimumTlsVersion",
     "OnErrorType",
     "Priority",
     "PrivateEndpointConnectionProvisioningState",

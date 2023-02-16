@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.streaming_locators.create(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         streaming_locator_name="UserCreatedSecureStreamingLocator",
         parameters={
@@ -38,7 +38,7 @@ def main():
                 "assetName": "ClimbingMountRainier",
                 "endTime": "2028-12-31T23:59:59.9999999Z",
                 "startTime": "2018-03-01T00:00:00Z",
-                "streamingPolicyName": "secureStreamingPolicy",
+                "streamingPolicyName": "UserCreatedSecureStreamingPolicy",
             }
         },
     )

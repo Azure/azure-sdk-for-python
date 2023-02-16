@@ -31,11 +31,11 @@ def main():
 
     response = client.locations.check_name_availability(
         location_name="japanwest",
-        parameters={"name": "contosotv", "type": "videoAnalyzers"},
+        parameters={"name": "contosotv", "type": "Microsoft.Media/mediaservices"},
     )
     print(response)
 
 
-# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2021-11-01/examples/accounts-check-name-availability.json
+# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2023-01-01/examples/accounts-check-name-availability.json
 if __name__ == "__main__":
     main()

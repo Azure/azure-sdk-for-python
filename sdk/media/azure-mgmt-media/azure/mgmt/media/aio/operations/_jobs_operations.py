@@ -329,7 +329,7 @@ class JobsOperations:
         :type transform_name: str
         :param job_name: The Job name. Required.
         :type job_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a Job type or a IO type. Required.
         :type parameters: ~azure.mgmt.media.models.Job or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -570,7 +570,7 @@ class JobsOperations:
         :type transform_name: str
         :param job_name: The Job name. Required.
         :type job_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a Job type or a IO type. Required.
         :type parameters: ~azure.mgmt.media.models.Job or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Streaming/stable/2022-08-01/examples/liveevent-list-all.json
+# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Streaming/stable/2022-11-01/examples/liveevent-list-all.json
 if __name__ == "__main__":
     main()

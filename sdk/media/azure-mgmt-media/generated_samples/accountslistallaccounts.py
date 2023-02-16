@@ -30,12 +30,12 @@ def main():
     )
 
     response = client.mediaservices.list(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2021-11-01/examples/accounts-list-all-accounts.json
+# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2023-01-01/examples/accounts-list-all-accounts.json
 if __name__ == "__main__":
     main()

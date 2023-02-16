@@ -89,7 +89,7 @@ class LiveOutputsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.LiveOutputListResult] = kwargs.pop("cls", None)
 
         error_map = {
@@ -184,7 +184,7 @@ class LiveOutputsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.LiveOutput] = kwargs.pop("cls", None)
 
         request = build_get_request(
@@ -243,7 +243,7 @@ class LiveOutputsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LiveOutput] = kwargs.pop("cls", None)
 
@@ -409,8 +409,8 @@ class LiveOutputsOperations:
         :type live_event_name: str
         :param live_output_name: The name of the live output. Required.
         :type live_output_name: str
-        :param parameters: Live Output properties needed for creation. Is either a model type or a IO
-         type. Required.
+        :param parameters: Live Output properties needed for creation. Is either a LiveOutput type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.media.models.LiveOutput or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -431,7 +431,7 @@ class LiveOutputsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.LiveOutput] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -492,7 +492,7 @@ class LiveOutputsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
@@ -560,7 +560,7 @@ class LiveOutputsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -633,7 +633,7 @@ class LiveOutputsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[_models.AsyncOperationResult] = kwargs.pop("cls", None)
 
         request = build_async_operation_request(
@@ -712,7 +712,7 @@ class LiveOutputsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-08-01"))
+        api_version: Literal["2022-11-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))
         cls: ClsType[Optional[_models.LiveOutput]] = kwargs.pop("cls", None)
 
         request = build_operation_location_request(

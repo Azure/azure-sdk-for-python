@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.streaming_policies.create(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         streaming_policy_name="UserCreatedSecureStreamingPolicyWithEnvelopeEncryptionOnly",
         parameters={

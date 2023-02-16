@@ -618,7 +618,7 @@ class TracksOperations:
         :type asset_name: str
         :param track_name: The Asset Track name. Required.
         :type track_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a AssetTrack type or a IO type. Required.
         :type parameters: ~azure.mgmt.media.models.AssetTrack or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1011,7 +1011,7 @@ class TracksOperations:
         :type asset_name: str
         :param track_name: The Asset Track name. Required.
         :type track_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a AssetTrack type or a IO type. Required.
         :type parameters: ~azure.mgmt.media.models.AssetTrack or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

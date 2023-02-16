@@ -30,13 +30,13 @@ def main():
     )
 
     response = client.private_link_resources.get(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contososports",
         name="keydelivery",
     )
     print(response)
 
 
-# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2021-11-01/examples/private-link-resources-get-by-name.json
+# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2023-01-01/examples/private-link-resources-get-by-name.json
 if __name__ == "__main__":
     main()

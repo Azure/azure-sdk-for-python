@@ -14,7 +14,7 @@ from azure.mgmt.media import AzureMediaServices
     pip install azure-identity
     pip install azure-mgmt-media
 # USAGE
-    python liveeventallocate.py
+    python liveeventgettrackevents.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,14 +29,15 @@ def main():
         subscription_id="0a6ec948-5a62-437d-b9df-934dc7c1b722",
     )
 
-    response = client.live_events.begin_allocate(
+    response = client.live_events.begin_list_get_track_ingest_heartbeats(
         resource_group_name="mediaresources",
         account_name="slitestmedia10",
         live_event_name="myLiveEvent1",
     ).result()
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Streaming/stable/2022-11-01/examples/liveevent-allocate.json
+# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Streaming/stable/2022-11-01/examples/liveevent-get-track-events.json
 if __name__ == "__main__":
     main()

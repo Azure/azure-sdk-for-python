@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.operation_statuses.get(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         asset_name="ClimbingMountRainer",
         track_name="text1",

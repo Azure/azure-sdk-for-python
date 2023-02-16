@@ -481,7 +481,7 @@ class AssetFiltersOperations:
         :type asset_name: str
         :param filter_name: The Asset Filter name. Required.
         :type filter_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a AssetFilter type or a IO type. Required.
         :type parameters: ~azure.mgmt.media.models.AssetFilter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -720,7 +720,7 @@ class AssetFiltersOperations:
         :type asset_name: str
         :param filter_name: The Asset Filter name. Required.
         :type filter_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a AssetFilter type or a IO type. Required.
         :type parameters: ~azure.mgmt.media.models.AssetFilter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

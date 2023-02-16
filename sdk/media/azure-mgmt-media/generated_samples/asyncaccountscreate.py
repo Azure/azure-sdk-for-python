@@ -30,38 +30,17 @@ def main():
     )
 
     response = client.mediaservices.begin_create_or_update(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contososports",
         parameters={
-            "identity": {
-                "type": "UserAssigned",
-                "userAssignedIdentities": {
-                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1": {},
-                    "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id2": {},
-                },
-            },
             "location": "South Central US",
             "properties": {
-                "encryption": {
-                    "identity": {
-                        "useSystemAssignedIdentity": False,
-                        "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1",
-                    },
-                    "type": "CustomerKey",
-                },
-                "keyDelivery": {"accessControl": {"defaultAction": "Allow"}},
-                "publicNetworkAccess": "Enabled",
                 "storageAccounts": [
                     {
-                        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso/providers/Microsoft.Storage/storageAccounts/contososportsstore",
-                        "identity": {
-                            "useSystemAssignedIdentity": False,
-                            "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contoso/providers/Microsoft.ManagedIdentity/userAssignedIdentities/id1",
-                        },
+                        "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/contosorg/providers/Microsoft.Storage/storageAccounts/teststorageaccount",
                         "type": "Primary",
                     }
-                ],
-                "storageAuthentication": "ManagedIdentity",
+                ]
             },
             "tags": {"key1": "value1", "key2": "value2"},
         },
@@ -69,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2021-11-01/examples/async-accounts-create.json
+# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2023-01-01/examples/async-accounts-create.json
 if __name__ == "__main__":
     main()

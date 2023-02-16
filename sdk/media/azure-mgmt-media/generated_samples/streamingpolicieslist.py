@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.streaming_policies.list(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
     )
     for item in response:

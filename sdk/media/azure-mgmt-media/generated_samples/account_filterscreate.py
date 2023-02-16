@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.account_filters.create_or_update(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contosomedia",
         filter_name="newAccountFilter",
         parameters={

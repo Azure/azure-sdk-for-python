@@ -300,7 +300,8 @@ class AccountFiltersOperations:
         :type account_name: str
         :param filter_name: The Account Filter name. Required.
         :type filter_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a AccountFilter type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.media.models.AccountFilter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -526,7 +527,8 @@ class AccountFiltersOperations:
         :type account_name: str
         :param filter_name: The Account Filter name. Required.
         :type filter_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a AccountFilter type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.media.models.AccountFilter or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

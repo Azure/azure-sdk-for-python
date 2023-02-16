@@ -30,13 +30,13 @@ def main():
     )
 
     response = client.mediaservices.list_edge_policies(
-        resource_group_name="contoso",
+        resource_group_name="contosorg",
         account_name="contososports",
         parameters={"deviceId": "contosiothubhost_contosoiotdevice"},
     )
     print(response)
 
 
-# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2021-11-01/examples/accounts-list-media-edge-policies.json
+# x-ms-original-file: specification/mediaservices/resource-manager/Microsoft.Media/Accounts/stable/2023-01-01/examples/accounts-list-media-edge-policies.json
 if __name__ == "__main__":
     main()

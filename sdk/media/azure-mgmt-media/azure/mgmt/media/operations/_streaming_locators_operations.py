@@ -521,7 +521,8 @@ class StreamingLocatorsOperations:
         :type account_name: str
         :param streaming_locator_name: The Streaming Locator name. Required.
         :type streaming_locator_name: str
-        :param parameters: The request parameters. Is either a model type or a IO type. Required.
+        :param parameters: The request parameters. Is either a StreamingLocator type or a IO type.
+         Required.
         :type parameters: ~azure.mgmt.media.models.StreamingLocator or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
