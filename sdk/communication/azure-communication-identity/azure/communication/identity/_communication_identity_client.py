@@ -230,4 +230,3 @@ class CommunicationIdentityClient(object):
             body=request_body,
             cls=lambda pr, u, e: AccessToken(u['token'], u['expiresOn']),
             **kwargs)
-        
