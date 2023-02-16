@@ -144,7 +144,7 @@ def format_details_section(
 
 
 def format_errors_and_resolutions_sections(
-    entity_type: str, error_types: Dict[str, bool], cli: bool
+    error_types: Dict[str, bool], cli: bool
 ) -> Tuple[str, str]:
     """Builds strings for details of the error message template's Errors and Resolutions sections."""
 
@@ -153,37 +153,52 @@ def format_errors_and_resolutions_sections(
     count = 1
 
     if error_types[ValidationErrorType.INVALID_VALUE]:
-        errors += f"\n{count}) One or more fields are invalid"
+        errors += (
+            f"\n{count}) The yaml file you provided has one or more values"
+            f" (for required fields) which are invalid:"
+        )
         resolutions += (
-            f"\n{count}) Double-check that all specified parameters are of the correct types and formats "
-            f"prescribed by the {entity_type} schema."
+            f"\n{count}) If the type is invalid, change it to the correct type. "
+            f"If value is invalid, choose a value from the expected range."
         )
         count += 1
     if error_types[ValidationErrorType.UNKNOWN_FIELD]:
-        errors += f"\n{count}) A least one unrecognized parameter is specified"
-        resolutions += f"\n{count}) Remove any parameters not prescribed by the {entity_type} schema."
+        errors += f"\n{count}) The yaml file you provided has one or more unrecognized parameters. "
+        resolutions += f"\n{count}) Remove the unrecognized parameter specified above."
         count += 1
     if error_types[ValidationErrorType.MISSING_FIELD]:
-        errors += f"\n{count}) At least one required parameter is missing"
-        resolutions += f"\n{count}) Ensure all parameters required by the {entity_type} schema are specified."
+        errors += f"\n{count}) The yaml file provided is missing one or more required parameters."
+        resolutions += (
+            f"\n{count}) Add the missing parameters with values of the correct type. "
+            f"To know what type of value to assign to any required parameter, "
+        )
         count += 1
     if error_types[ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND]:
-        errors += f"\n{count}) One or more files or folders do not exist.\n"
-        resolutions += f"\n{count}) Double-check the directory path you provided and enter the correct path."
+        errors += (
+            f"\n{count}) One or more files or folders specified in the yaml file you provided either "
+            f"does not exist, or the path is incorrect.\n"
+        )
+        resolutions += (
+            f"\n{count}) Double-check the file / folder name, extension, and path provided."
+            f" Fix it and resubmit."
+        )
         count += 1
     if error_types[ValidationErrorType.CANNOT_SERIALIZE]:
-        errors += f"\n{count}) One or more fields cannot be serialized.\n"
-        resolutions += f"\n{count}) Double-check that all specified parameters are of the correct types and formats \
-        prescribed by the {entity_type} schema."
+        errors += f"\n{count}) One or more fields cannot be serialized in the yaml file you provided\n"
+        resolutions += (
+            f"\n{count}) Double-check all specified parameters to ensure they are the "
+            f"correct types and formats."
+        )
         count += 1
     if error_types[ValidationErrorType.CANNOT_PARSE]:
-        errors += f"\n{count}) YAML file cannot be parsed.\n"
-        resolutions += f"\n{count}) Double-check your YAML file for syntax and formatting errors."
+        errors += f"\n{count}) The yaml file you provided cannot be parsed due to wrong syntax / formatting.\n"
+        resolutions += f"\n{count}) Double-check the yaml file to ensure correct syntax and fix all formatting errors."
         count += 1
     if error_types[ValidationErrorType.RESOURCE_NOT_FOUND]:
-        errors += f"\n{count}) Resource was not found.\n"
+        errors += f"\n{count}) One or more resources was not found in the yaml file you provided.\n"
         resolutions += (
-            f"\n{count}) Double-check that the resource has been specified correctly and " "that you have access to it."
+            f"\n{count}) Double-check that the name of the resource has been specified correctly "
+            f"and that you have access to it."
         )
         count += 1
 
@@ -193,7 +208,6 @@ def format_errors_and_resolutions_sections(
         errors = Fore.BLACK + errors + Fore.RESET
 
     return errors, resolutions
-
 
 def format_create_validation_error(
     error: Union[SchemaValidationError, ValidationException],
@@ -221,7 +235,7 @@ def format_create_validation_error(
         error = raw_error
     entity_type, details = get_entity_type(error)
     error_types, details = format_details_section(error, details, entity_type)
-    errors, resolutions = format_errors_and_resolutions_sections(entity_type, error_types, cli)
+    errors, resolutions = format_errors_and_resolutions_sections(error_types, cli)
 
     if yaml_operation:
         description = YAML_CREATION_ERROR_DESCRIPTION.format(entity_type=entity_type)

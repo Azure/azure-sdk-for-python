@@ -151,7 +151,7 @@ class TestDataOperations:
         name = "random_name"
         with pytest.raises(Exception) as ex:
             mock_data_operations.get(name=name)
-        assert "At least one required parameter is missing" in str(ex.value)
+        assert "The yaml file provided is missing one or more required parameters" in str(ex.value)
 
     def test_create_with_spec_file(
         self,
@@ -265,7 +265,7 @@ class TestDataOperations:
 
         with pytest.raises(Exception) as ex:
             mock_data_operations.create_or_update(data1)
-        assert "At least one required parameter is missing" in str(ex.value)
+        assert "The yaml file provided is missing one or more required parameters" in str(ex.value)
         mock_data_operations._operation.create_or_update.assert_not_called()
 
         with pytest.raises(Exception) as ex:
