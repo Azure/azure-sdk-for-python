@@ -2795,3 +2795,42 @@ class TestDSLPipeline(AzureRecordedTestCase):
         check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, 'p1_output', 'v1')
         check_name_version_and_register_succeed(pipeline_job.jobs['node_2'].outputs.component_out_path, 'n2_output', 'v1')
         check_name_version_and_register_succeed(pipeline_job.jobs['sub_node'].outputs.sub_pipeine_a_output, 'sub_pipeline', 'v1')
+
+    @pytest.mark.disable_mock_code_hash
+    def test_register_with_output_format(self, client: MLClient):
+        component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
+        component_input = Input(type='uri_file', path='https://dprepdata.blob.core.windows.net/demo/Titanic.csv')
+
+        @dsl.pipeline()
+        def register_both_output():
+            # register NodeOutput which is binding to PipelineOutput
+            node = component(component_in_path=component_input) # binding and re-define name and version
+            node.outputs.component_out_path = Output(name='n1_o_output', version='1')
+
+            node_2 = component(component_in_path=component_input)   # binding
+            node_2.outputs.component_out_path = Output(name='n2_o_output', version='2')
+
+            node_3 = component(component_in_path=component_input)   # isn't binding
+            node_3.outputs.component_out_path = Output(name='n3_o_output', version='3')
+
+            # will add subgraph example here
+            return {
+                'pipeine_a_output': node.outputs.component_out_path,
+                'pipeine_b_output': node_2.outputs.component_out_path,
+            }
+
+        pipeline = register_both_output()
+        pipeline.settings.default_compute = "testcompute3"
+        pipeline.outputs.pipeine_a_output.name = 'np_output'
+        pipeline.outputs.pipeine_a_output.version = '1'
+        pipeline_job = client.jobs.create_or_update(pipeline)
+        client.jobs.stream(pipeline_job.name)
+
+        def check_name_version_and_register_succeed(output, output_name, output_version):
+            assert output.name == output_name
+            assert output.version == output_version
+            assert client.data.get(name=output_name, version=output_version)
+
+        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, 'np_output', '1')
+        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_b_output, 'n2_o_output', '2')
+        check_name_version_and_register_succeed(pipeline_job.jobs['node_3'].outputs['component_out_path'], 'n3_o_output', '3')
