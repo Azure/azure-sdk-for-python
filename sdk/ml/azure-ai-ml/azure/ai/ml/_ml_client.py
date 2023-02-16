@@ -38,7 +38,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsC
 
 # from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
-from azure.ai.ml._utils._experimefrom azure.ai.ml._restclient.v2023_02_01_preview importntal import experimental
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import RegistryDiscovery
 from azure.ai.ml._utils.utils import _is_https_url
