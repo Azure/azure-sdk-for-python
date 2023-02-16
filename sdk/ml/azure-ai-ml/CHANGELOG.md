@@ -3,10 +3,9 @@
 ## 1.5.0 (Unreleased)
 
 ### Features Added
+- Added support for `tags` on Compute Resources.
 - Add managed network preview feature for the workspace.
 - Add outbound rule operations to interact with the outbound rules of the managed network property for workspace.
-
-- Added support for `tags` on Compute Resources.
 
 ### Bugs Fixed
 
