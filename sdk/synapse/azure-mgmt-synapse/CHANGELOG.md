@@ -1,5 +1,11 @@
 # Release History
 
+## 2.1.0b7 (2023-02-19)
+
+### Features Added
+
+  - Added operation group GetOperations
+
 ## 2.1.0b6 (2022-11-23)
 
 ### Features Added
