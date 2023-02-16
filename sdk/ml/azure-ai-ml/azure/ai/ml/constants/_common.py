@@ -175,6 +175,47 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "will not create a docker container using the image defined in the environment."
 )
 
+WORKSPACE_EXCLUSIVE_OPERATIONS = {
+    "_batch_deployment_operations",
+    "_batch_endpoint_operations",
+    "_compute_operations",
+    "_datastore_operations",
+    "_job_operations",
+    "_model_dataplane_operations",
+    "_online_deployment_operations",
+    "_online_endpoint_operations",
+    "_run_operations",
+    "_schedule_operations",
+}
+WORKSPACE_OR_REGISTRY_REQUIRED_OPERATIONS = {
+    "_code_operations",
+    "_component_operations",
+    "_data_operations",
+    "_environment_operations",
+    "_model_operations",
+}
+WORKSPACE_NOT_INCLUDED_ERROR_MESSAGE = (
+    "This operation requires that you specify a connection to a workspace. "
+    "You can specify a workspace for your MLClient with these parameters:\n\n"
+    "ml_client = MLClient(\n\tcredential=DefaultAzureCredential(),\n\t"
+    "subscription_id='<SUBSCRIPTION_ID>',\n\tresource_group_name='<RESOURCE_GROUP>',"
+    "\n\tworkspace_name='<WORKSPACE_NAME>'\n)\n\n"
+    "If you have not yet created a workspace, please refer to "
+    "https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-workspace?tabs=python"
+    " to learn more."
+)
+WORKSPACE_REG_NOT_INCLUDED_ERROR_MESSAGE = (
+    "This operation requires that you specify a connection to a workspace or a registry. "
+    "You can specify a workspace or registry for your MLClient with these parameters:\n\n"
+    "ml_client = MLClient(\n\tcredential=DefaultAzureCredential(),\n\t"
+    "subscription_id='<SUBSCRIPTION_ID>',\n\tresource_group_name='<RESOURCE_GROUP>',"
+    "\n\tworkspace_name='<WORKSPACE_NAME>' #Or replace with registry_name='<REGISTRY_NAME>'\n)\n\n"
+    "If you have not yet created a workspace or registry, please refer to "
+    "https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-workspace?tabs=python"
+    "\nto learn more about workspaces or "
+    "https://learn.microsoft.com/en-us/azure/machine-learning/how-to-manage-registries"
+    " to learn more about registries."
+)
 
 class AzureMLResourceType(object):
     CODE = "codes"

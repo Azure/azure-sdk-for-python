@@ -5,9 +5,17 @@
 # pylint: disable=protected-access
 
 import logging
+import functools
+import traceback
 from typing import Callable, Dict, Optional, TypeVar, cast
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.constants._common import(
+    WORKSPACE_EXCLUSIVE_OPERATIONS,
+    WORKSPACE_OR_REGISTRY_REQUIRED_OPERATIONS,
+    WORKSPACE_NOT_INCLUDED_ERROR_MESSAGE,
+    WORKSPACE_REG_NOT_INCLUDED_ERROR_MESSAGE
+)
 
 T = TypeVar("T")
 module_logger = logging.getLogger(__name__)
@@ -71,6 +79,24 @@ class OperationScope(object):
     def registry_name(self, value: str) -> None:
         self._registry_name = value
 
+def workspace_registry_name_validation(func: Callable[..., any]) -> Callable[..., any]:
+    @functools.wraps(func)
+    def new_function(self: any, *args: any, **kwargs: any) -> any:
+        if (not self._operation_scope.workspace_name and
+            not self._operation_scope.registry_name):
+            stack = traceback.extract_stack()
+            summary_bottom = stack[1]
+            summary_top = stack[-2]
+            bottom_filename = summary_bottom.filename.rsplit("\\",1)[-1][:-3]
+            top_filename = summary_top.filename.rsplit("\\",1)[-1][:-3]
+            if (bottom_filename in WORKSPACE_EXCLUSIVE_OPERATIONS or
+                top_filename in WORKSPACE_EXCLUSIVE_OPERATIONS):
+                raise Exception(WORKSPACE_NOT_INCLUDED_ERROR_MESSAGE)
+            if (bottom_filename in WORKSPACE_OR_REGISTRY_REQUIRED_OPERATIONS or
+                top_filename in WORKSPACE_OR_REGISTRY_REQUIRED_OPERATIONS):
+                raise Exception(WORKSPACE_REG_NOT_INCLUDED_ERROR_MESSAGE)
+        return func(self, *args, **kwargs)
+    return new_function
 
 class _ScopeDependentOperations(object):
     def __init__(self, operation_scope: OperationScope, operation_config: OperationConfig):
@@ -81,6 +107,7 @@ class _ScopeDependentOperations(object):
         }
 
     @property  # type: ignore
+    @workspace_registry_name_validation
     def _workspace_name(self) -> str:
         return cast(str, self._operation_scope.workspace_name)
 
