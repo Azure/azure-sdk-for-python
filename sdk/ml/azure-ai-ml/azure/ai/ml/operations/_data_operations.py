@@ -255,7 +255,7 @@ class DataOperations(_ScopeDependentOperations):
                             version=data.version,
                             resource_group_name=self._resource_group_name,
                             registry_name=self._registry_name)
-                    except Exception as err:
+                    except Exception as err:  # pylint: disable=broad-except
                         if isinstance(err, ResourceNotFoundError):
                             pass
                         else:
