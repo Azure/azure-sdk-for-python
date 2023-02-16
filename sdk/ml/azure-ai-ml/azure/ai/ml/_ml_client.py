@@ -57,8 +57,8 @@ from azure.ai.ml.entities import (
     OnlineEndpoint,
     Registry,
     Workspace,
+    WorkspaceModelReference,
 )
-from azure.ai.ml.entities._assets import WorkspaceAssetReference
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.operations import (
     BatchDeploymentOperations,
@@ -769,7 +769,7 @@ class MLClient:
 
     # T = valid inputs/outputs for create_or_update
     # Each entry here requires a registered _create_or_update function below
-    T = TypeVar("T", Job, Model, Environment, Component, Datastore, WorkspaceAssetReference)
+    T = TypeVar("T", Job, Model, Environment, Component, Datastore, WorkspaceModelReference)
 
     def create_or_update(
         self,
@@ -781,7 +781,7 @@ class MLClient:
         :param entity: The resource to create or update.
         :type entity: typing.Union[~azure.ai.ml.entities.Job
             , ~azure.ai.ml.entities.Model, ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component
-            , ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceAssetReference]
+            , ~azure.ai.ml.entities.Datastore, ~azure.ai.ml.entities.WorkspaceModelReference]
         :return: The created or updated resource.
         :rtype: typing.Union[~azure.ai.ml.entities.Job, ~azure.ai.ml.entities.Model
             , ~azure.ai.ml.entities.Environment, ~azure.ai.ml.entities.Component, ~azure.ai.ml.entities.Datastore]
@@ -846,8 +846,8 @@ def _(entity: Model, operations):
     return operations[AzureMLResourceType.MODEL].create_or_update(entity)
 
 
-@_create_or_update.register(WorkspaceAssetReference)
-def _(entity: WorkspaceAssetReference, operations):
+@_create_or_update.register(WorkspaceModelReference)
+def _(entity: WorkspaceModelReference, operations):
     module_logger.debug("Promoting model to registry")
     return operations[AzureMLResourceType.MODEL].create_or_update(entity)
 
@@ -858,8 +858,8 @@ def _(entity: Environment, operations):
     return operations[AzureMLResourceType.ENVIRONMENT].create_or_update(entity)
 
 
-@_create_or_update.register(WorkspaceAssetReference)
-def _(entity: WorkspaceAssetReference, operations):
+@_create_or_update.register(WorkspaceModelReference)
+def _(entity: WorkspaceModelReference, operations):
     module_logger.debug("Promoting environment to registry")
     return operations[AzureMLResourceType.ENVIRONMENT].create_or_update(entity)
 
