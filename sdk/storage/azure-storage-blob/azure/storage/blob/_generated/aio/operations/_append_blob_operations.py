@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -15,7 +14,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
-    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -33,10 +31,6 @@ from ...operations._append_blob_operations import (
     build_seal_request,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -69,7 +63,7 @@ class AppendBlobOperations:
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -129,19 +123,14 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type: Literal["AppendBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "AppendBlob"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -214,9 +203,9 @@ class AppendBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -251,7 +240,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create.metadata = {"url": "{url}/{containerName}/{blob}"}
+    create.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def append_block(  # pylint: disable=inconsistent-return-statements
@@ -311,20 +300,15 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "appendblock"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _max_size = None
@@ -385,9 +369,9 @@ class AppendBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -430,7 +414,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block.metadata = {"url": "{url}/{containerName}/{blob}"}
+    append_block.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def append_block_from_url(  # pylint: disable=inconsistent-return-statements
@@ -506,19 +490,14 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["appendblock"] = kwargs.pop("comp", _params.pop("comp", "appendblock"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "appendblock"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -593,9 +572,9 @@ class AppendBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -635,7 +614,7 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    append_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}
+    append_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def seal(  # pylint: disable=inconsistent-return-statements
@@ -674,19 +653,14 @@ class AppendBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["seal"] = kwargs.pop("comp", _params.pop("comp", "seal"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "seal"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _if_modified_since = None
@@ -721,9 +695,9 @@ class AppendBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -748,4 +722,4 @@ class AppendBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    seal.metadata = {"url": "{url}/{containerName}/{blob}"}
+    seal.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore

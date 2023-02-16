@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -15,7 +14,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
-    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -35,10 +33,6 @@ from ...operations._block_blob_operations import (
     build_upload_request,
 )
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
@@ -70,11 +64,11 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
         metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, _models.AccessTierOptional]] = None,
+        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
         transactional_content_crc64: Optional[bytes] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
@@ -151,20 +145,15 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -243,9 +232,9 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -280,7 +269,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    upload.metadata = {"url": "{url}/{containerName}/{blob}"}
+    upload.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def put_blob_from_url(  # pylint: disable=inconsistent-return-statements
@@ -290,13 +279,13 @@ class BlockBlobOperations:
         timeout: Optional[int] = None,
         transactional_content_md5: Optional[bytes] = None,
         metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, _models.AccessTierOptional]] = None,
+        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         source_content_md5: Optional[bytes] = None,
         blob_tags_string: Optional[str] = None,
         copy_source_blob_properties: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
-        copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+        copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         cpk_info: Optional[_models.CpkInfo] = None,
@@ -380,19 +369,14 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        blob_type: Literal["BlockBlob"] = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        blob_type = kwargs.pop("blob_type", _headers.pop("x-ms-blob-type", "BlockBlob"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _blob_content_type = None
         _blob_content_encoding = None
@@ -485,9 +469,9 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -522,7 +506,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    put_blob_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}
+    put_blob_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def stage_block(  # pylint: disable=inconsistent-return-statements
@@ -578,20 +562,15 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -630,9 +609,9 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -667,7 +646,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block.metadata = {"url": "{url}/{containerName}/{blob}"}
+    stage_block.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def stage_block_from_url(  # pylint: disable=inconsistent-return-statements
@@ -735,19 +714,14 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["block"] = kwargs.pop("comp", _params.pop("comp", "block"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "block"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -799,9 +773,9 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -836,7 +810,7 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    stage_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}
+    stage_block_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def commit_block_list(  # pylint: disable=inconsistent-return-statements
@@ -846,11 +820,11 @@ class BlockBlobOperations:
         transactional_content_md5: Optional[bytes] = None,
         transactional_content_crc64: Optional[bytes] = None,
         metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, _models.AccessTierOptional]] = None,
+        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
         blob_http_headers: Optional[_models.BlobHTTPHeaders] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -925,20 +899,15 @@ class BlockBlobOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _blob_cache_control = None
         _blob_content_type = None
@@ -1016,9 +985,9 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1056,13 +1025,13 @@ class BlockBlobOperations:
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    commit_block_list.metadata = {"url": "{url}/{containerName}/{blob}"}
+    commit_block_list.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace_async
     async def get_block_list(
         self,
         snapshot: Optional[str] = None,
-        list_type: Union[str, _models.BlockListType] = "committed",
+        list_type: Union[str, "_models.BlockListType"] = "committed",
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -1103,19 +1072,14 @@ class BlockBlobOperations:
         :rtype: ~azure.storage.blob.models.BlockList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["blocklist"] = kwargs.pop("comp", _params.pop("comp", "blocklist"))
-        cls: ClsType[_models.BlockList] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "blocklist"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlockList]
 
         _lease_id = None
         _if_tags = None
@@ -1139,9 +1103,9 @@ class BlockBlobOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1173,4 +1137,4 @@ class BlockBlobOperations:
 
         return deserialized
 
-    get_block_list.metadata = {"url": "{url}/{containerName}/{blob}"}
+    get_block_list.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore

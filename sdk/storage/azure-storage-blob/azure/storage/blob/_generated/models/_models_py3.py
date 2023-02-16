@@ -13,14 +13,13 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -42,13 +41,8 @@ class AccessPolicy(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        start: Optional[str] = None,
-        expiry: Optional[str] = None,
-        permission: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        self, *, start: Optional[str] = None, expiry: Optional[str] = None, permission: Optional[str] = None, **kwargs
+    ):
         """
         :keyword start: the date-time the policy is active.
         :paramtype start: str
@@ -83,7 +77,7 @@ class AppendPositionAccessConditions(_serialization.Model):
         "append_position": {"key": "appendPosition", "type": "int"},
     }
 
-    def __init__(self, *, max_size: Optional[int] = None, append_position: Optional[int] = None, **kwargs: Any) -> None:
+    def __init__(self, *, max_size: Optional[int] = None, append_position: Optional[int] = None, **kwargs):
         """
         :keyword max_size: Optional conditional header. The max length in bytes permitted for the
          append blob. If the Append Block operation would cause the blob to exceed that limit or if the
@@ -123,7 +117,7 @@ class ArrowConfiguration(_serialization.Model):
     }
     _xml_map = {"name": "ArrowConfiguration"}
 
-    def __init__(self, *, schema: List["_models.ArrowField"], **kwargs: Any) -> None:
+    def __init__(self, *, schema: List["_models.ArrowField"], **kwargs):
         """
         :keyword schema: Required.
         :paramtype schema: list[~azure.storage.blob.models.ArrowField]
@@ -166,8 +160,8 @@ class ArrowField(_serialization.Model):
         name: Optional[str] = None,
         precision: Optional[int] = None,
         scale: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword type: Required.
         :paramtype type: str
@@ -203,7 +197,7 @@ class BlobFlatListSegment(_serialization.Model):
     }
     _xml_map = {"name": "Blobs"}
 
-    def __init__(self, *, blob_items: List["_models.BlobItemInternal"], **kwargs: Any) -> None:
+    def __init__(self, *, blob_items: List["_models.BlobItemInternal"], **kwargs):
         """
         :keyword blob_items: Required.
         :paramtype blob_items: list[~azure.storage.blob.models.BlobItemInternal]
@@ -238,8 +232,8 @@ class BlobHierarchyListSegment(_serialization.Model):
         *,
         blob_items: List["_models.BlobItemInternal"],
         blob_prefixes: Optional[List["_models.BlobPrefix"]] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword blob_prefixes:
         :paramtype blob_prefixes: list[~azure.storage.blob.models.BlobPrefix]
@@ -291,8 +285,8 @@ class BlobHTTPHeaders(_serialization.Model):
         blob_content_encoding: Optional[str] = None,
         blob_content_language: Optional[str] = None,
         blob_content_disposition: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword blob_cache_control: Optional. Sets the blob's cache control. If specified, this
          property is stored with the blob and returned with a read request.
@@ -382,8 +376,8 @@ class BlobItemInternal(_serialization.Model):
         blob_tags: Optional["_models.BlobTags"] = None,
         has_versions_only: Optional[bool] = None,
         object_replication_metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword name: Required.
         :paramtype name: ~azure.storage.blob.models.BlobName
@@ -436,8 +430,8 @@ class BlobMetadata(_serialization.Model):
     _xml_map = {"name": "Metadata"}
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, str]] = None, encrypted: Optional[str] = None, **kwargs: Any
-    ) -> None:
+        self, *, additional_properties: Optional[Dict[str, str]] = None, encrypted: Optional[str] = None, **kwargs
+    ):
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -464,7 +458,7 @@ class BlobName(_serialization.Model):
         "content": {"key": "content", "type": "str", "xml": {"text": True}},
     }
 
-    def __init__(self, *, encoded: Optional[bool] = None, content: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, encoded: Optional[bool] = None, content: Optional[str] = None, **kwargs):
         """
         :keyword encoded: Indicates if the blob name is encoded.
         :paramtype encoded: bool
@@ -493,7 +487,7 @@ class BlobPrefix(_serialization.Model):
         "name": {"key": "Name", "type": "BlobName"},
     }
 
-    def __init__(self, *, name: "_models.BlobName", **kwargs: Any) -> None:
+    def __init__(self, *, name: "_models.BlobName", **kwargs):
         """
         :keyword name: Required.
         :paramtype name: ~azure.storage.blob.models.BlobName
@@ -686,8 +680,8 @@ class BlobPropertiesInternal(_serialization.Model):  # pylint: disable=too-many-
         immutability_policy_expires_on: Optional[datetime.datetime] = None,
         immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword creation_time:
         :paramtype creation_time: ~datetime.datetime
@@ -841,7 +835,7 @@ class BlobTag(_serialization.Model):
     }
     _xml_map = {"name": "Tag"}
 
-    def __init__(self, *, key: str, value: str, **kwargs: Any) -> None:
+    def __init__(self, *, key: str, value: str, **kwargs):
         """
         :keyword key: Required.
         :paramtype key: str
@@ -875,7 +869,7 @@ class BlobTags(_serialization.Model):
     }
     _xml_map = {"name": "Tags"}
 
-    def __init__(self, *, blob_tag_set: List["_models.BlobTag"], **kwargs: Any) -> None:
+    def __init__(self, *, blob_tag_set: List["_models.BlobTag"], **kwargs):
         """
         :keyword blob_tag_set: Required.
         :paramtype blob_tag_set: list[~azure.storage.blob.models.BlobTag]
@@ -905,7 +899,7 @@ class Block(_serialization.Model):
         "size": {"key": "Size", "type": "int"},
     }
 
-    def __init__(self, *, name: str, size: int, **kwargs: Any) -> None:
+    def __init__(self, *, name: str, size: int, **kwargs):
         """
         :keyword name: The base64 encoded block ID. Required.
         :paramtype name: str
@@ -936,8 +930,8 @@ class BlockList(_serialization.Model):
         *,
         committed_blocks: Optional[List["_models.Block"]] = None,
         uncommitted_blocks: Optional[List["_models.Block"]] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword committed_blocks:
         :paramtype committed_blocks: list[~azure.storage.blob.models.Block]
@@ -973,8 +967,8 @@ class BlockLookupList(_serialization.Model):
         committed: Optional[List[str]] = None,
         uncommitted: Optional[List[str]] = None,
         latest: Optional[List[str]] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword committed:
         :paramtype committed: list[str]
@@ -1011,7 +1005,7 @@ class ClearRange(_serialization.Model):
     }
     _xml_map = {"name": "ClearRange"}
 
-    def __init__(self, *, start: int, end: int, **kwargs: Any) -> None:
+    def __init__(self, *, start: int, end: int, **kwargs):
         """
         :keyword start: Required.
         :paramtype start: int
@@ -1045,8 +1039,8 @@ class ContainerCpkScopeInfo(_serialization.Model):
         *,
         default_encryption_scope: Optional[str] = None,
         prevent_encryption_scope_override: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword default_encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the
          default encryption scope to set on the container and use for all future writes.
@@ -1100,8 +1094,8 @@ class ContainerItem(_serialization.Model):
         deleted: Optional[bool] = None,
         version: Optional[str] = None,
         metadata: Optional[Dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword name: Required.
         :paramtype name: str
@@ -1197,8 +1191,8 @@ class ContainerProperties(_serialization.Model):  # pylint: disable=too-many-ins
         deleted_time: Optional[datetime.datetime] = None,
         remaining_retention_days: Optional[int] = None,
         is_immutable_storage_with_versioning_enabled: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword last_modified: Required.
         :paramtype last_modified: ~datetime.datetime
@@ -1246,10 +1240,7 @@ class ContainerProperties(_serialization.Model):  # pylint: disable=too-many-ins
 
 
 class CorsRule(_serialization.Model):
-    """CORS is an HTTP feature that enables a web application running under one domain to access
-    resources in another domain. Web browsers implement a security restriction known as same-origin
-    policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
-    way to allow one domain (the origin domain) to call APIs in another domain.
+    """CORS is an HTTP feature that enables a web application running under one domain to access resources in another domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to call APIs in another domain.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1297,8 +1288,8 @@ class CorsRule(_serialization.Model):
         allowed_headers: str,
         exposed_headers: str,
         max_age_in_seconds: int,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword allowed_origins: The origin domains that are permitted to make a request against the
          storage service via CORS. The origin domain is the domain from which the request originates.
@@ -1355,8 +1346,8 @@ class CpkInfo(_serialization.Model):
         encryption_key: Optional[str] = None,
         encryption_key_sha256: Optional[str] = None,
         encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword encryption_key: Optional. Specifies the encryption key to use to encrypt the data
          provided in the request. If not specified, encryption is performed with the root account
@@ -1390,7 +1381,7 @@ class CpkScopeInfo(_serialization.Model):
         "encryption_scope": {"key": "encryptionScope", "type": "str"},
     }
 
-    def __init__(self, *, encryption_scope: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, encryption_scope: Optional[str] = None, **kwargs):
         """
         :keyword encryption_scope: Optional. Version 2019-07-07 and later.  Specifies the name of the
          encryption scope to use to encrypt the data provided in the request. If not specified,
@@ -1403,8 +1394,7 @@ class CpkScopeInfo(_serialization.Model):
 
 
 class DelimitedTextConfiguration(_serialization.Model):
-    """Groups the settings used for interpreting the blob data if the blob is delimited text
-    formatted.
+    """Groups the settings used for interpreting the blob data if the blob is delimited text formatted.
 
     :ivar column_separator: The string used to separate columns.
     :vartype column_separator: str
@@ -1435,8 +1425,8 @@ class DelimitedTextConfiguration(_serialization.Model):
         record_separator: Optional[str] = None,
         escape_char: Optional[str] = None,
         headers_present: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword column_separator: The string used to separate columns.
         :paramtype column_separator: str
@@ -1496,8 +1486,8 @@ class FilterBlobItem(_serialization.Model):
         tags: Optional["_models.BlobTags"] = None,
         version_id: Optional[str] = None,
         is_current_version: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword name: Required.
         :paramtype name: str
@@ -1558,8 +1548,8 @@ class FilterBlobSegment(_serialization.Model):
         where: str,
         blobs: List["_models.FilterBlobItem"],
         next_marker: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -1602,12 +1592,8 @@ class GeoReplication(_serialization.Model):
     }
 
     def __init__(
-        self,
-        *,
-        status: Union[str, "_models.GeoReplicationStatusType"],
-        last_sync_time: datetime.datetime,
-        **kwargs: Any
-    ) -> None:
+        self, *, status: Union[str, "_models.GeoReplicationStatusType"], last_sync_time: datetime.datetime, **kwargs
+    ):
         """
         :keyword status: The status of the secondary location. Required. Known values are: "live",
          "bootstrap", and "unavailable".
@@ -1634,7 +1620,7 @@ class JsonTextConfiguration(_serialization.Model):
     }
     _xml_map = {"name": "JsonTextConfiguration"}
 
-    def __init__(self, *, record_separator: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, record_separator: Optional[str] = None, **kwargs):
         """
         :keyword record_separator: The string used to separate records.
         :paramtype record_separator: str
@@ -1664,7 +1650,7 @@ class KeyInfo(_serialization.Model):
         "expiry": {"key": "Expiry", "type": "str"},
     }
 
-    def __init__(self, *, start: str, expiry: str, **kwargs: Any) -> None:
+    def __init__(self, *, start: str, expiry: str, **kwargs):
         """
         :keyword start: The date-time the key is active in ISO 8601 UTC time. Required.
         :paramtype start: str
@@ -1688,7 +1674,7 @@ class LeaseAccessConditions(_serialization.Model):
         "lease_id": {"key": "leaseId", "type": "str"},
     }
 
-    def __init__(self, *, lease_id: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, lease_id: Optional[str] = None, **kwargs):
         """
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID.
@@ -1746,8 +1732,8 @@ class ListBlobsFlatSegmentResponse(_serialization.Model):
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
         next_marker: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -1826,8 +1812,8 @@ class ListBlobsHierarchySegmentResponse(_serialization.Model):
         max_results: Optional[int] = None,
         delimiter: Optional[str] = None,
         next_marker: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -1904,8 +1890,8 @@ class ListContainersSegmentResponse(_serialization.Model):
         marker: Optional[str] = None,
         max_results: Optional[int] = None,
         next_marker: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword service_endpoint: Required.
         :paramtype service_endpoint: str
@@ -1971,8 +1957,8 @@ class Logging(_serialization.Model):
         read: bool,
         write: bool,
         retention_policy: "_models.RetentionPolicy",
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword version: The version of Storage Analytics to configure. Required.
         :paramtype version: str
@@ -2029,8 +2015,8 @@ class Metrics(_serialization.Model):
         version: Optional[str] = None,
         include_apis: Optional[bool] = None,
         retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword version: The version of Storage Analytics to configure.
         :paramtype version: str
@@ -2084,8 +2070,8 @@ class ModifiedAccessConditions(_serialization.Model):
         if_match: Optional[str] = None,
         if_none_match: Optional[str] = None,
         if_tags: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
          modified since the specified date/time.
@@ -2133,8 +2119,8 @@ class PageList(_serialization.Model):
         page_range: Optional[List["_models.PageRange"]] = None,
         clear_range: Optional[List["_models.ClearRange"]] = None,
         next_marker: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword page_range:
         :paramtype page_range: list[~azure.storage.blob.models.PageRange]
@@ -2171,7 +2157,7 @@ class PageRange(_serialization.Model):
     }
     _xml_map = {"name": "PageRange"}
 
-    def __init__(self, *, start: int, end: int, **kwargs: Any) -> None:
+    def __init__(self, *, start: int, end: int, **kwargs):
         """
         :keyword start: Required.
         :paramtype start: int
@@ -2223,8 +2209,8 @@ class QueryFormat(_serialization.Model):
         json_text_configuration: Optional["_models.JsonTextConfiguration"] = None,
         arrow_configuration: Optional["_models.ArrowConfiguration"] = None,
         parquet_text_configuration: Optional[JSON] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword type: The quick query format type. Required. Known values are: "delimited", "json",
          "arrow", and "parquet".
@@ -2288,8 +2274,8 @@ class QueryRequest(_serialization.Model):
         expression: str,
         input_serialization: Optional["_models.QuerySerialization"] = None,
         output_serialization: Optional["_models.QuerySerialization"] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword expression: The query expression in SQL. The maximum size of the query expression is
          256KiB. Required.
@@ -2322,7 +2308,7 @@ class QuerySerialization(_serialization.Model):
         "format": {"key": "Format", "type": "QueryFormat"},
     }
 
-    def __init__(self, *, format: "_models.QueryFormat", **kwargs: Any) -> None:
+    def __init__(self, *, format: "_models.QueryFormat", **kwargs):
         """
         :keyword format: Required.
         :paramtype format: ~azure.storage.blob.models.QueryFormat
@@ -2359,8 +2345,8 @@ class RetentionPolicy(_serialization.Model):
     }
 
     def __init__(
-        self, *, enabled: bool, days: Optional[int] = None, allow_permanent_delete: Optional[bool] = None, **kwargs: Any
-    ) -> None:
+        self, *, enabled: bool, days: Optional[int] = None, allow_permanent_delete: Optional[bool] = None, **kwargs
+    ):
         """
         :keyword enabled: Indicates whether a retention policy is enabled for the storage service.
          Required.
@@ -2404,8 +2390,8 @@ class SequenceNumberAccessConditions(_serialization.Model):
         if_sequence_number_less_than_or_equal_to: Optional[int] = None,
         if_sequence_number_less_than: Optional[int] = None,
         if_sequence_number_equal_to: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword if_sequence_number_less_than_or_equal_to: Specify this header value to operate only on
          a blob if it has a sequence number less than or equal to the specified.
@@ -2449,8 +2435,8 @@ class SignedIdentifier(_serialization.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         access_policy: Optional["_models.AccessPolicy"] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword id: a unique id. Required.
         :paramtype id: str
@@ -2497,8 +2483,8 @@ class SourceModifiedAccessConditions(_serialization.Model):
         source_if_match: Optional[str] = None,
         source_if_none_match: Optional[str] = None,
         source_if_tags: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
          has been modified since the specified date/time.
@@ -2556,8 +2542,8 @@ class StaticWebsite(_serialization.Model):
         index_document: Optional[str] = None,
         error_document404_path: Optional[str] = None,
         default_index_document_path: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword enabled: Indicates whether this account is hosting a static website. Required.
         :paramtype enabled: bool
@@ -2586,7 +2572,7 @@ class StorageError(_serialization.Model):
         "message": {"key": "Message", "type": "str"},
     }
 
-    def __init__(self, *, message: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, message: Optional[str] = None, **kwargs):
         """
         :keyword message:
         :paramtype message: str
@@ -2639,8 +2625,8 @@ class StorageServiceProperties(_serialization.Model):
         default_service_version: Optional[str] = None,
         delete_retention_policy: Optional["_models.RetentionPolicy"] = None,
         static_website: Optional["_models.StaticWebsite"] = None,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword logging: Azure Analytics Logging settings.
         :paramtype logging: ~azure.storage.blob.models.Logging
@@ -2683,7 +2669,7 @@ class StorageServiceStats(_serialization.Model):
         "geo_replication": {"key": "GeoReplication", "type": "GeoReplication"},
     }
 
-    def __init__(self, *, geo_replication: Optional["_models.GeoReplication"] = None, **kwargs: Any) -> None:
+    def __init__(self, *, geo_replication: Optional["_models.GeoReplication"] = None, **kwargs):
         """
         :keyword geo_replication: Geo-Replication information for the Secondary Storage Service.
         :paramtype geo_replication: ~azure.storage.blob.models.GeoReplication
@@ -2743,8 +2729,8 @@ class UserDelegationKey(_serialization.Model):
         signed_service: str,
         signed_version: str,
         value: str,
-        **kwargs: Any
-    ) -> None:
+        **kwargs
+    ):
         """
         :keyword signed_oid: The Azure Active Directory object ID in GUID format. Required.
         :paramtype signed_oid: str

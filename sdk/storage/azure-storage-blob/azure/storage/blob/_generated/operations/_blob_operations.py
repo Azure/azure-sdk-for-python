@@ -7,7 +7,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import datetime
-import sys
 from typing import Any, Callable, Dict, Iterator, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
@@ -15,7 +14,6 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
-    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -28,10 +26,6 @@ from .. import models as _models
 from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
 
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -51,7 +45,7 @@ def build_download_request(
     range_get_content_crc64: Optional[bool] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
@@ -63,7 +57,7 @@ def build_download_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -72,7 +66,7 @@ def build_download_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if snapshot is not None:
@@ -130,7 +124,7 @@ def build_get_properties_request(
     lease_id: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
@@ -142,7 +136,7 @@ def build_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -151,7 +145,7 @@ def build_get_properties_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if snapshot is not None:
@@ -197,20 +191,20 @@ def build_delete_request(
     version_id: Optional[str] = None,
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
-    delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
+    delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_tags: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
-    blob_delete_type: Literal["Permanent"] = "Permanent",
+    blob_delete_type: str = "Permanent",
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -219,7 +213,7 @@ def build_delete_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if snapshot is not None:
@@ -260,8 +254,8 @@ def build_undelete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "undelete"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -270,7 +264,7 @@ def build_undelete_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -289,7 +283,7 @@ def build_undelete_request(
 def build_set_expiry_request(
     url: str,
     *,
-    expiry_options: Union[str, _models.BlobExpiryOptions],
+    expiry_options: Union[str, "_models.BlobExpiryOptions"],
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     expires_on: Optional[str] = None,
@@ -298,8 +292,8 @@ def build_set_expiry_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "expiry"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -308,7 +302,7 @@ def build_set_expiry_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -349,8 +343,8 @@ def build_set_http_headers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -359,7 +353,7 @@ def build_set_http_headers_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -412,14 +406,14 @@ def build_set_immutability_policy_request(
     request_id_parameter: Optional[str] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     immutability_policy_expiry: Optional[datetime.datetime] = None,
-    immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -428,7 +422,7 @@ def build_set_immutability_policy_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -460,8 +454,8 @@ def build_delete_immutability_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -470,7 +464,7 @@ def build_delete_immutability_policy_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -497,8 +491,8 @@ def build_set_legal_hold_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["legalhold"] = kwargs.pop("comp", _params.pop("comp", "legalhold"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "legalhold"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -507,7 +501,7 @@ def build_set_legal_hold_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -532,7 +526,7 @@ def build_set_metadata_request(
     lease_id: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
     encryption_scope: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -545,8 +539,8 @@ def build_set_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -555,7 +549,7 @@ def build_set_metadata_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -612,9 +606,9 @@ def build_acquire_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -623,7 +617,7 @@ def build_acquire_lease_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -670,9 +664,9 @@ def build_release_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -681,7 +675,7 @@ def build_release_lease_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -725,9 +719,9 @@ def build_renew_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -736,7 +730,7 @@ def build_renew_lease_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -781,9 +775,9 @@ def build_change_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -792,7 +786,7 @@ def build_change_lease_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -837,9 +831,9 @@ def build_break_lease_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-    action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+    action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -848,7 +842,7 @@ def build_break_lease_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -884,7 +878,7 @@ def build_create_snapshot_request(
     metadata: Optional[Dict[str, str]] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
     encryption_scope: Optional[str] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
@@ -898,8 +892,8 @@ def build_create_snapshot_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "snapshot"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -908,7 +902,7 @@ def build_create_snapshot_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -954,8 +948,8 @@ def build_start_copy_from_url_request(
     copy_source: str,
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
-    tier: Optional[Union[str, _models.AccessTierOptional]] = None,
-    rehydrate_priority: Optional[Union[str, _models.RehydratePriority]] = None,
+    tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+    rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
     source_if_modified_since: Optional[datetime.datetime] = None,
     source_if_unmodified_since: Optional[datetime.datetime] = None,
     source_if_match: Optional[str] = None,
@@ -971,14 +965,14 @@ def build_start_copy_from_url_request(
     blob_tags_string: Optional[str] = None,
     seal_blob: Optional[bool] = None,
     immutability_policy_expiry: Optional[datetime.datetime] = None,
-    immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
     legal_hold: Optional[bool] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -987,7 +981,7 @@ def build_start_copy_from_url_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
@@ -1055,7 +1049,7 @@ def build_copy_from_url_request(
     copy_source: str,
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
-    tier: Optional[Union[str, _models.AccessTierOptional]] = None,
+    tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
     source_if_modified_since: Optional[datetime.datetime] = None,
     source_if_unmodified_since: Optional[datetime.datetime] = None,
     source_if_match: Optional[str] = None,
@@ -1070,18 +1064,18 @@ def build_copy_from_url_request(
     source_content_md5: Optional[bytes] = None,
     blob_tags_string: Optional[str] = None,
     immutability_policy_expiry: Optional[datetime.datetime] = None,
-    immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+    immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
     legal_hold: Optional[bool] = None,
     copy_source_authorization: Optional[str] = None,
     encryption_scope: Optional[str] = None,
-    copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+    copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    x_ms_requires_sync: Literal["true"] = kwargs.pop("x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    x_ms_requires_sync = kwargs.pop("x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1090,7 +1084,7 @@ def build_copy_from_url_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     if timeout is not None:
@@ -1169,11 +1163,11 @@ def build_abort_copy_from_url_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["copy"] = kwargs.pop("comp", _params.pop("comp", "copy"))
-    copy_action_abort_constant: Literal["abort"] = kwargs.pop(
+    comp = kwargs.pop("comp", _params.pop("comp", "copy"))  # type: str
+    copy_action_abort_constant = kwargs.pop(
         "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
-    )
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    )  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1182,7 +1176,7 @@ def build_abort_copy_from_url_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -1205,11 +1199,11 @@ def build_abort_copy_from_url_request(
 def build_set_tier_request(
     url: str,
     *,
-    tier: Union[str, _models.AccessTierRequired],
+    tier: Union[str, "_models.AccessTierRequired"],
     snapshot: Optional[str] = None,
     version_id: Optional[str] = None,
     timeout: Optional[int] = None,
-    rehydrate_priority: Optional[Union[str, _models.RehydratePriority]] = None,
+    rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
     request_id_parameter: Optional[str] = None,
     lease_id: Optional[str] = None,
     if_tags: Optional[str] = None,
@@ -1218,8 +1212,8 @@ def build_set_tier_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["tier"] = kwargs.pop("comp", _params.pop("comp", "tier"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "tier"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1228,7 +1222,7 @@ def build_set_tier_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -1259,9 +1253,9 @@ def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
-    comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    restype = kwargs.pop("restype", _params.pop("restype", "account"))  # type: str
+    comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1270,7 +1264,7 @@ def build_get_account_info_request(url: str, **kwargs: Any) -> HttpRequest:
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["restype"] = _SERIALIZER.query("restype", restype, "str")
@@ -1291,7 +1285,7 @@ def build_query_request(
     lease_id: Optional[str] = None,
     encryption_key: Optional[str] = None,
     encryption_key_sha256: Optional[str] = None,
-    encryption_algorithm: Optional[Union[str, _models.EncryptionAlgorithmType]] = None,
+    encryption_algorithm: Optional[Union[str, "_models.EncryptionAlgorithmType"]] = None,
     if_modified_since: Optional[datetime.datetime] = None,
     if_unmodified_since: Optional[datetime.datetime] = None,
     if_match: Optional[str] = None,
@@ -1304,9 +1298,9 @@ def build_query_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["query"] = kwargs.pop("comp", _params.pop("comp", "query"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "query"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1315,7 +1309,7 @@ def build_query_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -1369,8 +1363,8 @@ def build_get_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "tags"))  # type: str
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1379,7 +1373,7 @@ def build_get_tags_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -1419,9 +1413,9 @@ def build_set_tags_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    version: Literal["2021-12-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))
+    comp = kwargs.pop("comp", _params.pop("comp", "tags"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    version = kwargs.pop("version", _headers.pop("x-ms-version", "2021-12-02"))  # type: str
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -1430,7 +1424,7 @@ def build_set_tags_request(
         "url": _SERIALIZER.url("url", url, "str", skip_quote=True),
     }
 
-    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
+    _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
     _params["comp"] = _SERIALIZER.query("comp", comp, "str")
@@ -1539,18 +1533,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[Iterator[bytes]]
 
         _lease_id = None
         _encryption_key = None
@@ -1598,9 +1587,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=True, **kwargs
         )
 
@@ -1778,11 +1767,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return deserialized  # type: ignore
+        return deserialized
 
-    download.metadata = {"url": "{url}/{containerName}/{blob}"}
+    download.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def get_properties(  # pylint: disable=inconsistent-return-statements
@@ -1829,18 +1818,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -1885,9 +1869,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1988,7 +1972,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_properties.metadata = {"url": "{url}/{containerName}/{blob}"}
+    get_properties.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -1996,9 +1980,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
         timeout: Optional[int] = None,
-        delete_snapshots: Optional[Union[str, _models.DeleteSnapshotsOptionType]] = None,
+        delete_snapshots: Optional[Union[str, "_models.DeleteSnapshotsOptionType"]] = None,
         request_id_parameter: Optional[str] = None,
-        blob_delete_type: Literal["Permanent"] = "Permanent",
+        blob_delete_type: str = "Permanent",
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
@@ -2053,18 +2037,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _if_modified_since = None
@@ -2101,9 +2080,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2125,7 +2104,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete.metadata = {"url": "{url}/{containerName}/{blob}"}
+    delete.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def undelete(  # pylint: disable=inconsistent-return-statements
@@ -2150,19 +2129,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["undelete"] = kwargs.pop("comp", _params.pop("comp", "undelete"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "undelete"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_undelete_request(
             url=self._config.url,
@@ -2175,9 +2149,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2199,12 +2173,12 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    undelete.metadata = {"url": "{url}/{containerName}/{blob}"}
+    undelete.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def set_expiry(  # pylint: disable=inconsistent-return-statements
         self,
-        expiry_options: Union[str, _models.BlobExpiryOptions],
+        expiry_options: Union[str, "_models.BlobExpiryOptions"],
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         expires_on: Optional[str] = None,
@@ -2234,19 +2208,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["expiry"] = kwargs.pop("comp", _params.pop("comp", "expiry"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "expiry"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_set_expiry_request(
             url=self._config.url,
@@ -2261,9 +2230,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2287,7 +2256,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_expiry.metadata = {"url": "{url}/{containerName}/{blob}"}
+    set_expiry.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def set_http_headers(  # pylint: disable=inconsistent-return-statements
@@ -2324,19 +2293,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _blob_cache_control = None
         _blob_content_type = None
@@ -2389,9 +2353,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2418,7 +2382,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_http_headers.metadata = {"url": "{url}/{containerName}/{blob}"}
+    set_http_headers.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def set_immutability_policy(  # pylint: disable=inconsistent-return-statements
@@ -2426,7 +2390,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         **kwargs: Any
     ) -> None:
@@ -2457,19 +2421,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_unmodified_since = None
         if modified_access_conditions is not None:
@@ -2489,9 +2448,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2519,7 +2478,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_immutability_policy.metadata = {"url": "{url}/{containerName}/{blob}"}
+    set_immutability_policy.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def delete_immutability_policy(  # pylint: disable=inconsistent-return-statements
@@ -2544,19 +2503,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["immutabilityPolicies"] = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "immutabilityPolicies"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_immutability_policy_request(
             url=self._config.url,
@@ -2569,9 +2523,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2593,7 +2547,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    delete_immutability_policy.metadata = {"url": "{url}/{containerName}/{blob}"}
+    delete_immutability_policy.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def set_legal_hold(  # pylint: disable=inconsistent-return-statements
@@ -2620,19 +2574,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["legalhold"] = kwargs.pop("comp", _params.pop("comp", "legalhold"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "legalhold"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_set_legal_hold_request(
             url=self._config.url,
@@ -2646,9 +2595,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2671,7 +2620,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_legal_hold.metadata = {"url": "{url}/{containerName}/{blob}"}
+    set_legal_hold.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def set_metadata(  # pylint: disable=inconsistent-return-statements
@@ -2721,19 +2670,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["metadata"] = kwargs.pop("comp", _params.pop("comp", "metadata"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "metadata"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _encryption_key = None
@@ -2782,9 +2726,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2818,7 +2762,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_metadata.metadata = {"url": "{url}/{containerName}/{blob}"}
+    set_metadata.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def acquire_lease(  # pylint: disable=inconsistent-return-statements
@@ -2863,20 +2807,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-        action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -2909,9 +2848,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2936,7 +2875,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    acquire_lease.metadata = {"url": "{url}/{containerName}/{blob}"}
+    acquire_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def release_lease(  # pylint: disable=inconsistent-return-statements
@@ -2974,20 +2913,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-        action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -3019,9 +2953,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3045,7 +2979,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    release_lease.metadata = {"url": "{url}/{containerName}/{blob}"}
+    release_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def renew_lease(  # pylint: disable=inconsistent-return-statements
@@ -3083,20 +3017,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-        action: Literal["renew"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "renew"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -3128,9 +3057,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3155,7 +3084,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    renew_lease.metadata = {"url": "{url}/{containerName}/{blob}"}
+    renew_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def change_lease(  # pylint: disable=inconsistent-return-statements
@@ -3198,20 +3127,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-        action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -3244,9 +3168,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3271,7 +3195,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    change_lease.metadata = {"url": "{url}/{containerName}/{blob}"}
+    change_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def break_lease(  # pylint: disable=inconsistent-return-statements
@@ -3315,20 +3239,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["lease"] = kwargs.pop("comp", _params.pop("comp", "lease"))
-        action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "lease"))  # type: str
+        action = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_modified_since = None
         _if_unmodified_since = None
@@ -3360,9 +3279,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3387,7 +3306,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    break_lease.metadata = {"url": "{url}/{containerName}/{blob}"}
+    break_lease.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def create_snapshot(  # pylint: disable=inconsistent-return-statements
@@ -3436,19 +3355,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["snapshot"] = kwargs.pop("comp", _params.pop("comp", "snapshot"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "snapshot"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _encryption_key = None
         _encryption_key_sha256 = None
@@ -3497,9 +3411,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3528,7 +3442,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    create_snapshot.metadata = {"url": "{url}/{containerName}/{blob}"}
+    create_snapshot.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def start_copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -3536,13 +3450,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         copy_source: str,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, _models.AccessTierOptional]] = None,
-        rehydrate_priority: Optional[Union[str, _models.RehydratePriority]] = None,
+        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
+        rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
         request_id_parameter: Optional[str] = None,
         blob_tags_string: Optional[str] = None,
         seal_blob: Optional[bool] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -3606,18 +3520,13 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _source_if_modified_since = None
         _source_if_unmodified_since = None
@@ -3675,9 +3584,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3704,7 +3613,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    start_copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}
+    start_copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -3712,15 +3621,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         copy_source: str,
         timeout: Optional[int] = None,
         metadata: Optional[Dict[str, str]] = None,
-        tier: Optional[Union[str, _models.AccessTierOptional]] = None,
+        tier: Optional[Union[str, "_models.AccessTierOptional"]] = None,
         request_id_parameter: Optional[str] = None,
         source_content_md5: Optional[bytes] = None,
         blob_tags_string: Optional[str] = None,
         immutability_policy_expiry: Optional[datetime.datetime] = None,
-        immutability_policy_mode: Optional[Union[str, _models.BlobImmutabilityPolicyMode]] = None,
+        immutability_policy_mode: Optional[Union[str, "_models.BlobImmutabilityPolicyMode"]] = None,
         legal_hold: Optional[bool] = None,
         copy_source_authorization: Optional[str] = None,
-        copy_source_tags: Optional[Union[str, _models.BlobCopySourceTags]] = None,
+        copy_source_tags: Optional[Union[str, "_models.BlobCopySourceTags"]] = None,
         source_modified_access_conditions: Optional[_models.SourceModifiedAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
@@ -3795,21 +3704,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        x_ms_requires_sync: Literal["true"] = kwargs.pop(
-            "x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        x_ms_requires_sync = kwargs.pop("x_ms_requires_sync", _headers.pop("x-ms-requires-sync", "true"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _source_if_modified_since = None
         _source_if_unmodified_since = None
@@ -3870,9 +3772,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3906,7 +3808,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}
+    copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def abort_copy_from_url(  # pylint: disable=inconsistent-return-statements
@@ -3945,22 +3847,17 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["copy"] = kwargs.pop("comp", _params.pop("comp", "copy"))
-        copy_action_abort_constant: Literal["abort"] = kwargs.pop(
+        comp = kwargs.pop("comp", _params.pop("comp", "copy"))  # type: str
+        copy_action_abort_constant = kwargs.pop(
             "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        )  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         if lease_access_conditions is not None:
@@ -3980,9 +3877,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4004,16 +3901,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    abort_copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}
+    abort_copy_from_url.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def set_tier(  # pylint: disable=inconsistent-return-statements
         self,
-        tier: Union[str, _models.AccessTierRequired],
+        tier: Union[str, "_models.AccessTierRequired"],
         snapshot: Optional[str] = None,
         version_id: Optional[str] = None,
         timeout: Optional[int] = None,
-        rehydrate_priority: Optional[Union[str, _models.RehydratePriority]] = None,
+        rehydrate_priority: Optional[Union[str, "_models.RehydratePriority"]] = None,
         request_id_parameter: Optional[str] = None,
         lease_access_conditions: Optional[_models.LeaseAccessConditions] = None,
         modified_access_conditions: Optional[_models.ModifiedAccessConditions] = None,
@@ -4063,19 +3960,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["tier"] = kwargs.pop("comp", _params.pop("comp", "tier"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "tier"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _lease_id = None
         _if_tags = None
@@ -4101,9 +3993,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4132,7 +4024,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tier.metadata = {"url": "{url}/{containerName}/{blob}"}
+    set_tier.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def get_account_info(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -4149,20 +4041,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype: Literal["account"] = kwargs.pop("restype", _params.pop("restype", "account"))
-        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        restype = kwargs.pop("restype", _params.pop("restype", "account"))  # type: str
+        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_get_account_info_request(
             url=self._config.url,
@@ -4174,9 +4061,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4200,7 +4087,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    get_account_info.metadata = {"url": "{url}/{containerName}/{blob}"}
+    get_account_info.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def query(
@@ -4248,20 +4135,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["query"] = kwargs.pop("comp", _params.pop("comp", "query"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "query"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Iterator[bytes]]
 
         _lease_id = None
         _encryption_key = None
@@ -4312,9 +4194,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=True, **kwargs
         )
 
@@ -4450,11 +4332,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             deserialized = response.stream_download(self._client._pipeline)
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)
 
-        return deserialized  # type: ignore
+        return deserialized
 
-    query.metadata = {"url": "{url}/{containerName}/{blob}"}
+    query.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def get_tags(
@@ -4500,19 +4382,14 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.storage.blob.models.BlobTags
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
-        cls: ClsType[_models.BlobTags] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "tags"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.BlobTags]
 
         _if_tags = None
         _lease_id = None
@@ -4536,9 +4413,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4564,7 +4441,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized
 
-    get_tags.metadata = {"url": "{url}/{containerName}/{blob}"}
+    get_tags.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
 
     @distributed_trace
     def set_tags(  # pylint: disable=inconsistent-return-statements
@@ -4614,20 +4491,15 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
+        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp: Literal["tags"] = kwargs.pop("comp", _params.pop("comp", "tags"))
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        comp = kwargs.pop("comp", _params.pop("comp", "tags"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _if_tags = None
         _lease_id = None
@@ -4658,9 +4530,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
+        request.url = self._client.format_url(request.url)  # type: ignore
 
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -4682,4 +4554,4 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         if cls:
             return cls(pipeline_response, None, response_headers)
 
-    set_tags.metadata = {"url": "{url}/{containerName}/{blob}"}
+    set_tags.metadata = {"url": "{url}/{containerName}/{blob}"}  # type: ignore
