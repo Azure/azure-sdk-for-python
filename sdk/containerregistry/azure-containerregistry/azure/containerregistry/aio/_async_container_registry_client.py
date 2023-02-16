@@ -657,7 +657,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity.aio import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
-            manifest_properties = ArtifactManifestProperties(can_delete=False, can_list=False, can_read=False, can_write=False)
+            manifest_properties = ArtifactManifestProperties(
+                can_delete=False, can_list=False, can_read=False, can_write=False
+            )
             async for artifact in client.list_manifest_properties("my_repository"):
                 received_properties = await client.update_manifest_properties(
                     "my_repository",
