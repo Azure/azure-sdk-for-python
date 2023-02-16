@@ -32,12 +32,12 @@ class AdaptiveApplicationControlIssue(str, Enum, metaclass=CaseInsensitiveEnumMe
 class AssessmentStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Programmatic code for the status of the assessment."""
 
-    #: The resource is healthy
     HEALTHY = "Healthy"
-    #: The resource has a security issue that needs to be addressed
+    """The resource is healthy"""
     UNHEALTHY = "Unhealthy"
-    #: Assessment for this resource did not happen
+    """The resource has a security issue that needs to be addressed"""
     NOT_APPLICABLE = "NotApplicable"
+    """Assessment for this resource did not happen"""
 
 
 class AssessmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,16 +45,16 @@ class AssessmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     based on custom Azure Policy definition.
     """
 
-    #: Microsoft Defender for Cloud managed assessments
     BUILT_IN = "BuiltIn"
-    #: User defined policies that are automatically ingested from Azure Policy to Microsoft Defender
-    #: for Cloud
+    """Microsoft Defender for Cloud managed assessments"""
     CUSTOM_POLICY = "CustomPolicy"
-    #: User assessments pushed directly by the user or other third party to Microsoft Defender for
-    #: Cloud
+    """User defined policies that are automatically ingested from Azure Policy to Microsoft Defender
+    #: for Cloud"""
     CUSTOMER_MANAGED = "CustomerManaged"
-    #: An assessment that was created by a verified 3rd party if the user connected it to ASC
+    """User assessments pushed directly by the user or other third party to Microsoft Defender for
+    #: Cloud"""
     VERIFIED_PARTNER = "VerifiedPartner"
+    """An assessment that was created by a verified 3rd party if the user connected it to ASC"""
 
 
 class Categories(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -87,10 +87,10 @@ class ConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ControlType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of security control (for example, BuiltIn)."""
 
-    #: Microsoft Defender for Cloud managed assessments
     BUILT_IN = "BuiltIn"
-    #: Non Microsoft Defender for Cloud managed assessments
+    """Microsoft Defender for Cloud managed assessments"""
     CUSTOM = "Custom"
+    """Non Microsoft Defender for Cloud managed assessments"""
 
 
 class Direction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -119,17 +119,17 @@ class EnforcementSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ExpandControlsEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ExpandControlsEnum."""
 
-    #: Add definition object for each control
     DEFINITION = "definition"
+    """Add definition object for each control"""
 
 
 class ExpandEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ExpandEnum."""
 
-    #: All links associated with an assessment
     LINKS = "links"
-    #: Assessment metadata
+    """All links associated with an assessment"""
     METADATA = "metadata"
+    """Assessment metadata"""
 
 
 class ExternalSecuritySolutionKindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -233,12 +233,12 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class Source(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The platform where the assessed resource resides."""
 
-    #: Resource is in Azure
     AZURE = "Azure"
-    #: Resource in an on premise machine connected to Azure cloud
+    """Resource is in Azure"""
     ON_PREMISE = "OnPremise"
-    #: SQL Resource in an on premise machine connected to Azure cloud
+    """Resource in an on premise machine connected to Azure cloud"""
     ON_PREMISE_SQL = "OnPremiseSql"
+    """SQL Resource in an on premise machine connected to Azure cloud"""
 
 
 class SourceSystem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
