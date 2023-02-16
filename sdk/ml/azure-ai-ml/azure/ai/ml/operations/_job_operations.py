@@ -312,7 +312,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     # @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
-    def begin_cancel(self, name: str) -> LROPoller[None]:
+    def begin_cancel(self, name: str, **kwargs) -> LROPoller[None]:
         """Cancel job resource.
 
         :param str name: Name of the job.
@@ -322,10 +322,9 @@ class JobOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[None]
         :raise: ResourceNotFoundError if can't find a job matching provided name.
         """
-        kwargs = self._kwargs
-        tags = kwargs.get("tags", None) if kwargs else None
+        tag = kwargs.get("tag", None) if kwargs else None
 
-        if not tags:
+        if not tag:
             return self._operation_2022_12_preview.begin_cancel(
                 id=name,
                 resource_group_name=self._operation_scope.resource_group_name,
@@ -335,7 +334,7 @@ class JobOperations(_ScopeDependentOperations):
 
         # Note: Below batch cancel is experimental and for private usage
         results = []
-        jobs = self.list(tags=tags)
+        jobs = self.list(tag=tag)
         # TODO: Do we need to show error message when no jobs is returned for the given tag?
         for job in jobs:
             result = self._operation_2022_12_preview.begin_cancel(
