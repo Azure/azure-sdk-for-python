@@ -601,6 +601,87 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 | Key Vault ([example][kv_tenant_id]) | Request access in a tenant that was discovered as part of an authentication challenge
 
 
+## Long-running operation (LRO) customization
+
+ APIs that can take longer to complete are often represented as long-running operations. azure-core provides a LROPoller (and AsyncLROPoller) protocols
+ that give a user an object to access the long-running operation and do things such as wait until it reaches a terminal state, register disinterest, or
+ provide a callback to do work on the final result when it is ready.
+
+ There are 3 common ways to customize the logic for our LROs.
+
+ 1) LROPoller/AsyncLROPoller
+    1) TODO when you would customize this (Public interface)
+ 2) LROBasePolling/AsyncLROBasePolling polling method
+    1) TODO when you would customize this (internal)
+ 3) LRO algorithm/strategies (OperationResourcePolling, LocationPolling, StatusCheckPolling)
+    - The service sends a custom header which contains the URL that should be polled against.
+    - The service has special logic for whether a final GET should be done or not.
+    - A non-standard status is returned by the service
+
+### LROPoller/AsyncLROPoller
+
+Example: 
+
+
+### LROBasePolling/AsyncLROBasePoling
+
+Example: 
+
+### LRO algorithm/strategies (OperationResourcePolling, LocationPolling, StatusCheckPolling)
+
+Example: A non-standard status is returned via the POST call - "ValidationFailed".
+
+Choose a polling algorithm that closely represents what you need to do or create your own that subclasses 
+`azure.core.polling.base_polling.LongRunningOperation` and implement the necessary methods.
+
+For our purposes, let's say that OperationResourcePolling closely resembles what the service does, but we
+need to account for the nonstandard status.
+
+```python
+class CustomOperationResourcePolling(OperationResourcePolling):
+    """Implements a operation resource polling, typically from Operation-Location.
+
+    :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
+    :keyword dict[str, any] lro_options: Additional options for LRO. For more information, see
+     https://aka.ms/azsdk/autorest/openapi/lro-options
+    """
+
+    def get_status(self, pipeline_response: "PipelineResponseType") -> str:
+        """Process the latest status update retrieved from an "Operation-Location" header.
+
+        :param azure.core.pipeline.PipelineResponse response: The response to extract the status.
+        :raises: BadResponse if response has no body, or body does not contain status.
+        """
+        response = pipeline_response.http_response
+        if _is_empty(response):
+            raise BadResponse("The response from long running operation does not contain a body.")
+
+        body = _as_json(response)
+        status = body.get("status")
+        if not status:
+            raise BadResponse("No status found in body")
+        if status.lower() == "validationfailed":
+            raise HttpResponseError(error=body["error"])
+        return status
+```
+
+And now, to plug into the client code:
+
+```python
+class ServiceClient:
+
+    def begin_upload(self, data: AnyStr) -> LROPoller[Upload]:
+        return self.begin_upload(
+            data,
+            polling=LROBasePolling(
+                lro_algorithms=[
+                    CustomOperationResourcePolling()
+                ]
+            ),
+            **kwargs
+        )
+```
+
 [cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
 [custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py
 [identity_github]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity
