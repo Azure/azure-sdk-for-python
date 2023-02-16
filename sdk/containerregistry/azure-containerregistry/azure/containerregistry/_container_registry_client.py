@@ -602,7 +602,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             from azure.identity import DefaultAzureCredential
             endpoint = os.environ["CONTAINERREGISTRY_ENDPOINT"]
             client = ContainerRegistryClient(endpoint, DefaultAzureCredential(), audience="my_audience")
-            manifest_properties = ArtifactManifestProperties(can_delete=False, can_list=False, can_read=False, can_write=False)
+            manifest_properties = ArtifactManifestProperties(
+                can_delete=False, can_list=False, can_read=False, can_write=False
+            )
             for artifact in client.list_manifest_properties("my_repository"):
                 received_properties = client.update_manifest_properties(
                     "my_repository",
@@ -610,7 +612,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     manifest_properties,
                 )
         """
-        pass
 
     @overload
     def update_manifest_properties(
@@ -655,7 +656,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     can_write=False,
                 )
         """
-        pass
 
     @distributed_trace
     def update_manifest_properties(
@@ -732,7 +732,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties,
             )
         """
-        pass
 
     @overload
     def update_tag_properties(
@@ -776,7 +775,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 can_write=False,
             )
         """
-        pass
 
     @distributed_trace
     def update_tag_properties(self, *args: Union[str, ArtifactTagProperties], **kwargs) -> ArtifactTagProperties:
@@ -827,7 +825,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
-        pass
 
     @overload
     def update_repository_properties(
@@ -852,7 +849,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
-        pass
 
     @distributed_trace
     def update_repository_properties(

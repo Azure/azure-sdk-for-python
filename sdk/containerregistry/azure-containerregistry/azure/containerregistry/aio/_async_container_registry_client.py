@@ -571,7 +571,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
-        ...
 
     @overload
     def update_repository_properties(
@@ -595,7 +594,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         :rtype: ~azure.containerregistry.RepositoryProperties
         :raises: ~azure.core.exceptions.ResourceNotFoundError
         """
-        ...
 
     @distributed_trace_async
     async def update_repository_properties(
@@ -667,7 +665,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     manifest_properties,
                 )
         """
-        ...
 
     @overload
     async def update_manifest_properties(
@@ -712,7 +709,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     can_write=False,
                 )
         """
-        ...
 
     @distributed_trace_async
     async def update_manifest_properties(
@@ -790,7 +786,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 tag_properties,
             )
         """
-        ...
 
     @overload
     async def update_tag_properties(
@@ -835,7 +830,6 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                 can_write=False
             )
         """
-        ...
 
     @distributed_trace_async
     async def update_tag_properties(
