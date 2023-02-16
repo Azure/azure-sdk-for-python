@@ -126,7 +126,7 @@ from ._workspace.diagnose import (
 from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
-from ._workspace.compute_runtime_dto import ComputeRuntimeDto
+from ._workspace.compute_runtime import ComputeRuntime
 from ._workspace.feature_store_settings import FeatureStoreSettings
 from ._feature_store.feature_store import FeatureStore
 
@@ -187,7 +187,7 @@ __all__ = [
     "Workspace",
     "WorkspaceKeys",
     "WorkspaceConnection",
-    "ComputeRuntimeDto",
+    "ComputeRuntime",
     "FeatureStoreSettings",
     "FeatureStore",
     "DiagnoseRequestProperties",

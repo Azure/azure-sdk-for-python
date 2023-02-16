@@ -7,7 +7,7 @@
 from typing import IO, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import Workspace as RestWorkspace
-from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntimeDto
+from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSettings, ComputeRuntime
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 
 
@@ -36,7 +36,7 @@ class FeatureStore(Workspace):
         **kwargs,
     ):
         feature_store_settings = FeatureStoreSettings(
-            compute_runtime=ComputeRuntimeDto(
+            compute_runtime=ComputeRuntime(
                 spark_runtime_version=spark_runtime_version
             ),
             offline_store_connection_name=offline_store_connection_name

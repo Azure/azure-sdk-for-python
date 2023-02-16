@@ -8,7 +8,7 @@ from azure.ai.ml._restclient.v2022_12_01_preview.models import ComputeRuntimeDto
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
-class ComputeRuntimeDto(RestTranslatableMixin):
+class ComputeRuntime(RestTranslatableMixin):
     def __init__(
         self,
         *,
@@ -28,9 +28,9 @@ class ComputeRuntimeDto(RestTranslatableMixin):
         pass
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: RestComputeRuntimeDto) -> "ComputeRuntimeDto":
+    def _from_rest_object(cls, rest_obj: RestComputeRuntimeDto) -> "ComputeRuntime":
         if not rest_obj:
             return None
-        return ComputeRuntimeDto(
+        return ComputeRuntime(
             spark_runtime_version=rest_obj.spark_runtime_version
         )

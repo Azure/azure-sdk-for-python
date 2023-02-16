@@ -6,14 +6,14 @@ from typing import Optional, Any
 
 from azure.ai.ml._restclient.v2022_12_01_preview.models import FeatureStoreSettings as RestFeatureStoreSettings
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from .compute_runtime_dto import ComputeRuntimeDto
+from .compute_runtime import ComputeRuntime
 
 
 class FeatureStoreSettings(RestTranslatableMixin):
     def __init__(
         self,
         *,
-        compute_runtime: ComputeRuntimeDto,
+        compute_runtime: ComputeRuntime,
         offline_store_connection_name: Optional[str] = None,
         **kwargs
     ):
@@ -28,7 +28,7 @@ class FeatureStoreSettings(RestTranslatableMixin):
 
     def _to_rest_object(self) -> RestFeatureStoreSettings:
         return RestFeatureStoreSettings(
-            compute_runtime=ComputeRuntimeDto._to_rest_object(self.compute_runtime),
+            compute_runtime=ComputeRuntime._to_rest_object(self.compute_runtime),
             offline_store_connection_name=self.offline_store_connection_name,
             online_store_connection_name=None
         )
@@ -39,6 +39,6 @@ class FeatureStoreSettings(RestTranslatableMixin):
         if not rest_obj:
             return None
         return FeatureStoreSettings(
-            compute_runtime=ComputeRuntimeDto._from_rest_object(rest_obj.compute_runtime),
+            compute_runtime=ComputeRuntime._from_rest_object(rest_obj.compute_runtime),
             offline_store_connection_name=rest_obj.offline_store_connection_name
         )
