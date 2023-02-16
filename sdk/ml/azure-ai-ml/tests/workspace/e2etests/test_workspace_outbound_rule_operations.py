@@ -29,7 +29,7 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         condition=not is_live(),
         reason="ARM template makes playback complex, so the test is flaky when run against recording",
     )
-    def test_workspace_create_with_managed_network_list_set_show_remove_rules(
+    def test_workspace_create_with_managed_network_list_show_remove_rules(
         self, client: MLClient, randstr: Callable[[], str]
     ) -> None:
         # resource name key word
@@ -79,100 +79,72 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         assert rules["pytorch"].category == OutboundRuleCategory.USER_DEFINED
         assert rules["pytorch"].destination == "*.pytorch.org"
 
-        # test add FQDN outbound rule
-        fqdn_rule_name = "testFQDNRule"
-        destination = "test.com"
-        rule_poller = client.workspace_outbound_rule.set(
-            client.resource_group_name,
-            wps_name,
-            fqdn_rule_name,
-            type=OutboundRuleType.FQDN,
-            category=OutboundRuleCategory.USER_DEFINED,
-            destination=destination)
-        assert isinstance(rule_poller, LROPoller)
-        rule_poller.result()
+        # test adding outbound rules with workspace update
+        params_override = [
+            {"name": wps_name},
+        ]
+        wps_update = load_workspace("./tests/test_configs/workspace/workspace_update_mvnet.yaml", params_override=params_override)
 
-        # test show FQDN outbound rule
+        workspace_poller = client.workspaces.begin_update(workspace=wps_update)
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
+        assert workspace.name == wps_name
+
+        # test show rules added
+        # FQDN rule
         rule = client.workspace_outbound_rule.show(
-            client.resource_group_name, wps_name, fqdn_rule_name
+            client.resource_group_name, wps_name, "added-fqdnrule"
         )
         assert isinstance(rule, FqdnDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
-        assert rule.destination == destination
-
-        # test add ServiceTag outbound rule
-        servicetag_rule_name = "testServiceTagRule"
-        service_tag = "DataFactory"
-        protocol = "TCP"
-        port_ranges = "80"
-        rule_poller = client.workspace_outbound_rule.set(
-            client.resource_group_name,
-            wps_name,
-            servicetag_rule_name,
-            type = OutboundRuleType.SERVICE_TAG,
-            category = OutboundRuleCategory.USER_DEFINED,
-            service_tag = service_tag,
-            protocol = protocol,
-            port_ranges = port_ranges)
-        assert isinstance(rule_poller, LROPoller)
-        rule_poller.result()
-
-        # test show ServiceTag outbound rule
+        assert rule.destination == "test.com"
+        # ServiceTag rule
         rule = client.workspace_outbound_rule.show(
-            client.resource_group_name, wps_name, servicetag_rule_name
+            client.resource_group_name, wps_name, "added-servicetagrule"
         )
         assert isinstance(rule, ServiceTagDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
-        assert rule.service_tag == service_tag
-        assert rule.protocol == protocol
-        assert rule.port_ranges == port_ranges
-
-        # test add PE outbound rule
-        pe_rule_name = "testPERule"
-        service_resource_id = "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount"
-        subresource_target = "blob"
-        spark_enabled = True
-        rule_poller = client.workspace_outbound_rule.set(
-            client.resource_group_name,
-            wps_name,
-            pe_rule_name,
-            type=OutboundRuleType.PRIVATE_ENDPOINT,
-            category=OutboundRuleCategory.USER_DEFINED,
-            service_resource_id=service_resource_id,
-            subresource_target=subresource_target,
-            spark_enabled=spark_enabled)
-        assert isinstance(rule_poller, LROPoller)
-        rule_poller.result()
-
-        # test show PE outbound rule
+        assert rule.service_tag == "DataFactory"
+        assert rule.protocol == "TCP"
+        assert rule.port_ranges == "80, 8080-8089"
+        # PrivateEndpoint rule
         rule = client.workspace_outbound_rule.show(
-            client.resource_group_name, wps_name, pe_rule_name
+            client.resource_group_name, wps_name, "added-perule"
         )
         assert isinstance(rule, PrivateEndpointDestination)
         assert rule.category == OutboundRuleCategory.USER_DEFINED
-        assert rule.service_resource_id == service_resource_id
-        assert rule.subresource_target == subresource_target
-        assert rule.spark_enabled == spark_enabled
+        assert rule.service_resource_id == "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/MyGroup/providers/Microsoft.Storage/storageAccounts/MyAccount"
+        assert rule.subresource_target == "blob"
+        assert rule.spark_enabled == True
+
+        # assert update did not remove existing outbound rules
+        rules = client.workspace_outbound_rule.list(
+            client.resource_group_name, wps_name
+        )
+        assert "pytorch" in rules.keys()
+        assert "my-service" in rules.keys()
+        assert "my-storage" in rules.keys()
 
         # test remove outbound rule
         rule_poller = client.workspace_outbound_rule.remove(
             client.resource_group_name,
             wps_name,
-            fqdn_rule_name)
+            "pytorch")
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
         rule_poller = client.workspace_outbound_rule.remove(
             client.resource_group_name,
             wps_name,
-            servicetag_rule_name)
+            "my-service")
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
         
         rule_poller = client.workspace_outbound_rule.remove(
             client.resource_group_name,
             wps_name,
-            pe_rule_name)
+            "my-storage")
         assert isinstance(rule_poller, LROPoller)
         rule_poller.result()
 
@@ -180,9 +152,9 @@ class TestWorkspaceOutboundRules(AzureRecordedTestCase):
         rules = client.workspace_outbound_rule.list(
             client.resource_group_name, wps_name
         )
-        assert fqdn_rule_name not in rules.keys()
-        assert servicetag_rule_name not in rules.keys()
-        assert pe_rule_name not in rules.keys()
+        assert "pytorch" not in rules.keys()
+        assert "my-service" not in rules.keys()
+        assert "my-storage" not in rules.keys()
 
         # test workspace deletion
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
