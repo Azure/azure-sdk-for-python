@@ -283,6 +283,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
+        annotations = None
         if annotated_message.annotations:
             # TODO: Investigate how we originally encoded annotations.
             annotations = dict(annotated_message.annotations)
@@ -293,7 +294,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             "header": message_header,
             "properties": message_properties,
             "application_properties": annotated_message.application_properties,
-            "message_annotations": annotated_message.annotations,
+            "message_annotations": annotations,
             "delivery_annotations": annotated_message.delivery_annotations,
             "data": annotated_message._data_body,  # pylint: disable=protected-access
             "sequence": annotated_message._sequence_body,  # pylint: disable=protected-access
