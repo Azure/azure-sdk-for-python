@@ -35,16 +35,14 @@ exporter = ConsoleSpanExporter()
 
 trace.set_tracer_provider(TracerProvider())
 tracer = trace.get_tracer(__name__)
-trace.get_tracer_provider().add_span_processor(
-    SimpleSpanProcessor(exporter)
-)
+trace.get_tracer_provider().add_span_processor(SimpleSpanProcessor(exporter))
 
 # Example with Storage SDKs
 import os
 from azure.storage.blob import BlobServiceClient
 
-connection_string = os.environ['AZURE_STORAGE_CONNECTION_STRING']
-container_name = os.environ['AZURE_STORAGE_BLOB_CONTAINER_NAME']
+connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
+container_name = os.environ["AZURE_STORAGE_BLOB_CONTAINER_NAME"]
 
 with tracer.start_as_current_span(name="MyApplication"):
     client = BlobServiceClient.from_connection_string(connection_string)
