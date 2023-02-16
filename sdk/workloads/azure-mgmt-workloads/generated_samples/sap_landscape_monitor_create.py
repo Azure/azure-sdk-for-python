@@ -14,7 +14,7 @@ from azure.mgmt.workloads import WorkloadsClient
     pip install azure-identity
     pip install azure-mgmt-workloads
 # USAGE
-    python wordpress_instances_create_or_update.py
+    python sap_landscape_monitor_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,19 +26,25 @@ from azure.mgmt.workloads import WorkloadsClient
 def main():
     client = WorkloadsClient(
         credential=DefaultAzureCredential(),
-        subscription_id="8e17e36c-42e9-4cd5-a078-7b44883414e0",
+        subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.wordpress_instances.begin_create_or_update(
-        resource_group_name="test-rg",
-        php_workload_name="wp39",
-        wordpress_instance_resource={
-            "properties": {"databaseName": "wpdb", "databaseUser": "wpuser", "version": "5.4.2"}
+    response = client.sap_landscape_monitor.create(
+        resource_group_name="myResourceGroup",
+        monitor_name="mySapMonitor",
+        sap_landscape_monitor_parameter={
+            "properties": {
+                "grouping": {
+                    "landscape": [{"name": "Prod", "topSid": ["SID1", "SID2"]}],
+                    "sapApplication": [{"name": "ERP1", "topSid": ["SID1", "SID2"]}],
+                },
+                "topMetricsThresholds": [{"green": 90, "name": "Instance Availability", "red": 50, "yellow": 75}],
+            }
         },
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2021-12-01-preview/examples/phpworkloads/WordpressInstances_CreateOrUpdate.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/workloadmonitor/SapLandscapeMonitor_Create.json
 if __name__ == "__main__":
     main()
