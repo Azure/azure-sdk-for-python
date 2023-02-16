@@ -473,7 +473,7 @@ class SnapshotsOperations:
          group. Required.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Put disk operation. Is either a
-         model type or a IO type. Required.
+         Snapshot type or a IO type. Required.
         :type snapshot: ~azure.mgmt.compute.v2016_04_30_preview.models.Snapshot or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -692,7 +692,7 @@ class SnapshotsOperations:
          group. Required.
         :type snapshot_name: str
         :param snapshot: Snapshot object supplied in the body of the Patch snapshot operation. Is
-         either a model type or a IO type. Required.
+         either a SnapshotUpdate type or a IO type. Required.
         :type snapshot: ~azure.mgmt.compute.v2016_04_30_preview.models.SnapshotUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1273,7 +1273,7 @@ class SnapshotsOperations:
          group. Required.
         :type snapshot_name: str
         :param grant_access_data: Access data object supplied in the body of the get snapshot access
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a GrantAccessData type or a IO type. Required.
         :type grant_access_data: ~azure.mgmt.compute.v2016_04_30_preview.models.GrantAccessData or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.

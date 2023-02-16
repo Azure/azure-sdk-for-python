@@ -265,7 +265,7 @@ class GalleryImageVersionsOperations:
          :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the create or update gallery Image Version
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a GalleryImageVersion type or a IO type. Required.
         :type gallery_image_version: ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersion or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -526,7 +526,7 @@ class GalleryImageVersionsOperations:
          :code:`<MajorVersion>`.:code:`<MinorVersion>`.:code:`<Patch>`. Required.
         :type gallery_image_version_name: str
         :param gallery_image_version: Parameters supplied to the update gallery Image Version
-         operation. Is either a model type or a IO type. Required.
+         operation. Is either a GalleryImageVersionUpdate type or a IO type. Required.
         :type gallery_image_version: ~azure.mgmt.compute.v2019_07_01.models.GalleryImageVersionUpdate
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
