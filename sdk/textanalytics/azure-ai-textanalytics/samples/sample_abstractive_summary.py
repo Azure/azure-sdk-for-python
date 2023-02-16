@@ -26,11 +26,9 @@ USAGE:
 """
 
 
-import os
-
-
 def sample_abstractive_summarization() -> None:
     # [START abstractive_summary]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics import TextAnalyticsClient
 

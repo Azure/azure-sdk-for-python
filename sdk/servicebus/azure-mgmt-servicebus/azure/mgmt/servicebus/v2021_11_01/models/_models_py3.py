@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,17 +8,27 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AccessKeys(msrest.serialization.Model):
+class AccessKeys(_serialization.Model):
     """Namespace/ServiceBus Connection String.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -45,32 +56,28 @@ class AccessKeys(msrest.serialization.Model):
     """
 
     _validation = {
-        'primary_connection_string': {'readonly': True},
-        'secondary_connection_string': {'readonly': True},
-        'alias_primary_connection_string': {'readonly': True},
-        'alias_secondary_connection_string': {'readonly': True},
-        'primary_key': {'readonly': True},
-        'secondary_key': {'readonly': True},
-        'key_name': {'readonly': True},
+        "primary_connection_string": {"readonly": True},
+        "secondary_connection_string": {"readonly": True},
+        "alias_primary_connection_string": {"readonly": True},
+        "alias_secondary_connection_string": {"readonly": True},
+        "primary_key": {"readonly": True},
+        "secondary_key": {"readonly": True},
+        "key_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'primary_connection_string': {'key': 'primaryConnectionString', 'type': 'str'},
-        'secondary_connection_string': {'key': 'secondaryConnectionString', 'type': 'str'},
-        'alias_primary_connection_string': {'key': 'aliasPrimaryConnectionString', 'type': 'str'},
-        'alias_secondary_connection_string': {'key': 'aliasSecondaryConnectionString', 'type': 'str'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        "primary_connection_string": {"key": "primaryConnectionString", "type": "str"},
+        "secondary_connection_string": {"key": "secondaryConnectionString", "type": "str"},
+        "alias_primary_connection_string": {"key": "aliasPrimaryConnectionString", "type": "str"},
+        "alias_secondary_connection_string": {"key": "aliasSecondaryConnectionString", "type": "str"},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(AccessKeys, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.primary_connection_string = None
         self.secondary_connection_string = None
         self.alias_primary_connection_string = None
@@ -80,8 +87,9 @@ class AccessKeys(msrest.serialization.Model):
         self.key_name = None
 
 
-class Action(msrest.serialization.Model):
-    """Represents the filter actions which are allowed for the transformation of a message that have been matched by a filter expression.
+class Action(_serialization.Model):
+    """Represents the filter actions which are allowed for the transformation of a message that have
+    been matched by a filter expression.
 
     :ivar sql_expression: SQL expression. e.g. MyProperty='ABC'.
     :vartype sql_expression: str
@@ -94,9 +102,9 @@ class Action(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sql_expression': {'key': 'sqlExpression', 'type': 'str'},
-        'compatibility_level': {'key': 'compatibilityLevel', 'type': 'int'},
-        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
+        "sql_expression": {"key": "sqlExpression", "type": "str"},
+        "compatibility_level": {"key": "compatibilityLevel", "type": "int"},
+        "requires_preprocessing": {"key": "requiresPreprocessing", "type": "bool"},
     }
 
     def __init__(
@@ -104,9 +112,9 @@ class Action(msrest.serialization.Model):
         *,
         sql_expression: Optional[str] = None,
         compatibility_level: Optional[int] = None,
-        requires_preprocessing: Optional[bool] = True,
-        **kwargs
-    ):
+        requires_preprocessing: bool = True,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sql_expression: SQL expression. e.g. MyProperty='ABC'.
         :paramtype sql_expression: str
@@ -117,13 +125,13 @@ class Action(msrest.serialization.Model):
          preprocessing.
         :paramtype requires_preprocessing: bool
         """
-        super(Action, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sql_expression = sql_expression
         self.compatibility_level = compatibility_level
         self.requires_preprocessing = requires_preprocessing
 
 
-class ProxyResource(msrest.serialization.Model):
+class ProxyResource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -141,26 +149,22 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -186,11 +190,11 @@ class ArmDisasterRecovery(ProxyResource):
     :vartype system_data: ~azure.mgmt.servicebus.v2021_11_01.models.SystemData
     :ivar provisioning_state: Provisioning state of the Alias(Disaster Recovery configuration) -
      possible values 'Accepted' or 'Succeeded' or 'Failed'. Known values are: "Accepted",
-     "Succeeded", "Failed".
+     "Succeeded", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.servicebus.v2021_11_01.models.ProvisioningStateDR
     :ivar pending_replication_operations_count: Number of entities pending to be replicated.
-    :vartype pending_replication_operations_count: long
+    :vartype pending_replication_operations_count: int
     :ivar partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is part
      of GEO DR pairing.
     :vartype partner_namespace: str
@@ -198,41 +202,37 @@ class ArmDisasterRecovery(ProxyResource):
      pairing.
     :vartype alternate_name: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating'
-     or 'Secondary'. Known values are: "Primary", "PrimaryNotReplicating", "Secondary".
+     or 'Secondary'. Known values are: "Primary", "PrimaryNotReplicating", and "Secondary".
     :vartype role: str or ~azure.mgmt.servicebus.v2021_11_01.models.RoleDisasterRecovery
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'pending_replication_operations_count': {'readonly': True},
-        'role': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "pending_replication_operations_count": {"readonly": True},
+        "role": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
-        'partner_namespace': {'key': 'properties.partnerNamespace', 'type': 'str'},
-        'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
-        'role': {'key': 'properties.role', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "pending_replication_operations_count": {"key": "properties.pendingReplicationOperationsCount", "type": "int"},
+        "partner_namespace": {"key": "properties.partnerNamespace", "type": "str"},
+        "alternate_name": {"key": "properties.alternateName", "type": "str"},
+        "role": {"key": "properties.role", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        partner_namespace: Optional[str] = None,
-        alternate_name: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, partner_namespace: Optional[str] = None, alternate_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is
          part of GEO DR pairing.
@@ -241,7 +241,7 @@ class ArmDisasterRecovery(ProxyResource):
          pairing.
         :paramtype alternate_name: str
         """
-        super(ArmDisasterRecovery, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
         self.pending_replication_operations_count = None
@@ -250,7 +250,7 @@ class ArmDisasterRecovery(ProxyResource):
         self.role = None
 
 
-class ArmDisasterRecoveryListResult(msrest.serialization.Model):
+class ArmDisasterRecoveryListResult(_serialization.Model):
     """The result of the List Alias(Disaster Recovery configuration) operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -263,65 +263,55 @@ class ArmDisasterRecoveryListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ArmDisasterRecovery]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ArmDisasterRecovery]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ArmDisasterRecovery"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ArmDisasterRecovery"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Alias(Disaster Recovery configurations).
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.ArmDisasterRecovery]
         """
-        super(ArmDisasterRecoveryListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class CheckNameAvailability(msrest.serialization.Model):
+class CheckNameAvailability(_serialization.Model):
     """Description of a Check Name availability request properties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The Name to check the namespace name availability and The namespace name
-     can contain only letters, numbers, and hyphens. The namespace must start with a letter, and it
-     must end with a letter or number.
+    :ivar name: The Name to check the namespace name availability and The namespace name can
+     contain only letters, numbers, and hyphens. The namespace must start with a letter, and it must
+     end with a letter or number. Required.
     :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
-        :keyword name: Required. The Name to check the namespace name availability and The namespace
-         name can contain only letters, numbers, and hyphens. The namespace must start with a letter,
-         and it must end with a letter or number.
+        :keyword name: The Name to check the namespace name availability and The namespace name can
+         contain only letters, numbers, and hyphens. The namespace must start with a letter, and it must
+         end with a letter or number. Required.
         :paramtype name: str
         """
-        super(CheckNameAvailability, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class CheckNameAvailabilityResult(msrest.serialization.Model):
+class CheckNameAvailabilityResult(_serialization.Model):
     """Description of a Check Name availability request properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -332,19 +322,19 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
      available; otherwise, false.
     :vartype name_available: bool
     :ivar reason: The reason for unavailability of a namespace. Known values are: "None",
-     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+     "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown", and
      "TooManyNamespaceInCurrentSubscription".
     :vartype reason: str or ~azure.mgmt.servicebus.v2021_11_01.models.UnavailableReason
     """
 
     _validation = {
-        'message': {'readonly': True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
+        "message": {"key": "message", "type": "str"},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
     }
 
     def __init__(
@@ -352,36 +342,36 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         *,
         name_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.UnavailableReason"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Value indicating namespace is availability, true if the namespace is
          available; otherwise, false.
         :paramtype name_available: bool
         :keyword reason: The reason for unavailability of a namespace. Known values are: "None",
-         "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown",
+         "InvalidName", "SubscriptionIsDisabled", "NameInUse", "NameInLockdown", and
          "TooManyNamespaceInCurrentSubscription".
         :paramtype reason: str or ~azure.mgmt.servicebus.v2021_11_01.models.UnavailableReason
         """
-        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.message = None
         self.name_available = name_available
         self.reason = reason
 
 
-class ConnectionState(msrest.serialization.Model):
+class ConnectionState(_serialization.Model):
     """ConnectionState information.
 
     :ivar status: Status of the connection. Known values are: "Pending", "Approved", "Rejected",
-     "Disconnected".
+     and "Disconnected".
     :vartype status: str or ~azure.mgmt.servicebus.v2021_11_01.models.PrivateLinkConnectionStatus
     :ivar description: Description of the connection state.
     :vartype description: str
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -389,21 +379,21 @@ class ConnectionState(msrest.serialization.Model):
         *,
         status: Optional[Union[str, "_models.PrivateLinkConnectionStatus"]] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword status: Status of the connection. Known values are: "Pending", "Approved", "Rejected",
-         "Disconnected".
+         and "Disconnected".
         :paramtype status: str or ~azure.mgmt.servicebus.v2021_11_01.models.PrivateLinkConnectionStatus
         :keyword description: Description of the connection state.
         :paramtype description: str
         """
-        super(ConnectionState, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
 
 
-class CorrelationFilter(msrest.serialization.Model):
+class CorrelationFilter(_serialization.Model):
     """Represents the correlation filter expression.
 
     :ivar properties: dictionary object for custom filters.
@@ -430,16 +420,16 @@ class CorrelationFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': '{str}'},
-        'correlation_id': {'key': 'correlationId', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'to': {'key': 'to', 'type': 'str'},
-        'reply_to': {'key': 'replyTo', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'session_id': {'key': 'sessionId', 'type': 'str'},
-        'reply_to_session_id': {'key': 'replyToSessionId', 'type': 'str'},
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
+        "properties": {"key": "properties", "type": "{str}"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "to": {"key": "to", "type": "str"},
+        "reply_to": {"key": "replyTo", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "reply_to_session_id": {"key": "replyToSessionId", "type": "str"},
+        "content_type": {"key": "contentType", "type": "str"},
+        "requires_preprocessing": {"key": "requiresPreprocessing", "type": "bool"},
     }
 
     def __init__(
@@ -454,9 +444,9 @@ class CorrelationFilter(msrest.serialization.Model):
         session_id: Optional[str] = None,
         reply_to_session_id: Optional[str] = None,
         content_type: Optional[str] = None,
-        requires_preprocessing: Optional[bool] = True,
-        **kwargs
-    ):
+        requires_preprocessing: bool = True,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: dictionary object for custom filters.
         :paramtype properties: dict[str, str]
@@ -480,7 +470,7 @@ class CorrelationFilter(msrest.serialization.Model):
          preprocessing.
         :paramtype requires_preprocessing: bool
         """
-        super(CorrelationFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
         self.correlation_id = correlation_id
         self.message_id = message_id
@@ -493,14 +483,13 @@ class CorrelationFilter(msrest.serialization.Model):
         self.requires_preprocessing = requires_preprocessing
 
 
-class Encryption(msrest.serialization.Model):
+class Encryption(_serialization.Model):
     """Properties to configure Encryption.
 
     :ivar key_vault_properties: Properties of KeyVault.
     :vartype key_vault_properties:
      list[~azure.mgmt.servicebus.v2021_11_01.models.KeyVaultProperties]
-    :ivar key_source: Enumerates the possible value of keySource for Encryption. The only
-     acceptable values to pass in are None and "Microsoft.KeyVault". The default value is
+    :ivar key_source: Enumerates the possible value of keySource for Encryption. Default value is
      "Microsoft.KeyVault".
     :vartype key_source: str
     :ivar require_infrastructure_encryption: Enable Infrastructure Encryption (Double Encryption).
@@ -508,38 +497,37 @@ class Encryption(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': '[KeyVaultProperties]'},
-        'key_source': {'key': 'keySource', 'type': 'str'},
-        'require_infrastructure_encryption': {'key': 'requireInfrastructureEncryption', 'type': 'bool'},
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "[KeyVaultProperties]"},
+        "key_source": {"key": "keySource", "type": "str"},
+        "require_infrastructure_encryption": {"key": "requireInfrastructureEncryption", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
         key_vault_properties: Optional[List["_models.KeyVaultProperties"]] = None,
-        key_source: Optional[str] = "Microsoft.KeyVault",
+        key_source: Literal["Microsoft.KeyVault"] = "Microsoft.KeyVault",
         require_infrastructure_encryption: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_vault_properties: Properties of KeyVault.
         :paramtype key_vault_properties:
          list[~azure.mgmt.servicebus.v2021_11_01.models.KeyVaultProperties]
-        :keyword key_source: Enumerates the possible value of keySource for Encryption. The only
-         acceptable values to pass in are None and "Microsoft.KeyVault". The default value is
-         "Microsoft.KeyVault".
+        :keyword key_source: Enumerates the possible value of keySource for Encryption. Default value
+         is "Microsoft.KeyVault".
         :paramtype key_source: str
         :keyword require_infrastructure_encryption: Enable Infrastructure Encryption (Double
          Encryption).
         :paramtype require_infrastructure_encryption: bool
         """
-        super(Encryption, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_vault_properties = key_vault_properties
         self.key_source = key_source
         self.require_infrastructure_encryption = require_infrastructure_encryption
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -547,31 +535,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """The resource management error response.
 
     :ivar error: The error object.
@@ -579,24 +563,19 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseError'},
+        "error": {"key": "error", "type": "ErrorResponseError"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["_models.ErrorResponseError"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, error: Optional["_models.ErrorResponseError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~azure.mgmt.servicebus.v2021_11_01.models.ErrorResponseError
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error = error
 
 
-class ErrorResponseError(msrest.serialization.Model):
+class ErrorResponseError(_serialization.Model):
     """The error object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -614,28 +593,24 @@ class ErrorResponseError(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorResponse]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorResponse]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorResponseError, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -643,8 +618,9 @@ class ErrorResponseError(msrest.serialization.Model):
         self.additional_info = None
 
 
-class FailoverProperties(msrest.serialization.Model):
-    """Safe failover is to indicate the service should wait for pending replication to finish before switching to the secondary.
+class FailoverProperties(_serialization.Model):
+    """Safe failover is to indicate the service should wait for pending replication to finish before
+    switching to the secondary.
 
     :ivar is_safe_failover: Safe failover is to indicate the service should wait for pending
      replication to finish before switching to the secondary.
@@ -652,25 +628,20 @@ class FailoverProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_safe_failover': {'key': 'properties.IsSafeFailover', 'type': 'bool'},
+        "is_safe_failover": {"key": "properties.IsSafeFailover", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_safe_failover: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, is_safe_failover: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_safe_failover: Safe failover is to indicate the service should wait for pending
          replication to finish before switching to the secondary.
         :paramtype is_safe_failover: bool
         """
-        super(FailoverProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_safe_failover = is_safe_failover
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Properties to configure User Assigned Identities for Bring your Own Keys.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -680,7 +651,7 @@ class Identity(msrest.serialization.Model):
     :ivar tenant_id: TenantId from the KeyVault.
     :vartype tenant_id: str
     :ivar type: Type of managed service identity. Known values are: "SystemAssigned",
-     "UserAssigned", "SystemAssigned, UserAssigned", "None".
+     "UserAssigned", "SystemAssigned, UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.servicebus.v2021_11_01.models.ManagedServiceIdentityType
     :ivar user_assigned_identities: Properties for User Assigned Identities.
     :vartype user_assigned_identities: dict[str,
@@ -688,15 +659,15 @@ class Identity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedIdentity}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
@@ -704,24 +675,24 @@ class Identity(msrest.serialization.Model):
         *,
         type: Optional[Union[str, "_models.ManagedServiceIdentityType"]] = None,
         user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword type: Type of managed service identity. Known values are: "SystemAssigned",
-         "UserAssigned", "SystemAssigned, UserAssigned", "None".
+         "UserAssigned", "SystemAssigned, UserAssigned", and "None".
         :paramtype type: str or ~azure.mgmt.servicebus.v2021_11_01.models.ManagedServiceIdentityType
         :keyword user_assigned_identities: Properties for User Assigned Identities.
         :paramtype user_assigned_identities: dict[str,
          ~azure.mgmt.servicebus.v2021_11_01.models.UserAssignedIdentity]
         """
-        super(Identity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class KeyVaultProperties(msrest.serialization.Model):
+class KeyVaultProperties(_serialization.Model):
     """Properties to configure keyVault Properties.
 
     :ivar key_name: Name of the Key from KeyVault.
@@ -735,10 +706,10 @@ class KeyVaultProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'key_vault_uri': {'key': 'keyVaultUri', 'type': 'str'},
-        'key_version': {'key': 'keyVersion', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'UserAssignedIdentityProperties'},
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_vault_uri": {"key": "keyVaultUri", "type": "str"},
+        "key_version": {"key": "keyVersion", "type": "str"},
+        "identity": {"key": "identity", "type": "UserAssignedIdentityProperties"},
     }
 
     def __init__(
@@ -748,8 +719,8 @@ class KeyVaultProperties(msrest.serialization.Model):
         key_vault_uri: Optional[str] = None,
         key_version: Optional[str] = None,
         identity: Optional["_models.UserAssignedIdentityProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword key_name: Name of the Key from KeyVault.
         :paramtype key_name: str
@@ -760,54 +731,50 @@ class KeyVaultProperties(msrest.serialization.Model):
         :keyword identity:
         :paramtype identity: ~azure.mgmt.servicebus.v2021_11_01.models.UserAssignedIdentityProperties
         """
-        super(KeyVaultProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_name = key_name
         self.key_vault_uri = key_vault_uri
         self.key_version = key_version
         self.identity = identity
 
 
-class MessageCountDetails(msrest.serialization.Model):
+class MessageCountDetails(_serialization.Model):
     """Message Count Details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar active_message_count: Number of active messages in the queue, topic, or subscription.
-    :vartype active_message_count: long
+    :vartype active_message_count: int
     :ivar dead_letter_message_count: Number of messages that are dead lettered.
-    :vartype dead_letter_message_count: long
+    :vartype dead_letter_message_count: int
     :ivar scheduled_message_count: Number of scheduled messages.
-    :vartype scheduled_message_count: long
+    :vartype scheduled_message_count: int
     :ivar transfer_message_count: Number of messages transferred to another queue, topic, or
      subscription.
-    :vartype transfer_message_count: long
+    :vartype transfer_message_count: int
     :ivar transfer_dead_letter_message_count: Number of messages transferred into dead letters.
-    :vartype transfer_dead_letter_message_count: long
+    :vartype transfer_dead_letter_message_count: int
     """
 
     _validation = {
-        'active_message_count': {'readonly': True},
-        'dead_letter_message_count': {'readonly': True},
-        'scheduled_message_count': {'readonly': True},
-        'transfer_message_count': {'readonly': True},
-        'transfer_dead_letter_message_count': {'readonly': True},
+        "active_message_count": {"readonly": True},
+        "dead_letter_message_count": {"readonly": True},
+        "scheduled_message_count": {"readonly": True},
+        "transfer_message_count": {"readonly": True},
+        "transfer_dead_letter_message_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'active_message_count': {'key': 'activeMessageCount', 'type': 'long'},
-        'dead_letter_message_count': {'key': 'deadLetterMessageCount', 'type': 'long'},
-        'scheduled_message_count': {'key': 'scheduledMessageCount', 'type': 'long'},
-        'transfer_message_count': {'key': 'transferMessageCount', 'type': 'long'},
-        'transfer_dead_letter_message_count': {'key': 'transferDeadLetterMessageCount', 'type': 'long'},
+        "active_message_count": {"key": "activeMessageCount", "type": "int"},
+        "dead_letter_message_count": {"key": "deadLetterMessageCount", "type": "int"},
+        "scheduled_message_count": {"key": "scheduledMessageCount", "type": "int"},
+        "transfer_message_count": {"key": "transferMessageCount", "type": "int"},
+        "transfer_dead_letter_message_count": {"key": "transferDeadLetterMessageCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(MessageCountDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.active_message_count = None
         self.dead_letter_message_count = None
         self.scheduled_message_count = None
@@ -815,7 +782,7 @@ class MessageCountDetails(msrest.serialization.Model):
         self.transfer_dead_letter_message_count = None
 
 
-class MigrationConfigListResult(msrest.serialization.Model):
+class MigrationConfigListResult(_serialization.Model):
     """The result of the List migrationConfigurations operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -828,25 +795,20 @@ class MigrationConfigListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[MigrationConfigProperties]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[MigrationConfigProperties]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.MigrationConfigProperties"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.MigrationConfigProperties"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Migration Configs.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.MigrationConfigProperties]
         """
-        super(MigrationConfigListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
@@ -871,7 +833,7 @@ class MigrationConfigProperties(ProxyResource):
     :ivar provisioning_state: Provisioning state of Migration Configuration.
     :vartype provisioning_state: str
     :ivar pending_replication_operations_count: Number of entities pending to be replicated.
-    :vartype pending_replication_operations_count: long
+    :vartype pending_replication_operations_count: int
     :ivar target_namespace: Existing premium Namespace ARM Id name which has no entities, will be
      used for migration.
     :vartype target_namespace: str
@@ -883,36 +845,32 @@ class MigrationConfigProperties(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'pending_replication_operations_count': {'readonly': True},
-        'migration_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "pending_replication_operations_count": {"readonly": True},
+        "migration_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'pending_replication_operations_count': {'key': 'properties.pendingReplicationOperationsCount', 'type': 'long'},
-        'target_namespace': {'key': 'properties.targetNamespace', 'type': 'str'},
-        'post_migration_name': {'key': 'properties.postMigrationName', 'type': 'str'},
-        'migration_state': {'key': 'properties.migrationState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "pending_replication_operations_count": {"key": "properties.pendingReplicationOperationsCount", "type": "int"},
+        "target_namespace": {"key": "properties.targetNamespace", "type": "str"},
+        "post_migration_name": {"key": "properties.postMigrationName", "type": "str"},
+        "migration_state": {"key": "properties.migrationState", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        target_namespace: Optional[str] = None,
-        post_migration_name: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, target_namespace: Optional[str] = None, post_migration_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword target_namespace: Existing premium Namespace ARM Id name which has no entities, will
          be used for migration.
@@ -920,7 +878,7 @@ class MigrationConfigProperties(ProxyResource):
         :keyword post_migration_name: Name to access Standard Namespace after migration.
         :paramtype post_migration_name: str
         """
-        super(MigrationConfigProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.provisioning_state = None
         self.pending_replication_operations_count = None
@@ -949,7 +907,8 @@ class NetworkRuleSet(ProxyResource):
     :ivar trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
      Enabled or not.
     :vartype trusted_service_access_enabled: bool
-    :ivar default_action: Default Action for Network Rule Set. Known values are: "Allow", "Deny".
+    :ivar default_action: Default Action for Network Rule Set. Known values are: "Allow" and
+     "Deny".
     :vartype default_action: str or ~azure.mgmt.servicebus.v2021_11_01.models.DefaultAction
     :ivar virtual_network_rules: List VirtualNetwork Rules.
     :vartype virtual_network_rules:
@@ -957,30 +916,30 @@ class NetworkRuleSet(ProxyResource):
     :ivar ip_rules: List of IpRules.
     :vartype ip_rules: list[~azure.mgmt.servicebus.v2021_11_01.models.NWRuleSetIpRules]
     :ivar public_network_access: This determines if traffic is allowed over public network. By
-     default it is enabled. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+     default it is enabled. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.servicebus.v2021_11_01.models.PublicNetworkAccessFlag
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'trusted_service_access_enabled': {'key': 'properties.trustedServiceAccessEnabled', 'type': 'bool'},
-        'default_action': {'key': 'properties.defaultAction', 'type': 'str'},
-        'virtual_network_rules': {'key': 'properties.virtualNetworkRules', 'type': '[NWRuleSetVirtualNetworkRules]'},
-        'ip_rules': {'key': 'properties.ipRules', 'type': '[NWRuleSetIpRules]'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "trusted_service_access_enabled": {"key": "properties.trustedServiceAccessEnabled", "type": "bool"},
+        "default_action": {"key": "properties.defaultAction", "type": "str"},
+        "virtual_network_rules": {"key": "properties.virtualNetworkRules", "type": "[NWRuleSetVirtualNetworkRules]"},
+        "ip_rules": {"key": "properties.ipRules", "type": "[NWRuleSetIpRules]"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
     }
 
     def __init__(
@@ -990,14 +949,14 @@ class NetworkRuleSet(ProxyResource):
         default_action: Optional[Union[str, "_models.DefaultAction"]] = None,
         virtual_network_rules: Optional[List["_models.NWRuleSetVirtualNetworkRules"]] = None,
         ip_rules: Optional[List["_models.NWRuleSetIpRules"]] = None,
-        public_network_access: Optional[Union[str, "_models.PublicNetworkAccessFlag"]] = "Enabled",
-        **kwargs
-    ):
+        public_network_access: Union[str, "_models.PublicNetworkAccessFlag"] = "Enabled",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
          Enabled or not.
         :paramtype trusted_service_access_enabled: bool
-        :keyword default_action: Default Action for Network Rule Set. Known values are: "Allow",
+        :keyword default_action: Default Action for Network Rule Set. Known values are: "Allow" and
          "Deny".
         :paramtype default_action: str or ~azure.mgmt.servicebus.v2021_11_01.models.DefaultAction
         :keyword virtual_network_rules: List VirtualNetwork Rules.
@@ -1006,11 +965,11 @@ class NetworkRuleSet(ProxyResource):
         :keyword ip_rules: List of IpRules.
         :paramtype ip_rules: list[~azure.mgmt.servicebus.v2021_11_01.models.NWRuleSetIpRules]
         :keyword public_network_access: This determines if traffic is allowed over public network. By
-         default it is enabled. Known values are: "Enabled", "Disabled". Default value: "Enabled".
+         default it is enabled. Known values are: "Enabled" and "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.servicebus.v2021_11_01.models.PublicNetworkAccessFlag
         """
-        super(NetworkRuleSet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.trusted_service_access_enabled = trusted_service_access_enabled
         self.default_action = default_action
@@ -1019,7 +978,7 @@ class NetworkRuleSet(ProxyResource):
         self.public_network_access = public_network_access
 
 
-class NetworkRuleSetListResult(msrest.serialization.Model):
+class NetworkRuleSetListResult(_serialization.Model):
     """The response of the List NetworkRuleSet operation.
 
     :ivar value: Result of the List NetworkRuleSet operation.
@@ -1030,17 +989,13 @@ class NetworkRuleSetListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NetworkRuleSet]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[NetworkRuleSet]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NetworkRuleSet"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.NetworkRuleSet"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of the List NetworkRuleSet operation.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.NetworkRuleSet]
@@ -1048,44 +1003,44 @@ class NetworkRuleSetListResult(msrest.serialization.Model):
          list of NetworkRuleSet.
         :paramtype next_link: str
         """
-        super(NetworkRuleSetListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class NWRuleSetIpRules(msrest.serialization.Model):
+class NWRuleSetIpRules(_serialization.Model):
     """Description of NetWorkRuleSet - IpRules resource.
 
     :ivar ip_mask: IP Mask.
     :vartype ip_mask: str
-    :ivar action: The IP Filter Action. Known values are: "Allow". Default value: "Allow".
+    :ivar action: The IP Filter Action. "Allow"
     :vartype action: str or ~azure.mgmt.servicebus.v2021_11_01.models.NetworkRuleIPAction
     """
 
     _attribute_map = {
-        'ip_mask': {'key': 'ipMask', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
+        "ip_mask": {"key": "ipMask", "type": "str"},
+        "action": {"key": "action", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         ip_mask: Optional[str] = None,
-        action: Optional[Union[str, "_models.NetworkRuleIPAction"]] = "Allow",
-        **kwargs
-    ):
+        action: Union[str, "_models.NetworkRuleIPAction"] = "Allow",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword ip_mask: IP Mask.
         :paramtype ip_mask: str
-        :keyword action: The IP Filter Action. Known values are: "Allow". Default value: "Allow".
+        :keyword action: The IP Filter Action. "Allow"
         :paramtype action: str or ~azure.mgmt.servicebus.v2021_11_01.models.NetworkRuleIPAction
         """
-        super(NWRuleSetIpRules, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ip_mask = ip_mask
         self.action = action
 
 
-class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
+class NWRuleSetVirtualNetworkRules(_serialization.Model):
     """Description of VirtualNetworkRules - NetworkRules resource.
 
     :ivar subnet: Subnet properties.
@@ -1096,8 +1051,8 @@ class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'subnet': {'key': 'subnet', 'type': 'Subnet'},
-        'ignore_missing_vnet_service_endpoint': {'key': 'ignoreMissingVnetServiceEndpoint', 'type': 'bool'},
+        "subnet": {"key": "subnet", "type": "Subnet"},
+        "ignore_missing_vnet_service_endpoint": {"key": "ignoreMissingVnetServiceEndpoint", "type": "bool"},
     }
 
     def __init__(
@@ -1105,8 +1060,8 @@ class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
         *,
         subnet: Optional["_models.Subnet"] = None,
         ignore_missing_vnet_service_endpoint: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword subnet: Subnet properties.
         :paramtype subnet: ~azure.mgmt.servicebus.v2021_11_01.models.Subnet
@@ -1114,12 +1069,12 @@ class NWRuleSetVirtualNetworkRules(msrest.serialization.Model):
          VNet Service Endpoint.
         :paramtype ignore_missing_vnet_service_endpoint: bool
         """
-        super(NWRuleSetVirtualNetworkRules, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subnet = subnet
         self.ignore_missing_vnet_service_endpoint = ignore_missing_vnet_service_endpoint
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """A Service Bus REST API operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1133,19 +1088,19 @@ class Operation(msrest.serialization.Model):
     :ivar origin: Origin of the operation.
     :vartype origin: str
     :ivar properties: Properties of the operation.
-    :vartype properties: any
+    :vartype properties: JSON
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'object'},
+        "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "object"},
     }
 
     def __init__(
@@ -1154,9 +1109,9 @@ class Operation(msrest.serialization.Model):
         is_data_action: Optional[bool] = None,
         display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional[Any] = None,
-        **kwargs
-    ):
+        properties: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword is_data_action: Indicates whether the operation is a data action.
         :paramtype is_data_action: bool
@@ -1165,9 +1120,9 @@ class Operation(msrest.serialization.Model):
         :keyword origin: Origin of the operation.
         :paramtype origin: str
         :keyword properties: Properties of the operation.
-        :paramtype properties: any
+        :paramtype properties: JSON
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.is_data_action = is_data_action
         self.display = display
@@ -1175,7 +1130,7 @@ class Operation(msrest.serialization.Model):
         self.properties = properties
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Operation display payload.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1191,34 +1146,31 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
-        'description': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
         self.description = None
 
 
-class OperationListResult(msrest.serialization.Model):
-    """Result of the request to list ServiceBus operations. It contains a list of operations and a URL link to get the next set of results.
+class OperationListResult(_serialization.Model):
+    """Result of the request to list ServiceBus operations. It contains a list of operations and a URL
+    link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -1230,27 +1182,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """PrivateEndpoint information.
 
     :ivar id: The ARM identifier for Private Endpoint.
@@ -1258,20 +1206,15 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
         :keyword id: The ARM identifier for Private Endpoint.
         :paramtype id: str
         """
-        super(PrivateEndpoint, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -1298,28 +1241,31 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype private_link_service_connection_state:
      ~azure.mgmt.servicebus.v2021_11_01.models.ConnectionState
     :ivar provisioning_state: Provisioning state of the Private Endpoint Connection. Known values
-     are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+     are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
     :vartype provisioning_state: str or
      ~azure.mgmt.servicebus.v2021_11_01.models.EndPointProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'ConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "ConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -1328,8 +1274,8 @@ class PrivateEndpointConnection(ProxyResource):
         private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         private_link_service_connection_state: Optional["_models.ConnectionState"] = None,
         provisioning_state: Optional[Union[str, "_models.EndPointProvisioningState"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword private_endpoint: The Private Endpoint resource for this Connection.
         :paramtype private_endpoint: ~azure.mgmt.servicebus.v2021_11_01.models.PrivateEndpoint
@@ -1337,18 +1283,18 @@ class PrivateEndpointConnection(ProxyResource):
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.servicebus.v2021_11_01.models.ConnectionState
         :keyword provisioning_state: Provisioning state of the Private Endpoint Connection. Known
-         values are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", "Failed".
+         values are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
         :paramtype provisioning_state: str or
          ~azure.mgmt.servicebus.v2021_11_01.models.EndPointProvisioningState
         """
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = provisioning_state
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+class PrivateEndpointConnectionListResult(_serialization.Model):
     """Result of the list of all private endpoint connections operation.
 
     :ivar value: A collection of private endpoint connection resources.
@@ -1358,8 +1304,8 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -1367,20 +1313,20 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
         *,
         value: Optional[List["_models.PrivateEndpointConnection"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of private endpoint connection resources.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.PrivateEndpointConnection]
         :keyword next_link: A link for the next page of private endpoint connection resources.
         :paramtype next_link: str
         """
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PrivateLinkResource(msrest.serialization.Model):
+class PrivateLinkResource(_serialization.Model):
     """Information of the private link resource.
 
     :ivar id: Fully qualified identifier of the resource.
@@ -1398,25 +1344,25 @@ class PrivateLinkResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
         group_id: Optional[str] = None,
         required_members: Optional[List[str]] = None,
         required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: Fully qualified identifier of the resource.
         :paramtype id: str
@@ -1431,7 +1377,7 @@ class PrivateLinkResource(msrest.serialization.Model):
         :keyword required_zone_names: Required Zone Names.
         :paramtype required_zone_names: list[str]
         """
-        super(PrivateLinkResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.type = type
@@ -1440,7 +1386,7 @@ class PrivateLinkResource(msrest.serialization.Model):
         self.required_zone_names = required_zone_names
 
 
-class PrivateLinkResourcesListResult(msrest.serialization.Model):
+class PrivateLinkResourcesListResult(_serialization.Model):
     """Result of the List private link resources operation.
 
     :ivar value: A collection of private link resources.
@@ -1450,8 +1396,8 @@ class PrivateLinkResourcesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -1459,25 +1405,26 @@ class PrivateLinkResourcesListResult(msrest.serialization.Model):
         *,
         value: Optional[List["_models.PrivateLinkResource"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: A collection of private link resources.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.PrivateLinkResource]
         :keyword next_link: A link for the next page of private link resources.
         :paramtype next_link: str
         """
-        super(PrivateLinkResourcesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class RegenerateAccessKeyParameters(msrest.serialization.Model):
-    """Parameters supplied to the Regenerate Authorization Rule operation, specifies which key needs to be reset.
+class RegenerateAccessKeyParameters(_serialization.Model):
+    """Parameters supplied to the Regenerate Authorization Rule operation, specifies which key needs
+    to be reset.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_type: Required. The access key to regenerate. Known values are: "PrimaryKey",
+    :ivar key_type: The access key to regenerate. Required. Known values are: "PrimaryKey" and
      "SecondaryKey".
     :vartype key_type: str or ~azure.mgmt.servicebus.v2021_11_01.models.KeyType
     :ivar key: Optional, if the key value provided, is reset for KeyType value or autogenerate Key
@@ -1486,35 +1433,29 @@ class RegenerateAccessKeyParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'key_type': {'required': True},
+        "key_type": {"required": True},
     }
 
     _attribute_map = {
-        'key_type': {'key': 'keyType', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
+        "key_type": {"key": "keyType", "type": "str"},
+        "key": {"key": "key", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_type: Union[str, "_models.KeyType"],
-        key: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, key_type: Union[str, "_models.KeyType"], key: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword key_type: Required. The access key to regenerate. Known values are: "PrimaryKey",
+        :keyword key_type: The access key to regenerate. Required. Known values are: "PrimaryKey" and
          "SecondaryKey".
         :paramtype key_type: str or ~azure.mgmt.servicebus.v2021_11_01.models.KeyType
         :keyword key: Optional, if the key value provided, is reset for KeyType value or autogenerate
          Key value set for keyType.
         :paramtype key: str
         """
-        super(RegenerateAccessKeyParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_type = key_type
         self.key = key
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The Resource definition for other than namespace.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1528,24 +1469,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1564,38 +1501,32 @@ class ResourceNamespacePatch(Resource):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(ResourceNamespacePatch, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
 
@@ -1621,7 +1552,7 @@ class Rule(ProxyResource):
      message that have been matched by a filter expression.
     :vartype action: ~azure.mgmt.servicebus.v2021_11_01.models.Action
     :ivar filter_type: Filter type that is evaluated against a BrokeredMessage. Known values are:
-     "SqlFilter", "CorrelationFilter".
+     "SqlFilter" and "CorrelationFilter".
     :vartype filter_type: str or ~azure.mgmt.servicebus.v2021_11_01.models.FilterType
     :ivar sql_filter: Properties of sqlFilter.
     :vartype sql_filter: ~azure.mgmt.servicebus.v2021_11_01.models.SqlFilter
@@ -1630,23 +1561,23 @@ class Rule(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'action': {'key': 'properties.action', 'type': 'Action'},
-        'filter_type': {'key': 'properties.filterType', 'type': 'str'},
-        'sql_filter': {'key': 'properties.sqlFilter', 'type': 'SqlFilter'},
-        'correlation_filter': {'key': 'properties.correlationFilter', 'type': 'CorrelationFilter'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "action": {"key": "properties.action", "type": "Action"},
+        "filter_type": {"key": "properties.filterType", "type": "str"},
+        "sql_filter": {"key": "properties.sqlFilter", "type": "SqlFilter"},
+        "correlation_filter": {"key": "properties.correlationFilter", "type": "CorrelationFilter"},
     }
 
     def __init__(
@@ -1656,21 +1587,21 @@ class Rule(ProxyResource):
         filter_type: Optional[Union[str, "_models.FilterType"]] = None,
         sql_filter: Optional["_models.SqlFilter"] = None,
         correlation_filter: Optional["_models.CorrelationFilter"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword action: Represents the filter actions which are allowed for the transformation of a
          message that have been matched by a filter expression.
         :paramtype action: ~azure.mgmt.servicebus.v2021_11_01.models.Action
         :keyword filter_type: Filter type that is evaluated against a BrokeredMessage. Known values
-         are: "SqlFilter", "CorrelationFilter".
+         are: "SqlFilter" and "CorrelationFilter".
         :paramtype filter_type: str or ~azure.mgmt.servicebus.v2021_11_01.models.FilterType
         :keyword sql_filter: Properties of sqlFilter.
         :paramtype sql_filter: ~azure.mgmt.servicebus.v2021_11_01.models.SqlFilter
         :keyword correlation_filter: Properties of correlationFilter.
         :paramtype correlation_filter: ~azure.mgmt.servicebus.v2021_11_01.models.CorrelationFilter
         """
-        super(Rule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.action = action
         self.filter_type = filter_type
@@ -1678,7 +1609,7 @@ class Rule(ProxyResource):
         self.correlation_filter = correlation_filter
 
 
-class RuleListResult(msrest.serialization.Model):
+class RuleListResult(_serialization.Model):
     """The response of the List rule operation.
 
     :ivar value: Result of the List Rules operation.
@@ -1689,17 +1620,13 @@ class RuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Rule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Rule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Rule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Rule"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of the List Rules operation.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.Rule]
@@ -1707,7 +1634,7 @@ class RuleListResult(msrest.serialization.Model):
          list of rules.
         :paramtype next_link: str
         """
-        super(RuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -1734,38 +1661,33 @@ class SBAuthorizationRule(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'rights': {'key': 'properties.rights', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "rights": {"key": "properties.rights", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        rights: Optional[List[Union[str, "_models.AccessRights"]]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rights: Optional[List[Union[str, "_models.AccessRights"]]] = None, **kwargs: Any) -> None:
         """
         :keyword rights: The rights associated with the rule.
         :paramtype rights: list[str or ~azure.mgmt.servicebus.v2021_11_01.models.AccessRights]
         """
-        super(SBAuthorizationRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.rights = rights
 
 
-class SBAuthorizationRuleListResult(msrest.serialization.Model):
+class SBAuthorizationRuleListResult(_serialization.Model):
     """The response to the List Namespace operation.
 
     :ivar value: Result of the List Authorization Rules operation.
@@ -1776,8 +1698,8 @@ class SBAuthorizationRuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SBAuthorizationRule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SBAuthorizationRule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -1785,8 +1707,8 @@ class SBAuthorizationRuleListResult(msrest.serialization.Model):
         *,
         value: Optional[List["_models.SBAuthorizationRule"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of the List Authorization Rules operation.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.SBAuthorizationRule]
@@ -1794,12 +1716,12 @@ class SBAuthorizationRuleListResult(msrest.serialization.Model):
          list of Authorization Rules.
         :paramtype next_link: str
         """
-        super(SBAuthorizationRuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SBClientAffineProperties(msrest.serialization.Model):
+class SBClientAffineProperties(_serialization.Model):
     """Properties specific to client affine subscriptions.
 
     :ivar client_id: Indicates the Client ID of the application that created the client-affine
@@ -1814,9 +1736,9 @@ class SBClientAffineProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'is_durable': {'key': 'isDurable', 'type': 'bool'},
-        'is_shared': {'key': 'isShared', 'type': 'bool'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "is_durable": {"key": "isDurable", "type": "bool"},
+        "is_shared": {"key": "isShared", "type": "bool"},
     }
 
     def __init__(
@@ -1825,8 +1747,8 @@ class SBClientAffineProperties(msrest.serialization.Model):
         client_id: Optional[str] = None,
         is_durable: Optional[bool] = None,
         is_shared: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword client_id: Indicates the Client ID of the application that created the client-affine
          subscription.
@@ -1838,7 +1760,7 @@ class SBClientAffineProperties(msrest.serialization.Model):
          subscription is shared or not.
         :paramtype is_shared: bool
         """
-        super(SBClientAffineProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.client_id = client_id
         self.is_durable = is_durable
         self.is_shared = is_shared
@@ -1857,46 +1779,40 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. The Geo-location where the resource lives.
+    :ivar location: The Geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. The Geo-location where the resource lives.
+        :keyword location: The Geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
 
 
-class SBNamespace(TrackedResource):
+class SBNamespace(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Description of a namespace resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1909,9 +1825,9 @@ class SBNamespace(TrackedResource):
     :vartype name: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar location: Required. The Geo-location where the resource lives.
+    :ivar location: The Geo-location where the resource lives. Required.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: Properties of SKU.
     :vartype sku: ~azure.mgmt.servicebus.v2021_11_01.models.SBSku
@@ -1947,39 +1863,42 @@ class SBNamespace(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
-        'created_at': {'readonly': True},
-        'updated_at': {'readonly': True},
-        'service_bus_endpoint': {'readonly': True},
-        'metric_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "created_at": {"readonly": True},
+        "updated_at": {"readonly": True},
+        "service_bus_endpoint": {"readonly": True},
+        "metric_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'SBSku'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
-        'metric_id': {'key': 'properties.metricId', 'type': 'str'},
-        'zone_redundant': {'key': 'properties.zoneRedundant', 'type': 'bool'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
-        'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "SBSku"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
+        "updated_at": {"key": "properties.updatedAt", "type": "iso-8601"},
+        "service_bus_endpoint": {"key": "properties.serviceBusEndpoint", "type": "str"},
+        "metric_id": {"key": "properties.metricId", "type": "str"},
+        "zone_redundant": {"key": "properties.zoneRedundant", "type": "bool"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
+        "alternate_name": {"key": "properties.alternateName", "type": "str"},
     }
 
     def __init__(
@@ -1994,12 +1913,12 @@ class SBNamespace(TrackedResource):
         private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None,
         disable_local_auth: Optional[bool] = None,
         alternate_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. The Geo-location where the resource lives.
+        :keyword location: The Geo-location where the resource lives. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: Properties of SKU.
         :paramtype sku: ~azure.mgmt.servicebus.v2021_11_01.models.SBSku
@@ -2019,7 +1938,7 @@ class SBNamespace(TrackedResource):
         :keyword alternate_name: Alternate name for namespace.
         :paramtype alternate_name: str
         """
-        super(SBNamespace, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
         self.system_data = None
@@ -2036,7 +1955,7 @@ class SBNamespace(TrackedResource):
         self.alternate_name = alternate_name
 
 
-class SBNamespaceListResult(msrest.serialization.Model):
+class SBNamespaceListResult(_serialization.Model):
     """The response of the List Namespace operation.
 
     :ivar value: Result of the List Namespace operation.
@@ -2047,17 +1966,13 @@ class SBNamespaceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SBNamespace]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SBNamespace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SBNamespace"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.SBNamespace"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of the List Namespace operation.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.SBNamespace]
@@ -2065,12 +1980,12 @@ class SBNamespaceListResult(msrest.serialization.Model):
          list of Namespaces.
         :paramtype next_link: str
         """
-        super(SBNamespaceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SBNamespaceUpdateParameters(ResourceNamespacePatch):
+class SBNamespaceUpdateParameters(ResourceNamespacePatch):  # pylint: disable=too-many-instance-attributes
     """Description of a namespace resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2083,7 +1998,7 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     :vartype type: str
     :ivar location: Resource location.
     :vartype location: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar sku: Properties of SKU.
     :vartype sku: ~azure.mgmt.servicebus.v2021_11_01.models.SBSku
@@ -2114,35 +2029,38 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'status': {'readonly': True},
-        'created_at': {'readonly': True},
-        'updated_at': {'readonly': True},
-        'service_bus_endpoint': {'readonly': True},
-        'metric_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "status": {"readonly": True},
+        "created_at": {"readonly": True},
+        "updated_at": {"readonly": True},
+        "service_bus_endpoint": {"readonly": True},
+        "metric_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'sku', 'type': 'SBSku'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'service_bus_endpoint': {'key': 'properties.serviceBusEndpoint', 'type': 'str'},
-        'metric_id': {'key': 'properties.metricId', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'Encryption'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
-        'alternate_name': {'key': 'properties.alternateName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "sku", "type": "SBSku"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
+        "updated_at": {"key": "properties.updatedAt", "type": "iso-8601"},
+        "service_bus_endpoint": {"key": "properties.serviceBusEndpoint", "type": "str"},
+        "metric_id": {"key": "properties.metricId", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "Encryption"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
+        "alternate_name": {"key": "properties.alternateName", "type": "str"},
     }
 
     def __init__(
@@ -2156,12 +2074,12 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None,
         disable_local_auth: Optional[bool] = None,
         alternate_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword sku: Properties of SKU.
         :paramtype sku: ~azure.mgmt.servicebus.v2021_11_01.models.SBSku
@@ -2178,7 +2096,7 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         :keyword alternate_name: Alternate name for namespace.
         :paramtype alternate_name: str
         """
-        super(SBNamespaceUpdateParameters, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
         self.provisioning_state = None
@@ -2193,7 +2111,7 @@ class SBNamespaceUpdateParameters(ResourceNamespacePatch):
         self.alternate_name = alternate_name
 
 
-class SBQueue(ProxyResource):
+class SBQueue(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Description of queue Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2220,9 +2138,9 @@ class SBQueue(ProxyResource):
      to this queue.
     :vartype accessed_at: ~datetime.datetime
     :ivar size_in_bytes: The size of the queue, in bytes.
-    :vartype size_in_bytes: long
+    :vartype size_in_bytes: int
     :ivar message_count: The number of messages in the queue.
-    :vartype message_count: long
+    :vartype message_count: int
     :ivar lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
      that the message is locked for other receivers. The maximum value for LockDuration is 5
      minutes; the default value is 1 minute.
@@ -2232,7 +2150,7 @@ class SBQueue(ProxyResource):
     :vartype max_size_in_megabytes: int
     :ivar max_message_size_in_kilobytes: Maximum size (in KB) of the message payload that can be
      accepted by the queue. This property is only used in Premium today and default is 1024.
-    :vartype max_message_size_in_kilobytes: long
+    :vartype max_message_size_in_kilobytes: int
     :ivar requires_duplicate_detection: A value indicating if this queue requires duplicate
      detection.
     :vartype requires_duplicate_detection: bool
@@ -2254,7 +2172,7 @@ class SBQueue(ProxyResource):
     :vartype max_delivery_count: int
     :ivar status: Enumerates the possible values for the status of a messaging entity. Known values
      are: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
-     "Deleting", "Renaming", "Unknown".
+     "Deleting", "Renaming", and "Unknown".
     :vartype status: str or ~azure.mgmt.servicebus.v2021_11_01.models.EntityStatus
     :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
@@ -2275,50 +2193,53 @@ class SBQueue(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
-        'count_details': {'readonly': True},
-        'created_at': {'readonly': True},
-        'updated_at': {'readonly': True},
-        'accessed_at': {'readonly': True},
-        'size_in_bytes': {'readonly': True},
-        'message_count': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
+        "count_details": {"readonly": True},
+        "created_at": {"readonly": True},
+        "updated_at": {"readonly": True},
+        "accessed_at": {"readonly": True},
+        "size_in_bytes": {"readonly": True},
+        "message_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'count_details': {'key': 'properties.countDetails', 'type': 'MessageCountDetails'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'accessed_at': {'key': 'properties.accessedAt', 'type': 'iso-8601'},
-        'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long'},
-        'message_count': {'key': 'properties.messageCount', 'type': 'long'},
-        'lock_duration': {'key': 'properties.lockDuration', 'type': 'duration'},
-        'max_size_in_megabytes': {'key': 'properties.maxSizeInMegabytes', 'type': 'int'},
-        'max_message_size_in_kilobytes': {'key': 'properties.maxMessageSizeInKilobytes', 'type': 'long'},
-        'requires_duplicate_detection': {'key': 'properties.requiresDuplicateDetection', 'type': 'bool'},
-        'requires_session': {'key': 'properties.requiresSession', 'type': 'bool'},
-        'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'duration'},
-        'dead_lettering_on_message_expiration': {'key': 'properties.deadLetteringOnMessageExpiration', 'type': 'bool'},
-        'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow', 'type': 'duration'},
-        'max_delivery_count': {'key': 'properties.maxDeliveryCount', 'type': 'int'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
-        'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'duration'},
-        'enable_partitioning': {'key': 'properties.enablePartitioning', 'type': 'bool'},
-        'enable_express': {'key': 'properties.enableExpress', 'type': 'bool'},
-        'forward_to': {'key': 'properties.forwardTo', 'type': 'str'},
-        'forward_dead_lettered_messages_to': {'key': 'properties.forwardDeadLetteredMessagesTo', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "count_details": {"key": "properties.countDetails", "type": "MessageCountDetails"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
+        "updated_at": {"key": "properties.updatedAt", "type": "iso-8601"},
+        "accessed_at": {"key": "properties.accessedAt", "type": "iso-8601"},
+        "size_in_bytes": {"key": "properties.sizeInBytes", "type": "int"},
+        "message_count": {"key": "properties.messageCount", "type": "int"},
+        "lock_duration": {"key": "properties.lockDuration", "type": "duration"},
+        "max_size_in_megabytes": {"key": "properties.maxSizeInMegabytes", "type": "int"},
+        "max_message_size_in_kilobytes": {"key": "properties.maxMessageSizeInKilobytes", "type": "int"},
+        "requires_duplicate_detection": {"key": "properties.requiresDuplicateDetection", "type": "bool"},
+        "requires_session": {"key": "properties.requiresSession", "type": "bool"},
+        "default_message_time_to_live": {"key": "properties.defaultMessageTimeToLive", "type": "duration"},
+        "dead_lettering_on_message_expiration": {"key": "properties.deadLetteringOnMessageExpiration", "type": "bool"},
+        "duplicate_detection_history_time_window": {
+            "key": "properties.duplicateDetectionHistoryTimeWindow",
+            "type": "duration",
+        },
+        "max_delivery_count": {"key": "properties.maxDeliveryCount", "type": "int"},
+        "status": {"key": "properties.status", "type": "str"},
+        "enable_batched_operations": {"key": "properties.enableBatchedOperations", "type": "bool"},
+        "auto_delete_on_idle": {"key": "properties.autoDeleteOnIdle", "type": "duration"},
+        "enable_partitioning": {"key": "properties.enablePartitioning", "type": "bool"},
+        "enable_express": {"key": "properties.enableExpress", "type": "bool"},
+        "forward_to": {"key": "properties.forwardTo", "type": "str"},
+        "forward_dead_lettered_messages_to": {"key": "properties.forwardDeadLetteredMessagesTo", "type": "str"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         lock_duration: Optional[datetime.timedelta] = None,
@@ -2337,8 +2258,8 @@ class SBQueue(ProxyResource):
         enable_express: Optional[bool] = None,
         forward_to: Optional[str] = None,
         forward_dead_lettered_messages_to: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lock_duration: ISO 8601 timespan duration of a peek-lock; that is, the amount of time
          that the message is locked for other receivers. The maximum value for LockDuration is 5
@@ -2349,7 +2270,7 @@ class SBQueue(ProxyResource):
         :paramtype max_size_in_megabytes: int
         :keyword max_message_size_in_kilobytes: Maximum size (in KB) of the message payload that can be
          accepted by the queue. This property is only used in Premium today and default is 1024.
-        :paramtype max_message_size_in_kilobytes: long
+        :paramtype max_message_size_in_kilobytes: int
         :keyword requires_duplicate_detection: A value indicating if this queue requires duplicate
          detection.
         :paramtype requires_duplicate_detection: bool
@@ -2371,7 +2292,7 @@ class SBQueue(ProxyResource):
         :paramtype max_delivery_count: int
         :keyword status: Enumerates the possible values for the status of a messaging entity. Known
          values are: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
-         "Deleting", "Renaming", "Unknown".
+         "Deleting", "Renaming", and "Unknown".
         :paramtype status: str or ~azure.mgmt.servicebus.v2021_11_01.models.EntityStatus
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
@@ -2391,7 +2312,7 @@ class SBQueue(ProxyResource):
          message.
         :paramtype forward_dead_lettered_messages_to: str
         """
-        super(SBQueue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.count_details = None
         self.created_at = None
@@ -2417,7 +2338,7 @@ class SBQueue(ProxyResource):
         self.forward_dead_lettered_messages_to = forward_dead_lettered_messages_to
 
 
-class SBQueueListResult(msrest.serialization.Model):
+class SBQueueListResult(_serialization.Model):
     """The response to the List Queues operation.
 
     :ivar value: Result of the List Queues operation.
@@ -2428,17 +2349,13 @@ class SBQueueListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SBQueue]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SBQueue]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SBQueue"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.SBQueue"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of the List Queues operation.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.SBQueue]
@@ -2446,19 +2363,19 @@ class SBQueueListResult(msrest.serialization.Model):
          list of queues.
         :paramtype next_link: str
         """
-        super(SBQueueListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SBSku(msrest.serialization.Model):
+class SBSku(_serialization.Model):
     """SKU of the namespace.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Name of this SKU. Known values are: "Basic", "Standard", "Premium".
+    :ivar name: Name of this SKU. Required. Known values are: "Basic", "Standard", and "Premium".
     :vartype name: str or ~azure.mgmt.servicebus.v2021_11_01.models.SkuName
-    :ivar tier: The billing tier of this particular SKU. Known values are: "Basic", "Standard",
+    :ivar tier: The billing tier of this particular SKU. Known values are: "Basic", "Standard", and
      "Premium".
     :vartype tier: str or ~azure.mgmt.servicebus.v2021_11_01.models.SkuTier
     :ivar capacity: The specified messaging units for the tier. For Premium tier, capacity are 1,2
@@ -2467,13 +2384,13 @@ class SBSku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
@@ -2482,25 +2399,26 @@ class SBSku(msrest.serialization.Model):
         name: Union[str, "_models.SkuName"],
         tier: Optional[Union[str, "_models.SkuTier"]] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword name: Required. Name of this SKU. Known values are: "Basic", "Standard", "Premium".
+        :keyword name: Name of this SKU. Required. Known values are: "Basic", "Standard", and
+         "Premium".
         :paramtype name: str or ~azure.mgmt.servicebus.v2021_11_01.models.SkuName
         :keyword tier: The billing tier of this particular SKU. Known values are: "Basic", "Standard",
-         "Premium".
+         and "Premium".
         :paramtype tier: str or ~azure.mgmt.servicebus.v2021_11_01.models.SkuTier
         :keyword capacity: The specified messaging units for the tier. For Premium tier, capacity are
          1,2 and 4.
         :paramtype capacity: int
         """
-        super(SBSku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = tier
         self.capacity = capacity
 
 
-class SBSubscription(ProxyResource):
+class SBSubscription(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Description of subscription resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2518,7 +2436,7 @@ class SBSubscription(ProxyResource):
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.servicebus.v2021_11_01.models.SystemData
     :ivar message_count: Number of messages.
-    :vartype message_count: long
+    :vartype message_count: int
     :ivar created_at: Exact time the message was created.
     :vartype created_at: ~datetime.datetime
     :ivar accessed_at: Last time there was a receive request to this subscription.
@@ -2549,7 +2467,7 @@ class SBSubscription(ProxyResource):
     :vartype max_delivery_count: int
     :ivar status: Enumerates the possible values for the status of a messaging entity. Known values
      are: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
-     "Deleting", "Renaming", "Unknown".
+     "Deleting", "Renaming", and "Unknown".
     :vartype status: str or ~azure.mgmt.servicebus.v2021_11_01.models.EntityStatus
     :ivar enable_batched_operations: Value that indicates whether server-side batched operations
      are enabled.
@@ -2570,46 +2488,52 @@ class SBSubscription(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
-        'message_count': {'readonly': True},
-        'created_at': {'readonly': True},
-        'accessed_at': {'readonly': True},
-        'updated_at': {'readonly': True},
-        'count_details': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
+        "message_count": {"readonly": True},
+        "created_at": {"readonly": True},
+        "accessed_at": {"readonly": True},
+        "updated_at": {"readonly": True},
+        "count_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'message_count': {'key': 'properties.messageCount', 'type': 'long'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'accessed_at': {'key': 'properties.accessedAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'count_details': {'key': 'properties.countDetails', 'type': 'MessageCountDetails'},
-        'lock_duration': {'key': 'properties.lockDuration', 'type': 'duration'},
-        'requires_session': {'key': 'properties.requiresSession', 'type': 'bool'},
-        'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'duration'},
-        'dead_lettering_on_filter_evaluation_exceptions': {'key': 'properties.deadLetteringOnFilterEvaluationExceptions', 'type': 'bool'},
-        'dead_lettering_on_message_expiration': {'key': 'properties.deadLetteringOnMessageExpiration', 'type': 'bool'},
-        'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow', 'type': 'duration'},
-        'max_delivery_count': {'key': 'properties.maxDeliveryCount', 'type': 'int'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
-        'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'duration'},
-        'forward_to': {'key': 'properties.forwardTo', 'type': 'str'},
-        'forward_dead_lettered_messages_to': {'key': 'properties.forwardDeadLetteredMessagesTo', 'type': 'str'},
-        'is_client_affine': {'key': 'properties.isClientAffine', 'type': 'bool'},
-        'client_affine_properties': {'key': 'properties.clientAffineProperties', 'type': 'SBClientAffineProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "message_count": {"key": "properties.messageCount", "type": "int"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
+        "accessed_at": {"key": "properties.accessedAt", "type": "iso-8601"},
+        "updated_at": {"key": "properties.updatedAt", "type": "iso-8601"},
+        "count_details": {"key": "properties.countDetails", "type": "MessageCountDetails"},
+        "lock_duration": {"key": "properties.lockDuration", "type": "duration"},
+        "requires_session": {"key": "properties.requiresSession", "type": "bool"},
+        "default_message_time_to_live": {"key": "properties.defaultMessageTimeToLive", "type": "duration"},
+        "dead_lettering_on_filter_evaluation_exceptions": {
+            "key": "properties.deadLetteringOnFilterEvaluationExceptions",
+            "type": "bool",
+        },
+        "dead_lettering_on_message_expiration": {"key": "properties.deadLetteringOnMessageExpiration", "type": "bool"},
+        "duplicate_detection_history_time_window": {
+            "key": "properties.duplicateDetectionHistoryTimeWindow",
+            "type": "duration",
+        },
+        "max_delivery_count": {"key": "properties.maxDeliveryCount", "type": "int"},
+        "status": {"key": "properties.status", "type": "str"},
+        "enable_batched_operations": {"key": "properties.enableBatchedOperations", "type": "bool"},
+        "auto_delete_on_idle": {"key": "properties.autoDeleteOnIdle", "type": "duration"},
+        "forward_to": {"key": "properties.forwardTo", "type": "str"},
+        "forward_dead_lettered_messages_to": {"key": "properties.forwardDeadLetteredMessagesTo", "type": "str"},
+        "is_client_affine": {"key": "properties.isClientAffine", "type": "bool"},
+        "client_affine_properties": {"key": "properties.clientAffineProperties", "type": "SBClientAffineProperties"},
     }
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         lock_duration: Optional[datetime.timedelta] = None,
@@ -2626,8 +2550,8 @@ class SBSubscription(ProxyResource):
         forward_dead_lettered_messages_to: Optional[str] = None,
         is_client_affine: Optional[bool] = None,
         client_affine_properties: Optional["_models.SBClientAffineProperties"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword lock_duration: ISO 8061 lock duration timespan for the subscription. The default value
          is 1 minute.
@@ -2651,7 +2575,7 @@ class SBSubscription(ProxyResource):
         :paramtype max_delivery_count: int
         :keyword status: Enumerates the possible values for the status of a messaging entity. Known
          values are: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
-         "Deleting", "Renaming", "Unknown".
+         "Deleting", "Renaming", and "Unknown".
         :paramtype status: str or ~azure.mgmt.servicebus.v2021_11_01.models.EntityStatus
         :keyword enable_batched_operations: Value that indicates whether server-side batched operations
          are enabled.
@@ -2671,7 +2595,7 @@ class SBSubscription(ProxyResource):
         :paramtype client_affine_properties:
          ~azure.mgmt.servicebus.v2021_11_01.models.SBClientAffineProperties
         """
-        super(SBSubscription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.message_count = None
         self.created_at = None
@@ -2694,7 +2618,7 @@ class SBSubscription(ProxyResource):
         self.client_affine_properties = client_affine_properties
 
 
-class SBSubscriptionListResult(msrest.serialization.Model):
+class SBSubscriptionListResult(_serialization.Model):
     """The response to the List Subscriptions operation.
 
     :ivar value: Result of the List Subscriptions operation.
@@ -2705,17 +2629,13 @@ class SBSubscriptionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SBSubscription]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SBSubscription]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SBSubscription"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.SBSubscription"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of the List Subscriptions operation.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.SBSubscription]
@@ -2723,12 +2643,12 @@ class SBSubscriptionListResult(msrest.serialization.Model):
          list of subscriptions.
         :paramtype next_link: str
         """
-        super(SBSubscriptionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SBTopic(ProxyResource):
+class SBTopic(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Description of topic resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2746,7 +2666,7 @@ class SBTopic(ProxyResource):
     :ivar system_data: The system meta data relating to this resource.
     :vartype system_data: ~azure.mgmt.servicebus.v2021_11_01.models.SystemData
     :ivar size_in_bytes: Size of the topic, in bytes.
-    :vartype size_in_bytes: long
+    :vartype size_in_bytes: int
     :ivar created_at: Exact time the message was created.
     :vartype created_at: ~datetime.datetime
     :ivar updated_at: The exact time the message was updated.
@@ -2766,7 +2686,7 @@ class SBTopic(ProxyResource):
     :vartype max_size_in_megabytes: int
     :ivar max_message_size_in_kilobytes: Maximum size (in KB) of the message payload that can be
      accepted by the topic. This property is only used in Premium today and default is 1024.
-    :vartype max_message_size_in_kilobytes: long
+    :vartype max_message_size_in_kilobytes: int
     :ivar requires_duplicate_detection: Value indicating if this topic requires duplicate
      detection.
     :vartype requires_duplicate_detection: bool
@@ -2778,7 +2698,7 @@ class SBTopic(ProxyResource):
     :vartype enable_batched_operations: bool
     :ivar status: Enumerates the possible values for the status of a messaging entity. Known values
      are: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
-     "Deleting", "Renaming", "Unknown".
+     "Deleting", "Renaming", and "Unknown".
     :vartype status: str or ~azure.mgmt.servicebus.v2021_11_01.models.EntityStatus
     :ivar support_ordering: Value that indicates whether the topic supports ordering.
     :vartype support_ordering: bool
@@ -2794,42 +2714,45 @@ class SBTopic(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'readonly': True},
-        'system_data': {'readonly': True},
-        'size_in_bytes': {'readonly': True},
-        'created_at': {'readonly': True},
-        'updated_at': {'readonly': True},
-        'accessed_at': {'readonly': True},
-        'subscription_count': {'readonly': True},
-        'count_details': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"readonly": True},
+        "system_data": {"readonly": True},
+        "size_in_bytes": {"readonly": True},
+        "created_at": {"readonly": True},
+        "updated_at": {"readonly": True},
+        "accessed_at": {"readonly": True},
+        "subscription_count": {"readonly": True},
+        "count_details": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'updated_at': {'key': 'properties.updatedAt', 'type': 'iso-8601'},
-        'accessed_at': {'key': 'properties.accessedAt', 'type': 'iso-8601'},
-        'subscription_count': {'key': 'properties.subscriptionCount', 'type': 'int'},
-        'count_details': {'key': 'properties.countDetails', 'type': 'MessageCountDetails'},
-        'default_message_time_to_live': {'key': 'properties.defaultMessageTimeToLive', 'type': 'duration'},
-        'max_size_in_megabytes': {'key': 'properties.maxSizeInMegabytes', 'type': 'int'},
-        'max_message_size_in_kilobytes': {'key': 'properties.maxMessageSizeInKilobytes', 'type': 'long'},
-        'requires_duplicate_detection': {'key': 'properties.requiresDuplicateDetection', 'type': 'bool'},
-        'duplicate_detection_history_time_window': {'key': 'properties.duplicateDetectionHistoryTimeWindow', 'type': 'duration'},
-        'enable_batched_operations': {'key': 'properties.enableBatchedOperations', 'type': 'bool'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'support_ordering': {'key': 'properties.supportOrdering', 'type': 'bool'},
-        'auto_delete_on_idle': {'key': 'properties.autoDeleteOnIdle', 'type': 'duration'},
-        'enable_partitioning': {'key': 'properties.enablePartitioning', 'type': 'bool'},
-        'enable_express': {'key': 'properties.enableExpress', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "size_in_bytes": {"key": "properties.sizeInBytes", "type": "int"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
+        "updated_at": {"key": "properties.updatedAt", "type": "iso-8601"},
+        "accessed_at": {"key": "properties.accessedAt", "type": "iso-8601"},
+        "subscription_count": {"key": "properties.subscriptionCount", "type": "int"},
+        "count_details": {"key": "properties.countDetails", "type": "MessageCountDetails"},
+        "default_message_time_to_live": {"key": "properties.defaultMessageTimeToLive", "type": "duration"},
+        "max_size_in_megabytes": {"key": "properties.maxSizeInMegabytes", "type": "int"},
+        "max_message_size_in_kilobytes": {"key": "properties.maxMessageSizeInKilobytes", "type": "int"},
+        "requires_duplicate_detection": {"key": "properties.requiresDuplicateDetection", "type": "bool"},
+        "duplicate_detection_history_time_window": {
+            "key": "properties.duplicateDetectionHistoryTimeWindow",
+            "type": "duration",
+        },
+        "enable_batched_operations": {"key": "properties.enableBatchedOperations", "type": "bool"},
+        "status": {"key": "properties.status", "type": "str"},
+        "support_ordering": {"key": "properties.supportOrdering", "type": "bool"},
+        "auto_delete_on_idle": {"key": "properties.autoDeleteOnIdle", "type": "duration"},
+        "enable_partitioning": {"key": "properties.enablePartitioning", "type": "bool"},
+        "enable_express": {"key": "properties.enableExpress", "type": "bool"},
     }
 
     def __init__(
@@ -2846,8 +2769,8 @@ class SBTopic(ProxyResource):
         auto_delete_on_idle: Optional[datetime.timedelta] = None,
         enable_partitioning: Optional[bool] = None,
         enable_express: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword default_message_time_to_live: ISO 8601 Default message timespan to live value. This is
          the duration after which the message expires, starting from when the message is sent to Service
@@ -2858,7 +2781,7 @@ class SBTopic(ProxyResource):
         :paramtype max_size_in_megabytes: int
         :keyword max_message_size_in_kilobytes: Maximum size (in KB) of the message payload that can be
          accepted by the topic. This property is only used in Premium today and default is 1024.
-        :paramtype max_message_size_in_kilobytes: long
+        :paramtype max_message_size_in_kilobytes: int
         :keyword requires_duplicate_detection: Value indicating if this topic requires duplicate
          detection.
         :paramtype requires_duplicate_detection: bool
@@ -2870,7 +2793,7 @@ class SBTopic(ProxyResource):
         :paramtype enable_batched_operations: bool
         :keyword status: Enumerates the possible values for the status of a messaging entity. Known
          values are: "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating",
-         "Deleting", "Renaming", "Unknown".
+         "Deleting", "Renaming", and "Unknown".
         :paramtype status: str or ~azure.mgmt.servicebus.v2021_11_01.models.EntityStatus
         :keyword support_ordering: Value that indicates whether the topic supports ordering.
         :paramtype support_ordering: bool
@@ -2884,7 +2807,7 @@ class SBTopic(ProxyResource):
          topic holds a message in memory temporarily before writing it to persistent storage.
         :paramtype enable_express: bool
         """
-        super(SBTopic, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.size_in_bytes = None
         self.created_at = None
@@ -2905,7 +2828,7 @@ class SBTopic(ProxyResource):
         self.enable_express = enable_express
 
 
-class SBTopicListResult(msrest.serialization.Model):
+class SBTopicListResult(_serialization.Model):
     """The response to the List Topics operation.
 
     :ivar value: Result of the List Topics operation.
@@ -2916,17 +2839,13 @@ class SBTopicListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SBTopic]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SBTopic]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SBTopic"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.SBTopic"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: Result of the List Topics operation.
         :paramtype value: list[~azure.mgmt.servicebus.v2021_11_01.models.SBTopic]
@@ -2934,13 +2853,14 @@ class SBTopicListResult(msrest.serialization.Model):
          list of topics.
         :paramtype next_link: str
         """
-        super(SBTopicListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SqlFilter(msrest.serialization.Model):
-    """Represents a filter which is a composition of an expression and an action that is executed in the pub/sub pipeline.
+class SqlFilter(_serialization.Model):
+    """Represents a filter which is a composition of an expression and an action that is executed in
+    the pub/sub pipeline.
 
     :ivar sql_expression: The SQL expression. e.g. MyProperty='ABC'.
     :vartype sql_expression: str
@@ -2953,9 +2873,9 @@ class SqlFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'sql_expression': {'key': 'sqlExpression', 'type': 'str'},
-        'compatibility_level': {'key': 'compatibilityLevel', 'type': 'int'},
-        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
+        "sql_expression": {"key": "sqlExpression", "type": "str"},
+        "compatibility_level": {"key": "compatibilityLevel", "type": "int"},
+        "requires_preprocessing": {"key": "requiresPreprocessing", "type": "bool"},
     }
 
     def __init__(
@@ -2963,9 +2883,9 @@ class SqlFilter(msrest.serialization.Model):
         *,
         sql_expression: Optional[str] = None,
         compatibility_level: Optional[int] = None,
-        requires_preprocessing: Optional[bool] = True,
-        **kwargs
-    ):
+        requires_preprocessing: bool = True,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sql_expression: The SQL expression. e.g. MyProperty='ABC'.
         :paramtype sql_expression: str
@@ -2976,14 +2896,15 @@ class SqlFilter(msrest.serialization.Model):
          preprocessing.
         :paramtype requires_preprocessing: bool
         """
-        super(SqlFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.sql_expression = sql_expression
         self.compatibility_level = compatibility_level
         self.requires_preprocessing = requires_preprocessing
 
 
 class SqlRuleAction(Action):
-    """Represents set of actions written in SQL language-based syntax that is performed against a ServiceBus.Messaging.BrokeredMessage.
+    """Represents set of actions written in SQL language-based syntax that is performed against a
+    ServiceBus.Messaging.BrokeredMessage.
 
     :ivar sql_expression: SQL expression. e.g. MyProperty='ABC'.
     :vartype sql_expression: str
@@ -2996,9 +2917,9 @@ class SqlRuleAction(Action):
     """
 
     _attribute_map = {
-        'sql_expression': {'key': 'sqlExpression', 'type': 'str'},
-        'compatibility_level': {'key': 'compatibilityLevel', 'type': 'int'},
-        'requires_preprocessing': {'key': 'requiresPreprocessing', 'type': 'bool'},
+        "sql_expression": {"key": "sqlExpression", "type": "str"},
+        "compatibility_level": {"key": "compatibilityLevel", "type": "int"},
+        "requires_preprocessing": {"key": "requiresPreprocessing", "type": "bool"},
     }
 
     def __init__(
@@ -3006,9 +2927,9 @@ class SqlRuleAction(Action):
         *,
         sql_expression: Optional[str] = None,
         compatibility_level: Optional[int] = None,
-        requires_preprocessing: Optional[bool] = True,
-        **kwargs
-    ):
+        requires_preprocessing: bool = True,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sql_expression: SQL expression. e.g. MyProperty='ABC'.
         :paramtype sql_expression: str
@@ -3019,66 +2940,66 @@ class SqlRuleAction(Action):
          preprocessing.
         :paramtype requires_preprocessing: bool
         """
-        super(SqlRuleAction, self).__init__(sql_expression=sql_expression, compatibility_level=compatibility_level, requires_preprocessing=requires_preprocessing, **kwargs)
+        super().__init__(
+            sql_expression=sql_expression,
+            compatibility_level=compatibility_level,
+            requires_preprocessing=requires_preprocessing,
+            **kwargs
+        )
 
 
-class Subnet(msrest.serialization.Model):
+class Subnet(_serialization.Model):
     """Properties supplied for Subnet.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Resource ID of Virtual Network Subnet.
+    :ivar id: Resource ID of Virtual Network Subnet. Required.
     :vartype id: str
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. Resource ID of Virtual Network Subnet.
+        :keyword id: Resource ID of Virtual Network Subnet. Required.
         :paramtype id: str
         """
-        super(Subnet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", "Key".
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.servicebus.v2021_11_01.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", "Key".
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.servicebus.v2021_11_01.models.CreatedByType
     :ivar last_modified_at: The type of identity that last modified the resource.
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3090,26 +3011,26 @@ class SystemData(msrest.serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", "Key".
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.servicebus.v2021_11_01.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", "Key".
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.servicebus.v2021_11_01.models.CreatedByType
         :keyword last_modified_at: The type of identity that last modified the resource.
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -3118,7 +3039,7 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UserAssignedIdentity(msrest.serialization.Model):
+class UserAssignedIdentity(_serialization.Model):
     """Recognized Dictionary value.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3130,27 +3051,23 @@ class UserAssignedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UserAssignedIdentity, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.client_id = None
 
 
-class UserAssignedIdentityProperties(msrest.serialization.Model):
+class UserAssignedIdentityProperties(_serialization.Model):
     """UserAssignedIdentityProperties.
 
     :ivar user_assigned_identity: ARM ID of user Identity selected for encryption.
@@ -3158,18 +3075,13 @@ class UserAssignedIdentityProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        user_assigned_identity: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, user_assigned_identity: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword user_assigned_identity: ARM ID of user Identity selected for encryption.
         :paramtype user_assigned_identity: str
         """
-        super(UserAssignedIdentityProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_assigned_identity = user_assigned_identity

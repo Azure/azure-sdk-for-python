@@ -53,8 +53,8 @@ class TestPipelineJobValidate:
             ),
             (
                 "./tests/test_configs/pipeline_jobs/invalid/invalid_pipeline_referencing_component_file.yml",
-                "In order to specify an existing components, please provide the correct registry"
-            )
+                "In order to specify an existing components, please provide the correct registry",
+            ),
         ],
     )
     def test_pipeline_job_validation_on_load(self, pipeline_job_path: str, expected_error: str) -> None:
@@ -148,7 +148,7 @@ class TestPipelineJobValidate:
                 {
                     "path": "jobs.hello_world_no_env.trial",
                     "value": None,
-                }
+                },
             ],
             "result": "Failed",
         }
@@ -254,15 +254,15 @@ class TestPipelineJobValidate:
         [
             (
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_without_name.yaml",
-                "Output name is required when output version is specified."
+                "Output name is required when output version is specified.",
             ),
             (
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_node_output_without_name.yaml",
-                "Output name is required when output version is specified."
+                "Output name is required when output version is specified.",
             ),
             (
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_register_pipeline_output_with_invalid_name.yaml",
-                "The output name pipeline_output@ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters."
+                "The output name pipeline_output@ can only contain alphanumeric characters, dashes and underscores, with a limit of 255 characters.",
             ),
         ],
     )
@@ -678,7 +678,7 @@ class TestDSLPipelineJobValidate:
             node1.compute = compute_name
             sub_pipeline_with_compute_binding(compute_name)
 
-        pipeline_job = pipeline_with_compute_binding('cpu-cluster')
+        pipeline_job = pipeline_with_compute_binding("cpu-cluster")
         # Assert compute binding validate not raise error when validate
         assert pipeline_job._validate().passed
 

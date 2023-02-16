@@ -37,7 +37,6 @@ class ControlFlowType(object):
 CONTROL_FLOW_TYPES = [getattr(ControlFlowType, k) for k in dir(ControlFlowType) if k.isupper()]
 
 
-
 class DataTransferTaskType(object):
     COPY_DATA = "copy_data"
     IMPORT_DATA = "import_data"
