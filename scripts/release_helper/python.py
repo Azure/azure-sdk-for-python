@@ -159,7 +159,7 @@ class IssueProcessPython(IssueProcess):
     def auto_parse(self):
         super().auto_parse()
         issue_body_list = self.get_issue_body()
-        self.readme_link = issue_body_list[0]
+        self.readme_link = issue_body_list[0].strip("\r\n ")
         if not re.findall(".+/Azure/azure-rest-api-specs/.+/resource-manager", self.readme_link):
             return
 
