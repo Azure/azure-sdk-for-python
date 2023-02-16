@@ -32,12 +32,10 @@ from azure.ai.ml._internal import (
     TargetSelector,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
-from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR, AssetTypes
+from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.dsl._utils import environment_variable_overwrite
 from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
-from azure.ai.ml.exceptions import ValidationException
 
 from .._utils import (
     DATA_VERSION,
@@ -46,7 +44,6 @@ from .._utils import (
     extract_non_primitive,
     get_expected_runsettings_items,
     set_run_settings,
-    unregister_internal_components,
 )
 
 
@@ -283,9 +280,7 @@ class TestPipelineJob:
         }
 
     def test_elastic_component_in_pipeline(self):
-        yaml_path = (
-            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
-        )
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
         configuration = ITPConfiguration(
@@ -340,9 +335,7 @@ class TestPipelineJob:
         }
 
     def test_singularity_component_in_pipeline(self):
-        yaml_path = (
-            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # singularity is based on CommandComponent
-        )
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # singularity is based on CommandComponent
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
         configuration = AISuperComputerConfiguration(
@@ -570,6 +563,7 @@ class TestPipelineJob:
             )
             node.compute = compute_name
             node.environment = environment_name
+
         pipeline_job = pipeline_func()
         assert pipeline_job._validate().passed, repr(pipeline_job._validate())
         rest_object = pipeline_job._to_rest_object().properties.jobs["node"]
@@ -602,15 +596,3 @@ class TestPipelineJob:
             assert len(node_dict["properties"]) == 1
             assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
             assert node_dict["properties"] == rest_node_dict["properties"]
-
-    def test_load_pipeline_job_with_internal_nodes_from_rest(self):
-        # this is a simplified test case which avoid constructing a complete pipeline job rest object
-        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
-
-        unregister_internal_components()
-        internal_node_type = "CommandComponent"
-        with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "False"):
-            with pytest.raises(ValidationException, match=f"Unsupported component type: {internal_node_type}."):
-                pipeline_node_factory.get_load_from_rest_object_func(internal_node_type)
-
-        pipeline_node_factory.get_load_from_rest_object_func(internal_node_type)

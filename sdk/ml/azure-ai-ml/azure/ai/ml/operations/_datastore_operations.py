@@ -9,8 +9,12 @@ from typing import Dict, Iterable
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient2022_05_01
-from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreSecrets, NoneDatastoreCredentials
+from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient2022_10_01
+from azure.ai.ml._restclient.v2022_10_01.models import (
+    Datastore as DatastoreData,
+    DatastoreSecrets,
+    NoneDatastoreCredentials,
+)
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
@@ -34,13 +38,13 @@ class DatastoreOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        serviceclient_2022_05_01: ServiceClient2022_05_01,
+        serviceclient_2022_10_01: ServiceClient2022_10_01,
         **kwargs: Dict
     ):
         super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         # ops_logger.update_info(kwargs)
-        self._operation = serviceclient_2022_05_01.datastores
-        self._credential = serviceclient_2022_05_01._config.credential
+        self._operation = serviceclient_2022_10_01.datastores
+        self._credential = serviceclient_2022_10_01._config.credential
         self._init_kwargs = kwargs
 
     # @monitor_with_activity(logger, "Datastore.List", ActivityType.PUBLICAPI)

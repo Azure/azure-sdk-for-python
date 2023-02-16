@@ -2,13 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-try:
-    import urllib.parse as parse
-except ImportError:
-    # pylint:disable=import-error
-    import urlparse as parse  # type: ignore
-
 from typing import TYPE_CHECKING
+from urllib import parse
+
 from .challenge_auth_policy import ChallengeAuthPolicy
 from .client_base import KeyVaultClientBase
 from .http_challenge import HttpChallenge
@@ -39,32 +35,31 @@ class KeyVaultResourceId():
 
     def __init__(
         self,
-        source_id,  # type: str
-        vault_url,  # type: str
-        name,  # type: str
-        version=None  # type: Optional[str]
-    ):
+        source_id: str,
+        vault_url: str,
+        name: str,
+        version: "Optional[str]" = None,
+    ) -> None:
         self.source_id = source_id
         self.vault_url = vault_url
         self.name = name
         self.version = version
 
 
-def parse_key_vault_id(source_id):
-    # type: (str) -> KeyVaultResourceId
+def parse_key_vault_id(source_id: str) -> KeyVaultResourceId:
     try:
         parsed_uri = parse.urlparse(source_id)
     except Exception:  # pylint: disable=broad-except
-        raise ValueError("'{}' is not a valid ID".format(source_id))
+        raise ValueError(f"'{source_id}' is not a valid ID")
     if not (parsed_uri.scheme and parsed_uri.hostname):
-        raise ValueError("'{}' is not a valid ID".format(source_id))
+        raise ValueError(f"'{source_id}' is not a valid ID")
 
     path = list(filter(None, parsed_uri.path.split("/")))
 
     if len(path) < 2 or len(path) > 3:
-        raise ValueError("'{}' is not a valid ID".format(source_id))
+        raise ValueError(f"'{source_id}' is not a valid ID")
 
-    vault_url = "{}://{}".format(parsed_uri.scheme, parsed_uri.hostname)
+    vault_url = f"{parsed_uri.scheme}://{parsed_uri.hostname}"
     if parsed_uri.port:
         vault_url += f":{parsed_uri.port}"
 

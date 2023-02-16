@@ -10,7 +10,7 @@ import shutil
 import subprocess
 import sys
 import time
-from typing import List
+from typing import List, Optional, Any
 import six
 
 from azure.core.credentials import AccessToken
@@ -27,7 +27,7 @@ EXECUTABLE_NAME = "az"
 NOT_LOGGED_IN = "Please run 'az login' to set up an account"
 
 
-class AzureCliCredential(object):
+class AzureCliCredential:
     """Authenticates by requesting a token from the Azure CLI.
 
     This requires previously logging in to Azure via "az login", and will use the CLI's currently logged in identity.
@@ -37,7 +37,12 @@ class AzureCliCredential(object):
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
         acquire tokens for any tenant the application can access.
     """
-    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+    def __init__(
+        self,
+        *,
+        tenant_id: str = "",
+        additionally_allowed_tenants: Optional[List[str]] = None
+    ) -> None:
 
         self.tenant_id = tenant_id
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
@@ -52,7 +57,7 @@ class AzureCliCredential(object):
         """Calling this method is unnecessary."""
 
     @log_get_token("AzureCliCredential")
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+    def get_token(self, *scopes: str, **kwargs: Any) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -92,7 +97,7 @@ class AzureCliCredential(object):
         return token
 
 
-def parse_token(output):
+def parse_token(output) -> Optional[AccessToken]:
     """Parse output of 'az account get-access-token' to an AccessToken.
 
     In particular, convert the "expiresOn" value to epoch seconds. This value is a naive local datetime as returned by
@@ -113,7 +118,7 @@ def parse_token(output):
         return None
 
 
-def get_safe_working_dir():
+def get_safe_working_dir() -> str:
     """Invoke 'az' from a directory controlled by the OS, not the executing program's directory"""
 
     if sys.platform.startswith("win"):
@@ -125,7 +130,7 @@ def get_safe_working_dir():
     return "/bin"
 
 
-def sanitize_output(output):
+def sanitize_output(output: str) -> str:
     """Redact access tokens from CLI output to prevent error messages revealing them"""
     return re.sub(r"\"accessToken\": \"(.*?)(\"|$)", "****", output)
 

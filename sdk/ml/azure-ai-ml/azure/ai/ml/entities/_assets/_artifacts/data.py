@@ -11,12 +11,12 @@ from pathlib import Path
 from typing import Dict, Optional, Type, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_05_01.models import (
-    DataContainerData,
-    DataContainerDetails,
+from azure.ai.ml._restclient.v2022_10_01.models import (
+    DataContainer,
+    DataContainerProperties,
     DataType,
-    DataVersionBaseData,
-    DataVersionBaseDetails,
+    DataVersionBase,
+    DataVersionBaseProperties,
     MLTableData,
     UriFileDataVersion,
     UriFolderDataVersion,
@@ -32,14 +32,14 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 
 from .artifact import ArtifactStorageInfo
 
-DataAssetTypeModelMap: Dict[str, Type[DataVersionBaseDetails]] = {
+DataAssetTypeModelMap: Dict[str, Type[DataVersionBaseProperties]] = {
     AssetTypes.URI_FILE: UriFileDataVersion,
     AssetTypes.URI_FOLDER: UriFolderDataVersion,
     AssetTypes.MLTABLE: MLTableData,
 }
 
 
-def getModelForDataAssetType(data_asset_type: str) -> Type[DataVersionBaseDetails]:
+def getModelForDataAssetType(data_asset_type: str) -> Type[DataVersionBaseProperties]:
     model = DataAssetTypeModelMap.get(data_asset_type)
     if model is None:
         msg = "Unknown DataType {}".format(data_asset_type)
@@ -150,10 +150,10 @@ class Data(Artifact):
         # pylint: disable=no-member
         return DataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
-    def _to_container_rest_object(self) -> DataContainerData:
+    def _to_container_rest_object(self) -> DataContainer:
         VersionDetailsClass = getModelForDataAssetType(self.type)
-        return DataContainerData(
-            properties=DataContainerDetails(
+        return DataContainer(
+            properties=DataContainerProperties(
                 properties=self.properties,
                 tags=self.tags,
                 is_archived=False,
@@ -161,7 +161,7 @@ class Data(Artifact):
             )
         )
 
-    def _to_rest_object(self) -> DataVersionBaseData:
+    def _to_rest_object(self) -> DataVersionBase:
         VersionDetailsClass = getModelForDataAssetType(self.type)
         data_version_details = VersionDetailsClass(
             description=self.description,
@@ -173,11 +173,11 @@ class Data(Artifact):
         )
         if VersionDetailsClass._attribute_map.get("referenced_uris") is not None:
             data_version_details.referenced_uris = self._referenced_uris
-        return DataVersionBaseData(properties=data_version_details)
+        return DataVersionBase(properties=data_version_details)
 
     @classmethod
-    def _from_container_rest_object(cls, data_container_rest_object: DataContainerData) -> "Data":
-        data_rest_object_details: DataContainerDetails = data_container_rest_object.properties
+    def _from_container_rest_object(cls, data_container_rest_object: DataContainer) -> "Data":
+        data_rest_object_details: DataContainerProperties = data_container_rest_object.properties
         data = Data(
             name=data_container_rest_object.name,
             creation_context=SystemData._from_rest_object(data_container_rest_object.system_data),
@@ -189,8 +189,8 @@ class Data(Artifact):
         return data
 
     @classmethod
-    def _from_rest_object(cls, data_rest_object: DataVersionBaseData) -> "Data":
-        data_rest_object_details: DataVersionBaseDetails = data_rest_object.properties
+    def _from_rest_object(cls, data_rest_object: DataVersionBase) -> "Data":
+        data_rest_object_details: DataVersionBaseProperties = data_rest_object.properties
         arm_id_object = get_arm_id_object_from_id(data_rest_object.id)
         path = data_rest_object_details.data_uri
         data = Data(
@@ -210,7 +210,11 @@ class Data(Artifact):
 
     def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
         regex = r"datastores\/(.+)"
-        groups = re.search(regex, asset_artifact.datastore_arm_id)
-        if groups:
-            datastore_name = groups.group(1)
-            self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)
+        # datastore_arm_id is null for registry scenario, so capture the full_storage_path
+        if not asset_artifact.datastore_arm_id and asset_artifact.full_storage_path:
+            self.path = asset_artifact.full_storage_path
+        else:
+            groups = re.search(regex, asset_artifact.datastore_arm_id)
+            if groups:
+                datastore_name = groups.group(1)
+                self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)

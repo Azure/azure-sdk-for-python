@@ -34,6 +34,8 @@ class Compute(Resource, RestTranslatableMixin):
     :type description: Optional[str], optional
     :param resource_id: ARM resource id of the underlying compute.
     :type resource_id: str, optional
+    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
+    :type tags: Optional[dict[str, str]]
     """
 
     def __init__(
@@ -42,6 +44,7 @@ class Compute(Resource, RestTranslatableMixin):
         location: Optional[str] = None,
         description: Optional[str] = None,
         resource_id: Optional[str] = None,
+        tags: Optional[dict] = None,
         **kwargs,
     ):
         self._type = kwargs.pop("type", None)
@@ -55,6 +58,7 @@ class Compute(Resource, RestTranslatableMixin):
         super().__init__(name=name, description=description, **kwargs)
         self.resource_id = resource_id
         self.location = location
+        self.tags = tags
 
     @property
     def type(self) -> Optional[str]:

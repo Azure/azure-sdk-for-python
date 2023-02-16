@@ -12,29 +12,45 @@ import sys
 import subprocess
 
 logging.getLogger().setLevel(logging.INFO)
+from ci_tools.functions import discover_targeted_packages
+from ci_tools.environment_exclusions import is_check_enabled
 
 root_dir = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "..", ".."))
 sdk_dir = os.path.join(root_dir, "sdk")
 
 def run_black(service_dir):
+    results = []
     logging.info("Running black for {}".format(service_dir))
 
-    out = subprocess.Popen([sys.executable, "-m", "black", "-l", "120", "sdk/{}".format(service_dir)],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        cwd = root_dir
-    )
+    discovered_packages = discover_targeted_packages("azure*", os.path.join(root_dir, "sdk", service_dir))
 
-    stdout,stderr = out.communicate()
+    for package in discovered_packages:
+        package_name = os.path.basename(package)
 
-    if stderr:
-        raise RuntimeError("black ran into some trouble during its invocation: " + stderr)
+        if is_check_enabled(package, "black", True):
+            out = subprocess.Popen([sys.executable, "-m", "black", "--config", os.path.join(root_dir, "eng", "black-pyproject.toml"), os.path.join("sdk", service_dir, package_name)],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                cwd = root_dir
+            )
 
-    if stdout:
-        if "reformatted" in stdout.decode('utf-8'):
-            return False
+            stdout,stderr = out.communicate()
 
-    return True
+            if stderr:
+                results.append((package_name, stderr))
+        
+            if out.returncode > 0:
+                print(f"black ran into an unexpected failure while analyzing the code for {package_name}")
+                if stdout:
+                    print(stdout.decode('utf-8'))
+                exit(out.returncode)
+
+            if stdout and "reformatted" in stdout.decode('utf-8'):
+                results.append((package_name, False))
+            else:
+                print(f"black succeeded against {package_name}")
+
+    return results
 
     
 if __name__ == "__main__":
@@ -51,7 +67,13 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     if args.validate != "False":
-        if not run_black(args.service_directory):
+        results = run_black(args.service_directory)
+        
+        if len(results) > 0:
+            for result in results:
+                error = "Code needs reformat." if result[1] == False else error
+                logging.error(f"Black run for {result[0]} ran into an issue: {error}")
+
             raise ValueError("Found difference between formatted code and current commit. Please re-generate with the latest autorest.")
         
     else:

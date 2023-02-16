@@ -1,6 +1,6 @@
 # Azure Monitor Ingestion client library for Python
 
-The Azure Monitor Ingestion client library is used to send custom logs to [Azure Monitor][azure_monitor_overview].
+The Azure Monitor Ingestion client library is used to send custom logs to [Azure Monitor][azure_monitor_overview] using the [Logs Ingestion API][ingestion_overview].
 
 This library allows you to send data from virtually any source to supported built-in tables or to custom tables that you create in Log Analytics workspace. You can even extend the schema of built-in tables with custom columns.
 
@@ -75,7 +75,7 @@ Data collection rules (DCR) define data collected by Azure Monitor and specify h
 
 The DCR must understand the structure of the input data and the structure of the target table. If the two don't match, it can use a transformation to convert the source data to match the target table. You may also use the transform to filter source data and perform any other calculations or conversions.
 
-For more details, refer to [Data collection rules in Azure Monitor](https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview).
+For more details, see [Data collection rules in Azure Monitor][data_collection_rule]. For information on how to retrieve a DCR ID, see [this tutorial][data_collection_rule_tutorial].
 
 ### Log Analytics workspace tables
 
@@ -93,6 +93,7 @@ The logs that were uploaded using this library can be queried using the [Azure M
 ## Examples
 
 - [Upload custom logs](#upload-custom-logs)
+- [Upload with custom error handling](#upload-with-custom-error-handling)
 
 ### Upload custom logs
 
@@ -100,8 +101,10 @@ This example shows uploading logs to Azure Monitor.
 
 ```python
 import os
-from azure.monitor.ingestion import LogsIngestionClient, UploadLogsStatus
+
+from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
+from azure.monitor.ingestion import LogsIngestionClient
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
 credential = DefaultAzureCredential()
@@ -122,10 +125,28 @@ body = [
       }
     ]
 
-response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-if response.status != UploadLogsStatus.SUCCESS:
-    failed_logs = response.failed_logs_index
-    print(failed_logs)
+try:
+    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+except HttpResponseError as e:
+    print(f"Upload failed: {e}")
+```
+
+### Upload with custom error handling
+
+To upload logs with custom error handling, you can pass a callback function to the `on_error` parameter of the `upload` method. The callback function will be called for each error that occurs during the upload and should expect one argument that corresponds to an `LogsUploadError` object. This object contains the error encountered and the list of logs that failed to upload.
+
+```python
+# Example 1: Collect all logs that failed to upload.
+failed_logs = []
+def on_error(error):
+    print("Log chunk failed to upload with error: ", error.error)
+    failed_logs.extend(error.failed_logs)
+
+# Example 2: Ignore all errors.
+def on_error_pass(error):
+    pass
+
+client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error)
 ```
 
 ## Troubleshooting
@@ -175,6 +196,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [changelog]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-ingestion/CHANGELOG.md
 [data_collection_endpoint]: https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-endpoint-overview
 [data_collection_rule]: https://learn.microsoft.com/azure/azure-monitor/essentials/data-collection-rule-overview
+[data_collection_rule_tutorial]: https://learn.microsoft.com/azure/azure-monitor/logs/tutorial-logs-ingestion-portal#collect-information-from-the-dcr
+[ingestion_overview]: https://learn.microsoft.com/azure/azure-monitor/logs/logs-ingestion-api-overview
 [package]: https://aka.ms/azsdk-python-monitor-ingestion-pypi
 [pip]: https://pypi.org/project/pip/
 [python_logging]: https://docs.python.org/3/library/logging.html

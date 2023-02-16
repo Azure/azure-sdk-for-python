@@ -1,7 +1,7 @@
 param (
   [string]$TargetDirectory = "", # Code path to code owners. e.g sdk/core/azure-amqp
   [string]$CodeOwnerFileLocation = (Resolve-Path $PSScriptRoot/../../../.github/CODEOWNERS), # The absolute path of CODEOWNERS file. 
-  [string]$ToolVersion = "1.0.0-dev.20221215.1", 
+  [string]$ToolVersion = "1.0.0-dev.20230108.6", 
   [string]$ToolPath = (Join-Path ([System.IO.Path]::GetTempPath()) "codeowners-tool-path"), # The place to check the tool existence. Put temp path as default
   [string]$DevOpsFeed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json", # DevOp tool feeds.
   [string]$VsoVariable = "", # Option of write code owners into devop variable
@@ -81,13 +81,18 @@ function TestGetCodeOwner([string]$targetDirectory, [string]$codeOwnerFileLocati
 }
 
 if($Test) {
-  $testFile = (Resolve-Path $PSScriptRoot/../../../tools/code-owners-parser/Azure.Sdk.Tools.RetrieveCodeOwners.Tests/CODEOWNERS)
-  TestGetCodeOwner -targetDirectory "sdk" -codeOwnerFileLocation $testFile -includeNonUserAliases $true -expectReturn @("person1", "person2")
-  TestGetCodeOwner -targetDirectory "sdk/noPath" -codeOwnerFileLocation $testFile -includeNonUserAliases $true -expectReturn @("person1", "person2")
-  TestGetCodeOwner -targetDirectory "/sdk/azconfig" -codeOwnerFileLocation $testFile -includeNonUserAliases $true -expectReturn @("person3", "person4")
-  TestGetCodeOwner -targetDirectory "/sdk/azconfig/package" -codeOwnerFileLocation $testFile -includeNonUserAliases $true  $testFile -expectReturn @("person3", "person4")
-  TestGetCodeOwner -targetDirectory "/sd" -codeOwnerFileLocation $testFile -includeNonUserAliases $true  -expectReturn @()
-  TestGetCodeOwner -targetDirectory "/sdk/testUser/" -codeOwnerFileLocation $testFile -expectReturn @("azure-sdk") 
+  # These tests have been removed; now instead we should run tests from RetrieveCodeOwnersProgramTests, and in a way as explained in:
+  # https://github.com/Azure/azure-sdk-tools/issues/5434
+  # https://github.com/Azure/azure-sdk-tools/pull/5103#discussion_r1068680818
+  Write-Host "These tests have been removed. Please see https://github.com/Azure/azure-sdk-tools/issues/5434 for more."
+  #
+  # $testFile = (Resolve-Path $PSScriptRoot/../../../tools/code-owners-parser/Azure.Sdk.Tools.RetrieveCodeOwners.Tests/TestData/simple_path_CODEOWNERS)
+  # TestGetCodeOwner -targetDirectory "sdk" -codeOwnerFileLocation $testFile -includeNonUserAliases $true -expectReturn @("person1", "person2")
+  # TestGetCodeOwner -targetDirectory "sdk/noPath" -codeOwnerFileLocation $testFile -includeNonUserAliases $true -expectReturn @("person1", "person2")
+  # TestGetCodeOwner -targetDirectory "/sdk/azconfig" -codeOwnerFileLocation $testFile -includeNonUserAliases $true -expectReturn @("person3", "person4")
+  # TestGetCodeOwner -targetDirectory "/sdk/azconfig/package" -codeOwnerFileLocation $testFile -includeNonUserAliases $true  $testFile -expectReturn @("person3", "person4")
+  # TestGetCodeOwner -targetDirectory "/sd" -codeOwnerFileLocation $testFile -includeNonUserAliases $true  -expectReturn @()
+  # TestGetCodeOwner -targetDirectory "/sdk/testUser/" -codeOwnerFileLocation $testFile -expectReturn @("azure-sdk") 
   exit 0
 }
 else {

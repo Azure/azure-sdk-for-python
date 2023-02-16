@@ -35,6 +35,7 @@ extends:
   template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: core
+    ValidateFormatting: true
     Artifacts:
     - name: azure-core
       safeName: azurecore

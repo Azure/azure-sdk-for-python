@@ -68,26 +68,33 @@ class TestWorkspace(AzureRecordedTestCase):
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
 
+        static_acr = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/Microsoft.ContainerRegistry/registries/acrmhetest2"
+        static_appinsights = "/subscriptions/8f338f6e-4fce-44ae-969c-fc7d8fda030e/resourceGroups/rg-mhe-e2e-test-dont-remove/providers/microsoft.insights/components/aimhetest2"
+        param_image_build_compute = "compute"
+        param_display_name = "Test display name"
+        param_description = "Test description"
+        param_tags = {"k1": "v1", "k2": "v2"}
         workspace_poller = client.workspaces.begin_update(
             workspace,
-            image_build_compute="compute",
+            display_name=param_display_name,
+            description=param_description,
+            image_build_compute=param_image_build_compute,
             public_network_access=PublicNetworkAccess.DISABLED,
-            container_regristry=workspace.container_registry,
-            application_insights=workspace.application_insights,
+            container_registry=static_acr,
+            application_insights=static_appinsights,
             update_dependent_resources=True,
+            tags=param_tags,
         )
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
-        assert workspace.image_build_compute == "compute"
+        assert workspace.display_name == param_display_name
+        assert workspace.description == param_description
+        assert workspace.image_build_compute == param_image_build_compute
         assert workspace.public_network_access == PublicNetworkAccess.DISABLED
-        # verify updating acr
-        # TODO (1412559): Disabling this logic as it is deleting the main test workspace container registry
-        # static_acr: str = client.workspaces.get(client._operation_scope.workspace_name).container_registry
-        # workspace = client.workspaces.begin_update_dependencies(
-        #     workspace_name=workspace.name, container_registry=static_acr, force=True
-        # )
-        # assert workspace.container_registry.lower() == static_acr.lower()
+        assert workspace.container_registry.lower() == static_acr.lower()
+        assert workspace.application_insights.lower() == static_appinsights.lower()
+        assert workspace.tags == param_tags
 
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
@@ -167,15 +174,15 @@ class TestWorkspace(AzureRecordedTestCase):
             {
                 "identity": {
                     "type": "user_assigned",
-                    "user_assigned_identities":{
+                    "user_assigned_identities": {
                         user_assigned_identity.id: {
                             "client_id": user_assigned_identity.client_id,
-                            "principal_id": user_assigned_identity.principal_id
+                            "principal_id": user_assigned_identity.principal_id,
                         },
                         user_assigned_identity2.id: {
                             "client_id": user_assigned_identity2.client_id,
-                            "principal_id": user_assigned_identity2.principal_id
-                        }
+                            "principal_id": user_assigned_identity2.principal_id,
+                        },
                     },
                 }
             },
@@ -264,7 +271,6 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.identity.user_assigned_identities == None
         assert workspace.primary_user_assigned_identity == None
 
-
         # test updating identity type from system_assgined to system_assigned and user_assigned
         msi_client = ManagedServiceIdentityClient(
             credential=client._credential, subscription_id=client._operation_scope.subscription_id
@@ -283,15 +289,15 @@ class TestWorkspace(AzureRecordedTestCase):
             {
                 "identity": {
                     "type": "system_assigned, user_assigned",
-                    "user_assigned_identities":{
+                    "user_assigned_identities": {
                         user_assigned_identity.id: {
                             "client_id": user_assigned_identity.client_id,
-                            "principal_id": user_assigned_identity.principal_id
+                            "principal_id": user_assigned_identity.principal_id,
                         },
                         user_assigned_identity2.id: {
                             "client_id": user_assigned_identity2.client_id,
-                            "principal_id": user_assigned_identity2.principal_id
-                        }
+                            "principal_id": user_assigned_identity2.principal_id,
+                        },
                     },
                 }
             },
@@ -299,13 +305,13 @@ class TestWorkspace(AzureRecordedTestCase):
         wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
         workspace_poller = client.workspaces.begin_update(
             wps,
-            # primary_user_assigned_identity=user_assigned_identity.id, # uncomment this when sai to sai|uai fixing pr released. 
+            # primary_user_assigned_identity=user_assigned_identity.id, # uncomment this when sai to sai|uai fixing pr released.
         )
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
         assert len(workspace.identity.user_assigned_identities) == 2
-        # assert workspace.primary_user_assigned_identity == user_assigned_identity.id # uncomment this when sai to sai|uai fixing pr released. 
+        # assert workspace.primary_user_assigned_identity == user_assigned_identity.id # uncomment this when sai to sai|uai fixing pr released.
         assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
 
         ## test uai removal. not supported yet, service returning "Code: FailedIdentityOperation, Removal of all user-assigned identities assigned to resource '...' with type 'SystemAssigned, UserAssigned' is invalid."

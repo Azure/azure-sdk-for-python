@@ -655,6 +655,11 @@ class ManagedDatabaseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INACCESSIBLE = "Inaccessible"
     RESTORING = "Restoring"
     UPDATING = "Updating"
+    STOPPING = "Stopping"
+    STOPPED = "Stopped"
+    STARTING = "Starting"
+    DB_MOVING = "DbMoving"
+    DB_COPYING = "DbCopying"
 
 
 class ManagedInstanceAdministratorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -756,7 +761,7 @@ class MetricType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class MoveOperationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The move operation mode."""
+    """Operation mode."""
 
     MOVE = "Move"
     COPY = "Copy"
@@ -1006,6 +1011,13 @@ class SampleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ADVENTURE_WORKS_LT = "AdventureWorksLT"
     WIDE_WORLD_IMPORTERS_STD = "WideWorldImportersStd"
     WIDE_WORLD_IMPORTERS_FULL = "WideWorldImportersFull"
+
+
+class SecondaryInstanceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the geo-secondary instance. Set 'Standby' if the instance is used as a DR option only."""
+
+    GEO = "Geo"
+    STANDBY = "Standby"
 
 
 class SecondaryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

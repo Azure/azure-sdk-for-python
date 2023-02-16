@@ -35,6 +35,9 @@ DATASTORE_RESOURCE_ID = (
 PROVIDER_RESOURCE_ID_WITH_VERSION = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/{}/{}/versions/{}"
 )
+SINGULARITY_ID_FORMAT = (
+    "/subscriptions/.*/resourceGroups/.*/providers/Microsoft.MachineLearningServices/virtualclusters/.*"
+)
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"
@@ -49,6 +52,8 @@ TID_FMT = "&tid={}"
 AZUREML_PRIVATE_FEATURES_ENV_VAR = "AZURE_ML_CLI_PRIVATE_FEATURES_ENABLED"
 AZUREML_INTERNAL_COMPONENTS_ENV_VAR = "AZURE_ML_INTERNAL_COMPONENTS_ENABLED"
 AZUREML_DISABLE_ON_DISK_CACHE_ENV_VAR = "AZURE_ML_DISABLE_ON_DISK_CACHE"
+AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS = "AZURE_ML_COMPONENT_REGISTRATION_MAX_WORKERS"
+AZUREML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION = "AZURE_ML_DISABLE_CONCURRENT_COMPONENT_REGISTRATION"
 AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX = "https://componentsdk.azureedge.net/jsonschema/"
 COMMON_RUNTIME_ENV_VAR = "AZUREML_COMPUTE_USE_COMMON_RUNTIME"
 ENDPOINT_DEPLOYMENT_START_MSG = (
@@ -62,6 +67,7 @@ LIMITED_RESULTSET_WARNING_FORMAT = "Displaying top {} results from the list comm
 MAX_LIST_CLI_RESULTS = 50
 LOCAL_COMPUTE_TARGET = "local"
 LOCAL_COMPUTE_PROPERTY = "IsLocal"
+SERVERLESS_COMPUTE = "serverless"
 CONDA_FILE = "conda_file"
 DOCKER_FILE_NAME = "Dockerfile"
 COMPUTE_UPDATE_ERROR = (
@@ -270,6 +276,12 @@ class ArmConstants(object):
     AZURE_MGMT_APPINSIGHT_API_VERSION = "2015-05-01"
     AZURE_MGMT_KEYVAULT_API_VERSION = "2019-09-01"
     AZURE_MGMT_CONTAINER_REG_API_VERSION = "2019-05-01"
+
+    DEFAULT_URL = "https://management.azure.com/metadata/endpoints?api-version=2019-05-01"
+    METADATA_URL_ENV_NAME = "ARM_CLOUD_METADATA_URL"
+    REGISTRY_DISCOVERY_DEFAULT_REGION = "west"
+    REGISTRY_DISCOVERY_REGION_ENV_NAME = "REGISTRY_DISCOVERY_ENDPOINT_REGION"
+    REGISTRY_ENV_URL = "REGISTRY_DISCOVERY_ENDPOINT_URL"
 
 
 class HttpResponseStatusCode(object):
@@ -570,8 +582,6 @@ class ModelType:
 
 
 class RollingRate:
-    YEAR = "year"
-    MONTH = "month"
     DAY = "day"
     HOUR = "hour"
     MINUTE = "minute"
@@ -586,3 +596,8 @@ class IdentityType:
     AML_TOKEN = "aml_token"
     USER_IDENTITY = "user_identity"
     MANAGED_IDENTITY = "managed_identity"
+
+
+class Boolean:
+    TRUE = "true"
+    FALSE = "false"

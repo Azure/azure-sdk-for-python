@@ -82,10 +82,12 @@ from ._models_py3 import IntegrationRuntimeConnectionInfo
 from ._models_py3 import IntegrationRuntimeCustomSetupScriptProperties
 from ._models_py3 import IntegrationRuntimeDataFlowProperties
 from ._models_py3 import IntegrationRuntimeDataProxyProperties
+from ._models_py3 import IntegrationRuntimeEnableinteractivequery
 from ._models_py3 import IntegrationRuntimeListResponse
 from ._models_py3 import IntegrationRuntimeMonitoringData
 from ._models_py3 import IntegrationRuntimeNodeIpAddress
 from ._models_py3 import IntegrationRuntimeNodeMonitoringData
+from ._models_py3 import IntegrationRuntimeOperationStatus
 from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint
 from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesEndpoint
 from ._models_py3 import IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails
@@ -96,6 +98,7 @@ from ._models_py3 import IntegrationRuntimeSsisCatalogInfo
 from ._models_py3 import IntegrationRuntimeSsisProperties
 from ._models_py3 import IntegrationRuntimeStatus
 from ._models_py3 import IntegrationRuntimeStatusResponse
+from ._models_py3 import IntegrationRuntimeStopOperationStatus
 from ._models_py3 import IntegrationRuntimeVNetProperties
 from ._models_py3 import IotHubDataConnection
 from ._models_py3 import IpFirewallRuleInfo
@@ -346,6 +349,7 @@ from ._synapse_management_client_enums import VulnerabilityAssessmentPolicyBasel
 from ._synapse_management_client_enums import VulnerabilityAssessmentScanState
 from ._synapse_management_client_enums import VulnerabilityAssessmentScanTriggerType
 from ._synapse_management_client_enums import WorkspacePublicNetworkAccess
+from ._synapse_management_client_enums import WorkspaceStatus
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -427,10 +431,12 @@ __all__ = [
     "IntegrationRuntimeCustomSetupScriptProperties",
     "IntegrationRuntimeDataFlowProperties",
     "IntegrationRuntimeDataProxyProperties",
+    "IntegrationRuntimeEnableinteractivequery",
     "IntegrationRuntimeListResponse",
     "IntegrationRuntimeMonitoringData",
     "IntegrationRuntimeNodeIpAddress",
     "IntegrationRuntimeNodeMonitoringData",
+    "IntegrationRuntimeOperationStatus",
     "IntegrationRuntimeOutboundNetworkDependenciesCategoryEndpoint",
     "IntegrationRuntimeOutboundNetworkDependenciesEndpoint",
     "IntegrationRuntimeOutboundNetworkDependenciesEndpointDetails",
@@ -441,6 +447,7 @@ __all__ = [
     "IntegrationRuntimeSsisProperties",
     "IntegrationRuntimeStatus",
     "IntegrationRuntimeStatusResponse",
+    "IntegrationRuntimeStopOperationStatus",
     "IntegrationRuntimeVNetProperties",
     "IotHubDataConnection",
     "IpFirewallRuleInfo",
@@ -690,6 +697,7 @@ __all__ = [
     "VulnerabilityAssessmentScanState",
     "VulnerabilityAssessmentScanTriggerType",
     "WorkspacePublicNetworkAccess",
+    "WorkspaceStatus",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

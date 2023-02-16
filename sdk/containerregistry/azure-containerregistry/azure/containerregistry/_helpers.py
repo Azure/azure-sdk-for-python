@@ -8,18 +8,15 @@ import hashlib
 import re
 import time
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 from io import BytesIO
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from urllib.parse import urlparse
 
 from azure.core.exceptions import ServiceRequestError
 from ._generated.models import OCIManifest
 
 if TYPE_CHECKING:
-    from typing import List, Dict, IO
+    from typing import List, IO, Optional
     from azure.core.pipeline import PipelineRequest
 
 BEARER = "Bearer"
@@ -57,20 +54,19 @@ def _clean(matches):
 def _parse_challenge(header):
     # type: (str) -> Dict[str, str]
     """Parse challenge header into service and scope"""
-    ret = {}
+    ret: Dict[str, str] = {}
     if header.startswith(BEARER):
         challenge_params = header[len(BEARER) + 1 :]
 
         matches = re.split(AUTHENTICATION_CHALLENGE_PARAMS_PATTERN, challenge_params)
         _clean(matches)
-        ret = {}
         for i in range(0, len(matches), 2):
             ret[matches[i]] = matches[i + 1]
 
     return ret
 
 def _parse_next_link(link_string):
-    # type: (str) -> str
+    # type: (str) -> Optional[str]
     """Parses the next link in the list operations response URL
 
     Per the Docker v2 HTTP API spec, the Link header is an RFC5988
@@ -114,10 +110,10 @@ def _strip_alg(digest):
     return digest
 
 def _parse_exp_time(raw_token):
-    # type: (bytes) -> float
-    value = raw_token.split(".")
-    if len(value) > 2:
-        value = value[1]
+    # type: (str) -> float
+    raw_token_list = raw_token.split(".")
+    if len(raw_token_list) > 2:
+        value = raw_token_list[1]
         padding = len(value) % 4
         if padding > 0:
             value += "=" * padding

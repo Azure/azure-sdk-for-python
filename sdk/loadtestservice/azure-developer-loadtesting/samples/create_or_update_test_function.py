@@ -19,7 +19,7 @@ USAGE:
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
-from azure.developer.loadtesting import LoadTestingClient
+from azure.developer.loadtesting import LoadTestAdministrationClient
 
 # for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
 # -loadtesting/README.md
@@ -32,12 +32,12 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestAdministrationClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 # ID to be assigned to test
-TEST_ID = "my-new-sdk-test-id"
+TEST_ID = "my-sdk-test-id"
 
-result = client.load_test_administration.create_or_update_test(
+result = client.create_or_update_test(
     TEST_ID,
     {
         "description": "",
@@ -81,5 +81,4 @@ result = client.load_test_administration.create_or_update_test(
     }
 )
 
-print(result["testId"])
 print(result)

@@ -10,7 +10,7 @@ import pydash
 import pytest
 
 from conftest import normalized_arm_id_in_object
-from test_utilities.utils import verify_entity_load_and_dump
+from test_utilities.utils import verify_entity_load_and_dump, build_temp_folder
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
@@ -238,9 +238,9 @@ class TestCommandComponentEntity:
         assert rest_yaml_component == expected_rest_component
 
         # assert positional args is not supported
-        with pytest.raises(TypeError) as error_info:
+        with pytest.raises(ValidationException) as error_info:
             yaml_component_version(1)
-        assert "[component] CommandComponentBasic() takes 0 positional arguments but 1 was given" in str(error_info)
+        assert "Component function doesn't has any parameters" in str(error_info)
 
         # unknown kw arg
         with pytest.raises(UnexpectedKeywordError) as error_info:
@@ -384,13 +384,19 @@ class TestCommandComponentEntity:
             sampling_algorithm="random",
         )
         sweep_job1.early_termination = {
-            'type': "bandit", 'evaluation_interval': 100, 'delay_evaluation': 200, 'slack_factor': 40.0
-            }
+            "type": "bandit",
+            "evaluation_interval": 100,
+            "delay_evaluation": 200,
+            "slack_factor": 40.0,
+        }
         from azure.ai.ml.entities._job.sweep.early_termination_policy import BanditPolicy
+
         assert isinstance(sweep_job1.early_termination, BanditPolicy)
-        assert [sweep_job1.early_termination.evaluation_interval,
-                sweep_job1.early_termination.delay_evaluation,
-                sweep_job1.early_termination.slack_factor] == [100, 200, 40.0]
+        assert [
+            sweep_job1.early_termination.evaluation_interval,
+            sweep_job1.early_termination.delay_evaluation,
+            sweep_job1.early_termination.slack_factor,
+        ] == [100, 200, 40.0]
 
     def test_invalid_component_inputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_conflict_input_names.yml"
@@ -503,12 +509,11 @@ class TestCommandComponentEntity:
     def test_component_code_asset_ignoring_pycache(self) -> None:
         component_yaml = "./tests/test_configs/components/helloworld_component.yml"
         component = load_component(component_yaml)
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # create some files/folders expected to ignore
-            pycache = Path(temp_dir) / "__pycache__"
-            pycache.mkdir()
-            expected_exclude = pycache / "a.pyc"
-            expected_exclude.touch()
+        with build_temp_folder(
+            source_base_dir="./tests/test_configs/components",
+            relative_files_to_copy=["helloworld_component.yml"],
+            extra_files_to_create={"__pycache__/a.pyc": None},
+        ) as temp_dir:
             # resolve and test for ignore_file's is_file_excluded
             component.code = temp_dir
             with component._resolve_local_code() as code:
@@ -518,17 +523,17 @@ class TestCommandComponentEntity:
                         path = os.path.join(root, name)
                         if code._ignore_file.is_file_excluded(path):
                             excluded.append(path)
-                assert excluded == [str(expected_exclude.absolute())]
+                assert excluded == [str((Path(temp_dir) / "__pycache__/a.pyc").absolute())]
 
     def test_normalized_arm_id_in_component_dict(self):
         component_dict = {
             "code": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/codes/xxx",
-            "environment": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/environments/xxx"
+            "environment": "azureml:/subscriptions/123ABC_+-=/resourceGroups/123ABC_+-=/providers/Microsoft.MachineLearningServices/workspaces/123ABC_+-=/environments/xxx",
         }
         normalized_arm_id_in_object(component_dict)
 
         expected_dict = {
-            'code': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/xxx',
-            'environment': 'azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx'
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/xxx",
+            "environment": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/environments/xxx",
         }
         assert component_dict == expected_dict

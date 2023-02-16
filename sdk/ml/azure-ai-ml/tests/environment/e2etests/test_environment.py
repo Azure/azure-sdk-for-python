@@ -17,7 +17,9 @@ def env_name(variable_recorder) -> Callable[[str], str]:
     def generate_random_environment_name(env_name: Callable[[str], str]) -> str:
         random_env_name = f"env-test-{str(random.randint(1, 10000000))}"
         return variable_recorder.get_or_record(env_name, random_env_name)
+
     return generate_random_environment_name
+
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
@@ -87,8 +89,9 @@ class TestEnvironment(AzureRecordedTestCase):
         assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["image"] == environment.image
 
-    @pytest.mark.skip(reason="This test not recording, task : 2128097")
-    def test_environment_create_or_update_docker_context(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+    def test_environment_create_or_update_docker_context(
+        self, client: MLClient, env_name: Callable[[str], str]
+    ) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_docker_context.yml",
@@ -124,7 +127,9 @@ class TestEnvironment(AzureRecordedTestCase):
         assert environment_with_context_uri.build.dockerfile_path == dockerfile_path
         assert environment_with_context_uri.build.path == context_uri
 
-    def test_environment_create_or_update_docker_context_and_image(self, client: MLClient, env_name: Callable[[str], str]) -> None:
+    def test_environment_create_or_update_docker_context_and_image(
+        self, client: MLClient, env_name: Callable[[str], str]
+    ) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_docker_context.yml",
@@ -136,20 +141,6 @@ class TestEnvironment(AzureRecordedTestCase):
             client._environments.create_or_update(env)
 
         assert "Docker image or Dockerfile should be provided not both" in str(error.value)
-
-    def test_create_autoincrement(self, client: MLClient, env_name: Callable[[str], str]) -> None:
-        env = load_environment(source="./tests/test_configs/environment/environment_no_version.yml")
-
-        env.name = env_name("name")
-        assert env.version is None
-        assert env._auto_increment_version
-
-        created_env = client.environments.create_or_update(env)
-        assert created_env.version == "1"
-        assert created_env._auto_increment_version is False
-
-        next_env_asset = client.environments.create_or_update(env)
-        assert next_env_asset._auto_increment_version is False
 
     def test_environment_list(self, client: MLClient) -> None:
         environment_list = client._environments.list()
@@ -228,7 +219,9 @@ class TestEnvironment(AzureRecordedTestCase):
             sleep_if_live(2)
             assert client.environments.get(name, label="latest").version == version
 
-    def test_registry_environment_create_conda_and_get(self, only_registry_client: MLClient, env_name: Callable[[str], str]) -> None:
+    def test_registry_environment_create_conda_and_get(
+        self, only_registry_client: MLClient, env_name: Callable[[str], str]
+    ) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
             source="./tests/test_configs/environment/environment_conda.yml", params_override=params_override

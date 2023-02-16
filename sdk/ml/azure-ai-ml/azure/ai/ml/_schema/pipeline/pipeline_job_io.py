@@ -40,7 +40,13 @@ class OutputBindingStr(fields.Field):
         raise ValidationError(f"Invalid output binding string '{value}' passed")
 
     def _deserialize(self, value, attr, data, **kwargs):
-        if isinstance(value, dict) and "path" in value and "mode" not in value:
+        if (
+            isinstance(value, dict)
+            and "path" in value
+            and "mode" not in value
+            and "name" not in value
+            and "version" not in value
+        ):
             value = value["path"]
         if isinstance(value, str) and re.match(ComponentJobConstants.OUTPUT_PATTERN, value):
             return value

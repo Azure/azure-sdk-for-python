@@ -14,6 +14,8 @@ class Destination:
 
     :param path: Blob path for Model Data Collector file.
     :type path: str
+    :param event_hub: Azure Event Hub location where payload logging will be stored.
+    :type event_hub: EventHub
 
     """
 

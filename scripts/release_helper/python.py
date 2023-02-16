@@ -30,7 +30,6 @@ class IssueProcessPython(IssueProcess):
                  assignee_candidates: Set[str], language_owner: Set[str]):
         IssueProcess.__init__(self, issue_package, request_repo_dict, assignee_candidates, language_owner)
         self.output_folder = ''
-        self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         self.delay_time = self.get_delay_time()
         self.python_tag = ''
         self.rest_repo_hash = ''
@@ -59,6 +58,17 @@ class IssueProcessPython(IssueProcess):
     def is_multiapi(self):
         return _MultiAPI in self.issue_package.labels_name
 
+    def get_content(self, file_name: str) -> str:
+        patterns = [r'/specification/([\w-]+/)+resource-manager', r'/specification/([\w-]+/)+resource-manager/.*']
+        for item in patterns:
+            try:
+                readme_path = re.compile(item).search(self.readme_link).group() + file_name
+                contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
+                return contents
+            except:
+                pass
+        raise Exception(f"can not get content with {self.readme_link}")
+
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
@@ -66,8 +76,7 @@ class IssueProcessPython(IssueProcess):
             return False
         if 'package-' not in self.target_readme_tag:
             return True
-        readme_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
-        contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
+        contents = self.get_content('/readme.md')
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
         package_tags = pattern_tag.findall(contents)
         whether_same_tag = self.target_readme_tag in package_tags[0]
@@ -150,7 +159,7 @@ class IssueProcessPython(IssueProcess):
     def auto_parse(self):
         super().auto_parse()
         issue_body_list = self.get_issue_body()
-        self.readme_link = issue_body_list[0]
+        self.readme_link = issue_body_list[0].strip("\r\n ")
         if not re.findall(".+/Azure/azure-rest-api-specs/.+/resource-manager", self.readme_link):
             return
 
@@ -159,8 +168,7 @@ class IssueProcessPython(IssueProcess):
         self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
 
         try:
-            readme_python_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.python.md'
-            contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
+            contents = self.get_content('/readme.python.md')
         except Exception as e:
             raise Exception(f"fail to read readme.python.md: {e}")
         pattern_package = re.compile(r'package-name: [\w+-.]+')
