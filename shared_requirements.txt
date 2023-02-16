@@ -184,6 +184,7 @@ yarl<2.0,>=1.0
 #override azure-mgmt-powerbidedicated msrest>=0.7.1
 #override azure-mgmt-eventhub typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-nginx typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-datalake-store typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-portal msrest>=0.7.1
 #override azure-search-documents azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-managementgroups typing-extensions>=4.3.0; python_version<'3.8.0'
