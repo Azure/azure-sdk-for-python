@@ -168,6 +168,7 @@ class RetryPolicy:
 
     def get_backoff_time(self, settings, error):
         try:
+            self._custom_condition_backoff = cast(Dict, self.custom_condition_backoff)
             return self.custom_condition_backoff[error.condition]
         except (KeyError, TypeError):
             pass

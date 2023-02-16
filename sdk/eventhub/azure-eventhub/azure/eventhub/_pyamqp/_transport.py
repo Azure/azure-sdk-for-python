@@ -147,7 +147,7 @@ class UnexpectedFrame(Exception):
     pass
 
 
-class _AbstractTransport(object):  # pylint: disable=too-many-instance-attributes
+class TransportBase(object):  # pylint: disable=too-many-instance-attributes
     """Common superclass for TCP and SSL transports."""
 
     def __init__(
@@ -503,7 +503,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         pass
 
 
-class SSLTransport(_AbstractTransport):
+class SSLTransport(TransportBase):
     """Transport that works over SSL."""
 
     def __init__(
@@ -527,12 +527,12 @@ class SSLTransport(_AbstractTransport):
         return self._wrap_socket_sni(sock, **sslopts)
 
     def _wrap_context(  # pylint: disable=no-self-use
-        self, sock, sslopts, check_hostname=None, **ctx_options
+        self, sock, sslopts, **ctx_options
     ):
         ctx = ssl.create_default_context(**ctx_options)
         ctx.verify_mode = ssl.CERT_REQUIRED
         ctx.load_verify_locations(cafile=certifi.where())
-        ctx.check_hostname = check_hostname
+        # ctx.check_hostname = check_hostname
         return ctx.wrap_socket(sock, **sslopts)
 
     def _wrap_socket_sni(  # pylint: disable=no-self-use
@@ -668,18 +668,19 @@ class SSLTransport(_AbstractTransport):
         with self.block():
             self.write(TLS_HEADER_FRAME)
             _, returned_header = self.receive_frame(verify_frame_type=None)
-            if returned_header[1] == TLS_HEADER_FRAME:
-                raise ValueError(
-                    f"""Mismatching TLS header protocol. Expected: {TLS_HEADER_FRAME!r},"""
-                    """received: {returned_header[1]!r}"""
-                )
+            if returned_header !=None:
+                if returned_header[1] == TLS_HEADER_FRAME:
+                    raise ValueError(
+                        f"""Mismatching TLS header protocol. Expected: {TLS_HEADER_FRAME!r},"""
+                        """received: {returned_header[1]!r}"""
+                    )
 
 
 def Transport(host, transport_type, connect_timeout=None, ssl_opts=True, **kwargs):
     """Create transport.
 
     Given a few parameters from the Connection constructor,
-    select and create a subclass of _AbstractTransport.
+    select and create a subclass of TransportBase.
     """
     if transport_type == TransportType.AmqpOverWebsocket:
         transport = WebSocketTransport
@@ -688,7 +689,7 @@ def Transport(host, transport_type, connect_timeout=None, ssl_opts=True, **kwarg
     return transport(host, connect_timeout=connect_timeout, ssl_opts=ssl_opts, **kwargs)
 
 
-class WebSocketTransport(_AbstractTransport):
+class WebSocketTransport(TransportBase):
     def __init__(
         self,
         host,
@@ -755,9 +756,9 @@ class WebSocketTransport(_AbstractTransport):
     def _read(self, n, initial=False, buffer=None, _errnos=None):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
         from websocket import WebSocketTimeoutException, WebSocket
+        view = buffer or memoryview(bytearray(n))
         try:
             length = 0
-            view = buffer or memoryview(bytearray(n))
             nbytes = self._read_buffer.readinto(view)
             length += nbytes
             n -= nbytes

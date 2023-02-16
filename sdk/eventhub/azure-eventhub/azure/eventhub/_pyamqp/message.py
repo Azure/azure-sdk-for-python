@@ -6,7 +6,6 @@
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from collections import namedtuple
-from typing import NamedTuple
 
 from .types import AMQPTypes, FieldDefinition
 from .constants import FIELD, MessageDeliveryState
@@ -22,9 +21,9 @@ Header = namedtuple(
         'first_acquirer',
         'delivery_count'
     ])
-Header._code = 0x00000070 # type: ignore # pylint:disable=protected-access
-Header.__new__.__defaults__ = (None,) * len(Header._fields) # type: ignore
-Header._definition = ( # type: ignore # pylint:disable=protected-access
+Header._code = 0x00000070 # pylint:disable=protected-access
+Header.__new__.__defaults__ = (None,) * len(Header._fields)
+Header._definition = ( # pylint:disable=protected-access
     FIELD("durable", AMQPTypes.boolean, False, None, False),
     FIELD("priority", AMQPTypes.ubyte, False, None, False),
     FIELD("ttl", AMQPTypes.uint, False, None, False),

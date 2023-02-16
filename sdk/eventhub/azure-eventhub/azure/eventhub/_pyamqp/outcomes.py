@@ -84,9 +84,9 @@ if _CAN_ADD_DOCSTRING:
 
 
 Rejected = namedtuple('Rejected', ['error'])
-Rejected.__new__.__defaults__ = (None,) * len(Rejected._fields) # type: ignore
-Rejected._code = 0x00000025 # type: ignore # pylint:disable=protected-access
-Rejected._definition = (FIELD("error", ObjDefinition.error, False, None, False),) # type: ignore # pylint:disable=protected-access
+Rejected.__new__.__defaults__ = (None,) * len(Rejected._fields)
+Rejected._code = 0x00000025 # pylint:disable=protected-access
+Rejected._definition = (FIELD("error", ObjDefinition.error, False, None, False),) # pylint:disable=protected-access
 if _CAN_ADD_DOCSTRING:
     Rejected.__doc__ = """
     The rejected outcome.
