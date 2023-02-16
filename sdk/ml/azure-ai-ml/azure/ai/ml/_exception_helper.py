@@ -143,9 +143,7 @@ def format_details_section(
     return error_types, details
 
 
-def format_errors_and_resolutions_sections(
-    error_types: Dict[str, bool], cli: bool
-) -> Tuple[str, str]:
+def format_errors_and_resolutions_sections(error_types: Dict[str, bool], cli: bool) -> Tuple[str, str]:
     """Builds strings for details of the error message template's Errors and Resolutions sections."""
 
     resolutions = ""
@@ -154,8 +152,7 @@ def format_errors_and_resolutions_sections(
 
     if error_types[ValidationErrorType.INVALID_VALUE]:
         errors += (
-            f"\n{count}) The yaml file you provided has one or more values"
-            f" (for required fields) which are invalid:"
+            f"\n{count}) The yaml file you provided has one or more values" f" (for required fields) which are invalid:"
         )
         resolutions += (
             f"\n{count}) If the type is invalid, change it to the correct type. "
@@ -179,15 +176,13 @@ def format_errors_and_resolutions_sections(
             f"does not exist, or the path is incorrect.\n"
         )
         resolutions += (
-            f"\n{count}) Double-check the file / folder name, extension, and path provided."
-            f" Fix it and resubmit."
+            f"\n{count}) Double-check the file / folder name, extension, and path provided." f" Fix it and resubmit."
         )
         count += 1
     if error_types[ValidationErrorType.CANNOT_SERIALIZE]:
         errors += f"\n{count}) One or more fields cannot be serialized in the yaml file you provided\n"
         resolutions += (
-            f"\n{count}) Double-check all specified parameters to ensure they are the "
-            f"correct types and formats."
+            f"\n{count}) Double-check all specified parameters to ensure they are the " f"correct types and formats."
         )
         count += 1
     if error_types[ValidationErrorType.CANNOT_PARSE]:
@@ -208,6 +203,7 @@ def format_errors_and_resolutions_sections(
         errors = Fore.BLACK + errors + Fore.RESET
 
     return errors, resolutions
+
 
 def format_create_validation_error(
     error: Union[SchemaValidationError, ValidationException],
