@@ -127,8 +127,5 @@
     },
     "online_store_connection_name" : {
         "value": ""
-    },
-    "allow_role_assignments_on_resource_group_level" : {
-        "value": "false"
     }
 }

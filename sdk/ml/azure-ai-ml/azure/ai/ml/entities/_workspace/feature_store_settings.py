@@ -15,8 +15,6 @@ class FeatureStoreSettings(RestTranslatableMixin):
         *,
         compute_runtime: ComputeRuntimeDto,
         offline_store_connection_name: Optional[str] = None,
-        online_store_connection_name: Optional[str] = None,
-        allow_role_assignments_on_resource_group_level: Optional[bool] = None,
         **kwargs
     ):
         """
@@ -24,22 +22,15 @@ class FeatureStoreSettings(RestTranslatableMixin):
         :paramtype compute_runtime: ~azure.mgmt.machinelearningservices.models.ComputeRuntimeDto
         :keyword offline_store_connection_name:
         :paramtype offline_store_connection_name: str
-        :keyword online_store_connection_name:
-        :paramtype online_store_connection_name: str
-        :keyword allow_role_assignments_on_resource_group_level:
-        :paramtype allow_role_assignments_on_resource_group_level: bool
         """
         self.compute_runtime = compute_runtime
         self.offline_store_connection_name = offline_store_connection_name
-        self.online_store_connection_name = online_store_connection_name
-        self.allow_role_assignments_on_resource_group_level = allow_role_assignments_on_resource_group_level
 
     def _to_rest_object(self) -> RestFeatureStoreSettings:
         return RestFeatureStoreSettings(
             compute_runtime=ComputeRuntimeDto._to_rest_object(self.compute_runtime),
             offline_store_connection_name=self.offline_store_connection_name,
-            online_store_connection_name=self.online_store_connection_name,
-            allow_role_assignments_on_resource_group_level=self.allow_role_assignments_on_resource_group_level
+            online_store_connection_name=None
         )
         pass
 
@@ -49,7 +40,5 @@ class FeatureStoreSettings(RestTranslatableMixin):
             return None
         return FeatureStoreSettings(
             compute_runtime=ComputeRuntimeDto._from_rest_object(rest_obj.compute_runtime),
-            offline_store_connection_name=rest_obj.offline_store_connection_name,
-            online_store_connection_name=rest_obj.online_store_connection_name,
-            allow_role_assignments_on_resource_group_level=rest_obj.allow_role_assignments_on_resource_group_level
+            offline_store_connection_name=rest_obj.offline_store_connection_name
         )

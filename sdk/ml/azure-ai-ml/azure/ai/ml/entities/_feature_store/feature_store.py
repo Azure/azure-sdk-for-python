@@ -11,15 +11,14 @@ from azure.ai.ml.entities import Workspace, CustomerManagedKey, FeatureStoreSett
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 
 
-class FeatureStore:
+class FeatureStore(Workspace):
     def __init__(
         self,
         *,
         name: str,
         spark_runtime_version: Optional[str] = None,
-        offline_store: Optional[str] = None,
-        online_store: Optional[str] = None,
-        allow_role_assignments_on_resource_group_level: bool = False,
+        offline_store_connection_name: Optional[str] = None,
+        identity: Optional[IdentityConfiguration] = None,
         description: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         display_name: Optional[str] = None,
@@ -33,7 +32,6 @@ class FeatureStore:
         customer_managed_key: Optional[CustomerManagedKey] = None,
         image_build_compute: Optional[str] = None,
         public_network_access: Optional[str] = None,
-        identity: Optional[IdentityConfiguration] = None,
         primary_user_assigned_identity: Optional[str] = None,
         **kwargs,
     ):
@@ -41,11 +39,9 @@ class FeatureStore:
             compute_runtime=ComputeRuntimeDto(
                 spark_runtime_version=spark_runtime_version
             ),
-            offline_store_connection_name=offline_store,
-            online_store_connection_name=online_store,
-            allow_role_assignments_on_resource_group_level=allow_role_assignments_on_resource_group_level
+            offline_store_connection_name=offline_store_connection_name
         )
-        Workspace(
+        super().__init__(
             name=name,
             description=description,
             tags=tags,
@@ -76,5 +72,22 @@ class FeatureStore:
         workspace_object = Workspace._from_rest_object(rest_obj)
 
         return FeatureStore(
-            name=workspace_object.name
+            name=workspace_object.name,
+            description=workspace_object.description,
+            tags= workspace_object.tags,
+            offline_store_connection_name=workspace_object.feature_store_settings.offline_store_connection_name,
+            spark_runtime_version=workspace_object.feature_store_settings.compute_runtime.spark_runtime_version,
+            display_name=workspace_object.display_name,
+            location=workspace_object.location,
+            resource_group=workspace_object.resource_group,
+            hbi_workspace=workspace_object.hbi_workspace,
+            storage_account=workspace_object.storage_account,
+            container_registry=workspace_object.container_registry,
+            key_vault=workspace_object.key_vault,
+            application_insights=workspace_object.application_insights,
+            customer_managed_key=workspace_object.customer_managed_key,
+            image_build_compute=workspace_object.image_build_compute,
+            public_network_access=workspace_object.public_network_access,
+            identity=workspace_object.identity,
+            primary_user_assigned_identity=workspace_object.primary_user_assigned_identity
         )

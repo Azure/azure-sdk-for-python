@@ -44,12 +44,14 @@ from azure.ai.ml.entities import (
     DiagnoseWorkspaceParameters,
     Workspace,
     WorkspaceKeys,
+    FeatureStore,
 )
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller, PollingMethod
 from azure.core.tracing.decorator import distributed_trace
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -219,7 +221,12 @@ class WorkspaceOperations:
         )
 
         def callback():
-            return self.get(workspace.name, resource_group=resource_group)
+            is_feature_store_poller = kwargs.get("get_feature_store_poller", False)
+            if is_feature_store_poller:
+                return self._all_operations.all_operations[AzureMLResourceType.FEATURE_STORE].get(
+                    workspace.name, resource_group=resource_group)
+            else:
+                return self.get(workspace.name, resource_group=resource_group)
 
         return LROPoller(
             self._operation._client,
@@ -338,7 +345,10 @@ class WorkspaceOperations:
 
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
-            return Workspace._from_rest_object(deserialized)
+            is_feature_store_poller = kwargs.get("get_feature_store_poller", False)
+                return FeatureStore._from_rest_object(deserialized)
+            else:
+                return Workspace._from_rest_object(deserialized)
 
         poller = self._operation.begin_update(resource_group, workspace_name, update_param, polling=True, cls=callback)
         return poller
@@ -612,8 +622,6 @@ class WorkspaceOperations:
             _set_val(param["online_store_connection_name"],
                      workspace.feature_store_settings.online_store_connection_name
                      if workspace.feature_store_settings.online_store_connection_name else '')
-            _set_val(param["allow_role_assignments_on_resource_group_level"],
-                     "true" if workspace.feature_store_settings.allow_role_assignments_on_resource_group_level else "false")
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

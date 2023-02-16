@@ -413,17 +413,6 @@
             "metadata": {
                 "description": "Feature store online store config"
             }
-        },
-        "allow_role_assignments_on_resource_group_level": {
-            "type": "string",
-            "defaultValue": "false",
-            "allowedValues": [
-                "false",
-                "true"
-            ],
-            "metadata": {
-                "description": "Whether to allow role assignments on resource group level"
-            }
         }
     },
     "variables": {
@@ -621,8 +610,7 @@
                         "SparkRuntimeVersion": "[parameters('spark_runtime_version')]"
                     },
                     "offlinestoreconnectionname": "[parameters('offline_store_connection_name')]",
-                    "onlinestoreconnectionname": "[parameters('online_store_connection_name')]",
-                    "allowroleassignmentsonresourcegrouplevel": "[parameters('allow_role_assignments_on_resource_group_level')]"
+                    "onlinestoreconnectionname": "[parameters('online_store_connection_name')]"
                 }
             }
         },

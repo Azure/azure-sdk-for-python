@@ -66,19 +66,17 @@ class FeatureStoreOperations():
 
     # @monitor_with_activity(logger, "FeatureStore.Get", ActivityType.PUBLICAPI)
     @distributed_trace
-    def get(self, name: Optional[str] = None, **kwargs: Dict) -> FeatureStore:
+    def get(self, name: str, **kwargs: Dict) -> FeatureStore:
         """Get a feature store by name.
 
         :param name: Name of the feature store.
         :type name: str
         :return: The feature store with the provided name.
-        :rtype: Workspace
+        :rtype: FeatureStore
         """
 
-        feature_store_name = self._check_workspace_name(name)
-        resource_group = kwargs.get(
-            "resource_group") or self._resource_group_name
-        obj = self._workspace_operation.get(resource_group, feature_store_name)
+        resource_group = kwargs.get("resource_group") or self._resource_group_name
+        obj = self._workspace_operation.get(resource_group, name)
         return FeatureStore._from_rest_object(obj)
 
     # @monitor_with_activity(logger, "FeatureStore.BeginCreate", ActivityType.PUBLICAPI)
@@ -102,6 +100,7 @@ class FeatureStoreOperations():
         return self._operations_container.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
+            get_feature_store_poller=True,
             *kwargs
         )
 
@@ -117,10 +116,10 @@ class FeatureStoreOperations():
         """Update friendly name, description, managed identities or tags of a feature store.
 
         :param feature store: FeatureStore resource.
-        :param update_dependent_resources: gives your consent to update the feature storedependent resources.
-            Note that updating the feature store-attached Azure Container Registry resource may break lineage
+        :param update_dependent_resources: gives your consent to update the feature store dependent resources.
+            Note that updating the feature store attached Azure Container Registry resource may break lineage
             of previous jobs or your ability to rerun earlier jobs in this feature store.
-            Also, updating the feature store-attached Azure Application Insights resource may break lineage of
+            Also, updating the feature store attached Azure Application Insights resource may break lineage of
             deployed inference endpoints this feature store. Only set this argument if you are sure that you want
             to perform this operation. If this argument is not set, the command to update
             Azure Container Registry and Azure Application Insights will fail.
@@ -133,6 +132,7 @@ class FeatureStoreOperations():
         return self._operations_container.all_operations[AzureMLResourceType.WORKSPACE].begin_update(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
+            get_feature_store_poller=True,
             **kwargs
         )
 
