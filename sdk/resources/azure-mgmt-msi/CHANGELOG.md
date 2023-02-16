@@ -1,5 +1,12 @@
 # Release History
 
+## 7.1.0b1 (2023-02-16)
+
+### Other Changes
+
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
+
 ## 7.0.0 (2023-02-02)
 
 ### Features Added
