@@ -16,7 +16,7 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 16 Feb 2023 00:25:38 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
@@ -115,7 +115,7 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Date": "Thu, 16 Feb 2023 00:25:38 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
@@ -201,7 +201,7 @@
         "client-request-id": "3790fe67-c216-4e30-a32a-a78b5b6871a9",
         "Content-Length": "111",
         "Content-Type": "application/json; charset=utf-8",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Date": "Thu, 16 Feb 2023 00:25:39 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
@@ -240,7 +240,7 @@
       "ResponseHeaders": {
         "api-supported-versions": "2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 16 Feb 2023 00:25:39 GMT",
@@ -318,7 +318,7 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 16 Feb 2023 00:25:40 GMT",
@@ -451,7 +451,7 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 16 Feb 2023 00:25:41 GMT",
@@ -505,7 +505,7 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 16 Feb 2023 00:25:42 GMT",
@@ -559,7 +559,7 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 16 Feb 2023 00:26:12 GMT",
@@ -615,7 +615,7 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 16 Feb 2023 00:26:12 GMT",
@@ -671,7 +671,7 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-07-31-preview, 2022-11-01-preview",
         "Connection": "keep-alive",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Security-Policy": "self",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "Thu, 16 Feb 2023 00:26:13 GMT",
@@ -944,7 +944,7 @@
         "Connection": "keep-alive",
         "Content-Disposition": "attachment; filename=\u0022ndvi_10.tif\u0022",
         "Content-Security-Policy": "self",
-        "Content-Encoding": "br",
+        "Content-Encoding": "gzip",
         "Content-Type": "application/octet-stream",
         "Date": "Thu, 16 Feb 2023 00:26:14 GMT",
         "mise-correlation-id": "d63b2966-ade9-499a-b539-f512f4f7d55a",
