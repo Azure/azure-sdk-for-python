@@ -35,15 +35,15 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class DataSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataSource."""
 
-    #: Devices twin data
     TWIN_DATA = "TwinData"
+    """Devices twin data"""
 
 
 class ExportData(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ExportData."""
 
-    #: Agent raw events
     RAW_EVENTS = "RawEvents"
+    """Agent raw events"""
 
 
 class RecommendationConfigStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -58,50 +58,50 @@ class RecommendationConfigStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RecommendationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of IoT Security recommendation."""
 
-    #: Authentication schema used for pull an edge module from an ACR repository does not use Service
-    #: Principal Authentication.
     IO_T_ACRAUTHENTICATION = "IoT_ACRAuthentication"
-    #: IoT agent message size capacity is currently underutilized, causing an increase in the number
-    #: of sent messages. Adjust message intervals for better utilization.
+    """Authentication schema used for pull an edge module from an ACR repository does not use Service
+    #: Principal Authentication."""
     IO_T_AGENT_SENDS_UNUTILIZED_MESSAGES = "IoT_AgentSendsUnutilizedMessages"
-    #: Identified security related system configuration issues.
+    """IoT agent message size capacity is currently underutilized, causing an increase in the number
+    #: of sent messages. Adjust message intervals for better utilization."""
     IO_T_BASELINE = "IoT_Baseline"
-    #: You can optimize Edge Hub memory usage by turning off protocol heads for any protocols not used
-    #: by Edge modules in your solution.
+    """Identified security related system configuration issues."""
     IO_T_EDGE_HUB_MEM_OPTIMIZE = "IoT_EdgeHubMemOptimize"
-    #: Logging is disabled for this edge module.
+    """You can optimize Edge Hub memory usage by turning off protocol heads for any protocols not used
+    #: by Edge modules in your solution."""
     IO_T_EDGE_LOGGING_OPTIONS = "IoT_EdgeLoggingOptions"
-    #: A minority within a device security group has inconsistent Edge Module settings with the rest
-    #: of their group.
+    """Logging is disabled for this edge module."""
     IO_T_INCONSISTENT_MODULE_SETTINGS = "IoT_InconsistentModuleSettings"
-    #: Install the Azure Security of Things Agent.
+    """A minority within a device security group has inconsistent Edge Module settings with the rest
+    #: of their group."""
     IO_T_INSTALL_AGENT = "IoT_InstallAgent"
-    #: IP Filter Configuration should have rules defined for allowed traffic and should deny all other
-    #: traffic by default.
+    """Install the Azure Security of Things Agent."""
     IO_T_IPFILTER_DENY_ALL = "IoT_IPFilter_DenyAll"
-    #: An Allow IP Filter rules source IP range is too large. Overly permissive rules might expose
-    #: your IoT hub to malicious intenders.
+    """IP Filter Configuration should have rules defined for allowed traffic and should deny all other
+    #: traffic by default."""
     IO_T_IPFILTER_PERMISSIVE_RULE = "IoT_IPFilter_PermissiveRule"
-    #: A listening endpoint was found on the device.
+    """An Allow IP Filter rules source IP range is too large. Overly permissive rules might expose
+    #: your IoT hub to malicious intenders."""
     IO_T_OPEN_PORTS = "IoT_OpenPorts"
-    #: An Allowed firewall policy was found (INPUT/OUTPUT). The policy should Deny all traffic by
-    #: default and define rules to allow necessary communication to/from the device.
+    """A listening endpoint was found on the device."""
     IO_T_PERMISSIVE_FIREWALL_POLICY = "IoT_PermissiveFirewallPolicy"
-    #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP
-    #: addresses or Ports.
+    """An Allowed firewall policy was found (INPUT/OUTPUT). The policy should Deny all traffic by
+    #: default and define rules to allow necessary communication to/from the device."""
     IO_T_PERMISSIVE_INPUT_FIREWALL_RULES = "IoT_PermissiveInputFirewallRules"
-    #: A rule in the firewall has been found that contains a permissive pattern for a wide range of IP
-    #: addresses or Ports.
+    """A rule in the firewall has been found that contains a permissive pattern for a wide range of IP
+    #: addresses or Ports."""
     IO_T_PERMISSIVE_OUTPUT_FIREWALL_RULES = "IoT_PermissiveOutputFirewallRules"
-    #: Edge module is configured to run in privileged mode, with extensive Linux capabilities or with
-    #: host-level network access (send/receive data to host machine).
+    """A rule in the firewall has been found that contains a permissive pattern for a wide range of IP
+    #: addresses or Ports."""
     IO_T_PRIVILEGED_DOCKER_OPTIONS = "IoT_PrivilegedDockerOptions"
-    #: Same authentication credentials to the IoT Hub used by multiple devices. This could indicate an
-    #: illegitimate device impersonating a legitimate device. It also exposes the risk of device
-    #: impersonation by an attacker.
+    """Edge module is configured to run in privileged mode, with extensive Linux capabilities or with
+    #: host-level network access (send/receive data to host machine)."""
     IO_T_SHARED_CREDENTIALS = "IoT_SharedCredentials"
-    #: Insecure TLS configurations detected. Immediate upgrade recommended.
+    """Same authentication credentials to the IoT Hub used by multiple devices. This could indicate an
+    #: illegitimate device impersonating a legitimate device. It also exposes the risk of device
+    #: impersonation by an attacker."""
     IO_T_VULNERABLE_TLS_CIPHER_SUITE = "IoT_VulnerableTLSCipherSuite"
+    """Insecure TLS configurations detected. Immediate upgrade recommended."""
 
 
 class ReportedSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -123,16 +123,16 @@ class SecuritySolutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class UnmaskedIpLoggingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unmasked IP address logging status."""
 
-    #: Unmasked IP logging is disabled
     DISABLED = "Disabled"
-    #: Unmasked IP logging is enabled
+    """Unmasked IP logging is disabled"""
     ENABLED = "Enabled"
+    """Unmasked IP logging is enabled"""
 
 
 class ValueType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The value type of the items in the list."""
 
-    #: An IP range in CIDR format (e.g. '192.168.0.1/8').
     IP_CIDR = "IpCidr"
-    #: Any string value.
+    """An IP range in CIDR format (e.g. '192.168.0.1/8')."""
     STRING = "String"
+    """Any string value."""

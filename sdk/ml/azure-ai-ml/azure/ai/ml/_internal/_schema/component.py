@@ -13,6 +13,7 @@ from azure.ai.ml.constants._common import LABELLED_RESOURCE_NAME, AzureMLResourc
 
 from .._utils import yaml_safe_load_with_base_resolver
 from ..._utils._arm_id_utils import parse_name_label
+from ..._utils.utils import get_valid_dot_keys_with_wildcard
 from .environment import InternalEnvironmentSchema
 from .input_output import (
     InternalEnumParameterSchema,
@@ -118,17 +119,25 @@ class InternalComponentSchema(ComponentSchema):
     def add_param_overrides(self, data, **kwargs):
         source_path = self.context.pop(SOURCE_PATH_CONTEXT_KEY, None)
         if isinstance(data, dict) and source_path and os.path.isfile(source_path):
+
+            def should_node_overwritten(_root, _parts):
+                parts = _parts.copy()
+                parts.pop()
+                parts.append("type")
+                _input_type = pydash.get(_root, parts, None)
+                return isinstance(_input_type, str) and _input_type.lower() not in ["boolean"]
+
             # do override here
             with open(source_path, "r") as f:
                 origin_data = yaml_safe_load_with_base_resolver(f)
-                dot_keys = ["version"]
-                for input_key in data.get("inputs", {}).keys():
-                    # Keep value in float input as string to avoid precision issue.
-                    for attr_name in ["default", "enum", "min", "max"]:
-                        dot_keys.append(f"inputs.{input_key}.{attr_name}")
-
-                for dot_key in dot_keys:
-                    if pydash.has(data, dot_key) and pydash.has(origin_data, dot_key):
+                for dot_key_wildcard, condition_func in [
+                    ("version", None),
+                    ("inputs.*.default", should_node_overwritten),
+                    ("inputs.*.enum", should_node_overwritten),
+                ]:
+                    for dot_key in get_valid_dot_keys_with_wildcard(
+                        origin_data, dot_key_wildcard, validate_func=condition_func
+                    ):
                         pydash.set_(data, dot_key, pydash.get(origin_data, dot_key))
         return super().add_param_overrides(data, **kwargs)
 

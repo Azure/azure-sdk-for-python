@@ -24,4 +24,6 @@ class EndpointDeploymentLogContainerType(object):
     INFERENCE_SERVER = "inference-server"
     STORAGE_INITIALIZER = "storage-initializer"
 
+
 SmallSKUs = ["standard_ds1_v2", "standard_ds2_v2"]
+DEFAULT_MDC_PATH = "azureml://datastores/workspaceblobstore/paths/modelDataCollector"

@@ -33,9 +33,7 @@ class RestTrioRequestsTransportResponse(AsyncHttpResponseImpl, _RestRequestsTran
     """Asynchronous streaming of data from the response."""
 
     def __init__(self, **kwargs):
-        super().__init__(
-            stream_download_generator=TrioStreamDownloadGenerator, **kwargs
-        )
+        super().__init__(stream_download_generator=TrioStreamDownloadGenerator, **kwargs)
 
     async def close(self) -> None:
         if not self.is_closed:

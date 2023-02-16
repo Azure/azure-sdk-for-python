@@ -18,7 +18,7 @@ ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
 
-class VirtualClusterOperations():
+class VirtualClusterOperations:
     """VirtualClusterOperations.
 
     You should not instantiate this class directly. Instead, you should
@@ -70,6 +70,9 @@ class VirtualClusterOperations():
         :rtype: Dict
         """
 
-
-        return get_virtual_cluster_by_id(name=name, resource_group=self._resource_group_name,
-            subscription_id=self._subscription_id, credential=self._credentials)
+        return get_virtual_cluster_by_id(
+            name=name,
+            resource_group=self._resource_group_name,
+            subscription_id=self._subscription_id,
+            credential=self._credentials,
+        )
