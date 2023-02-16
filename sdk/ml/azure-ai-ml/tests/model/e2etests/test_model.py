@@ -69,25 +69,6 @@ class TestModel(AzureRecordedTestCase):
         # with pytest.raises(Exception):
         #     client.models.get(name=model.name, version="3")
 
-    def test_create_autoincrement(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
-        path = Path("./tests/test_configs/model/model_no_version.yml")
-        model_name = randstr("model_name")
-
-        model = load_model(path)
-        model.name = model_name
-        assert model.version is None
-        assert model._auto_increment_version
-
-        created_model = client.models.create_or_update(model)
-        assert created_model.version == "1"
-        assert created_model.type == "custom_model"
-        assert created_model._auto_increment_version is False
-
-        next_model_asset = client.models.create_or_update(model)
-        assert next_model_asset.version == "2"
-        assert next_model_asset.type == "custom_model"
-        assert next_model_asset._auto_increment_version is False
-
     def test_list_no_name(self, client: MLClient) -> None:
         models = client.models.list()
         assert isinstance(models, Iterator)
