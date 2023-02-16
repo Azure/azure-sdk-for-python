@@ -342,6 +342,7 @@ class WorkspaceOperations:
         # pylint: disable=unused-argument
         def callback(_, deserialized, args):
             is_feature_store_poller = kwargs.get("get_feature_store_poller", False)
+            if(is_feature_store_poller):
                 return FeatureStore._from_rest_object(deserialized)
             else:
                 return Workspace._from_rest_object(deserialized)
@@ -615,9 +616,7 @@ class WorkspaceOperations:
             _set_val(param["offline_store_connection_name"],
                      workspace.feature_store_settings.offline_store_connection_name 
                      if workspace.feature_store_settings.offline_store_connection_name else '')
-            _set_val(param["online_store_connection_name"],
-                     workspace.feature_store_settings.online_store_connection_name
-                     if workspace.feature_store_settings.online_store_connection_name else '')
+            _set_val(param["online_store_connection_name"], '')
 
         resources_being_deployed[workspace.name] = (ArmConstants.WORKSPACE, None)
         return template, param, resources_being_deployed

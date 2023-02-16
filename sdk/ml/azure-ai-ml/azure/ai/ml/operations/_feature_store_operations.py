@@ -38,7 +38,7 @@ class FeatureStoreOperations():
         operations_container: OperationsContainer,
         **kwargs: Dict,
     ):
-        self._operations_container = operations_container
+        self._all_operations = operations_container
         self._workspace_operation = service_client.workspaces
         self._resource_group_name = operation_scope.resource_group_name
 
@@ -97,7 +97,7 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
-        return self._operations_container.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
+        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_create(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
             get_feature_store_poller=True,
@@ -129,7 +129,7 @@ class FeatureStoreOperations():
         :return: An instance of LROPoller that returns a FeatureStore.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.FeatureStore]
         """
-        return self._operations_container.all_operations[AzureMLResourceType.WORKSPACE].begin_update(
+        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_update(
             workspace=feature_store,
             update_dependent_resources=update_dependent_resources,
             get_feature_store_poller=True,
@@ -150,7 +150,7 @@ class FeatureStoreOperations():
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
-        return self._operations_container.all_operations[AzureMLResourceType.WORKSPACE].begin_delete(
+        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].begin_delete(
             workspace=feature_store,
             delete_dependent_resources=delete_dependent_resources,
             **kwargs
