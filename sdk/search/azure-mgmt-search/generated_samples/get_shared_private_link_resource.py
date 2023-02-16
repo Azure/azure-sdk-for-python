@@ -14,7 +14,7 @@ from azure.mgmt.search import SearchManagementClient
     pip install azure-identity
     pip install azure-mgmt-search
 # USAGE
-    python search_get_service.py
+    python get_shared_private_link_resource.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,14 @@ def main():
         subscription_id="subid",
     )
 
-    response = client.services.get(
+    response = client.shared_private_link_resources.get(
         resource_group_name="rg1",
         search_service_name="mysearchservice",
+        shared_private_link_resource_name="testResource",
     )
     print(response)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/SearchGetService.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/GetSharedPrivateLinkResource.json
 if __name__ == "__main__":
     main()
