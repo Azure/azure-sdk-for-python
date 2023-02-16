@@ -6,6 +6,7 @@
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from collections import namedtuple
+from typing import NamedTuple
 
 from .types import AMQPTypes, FieldDefinition
 from .constants import FIELD, MessageDeliveryState

@@ -65,7 +65,7 @@ frame_typing = Union[Tuple[int, bytes], Tuple[int, List]]
 try:
     import fcntl
 except ImportError:  # pragma: no cover
-    fcntl = None    # type: ignore  # noqa
+    fcntl = None     # noqa
 
 def set_cloexec(fd, cloexec):  # noqa
     """Set flag to close fd after exec."""

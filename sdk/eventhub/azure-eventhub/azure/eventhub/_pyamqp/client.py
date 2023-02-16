@@ -14,7 +14,7 @@ import queue
 import time
 import uuid
 from functools import partial
-from typing import Any, Dict, Optional, Tuple, Union, overload, cast
+from typing import Any, Dict, Optional, Tuple, Union, overload, cast, TYPE_CHECKING
 import certifi
 from typing_extensions import Literal
 
@@ -51,6 +51,10 @@ from .management_operation import ManagementOperation
 from .cbs import CBSAuthenticator
 
 Outcomes = Union[Received, Rejected, Released, Accepted, Modified]
+
+if TYPE_CHECKING:
+    from authentication import SASLPlainAuth, SASTokenAuth, JWTTokenAuth
+
 
 
 _logger = logging.getLogger(__name__)
@@ -176,7 +180,7 @@ class AMQPClient(
             "remote_idle_timeout_empty_frame_send_ratio", None
         )
         self._network_trace = kwargs.pop("network_trace", False)
-        self._network_trace_params = {"amqpConnection": None, "amqpSession": None, "amqpLink": None}
+        self._network_trace_params: Dict[str, Any] = {"amqpConnection": None, "amqpSession": None, "amqpLink": None}
 
         # Session settings
         self._outgoing_window = kwargs.pop("outgoing_window", OUTGOING_WINDOW)
@@ -228,6 +232,7 @@ class AMQPClient(
 
     def _client_run(self, **kwargs):
         """Perform a single Connection iteration."""
+        self._connection = cast(Connection, self._connection)
         self._connection.listen(wait=self._socket_timeout, **kwargs)
 
     def _close_link(self):
@@ -278,6 +283,8 @@ class AMQPClient(
          multiple clients.
         :type connection: ~pyamqp.Connection
         """
+        self._auth = cast(Union[SASLPlainAuth, SASTokenAuth, JWTTokenAuth], self._auth)
+        self._connection = cast(Connection, self._connection)
         # pylint: disable=protected-access
         if self._session:
             return  # already open.
@@ -337,6 +344,7 @@ class AMQPClient(
         self._session.end()
         self._session = None
         if not self._external_connection:
+            self._connection = cast(Connection, self._connection)
             self._connection.close()
             self._connection = None
         self._network_trace_params["amqpConnection"] = None
@@ -349,6 +357,7 @@ class AMQPClient(
         :rtype: bool
         """
         if self._cbs_authenticator and not self._cbs_authenticator.handle_token():
+            self._connection = cast(Connection, self._connection)
             self._connection.listen(wait=self._socket_timeout)
             return False
         return True
@@ -365,6 +374,7 @@ class AMQPClient(
             return False
         if not self._client_ready():
             try:
+                self._connection = cast(Connection, self._connection)
                 self._connection.listen(wait=self._socket_timeout)
             except ValueError:
                 return True
@@ -417,6 +427,7 @@ class AMQPClient(
             mgmt_link.open()
 
             while not mgmt_link.ready():
+                self._connection = cast(Connection, self._connection)
                 self._connection.listen(wait=False)
 
         operation_type = operation_type or b"empty"
@@ -536,7 +547,7 @@ class SendClient(AMQPClient):
         :rtype: bool
         """
         # pylint: disable=protected-access
-        if not self._link:
+        if not self._link and self._session:
             self._link = self._session.create_sender_link(
                 target_address=self.target,
                 link_credit=self._link_credit,
@@ -560,6 +571,7 @@ class SendClient(AMQPClient):
         :rtype: bool
         """
         self._link.update_pending_deliveries()
+        self._connection = cast(Connection, self._connection)
         self._connection.listen(wait=self._socket_timeout, **kwargs)
         return True
 
@@ -642,7 +654,7 @@ class SendClient(AMQPClient):
             MessageDeliveryState.Timeout,
         ):
             try:
-                raise message_delivery.error  # pylint: disable=raising-bad-type
+                raise message_delivery.error  # type: ignore[reportGeneralTypeIssues] # pylint: disable=raising-bad-type
             except TypeError:
                 # This is a default handler
                 raise MessageException(
@@ -773,7 +785,7 @@ class ReceiveClient(AMQPClient):
         :rtype: bool
         """
         # pylint: disable=protected-access
-        if not self._link:
+        if not self._link and self._session:
             self._link = self._session.create_receiver_link(
                 source_address=self.source,
                 link_credit=self._link_credit,
@@ -800,6 +812,7 @@ class ReceiveClient(AMQPClient):
         """
         try:
             self._link.flow()
+            self._connection = cast(Connection, self._connection)
             self._connection.listen(wait=self._socket_timeout, **kwargs)
         except ValueError:
             _logger.info("Timeout reached, closing receiver.", extra=self._network_trace_params)

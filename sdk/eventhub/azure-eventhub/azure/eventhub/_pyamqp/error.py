@@ -6,6 +6,7 @@
 
 # TODO: fix mypy errors for _code/_definition/__defaults__ (issue #26500)
 from enum import Enum
+from typing import Optional, Any, Dict, AnyStr, cast
 from collections import namedtuple
 
 from .constants import SECURE_PORT, FIELD
@@ -238,7 +239,8 @@ class AMQPConnectionRedirect(AMQPConnectionError):
     :keyword str description: A description of the error.
     :keyword dict info: A dictionary of additional data associated with the error.
     """
-    def __init__(self, condition, description=None, info=None):
+    def __init__(self, condition: bytes, description: Optional[str] =None, info: Optional[Dict[bytes,Any]]=None):
+        info = cast(Dict[bytes, Any], info)
         self.hostname = info.get(b'hostname', b'').decode('utf-8')
         self.network_host = info.get(b'network-host', b'').decode('utf-8')
         self.port = int(info.get(b'port', SECURE_PORT))
@@ -274,7 +276,8 @@ class AMQPLinkRedirect(AMQPLinkError):
     :keyword dict info: A dictionary of additional data associated with the error.
     """
 
-    def __init__(self, condition, description=None, info=None):
+    def __init__(self, condition: bytes, description: Optional[str] =None, info: Optional[Dict[bytes,Any]]=None):
+        info = cast(Dict[bytes, Any], info)
         self.hostname = info.get(b'hostname', b'').decode('utf-8')
         self.network_host = info.get(b'network-host', b'').decode('utf-8')
         self.port = int(info.get(b'port', SECURE_PORT))

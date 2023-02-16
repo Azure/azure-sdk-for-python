@@ -6,6 +6,7 @@
 
 import time
 import logging
+from typing import Callable, List, cast
 from functools import partial
 from collections import namedtuple
 
@@ -37,7 +38,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
     def __init__(self, session, endpoint, **kwargs):
         self.next_message_id = 0
         self.state = ManagementLinkState.IDLE
-        self._pending_operations = []
+        self._pending_operations: List[PendingManagementOperation] = []
         self._session = session
         self._network_trace_params = kwargs.get('network_trace_params')
         self._request_link: SenderLink = session.create_sender_link(
@@ -57,8 +58,8 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
             rcv_settle_mode=ReceiverSettleMode.First,
             network_trace=kwargs.get("network_trace", False)
         )
-        self._on_amqp_management_error = kwargs.get('on_amqp_management_error')
-        self._on_amqp_management_open_complete = kwargs.get('on_amqp_management_open_complete')
+        self._on_amqp_management_error: Callable = kwargs.get('on_amqp_management_error')
+        self._on_amqp_management_open_complete: Callable = kwargs.get('on_amqp_management_open_complete')
 
         self._status_code_field = kwargs.get('status_code_field', b'statusCode')
         self._status_description_field = kwargs.get('status_description_field', b'statusDescription')
@@ -166,6 +167,7 @@ class ManagementLink(object): # pylint:disable=too-many-instance-attributes
                 if message_delivery.message == operation.message:
                     to_remove_operation = operation
                     break
+            to_remove_operation = cast(PendingManagementOperation, to_remove_operation)
             self._pending_operations.remove(to_remove_operation)
             # TODO: better error handling
             #  AMQPException is too general? to be more specific: MessageReject(Error) or AMQPManagementError?

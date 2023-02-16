@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 
-from typing import Optional
+from typing import Optional, Callable
 import uuid
 import logging
 
@@ -14,6 +14,7 @@ from .constants import DEFAULT_LINK_CREDIT, SessionState, LinkState, Role, Sende
 from .performatives import AttachFrame, DetachFrame
 
 from .error import ErrorCondition, AMQPLinkError, AMQPLinkRedirect, AMQPConnectionError
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
         self.network_trace_params["amqpLink"] = self.name
         self._session = session
         self._is_closed = False
-        self._on_link_state_change = kwargs.get("on_link_state_change")
+        self._on_link_state_change  = kwargs.get("on_link_state_change")
         self._on_attach = kwargs.get("on_attach")
         self._error = None
 
@@ -103,7 +104,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
 
     def get_state(self):
         try:
-            raise self._error
+            raise self._error # type: ignore[reportGeneralTypeIssues]
         except TypeError:
             pass
         return self.state
@@ -111,7 +112,7 @@ class Link(object):  # pylint: disable=too-many-instance-attributes
     def _check_if_closed(self):
         if self._is_closed:
             try:
-                raise self._error
+                raise self._error # type: ignore[reportGeneralTypeIssues]
             except TypeError:
                 raise AMQPConnectionError(condition=ErrorCondition.InternalError, description="Link already closed.")
 
