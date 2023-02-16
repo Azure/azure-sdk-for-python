@@ -51,7 +51,9 @@ def generate_path_property(azureml_type):
             fields.Str(metadata={"pattern": r"^(http(s)?):.*"}),
             fields.Str(metadata={"pattern": r"^(wasb(s)?):.*"}),
             LocalPathField(pattern=r"^file:.*"),
-            LocalPathField(pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*",),
+            LocalPathField(
+                pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*",
+            ),
         ],
         is_strict=True,
     )
@@ -104,7 +106,6 @@ class DataInputSchema(InputSchema):
     datastore = generate_datastore_property()
 
 
-
 class MLTableInputSchema(InputSchema):
     mode = StringTransformedEnum(
         allowed_values=[
@@ -119,7 +120,6 @@ class MLTableInputSchema(InputSchema):
     type = StringTransformedEnum(allowed_values=[AssetTypes.MLTABLE])
     path = generate_path_property(azureml_type=AzureMLResourceType.DATA)
     datastore = generate_datastore_property()
-
 
 
 class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
@@ -191,17 +191,10 @@ class StoredProcedureParamsSchema(metaclass=PatchedSchemaMeta):
 
 
 class DatabaseSchema(metaclass=PatchedSchemaMeta):
-    type = StringTransformedEnum(
-        allowed_values=[
-            ExternalDataType.DATABASE
-        ],
-        required=True
-    )
+    type = StringTransformedEnum(allowed_values=[ExternalDataType.DATABASE], required=True)
     table_name = fields.Str()
     query = fields.Str(
-        metadata={
-            "description": "The sql query command."
-        },
+        metadata={"description": "The sql query command."},
     )
     stored_procedure = fields.Str()
     stored_procedure_params = fields.List(NestedField(StoredProcedureParamsSchema))

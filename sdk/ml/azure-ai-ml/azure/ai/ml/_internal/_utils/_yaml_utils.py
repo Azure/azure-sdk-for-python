@@ -18,6 +18,7 @@ class _SafeLoaderWithBaseLoader(strictyaml.ruamel.SafeLoader):
     from the inheritance list. Instead, we overwrite add_version_implicit_resolver method to make
     _SafeLoaderWithBaseLoader._version_implicit_resolver empty. Then the resolver will act like a BaseResolver.
     """
+
     def fetch_comment(self, comment):
         pass
 

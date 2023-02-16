@@ -69,9 +69,7 @@ class TestComponentFunc:
         # hint user when component func don't take any parameters.
         with pytest.raises(ValidationException) as error_info:
             new_func(10)
-        assert (
-            "Component function doesn't has any parameters"
-        ) in str(error_info.value)
+        assert ("Component function doesn't has any parameters") in str(error_info.value)
 
     def test_required_component_inputs_missing(self):
         component_func = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -183,9 +181,8 @@ class TestComponentFunc:
 
         # non-existent output
         with pytest.raises(
-                UnexpectedAttributeError,
-                match="Got an unexpected attribute 'component_out_path_non', "
-                      "valid attributes: 'component_out_path'."
+            UnexpectedAttributeError,
+            match="Got an unexpected attribute 'component_out_path_non', " "valid attributes: 'component_out_path'.",
         ):
             component.outputs["component_out_path_non"].path = test_output_path
 
@@ -196,7 +193,9 @@ class TestComponentFunc:
         assert component._build_outputs() == {"component_out_path": output_data}
 
         # set output via output binding
-        component.outputs.component_out_path._data = PipelineOutput(port_name="pipeline_output", owner="pipeline", meta=None)
+        component.outputs.component_out_path._data = PipelineOutput(
+            port_name="pipeline_output", owner="pipeline", meta=None
+        )
         assert component._build_outputs() == {
             "component_out_path": Output(path="${{parent.outputs.pipeline_output}}", type="uri_folder", mode=None)
         }

@@ -58,7 +58,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: Optional[str] = None, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -121,8 +121,8 @@ class GenericResource(Resource):
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.Identity"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -226,8 +226,8 @@ class Application(GenericResource):  # pylint: disable=too-many-instance-attribu
         plan: Optional["_models.Plan"] = None,
         application_definition_id: Optional[str] = None,
         parameters: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -287,8 +287,8 @@ class ApplicationArtifact(_serialization.Model):
         name: Optional[str] = None,
         uri: Optional[str] = None,
         type: Optional[Union[str, "_models.ApplicationArtifactType"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The managed application artifact name.
         :paramtype name: str
@@ -401,8 +401,8 @@ class ApplicationDefinition(GenericResource):  # pylint: disable=too-many-instan
         package_file_uri: Optional[str] = None,
         main_template: Optional[JSON] = None,
         create_ui_definition: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -474,8 +474,8 @@ class ApplicationDefinitionListResult(_serialization.Model):
         *,
         value: Optional[List["_models.ApplicationDefinition"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The array of managed application definitions.
         :paramtype value:
@@ -503,8 +503,8 @@ class ApplicationListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.Application"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self, *, value: Optional[List["_models.Application"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The array of managed applications.
         :paramtype value: list[~azure.mgmt.resource.managedapplications.v2018_06_01.models.Application]
@@ -598,8 +598,8 @@ class ApplicationPatchable(GenericResource):  # pylint: disable=too-many-instanc
         managed_resource_group_id: Optional[str] = None,
         application_definition_id: Optional[str] = None,
         parameters: Optional[JSON] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location.
         :paramtype location: str
@@ -659,7 +659,7 @@ class ApplicationProviderAuthorization(_serialization.Model):
         "role_definition_id": {"key": "roleDefinitionId", "type": "str"},
     }
 
-    def __init__(self, *, principal_id: str, role_definition_id: str, **kwargs):
+    def __init__(self, *, principal_id: str, role_definition_id: str, **kwargs: Any) -> None:
         """
         :keyword principal_id: The provider's principal identifier. This is the identity that the
          provider will use to call ARM to manage the managed application resources. Required.
@@ -675,7 +675,8 @@ class ApplicationProviderAuthorization(_serialization.Model):
 
 
 class ErrorResponse(_serialization.Model):
-    """Error response indicates managed application is not able to process the incoming request. The reason is provided in the error message.
+    """Error response indicates managed application is not able to process the incoming request. The
+    reason is provided in the error message.
 
     :ivar http_status: Http status code.
     :vartype http_status: str
@@ -697,8 +698,8 @@ class ErrorResponse(_serialization.Model):
         http_status: Optional[str] = None,
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword http_status: Http status code.
         :paramtype http_status: str
@@ -737,7 +738,7 @@ class Identity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs):
+    def __init__(self, *, type: Optional[Literal["SystemAssigned"]] = None, **kwargs: Any) -> None:
         """
         :keyword type: The identity type. Default value is "SystemAssigned".
         :paramtype type: str
@@ -762,7 +763,9 @@ class Operation(_serialization.Model):
         "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(
+        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword name: Operation name: {provider}/{resource}/{operation}.
         :paramtype name: str
@@ -798,8 +801,8 @@ class OperationDisplay(_serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword provider: Service provider: Microsoft.Solutions.
         :paramtype provider: str
@@ -815,7 +818,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Microsoft.Solutions operations. It contains a list of operations and a URL link to get the next set of results.
+    """Result of the request to list Microsoft.Solutions operations. It contains a list of operations
+    and a URL link to get the next set of results.
 
     :ivar value: List of Microsoft.Solutions operations.
     :vartype value: list[~azure.mgmt.resource.managedapplications.v2018_06_01.models.Operation]
@@ -828,7 +832,9 @@ class OperationListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: List of Microsoft.Solutions operations.
         :paramtype value: list[~azure.mgmt.resource.managedapplications.v2018_06_01.models.Operation]
@@ -873,8 +879,15 @@ class Plan(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, publisher: str, product: str, version: str, promotion_code: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        name: str,
+        publisher: str,
+        product: str,
+        version: str,
+        promotion_code: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan name. Required.
         :paramtype name: str
@@ -926,8 +939,8 @@ class PlanPatchable(_serialization.Model):
         product: Optional[str] = None,
         promotion_code: Optional[str] = None,
         version: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The plan name.
         :paramtype name: str
@@ -989,8 +1002,8 @@ class Sku(_serialization.Model):
         family: Optional[str] = None,
         model: Optional[str] = None,
         capacity: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: The SKU name. Required.
         :paramtype name: str

@@ -89,6 +89,7 @@ from ._integration_runtime_connection_infos_operations import IntegrationRuntime
 from ._integration_runtime_auth_keys_operations import IntegrationRuntimeAuthKeysOperations
 from ._integration_runtime_monitoring_data_operations import IntegrationRuntimeMonitoringDataOperations
 from ._integration_runtime_status_operations import IntegrationRuntimeStatusOperations
+from ._get_operations import GetOperations
 from ._spark_configuration_operations import SparkConfigurationOperations
 from ._spark_configurations_operations import SparkConfigurationsOperations
 from ._kusto_operations_operations import KustoOperationsOperations
@@ -169,6 +170,7 @@ __all__ = [
     "IntegrationRuntimeAuthKeysOperations",
     "IntegrationRuntimeMonitoringDataOperations",
     "IntegrationRuntimeStatusOperations",
+    "GetOperations",
     "SparkConfigurationOperations",
     "SparkConfigurationsOperations",
     "KustoOperationsOperations",
