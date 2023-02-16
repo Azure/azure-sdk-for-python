@@ -144,9 +144,7 @@ class LocalPathField(fields.Str):
                 return result
         except OSError:
             raise self.make_error("invalid_path")
-        raise self.make_error(
-            "path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type
-        )
+        raise self.make_error("path_not_exist", path=result.as_posix(), allow_type=self.allowed_path_type)
 
     @property
     def allowed_path_type(self) -> str:
