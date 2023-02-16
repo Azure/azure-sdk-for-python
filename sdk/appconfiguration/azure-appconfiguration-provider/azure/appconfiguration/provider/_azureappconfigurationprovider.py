@@ -15,6 +15,7 @@ from azure.keyvault.secrets import SecretClient, KeyVaultSecretIdentifier
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
 from ._constants import (
     FEATURE_MANAGEMENT_KEY,
+    FEATURE_FLAG_PREFIX,
     ServiceFabricEnvironmentVariable,
     AzureFunctionEnvironmentVariable,
     AzureWebAppEnvironmentVariable,
@@ -129,7 +130,10 @@ def load_provider(*args, **kwargs) -> "AzureAppConfigurationProvider":
                 provider._dict[trimmed_key] = secret
             elif isinstance(config, FeatureFlagConfigurationSetting):
                 feature_management = provider._dict.get(FEATURE_MANAGEMENT_KEY, {})
-                feature_management[trimmed_key] = config.value
+                if trimmed_key.startswith(FEATURE_FLAG_PREFIX):
+                    feature_management[trimmed_key[len(FEATURE_FLAG_PREFIX) :]] = config.value
+                else:
+                    feature_management[trimmed_key] = config.value
                 if FEATURE_MANAGEMENT_KEY not in provider.keys():
                     provider._dict[FEATURE_MANAGEMENT_KEY] = feature_management
             elif _is_json_content_type(config.content_type):

@@ -11,7 +11,7 @@ from ._sql_vulnerability_assessment_scan_results_operations import SqlVulnerabil
 from ._sql_vulnerability_assessment_baseline_rules_operations import SqlVulnerabilityAssessmentBaselineRulesOperations
 
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [

@@ -43,6 +43,7 @@ def main():
                     "hostname": "name",
                     "instanceNumber": "00",
                     "providerType": "SapHana",
+                    "sapSid": "SID",
                     "sqlPort": "0000",
                     "sslHostNameInCertificate": "xyz.domain.com",
                     "sslPreference": "RootCertificate",
@@ -53,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2021-12-01-preview/examples/workloadmonitor/ProviderInstances_Create_Root_Certificate.json
+# x-ms-original-file: specification/workloads/resource-manager/Microsoft.Workloads/preview/2022-11-01-preview/examples/workloadmonitor/ProviderInstances_Create_Root_Certificate.json
 if __name__ == "__main__":
     main()

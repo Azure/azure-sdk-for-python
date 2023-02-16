@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------
 
 from abc import ABC
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING, cast
 
 from azure.core.pipeline.transport import HttpRequest
 
@@ -33,7 +33,8 @@ def _format_url_section(template, **kwargs):
         try:
             return template.format(**kwargs)
         except KeyError as key:
-            formatted_components = template.split("/")
+            # Need the cast, as for some reasons "split" is typed as list[str | Any]
+            formatted_components = cast(List[str], template.split("/"))
             components = [c for c in formatted_components if "{}".format(key.args[0]) not in c]
             template = "/".join(components)
 
