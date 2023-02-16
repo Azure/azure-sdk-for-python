@@ -86,4 +86,6 @@ class WorkspaceAssetReference(Asset):
         # pylint: disable=no-member
         return WorkspaceAssetReferenceSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
+
+# Aliasing previous model name to support backwards compatibility for public API
 WorkspaceModelReference = WorkspaceAssetReference
