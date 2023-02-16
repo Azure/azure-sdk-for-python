@@ -57,7 +57,7 @@ class AsyncHttpXStreamDownloadGenerator(AsyncIterator):
     async def __len__(self) -> int:
         return self.response.internal_response.headers['content-length']
 
-    async def __aiter__(self) -> 'AsyncHttpXStreamDownloadGenerator':
+    def __aiter__(self) -> 'AsyncHttpXStreamDownloadGenerator':
         return self
 
     async def __anext__(self):
@@ -102,9 +102,8 @@ class AsyncHttpXTransport(AsyncHttpTransport):
         if stream_response:
             req = self.client.build_request(**parameters)
             response = await self.client.send(req, stream=stream_response)
-            stream_ctx = response.iter_bytes()
+            #stream_ctx = response.iter_bytes()
         else:
             response = await self.client.request(**parameters)
 
         return AsyncHttpXTransportResponse(request, response, stream_contextmanager=stream_ctx)
-    
