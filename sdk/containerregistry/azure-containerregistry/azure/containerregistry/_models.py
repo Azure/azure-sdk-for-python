@@ -67,7 +67,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     def _from_generated(cls, generated, **kwargs):
         # type: (ManifestAttributesBase,  Any) -> ArtifactManifestProperties
         return cls(
-            architecture=generated.architecture,
+            cpu_architecture=generated.architecture,
             created_on=generated.created_on,
             digest=generated.digest,
             last_updated_on=generated.last_updated_on,
@@ -79,6 +79,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
             can_write=generated.changeable_attributes.can_write,
             can_list=generated.changeable_attributes.can_list,
             repository_name=kwargs.get("repository_name", None),
+            registry=kwargs.get("registry", None),
         )
 
     def _to_generated(self):
@@ -133,13 +134,7 @@ class ArtifactManifestProperties(object):  # pylint: disable=too-many-instance-a
     @property
     def fully_qualified_reference(self):
         # type: () -> str
-        return "{}/{}{}{}".format(
-            _host_only(self._registry),
-            self._repository_name,
-            ":" if _is_tag(self._digest) else "@",
-            _strip_alg(self._digest)
-        )
-        # return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
+        return f"{_host_only(self._registry)}/{self._repository_name}{':' if _is_tag(self._digest) else '@'}{_strip_alg(self._digest)}" # pylint: disable=line-too-long
 
 
 class RepositoryProperties(object):
