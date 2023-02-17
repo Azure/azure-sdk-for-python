@@ -17,10 +17,12 @@ from azure.appconfiguration import AzureAppConfigurationClient, ConfigurationSet
 from util import print_configuration_setting, get_connection_string
 
 def main():
+    # [START create_app_config_client]
     CONNECTION_STRING = get_connection_string()
 
     # Create app config client
     client = AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING)
+    # [END create_app_config_client]
 
     print("Set new configuration setting")
     config_setting = ConfigurationSetting(

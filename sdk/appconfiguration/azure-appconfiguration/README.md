@@ -58,12 +58,14 @@ Alternatively, get the connection string from the Azure Portal.
 
 Once you have the value of the connection string, you can create the AzureAppConfigurationClient:
 
+<!-- SNIPPET:hello_world_sample.create_app_config_client -->
 ```python
 from azure.appconfiguration import AzureAppConfigurationClient
 
 connection_str = "<connection_string>"
 client = AzureAppConfigurationClient.from_connection_string(connection_str)
 ```
+<!-- END SNIPPET -->
 
 #### Use AAD token
 
