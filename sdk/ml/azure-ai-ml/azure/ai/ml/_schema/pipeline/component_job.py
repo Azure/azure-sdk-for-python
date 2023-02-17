@@ -440,21 +440,20 @@ class DataTransferImportSchema(BaseNodeSchema):
     compute = ComputeField()
     source = UnionField([NestedField(DatabaseSchema), NestedField(FileSystemSchema)], required=True, allow_none=False)
     outputs = fields.Dict(
-        keys=fields.Str(),
-        values=UnionField([OutputBindingStr, NestedField(OutputSchema)]),
-        allow_none=False
+        keys=fields.Str(), values=UnionField([OutputBindingStr, NestedField(OutputSchema)]), allow_none=False
     )
 
     @validates("inputs")
     def inputs_key(self, value):
-        raise ValidationError(f"inputs field is not a valid filed in task type "
-                              f"{DataTransferTaskType.IMPORT_DATA}.")
+        raise ValidationError(f"inputs field is not a valid filed in task type " f"{DataTransferTaskType.IMPORT_DATA}.")
 
     @validates("outputs")
     def outputs_key(self, value):
         if len(value) != 1 or list(value.keys())[0] != "sink":
-            raise ValidationError(f"outputs field only support one output called sink in task type "
-                                  f"{DataTransferTaskType.IMPORT_DATA}.")
+            raise ValidationError(
+                f"outputs field only support one output called sink in task type "
+                f"{DataTransferTaskType.IMPORT_DATA}."
+            )
 
     @post_load
     def make(self, data, **kwargs) -> "DataTransferImport":
@@ -504,13 +503,16 @@ class DataTransferExportSchema(BaseNodeSchema):
     @validates("inputs")
     def inputs_key(self, value):
         if len(value) != 1 or list(value.keys())[0] != "source":
-            raise ValidationError(f"inputs field only support one input called source in task type "
-                                  f"{DataTransferTaskType.EXPORT_DATA}.")
+            raise ValidationError(
+                f"inputs field only support one input called source in task type "
+                f"{DataTransferTaskType.EXPORT_DATA}."
+            )
 
     @validates("outputs")
     def outputs_key(self, value):
-        raise ValidationError(f"outputs field is not a valid filed in task type "
-                              f"{DataTransferTaskType.EXPORT_DATA}.")
+        raise ValidationError(
+            f"outputs field is not a valid filed in task type " f"{DataTransferTaskType.EXPORT_DATA}."
+        )
 
     @post_load
     def make(self, data, **kwargs) -> "DataTransferExport":

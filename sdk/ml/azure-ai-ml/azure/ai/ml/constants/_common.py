@@ -597,6 +597,7 @@ class IdentityType:
     USER_IDENTITY = "user_identity"
     MANAGED_IDENTITY = "managed_identity"
 
+
 class Boolean:
     TRUE = "true"
     FALSE = "false"

@@ -155,9 +155,7 @@ class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMi
         return super().__getattr__(attr)
 
 
-class RestAioHttpTransportResponse(
-    AsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin
-):
+class RestAioHttpTransportResponse(AsyncHttpResponseImpl, _RestAioHttpTransportResponseBackcompatMixin):
     def __init__(self, *, internal_response, decompress: bool = True, **kwargs):
         headers = _CIMultiDict(internal_response.headers)
         super().__init__(
@@ -176,9 +174,7 @@ class RestAioHttpTransportResponse(
     def __getstate__(self):
         state = self.__dict__.copy()
         # Remove the unpicklable entries.
-        state[
-            "_internal_response"
-        ] = None  # aiohttp response are not pickable (see headers comments)
+        state["_internal_response"] = None  # aiohttp response are not pickable (see headers comments)
         state["headers"] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
 

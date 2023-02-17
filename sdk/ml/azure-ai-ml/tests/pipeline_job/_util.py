@@ -52,10 +52,14 @@ DATABINDING_EXPRESSION_TEST_CASES = [
 ]
 
 # this is to shorten the test name
-DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE = list(enumerate(map(
-    lambda params: Path(params[0]).name,
-    DATABINDING_EXPRESSION_TEST_CASES,
-)))
+DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE = list(
+    enumerate(
+        map(
+            lambda params: Path(params[0]).name,
+            DATABINDING_EXPRESSION_TEST_CASES,
+        )
+    )
+)
 
 
 SERVERLESS_COMPUTE_TEST_PARAMETERS = [

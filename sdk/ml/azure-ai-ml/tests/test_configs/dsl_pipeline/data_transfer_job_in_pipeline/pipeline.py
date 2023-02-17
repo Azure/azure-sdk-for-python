@@ -11,9 +11,9 @@ parent_dir = str(Path(__file__).parent)
 
 
 def generate_dsl_pipeline() -> PipelineJob:
-    path_source_s3 = 'test1/*'
-    query_source_sql = 'select top(10) Name from SalesLT.ProductCategory'
-    connection_target_s3 = 'azureml:my-s3-connection'
+    path_source_s3 = "test1/*"
+    query_source_sql = "select top(10) Name from SalesLT.ProductCategory"
+    connection_target_s3 = "azureml:my-s3-connection"
 
     connection_target_azuresql = 'azureml:my_export_azuresqldb_connection'
     table_name = "dbo.Persons"
@@ -31,11 +31,10 @@ def generate_dsl_pipeline() -> PipelineJob:
             outputs={"sink": Output(type=AssetTypes.MLTABLE)}
         )
 
-        source_s3 = FileSystem(path=path_source_s3, connection='azureml:my-s3-connection')
-        s3_blob = import_data( source=source_s3, outputs={"sink": Output(type=AssetTypes.URI_FOLDER)})
+        source_s3 = FileSystem(path=path_source_s3, connection="azureml:my-s3-connection")
+        s3_blob = import_data(source=source_s3, outputs={"sink": Output(type=AssetTypes.URI_FOLDER)})
 
         merge_files = merge_files_func(folder1=s3_blob.outputs.sink, folder2=snowflake_blob.outputs.sink)
-
         blob_azuresql= export_data(inputs=inputs, sink=sink)
         return {"merged_blob": merge_files.outputs.output_folder}
 

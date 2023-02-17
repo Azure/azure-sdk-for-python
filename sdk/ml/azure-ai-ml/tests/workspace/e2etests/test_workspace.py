@@ -174,15 +174,15 @@ class TestWorkspace(AzureRecordedTestCase):
             {
                 "identity": {
                     "type": "user_assigned",
-                    "user_assigned_identities":{
+                    "user_assigned_identities": {
                         user_assigned_identity.id: {
                             "client_id": user_assigned_identity.client_id,
-                            "principal_id": user_assigned_identity.principal_id
+                            "principal_id": user_assigned_identity.principal_id,
                         },
                         user_assigned_identity2.id: {
                             "client_id": user_assigned_identity2.client_id,
-                            "principal_id": user_assigned_identity2.principal_id
-                        }
+                            "principal_id": user_assigned_identity2.principal_id,
+                        },
                     },
                 }
             },
@@ -271,7 +271,6 @@ class TestWorkspace(AzureRecordedTestCase):
         assert workspace.identity.user_assigned_identities == None
         assert workspace.primary_user_assigned_identity == None
 
-
         # test updating identity type from system_assgined to system_assigned and user_assigned
         msi_client = ManagedServiceIdentityClient(
             credential=client._credential, subscription_id=client._operation_scope.subscription_id
@@ -290,15 +289,15 @@ class TestWorkspace(AzureRecordedTestCase):
             {
                 "identity": {
                     "type": "system_assigned, user_assigned",
-                    "user_assigned_identities":{
+                    "user_assigned_identities": {
                         user_assigned_identity.id: {
                             "client_id": user_assigned_identity.client_id,
-                            "principal_id": user_assigned_identity.principal_id
+                            "principal_id": user_assigned_identity.principal_id,
                         },
                         user_assigned_identity2.id: {
                             "client_id": user_assigned_identity2.client_id,
-                            "principal_id": user_assigned_identity2.principal_id
-                        }
+                            "principal_id": user_assigned_identity2.principal_id,
+                        },
                     },
                 }
             },
@@ -306,13 +305,13 @@ class TestWorkspace(AzureRecordedTestCase):
         wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
         workspace_poller = client.workspaces.begin_update(
             wps,
-            # primary_user_assigned_identity=user_assigned_identity.id, # uncomment this when sai to sai|uai fixing pr released. 
+            # primary_user_assigned_identity=user_assigned_identity.id, # uncomment this when sai to sai|uai fixing pr released.
         )
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
         assert len(workspace.identity.user_assigned_identities) == 2
-        # assert workspace.primary_user_assigned_identity == user_assigned_identity.id # uncomment this when sai to sai|uai fixing pr released. 
+        # assert workspace.primary_user_assigned_identity == user_assigned_identity.id # uncomment this when sai to sai|uai fixing pr released.
         assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
 
         ## test uai removal. not supported yet, service returning "Code: FailedIdentityOperation, Removal of all user-assigned identities assigned to resource '...' with type 'SystemAssigned, UserAssigned' is invalid."

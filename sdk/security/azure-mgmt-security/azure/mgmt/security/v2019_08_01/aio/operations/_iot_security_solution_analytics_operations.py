@@ -82,8 +82,8 @@ class IotSecuritySolutionAnalyticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IoTSecuritySolutionAnalyticsModelList]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.IoTSecuritySolutionAnalyticsModelList] = kwargs.pop("cls", None)
 
         request = build_list_request(
             resource_group_name=resource_group_name,
@@ -95,9 +95,9 @@ class IotSecuritySolutionAnalyticsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -114,7 +114,9 @@ class IotSecuritySolutionAnalyticsOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels"
+    }
 
     @distributed_trace_async
     async def get(
@@ -143,8 +145,8 @@ class IotSecuritySolutionAnalyticsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))  # type: Literal["2019-08-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.IoTSecuritySolutionAnalyticsModel]
+        api_version: Literal["2019-08-01"] = kwargs.pop("api_version", _params.pop("api-version", "2019-08-01"))
+        cls: ClsType[_models.IoTSecuritySolutionAnalyticsModel] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_group_name=resource_group_name,
@@ -156,9 +158,9 @@ class IotSecuritySolutionAnalyticsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -175,4 +177,6 @@ class IotSecuritySolutionAnalyticsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/iotSecuritySolutions/{solutionName}/analyticsModels/default"
+    }

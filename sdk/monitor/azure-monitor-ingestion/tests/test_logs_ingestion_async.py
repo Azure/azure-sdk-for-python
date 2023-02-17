@@ -6,6 +6,7 @@
 import gzip
 import os
 import json
+from unittest import mock
 import uuid
 
 import pytest
@@ -44,7 +45,17 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
             LogsIngestionClient, credential, endpoint=monitor_info['dce'])
         async with client:
             await client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=LOGS_BODY)
-        credential.close()
+        await credential.close()
+
+    @pytest.mark.asyncio
+    async def test_send_logs_large(self, recorded_test, monitor_info, large_data):
+        credential = self.get_credential(LogsIngestionClient, is_async=True)
+        client = self.create_client_from_credential(
+            LogsIngestionClient, credential, endpoint=monitor_info['dce'])
+        async with client:
+            await client.upload(
+                rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=large_data)
+        await credential.close()
 
     @pytest.mark.asyncio
     async def test_send_logs_error(self, recorded_test, monitor_info):
@@ -56,7 +67,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
         with pytest.raises(HttpResponseError) as ex:
             async with client:
                 await client.upload(rule_id='bad-rule', stream_name=monitor_info['stream_name'], logs=body)
-        credential.close()
+        await credential.close()
 
     @pytest.mark.asyncio
     async def test_send_logs_error_custom(self, recorded_test, monitor_info):
@@ -76,7 +87,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
             await client.upload(
                 rule_id='bad-rule', stream_name=monitor_info['stream_name'], logs=body, on_error=on_error)
         assert on_error.called
-        credential.close()
+        await credential.close()
 
     @pytest.mark.asyncio
     async def test_send_logs_json_file(self, recorded_test, monitor_info):
@@ -92,7 +103,7 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
             with open(temp_file, 'r') as f:
                 await client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=f)
         os.remove(temp_file)
-        credential.close()
+        await credential.close()
 
     @pytest.mark.asyncio
     @pytest.mark.live_test_only("Issues recording binary streams with test-proxy")
@@ -109,4 +120,49 @@ class TestLogsIngestionClientAsync(AzureRecordedTestCase):
             with open(temp_file, 'rb') as f:
                 await client.upload(rule_id=monitor_info['dcr_id'], stream_name=monitor_info['stream_name'], logs=f)
         os.remove(temp_file)
-        credential.close()
+        await credential.close()
+
+
+    @pytest.mark.asyncio
+    async def test_abort_error_handler(self, monitor_info):
+        credential = self.get_credential(LogsIngestionClient, is_async=True)
+        client = self.create_client_from_credential(
+            LogsIngestionClient, credential, endpoint=monitor_info['dce'])
+        body = [{"foo": "bar"}]
+
+        class TestException(Exception):
+            pass
+
+        async def on_error(e):
+            on_error.called = True
+            if isinstance(e.error, RuntimeError):
+                raise TestException("Abort")
+            return
+
+        on_error.called = False
+
+        async with client:
+            # No exception should be raised
+            with mock.patch("azure.monitor.ingestion.aio._operations._patch.GeneratedOps.upload",
+                            side_effect=ConnectionError):
+                await client.upload(
+                    rule_id=monitor_info['dcr_id'],
+                    stream_name=monitor_info['stream_name'],
+                    logs=LOGS_BODY,
+                    on_error=on_error)
+
+            assert on_error.called
+
+            on_error.called = False
+            # Exception should now be raised since error handler checked for RuntimeError.
+            with mock.patch("azure.monitor.ingestion.aio._operations._patch.GeneratedOps.upload",
+                            side_effect=RuntimeError):
+                with pytest.raises(TestException):
+                    await client.upload(
+                        rule_id=monitor_info['dcr_id'],
+                        stream_name=monitor_info['stream_name'],
+                        logs=LOGS_BODY,
+                        on_error=on_error)
+
+            assert on_error.called
+        await credential.close()

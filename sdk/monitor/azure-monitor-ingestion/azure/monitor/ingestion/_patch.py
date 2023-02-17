@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import TYPE_CHECKING, Any
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 from ._client import LogsIngestionClient as GeneratedClient
-from ._models import UploadLogsError
+from ._models import LogsUploadError
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -40,7 +40,7 @@ class LogsIngestionClient(GeneratedClient):
 
 __all__ = [
     "LogsIngestionClient",
-    "UploadLogsError"
+    "LogsUploadError"
 ]
 
 

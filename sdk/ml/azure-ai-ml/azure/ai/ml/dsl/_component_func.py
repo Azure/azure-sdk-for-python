@@ -52,6 +52,7 @@ def to_component_func(entity: ComponentEntity, component_creation_func) -> Calla
     flattened_group_keys = []
     # Flatten all group parameters, for function parameter validation.
     from azure.ai.ml.entities._inputs_outputs import GroupInput
+
     for name, item in entity.inputs.items():
         if isinstance(item, GroupInput):
             flattened_group_keys.extend(list(item.flatten(group_parameter_name=name).keys()))
