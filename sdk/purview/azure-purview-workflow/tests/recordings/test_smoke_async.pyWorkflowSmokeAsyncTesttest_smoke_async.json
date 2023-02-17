@@ -34,7 +34,7 @@
       }
     },
     {
-      "RequestUri": "https://test-create-account.purview.azure.com/workflow/workflows?api-version=2022-05-01-preview",
+      "RequestUri": "https://myservice.azure.com/workflow/workflows?api-version=2022-05-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",

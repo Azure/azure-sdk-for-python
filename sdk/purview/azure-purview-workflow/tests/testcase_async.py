@@ -14,17 +14,9 @@ class WorkflowAsyncTest(AzureTestCase):
         super(WorkflowAsyncTest, self).__init__(method_name, **kwargs)
 
     def create_async_client(self, endpoint):
-        credential = self.get_credential()
+        credential = self.get_credential(PurviewWorkflowClient, is_async=True)
         return self.create_client_from_credential(
             PurviewWorkflowClient,
             credential=credential,
             endpoint=endpoint,
         )
-
-    def get_credential(self):
-        username = os.getenv("USERNAME")
-        password = os.getenv("PASSWORD")
-        client_id = os.getenv("AZURE_CLIENT_ID")
-        tenant_id = os.getenv("AZURE_TENANT_ID")
-        return UsernamePasswordCredential(client_id=client_id, username=username, password=password,
-                                          tenant_id=tenant_id)
