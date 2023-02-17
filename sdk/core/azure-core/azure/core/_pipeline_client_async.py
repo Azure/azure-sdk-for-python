@@ -164,9 +164,7 @@ class AsyncPipelineClient(
         self,
         base_url: str,
         *,
-        pipeline: Optional[
-            AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]
-        ] = None,
+        pipeline: Optional[AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]] = None,
         config: Optional[Configuration] = None,
         **kwargs
     ):
