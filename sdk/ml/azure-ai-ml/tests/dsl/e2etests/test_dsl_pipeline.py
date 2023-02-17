@@ -2767,6 +2767,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
     @pytest.mark.disable_mock_code_hash
     def test_register_output_sdk_succeed(self, client: MLClient):
+        # https://ml.azure.com/runs/affable_net_crshmbg558?wsid=/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master&tid=72f988bf-86f1-41af-91ab-2d7cd011db47#
+        # try to re-run this test to generate recording after the above pipeline run finish
         component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_input = Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv")
 
