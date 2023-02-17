@@ -584,6 +584,10 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_component_id = pipeline_job.jobs["hello_world_component_inline"].component
         self.assert_component_is_anonymous(client, created_component_id)
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails"
+    )
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_create_with_distribution_component(
         self, client: MLClient, randstr: Callable[[str], str]
