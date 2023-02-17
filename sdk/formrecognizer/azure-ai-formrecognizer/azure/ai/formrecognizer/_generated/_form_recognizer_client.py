@@ -60,24 +60,10 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     LATEST_PROFILE = ProfileDefinition({
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
-            'authorize_copy_document_model': '2022-10-31-preview',
-            'begin_analyze_document': '2022-10-31-preview',
-            'begin_build_document_classifier': '2022-10-31-preview',
-            'begin_build_document_model': '2022-10-31-preview',
-            'begin_classify_document': '2022-10-31-preview',
-            'begin_compose_document_model': '2022-10-31-preview',
-            'begin_copy_document_model_to': '2022-10-31-preview',
-            'delete_document_classifier': '2022-10-31-preview',
-            'delete_document_model': '2022-10-31-preview',
-            'get_analyze_document_result': '2022-10-31-preview',
-            'get_classify_document_result': '2022-10-31-preview',
-            'get_document_classifier': '2022-10-31-preview',
-            'get_document_classifiers': '2022-10-31-preview',
-            'get_document_model': '2022-10-31-preview',
-            'get_document_models': '2022-10-31-preview',
-            'get_operation': '2022-10-31-preview',
-            'get_operations': '2022-10-31-preview',
-            'get_resource_details': '2022-10-31-preview',
+            'document_classifiers': '2023-02-28-preview',
+            'document_models': '2023-02-28-preview',
+            'operations': '2023-02-28-preview',
+            'resource_info': '2023-02-28-preview',
             'train_custom_model_async': '2.0',
         }},
         _PROFILE_TAG + " latest"
@@ -91,7 +77,7 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
-        if api_version == '2022-10-31-preview':
+        if api_version == '2023-02-28-preview' or api_version == '2023-02-28-preview':
             base_url = '{endpoint}/formrecognizer'
         elif api_version == '2.0':
             base_url = '{endpoint}/formrecognizer/v2.0'
@@ -114,12 +100,16 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
     def models(cls, api_version=DEFAULT_API_VERSION):
         """Module depends on the API version:
 
-           * 2022-10-31-preview: :mod:`v2023_02_28.models<azure.ai.formrecognizer.v2023_02_28.models>`
+           * 2023-02-28-preview: :mod:`v2023_02_28.models<azure.ai.formrecognizer.v2023_02_28.models>`
+           * 2023-02-28-preview: :mod:`v2023_02_28_preview.models<azure.ai.formrecognizer.v2023_02_28_preview.models>`
            * 2.0: :mod:`v2_0.models<azure.ai.formrecognizer.v2_0.models>`
            * 2.1: :mod:`v2_1.models<azure.ai.formrecognizer.v2_1.models>`
         """
-        if api_version == '2022-10-31-preview':
+        if api_version == '2023-02-28-preview':
             from .v2023_02_28 import models
+            return models
+        elif api_version == '2023-02-28-preview':
+            from .v2023_02_28_preview import models
             return models
         elif api_version == '2.0':
             from .v2_0 import models
@@ -128,6 +118,70 @@ class FormRecognizerClient(FormRecognizerClientOperationsMixin, MultiApiClientMi
             from .v2_1 import models
             return models
         raise ValueError("API version {} is not available".format(api_version))
+
+    @property
+    def document_classifiers(self):
+        """Instance depends on the API version:
+
+           * 2023-02-28-preview: :class:`DocumentClassifiersOperations<azure.ai.formrecognizer.v2023_02_28.operations.DocumentClassifiersOperations>`
+           * 2023-02-28-preview: :class:`DocumentClassifiersOperations<azure.ai.formrecognizer.v2023_02_28_preview.operations.DocumentClassifiersOperations>`
+        """
+        api_version = self._get_api_version('document_classifiers')
+        if api_version == '2023-02-28-preview':
+            from .v2023_02_28.operations import DocumentClassifiersOperations as OperationClass
+        elif api_version == '2023-02-28-preview':
+            from .v2023_02_28_preview.operations import DocumentClassifiersOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'document_classifiers'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def document_models(self):
+        """Instance depends on the API version:
+
+           * 2023-02-28-preview: :class:`DocumentModelsOperations<azure.ai.formrecognizer.v2023_02_28.operations.DocumentModelsOperations>`
+           * 2023-02-28-preview: :class:`DocumentModelsOperations<azure.ai.formrecognizer.v2023_02_28_preview.operations.DocumentModelsOperations>`
+        """
+        api_version = self._get_api_version('document_models')
+        if api_version == '2023-02-28-preview':
+            from .v2023_02_28.operations import DocumentModelsOperations as OperationClass
+        elif api_version == '2023-02-28-preview':
+            from .v2023_02_28_preview.operations import DocumentModelsOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'document_models'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def operations(self):
+        """Instance depends on the API version:
+
+           * 2023-02-28-preview: :class:`Operations<azure.ai.formrecognizer.v2023_02_28.operations.Operations>`
+           * 2023-02-28-preview: :class:`Operations<azure.ai.formrecognizer.v2023_02_28_preview.operations.Operations>`
+        """
+        api_version = self._get_api_version('operations')
+        if api_version == '2023-02-28-preview':
+            from .v2023_02_28.operations import Operations as OperationClass
+        elif api_version == '2023-02-28-preview':
+            from .v2023_02_28_preview.operations import Operations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def resource_info(self):
+        """Instance depends on the API version:
+
+           * 2023-02-28-preview: :class:`ResourceInfoOperations<azure.ai.formrecognizer.v2023_02_28.operations.ResourceInfoOperations>`
+           * 2023-02-28-preview: :class:`ResourceInfoOperations<azure.ai.formrecognizer.v2023_02_28_preview.operations.ResourceInfoOperations>`
+        """
+        api_version = self._get_api_version('resource_info')
+        if api_version == '2023-02-28-preview':
+            from .v2023_02_28.operations import ResourceInfoOperations as OperationClass
+        elif api_version == '2023-02-28-preview':
+            from .v2023_02_28_preview.operations import ResourceInfoOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'resource_info'".format(api_version))
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):
         self._client.close()

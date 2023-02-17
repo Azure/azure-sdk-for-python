@@ -6,13 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._form_recognizer_client_operations import FormRecognizerClientOperationsMixin
+from ._document_models_operations import DocumentModelsOperations
+from ._operations import Operations
+from ._document_classifiers_operations import DocumentClassifiersOperations
+from ._resource_info_operations import ResourceInfoOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 __all__ = [
-    'FormRecognizerClientOperationsMixin',
+    'DocumentModelsOperations',
+    'Operations',
+    'DocumentClassifiersOperations',
+    'ResourceInfoOperations',
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

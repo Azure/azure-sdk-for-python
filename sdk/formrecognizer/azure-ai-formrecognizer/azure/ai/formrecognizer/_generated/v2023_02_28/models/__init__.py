@@ -31,6 +31,7 @@ from ._models_py3 import DocumentClassifierDetails
 from ._models_py3 import DocumentField
 from ._models_py3 import DocumentFieldSchema
 from ._models_py3 import DocumentFormula
+from ._models_py3 import DocumentImage
 from ._models_py3 import DocumentKeyValueElement
 from ._models_py3 import DocumentKeyValuePair
 from ._models_py3 import DocumentLanguage
@@ -57,6 +58,7 @@ from ._models_py3 import GetOperationsResponse
 from ._models_py3 import InnerError
 from ._models_py3 import OperationDetails
 from ._models_py3 import OperationSummary
+from ._models_py3 import QuotaDetails
 from ._models_py3 import ResourceDetails
 
 
@@ -71,6 +73,7 @@ from ._form_recognizer_client_enums import (
     DocumentBuildMode,
     DocumentFieldType,
     DocumentFormulaKind,
+    DocumentPageKind,
     DocumentSignatureType,
     DocumentTableCellKind,
     FontFamily,
@@ -112,6 +115,7 @@ __all__ = [
     'DocumentField',
     'DocumentFieldSchema',
     'DocumentFormula',
+    'DocumentImage',
     'DocumentKeyValueElement',
     'DocumentKeyValuePair',
     'DocumentLanguage',
@@ -138,6 +142,7 @@ __all__ = [
     'InnerError',
     'OperationDetails',
     'OperationSummary',
+    'QuotaDetails',
     'ResourceDetails',
     'AnalyzeResultOperationStatus',
     'ApiVersion',
@@ -149,6 +154,7 @@ __all__ = [
     'DocumentBuildMode',
     'DocumentFieldType',
     'DocumentFormulaKind',
+    'DocumentPageKind',
     'DocumentSignatureType',
     'DocumentTableCellKind',
     'FontFamily',

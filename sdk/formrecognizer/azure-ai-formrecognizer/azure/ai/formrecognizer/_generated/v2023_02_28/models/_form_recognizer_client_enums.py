@@ -24,7 +24,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     TWO_THOUSAND_TWENTY_TWO08_31 = "2022-08-31"
-    TWO_THOUSAND_TWENTY_TWO10_31_PREVIEW = "2022-10-31-preview"
+    TWO_THOUSAND_TWENTY_THREE02_28_PREVIEW = "2023-02-28-preview"
 
 class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for upload
@@ -76,9 +76,10 @@ class ContentType1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DocumentAnalysisFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
-    HIGH_RESOLUTION = "highResolution"
-    FORMULA = "formula"
-    FONT = "font"
+    OCR_HIGH_RESOLUTION = "ocr.highResolution"
+    OCR_FORMULA = "ocr.formula"
+    OCR_FONT = "ocr.font"
+    QUERY_FIELDS_PREMIUM = "queryFields.premium"
 
 class DocumentAnnotationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Annotation kind.
@@ -133,6 +134,7 @@ class DocumentFieldType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     OBJECT = "object"
     CURRENCY = "currency"
     ADDRESS = "address"
+    BOOLEAN = "boolean"
 
 class DocumentFormulaKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Formula kind.
@@ -140,6 +142,15 @@ class DocumentFormulaKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     INLINE = "inline"
     DISPLAY = "display"
+
+class DocumentPageKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Kind of document page.
+    """
+
+    DOCUMENT = "document"
+    SHEET = "sheet"
+    SLIDE = "slide"
+    IMAGE = "image"
 
 class DocumentSignatureType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Presence of signature.
