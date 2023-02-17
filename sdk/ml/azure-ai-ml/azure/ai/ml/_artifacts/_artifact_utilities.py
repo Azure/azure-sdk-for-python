@@ -481,8 +481,6 @@ def _get_asset_by_hash(
     )
 
     response = requests_pipeline.get(request_url, headers=request_headers)
-    if response.status_code == 404:
-        return None
     if response.status_code != 200:
         # If API is unresponsive, create new asset
         return None
