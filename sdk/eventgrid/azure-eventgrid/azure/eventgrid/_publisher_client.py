@@ -97,7 +97,7 @@ class EventGridPublisherClient(object): # pylint: disable=client-accepts-api-ver
     def __init__(self, endpoint, credential, **kwargs):
         # type: (str, Union[AzureKeyCredential, AzureSasCredential, TokenCredential], Any) -> None
         self._endpoint = endpoint
-        self._client = EventGridPublisherClientImpl(
+        self._client = EventGridPublisherClientImpl(endpoint=self._endpoint, credential=credential,
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
 
