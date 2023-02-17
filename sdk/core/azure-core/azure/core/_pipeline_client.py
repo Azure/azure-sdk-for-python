@@ -105,7 +105,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
         config: Configuration,
         *,
         transport: Optional[HttpTransport[HTTPRequestType, HTTPResponseType]] = None,
-        policies=None,
+        policies: Optional[PoliciesType] = None,
         per_call_policies=None,
         per_retry_policies=None,
         **kwargs
