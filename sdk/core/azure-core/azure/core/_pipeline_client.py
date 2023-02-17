@@ -102,7 +102,7 @@ class PipelineClient(PipelineClientBase, Generic[HTTPRequestType, HTTPResponseTy
 
     def _build_pipeline(  # pylint: disable=no-self-use
         self,
-        config,
+        config: Configuration,
         *,
         transport: Optional[HttpTransport[HTTPRequestType, HTTPResponseType]] = None,
         policies=None,
