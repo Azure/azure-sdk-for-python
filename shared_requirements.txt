@@ -146,7 +146,9 @@ yarl<2.0,>=1.0
 #override azure-data-tables isodate>=0.6.1
 #override azure-data-tables typing-extensions>=4.3.0
 #override azure-digitaltwins-core azure-core<2.0.0,>=1.20.0
-#override azure-defender-easm azure-core<2.0.0,>=1.24.0; isodate<1.0.0,>=0.6.1; typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-defender-easm azure-core<2.0.0,>=1.24.0
+#override azure-defender-easm isodate<1.0.0,>=0.6.1
+#override azure-defender-easm typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-eventhub typing-extensions>=4.0.1
 #override azure-mgmt-costmanagement msrest>=0.7.1
