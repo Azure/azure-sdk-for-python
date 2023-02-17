@@ -8,6 +8,7 @@ import hashlib
 import re
 import time
 import json
+import os
 from typing import TYPE_CHECKING, Dict
 from io import BytesIO
 from urllib.parse import urlparse
@@ -26,6 +27,7 @@ SUPPORTED_API_VERSIONS = [
     "2021-07-01"
 ]
 OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
+DEFAULT_CHUNK_SIZE = 4 * 1024 * 1024 # 4MB
 
 # Supported audiences
 AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"
@@ -137,9 +139,9 @@ def _deserialize_manifest(data):
 
 def _compute_digest(data):
     # type: (IO) -> str
-    data.seek(0)
+    position = data.tell()
     value = data.read()
-    data.seek(0)
+    data.seek(position)
     return "sha256:" + hashlib.sha256(value).hexdigest()
 
 def _validate_digest(data, digest):

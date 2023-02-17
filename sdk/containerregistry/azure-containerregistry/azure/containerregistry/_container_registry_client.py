@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import hashlib
 from io import BytesIO
 from typing import TYPE_CHECKING, Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.exceptions import (
@@ -24,9 +25,11 @@ from ._helpers import (
     _parse_next_link,
     _serialize_manifest,
     _validate_digest,
+    _get_stream_size,
     OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
     AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+    DEFAULT_CHUNK_SIZE,
 )
 from ._models import (
     RepositoryProperties,
@@ -826,27 +829,38 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             start_upload_response_headers = cast(Dict[str, str], self._client.container_registry_blob.start_upload(
                 repository, cls=_return_response_headers, **kwargs
             ))
-            upload_chunk_response_headers = cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
-                start_upload_response_headers['Location'],
-                data,
-                cls=_return_response_headers,
-                **kwargs
-            ))
-            digest = _compute_digest(data)
+            digest, location = self._upload_blob_chunk(start_upload_response_headers['Location'], data, **kwargs)
             complete_upload_response_headers = cast(
                 Dict[str, str],
                 self._client.container_registry_blob.complete_upload(
                     digest=digest,
-                    next_link=upload_chunk_response_headers['Location'],
+                    next_link=location,
                     cls=_return_response_headers,
                     **kwargs
                 )
             )
+            digest = complete_upload_response_headers['Docker-Content-Digest']
         except ValueError:
             if repository is None or data is None:
                 raise ValueError("The parameter repository and data cannot be None.")
+            if not _validate_digest(data, digest):
+                raise ValueError("The digest in the response does not match the digest of the uploaded blob.")
             raise
-        return complete_upload_response_headers['Docker-Content-Digest']
+        return digest
+
+    def _upload_blob_chunk(self, location: str, data: IO, **kwargs) -> Tuple[str, str]:
+        hasher = hashlib.sha256()       
+        buffer = data.read(DEFAULT_CHUNK_SIZE)
+        while len(buffer) > 0:
+            response_headers = cast(Dict[str, str], self._client.container_registry_blob.upload_chunk(
+                location,
+                data,
+                cls=_return_response_headers,
+                **kwargs
+            ))
+            hasher.update(buffer)
+            buffer = data.read(DEFAULT_CHUNK_SIZE)
+        return hasher.hexdigest(), response_headers['Location']
 
     @distributed_trace
     def download_manifest(self, repository, tag_or_digest, **kwargs):
