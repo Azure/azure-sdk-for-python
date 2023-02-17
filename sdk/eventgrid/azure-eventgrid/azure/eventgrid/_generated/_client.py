@@ -7,31 +7,39 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core import PipelineClient
+from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import EventGridClientConfiguration
 from ._operations import EventGridClientOperationsMixin
 from ._serialization import Deserializer, Serializer
 
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
+
 
 class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Azure EventGrid Client.
 
-    :param topic_hostname: The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net.
+    :param endpoint: The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net.
      Required.
-    :type topic_hostname: str
-    :param api_version: Version of the API to be used with the client request. Required.
-    :type api_version: str
+    :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is "2018-01-01".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, topic_hostname: str, api_version: str, **kwargs: Any
-    ) -> None:
-        _endpoint = "{topicHostname}"
-        self._config = EventGridClientConfiguration(topic_hostname=topic_hostname, api_version=api_version, **kwargs)
+    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
+        self._config = EventGridClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -58,9 +66,7 @@ class EventGridClient(EventGridClientOperationsMixin):  # pylint: disable=client
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "topicHostname": self._serialize.url(
-                "self._config.topic_hostname", self._config.topic_hostname, "str", skip_quote=True
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

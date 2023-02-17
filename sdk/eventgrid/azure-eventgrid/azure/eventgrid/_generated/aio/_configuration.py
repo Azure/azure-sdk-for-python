@@ -6,12 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+import sys
+from typing import Any, TYPE_CHECKING, Union
 
 from azure.core.configuration import Configuration
+from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from .._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class EventGridClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
@@ -20,24 +31,42 @@ class EventGridClientConfiguration(Configuration):  # pylint: disable=too-many-i
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param topic_hostname: The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net.
+    :param endpoint: The host name of the topic, e.g. topic1.westus2-1.eventgrid.azure.net.
      Required.
-    :type topic_hostname: str
-    :param api_version: Version of the API to be used with the client request. Required.
-    :type api_version: str
+    :type endpoint: str
+    :param credential: Credential needed for the client to connect to Azure. Is either a
+     AzureKeyCredential type or a TokenCredential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version: The API version to use for this operation. Default value is "2018-01-01".
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
-    def __init__(self, topic_hostname: str, api_version: str, **kwargs: Any) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+    ) -> None:
         super(EventGridClientConfiguration, self).__init__(**kwargs)
-        if topic_hostname is None:
-            raise ValueError("Parameter 'topic_hostname' must not be None.")
-        if api_version is None:
-            raise ValueError("Parameter 'api_version' must not be None.")
+        api_version: Literal["2018-01-01"] = kwargs.pop("api_version", "2018-01-01")
 
-        self.topic_hostname = topic_hostname
+        if endpoint is None:
+            raise ValueError("Parameter 'endpoint' must not be None.")
+        if credential is None:
+            raise ValueError("Parameter 'credential' must not be None.")
+
+        self.endpoint = endpoint
+        self.credential = credential
         self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://eventgrid.azure.net/.default"])
         kwargs.setdefault("sdk_moniker", "eventgridclient/{}".format(VERSION))
         self._configure(**kwargs)
+
+    def _infer_policy(self, **kwargs):
+        if isinstance(self.credential, AzureKeyCredential):
+            return policies.AzureKeyCredentialPolicy(self.credential, "aeg-sas-key", **kwargs)
+        if hasattr(self.credential, "get_token"):
+            return policies.AsyncBearerTokenCredentialPolicy(self.credential, *self.credential_scopes, **kwargs)
+        raise TypeError(f"Unsupported credential: {self.credential}")
 
     def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
@@ -49,3 +78,5 @@ class EventGridClientConfiguration(Configuration):  # pylint: disable=too-many-i
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
+        if self.credential and not self.authentication_policy:
+            self.authentication_policy = self._infer_policy(**kwargs)
