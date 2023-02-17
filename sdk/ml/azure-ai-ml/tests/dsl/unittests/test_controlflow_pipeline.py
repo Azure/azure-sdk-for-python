@@ -32,6 +32,9 @@ class TestDoWhilePipelineUT(TestControlFlowPipelineUT):
         from test_configs.dsl_pipeline.dynamic_input_do_while.pipeline import pipeline_job
 
         assert pipeline_job._customized_validate().passed
+        # assert input type of loop body, should both have type now
+        assert pipeline_job.jobs["loop_body"].inputs.required_input.type == "uri_folder"
+        assert pipeline_job.jobs["loop_body"].inputs.optional_input.type == "uri_folder"
 
 
 class TestParallelForPipelineUT(TestControlFlowPipelineUT):
