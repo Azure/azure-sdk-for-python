@@ -30,7 +30,7 @@ python3-only: true
 batch:
   - tag: release_2_0
   - tag: release_2_1
-  - tag: release_2023_02_28
+  - tag: release_2023_02_28_preview
   - multiapiscript: true
 ```
 
@@ -76,10 +76,10 @@ output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azur
 
 ## Release 3.2-preview
 
-These settings apply only when `--tag=release_2023_02_28` is specified on the command line.
+These settings apply only when `--tag=release_2023_02_28_preview` is specified on the command line.
 
-``` yaml $(tag) == 'release_2023_02_28'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs-pr/a9a01d5dd8fa1ac106af45a79a66ae16d543889a/specification/cognitiveservices/data-plane/FormRecognizer/preview/2022-10-31-preview/FormRecognizer.json?token=GHSAT0AAAAAABUYDSJIN2DW2V6Z3YBDHJOOY6QUDIA
+``` yaml $(tag) == 'release_2023_02_28_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs-pr/6fd0eae463baaa27e56893d67f58b59c32621cfe/specification/cognitiveservices/data-plane/FormRecognizer/preview/2022-10-31-preview/FormRecognizer.json?token=GHSAT0AAAAAABUYDSJJ5PADTZSZHA4KSQI6Y7QB65Q
 namespace: azure.ai.formrecognizer.v2023_02_28
 output-folder: $(python-sdks-folder)/formrecognizer/azure-ai-formrecognizer/azure/ai/formrecognizer/_generated/v2023_02_28
 ```
