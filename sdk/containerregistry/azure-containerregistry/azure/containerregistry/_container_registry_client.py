@@ -3,6 +3,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+# pylint: disable=C0302
 from io import BytesIO
 from typing import Any, Dict, IO, Optional, overload, Union, cast, Tuple
 from azure.core.credentials import TokenCredential
