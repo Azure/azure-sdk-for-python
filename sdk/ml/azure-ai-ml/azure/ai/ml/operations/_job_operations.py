@@ -256,6 +256,7 @@ class JobOperations(_ScopeDependentOperations):
             scheduled=schedule_defined,
             schedule_id=scheduled_job_name,
             **self._kwargs,
+            **kwargs,
         )
 
     def _handle_rest_errors(self, job_object):
@@ -330,6 +331,7 @@ class JobOperations(_ScopeDependentOperations):
                 resource_group_name=self._operation_scope.resource_group_name,
                 workspace_name=self._workspace_name,
                 **self._kwargs,
+                **kwargs,
             )
 
         # Note: Below batch cancel is experimental and for private usage
