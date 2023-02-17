@@ -58,10 +58,9 @@ def do_while(body, mapping, max_iteration_count: int, condition=None):
 
     def _infer_and_update_body_input_from_mapping():
         # pylint: disable=protected-access
-        for output_name, body_input in mapping.items():
+        for source_output, body_input in mapping.items():
             # handle case that mapping key is a NodeOutput
-            if isinstance(output_name, NodeOutput):
-                output_name = output_name.port_name
+            output_name = source_output.port_name if isinstance(source_output, NodeOutput) else source_output
             # if loop body output type is not specified, skip as we have no place to infer
             if body.outputs[output_name].type is None:
                 continue
