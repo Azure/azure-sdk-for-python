@@ -46,6 +46,7 @@ def load_registered_component(
     component_rest_object = component_entity._to_rest_object()
     return pydash.omit(component_rest_object.properties.component_spec, *omit_fields)
 
+
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
@@ -93,7 +94,7 @@ class TestComponent(AzureRecordedTestCase):
         loaded_dict = load_registered_component(client, component_name, component_resource.version, omit_fields)
 
         base_dir = "./tests/test_configs/internal"
-        json_path = (yaml_path.rsplit(".", 1)[0] + ".json")
+        json_path = yaml_path.rsplit(".", 1)[0] + ".json"
         json_path = os.path.join(base_dir, "loaded_from_rest", os.path.relpath(json_path, base_dir))
         os.makedirs(os.path.dirname(json_path), exist_ok=True)
         if not os.path.isfile(json_path):
@@ -105,9 +106,7 @@ class TestComponent(AzureRecordedTestCase):
 
             # default value for datatransfer
             if expected_dict["type"] == "DataTransferComponent" and "datatransfer" not in expected_dict:
-                expected_dict["datatransfer"] = {
-                    'allow_overwrite': 'True'
-                }
+                expected_dict["datatransfer"] = {"allow_overwrite": "True"}
 
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)

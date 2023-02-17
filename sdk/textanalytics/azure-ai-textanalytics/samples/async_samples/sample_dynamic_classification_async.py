@@ -22,14 +22,12 @@ USAGE:
     2) AZURE_LANGUAGE_KEY - your Language subscription key
 """
 
-
-from cgitb import text
-import os
 import asyncio
 
 
 async def sample_dynamic_classification_async() -> None:
     # [START dynamic_classification_async]
+    import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.textanalytics.aio import TextAnalyticsClient
 

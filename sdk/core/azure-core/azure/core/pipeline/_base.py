@@ -121,9 +121,7 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
             :caption: Builds the pipeline for synchronous transport.
     """
 
-    def __init__(
-        self, transport: HttpTransportType, policies: Optional[PoliciesType] = None
-    ) -> None:
+    def __init__(self, transport: HttpTransportType, policies: Optional[PoliciesType] = None) -> None:
         self._impl_policies: List[HTTPPolicy] = []
         self._transport = transport
 
@@ -194,12 +192,6 @@ class Pipeline(AbstractContextManager, Generic[HTTPRequestType, HTTPResponseType
         """
         self._prepare_multipart(request)
         context = PipelineContext(self._transport, **kwargs)
-        pipeline_request: PipelineRequest[HTTPRequestType] = PipelineRequest(
-            request, context
-        )
-        first_node = (
-            self._impl_policies[0]
-            if self._impl_policies
-            else _TransportRunner(self._transport)
-        )
+        pipeline_request: PipelineRequest[HTTPRequestType] = PipelineRequest(request, context)
+        first_node = self._impl_policies[0] if self._impl_policies else _TransportRunner(self._transport)
         return first_node.send(pipeline_request)  # type: ignore

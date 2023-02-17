@@ -9,20 +9,27 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
+from ..._serialization import Deserializer, Serializer
 from ._configuration import AppConfigurationManagementClientConfiguration
-from .operations import ConfigurationStoresOperations, KeyValuesOperations, Operations, PrivateEndpointConnectionsOperations, PrivateLinkResourcesOperations, ReplicasOperations
+from .operations import (
+    ConfigurationStoresOperations,
+    KeyValuesOperations,
+    Operations,
+    PrivateEndpointConnectionsOperations,
+    PrivateLinkResourcesOperations,
+    ReplicasOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class AppConfigurationManagementClient:
+
+class AppConfigurationManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     """AppConfigurationManagementClient.
 
     :ivar configuration_stores: ConfigurationStoresOperations operations
@@ -42,9 +49,9 @@ class AppConfigurationManagementClient:
     :ivar replicas: ReplicasOperations operations
     :vartype replicas:
      azure.mgmt.appconfiguration.v2022_03_01_preview.aio.operations.ReplicasOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The Microsoft Azure subscription ID.
+    :param subscription_id: The Microsoft Azure subscription ID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -62,38 +69,29 @@ class AppConfigurationManagementClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = AppConfigurationManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = AppConfigurationManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.configuration_stores = ConfigurationStoresOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.key_values = KeyValuesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.replicas = ReplicasOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
+        self.key_values = KeyValuesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.replicas = ReplicasOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -102,7 +100,7 @@ class AppConfigurationManagementClient:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -122,5 +120,5 @@ class AppConfigurationManagementClient:
         await self._client.__aenter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
+    async def __aexit__(self, *exc_details: Any) -> None:
         await self._client.__aexit__(*exc_details)

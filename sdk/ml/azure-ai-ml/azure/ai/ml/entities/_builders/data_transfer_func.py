@@ -5,11 +5,18 @@
 
 from typing import Optional, Dict, Union, Callable, Tuple
 
-from azure.ai.ml.entities._component.datatransfer_component import DataTransferCopyComponent, \
-    DataTransferImportComponent, DataTransferExportComponent
+from azure.ai.ml.entities._component.datatransfer_component import (
+    DataTransferCopyComponent,
+    DataTransferImportComponent,
+    DataTransferExportComponent,
+)
 from azure.ai.ml.constants._common import AssetTypes, LegacyAssetTypes
-from azure.ai.ml.constants._component import ComponentSource, ExternalDataType, DataTransferBuiltinComponentUri, \
-    DataTransferTaskType
+from azure.ai.ml.constants._component import (
+    ComponentSource,
+    ExternalDataType,
+    DataTransferBuiltinComponentUri,
+    DataTransferTaskType,
+)
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
 from azure.ai.ml.entities._inputs_outputs import Output, Input
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, NodeOutput
@@ -44,7 +51,7 @@ def _parse_input(input_value):
         if input_type in SUPPORTED_INPUTS:
             job_input = Input(**input_value)
         component_input = Input(**input_value)
-    elif isinstance(input_value,  str):
+    elif isinstance(input_value, str):
         # Input bindings
         component_input = ComponentTranslatableMixin._to_input_builder_function(input_value)
         job_input = input_value
@@ -57,8 +64,10 @@ def _parse_input(input_value):
         component_input, _ = _parse_input(data)
         job_input = input_value
     else:
-        msg = f"Unsupported input type: {type(input_value)}, only Input, dict, str, PipelineInput and NodeOutput are " \
-              f"supported."
+        msg = (
+            f"Unsupported input type: {type(input_value)}, only Input, dict, str, PipelineInput and NodeOutput are "
+            f"supported."
+        )
         raise ValidationException(
             message=msg,
             no_personal_data_message=msg,
@@ -105,19 +114,19 @@ def _parse_inputs_outputs(io_dict: Dict, parse_func: Callable) -> Tuple[Dict, Di
 
 
 def copy_data(
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tags: Optional[Dict] = None,
-        display_name: Optional[str] = None,
-        experiment_name: Optional[str] = None,
-        compute: Optional[str] = None,
-        inputs: Optional[Dict] = None,
-        outputs: Optional[Dict] = None,
-        is_deterministic: bool = True,
-        task: Optional[str] = DataTransferTaskType.COPY_DATA,
-        data_copy_mode: Optional[str] = None,
-        **kwargs,
+    *,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    compute: Optional[str] = None,
+    inputs: Optional[Dict] = None,
+    outputs: Optional[Dict] = None,
+    is_deterministic: bool = True,
+    task: Optional[str] = DataTransferTaskType.COPY_DATA,
+    data_copy_mode: Optional[str] = None,
+    **kwargs,
 ) -> DataTransferCopy:
     """Create a DataTransferCopy object which can be used inside dsl.pipeline as a function.
 
@@ -187,18 +196,18 @@ def copy_data(
 
 @pipeline_node_decorator
 def import_data(
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tags: Optional[Dict] = None,
-        display_name: Optional[str] = None,
-        experiment_name: Optional[str] = None,
-        compute: Optional[str] = None,
-        source: Optional[Union[Dict, Database, FileSystem]] = None,
-        outputs: Optional[Dict] = None,
-        is_deterministic: bool = True,
-        task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
-        **kwargs,
+    *,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    compute: Optional[str] = None,
+    source: Optional[Union[Dict, Database, FileSystem]] = None,
+    outputs: Optional[Dict] = None,
+    is_deterministic: bool = True,
+    task: Optional[str] = DataTransferTaskType.IMPORT_DATA,
+    **kwargs,
 ) -> DataTransferImport:
     """Create a DataTransferImport object which can be used inside dsl.pipeline.
 
@@ -229,7 +238,7 @@ def import_data(
     :type task: str
     """
     source = _build_source_sink(source)
-    outputs = outputs or {'sink': Output(type=AssetTypes.MLTABLE)}
+    outputs = outputs or {"sink": Output(type=AssetTypes.MLTABLE)}
     # # job inputs can not be None
     # job_inputs = {k: v for k, v in job_inputs.items() if v is not None}
     component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
@@ -271,18 +280,18 @@ def import_data(
 
 @pipeline_node_decorator
 def export_data(
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tags: Optional[Dict] = None,
-        display_name: Optional[str] = None,
-        experiment_name: Optional[str] = None,
-        compute: Optional[str] = None,
-        sink: Optional[Union[Dict, Database, FileSystem]] = None,
-        inputs: Optional[Dict] = None,
-        is_deterministic: bool = True,
-        task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
-        **kwargs,
+    *,
+    name: Optional[str] = None,
+    description: Optional[str] = None,
+    tags: Optional[Dict] = None,
+    display_name: Optional[str] = None,
+    experiment_name: Optional[str] = None,
+    compute: Optional[str] = None,
+    sink: Optional[Union[Dict, Database, FileSystem]] = None,
+    inputs: Optional[Dict] = None,
+    is_deterministic: bool = True,
+    task: Optional[str] = DataTransferTaskType.EXPORT_DATA,
+    **kwargs,
 ) -> DataTransferExport:
     """Create a DataTransferExport object which can be used inside dsl.pipeline.
 

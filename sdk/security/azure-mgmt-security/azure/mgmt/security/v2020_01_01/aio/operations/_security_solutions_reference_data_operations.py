@@ -78,8 +78,8 @@ class SecuritySolutionsReferenceDataOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecuritySolutionsReferenceDataList]
+        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        cls: ClsType[_models.SecuritySolutionsReferenceDataList] = kwargs.pop("cls", None)
 
         request = build_list_request(
             subscription_id=self._config.subscription_id,
@@ -89,9 +89,9 @@ class SecuritySolutionsReferenceDataOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -108,7 +108,9 @@ class SecuritySolutionsReferenceDataOperations:
 
         return deserialized
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/securitySolutionsReferenceData"}  # type: ignore
+    list.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/securitySolutionsReferenceData"
+    }
 
     @distributed_trace_async
     async def list_by_home_region(self, asc_location: str, **kwargs: Any) -> _models.SecuritySolutionsReferenceDataList:
@@ -133,8 +135,8 @@ class SecuritySolutionsReferenceDataOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecuritySolutionsReferenceDataList]
+        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        cls: ClsType[_models.SecuritySolutionsReferenceDataList] = kwargs.pop("cls", None)
 
         request = build_list_by_home_region_request(
             asc_location=asc_location,
@@ -145,9 +147,9 @@ class SecuritySolutionsReferenceDataOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -164,4 +166,6 @@ class SecuritySolutionsReferenceDataOperations:
 
         return deserialized
 
-    list_by_home_region.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/securitySolutionsReferenceData"}  # type: ignore
+    list_by_home_region.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/locations/{ascLocation}/securitySolutionsReferenceData"
+    }

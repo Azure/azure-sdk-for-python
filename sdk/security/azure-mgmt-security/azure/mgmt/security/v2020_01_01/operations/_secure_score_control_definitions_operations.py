@@ -45,7 +45,7 @@ def build_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
+    api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -64,7 +64,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
+    api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -77,7 +77,7 @@ def build_list_by_subscription_request(subscription_id: str, **kwargs: Any) -> H
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -121,8 +121,8 @@ class SecureScoreControlDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecureScoreControlDefinitionList]
+        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        cls: ClsType[_models.SecureScoreControlDefinitionList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -142,7 +142,7 @@ class SecureScoreControlDefinitionsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -158,7 +158,7 @@ class SecureScoreControlDefinitionsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -166,13 +166,13 @@ class SecureScoreControlDefinitionsOperations:
             deserialized = self._deserialize("SecureScoreControlDefinitionList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -185,7 +185,7 @@ class SecureScoreControlDefinitionsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/providers/Microsoft.Security/secureScoreControlDefinitions"}  # type: ignore
+    list.metadata = {"url": "/providers/Microsoft.Security/secureScoreControlDefinitions"}
 
     @distributed_trace
     def list_by_subscription(self, **kwargs: Any) -> Iterable["_models.SecureScoreControlDefinitionItem"]:
@@ -202,8 +202,8 @@ class SecureScoreControlDefinitionsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecureScoreControlDefinitionList]
+        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        cls: ClsType[_models.SecureScoreControlDefinitionList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -224,7 +224,7 @@ class SecureScoreControlDefinitionsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -240,7 +240,7 @@ class SecureScoreControlDefinitionsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -248,13 +248,13 @@ class SecureScoreControlDefinitionsOperations:
             deserialized = self._deserialize("SecureScoreControlDefinitionList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -267,4 +267,6 @@ class SecureScoreControlDefinitionsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list_by_subscription.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/secureScoreControlDefinitions"}  # type: ignore
+    list_by_subscription.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/secureScoreControlDefinitions"
+    }

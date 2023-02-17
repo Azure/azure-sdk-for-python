@@ -13,59 +13,59 @@ from azure.core import CaseInsensitiveEnumMeta
 class RuleSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rule severity."""
 
-    #: High
     HIGH = "High"
-    #: Medium
+    """High"""
     MEDIUM = "Medium"
-    #: Low
+    """Medium"""
     LOW = "Low"
-    #: Informational
+    """Low"""
     INFORMATIONAL = "Informational"
-    #: Obsolete
+    """Informational"""
     OBSOLETE = "Obsolete"
+    """Obsolete"""
 
 
 class RuleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rule result status."""
 
-    #: NonFinding
     NON_FINDING = "NonFinding"
-    #: Finding
+    """NonFinding"""
     FINDING = "Finding"
-    #: InternalError
+    """Finding"""
     INTERNAL_ERROR = "InternalError"
+    """InternalError"""
 
 
 class RuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rule type."""
 
-    #: Binary
     BINARY = "Binary"
-    #: BaselineExpected
+    """Binary"""
     BASELINE_EXPECTED = "BaselineExpected"
-    #: PositiveList
+    """BaselineExpected"""
     POSITIVE_LIST = "PositiveList"
-    #: NegativeList
+    """PositiveList"""
     NEGATIVE_LIST = "NegativeList"
+    """NegativeList"""
 
 
 class ScanState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scan status."""
 
-    #: Failed
     FAILED = "Failed"
-    #: FailedToRun
+    """Failed"""
     FAILED_TO_RUN = "FailedToRun"
-    #: InProgress
+    """FailedToRun"""
     IN_PROGRESS = "InProgress"
-    #: Passed
+    """InProgress"""
     PASSED = "Passed"
+    """Passed"""
 
 
 class ScanTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scan trigger type."""
 
-    #: OnDemand
     ON_DEMAND = "OnDemand"
-    #: Recurring
+    """OnDemand"""
     RECURRING = "Recurring"
+    """Recurring"""
