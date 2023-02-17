@@ -41,9 +41,7 @@ class SetImageProperties(object):
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(
-            self.authority, exclude_environment_credential=True
-        )
+        self.credential = get_credential(self.authority, exclude_environment_credential=True)
 
     def set_image_properties(self):
         load_registry()

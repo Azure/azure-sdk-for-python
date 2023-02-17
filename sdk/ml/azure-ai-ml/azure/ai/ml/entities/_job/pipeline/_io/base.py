@@ -418,7 +418,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
                 f"but got type: {type(self._data)}."
-                )
+            )
 
     @property
     def version(self) -> str:
@@ -440,7 +440,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"We support self._data of Input, Output, InputOutputBase, NodeOutput and NodeInput,"
                 f"but got type: {type(self._data)}."
-                )
+            )
 
     @property
     def path(self) -> Optional[str]:
@@ -470,7 +470,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             raise UserErrorException(
                 f"The output name {self.name} can only contain alphanumeric characters, dashes and underscores, "
                 f"with a limit of 255 characters."
-                )
+            )
         if self.version and not self.name:
             raise UserErrorException("Output name is required when output version is specified.")
 
@@ -513,7 +513,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
                 is_control=is_control,
                 name=self._data.name,
                 version=self._data.version,
-                description=self.description
+                description=self.description,
             )
         else:
             msg = "Got unexpected type for output: {}."

@@ -280,9 +280,7 @@ class TestPipelineJob:
         }
 
     def test_elastic_component_in_pipeline(self):
-        yaml_path = (
-            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
-        )
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # itp & elastic are based on CommandComponent
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
         configuration = ITPConfiguration(
@@ -337,9 +335,7 @@ class TestPipelineJob:
         }
 
     def test_singularity_component_in_pipeline(self):
-        yaml_path = (
-            "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # singularity is based on CommandComponent
-        )
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"  # singularity is based on CommandComponent
         node_func: CommandComponent = load_component(yaml_path)
         node = node_func()
         configuration = AISuperComputerConfiguration(
@@ -567,6 +563,7 @@ class TestPipelineJob:
             )
             node.compute = compute_name
             node.environment = environment_name
+
         pipeline_job = pipeline_func()
         assert pipeline_job._validate().passed, repr(pipeline_job._validate())
         rest_object = pipeline_job._to_rest_object().properties.jobs["node"]

@@ -15,33 +15,44 @@ class GovernanceRuleConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMe
     assessments, see examples.
     """
 
-    #: Checks that the string value of the data defined in Property equals the given value - exact fit
     EQUALS = "Equals"
-    #: Checks that the string value of the data defined in Property equals any of the given values
-    #: (exact fit)
+    """Checks that the string value of the data defined in Property equals the given value - exact fit"""
     IN = "In"
+    """Checks that the string value of the data defined in Property equals any of the given values
+    #: (exact fit)"""
 
 
 class GovernanceRuleOwnerSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The owner type for the governance rule owner source."""
 
-    #: The rule source type defined using resource tag
     BY_TAG = "ByTag"
-    #: The rule source type defined manually
+    """The rule source type defined using resource tag"""
     MANUALLY = "Manually"
+    """The rule source type defined manually"""
 
 
 class GovernanceRuleSourceResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The governance rule source, what the rule affects, e.g. Assessments."""
 
-    #: The source of the governance rule is assessments
     ASSESSMENTS = "Assessments"
+    """The source of the governance rule is assessments"""
 
 
 class GovernanceRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rule type of the governance rule, defines the source of the rule e.g. Integrated."""
 
-    #: The source of the rule type definition is integrated
     INTEGRATED = "Integrated"
-    #: The source of the rule type definition is ServiceNow
+    """The source of the rule type definition is integrated"""
     SERVICE_NOW = "ServiceNow"
+    """The source of the rule type definition is ServiceNow"""
+
+
+class OperationResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the long run operation result of governance rule."""
+
+    SUCCEEDED = "Succeeded"
+    """The operation succeeded"""
+    FAILED = "Failed"
+    """The operation failed"""
+    CANCELED = "Canceled"
+    """The operation canceled"""

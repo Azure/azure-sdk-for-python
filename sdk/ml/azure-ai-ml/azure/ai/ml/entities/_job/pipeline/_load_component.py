@@ -15,8 +15,17 @@ from azure.ai.ml.constants._component import ControlFlowType, NodeType, DataTran
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
-from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep, DataTransferCopy, \
-    DataTransferImport, DataTransferExport
+from azure.ai.ml.entities._builders import (
+    BaseNode,
+    Command,
+    Import,
+    Parallel,
+    Spark,
+    Sweep,
+    DataTransferCopy,
+    DataTransferImport,
+    DataTransferExport,
+)
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._builders.do_while import DoWhile
