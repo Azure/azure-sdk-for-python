@@ -4,9 +4,7 @@ This package contains a Python SDK for Azure Communication Services for Email.
 
 ## Key concepts
 
-The Azure Communication Email package is used to do following:
-- Send emails to multiple types of recipients
-- Query the status of a sent email message
+The Azure Communication Email package is used to send emails to multiple types of recipients.
 
 ## Getting started
 
@@ -63,7 +61,7 @@ client = EmailClient(endpoint, credential);
 
 ### Send an Email Message
 
-To send an email message, call the `send` function from the `EmailClient`.
+To send an email message, call the `begin_send` function from the `EmailClient`. This will return a poller. You can use this poller to check on the status of the operation and retrieve the result once it's finished.
 
 ```python
 message = {
@@ -80,10 +78,11 @@ message = {
             }
         ]
     },
-    "sender": "sender@contoso.com"
+    "senderEmail": "sender@contoso.com"
 }
 
-response = client.send(message)
+poller = email_client.begin_send(message)
+response = poller.result()
 ```
 
 ### Send an Email Message to Multiple Recipients
@@ -111,10 +110,11 @@ message = {
             {"email": "bccCustomer2@domain.com", "displayName": "BCC Customer Name 2"}
         ]
     },
-    "sender": "sender@contoso.com"
+    "senderEmail": "sender@contoso.com"
 }
 
-response = client.send(message)
+poller = email_client.begin_send(message)
+response = poller.result()
 ```
 
 ### Send Email with Attachments
@@ -143,7 +143,7 @@ message = {
             }
         ]
     },
-    "sender": "sender@contoso.com",
+    "senderEmail": "sender@contoso.com",
     "attachments": [
         {
             "name": "attachment.txt",
@@ -153,16 +153,8 @@ message = {
     ]
 }
 
-response = client.send(message)
-```
-
-### Get Email Message Status
-
-The result from the `send` call contains a `messageId` which can be used to query the status of the email.
-
-```python
-response = client.send(message)
-status = client.get_send_status(response['messageId'])
+poller = email_client.begin_send(message)
+response = poller.result()
 ```
 
 ## Troubleshooting

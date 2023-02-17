@@ -57,10 +57,8 @@ class EmailSingleRecipientSample(object):
         try:
             # sending the email message
             poller = email_client.begin_send(message)
-            print(poller.status())
-            # print(response)
             response = poller.result()
-            # print("Operation ID: " + response['id'])
+            print("Operation ID: " + response['id'])
         except HttpResponseError as ex:
             print(ex)
             pass

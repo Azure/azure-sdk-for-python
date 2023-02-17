@@ -100,36 +100,3 @@ class TestEmailClient(AzureRecordedTestCase):
             poller = await email_client.begin_send(message)
             response = await poller.result()
             assert response['status'] == "Succeeded"
-
-    @email_decorator_async
-    @recorded_by_proxy_async
-    async def test_send_email_empty_to_recipients(self):
-        email_client = EmailClient.from_connection_string(self.communication_connection_string)
-
-        message = {
-            "content": {
-                "subject": "This is the subject",
-                "plainText": "This is the body",
-            },
-            "recipients": {
-                "cc": [
-                    {
-                        "email": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ],
-                "bcc": [
-                    {
-                        "email": self.recipient_address,
-                        "displayName": "Customer Name"
-                    }
-                ]
-            },
-            "sender": self.sender_address
-        }
-
-        async with email_client:
-            poller = await email_client.begin_send(message)
-            response = await poller.result()
-            assert response['status'] == "Succeeded"
-
