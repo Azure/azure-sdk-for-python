@@ -604,54 +604,33 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 ## Long-running operation (LRO) customization
 
  APIs that can take longer to complete are often represented as long-running operations. azure-core provides a LROPoller (and AsyncLROPoller) protocols
- that give a user an object to access the long-running operation and do things such as wait until it reaches a terminal state, register disinterest, or
- provide a callback to do work on the final result when it is ready.
+ that give a user access to the long-running operation and exposes methods to interact with it such as wait until it reaches a terminal state, register disinterest, or
+ provide a callback to do work on the final result when it is ready. Sometimes you may need to customize an LRO to achieve the desired scenario for the service.
 
- There are 3 common ways to customize the logic for our LROs.
+ There are 3 options to customize the logic for our LROs.
 
- 1) LROPoller/AsyncLROPoller
-    1) TODO when you would customize this (Public interface)
- 2) LROBasePolling/AsyncLROBasePolling polling method
-    1) TODO when you would customize this (internal)
- 3) LRO algorithm/strategies (OperationResourcePolling, LocationPolling, StatusCheckPolling)
-    - The service sends a custom header which contains the URL that should be polled against.
-    - The service has special logic for whether a final GET should be done or not.
-    - A non-standard status is returned by the service
-
-### LROPoller/AsyncLROPoller
-
-Example: 
+ 1) LRO algorithm/strategies - OperationResourcePolling, LocationPolling, StatusCheckPolling
+    - You need to customize the polling strategy
+ 2) Polling method - LROBasePolling/AsyncLROBasePolling
+    - You need to customize the polling loop
+ 3) Poller - LROPoller/AsyncLROPoller
+    - You need to customize the public interface of the poller
 
 
-### LROBasePolling/AsyncLROBasePoling
+### LRO algorithm/strategies - OperationResourcePolling, LocationPolling, StatusCheckPolling
 
-Example: 
-
-### LRO algorithm/strategies (OperationResourcePolling, LocationPolling, StatusCheckPolling)
-
-Example: A non-standard status is returned via the POST call - "ValidationFailed".
+Example: Account for a non-standard status that is returned via the POST call - "ValidationFailed".
 
 Choose a polling algorithm that closely represents what you need to do or create your own that subclasses 
 `azure.core.polling.base_polling.LongRunningOperation` and implement the necessary methods.
 
 For our purposes, let's say that OperationResourcePolling closely resembles what the service does, but we
-need to account for the nonstandard status.
+need to account (and raise an exception) for the nonstandard status.
 
 ```python
 class CustomOperationResourcePolling(OperationResourcePolling):
-    """Implements a operation resource polling, typically from Operation-Location.
-
-    :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
-    :keyword dict[str, any] lro_options: Additional options for LRO. For more information, see
-     https://aka.ms/azsdk/autorest/openapi/lro-options
-    """
 
     def get_status(self, pipeline_response: "PipelineResponseType") -> str:
-        """Process the latest status update retrieved from an "Operation-Location" header.
-
-        :param azure.core.pipeline.PipelineResponse response: The response to extract the status.
-        :raises: BadResponse if response has no body, or body does not contain status.
-        """
         response = pipeline_response.http_response
         if _is_empty(response):
             raise BadResponse("The response from long running operation does not contain a body.")
@@ -661,18 +640,19 @@ class CustomOperationResourcePolling(OperationResourcePolling):
         if not status:
             raise BadResponse("No status found in body")
         if status.lower() == "validationfailed":
-            raise HttpResponseError(error=body["error"])
+            raise HttpResponseError(response=response, error=body["error"])
         return status
 ```
 
-And now, to plug into the client code:
+And now, to plug into the client method:
 
 ```python
-class ServiceClient:
+class ServiceOperations:
 
-    def begin_upload(self, data: AnyStr) -> LROPoller[Upload]:
-        return self.begin_upload(
+    def begin_analyze(self, data: AnyStr, name: str) -> LROPoller[JSON]:
+        return self._client.begin_analyze(
             data,
+            name,
             polling=LROBasePolling(
                 lro_algorithms=[
                     CustomOperationResourcePolling()
@@ -681,6 +661,100 @@ class ServiceClient:
             **kwargs
         )
 ```
+
+### Polling method - LROBasePolling/AsyncLROBasePolling
+
+Subclass `LROBasePolling` or create your own class that subclasses 
+`azure.core.polling.base_polling.PollingMethod` and implement the necessary methods.
+
+Example: Provide a different API call to use for GET polling.
+
+```python
+class CustomLROPolling(PollingMethod):
+    def __init__(self, command, client, name, polling_interval=30) -> None:
+        self._command = command
+        self._polling_interval = polling_interval
+        self._resource = None
+        self._finished = False
+        self._status = "InProgress"
+        self.client = client
+        self.name = name
+
+    def status(self) -> str:
+        return "Succeeded" if self._finished else "InProgress"
+
+    def finished(self) -> bool:
+        return self._finished
+
+    def resource(self) -> PollingReturnType:
+        return self._resource
+
+    def _update_status(self) -> None:
+        try:
+            self._resource = self._command()
+            self._finished = True
+        except ResourceNotFoundError:
+            pass
+
+    def run(self) -> None:
+        while not self.finished():
+            self._update_status()
+            if not self.finished():
+                time.sleep(self._polling_interval)
+```
+
+And now, to plug into the client code:
+
+```python
+class ServiceOperations:
+
+    def begin_upload(self, data: AnyStr, name: str) -> LROPoller[JSON]:
+        
+        return self._client.begin_upload(
+            data,
+            name,
+            polling=CustomLROBasePolling(
+                command=functools.partial(self.get_upload_file, name=name, **kwargs),
+                client=self._client,
+                name=name
+            ),
+            **kwargs
+        )
+```
+
+
+### Poller - LROPoller/AsyncLROPoller
+
+Example: I want to add a cancel method to my poller
+
+
+```python
+class CustomLROPoller(LROPoller[PollingReturnType]):
+
+    def cancel_upload(self) -> None:
+        return self.polling_method.client.cancel_upload_file(self.polling_method.file_name)
+
+```
+
+And now, to plug into the client code:
+
+```python
+class ServiceOperations:
+
+    def begin_upload(self, data: AnyStr, name: str) -> LROPoller[JSON]:
+        return CustomLROPoller(
+            client=self._client,
+            initial_response=self.create_upload(data, name, **kwargs),
+            deserialization_callback=lambda: None,
+            polling_method=CustomLROBasePolling(
+                command=functools.partial(self.get_upload_file, name=name, **kwargs),
+                client=self._client,
+                name=name
+            ),
+        )
+```
+
+
 
 [cae_doc]: https://docs.microsoft.com/azure/active-directory/conditional-access/concept-continuous-access-evaluation
 [custom_creds_sample]: https://github.com/Azure/azure-sdk-for-python/blob/fc95f8d3d84d076ffea158116ca1bf6912689c70/sdk/identity/azure-identity/samples/custom_credentials.py
