@@ -7,12 +7,166 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import datetime
+from typing import Any, Mapping, Optional, TYPE_CHECKING, overload
+
 from .. import _model_base
+from .._model_base import rest_field
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
 class CloudEventEvent(_model_base.Model):
-    """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema"""
+    """Properties of an event published to an Event Grid topic using the CloudEvent 1.0 Schema.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: An identifier for the event. The combination of id and source must be unique for each
+     distinct event. Required.
+    :vartype id: str
+    :ivar source: Identifies the context in which an event happened. The combination of id and
+     source must be unique for each distinct event. Required.
+    :vartype source: str
+    :ivar data: Event data specific to the event type.
+    :vartype data: ~eventgrid.models.object
+    :ivar data_base64: Event data specific to the event type, encoded as a base64 string.
+    :vartype data_base64: bytes
+    :ivar type: Type of event related to the originating occurrence. Required.
+    :vartype type: str
+    :ivar time: The time (in UTC) the event was generated, in RFC3339 format.
+    :vartype time: ~datetime.datetime
+    :ivar specversion: The version of the CloudEvents specification which the event uses. Required.
+    :vartype specversion: str
+    :ivar dataschema: Identifies the schema that data adheres to.
+    :vartype dataschema: str
+    :ivar datacontenttype: Content type of data value.
+    :vartype datacontenttype: str
+    :ivar subject: This describes the subject of the event in the context of the event producer
+     (identified by source).
+    :vartype subject: str
+    """
+
+    id: str = rest_field()
+    """An identifier for the event. The combination of id and source must be unique for each distinct event. Required. """
+    source: str = rest_field()
+    """Identifies the context in which an event happened. The combination of id and source must be unique for each distinct event. Required. """
+    data: Optional["_models.object"] = rest_field()
+    """Event data specific to the event type. """
+    data_base64: Optional[bytes] = rest_field()
+    """Event data specific to the event type, encoded as a base64 string. """
+    type: str = rest_field()
+    """Type of event related to the originating occurrence. Required. """
+    time: Optional[datetime.datetime] = rest_field()
+    """The time (in UTC) the event was generated, in RFC3339 format. """
+    specversion: str = rest_field()
+    """The version of the CloudEvents specification which the event uses. Required. """
+    dataschema: Optional[str] = rest_field()
+    """Identifies the schema that data adheres to. """
+    datacontenttype: Optional[str] = rest_field()
+    """Content type of data value. """
+    subject: Optional[str] = rest_field()
+    """This describes the subject of the event in the context of the event producer (identified by source). """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source: str,
+        type: str,
+        specversion: str,
+        data: Optional["_models.object"] = None,
+        data_base64: Optional[bytes] = None,
+        time: Optional[datetime.datetime] = None,
+        dataschema: Optional[str] = None,
+        datacontenttype: Optional[str] = None,
+        subject: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
 
 
 class EventGridEvent(_model_base.Model):
-    """Properties of an event published to an Event Grid topic using the EventGrid Schema."""
+    """Properties of an event published to an Event Grid topic using the EventGrid Schema.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: An unique identifier for the event. Required.
+    :vartype id: str
+    :ivar topic: The resource path of the event source.
+    :vartype topic: str
+    :ivar subject: A resource path relative to the topic path. Required.
+    :vartype subject: str
+    :ivar data: Event data specific to the event type. Required.
+    :vartype data: ~eventgrid.models.object
+    :ivar event_type: The type of the event that occurred. Required.
+    :vartype event_type: str
+    :ivar event_time: The time (in UTC) the event was generated. Required.
+    :vartype event_time: ~datetime.datetime
+    :ivar metadata_version: The schema version of the event metadata.
+    :vartype metadata_version: str
+    :ivar data_version: The schema version of the data object. Required.
+    :vartype data_version: str
+    """
+
+    id: str = rest_field()
+    """An unique identifier for the event. Required. """
+    topic: Optional[str] = rest_field()
+    """The resource path of the event source. """
+    subject: str = rest_field()
+    """A resource path relative to the topic path. Required. """
+    data: "_models.object" = rest_field()
+    """Event data specific to the event type. Required. """
+    event_type: str = rest_field(name="eventType")
+    """The type of the event that occurred. Required. """
+    event_time: datetime.datetime = rest_field(name="eventTime")
+    """The time (in UTC) the event was generated. Required. """
+    metadata_version: Optional[str] = rest_field(name="metadataVersion", readonly=True)
+    """The schema version of the event metadata. """
+    data_version: str = rest_field(name="dataVersion")
+    """The schema version of the data object. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        subject: str,
+        data: "_models.object",
+        event_type: str,
+        event_time: datetime.datetime,
+        data_version: str,
+        topic: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
+        super().__init__(*args, **kwargs)
+
+
+class GeneralEvent(_model_base.Model):
+    """GeneralEvent."""
+
+
+class object(_model_base.Model):
+    """object."""

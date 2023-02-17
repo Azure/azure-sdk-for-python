@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 import json
 import sys
-from typing import Any, Callable, Dict, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -29,10 +29,15 @@ from .._model_base import AzureJSONEncoder
 from .._serialization import Serializer
 from .._vendor import EventGridClientMixinABC
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
 else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
@@ -59,15 +64,52 @@ def build_event_grid_publish_event_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_event_grid_publish_cloud_event_request(*, content: _models.CloudEventEvent, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
+    # Construct URL
+    _url = "/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["content-type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
+def build_event_grid_publish_event_grid_event_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2018-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2018-01-01"))
+    # Construct URL
+    _url = "/"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class EventGridClientOperationsMixin(EventGridClientMixinABC):
     @overload
     def publish_event(  # pylint: disable=inconsistent-return-statements
-        self, events: _models.EventGridEvent, *, content_type: str = "application/json", **kwargs: Any
+        self, events: _models.GeneralEvent, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """publish_event.
 
         :param events: Required.
-        :type events: ~eventgrid.models.EventGridEvent
+        :type events: ~eventgrid.models.GeneralEvent
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -78,13 +120,29 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
     @overload
     def publish_event(  # pylint: disable=inconsistent-return-statements
-        self, events: _models.CloudEventEvent, *, content_type: str = "application/json", **kwargs: Any
+        self, events: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """publish_event.
 
         :param events: Required.
-        :type events: ~eventgrid.models.CloudEventEvent
+        :type events: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def publish_event(  # pylint: disable=inconsistent-return-statements
+        self, events: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """publish_event.
+
+        :param events: Required.
+        :type events: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: None
@@ -94,12 +152,12 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
     @distributed_trace
     def publish_event(  # pylint: disable=inconsistent-return-statements
-        self, events: Union[_models.EventGridEvent, _models.CloudEventEvent], **kwargs: Any
+        self, events: Union[_models.GeneralEvent, JSON, IO], **kwargs: Any
     ) -> None:
         """publish_event.
 
-        :param events: Is either a EventGridEvent type or a CloudEventEvent type. Required.
-        :type events: ~eventgrid.models.EventGridEvent or ~eventgrid.models.CloudEventEvent
+        :param events: Is one of the following types: GeneralEvent, JSON, IO Required.
+        :type events: ~eventgrid.models.GeneralEvent or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
@@ -123,12 +181,178 @@ class EventGridClientOperationsMixin(EventGridClientMixinABC):
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(events, _model_base.Model):
-            _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
-        elif isinstance(events, _model_base.Model):
+        if isinstance(events, (IO, bytes)):
+            _content = events
+        else:
             _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
 
         request = build_event_grid_publish_event_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace
+    def publish_cloud_event(  # pylint: disable=inconsistent-return-statements
+        self, events: _models.CloudEventEvent, **kwargs: Any
+    ) -> None:
+        """publish_cloud_event.
+
+        :param events: Required.
+        :type events: ~eventgrid.models.CloudEventEvent
+        :keyword content_type: Default value is "application/cloudevents-batch+json; charset=utf-8".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop(
+            "content_type", _headers.pop("content-type", "application/cloudevents-batch+json; charset=utf-8")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
+
+        request = build_event_grid_publish_cloud_event_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)
+
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @overload
+    def publish_event_grid_event(  # pylint: disable=inconsistent-return-statements
+        self, events: _models.EventGridEvent, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """publish_event_grid_event.
+
+        :param events: Required.
+        :type events: ~eventgrid.models.EventGridEvent
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def publish_event_grid_event(  # pylint: disable=inconsistent-return-statements
+        self, events: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """publish_event_grid_event.
+
+        :param events: Required.
+        :type events: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def publish_event_grid_event(  # pylint: disable=inconsistent-return-statements
+        self, events: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """publish_event_grid_event.
+
+        :param events: Required.
+        :type events: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def publish_event_grid_event(  # pylint: disable=inconsistent-return-statements
+        self, events: Union[_models.EventGridEvent, JSON, IO], **kwargs: Any
+    ) -> None:
+        """publish_event_grid_event.
+
+        :param events: Is one of the following types: EventGridEvent, JSON, IO Required.
+        :type events: ~eventgrid.models.EventGridEvent or JSON or IO
+        :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
+         value is None.
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(events, (IO, bytes)):
+            _content = events
+        else:
+            _content = json.dumps(events, cls=AzureJSONEncoder)  # type: ignore
+
+        request = build_event_grid_publish_event_grid_event_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
