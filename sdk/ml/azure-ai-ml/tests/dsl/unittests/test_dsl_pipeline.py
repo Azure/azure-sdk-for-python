@@ -2997,4 +2997,7 @@ class TestDSLPipeline:
         pipeline_job = pipeline()
         assert pipeline_job.jobs["hello_world_component"].environment_variables
         pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
-        assert pipeline_dict["jobs"]["hello_world_component"]["environment_variables"] == "${{parent.inputs.environment_variables}}"
+        assert (
+            pipeline_dict["jobs"]["hello_world_component"]["environment_variables"]
+            == "${{parent.inputs.environment_variables}}"
+        )
