@@ -481,7 +481,7 @@ class TestMachineLearningClient:
         )
         assert ml_client._cloud == "test_cloud"
         assert ml_client._base_url == "https://test.management.azure.com"
-        assert _get_default_cloud_name() == "AzureCloud"
+        assert _get_default_cloud_name() == "test_cloud"
 
         # We shouldn't need to add it to the kwargs a second time, just the cloud name
         kwargs = {"cloud": "test_cloud"}
@@ -492,6 +492,7 @@ class TestMachineLearningClient:
             workspace_name="test-ws1",
             **kwargs,
         )
-        print(ml_client._base_url)
+        
         assert ml_client._cloud == "test_cloud"
         assert ml_client._base_url == "https://test.management.azure.com"
+        assert _get_default_cloud_name() == "test_cloud"
