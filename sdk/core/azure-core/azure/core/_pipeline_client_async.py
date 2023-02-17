@@ -40,7 +40,6 @@ from typing import (
 from typing_extensions import Protocol
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
-from .pipeline.transport import AsyncHttpTransport
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
     ContentDecodePolicy,
@@ -187,14 +186,12 @@ class AsyncPipelineClient(
         self,
         config: Configuration,
         *,
-        transport: Optional[AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]] = None,
         policies=None,
         per_call_policies=None,
         per_retry_policies=None,
         **kwargs
-    ) -> AsyncPipeline[
-        HTTPRequestType, AsyncHTTPResponseType
-    ]:
+    ) -> AsyncPipeline[HTTPRequestType, AsyncHTTPResponseType]:
+        transport = kwargs.get("transport")
         per_call_policies = per_call_policies or []
         per_retry_policies = per_retry_policies or []
 
