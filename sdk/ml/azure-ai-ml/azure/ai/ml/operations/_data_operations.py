@@ -47,6 +47,8 @@ from azure.ai.ml._utils._registry_utils import (
 from azure.ai.ml._utils.utils import is_url
 from azure.ai.ml.constants._common import MLTABLE_METADATA_SCHEMA_URL_FALLBACK, AssetTypes
 from azure.ai.ml.entities._assets import Data
+from azure.ai.ml.entities._data_import import DataImport
+from azure.ai.ml.entities._job.data_transfer import DataTransferImportJob
 from azure.ai.ml.entities._data.mltable_metadata import MLTableMetadata
 from azure.ai.ml.exceptions import (
     AssetPathException,
@@ -56,6 +58,7 @@ from azure.ai.ml.exceptions import (
     ValidationException,
 )
 from azure.ai.ml.operations._datastore_operations import DatastoreOperations
+from azure.ai.ml.operations._job_operations import JobOperations
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 
@@ -70,6 +73,7 @@ class DataOperations(_ScopeDependentOperations):
         operation_config: OperationConfig,
         service_client: Union[ServiceClient102022, ServiceClient102021Dataplane],
         datastore_operations: DatastoreOperations,
+        job_operations: JobOperations,
         **kwargs: Dict,
     ):
 
@@ -78,6 +82,7 @@ class DataOperations(_ScopeDependentOperations):
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
         self._datastore_operation = datastore_operations
+        self._job_operation = job_operations
         self._service_client = service_client
         self._init_kwargs = kwargs
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
@@ -313,6 +318,13 @@ class DataOperations(_ScopeDependentOperations):
                         error_category=ErrorCategory.USER_ERROR,
                     )
             raise ex
+
+    def import_data(self, data_import: DataImport) -> Job:
+        import_job = DataTransferImportJob(
+            outputs={"sink", Output()},
+            source=data_import.source
+        )
+        return self._job_operation.create_or_update(import_job)
 
     # @monitor_with_activity(logger, "Data.Validate", ActivityType.INTERNALCALL)
     def _validate(self, data: Data) -> Union[List[str], None]:
