@@ -187,8 +187,8 @@ deployments:
 @pytest.mark.core_sdk_test
 class TestOperationOrchestration:
     def test_registry_environment(self, operation_orchestrator: OperationOrchestrator) -> None:
-        test_input = '//registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2'
-        expected = 'azureml://registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2'
+        test_input = "//registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2"
+        expected = "azureml://registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2"
         actual = operation_orchestrator.get_asset_arm_id(test_input, azureml_type=AzureMLResourceType.ENVIRONMENT)
         assert actual == expected
 
@@ -197,8 +197,10 @@ class TestOperationOrchestration:
         model = Model(id=test_id, name="some_name", version="1")
         actual = operation_orchestrator.get_asset_arm_id(model, azureml_type=AzureMLResourceType.MODEL)
         assert actual == test_id
-    
-    def test_get_asset_arm_id_when_environment_already_created(self, operation_orchestrator: OperationOrchestrator) -> None:
+
+    def test_get_asset_arm_id_when_environment_already_created(
+        self, operation_orchestrator: OperationOrchestrator
+    ) -> None:
         test_id = "azureml://registries/my-registry/environments/env-base/versions/1"
         environment = Environment(id=test_id, name="some_name", version="1")
         actual = operation_orchestrator.get_asset_arm_id(environment, azureml_type=AzureMLResourceType.ENVIRONMENT)

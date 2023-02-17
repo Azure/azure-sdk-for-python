@@ -33,24 +33,19 @@ class SecurityCenterConfiguration(Configuration):  # pylint: disable=too-many-in
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Azure subscription ID. Required.
-    :type subscription_id: str
     :keyword api_version: Api Version. Default value is "2022-01-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
+    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(SecurityCenterConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-01-01-preview")  # type: Literal["2022-01-01-preview"]
+        api_version: Literal["2022-01-01-preview"] = kwargs.pop("api_version", "2022-01-01-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
-        if subscription_id is None:
-            raise ValueError("Parameter 'subscription_id' must not be None.")
 
         self.credential = credential
-        self.subscription_id = subscription_id
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-security/{}".format(VERSION))

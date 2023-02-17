@@ -45,7 +45,7 @@ def build_list_request(scope: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -54,7 +54,7 @@ def build_list_request(scope: str, **kwargs: Any) -> HttpRequest:
         "scope": _SERIALIZER.url("scope", scope, "str", skip_quote=True),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -71,7 +71,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -81,7 +81,7 @@ def build_get_request(
         "assessmentName": _SERIALIZER.url("assessment_name", assessment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -98,8 +98,8 @@ def build_create_or_update_request(resource_id: str, assessment_name: str, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_create_or_update_request(resource_id: str, assessment_name: str, **kwa
         "assessmentName": _SERIALIZER.url("assessment_name", assessment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -126,7 +126,7 @@ def build_delete_request(resource_id: str, assessment_name: str, **kwargs: Any) 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
+    api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -136,7 +136,7 @@ def build_delete_request(resource_id: str, assessment_name: str, **kwargs: Any) 
         "assessmentName": _SERIALIZER.url("assessment_name", assessment_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -184,8 +184,8 @@ class AssessmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityAssessmentList]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        cls: ClsType[_models.SecurityAssessmentList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -206,7 +206,7 @@ class AssessmentsOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -222,7 +222,7 @@ class AssessmentsOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -230,13 +230,13 @@ class AssessmentsOperations:
             deserialized = self._deserialize("SecurityAssessmentList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -249,7 +249,7 @@ class AssessmentsOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments"}  # type: ignore
+    list.metadata = {"url": "/{scope}/providers/Microsoft.Security/assessments"}
 
     @distributed_trace
     def get(
@@ -284,8 +284,8 @@ class AssessmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityAssessmentResponse]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        cls: ClsType[_models.SecurityAssessmentResponse] = kwargs.pop("cls", None)
 
         request = build_get_request(
             resource_id=resource_id,
@@ -297,9 +297,9 @@ class AssessmentsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -316,7 +316,7 @@ class AssessmentsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}"}  # type: ignore
+    get.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}"}
 
     @overload
     def create_or_update(
@@ -386,7 +386,7 @@ class AssessmentsOperations:
         :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
         :type assessment_name: str
         :param assessment: Calculated assessment on a pre-defined assessment metadata. Is either a
-         model type or a IO type. Required.
+         SecurityAssessment type or a IO type. Required.
         :type assessment: ~azure.mgmt.security.v2021_06_01.models.SecurityAssessment or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -407,9 +407,9 @@ class AssessmentsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecurityAssessmentResponse]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SecurityAssessmentResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -431,9 +431,9 @@ class AssessmentsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -450,11 +450,11 @@ class AssessmentsOperations:
             deserialized = self._deserialize("SecurityAssessmentResponse", pipeline_response)
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
-    create_or_update.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}"}  # type: ignore
+    create_or_update.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}"}
 
     @distributed_trace
     def delete(  # pylint: disable=inconsistent-return-statements
@@ -483,8 +483,8 @@ class AssessmentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))  # type: Literal["2021-06-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        api_version: Literal["2021-06-01"] = kwargs.pop("api_version", _params.pop("api-version", "2021-06-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_delete_request(
             resource_id=resource_id,
@@ -495,9 +495,9 @@ class AssessmentsOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -510,4 +510,4 @@ class AssessmentsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    delete.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}"}  # type: ignore
+    delete.metadata = {"url": "/{resourceId}/providers/Microsoft.Security/assessments/{assessmentName}"}

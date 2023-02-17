@@ -76,4 +76,4 @@ class TestCacheUtils:
 
         self.register_target_node_and_resolve(resolver)
         assert target_cache_path.exists()
-        assert stat.filemode(target_cache_path.stat().st_mode) == '-rw-rw-rw-'
+        assert stat.filemode(target_cache_path.stat().st_mode) == "-rw-rw-rw-"

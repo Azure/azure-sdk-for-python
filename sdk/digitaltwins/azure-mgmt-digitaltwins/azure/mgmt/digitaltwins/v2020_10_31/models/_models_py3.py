@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -42,7 +42,7 @@ class CheckNameRequest(_serialization.Model):
 
     type = "Microsoft.DigitalTwins/digitalTwinsInstances"
 
-    def __init__(self, *, name: str, **kwargs):
+    def __init__(self, *, name: str, **kwargs: Any) -> None:
         """
         :keyword name: Resource name. Required.
         :paramtype name: str
@@ -76,8 +76,8 @@ class CheckNameResult(_serialization.Model):
         name_available: Optional[bool] = None,
         message: Optional[str] = None,
         reason: Optional[Union[str, "_models.Reason"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name_available: Specifies a Boolean value that indicates if the name is available.
         :paramtype name_available: bool
@@ -128,7 +128,7 @@ class DigitalTwinsResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -196,7 +196,7 @@ class DigitalTwinsDescription(DigitalTwinsResource):
         "host_name": {"key": "properties.hostName", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -229,8 +229,8 @@ class DigitalTwinsDescriptionListResult(_serialization.Model):
         *,
         next_link: Optional[str] = None,
         value: Optional[List["_models.DigitalTwinsDescription"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of DigitalTwins description objects.
         :paramtype next_link: str
@@ -267,7 +267,7 @@ class ExternalResource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.id = None
@@ -307,7 +307,7 @@ class DigitalTwinsEndpointResource(ExternalResource):
         "properties": {"key": "properties", "type": "DigitalTwinsEndpointResourceProperties"},
     }
 
-    def __init__(self, *, properties: "_models.DigitalTwinsEndpointResourceProperties", **kwargs):
+    def __init__(self, *, properties: "_models.DigitalTwinsEndpointResourceProperties", **kwargs: Any) -> None:
         """
         :keyword properties: DigitalTwinsInstance endpoint resource properties. Required.
         :paramtype properties:
@@ -336,8 +336,8 @@ class DigitalTwinsEndpointResourceListResult(_serialization.Model):
         *,
         next_link: Optional[str] = None,
         value: Optional[List["_models.DigitalTwinsEndpointResource"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of DigitalTwinsInstance Endpoints.
         :paramtype next_link: str
@@ -389,7 +389,7 @@ class DigitalTwinsEndpointResourceProperties(_serialization.Model):
 
     _subtype_map = {"endpoint_type": {"EventGrid": "EventGrid", "EventHub": "EventHub", "ServiceBus": "ServiceBus"}}
 
-    def __init__(self, *, dead_letter_secret: Optional[str] = None, **kwargs):
+    def __init__(self, *, dead_letter_secret: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword dead_letter_secret: Dead letter storage secret. Will be obfuscated during read.
         :paramtype dead_letter_secret: str
@@ -412,7 +412,7 @@ class DigitalTwinsPatchDescription(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Instance tags.
         :paramtype tags: dict[str, str]
@@ -446,7 +446,7 @@ class ErrorDefinition(_serialization.Model):
         "details": {"key": "details", "type": "[ErrorDefinition]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.code = None
@@ -465,7 +465,7 @@ class ErrorResponse(_serialization.Model):
         "error": {"key": "error", "type": "ErrorDefinition"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.ErrorDefinition"] = None, **kwargs: Any) -> None:
         """
         :keyword error: Error description.
         :paramtype error: ~azure.mgmt.digitaltwins.v2020_10_31.models.ErrorDefinition
@@ -526,8 +526,8 @@ class EventGrid(DigitalTwinsEndpointResourceProperties):
         access_key1: str,
         dead_letter_secret: Optional[str] = None,
         access_key2: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dead_letter_secret: Dead letter storage secret. Will be obfuscated during read.
         :paramtype dead_letter_secret: str
@@ -594,8 +594,8 @@ class EventHub(DigitalTwinsEndpointResourceProperties):
         connection_string_primary_key: str,
         dead_letter_secret: Optional[str] = None,
         connection_string_secondary_key: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dead_letter_secret: Dead letter storage secret. Will be obfuscated during read.
         :paramtype dead_letter_secret: str
@@ -640,7 +640,7 @@ class Operation(_serialization.Model):
         "is_data_action": {"key": "isDataAction", "type": "bool"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: Operation properties display.
         :paramtype display: ~azure.mgmt.digitaltwins.v2020_10_31.models.OperationDisplay
@@ -681,7 +681,7 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.provider = None
@@ -691,7 +691,8 @@ class OperationDisplay(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of DigitalTwins service operations. It contains a list of operations and a URL link to get the next set of results.
+    """A list of DigitalTwins service operations. It contains a list of operations and a URL link to
+    get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -711,7 +712,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The link used to get the next page of DigitalTwins description objects.
         :paramtype next_link: str
@@ -770,8 +771,8 @@ class ServiceBus(DigitalTwinsEndpointResourceProperties):
         primary_connection_string: str,
         dead_letter_secret: Optional[str] = None,
         secondary_connection_string: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dead_letter_secret: Dead letter storage secret. Will be obfuscated during read.
         :paramtype dead_letter_secret: str

@@ -45,7 +45,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
+    api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -56,7 +56,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
         ),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -71,7 +71,7 @@ def build_get_request(secure_score_name: str, subscription_id: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
+    api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -85,7 +85,7 @@ def build_get_request(secure_score_name: str, subscription_id: str, **kwargs: An
         "secureScoreName": _SERIALIZER.url("secure_score_name", secure_score_name, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -128,8 +128,8 @@ class SecureScoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecureScoresList]
+        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        cls: ClsType[_models.SecureScoresList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -150,7 +150,7 @@ class SecureScoresOperations:
                     params=_params,
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
 
             else:
                 # make call to next link with the client's api-version
@@ -166,7 +166,7 @@ class SecureScoresOperations:
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 request = _convert_request(request)
-                request.url = self._client.format_url(request.url)  # type: ignore
+                request.url = self._client.format_url(request.url)
                 request.method = "GET"
             return request
 
@@ -174,13 +174,13 @@ class SecureScoresOperations:
             deserialized = self._deserialize("SecureScoresList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -193,7 +193,7 @@ class SecureScoresOperations:
 
         return ItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/secureScores"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/secureScores"}
 
     @distributed_trace
     def get(self, secure_score_name: str, **kwargs: Any) -> _models.SecureScoreItem:
@@ -219,8 +219,8 @@ class SecureScoresOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))  # type: Literal["2020-01-01"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SecureScoreItem]
+        api_version: Literal["2020-01-01"] = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        cls: ClsType[_models.SecureScoreItem] = kwargs.pop("cls", None)
 
         request = build_get_request(
             secure_score_name=secure_score_name,
@@ -231,9 +231,9 @@ class SecureScoresOperations:
             params=_params,
         )
         request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
+        request.url = self._client.format_url(request.url)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -250,4 +250,6 @@ class SecureScoresOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/secureScores/{secureScoreName}"}  # type: ignore
+    get.metadata = {
+        "url": "/subscriptions/{subscriptionId}/providers/Microsoft.Security/secureScores/{secureScoreName}"
+    }
