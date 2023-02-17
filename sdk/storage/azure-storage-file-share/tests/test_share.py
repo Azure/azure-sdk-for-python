@@ -24,7 +24,7 @@ from azure.storage.fileshare import (
     ShareProtocols,
     ShareRootSquash,
     ShareSasPermissions,
-    ShareServiceClient
+    token_intent
 )
 
 from devtools_testutils import recorded_by_proxy
@@ -40,7 +40,7 @@ class TestStorageShare(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         file_url = self.account_url(storage_account_name, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+        self.fsc = token_intent(account_url=file_url, credential=credentials)
         self.test_shares = []
 
     def _teardown(self, FILE_PATH):
@@ -929,7 +929,7 @@ class TestStorageShare(StorageRecordedTestCase):
         )
 
         # Act
-        fsc = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=sas_token)
+        fsc = token_intent(self.account_url(storage_account_name, "file"), credential=sas_token)
         shares = list(fsc.list_shares())
 
         # Assert
@@ -1515,7 +1515,7 @@ class TestStorageShare(StorageRecordedTestCase):
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
+        with token_intent(url, credential=credential, transport=transport) as fsc:
             fsc.get_service_properties()
             assert transport.session is not None
             with fsc.get_share_client(share_name) as fc:

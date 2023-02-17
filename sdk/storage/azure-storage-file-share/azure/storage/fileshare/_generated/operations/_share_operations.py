@@ -441,7 +441,7 @@ def build_create_permission_request(
     url: str,
     *,
     timeout: Optional[int] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -483,7 +483,7 @@ def build_get_permission_request(
     *,
     file_permission_key: str,
     timeout: Optional[int] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

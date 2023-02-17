@@ -50,7 +50,7 @@ def build_create_request(
     file_last_write_time: str = "now",
     file_change_time: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -103,7 +103,7 @@ def build_get_properties_request(
     sharesnapshot: Optional[str] = None,
     timeout: Optional[int] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -144,7 +144,7 @@ def build_delete_request(
     *,
     timeout: Optional[int] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -189,7 +189,7 @@ def build_set_properties_request(
     file_last_write_time: str = "now",
     file_change_time: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -242,7 +242,7 @@ def build_set_metadata_request(
     timeout: Optional[int] = None,
     metadata: Optional[Dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -291,7 +291,7 @@ def build_list_files_and_directories_segment_request(
     include: Optional[List[Union[str, _models.ListFilesIncludeType]]] = None,
     include_extended_info: Optional[bool] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -348,7 +348,7 @@ def build_list_handles_request(
     sharesnapshot: Optional[str] = None,
     recursive: Optional[bool] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -399,7 +399,7 @@ def build_force_close_handles_request(
     sharesnapshot: Optional[str] = None,
     recursive: Optional[bool] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -458,7 +458,7 @@ def build_rename_request(
     metadata: Optional[Dict[str, str]] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

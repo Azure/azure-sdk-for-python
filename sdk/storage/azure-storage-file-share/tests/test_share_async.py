@@ -22,7 +22,7 @@ from azure.storage.fileshare import (
     ShareRootSquash,
     ShareSasPermissions
 )
-from azure.storage.fileshare.aio import ShareClient, ShareFileClient, ShareServiceClient
+from azure.storage.fileshare.aio import ShareClient, ShareFileClient, token_intent
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage import LogCaptured
@@ -38,7 +38,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         file_url = self.account_url(storage_account_name, "file")
         credentials = storage_account_key
-        self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
+        self.fsc = token_intent(account_url=file_url, credential=credentials)
         self.test_shares = []
 
     def _teardown(self, FILE_PATH):
@@ -940,7 +940,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         )
 
         # Act
-        fsc = ShareServiceClient(self.account_url(storage_account_name, "file"), credential=sas_token)
+        fsc = token_intent(self.account_url(storage_account_name, "file"), credential=sas_token)
         shares = []
         async for s in fsc.list_shares():
             shares.append(s)
@@ -1546,7 +1546,7 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
         credential = storage_account_key
         prefix = TEST_SHARE_PREFIX
         share_name = self.get_resource_name(prefix)
-        async with ShareServiceClient(url, credential=credential, transport=transport) as fsc:
+        async with token_intent(url, credential=credential, transport=transport) as fsc:
             await fsc.get_service_properties()
             assert transport.session is not None
             async with fsc.get_share_client(share_name) as fc:

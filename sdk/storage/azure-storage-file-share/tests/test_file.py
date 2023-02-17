@@ -271,7 +271,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         resp = file_client.create_file(1024)
@@ -287,7 +287,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
     @FileSharePreparer()
     @recorded_by_proxy
-    def test_create_file_with_oauth_no_file_request_intent(self, **kwargs):
+    def test_create_file_with_oauth_no_token_intent(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
         token_credential = self.generate_oauth_token()
@@ -490,7 +490,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
         file_client.create_file(1024)
 
         lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
@@ -541,7 +541,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
         file_client.create_file(1024)
 
         lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
@@ -895,7 +895,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         file_client.create_file(1024)
@@ -940,7 +940,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         resp = file_client.create_file(1024)
@@ -1136,7 +1136,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
         metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
 
         # Act
@@ -1233,7 +1233,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         file_client.create_file(1024)
@@ -1384,7 +1384,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path='file1',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         file_client.create_file(1024)
@@ -1871,7 +1871,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         file_client.create_file(2048)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -2034,7 +2034,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
         file_client.create_file(1024)
 
         share_client = self.fsc.get_share_client(self.share_name)
@@ -2045,7 +2045,7 @@ class TestStorageFile(StorageRecordedTestCase):
             file_path=file_client.file_name,
             snapshot=snapshot,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         file_client.delete_file()
 
@@ -2135,7 +2135,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path='file1copy',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         copy = file_client.start_copy_from_url(source_client.url)
@@ -2459,7 +2459,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=target_file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
         copy_resp = file_client.start_copy_from_url(source_url)
         assert copy_resp['copy_status'] == 'pending'
         file_client.abort_copy(copy_resp)
@@ -3397,7 +3397,7 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         file_client.create_file(1024)

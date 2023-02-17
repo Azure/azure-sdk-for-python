@@ -96,19 +96,18 @@ class ShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
 
 
-class ShareFileRequestIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ShareFileRequestIntent."""
-
-    NONE = "none"
-    BACKUP = "backup"
-
-
 class ShareRootSquash(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ShareRootSquash."""
 
     NO_ROOT_SQUASH = "NoRootSquash"
     ROOT_SQUASH = "RootSquash"
     ALL_SQUASH = "AllSquash"
+
+
+class ShareTokenIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ShareTokenIntent."""
+
+    BACKUP = "backup"
 
 
 class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

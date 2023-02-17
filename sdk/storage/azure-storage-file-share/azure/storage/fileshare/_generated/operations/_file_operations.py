@@ -58,7 +58,7 @@ def build_create_request(
     file_change_time: Optional[str] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -130,7 +130,7 @@ def build_download_request(
     range_get_content_md5: Optional[bool] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -177,7 +177,7 @@ def build_get_properties_request(
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -219,7 +219,7 @@ def build_delete_request(
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -272,7 +272,7 @@ def build_set_http_headers_request(
     file_change_time: Optional[str] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -342,7 +342,7 @@ def build_set_metadata_request(
     metadata: Optional[Dict[str, str]] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -388,7 +388,7 @@ def build_acquire_lease_request(
     proposed_lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -437,7 +437,7 @@ def build_release_lease_request(
     timeout: Optional[int] = None,
     request_id_parameter: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -484,7 +484,7 @@ def build_change_lease_request(
     proposed_lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -532,7 +532,7 @@ def build_break_lease_request(
     lease_id: Optional[str] = None,
     request_id_parameter: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -584,7 +584,7 @@ def build_upload_range_request(
     file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
     content: Optional[IO] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -723,7 +723,7 @@ def build_get_range_list_request(
     range: Optional[str] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -783,7 +783,7 @@ def build_start_copy_request(
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -853,7 +853,7 @@ def build_abort_copy_request(
     timeout: Optional[int] = None,
     lease_id: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -902,7 +902,7 @@ def build_list_handles_request(
     timeout: Optional[int] = None,
     sharesnapshot: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -950,7 +950,7 @@ def build_force_close_handles_request(
     marker: Optional[str] = None,
     sharesnapshot: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1008,7 +1008,7 @@ def build_rename_request(
     file_content_type: Optional[str] = None,
     allow_trailing_dot: Optional[bool] = None,
     allow_source_trailing_dot: Optional[bool] = None,
-    file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+    file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})

@@ -34,9 +34,8 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
     :type url: str
     :param base_url: Service URL. Required. Default value is "".
     :type base_url: str
-    :param file_request_intent: Valid value is backup. Known values are: "none" and "backup".
-     Default value is None.
-    :type file_request_intent: str or ~azure.storage.fileshare.models.ShareFileRequestIntent
+    :param file_request_intent: Valid value is backup. "backup" Default value is None.
+    :type file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
     :param allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
      Default value is None.
     :type allow_trailing_dot: bool
@@ -56,7 +55,7 @@ class AzureFileStorage:  # pylint: disable=client-accepts-api-version-keyword
         self,
         url: str,
         base_url: str = "",
-        file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         **kwargs: Any

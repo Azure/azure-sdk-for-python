@@ -142,7 +142,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         created = directory_client.create_directory()
@@ -316,7 +316,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         directory_client.create_directory()
@@ -534,7 +534,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
         metadata = {'hello': 'world', 'number': '43'}
 
         # Act
@@ -580,7 +580,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         directory_client.create_directory()
@@ -731,7 +731,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         directory_client.create_directory()
@@ -1003,7 +1003,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         created = directory_client.create_directory()
@@ -1105,7 +1105,7 @@ class TestStorageDirectory(StorageRecordedTestCase):
             self.account_url(storage_account_name, 'file'),
             share_client.share_name, 'dir1',
             credential=token_credential,
-            file_request_intent=TEST_INTENT)
+            token_intent=TEST_INTENT)
 
         # Act
         directory_client.create_directory()

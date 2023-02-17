@@ -31,9 +31,8 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
     :param url: The URL of the service account, share, directory or file that is the target of the
      desired operation. Required.
     :type url: str
-    :param file_request_intent: Valid value is backup. Known values are: "none" and "backup".
-     Default value is None.
-    :type file_request_intent: str or ~azure.storage.fileshare.models.ShareFileRequestIntent
+    :param file_request_intent: Valid value is backup. "backup" Default value is None.
+    :type file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
     :param allow_trailing_dot: If true, the trailing dot will not be trimmed from the target URI.
      Default value is None.
     :type allow_trailing_dot: bool
@@ -52,7 +51,7 @@ class AzureFileStorageConfiguration(Configuration):  # pylint: disable=too-many-
     def __init__(
         self,
         url: str,
-        file_request_intent: Optional[Union[str, _models.ShareFileRequestIntent]] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
         allow_trailing_dot: Optional[bool] = None,
         allow_source_trailing_dot: Optional[bool] = None,
         **kwargs: Any

@@ -97,7 +97,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             **kwargs)
         self.allow_trailing_dot = kwargs.pop('allow_trailing_dot', None)
         self.allow_source_trailing_dot = kwargs.pop('allow_source_trailing_dot', None)
-        self.file_request_intent = kwargs.pop('file_request_intent', None)
+        self.file_request_intent = kwargs.pop('token_intent', None)
         self._client = AzureFileStorage(url=self.url, base_url=self.url, pipeline=self._pipeline,
                                         allow_trailing_dot=self.allow_trailing_dot,
                                         allow_source_trailing_dot=self.allow_source_trailing_dot,
@@ -402,4 +402,4 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             self.url, share_name=share_name, snapshot=snapshot, credential=self.credential,
             api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
             _pipeline=_pipeline, _location_mode=self._location_mode, allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot, file_request_intent=self.file_request_intent)
+            allow_source_trailing_dot=self.allow_source_trailing_dot, token_intent=self.file_request_intent)
