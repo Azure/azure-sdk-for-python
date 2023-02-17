@@ -81,13 +81,23 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
 
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
-        self._client = _ClientAsync(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=authentication_policy,
-            **kwargs
-        )
+        if isinstance(authentication_policy, tuple):
+            self._client = _ClientAsync(
+                endpoint=endpoint,
+                credential=credential,  # type: ignore
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=authentication_policy[0],
+                per_call_policies=authentication_policy[1],
+                **kwargs,
+            )
+        else:
+            self._client = _ClientAsync(
+                endpoint=endpoint,
+                credential=credential,  # type: ignore
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=authentication_policy,
+                **kwargs,
+            )
 
     def __repr__(self) -> str:
         return "<MetricsAdvisorAdministrationClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
@@ -967,13 +977,23 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
 
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
-        self._client = _ClientAsync(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=authentication_policy,
-            **kwargs
-        )
+        if isinstance(authentication_policy, tuple):
+            self._client = _ClientAsync(
+                endpoint=endpoint,
+                credential=credential,  # type: ignore
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=authentication_policy[0],
+                per_call_policies=authentication_policy[1],
+                **kwargs,
+            )
+        else:
+            self._client = _ClientAsync(
+                endpoint=endpoint,
+                credential=credential,  # type: ignore
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=authentication_policy,
+                **kwargs,
+            )
 
     def __repr__(self) -> str:
         return "<MetricsAdvisorClient [endpoint={}]>".format(repr(self._endpoint))[:1024]

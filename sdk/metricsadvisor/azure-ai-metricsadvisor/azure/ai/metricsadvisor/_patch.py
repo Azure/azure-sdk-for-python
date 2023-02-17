@@ -7,9 +7,10 @@
 import datetime
 from typing import Any, List, Union, overload, Dict, cast, TYPE_CHECKING
 
-from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 
 from ._client import MetricsAdvisorClient as _Client
 from ._version import SDK_MONIKER
@@ -38,8 +39,24 @@ class MetricsAdvisorKeyCredential:
     def __init__(self, subscription_key: str, api_key: str) -> None:
         if not (isinstance(subscription_key, str) and isinstance(api_key, str)):
             raise TypeError("key must be a string.")
-        self._subscription_key: str = subscription_key
-        self._api_key: str = api_key
+        self._subscription_credential: AzureKeyCredential = AzureKeyCredential(key=subscription_key)
+        self._api_credential: AzureKeyCredential = AzureKeyCredential(key=api_key)
+
+    @property
+    def subscription_credential(self) -> AzureKeyCredential:
+        """The subscription credential.
+
+        :rtype: AzureKeyCredential
+        """
+        return self._subscription_credential
+
+    @property
+    def api_credential(self) -> AzureKeyCredential:
+        """The api credential.
+
+        :rtype: AzureKeyCredential
+        """
+        return self._api_credential
 
     @property
     def subscription_key(self) -> str:
@@ -47,7 +64,7 @@ class MetricsAdvisorKeyCredential:
 
         :rtype: str
         """
-        return self._subscription_key
+        return self._subscription_credential.key
 
     @property
     def api_key(self) -> str:
@@ -55,7 +72,7 @@ class MetricsAdvisorKeyCredential:
 
         :rtype: str
         """
-        return self._api_key
+        return self._api_credential.key
 
     def update_key(self, **kwargs: Any) -> None:
         """Update the subscription key or the api key.
@@ -74,31 +91,31 @@ class MetricsAdvisorKeyCredential:
         if subscription_key:
             if not isinstance(subscription_key, str):
                 raise TypeError("The subscription_key used for updating must be a string.")
-            self._subscription_key = subscription_key
+            self._subscription_credential.update(subscription_key)
         if api_key:
             if not isinstance(api_key, str):
                 raise TypeError("The api_key used for updating must be a string.")
-            self._api_key = api_key
+            self._api_credential.update(api_key)
 
 
-class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
-    """Adds a key header for the provided credential.
-
-    :param credential: The credential used to authenticate requests.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param str name: The name of the key header used for the credential.
-    :raises: ValueError or TypeError
-    """
-
-    def __init__(
-        self, credential: MetricsAdvisorKeyCredential, **kwargs: Any  # pylint: disable=unused-argument
-    ) -> None:
-        super(MetricsAdvisorKeyCredentialPolicy, self).__init__()
-        self._credential = credential
-
-    def on_request(self, request):
-        request.http_request.headers[_API_KEY_HEADER_NAME] = self._credential.subscription_key
-        request.http_request.headers[_X_API_KEY_HEADER_NAME] = self._credential.api_key
+# class MetricsAdvisorKeyCredentialPolicy(SansIOHTTPPolicy):
+#     """Adds a key header for the provided credential.
+#
+#     :param credential: The credential used to authenticate requests.
+#     :type credential: ~azure.core.credentials.AzureKeyCredential
+#     :param str name: The name of the key header used for the credential.
+#     :raises: ValueError or TypeError
+#     """
+#
+#     def __init__(
+#         self, credential: MetricsAdvisorKeyCredential, **kwargs: Any  # pylint: disable=unused-argument
+#     ) -> None:
+#         super(MetricsAdvisorKeyCredentialPolicy, self).__init__()
+#         self._credential = credential
+#
+#     def on_request(self, request):
+#         request.http_request.headers[_API_KEY_HEADER_NAME] = self._credential.subscription_key
+#         request.http_request.headers[_X_API_KEY_HEADER_NAME] = self._credential.api_key
 
 
 def get_authentication_policy(credential):
@@ -106,7 +123,8 @@ def get_authentication_policy(credential):
     if credential is None:
         raise ValueError("Parameter 'credential' must not be None.")
     if isinstance(credential, MetricsAdvisorKeyCredential):
-        return MetricsAdvisorKeyCredentialPolicy(credential)
+        return (AzureKeyCredentialPolicy(credential=credential.subscription_credential, name="Ocp-Apim-Subscription-Key"),
+                AzureKeyCredentialPolicy(credential=credential.api_credential, name="x-api-key"))
     if credential is not None and not hasattr(credential, "get_token"):
         raise TypeError(
             "Unsupported credential: {}. Use an instance of MetricsAdvisorKeyCredential "
@@ -138,13 +156,23 @@ class MetricsAdvisorClient:  # pylint: disable=client-accepts-api-version-keywor
 
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
-        self._client = _Client(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=authentication_policy,
-            **kwargs,
-        )
+        if isinstance(authentication_policy, tuple):
+            self._client = _Client(
+                endpoint=endpoint,
+                credential=credential,  # type: ignore
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=authentication_policy[0],
+                per_call_policies=authentication_policy[1],
+                **kwargs,
+            )
+        else:
+            self._client = _Client(
+                endpoint=endpoint,
+                credential=credential,  # type: ignore
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=authentication_policy,
+                **kwargs,
+            )
 
     def __repr__(self) -> str:
         return "<MetricsAdvisorClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
@@ -696,13 +724,23 @@ class MetricsAdvisorAdministrationClient:  # pylint:disable=too-many-public-meth
 
         self._endpoint = endpoint
         authentication_policy = get_authentication_policy(credential)
-        self._client = _Client(
-            endpoint=endpoint,
-            credential=credential,  # type: ignore
-            sdk_moniker=SDK_MONIKER,
-            authentication_policy=authentication_policy,
-            **kwargs,
-        )
+        if isinstance(authentication_policy, tuple):
+            self._client = _Client(
+                endpoint=endpoint,
+                credential=credential,  # type: ignore
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=authentication_policy[0],
+                per_call_policies=authentication_policy[1],
+                **kwargs,
+            )
+        else:
+            self._client = _Client(
+                endpoint=endpoint,
+                credential=credential,  # type: ignore
+                sdk_moniker=SDK_MONIKER,
+                authentication_policy=authentication_policy,
+                **kwargs,
+            )
 
     def __repr__(self) -> str:
         return "<MetricsAdvisorAdministrationClient [endpoint={}]>".format(repr(self._endpoint))[:1024]
