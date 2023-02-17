@@ -507,6 +507,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         data = await stream.readall()
         assert data is not None
         assert data == blob_data
+        assert stream.properties['creation_time'] is not None
 
     @BlobPreparer()
     @recorded_by_proxy_async

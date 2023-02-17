@@ -281,6 +281,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         data = blob.download_blob(encoding='utf-8')
         assert data is not None
         assert data.readall() == blob_data
+        assert data.properties['creation_time'] is not None
 
     @BlobPreparer()
     @recorded_by_proxy
