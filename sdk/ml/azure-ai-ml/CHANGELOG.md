@@ -3,9 +3,6 @@
 ## 1.5.0 (Unreleased)
 
 ### Features Added
-- Checking for an environment variable `ARM_CLOUD_METADATA_URL`, the SDK will then follow that URL and look for cloud configurations there
-- Passing in keyword argument `cloud_metadata` creating a new MLClient object will configure the client to use the cloud configurations passed in
-
 - Added support for `tags` on Compute Resources.
 
 ### Bugs Fixed
