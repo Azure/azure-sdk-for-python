@@ -30,7 +30,5 @@ extends:
     ServiceDirectory: easm
     TestProxy: true
     Artifacts:
-    - name: azure-easm
-      safeName: azureeasm
-    - name: azure-mgmt-easm
-      safeName: azuremgmteasm
+    - name: azure-defender-easm
+      safeName: azuredefendereasm
