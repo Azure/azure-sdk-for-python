@@ -185,7 +185,7 @@ class AsyncPipelineClient(
         await self._pipeline.__aexit__()
 
     def _build_pipeline(
-        self, config, **kwargs
+        self, config: Configuration, **kwargs
     ) -> AsyncPipeline[
         HTTPRequestType, AsyncHTTPResponseType
     ]:  # pylint: disable=no-self-use
