@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -82,81 +82,6 @@ def build_logs_ingestion_upload_request(
 
 
 class LogsIngestionClientOperationsMixin(LogsIngestionClientMixinABC):
-    @overload
-    def upload(  # pylint: disable=inconsistent-return-statements
-        self,
-        rule_id: str,
-        stream: str,
-        body: List[JSON],
-        *,
-        content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Ingestion API used to directly ingest data using Data Collection Rules.
-
-        See error response code and error response message for more detail.
-
-        :param rule_id: The immutable Id of the Data Collection Rule resource. Required.
-        :type rule_id: str
-        :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
-        :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream. Required.
-        :type body: list[JSON]
-        :keyword content_encoding: gzip. Default value is None.
-        :paramtype content_encoding: str
-        :keyword x_ms_client_request_id: Client request Id. Default value is None.
-        :paramtype x_ms_client_request_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = [
-                    {}  # Optional.
-                ]
-        """
-
-    @overload
-    def upload(  # pylint: disable=inconsistent-return-statements
-        self,
-        rule_id: str,
-        stream: str,
-        body: IO,
-        *,
-        content_encoding: Optional[str] = None,
-        x_ms_client_request_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> None:
-        """Ingestion API used to directly ingest data using Data Collection Rules.
-
-        See error response code and error response message for more detail.
-
-        :param rule_id: The immutable Id of the Data Collection Rule resource. Required.
-        :type rule_id: str
-        :param stream: The streamDeclaration name as defined in the Data Collection Rule. Required.
-        :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream. Required.
-        :type body: IO
-        :keyword content_encoding: gzip. Default value is None.
-        :paramtype content_encoding: str
-        :keyword x_ms_client_request_id: Client request Id. Default value is None.
-        :paramtype x_ms_client_request_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
     @distributed_trace
     def upload(  # pylint: disable=inconsistent-return-statements

@@ -219,9 +219,11 @@ def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
 def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
 
+
 @pytest.fixture
 def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+
 
 @pytest.fixture
 def mock_aml_services_run_history(mocker: MockFixture) -> Mock:
@@ -342,6 +344,7 @@ def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) 
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
     )
+
 
 @pytest.fixture
 def data_asset_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:

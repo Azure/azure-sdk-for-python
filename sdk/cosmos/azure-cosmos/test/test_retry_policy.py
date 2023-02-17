@@ -254,6 +254,24 @@ class Test_retry_policy_tests(unittest.TestCase):
         finally:
             _retry_utility.ExecuteFunction = original_execute_function
 
+    def test_timeout_failover_retry_policy_for_read(self):
+        document_definition = {'id': 'failoverDoc',
+                               'name': 'sample document',
+                               'key': 'value'}
+
+        created_document = self.created_collection.create_item(body=document_definition)
+        try:
+            original_execute_function = _retry_utility.ExecuteFunction
+            mf = self.MockExecuteFunctionTimeout(original_execute_function)
+
+            _retry_utility.ExecuteFunction = mf
+            doc = self.created_collection.read_item(item=created_document['id'], partition_key=created_document['id'])
+            self.assertEqual(doc['id'], 'doc')
+        finally:
+            _retry_utility.ExecuteFunction = original_execute_function
+
+        self.created_collection.delete_item(item=created_document, partition_key=created_document['id'])
+
     def _MockExecuteFunction(self, function, *args, **kwargs):
         response = test_config.FakeResponse({HttpHeaders.RetryAfterInMilliseconds: self.retry_after_in_milliseconds})
         raise exceptions.CosmosHttpResponseError(
@@ -261,6 +279,21 @@ class Test_retry_policy_tests(unittest.TestCase):
             message="Request rate is too large",
             response=response)
 
+    class MockExecuteFunctionTimeout(object):
+        def __init__(self, org_func):
+            self.org_func = org_func
+            self.counter = 0
+
+        def __call__(self, func, *args, **kwargs):
+            self.counter += 1
+
+            if self.counter > 1:
+                return self.org_func(func, *args, **kwargs)
+            else:
+                raise exceptions.CosmosHttpResponseError(
+                    status_code=408,
+                    message="Timeout",
+                    response=test_config.FakeResponse({}))
 
     class MockExecuteFunctionConnectionReset(object):
 

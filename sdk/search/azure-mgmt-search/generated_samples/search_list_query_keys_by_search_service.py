@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2020-03-13/examples/SearchListQueryKeysBySearchService.json
+# x-ms-original-file: specification/search/resource-manager/Microsoft.Search/stable/2022-09-01/examples/SearchListQueryKeysBySearchService.json
 if __name__ == "__main__":
     main()

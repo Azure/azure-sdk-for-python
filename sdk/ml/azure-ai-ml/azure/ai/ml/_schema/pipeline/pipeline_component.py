@@ -41,8 +41,11 @@ from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJob
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_spark_job import PipelineSparkJobSchema
-from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import PipelineDataTransferCopyJobSchema, \
-    PipelineDataTransferImportJobSchema, PipelineDataTransferExportJobSchema
+from azure.ai.ml._schema.pipeline.pipeline_datatransfer_job import (
+    PipelineDataTransferCopyJobSchema,
+    PipelineDataTransferImportJobSchema,
+    PipelineDataTransferExportJobSchema,
+)
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
 from azure.ai.ml.constants._component import (
@@ -133,9 +136,7 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 job_type = job_instance.get("type")
                 if job_type == ControlFlowType.IF_ELSE:
                     # Convert to if-else node.
-                    job_instance = ConditionNode._create_instance_from_schema_dict(
-                        loaded_data=job_instance
-                    )
+                    job_instance = ConditionNode._create_instance_from_schema_dict(loaded_data=job_instance)
                 elif job_instance.get("type") == ControlFlowType.DO_WHILE:
                     # Convert to do-while node.
                     job_instance = DoWhile._create_instance_from_schema_dict(
@@ -156,8 +157,9 @@ def _post_load_pipeline_jobs(context, data: dict) -> dict:
                 context=context,
                 pipeline_job_dict=data,
             )
-            if not (job_instance.type == NodeType.DATA_TRANSFER and job_instance.task !=
-                    DataTransferTaskType.COPY_DATA):
+            if not (
+                job_instance.type == NodeType.DATA_TRANSFER and job_instance.task != DataTransferTaskType.COPY_DATA
+            ):
                 job_instance.component._source = ComponentSource.YAML_JOB
             job_instance._source = job_instance.component._source
             jobs[key] = job_instance

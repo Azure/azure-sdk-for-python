@@ -11,24 +11,27 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessPolicyUpdateKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessPolicyUpdateKind."""
 
     ADD = "add"
     REPLACE = "replace"
     REMOVE = "remove"
 
+
 class ActionsRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A message indicating if changes on the service provider require any updates on the consumer.
-    """
+    """A message indicating if changes on the service provider require any updates on the consumer."""
 
     NONE = "None"
 
+
 class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CertificatePermissions."""
 
     GET = "get"
     LIST = "list"
     DELETE = "delete"
     CREATE = "create"
-    IMPORT_ENUM = "import"
+    IMPORT = "import"
     UPDATE = "update"
     MANAGECONTACTS = "managecontacts"
     GETISSUERS = "getissuers"
@@ -41,23 +44,37 @@ class CertificatePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BACKUP = "backup"
     RESTORE = "restore"
 
+
 class CreateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The vault's create mode to indicate whether the vault need to be recovered or not.
-    """
+    """The vault's create mode to indicate whether the vault need to be recovered or not."""
 
     RECOVER = "recover"
     DEFAULT = "default"
 
+
+class Enum12(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum12."""
+
+    RESOURCE_TYPE_EQ_MICROSOFT_KEY_VAULT_VAULTS_ = "resourceType eq 'Microsoft.KeyVault/vaults'"
+
+
+class Enum13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum13."""
+
+    TWO_THOUSAND_FIFTEEN11_01 = "2015-11-01"
+
+
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity.
-    """
+    """The type of identity."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KeyPermissions."""
 
     ENCRYPT = "encrypt"
     DECRYPT = "decrypt"
@@ -69,7 +86,7 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LIST = "list"
     CREATE = "create"
     UPDATE = "update"
-    IMPORT_ENUM = "import"
+    IMPORT = "import"
     DELETE = "delete"
     BACKUP = "backup"
     RESTORE = "restore"
@@ -77,18 +94,19 @@ class KeyPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PURGE = "purge"
     RELEASE = "release"
 
+
 class ManagedHsmSkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SKU Family of the managed HSM Pool
-    """
+    """SKU Family of the managed HSM Pool."""
 
     B = "B"
 
+
 class ManagedHsmSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SKU of the managed HSM Pool
-    """
+    """SKU of the managed HSM Pool."""
 
     STANDARD_B1 = "Standard_B1"
     CUSTOM_B32 = "Custom_B32"
+
 
 class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The default action when no rule from ipRules and from virtualNetworkRules match. This is only
@@ -98,6 +116,7 @@ class NetworkRuleAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALLOW = "Allow"
     DENY = "Deny"
 
+
 class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Tells what traffic can bypass network rules. This can be 'AzureServices' or 'None'.  If not
     specified the default is 'AzureServices'.
@@ -106,9 +125,9 @@ class NetworkRuleBypassOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AZURE_SERVICES = "AzureServices"
     NONE = "None"
 
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
@@ -117,35 +136,36 @@ class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsens
     FAILED = "Failed"
     DISCONNECTED = "Disconnected"
 
+
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private endpoint connection status.
-    """
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state.
-    """
 
-    #: The managed HSM Pool has been full provisioned.
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state."""
+
     SUCCEEDED = "Succeeded"
-    #: The managed HSM Pool is currently being provisioned.
+    """The managed HSM Pool has been full provisioned."""
     PROVISIONING = "Provisioning"
-    #: Provisioning of the managed HSM Pool has failed.
+    """The managed HSM Pool is currently being provisioned."""
     FAILED = "Failed"
-    #: The managed HSM Pool is currently being updated.
+    """Provisioning of the managed HSM Pool has failed."""
     UPDATING = "Updating"
-    #: The managed HSM Pool is currently being deleted.
+    """The managed HSM Pool is currently being updated."""
     DELETING = "Deleting"
-    #: The managed HSM pool is ready for normal use.
+    """The managed HSM Pool is currently being deleted."""
     ACTIVATED = "Activated"
-    #: The managed HSM pool is waiting for a security domain restore action.
+    """The managed HSM pool is ready for normal use."""
     SECURITY_DOMAIN_RESTORE = "SecurityDomainRestore"
-    #: The managed HSM pool is being restored from full HSM backup.
+    """The managed HSM pool is waiting for a security domain restore action."""
     RESTORING = "Restoring"
+    """The managed HSM pool is being restored from full HSM backup."""
+
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Control permission for data plane traffic coming from public networks while private endpoint is
@@ -155,6 +175,7 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason that a vault name could not be used. The Reason element is only returned if
     NameAvailable is false.
@@ -163,7 +184,9 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+
 class SecretPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SecretPermissions."""
 
     GET = "get"
     LIST = "list"
@@ -174,20 +197,22 @@ class SecretPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RECOVER = "recover"
     PURGE = "purge"
 
+
 class SkuFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SKU family name
-    """
+    """SKU family name."""
 
     A = "A"
 
+
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SKU name to specify whether the key vault is a standard vault or a premium vault.
-    """
+    """SKU name to specify whether the key vault is a standard vault or a premium vault."""
 
     STANDARD = "standard"
     PREMIUM = "premium"
 
+
 class StoragePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StoragePermissions."""
 
     GET = "get"
     LIST = "list"
@@ -204,9 +229,9 @@ class StoragePermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GETSAS = "getsas"
     DELETESAS = "deletesas"
 
+
 class VaultProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Provisioning state of the vault.
-    """
+    """Provisioning state of the vault."""
 
     SUCCEEDED = "Succeeded"
     REGISTERING_DNS = "RegisteringDns"

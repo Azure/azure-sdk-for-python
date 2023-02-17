@@ -13,11 +13,9 @@ from typing import Callable, Union
 
 from azure.ai.ml._utils._func_utils import get_outputs_and_locals
 from azure.ai.ml._utils.utils import (
-    get_all_enum_values_iter,
     is_valid_node_name,
     parse_args_description_from_docstring,
 )
-from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.constants._job.pipeline import COMPONENT_IO_KEYWORDS
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
@@ -30,6 +28,7 @@ from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value,
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._attr_dict import has_attr_safe
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
+from azure.ai.ml.entities._util import copy_output_setting
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
@@ -203,7 +202,7 @@ class PipelineComponentBuilder:
         pipeline_component._outputs = self._build_pipeline_outputs(outputs)
         return pipeline_component
 
-    def _validate_group_annotation(self, name:str, val:GroupInput):
+    def _validate_group_annotation(self, name: str, val: GroupInput):
         for k, v in val.values.items():
             if isinstance(v, GroupInput):
                 self._validate_group_annotation(k, v)
@@ -259,34 +258,33 @@ class PipelineComponentBuilder:
                     is_control=value.is_control,
                 )
 
-            # hack: map component output type to valid pipeline output type
-            def _map_type(_meta):
+            # Hack: map internal output type to pipeline output type
+            def _map_internal_output_type(_meta):
+                """Map component output type to valid pipeline output type."""
                 if type(_meta).__name__ != "InternalOutput":
                     return _meta.type
-                if _meta.type in list(get_all_enum_values_iter(AssetTypes)):
-                    return _meta.type
-                if _meta.type in ["AnyFile"]:
-                    return AssetTypes.URI_FILE
-                return AssetTypes.URI_FOLDER
+                return _meta.map_pipeline_output_type()
 
             # Note: Here we set PipelineOutput as Pipeline's output definition as we need output binding.
             output_meta = Output(
-                type=_map_type(meta), description=meta.description, mode=meta.mode, is_control=meta.is_control
+                type=_map_internal_output_type(meta),
+                description=meta.description,
+                mode=meta.mode,
+                is_control=meta.is_control,
             )
             pipeline_output = PipelineOutput(
                 port_name=key,
                 data=None,
+                # meta is used to create pipeline component, store it here to make sure pipeline component and inner
+                # node output type are consistent
                 meta=output_meta,
                 owner="pipeline",
                 description=self._args_description.get(key, None),
             )
-            value._owner.outputs[value._port_name]._data = PipelineOutput(
-                port_name=key,
-                data=value._data,
-                meta=None,
-                owner="pipeline",
-                description=self._args_description.get(key, None),
-            )
+            # copy node level output setting to pipeline output
+            copy_output_setting(source=value._owner.outputs[value._port_name], target=pipeline_output)
+
+            value._owner.outputs[value._port_name]._data = pipeline_output
 
             output_dict[key] = pipeline_output
             output_meta_dict[key] = output_meta._to_dict()
@@ -439,7 +437,7 @@ class PipelineComponentBuilder:
             if not isinstance(val, Output):
                 raise UserErrorException(
                     message="Invalid output annotation. "
-                            f"Only Output annotation in return annotation is supported. Got {type(val)}."
+                    f"Only Output annotation in return annotation is supported. Got {type(val)}."
                 )
             output_annotations[key] = val._to_dict()
         return output_annotations
@@ -469,8 +467,12 @@ class PipelineComponentBuilder:
                     f"{key}: pipeline component output: {actual_output} != annotation output {expected_output}"
                 )
             if expected_description:
+                output_dict[key]._meta.description = expected_description
+                # also copy the description to pipeline job
                 output_dict[key].description = expected_description
             if expected_mode:
+                output_dict[key]._meta.mode = expected_mode
+                # also copy the mode to pipeline job
                 output_dict[key].mode = expected_mode
 
         if unmatched_outputs:
@@ -481,16 +483,22 @@ class PipelineComponentBuilder:
         if has_attr_safe(node, "inputs"):
             for input_name in set(node.inputs) & COMPONENT_IO_KEYWORDS:
                 module_logger.warning(
-                    "Reserved word \"%s\" is used as input name in node \"%s\", "
+                    'Reserved word "%s" is used as input name in node "%s", '
                     "can only be accessed with '%s.inputs[\"%s\"]'",
-                    input_name, node.name, node.name, input_name
+                    input_name,
+                    node.name,
+                    node.name,
+                    input_name,
                 )
         if has_attr_safe(node, "outputs"):
             for output_name in set(node.outputs) & COMPONENT_IO_KEYWORDS:
                 module_logger.warning(
-                    "Reserved word \"%s\" is used as output name in node \"%s\", "
+                    'Reserved word "%s" is used as output name in node "%s", '
                     "can only be accessed with '%s.outputs[\"%s\"]'",
-                    output_name, node.name, node.name, output_name
+                    output_name,
+                    node.name,
+                    node.name,
+                    output_name,
                 )
 
 
