@@ -267,7 +267,7 @@ class OperationOrchestrator(object):
             path, ignore_file, _ = _get_snapshot_path_info(code_asset)
             workspace_info = self._datastore_operation._service_client.workspaces.get(
                 resource_group_name=self._operation_scope.resource_group_name,
-                workspace_name=self._operation_scope.workspace_name
+                workspace_name=self._operation_scope.workspace_name,
             )
             uploaded_code_asset = _check_and_upload_snapshot(
                 artifact=code_asset,

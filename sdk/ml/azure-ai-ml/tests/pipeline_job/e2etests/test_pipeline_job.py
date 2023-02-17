@@ -586,7 +586,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
     @pytest.mark.skipif(
         condition=not is_live(),
-        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails"
+        reason="TODO (2235034) x-ms-meta-name header masking fixture isn't working, so playback fails",
     )
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_pipeline_job_create_with_distribution_component(
@@ -1677,7 +1677,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "task": "export_data",
             "type": "data_transfer",
         }
-
 
     @pytest.mark.usefixtures("storage_account_guid_sanitizer")
     def test_register_output_yaml_succeed(

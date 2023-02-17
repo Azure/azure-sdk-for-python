@@ -101,22 +101,15 @@ class CodeOperations(_ScopeDependentOperations):
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
                 code, _ = _check_and_upload_path(
-                    artifact=code,
-                    asset_operations=self,
-                    sas_uri=sas_uri,
-                    artifact_type=ErrorTarget.CODE
+                    artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
                 )
             else:
                 path, ignore_file, asset_hash = _get_snapshot_path_info(code)
                 workspace_info = self._datastore_operation._service_client.workspaces.get(
-                    resource_group_name=self._resource_group_name,
-                    workspace_name=self._workspace_name
+                    resource_group_name=self._resource_group_name, workspace_name=self._workspace_name
                 )
                 existing_asset = _get_existing_snapshot_by_hash(
-                    self._datastore_operation,
-                    asset_hash,
-                    workspace_info,
-                    requests_pipeline=self._requests_pipeline
+                    self._datastore_operation, asset_hash, workspace_info, requests_pipeline=self._requests_pipeline
                 )
                 if existing_asset:
                     return self.get(name=existing_asset.get("name"), version=existing_asset.get("version"))

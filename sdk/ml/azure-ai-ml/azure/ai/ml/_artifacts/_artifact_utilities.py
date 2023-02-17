@@ -387,7 +387,7 @@ def _get_snapshot_temporary_data_reference(
     request_headers: Dict[str, str],
     workspace: Workspace,
     requests_pipeline: HttpPipeline,
-    ) -> Tuple[str, str]:
+) -> Tuple[str, str]:
     """
     Make a temporary data reference for an asset and return SAS uri and blob storage uri.
 
@@ -409,18 +409,20 @@ def _get_snapshot_temporary_data_reference(
     temporary_data_reference_id = _generate_temporary_data_reference_id()
 
     # build and send request
-    asset_id = f"azureml://locations/{workspace.location}/workspaces/{workspace.workspace_id}/"\
+    asset_id = (
+        f"azureml://locations/{workspace.location}/workspaces/{workspace.workspace_id}/"
         f"codes/{asset_name}/versions/{asset_version}"
+    )
     data = {
         "assetId": asset_id,
         "temporaryDataReferenceId": temporary_data_reference_id,
-        "temporaryDataReferenceType": "TemporaryBlobReference"
+        "temporaryDataReferenceType": "TemporaryBlobReference",
     }
-    data_encoded = json.dumps(data).encode('utf-8')
+    data_encoded = json.dumps(data).encode("utf-8")
     serialized_data = json.loads(data_encoded)
 
     # make sure correct cloud endpoint is used
-    cloud_endpoint = _get_cloud_details()['registry_discovery_endpoint']
+    cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
     service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", workspace.location)
 
     # send request
@@ -433,8 +435,8 @@ def _get_snapshot_temporary_data_reference(
     response_json = json.loads(response.text())
 
     # get SAS uri for upload and blob uri for asset creation
-    blob_uri = response_json['blobReferenceForConsumption']['blobUri']
-    sas_uri = response_json['blobReferenceForConsumption']['credential']['sasUri']
+    blob_uri = response_json["blobReferenceForConsumption"]["blobUri"]
+    sas_uri = response_json["blobReferenceForConsumption"]["credential"]["sasUri"]
 
     return sas_uri, blob_uri
 
@@ -444,7 +446,8 @@ def _get_asset_by_hash(
     hash_str: str,
     request_headers: Dict[str, str],
     workspace: Workspace,
-    requests_pipeline: HttpPipeline) -> Dict[str, str]:
+    requests_pipeline: HttpPipeline,
+) -> Dict[str, str]:
     """
     Check if an asset with the same hash already exists in the workspace. If so, return the asset name and version.
 
@@ -469,11 +472,13 @@ def _get_asset_by_hash(
     resource_group_name = operations._resource_group_name
 
     # make sure correct cloud endpoint is used
-    cloud_endpoint = _get_cloud_details()['registry_discovery_endpoint']
+    cloud_endpoint = _get_cloud_details()["registry_discovery_endpoint"]
     service_url = replace_between(cloud_endpoint, HTTPS_PREFIX, ".", workspace.location)
-    request_url = f"{service_url}content/v2.0/subscriptions/{subscription_id}/"\
-        f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"\
+    request_url = (
+        f"{service_url}content/v2.0/subscriptions/{subscription_id}/"
+        f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"
         f"{workspace.name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
+    )
 
     response = requests_pipeline.get(request_url, headers=request_headers)
     if response.status_code == 404:
@@ -483,8 +488,8 @@ def _get_asset_by_hash(
         return None
 
     response_json = json.loads(response.text())
-    existing_asset["name"] = response_json['name']
-    existing_asset["version"] = response_json['version']
+    existing_asset["name"] = response_json["name"]
+    existing_asset["version"] = response_json["version"]
 
     return existing_asset
 
@@ -608,8 +613,8 @@ def _get_existing_snapshot_by_hash(
     """
     ws_base_url = datastore_operation._operation._client._base_url
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
-    request_headers={"Authorization": "Bearer " + token}
-    request_headers['Content-Type'] = 'application/json; charset=UTF-8'
+    request_headers = {"Authorization": "Bearer " + token}
+    request_headers["Content-Type"] = "application/json; charset=UTF-8"
 
     existing_asset = _get_asset_by_hash(
         operations=datastore_operation,
@@ -668,8 +673,8 @@ def _upload_snapshot_to_datastore(
     """
     ws_base_url = datastore_operation._operation._client._base_url
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
-    request_headers={"Authorization": "Bearer " + token}
-    request_headers['Content-Type'] = 'application/json; charset=UTF-8'
+    request_headers = {"Authorization": "Bearer " + token}
+    request_headers["Content-Type"] = "application/json; charset=UTF-8"
 
     if not sas_uri:
         sas_uri, blob_uri = _get_snapshot_temporary_data_reference(

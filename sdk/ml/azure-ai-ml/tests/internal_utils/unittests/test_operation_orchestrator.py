@@ -58,6 +58,7 @@ def code_operations(
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
     )
 
+
 @pytest.fixture
 def data_operations(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml.operations._data_operations.DataOperations")

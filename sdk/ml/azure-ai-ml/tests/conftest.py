@@ -81,10 +81,14 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
     add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
-    add_body_key_sanitizer(json_path="$.properties.sdkTelemetryAppInsightsKey", value="0000000-0000-0000-0000-000000000000")
-    add_body_key_sanitizer(json_path="$.properties.notebookInfo.resourceId", value="0000000-0000-0000-0000-000000000000")
+    add_body_key_sanitizer(
+        json_path="$.properties.sdkTelemetryAppInsightsKey", value="0000000-0000-0000-0000-000000000000"
+    )
+    add_body_key_sanitizer(
+        json_path="$.properties.notebookInfo.resourceId", value="0000000-0000-0000-0000-000000000000"
+    )
     add_body_key_sanitizer(json_path="$.identity.principalId", value="0000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(value="0000000-0000-0000-0000-000000000000", regex=os.environ.get('ML_TENANT_ID'))
+    add_general_regex_sanitizer(value="0000000-0000-0000-0000-000000000000", regex=os.environ.get("ML_TENANT_ID"))
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex="\\/LocalUpload\\/(\\S{32})\\/?", group_for_replace="1"
     )
@@ -100,7 +104,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         regex='\\/az-ml-artifacts\\/([^/\\s"]{36})\\/',
         group_for_replace="1",
     )
-    # masks signature in SAS uri 
+    # masks signature in SAS uri
     add_general_regex_sanitizer(
         value="000000000000000000000000000000000000",
         regex='sig=([^/\\s"]{46,52})',
@@ -199,6 +203,7 @@ def storage_account_guid_sanitizer(test_proxy):
         regex='ske=([^/\\s"]{24})',
         group_for_replace="1",
     )
+
 
 @pytest.fixture
 def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
@@ -549,9 +554,14 @@ def mock_snapshot_hash(mocker: MockFixture) -> None:
         return real_uuid
 
     if is_live():
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id", side_effect=generate_uuid)
+        mocker.patch(
+            "azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id",
+            side_effect=generate_uuid,
+        )
     else:
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id", return_value=fake_uuid)
+        mocker.patch(
+            "azure.ai.ml._artifacts._artifact_utilities._generate_temporary_data_reference_id", return_value=fake_uuid
+        )
 
 
 @pytest.fixture
@@ -583,9 +593,15 @@ def mock_anon_component_version(mocker: MockFixture):
         return ANONYMOUS_COMPONENT_NAME, fake_uuid
 
     if is_live():
-        mocker.patch("azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version", side_effect=generate_name_version)
+        mocker.patch(
+            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
+            side_effect=generate_name_version,
+        )
     else:
-        mocker.patch("azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version", side_effect=fake_name_version)
+        mocker.patch(
+            "azure.ai.ml.entities._component.component.Component._get_anonymous_component_name_version",
+            side_effect=fake_name_version,
+        )
 
 
 def normalized_arm_id_in_object(items):

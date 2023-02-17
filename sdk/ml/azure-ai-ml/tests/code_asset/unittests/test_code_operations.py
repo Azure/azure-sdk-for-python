@@ -62,10 +62,7 @@ class TestCodeOperations:
         with patch(
             "azure.ai.ml._artifacts._artifact_utilities._upload_snapshot_to_datastore",
             return_value=ArtifactStorageInfo(code_name, "3", "path", "datastore_id", "containerName"),
-        ), patch(
-            "azure.ai.ml.operations._code_operations.Code._from_rest_object",
-            return_value=None,
-        ), patch(
+        ), patch("azure.ai.ml.operations._code_operations.Code._from_rest_object", return_value=None,), patch(
             "azure.ai.ml.operations._code_operations._get_existing_snapshot_by_hash",
             return_value=None,
         ):
