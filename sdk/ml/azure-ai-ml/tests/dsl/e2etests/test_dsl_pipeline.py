@@ -2794,13 +2794,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             sub_node.outputs.sub_pipeine_a_output.name = "sub_pipeline"
             sub_node.outputs.sub_pipeine_a_output.version = "v1"
 
-            return {
-                'pipeine_a_output': node.outputs.component_out_path
-            }
+            return {"pipeine_a_output": node.outputs.component_out_path}
 
         pipeline = register_both_output()
-        pipeline.outputs.pipeine_a_output.name = 'p1_output'
-        pipeline.outputs.pipeine_a_output.version = 'v1'
+        pipeline.outputs.pipeine_a_output.name = "p1_output"
+        pipeline.outputs.pipeine_a_output.version = "v1"
         pipeline.settings.default_compute = "cpu-cluster"
         pipeline_job = client.jobs.create_or_update(pipeline)
         client.jobs.stream(pipeline_job.name)
@@ -2810,9 +2808,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
             assert output.version == output_version
             assert client.data.get(name=output_name, version=output_version)
 
-        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, 'p1_output', 'v1')
-        check_name_version_and_register_succeed(pipeline_job.jobs['node_2'].outputs.component_out_path, 'n2_output', 'v1')
-        check_name_version_and_register_succeed(pipeline_job.jobs['sub_node'].outputs.sub_pipeine_a_output, 'sub_pipeline', 'v1')
+        check_name_version_and_register_succeed(pipeline_job.outputs.pipeine_a_output, "p1_output", "v1")
+        check_name_version_and_register_succeed(
+            pipeline_job.jobs["node_2"].outputs.component_out_path, "n2_output", "v1"
+        )
+        check_name_version_and_register_succeed(
+            pipeline_job.jobs["sub_node"].outputs.sub_pipeine_a_output, "sub_pipeline", "v1"
+        )
 
     @pytest.mark.disable_mock_code_hash
     def test_register_with_output_format(self, client: MLClient):
