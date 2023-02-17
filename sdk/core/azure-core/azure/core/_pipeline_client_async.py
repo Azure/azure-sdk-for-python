@@ -40,6 +40,7 @@ from typing import (
 from typing_extensions import Protocol
 from .configuration import Configuration
 from .pipeline import AsyncPipeline
+from .pipeline.transport import AsyncHttpTransport
 from .pipeline.transport._base import PipelineClientBase
 from .pipeline.policies import (
     ContentDecodePolicy,
@@ -184,15 +185,20 @@ class AsyncPipelineClient(
     async def close(self):
         await self._pipeline.__aexit__()
 
-    def _build_pipeline(
-        self, config: Configuration, **kwargs
+    def _build_pipeline(    # pylint: disable=no-self-use
+        self,
+        config: Configuration,
+        *,
+        transport: Optional[AsyncHttpTransport[HTTPRequestType, AsyncHTTPResponseType]] = None,
+        policies=None,
+        per_call_policies=None,
+        per_retry_policies=None,
+        **kwargs
     ) -> AsyncPipeline[
         HTTPRequestType, AsyncHTTPResponseType
-    ]:  # pylint: disable=no-self-use
-        transport = kwargs.get("transport")
-        policies = kwargs.get("policies")
-        per_call_policies = kwargs.get("per_call_policies", [])
-        per_retry_policies = kwargs.get("per_retry_policies", [])
+    ]:
+        per_call_policies = per_call_policies or []
+        per_retry_policies = per_retry_policies or []
 
         if policies is None:  # [] is a valid policy list
             policies = [
