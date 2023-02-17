@@ -561,7 +561,7 @@ class MLClient:
         :rtype: WorkspaceOperations
         """
         return self._workspaces
-    
+
     @property
     def workspace_outbound_rule(self) -> WorkspaceOutboundRuleOperations:
         """A collection of workspace managed network outbound rule related operations.

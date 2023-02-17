@@ -15,6 +15,7 @@ from azure.ai.ml._schema.workspace.networking import ManagedNetworkSchema
 
 from azure.ai.ml._schema import ExperimentalField
 
+
 class WorkspaceSchema(PathAwareSchema):
     name = fields.Str(required=True)
     location = fields.Str()

@@ -13,8 +13,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 from azure.core.credentials import TokenCredential
 from azure.core.polling import LROPoller
 
-from azure.ai.ml._utils.utils import _snake_to_camel
-
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 

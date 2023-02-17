@@ -14,11 +14,13 @@ from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._workspace.diagnose import DiagnoseResponseResultValue
 from azure.ai.ml.entities._workspace.workspace import Workspace
-from azure.ai.ml.entities._workspace.networking import FqdnDestination, PrivateEndpointDestination, ServiceTagDestination
-from azure.core.paging import ItemPaged
-from azure.ai.ml.constants._workspace import (
-    IsolationMode, OutboundRuleCategory, OutboundRuleType
+from azure.ai.ml.entities._workspace.networking import (
+    FqdnDestination,
+    PrivateEndpointDestination,
+    ServiceTagDestination,
 )
+from azure.core.paging import ItemPaged
+from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 from azure.core.polling import LROPoller
 from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
 
@@ -344,14 +346,14 @@ class TestWorkspace(AzureRecordedTestCase):
     def test_workspace_create_update_delete_with_managed_network(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
-    # resource name key word
+        # resource name key word
         wps_name = f"e2etest_{randstr('wps_name')}_mvnet"
 
         wps_description = f"{wps_name} description"
         wps_display_name = f"{wps_name} display name"
         params_override = [
             {"name": wps_name},
-            # {"location": location}, # using master for now 
+            # {"location": location}, # using master for now
             {"description": wps_description},
             {"display_name": wps_display_name},
         ]
