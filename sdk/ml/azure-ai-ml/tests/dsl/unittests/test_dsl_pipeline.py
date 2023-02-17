@@ -2982,3 +2982,19 @@ class TestDSLPipeline:
             warning_template.format(io_name="keys", io="input", node_name="downstream_node"),
             warning_template.format(io_name="__hash__", io="output", node_name="pipeline_component_func"),
         ]
+
+    def test_pass_pipeline_inpute_to_environment_variables(self):
+        component_yaml = r"./tests/test_configs/components/helloworld_component_no_paths.yml"
+        component_func = load_component(source=component_yaml)
+
+        @dsl.pipeline(
+            name="pass_pipeline_inpute_to_environment_variables",
+        )
+        def pipeline(job_in_number: int, environment_variables: str):
+            hello_world_component = component_func(component_in_number=job_in_number)
+            hello_world_component.environment_variables = environment_variables
+
+        pipeline_job = pipeline()
+        assert pipeline_job.jobs["hello_world_component"].environment_variables
+        pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["jobs"]["hello_world_component"]["environment_variables"] == "${{parent.inputs.environment_variables}}"
