@@ -7,7 +7,7 @@ from datetime import datetime
 import os
 import pytest
 import six
-
+from io import BytesIO
 from azure.containerregistry import (
     RepositoryProperties,
     ArtifactManifestProperties,
@@ -16,7 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
     ContainerRegistryClient,
 )
-from azure.containerregistry._helpers import _deserialize_manifest
+from azure.containerregistry._helpers import _compute_digest, _deserialize_manifest, DEFAULT_CHUNK_SIZE
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
@@ -715,6 +715,16 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
             assert res.digest == digest
             
             client.delete_blob(repo, digest)
+    
+    @acr_preparer
+    @recorded_by_proxy
+    def test_upload_blob_by_chunk(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        blob_size = DEFAULT_CHUNK_SIZE * 1.2
+        data = bytearray(b'\x00' * blob_size)
+        with self.create_registry_client(containerregistry_endpoint) as client:
+            digest = client.upload_blob(repo, BytesIO(data))
+            assert _compute_digest(BytesIO(data)) == digest
     
     @acr_preparer()
     @recorded_by_proxy

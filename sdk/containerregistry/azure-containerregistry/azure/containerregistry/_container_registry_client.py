@@ -773,7 +773,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     ) -> str:
         """Upload a manifest for an OCI artifact.
 
-        :param str repository: Name of the repository
+        :param str repository: Name of the repository.
         :param manifest: The manifest to upload. Note: This must be a seekable stream.
         :type manifest: ~azure.containerregistry.models.OCIManifest or IO
         :keyword tag: Tag of the manifest.
@@ -818,7 +818,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, IO, **Any) -> str
         """Upload an artifact blob.
 
-        :param str repository: Name of the repository
+        :param str repository: Name of the repository.
         :param data: The blob to upload. Note: This must be a seekable stream.
         :type data: IO
         :returns: The digest of the uploaded blob, calculated by the registry.
@@ -867,7 +867,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         # type: (str, str, **Any) -> DownloadManifestResult
         """Download the manifest for an OCI artifact.
 
-        :param str repository: Name of the repository
+        :param str repository: Name of the repository.
         :param str tag_or_digest: The tag or digest of the manifest to download.
         :returns: DownloadManifestResult
         :rtype: ~azure.containerregistry.models.DownloadManifestResult
@@ -898,33 +898,61 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
         return DownloadManifestResult(digest=digest, data=manifest_stream, manifest=manifest)
 
-    @distributed_trace
-    def download_blob(self, repository, digest, **kwargs):
-        # type: (str, str, **Any) -> DownloadBlobResult | None
-        """Download a blob that is part of an artifact.
+    @overload
+    def download_blob(self, repository: str, digest: str, destination: str, **kwargs) -> DownloadBlobResult:
+        """Download a blob that is part of an artifact to a file in destination.
 
-        :param str repository: Name of the repository
+        :param str repository: Name of the repository.
+        :param str digest: The digest of the blob to download.
+        :param str destination: The destination of the blob to download.
+        :returns: DownloadBlobResult or None
+        :rtype: ~azure.containerregistry.DownloadBlobResult or None
+        :raises ValueError: If the parameter repository or digest is None.
+        """
+
+    @overload
+    def download_blob(self, repository: str, digest: str, **kwargs) -> DownloadBlobResult:
+        """Download a blob that is part of an artifact into memory.
+
+        :param str repository: Name of the repository.
         :param str digest: The digest of the blob to download.
         :returns: DownloadBlobResult or None
         :rtype: ~azure.containerregistry.DownloadBlobResult or None
         :raises ValueError: If the parameter repository or digest is None.
         """
-        try:
-            deserialized = self._client.container_registry_blob.get_blob( # type: ignore
-                repository, digest, cls=_return_deserialized, **kwargs
-            )
-        except ValueError:
-            if repository is None or digest is None:
-                raise ValueError("The parameter repository and digest cannot be None.")
-            raise
 
-        if deserialized:
-            blob_content = b''
-            for chunk in deserialized:
-                if chunk:
-                    blob_content += chunk
-            return DownloadBlobResult(data=BytesIO(blob_content), digest=digest)
-        return None
+    @distributed_trace
+    def download_blob(self, *args: str, **kwargs) -> DownloadBlobResult:
+        repository = args[0]
+        digest = args[1]
+        if len(args) == 2:
+            try:
+                deserialized = self._client.container_registry_blob.get_blob( # type: ignore
+                    repository, digest, cls=_return_deserialized, **kwargs
+                )
+                blob_content = b''
+                for chunk in deserialized:
+                    if chunk:
+                        blob_content += chunk
+                blob_stream = BytesIO(blob_content)
+            except ValueError:
+                if repository is None or digest is None:
+                    raise ValueError("The parameter repository and digest cannot be None.")
+                if not _validate_digest(blob_stream, digest):
+                    raise ValueError("The requested digest does not match the digest of the received blob.")
+                raise
+            return DownloadBlobResult(data=blob_stream, digest=digest)
+        else:
+            destination = args[2]
+            self._download_blob_chunk(repository, digest, destination)
+    
+    def _download_blob_chunk(self, repository: str, digest: str, destination: str) -> None:
+        import datetime, os
+        file_name = datetime.datetime.now().strftime("%Y-%m-%d%H%M%S")
+        with open(os.path.join(destination, file_name), 'wb') as file:
+            chunk = self._client.container_registry_blob.get_chunk(repository, digest, DEFAULT_CHUNK_SIZE)
+            file.write(chunk)
+            file.flush()
 
     @distributed_trace
     def delete_manifest(self, repository, tag_or_digest, **kwargs):
