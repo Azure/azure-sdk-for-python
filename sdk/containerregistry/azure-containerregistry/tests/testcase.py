@@ -27,7 +27,8 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
         if not self.is_live:
             return
         authority = get_authority(endpoint)
-        import_image(authority, repository, tags)
+        registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
+        import_image(authority, repository, tags, registry_name)
 
     def get_credential(self, authority=None, **kwargs):
         if self.is_live:
