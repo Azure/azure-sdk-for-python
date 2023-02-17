@@ -1,0 +1,5 @@
+name: banchci
+type: computeinstance
+size: STANDARD_DS3_V2
+enable_node_public_ip: false
+enable_batch_private_link: true

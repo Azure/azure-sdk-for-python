@@ -6,3 +6,4 @@ size: Standard_DS2_v2
 min_instances: 0
 max_instances: 2
 enable_node_public_ip: false
+enable_batch_private_link: true

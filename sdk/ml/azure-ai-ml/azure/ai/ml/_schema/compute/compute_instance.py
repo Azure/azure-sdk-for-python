@@ -71,3 +71,6 @@ class ComputeInstanceSchema(ComputeSchema):
     enable_node_public_ip = fields.Bool(
         metadata={"description": "Enable or disable node public IP address provisioning."}
     )
+    enable_batch_private_link = fields.Bool(
+        metadata={"description": "Enable or disable support for private link to batch."}
+    )

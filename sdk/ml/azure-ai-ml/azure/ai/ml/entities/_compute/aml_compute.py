@@ -126,6 +126,7 @@ class AmlCompute(Compute):
         identity: Optional[IdentityConfiguration] = None,
         tier: Optional[str] = None,
         enable_node_public_ip: bool = True,
+        enable_batch_private_link: bool = False, 
         **kwargs,
     ):
         kwargs[TYPE] = ComputeType.AMLCOMPUTE
@@ -146,6 +147,7 @@ class AmlCompute(Compute):
         self.network_settings = network_settings
         self.tier = tier
         self.enable_node_public_ip = enable_node_public_ip
+        self.enable_batch_private_link = enable_batch_private_link
         self.subnet = None
 
     @classmethod
@@ -163,6 +165,7 @@ class AmlCompute(Compute):
             if prop.properties.user_account_credentials
             else None
         )
+        # TODO: Modify _load_from_rest for enable_batch_private_link here
 
         response = AmlCompute(
             name=rest_obj.name,
@@ -229,6 +232,7 @@ class AmlCompute(Compute):
             remote_login_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
         else:
             remote_login_public_access = "NotSpecified"
+        # TODO: Modify _to_rest_object for enable_batch_private_link here
         aml_prop = AmlComputeProperties(
             vm_size=self.size if self.size else ComputeDefaults.VMSIZE,
             vm_priority=snake_to_pascal(self.tier),

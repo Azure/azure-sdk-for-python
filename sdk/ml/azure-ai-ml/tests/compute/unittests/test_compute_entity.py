@@ -249,20 +249,22 @@ class TestComputeEntity:
         assert compute_from_rest.type == "computeinstance"
         assert compute_from_rest.identity.type == "system_assigned"
 
-    def test_compute_no_public_ip_from_yaml(self):
-        compute_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-no-public-ip.yaml")
+    def test_compute_private_link_from_yaml(self):
+        compute_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-private-link.yaml")
+        aml_compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml-no-private-link.yaml")
 
-        aml_compute: AmlCompute = load_compute("tests/test_configs/compute/compute-aml-no-public-ip.yaml")
-
-        def validate_no_public_ip(compute: Compute):
+        def validate_private_link(compute: Compute):
             assert compute.enable_node_public_ip == False
+            assert compute.enable_batch_private_link == True
             compute_resource = compute._to_rest_object()
             assert compute_resource.properties.properties.enable_node_public_ip == False
+            assert compute_resource.properties.properties.enable_batch_private_link == True
             compute_from_rest = Compute._from_rest_object(compute_resource)
             assert compute_from_rest.enable_node_public_ip == False
+            assert compute_from_rest.enable_batch_private_link == True
 
-        validate_no_public_ip(compute=compute_instance)
-        validate_no_public_ip(compute=aml_compute)
+        validate_private_link(compute=compute_instance)
+        validate_private_link(compute=aml_compute)
 
     def test_compute_instance_with_custom_app(self):
         compute_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-custom-app.yaml")
