@@ -22,7 +22,7 @@ from azure.core.credentials import AzureKeyCredential, AzureSasCredential
 from ._signature_credential_policy import EventGridSasCredentialPolicy
 from . import _constants as constants
 
-from ._generated.models import (
+from azure.core.messaging import (
     CloudEvent as InternalCloudEvent,
 )
 
