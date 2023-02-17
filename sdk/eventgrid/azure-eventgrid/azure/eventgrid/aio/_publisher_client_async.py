@@ -42,7 +42,7 @@ from .._helpers import (
     _get_authentication_policy,
     _from_cncf_events,
 )
-from .._generated.aio import EventGridPublisherClient as EventGridPublisherClientAsync
+from .._generated.aio import EventGridClient as EventGridPublisherClientAsync
 from .._version import VERSION
 
 if TYPE_CHECKING:
@@ -91,7 +91,7 @@ class EventGridPublisherClient: # pylint: disable=client-accepts-api-version-key
         ],
         **kwargs: Any
     ) -> None:
-        self._client = EventGridPublisherClientAsync(
+        self._client = EventGridPublisherClientAsync(endpoint=endpoint, credential=credential,
             policies=EventGridPublisherClient._policies(credential, **kwargs), **kwargs
         )
         self._endpoint = endpoint
