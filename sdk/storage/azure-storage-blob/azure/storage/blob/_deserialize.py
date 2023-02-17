@@ -166,7 +166,7 @@ def get_blob_properties_from_generated_code(generated):
     blob.archive_status = generated.properties.archive_status
     blob.blob_tier_change_time = generated.properties.access_tier_change_time
     blob.version_id = generated.version_id
-    blob.is_current_version = generated.is_current_version
+    blob.is_current_version = False if (blob.version_id and not generated.is_current_version) else generated.is_current_version  # pylint: disable=line-too-long
     blob.tag_count = generated.properties.tag_count
     blob.tags = parse_tags(generated.blob_tags)  # pylint: disable=protected-access
     blob.object_replication_source_properties = deserialize_ors_policies(generated.object_replication_metadata)

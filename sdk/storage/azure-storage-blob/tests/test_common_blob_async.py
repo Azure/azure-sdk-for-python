@@ -3208,4 +3208,69 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert props['content_settings'] is not None
         assert props['size'] == len(blob_data)
 
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_blob_version_properties_versioning_disabled(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+        blob_data2 = 'abcabc'
+
+        # Act
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(blob_data, overwrite=True)
+
+        container_client = self.bsc.get_container_client(self.container_name)
+
+        blob_list = []
+        async for b in container_client.list_blobs(include=['versions']):
+            blob_list.append(b)
+        await blob_client.upload_blob(blob_data2, overwrite=True)
+        async for b in container_client.list_blobs(include=['versions']):
+            blob_list.append(b)
+
+        # Assert
+        for blob in blob_list:
+            if blob['size'] == len(blob_data):
+                assert blob['version_id'] is None
+                assert blob['is_current_version'] is None
+            if blob['size'] == len(blob_data2):
+                assert blob['version_id'] is None
+                assert blob['is_current_version'] is None
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_blob_version_properties_versioning_enabled(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        await self._setup(versioned_storage_account_name, versioned_storage_account_key)
+
+        blob_name = self.get_resource_name("utcontainer")
+        blob_data = 'abc'
+        blob_data2 = 'abcabc'
+
+        # Act
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        v1_props = await blob_client.upload_blob(blob_data, overwrite=True)
+        v2_props = await blob_client.upload_blob(blob_data2, overwrite=True)
+        container_client = self.bsc.get_container_client(self.container_name)
+
+        blob_list = []
+        async for b in container_client.list_blobs(include=['versions']):
+            blob_list.append(b)
+
+        # Assert
+        for blob in blob_list:
+            if blob['version_id'] == v1_props['version_id']:
+                assert blob['version_id'] is not None
+                assert blob['is_current_version'] is False
+            if blob['version_id'] == v2_props['version_id']:
+                assert blob['version_id'] is not None
+                assert blob['is_current_version'] is True
+
 # ------------------------------------------------------------------------------
