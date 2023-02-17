@@ -9,7 +9,7 @@ from typing import List, Any
 from urllib.parse import urlparse
 
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
-from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RedirectPolicy, RequestIdPolicy
+from azure.core.pipeline.policies import ContentDecodePolicy, HttpLoggingPolicy, RedirectPolicy, RequestIdPolicy, BearerTokenCredentialPolicy
 from azure.monitor.opentelemetry.exporter._generated import AzureMonitorClient
 from azure.monitor.opentelemetry.exporter._generated._configuration import AzureMonitorClientConfiguration
 from azure.monitor.opentelemetry.exporter._generated.models import TelemetryItem
@@ -42,6 +42,7 @@ logger = logging.getLogger(__name__)
 _AZURE_TEMPDIR_PREFIX = "Microsoft/AzureMonitor"
 _TEMPDIR_PREFIX = "opentelemetry-python-"
 _SERVICE_API_LATEST = "2020-09-15_Preview"
+_APPLICATION_INSIGHTS_RESOURCE_SCOPE = "https://monitor.azure.com//.default"
 
 class ExportResult(Enum):
     SUCCESS = 0
@@ -67,6 +68,7 @@ class BaseExporter:
         parsed_connection_string = ConnectionStringParser(kwargs.get('connection_string'))
 
         self._api_version = kwargs.get('api_version') or _SERVICE_API_LATEST
+        self._credential = kwargs.get('credential')
         self._consecutive_redirects = 0  # To prevent circular redirects
         self._disable_offline_storage = kwargs.get('disable_offline_storage', False)
         self._endpoint = parsed_connection_string.endpoint
@@ -99,6 +101,9 @@ class BaseExporter:
             # DistributedTracingPolicy(**kwargs),
             config.http_logging_policy or HttpLoggingPolicy(**kwargs)
         ]
+        if self._credential:
+            _add_credential_policy(policies, self._credential)
+        
         self.client = AzureMonitorClient(
             host=self._endpoint, connection_timeout=self._timeout, policies=policies, **kwargs)
         self.storage = None
@@ -306,6 +311,17 @@ class BaseExporter:
 
     def _is_stats_exporter(self):
         return self.__class__.__name__ == "_StatsBeatExporter"
+
+
+def _add_credential_policy(policies, credential):
+    if not hasattr(credential, 'get_token'):
+        raise ValueError(
+            'Must pass in valid TokenCredential.'
+        )
+    policies.append(BearerTokenCredentialPolicy(
+        credential,
+        _APPLICATION_INSIGHTS_RESOURCE_SCOPE,
+    ))
 
 
 def _is_redirect_code(response_code: int) -> bool:

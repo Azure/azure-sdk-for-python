@@ -13,6 +13,7 @@ from opentelemetry.sdk.trace.export import SpanExportResult
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
+    _add_credential_policy,
     BaseExporter,
     ExportResult,
 )
@@ -641,6 +642,23 @@ class TestBaseExporter(unittest.TestCase):
     def test_transmission_empty(self):
         status = self._base._transmit([])
         self.assertEqual(status, ExportResult.SUCCESS)
+
+    def test_add_credential_policy(self):
+        class TestCredential():
+            def get_token():
+                return "TEST_TOKEN"
+        credential = TestCredential()
+        policies = ["POLICY"]
+        _add_credential_policy(policies, credential)
+        self.assertEqual(len(policies), 2)
+        
+
+    def test_invalid_aad_credential(self):
+        class InvalidTestCredential():
+            def invalid_get_token():
+                return "TEST_TOKEN"
+        policies = ["POLICY"]
+        self.assertRaises(ValueError, _add_credential_policy, policies=policies, credential=InvalidTestCredential())
 
 
 class MockResponse:
