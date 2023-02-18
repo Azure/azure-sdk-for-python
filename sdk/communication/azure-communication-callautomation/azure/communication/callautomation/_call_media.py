@@ -13,6 +13,7 @@ from ._api_versions import DEFAULT_VERSION
 
 from ._generated._client import AzureCommunicationCallAutomationService
 from ._shared.utils import get_authentication_policy, parse_connection_str
+from ._communication_identifier_serializer import serialize_identifier
 
 from ._generated.models._models import (
 PlayRequest, RecognizeRequest, RecognizeOptions, DtmfOptions, PlayOptions, CommunicationIdentifierModel, 
@@ -32,40 +33,16 @@ if TYPE_CHECKING:
 class CallMediaClient(object):
     def __init__(
         self,
-        endpoint,  # type: str
-        credential,  # type: TokenCredential
         call_connection_id,  # type: str
-        call_media_client,  # type: CallMediaOperations
+        call_media_operations,  # type: CallMediaOperations
         **kwargs
-    ):
-        
+    ):     
         # type: (...) -> None
-        if not credential:
-            raise ValueError("credential can not be None")
-
-        try:
-            if not endpoint.lower().startswith('http'):
-                endpoint = "https://" + endpoint
-        except AttributeError:
-            raise ValueError("Host URL must be a string")
-
-        parsed_url = urlparse(endpoint.rstrip('/'))
-        if not parsed_url.netloc:
-            raise ValueError("Invalid URL: {}".format(endpoint))
-
-        self._endpoint = endpoint
         self._api_version = kwargs.pop("api_version", DEFAULT_VERSION)
-        self._credential = credential
 
         self.call_connection_id = call_connection_id
-        self._call_media_client = call_media_client
+        self._call_media_operations = call_media_operations
 
-        self._client = AzureCommunicationCallAutomationService(
-            self._endpoint,
-            api_version = self._api_version,
-            authentication_policy=get_authentication_policy(endpoint, credential),
-            sdk_moniker = SDK_MONIKER,
-            **kwargs)
 
     def play_to_all(
         self, 
@@ -77,7 +54,7 @@ class CallMediaClient(object):
 
         :param play_source: A PlaySource representing the source to play.
         """
-        self.play(play_source=play_source, play_to=[])
+        self.play(play_source=play_source, play_to=[], **kwargs)
 
     def play(
         self, 
@@ -94,24 +71,34 @@ class CallMediaClient(object):
         :type play_to: 
 
         """
-        play_source_internal = PlaySourceInternal()
+        play_source_internal = None
         if isinstance(play_source, FileSource):
             file_source = FileSourceInternal(uri=play_source.uri)
-            play_source_internal.source_type = PlaySourceType.FILE
-            play_source_internal.file_source = file_source
-            play_source_internal.play_source_id = play_source.play_source_id
+            play_source_internal = PlaySourceInternal(
+                source_type=PlaySourceType.FILE, 
+                file_source=file_source, 
+                play_source_id=play_source.play_source_id
+            )
         
         if isinstance(play_source, TextSource):
-            text_source = TextSourceInternal(text=play_source.text)
-            text_source.voice_gender = play_source.voice_gender
-            text_source.source_locale = play_source.source_locale
-            text_source.voice_name = play_source.voice_name
-            play_source_internal.source_type = PlaySourceType.TEXT
-            play_source_internal.play_source_id = play_source.play_source_id
-            play_source_internal.text_source = text_source
+            text_source = TextSourceInternal(
+                text=play_source.text,
+                voice_gender=play_source.voice_gender,
+                source_locale=play_source.source_locale,
+                voice_name=play_source.voice_name
+            )
+            play_source_internal = PlaySourceInternal(
+                source_type=PlaySource.TEXT,
+                play_source_id=play_source.play_source_id,
+                text_source=text_source
+            )
 
-        play_request = PlayRequest(play_source_internal, play_to, PlayOptions(loop=kwargs['loop']))
-        self._client.call_media.play(self.call_connection_id, play_request)
+        play_request = PlayRequest(
+            play_source_info=play_source_internal, 
+            play_to=[serialize_identifier(identifier) for identifier in play_to], 
+            play_options=PlayOptions(loop=kwargs.get('loop', False))
+        )
+        self._call_media_operations.play(self.call_connection_id, play_request)
 
 
     def start_recognizing(
@@ -151,7 +138,7 @@ class CallMediaClient(object):
             recognize_options=recognize_options
         )
 
-        self._client.call_media.recognize(self.call_connection_id, recognize_request)
+        self._call_media_operations.recognize(self.call_connection_id, recognize_request)
 
 
     def cancel_all_media_operations(
@@ -161,5 +148,4 @@ class CallMediaClient(object):
         Cancels all the queued media operations.
         
         """
-
-        self._client.call_media.cancel_all_media_operations(self.call_connection_id)
+        self._call_media_operations.cancel_all_media_operations(self.call_connection_id)
