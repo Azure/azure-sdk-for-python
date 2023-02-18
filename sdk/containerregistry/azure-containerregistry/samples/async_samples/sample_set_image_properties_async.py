@@ -33,7 +33,7 @@ import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry.aio import ContainerRegistryClient
-from samples.utilities import load_registry, get_authority, get_audience, get_credential
+from ..utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class SetImagePropertiesAsync(object):

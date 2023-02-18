@@ -18,7 +18,7 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has at least one repositories with more than three images,
+    This sample assumes your registry has at least one repository with more than three images,
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
