@@ -20,8 +20,8 @@ DESCRIPTION:
 import os
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
-from azure.identity import AzureAuthorityHosts, ClientSecretCredential, DefaultAzureCredential
-from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential, DefaultAzureCredential  as AsyncDefaultAzureCredential
+from azure.identity import AzureAuthorityHosts, ClientSecretCredential
+from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
 def load_registry():
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))

@@ -26,7 +26,7 @@ import os
 from io import BytesIO
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ContainerRegistryClient
-from sample_utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class UploadDownloadBlob(object):

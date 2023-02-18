@@ -33,7 +33,7 @@ import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry import ArtifactManifestOrder
 from azure.containerregistry.aio import ContainerRegistryClient
-from samples.sample_utilities import load_registry, get_authority, get_audience, get_credential
+from samples.utilities import load_registry, get_authority, get_audience, get_credential
 
 
 class DeleteImagesAsync(object):
