@@ -143,7 +143,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        return self._client.document_models.begin_build_document_model(  # type: ignore
+        return self._client.document_models.begin_build(  # type: ignore
             build_request=self._generated_models.BuildDocumentModelRequest(
                 model_id=model_id,
                 build_mode=build_mode,
@@ -207,7 +207,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        return self._client.document_models.begin_compose_document_model(  # type: ignore
+        return self._client.document_models.begin_compose(  # type: ignore
             compose_request=self._generated_models.ComposeDocumentModelRequest(
                 model_id=model_id,
                 description=description,
@@ -301,7 +301,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
         polling_interval = kwargs.pop("polling_interval", self._client._config.polling_interval)
         continuation_token = kwargs.pop("continuation_token", None)
 
-        return self._client.document_models.begin_copy_document_model_to(  # type: ignore
+        return self._client.document_models.begin_copy_to(  # type: ignore
             model_id=model_id,
             copy_to_request=self._generated_models.CopyAuthorization(
                 target_resource_id=target["targetResourceId"],
