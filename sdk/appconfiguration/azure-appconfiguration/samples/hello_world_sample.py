@@ -36,6 +36,7 @@ def main():
     print_configuration_setting(returned_config_setting)
     print("")
 
+    # [START get_config_setting]
     print("Get configuration setting")
     fetched_config_setting = client.get_configuration_setting(
         key="MyKey"
@@ -43,6 +44,7 @@ def main():
     print("Fetched configuration setting:")
     print_configuration_setting(fetched_config_setting)
     print("")
+    # [END get_config_setting]
 
     print("Delete configuration setting")
     client.delete_configuration_setting(

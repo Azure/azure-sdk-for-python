@@ -44,10 +44,12 @@ async def main():
     print_configuration_setting(updated_config_setting)
     print("")
 
+    # [START list_config_setting]
     print("List configuration settings")
     config_settings = client.list_configuration_settings(label_filter="MyLabel")
     async for item in config_settings:
         print_configuration_setting(item)
+    # [END list_config_setting]
 
     print("Delete configuration setting")
     await client.delete_configuration_setting(
