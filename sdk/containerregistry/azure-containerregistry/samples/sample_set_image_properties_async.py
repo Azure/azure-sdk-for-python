@@ -7,20 +7,19 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_list_tags_async.py
+FILE: sample_set_image_properties_async.py
 
 DESCRIPTION:
-    This sample demonstrates listing the tags for an image in a repository with anonymous pull access.
-    Anonymous access allows a user to list all the collections there, but they wouldn't have permissions to
-    modify or delete any of the images in the registry.
+    This sample demonstrates setting an image's properties on the tag so it can't be overwritten during a lengthy
+    deployment.
 
 USAGE:
-    python sample_list_tags_async.py
+    python sample_set_image_properties_async.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has a repository "library/hello-world" with image tagged "latest",
+    This sample assumes your registry has a repository "library/hello-world" with image tagged "v1",
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
@@ -34,10 +33,10 @@ import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
 from azure.containerregistry.aio import ContainerRegistryClient
-from samples.utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
-class ListTagsAsync(object):
+class SetImagePropertiesAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
@@ -45,20 +44,27 @@ class ListTagsAsync(object):
         self.audience = get_audience(self.authority)
         self.credential = get_credential(self.authority, is_async=True)
 
-    async def list_tags(self):
+    async def set_image_properties(self):
         load_registry()
-        # Instantiate an instance of ContainerRegistryClient    
+        # Instantiate an instance of ContainerRegistryClient
         async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
-            manifest = await client.get_manifest_properties("library/hello-world", "latest")
-            print("Tags of " + manifest.repository_name + ": ")
-            # Iterate through all the tags
-            for tag in manifest.tags:
-                print(tag)
+            # Set permissions on the v1 image's "latest" tag
+            await client.update_manifest_properties(
+                "library/hello-world",
+                "v1",
+                can_write=False,
+                can_delete=False
+            )
+            # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
+            # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
+            # and that tag did not have permissions set to prevent reads or deletes, the image could still be
+            # overwritten. For example, if someone were to push an update to `<registry endpoint>\hello-world:latest`
+            # (which references the same image), it would succeed.
 
 
 async def main():
-    sample = ListTagsAsync()
-    await sample.list_tags()
+    sample = SetImagePropertiesAsync()
+    await sample.set_image_properties()
 
 
 if __name__ == "__main__":

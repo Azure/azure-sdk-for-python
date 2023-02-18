@@ -7,18 +7,20 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_delete_images_async.py
+FILE: sample_list_tags_async.py
 
 DESCRIPTION:
-    This sample demonstrates deleting all but the most recent three images for each repository.
+    This sample demonstrates listing the tags for an image in a repository with anonymous pull access.
+    Anonymous access allows a user to list all the collections there, but they wouldn't have permissions to
+    modify or delete any of the images in the registry.
 
 USAGE:
-    python sample_delete_images_async.py
+    python sample_list_tags_async.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has at least one repository with more than three images,
+    This sample assumes your registry has a repository "library/hello-world" with image tagged "latest",
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
@@ -31,12 +33,11 @@ USAGE:
 import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ArtifactManifestOrder
 from azure.containerregistry.aio import ContainerRegistryClient
-from samples.utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
-class DeleteImagesAsync(object):
+class ListTagsAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
@@ -44,35 +45,20 @@ class DeleteImagesAsync(object):
         self.audience = get_audience(self.authority)
         self.credential = get_credential(self.authority, is_async=True)
 
-    async def delete_images(self):
+    async def list_tags(self):
         load_registry()
-        # Instantiate an instance of ContainerRegistryClient
+        # Instantiate an instance of ContainerRegistryClient    
         async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
-            async for repository in client.list_repository_names():
-                print(repository)
-
-                # Keep the three most recent images, delete everything else
-                manifest_count = 0
-                async for manifest in client.list_manifest_properties(
-                    repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
-                ):
-                    manifest_count += 1
-                    if manifest_count > 3:
-                        # Make sure will have the permission to delete the manifest later
-                        await client.update_manifest_properties(
-                            repository,
-                            manifest.digest,
-                            can_write=True,
-                            can_delete=True
-                        )
-
-                        print(f"Deleting {repository}:{manifest.digest}")
-                        await client.delete_manifest(repository, manifest.digest)
+            manifest = await client.get_manifest_properties("library/hello-world", "latest")
+            print("Tags of " + manifest.repository_name + ": ")
+            # Iterate through all the tags
+            for tag in manifest.tags:
+                print(tag)
 
 
 async def main():
-    sample = DeleteImagesAsync()
-    await sample.delete_images()
+    sample = ListTagsAsync()
+    await sample.list_tags()
 
 
 if __name__ == "__main__":

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_utilities.py
+FILE: utilities.py
 
 DESCRIPTION:
     This file include some utility functions for samples to use:
