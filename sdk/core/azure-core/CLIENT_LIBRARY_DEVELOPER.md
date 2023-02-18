@@ -603,9 +603,10 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 
 ## Long-running operation (LRO) customization
 
- APIs that can take longer to complete are often represented as long-running operations. azure-core provides a LROPoller (and AsyncLROPoller) protocols
- that give a user access to the long-running operation and exposes methods to interact with it such as wait until it reaches a terminal state, register disinterest, or
- provide a callback to do work on the final result when it is ready. Sometimes you may need to customize an LRO to achieve the desired scenario for the service.
+ API operations that can take longer to complete are often represented as long-running operations (LRO). azure-core provides LROPoller (and AsyncLROPoller) protocols
+ that give users access to the LRO and expose methods to interact with them such as waiting until the operation reaches a terminal state, checking its status, or
+ providing a callback to do work on the final result when it is ready. If the LRO follows the guidelines, it's likely that the generated client library code should _just work_. 
+ In cases where the LRO diverges from the guidelines, you may need to customize your code to achieve the desired scenario.
 
  There are 3 options to customize the logic for our LROs.
 
@@ -619,16 +620,28 @@ manager, with `__aenter__`, `__aexit__`, and `close` methods.
 
 ### LRO algorithm/strategies - OperationResourcePolling, LocationPolling, StatusCheckPolling
 
-Example: Account for a non-standard status that is returned via the POST call - "ValidationFailed".
+`azure.core.polling` provides three built-in strategies for polling - OperationResourcePolling, LocationPolling, and StatusCheckPolling.
+The type of polling needed will be determined automatically, unless otherwise changed by the client developer. If the LRO is determined
+not to fit OperationResourcePolling or LocationPolling, StatusCheckPolling serves as a fallback strategy which will not perform polling, but
+instead return a successful response for a 2xx.
 
-Choose a polling algorithm that closely represents what you need to do or create your own that subclasses 
-`azure.core.polling.base_polling.LongRunningOperation` and implement the necessary methods.
+If you need to customize the polling strategy, choose a polling algorithm that closely represents what you need to do
+or create your own that inherits from `azure.core.polling.LongRunningOperation` and implements the necessary methods.
 
 For our purposes, let's say that OperationResourcePolling closely resembles what the service does, but we
-need to account (and raise an exception) for the nonstandard status.
+need to account for a non-standard status.
+
+Example: Raise exception for a non-standard status that is returned via the initial POST call - "ValidationFailed".
 
 ```python
 class CustomOperationResourcePolling(OperationResourcePolling):
+    """Implements a operation resource polling, typically from Operation-Location. Customized to raise an
+    exception in the case of a "ValidationFailed" status returned from the service.
+
+    :param str operation_location_header: Name of the header to return operation format (default 'operation-location')
+    :keyword dict[str, any] lro_options: Additional options for LRO. For more information, see
+     https://aka.ms/azsdk/autorest/openapi/lro-options
+    """
 
     def get_status(self, pipeline_response: "PipelineResponseType") -> str:
         response = pipeline_response.http_response
@@ -644,7 +657,7 @@ class CustomOperationResourcePolling(OperationResourcePolling):
         return status
 ```
 
-And now, to plug into the client method:
+To plug into a client method which was generated as an LRO, you can pass the `polling` keyword argument.
 
 ```python
 class ServiceOperations:
@@ -655,52 +668,110 @@ class ServiceOperations:
             name,
             polling=LROBasePolling(
                 lro_algorithms=[
-                    CustomOperationResourcePolling()
+                    CustomOperationResourcePolling()  # overrides other LRO strategies
                 ]
             ),
             **kwargs
         )
 ```
 
+This example uses the default polling method - `LROBasePolling` and just overrides the algorithm used for polling.
+If you need to control the polling loop, then see the next section.
+
+
 ### Polling method - LROBasePolling/AsyncLROBasePolling
 
-Subclass `LROBasePolling` or create your own class that subclasses 
-`azure.core.polling.base_polling.PollingMethod` and implement the necessary methods.
+Built-in methods for polling are included in azure-core as both sync / async variants - LROBasePolling and AsyncLROBasePolling.
+You can also use `azure.core.polling.NoPolling` which will not initiate polling and simply return the 
+deserialized initial response when called with `poller.result()`. 
 
-Example: Provide a different API call to use for GET polling.
+To use `NoPolling`, you can simply pass `polling=False` to an operation generated as an LRO:
+
+```python
+class ServiceOperations:
+
+    def begin_analyze(self, data: AnyStr, name: str) -> LROPoller[JSON]:
+        return self._client.begin_analyze(
+            data,
+            name,
+            polling=False,
+            **kwargs
+        )
+```
+
+The polling method provides all the logic for polling the status monitor. It runs the polling loop while performing GET requests
+to the status monitor and checking if a terminal state is reached. Inbetween polls it inserts delay based on the service sent `retry-after`
+header or the given `polling_interval`.
+
+To customize parts of the polling method, you can create a subclass which uses `LROBasePolling` and override necessary methods.
+If significant customization is necessary, use `azure.core.polling.PollingMethod` and implement all the necessary methods.
+
+Example: Create an LRO method which will poll for when a file gets uploaded successfully (greatly simplified)
+
 
 ```python
 class CustomLROPolling(PollingMethod):
-    def __init__(self, command, client, name, polling_interval=30) -> None:
-        self._command = command
+    def __init__(self, polling_interval=30, **kwargs) -> None:
         self._polling_interval = polling_interval
         self._resource = None
         self._finished = False
         self._status = "InProgress"
+        self._kwargs = kwargs
+
+    def initialize(self, client, initial_response, deserialization_callback):
+        """
+        """        
         self.client = client
-        self.name = name
+        self.file_id = response.file_id
+        self._pipeline_response = self._initial_response = initial_response
+        self._deserialization_callback = deserialization_callback
+        self._command = functools.partial(self.client.get_upload_file, file_id=self.file_id, **self._kwargs)
 
     def status(self) -> str:
+        """
+        """
         return "Succeeded" if self._finished else "InProgress"
 
     def finished(self) -> bool:
+        """
+        """
         return self._finished
 
-    def resource(self) -> PollingReturnType:
+    def resource(self) -> JSON:
+        """
+        """
         return self._resource
 
-    def _update_status(self) -> None:
-        try:
-            self._resource = self._command()
-            self._finished = True
-        except ResourceNotFoundError:
-            pass
-
     def run(self) -> None:
+        """
+        """
         while not self.finished():
-            self._update_status()
+            try:
+                self._resource = self._command()
+                self._finished = True
+            except ResourceNotFoundError:
+                pass
             if not self.finished():
                 time.sleep(self._polling_interval)
+
+    def get_continuation_token(self) -> str:
+        import pickle
+
+        return base64.b64encode(pickle.dumps(self._initial_response)).decode("ascii")
+
+    @classmethod
+    def from_continuation_token(cls, continuation_token: str, **kwargs) -> Tuple[Any, Any, Callable]:
+        try:
+            client = kwargs["client"]
+        except KeyError:
+            raise ValueError("Need kwarg 'client' to be recreated from continuation_token")
+
+        import pickle
+
+        initial_response = pickle.loads(base64.b64decode(continuation_token))  # nosec
+        # Restore the transport in the context
+        initial_response.context.transport = client._client._pipeline._transport  # pylint: disable=protected-access
+        return client, initial_response, lambda: None
 ```
 
 And now, to plug into the client code:
@@ -708,31 +779,53 @@ And now, to plug into the client code:
 ```python
 class ServiceOperations:
 
-    def begin_upload(self, data: AnyStr, name: str) -> LROPoller[JSON]:
-        
-        return self._client.begin_upload(
-            data,
-            name,
-            polling=CustomLROBasePolling(
-                command=functools.partial(self.get_upload_file, name=name, **kwargs),
-                client=self._client,
-                name=name
-            ),
-            **kwargs
+    def begin_upload(self, data: AnyStr, **kwargs) -> LROPoller[JSON]:
+        continuation_token = kwargs.pop("continuation_token", None)
+        polling_method = CustomLROBasePolling(**kwargs)
+        if continuation_token is not None:
+            return LROPoller.from_continuation_token(
+                continuation_token=continuation_token,
+                polling_method=polling_method,
+                client=self
+            )
+        response = self._client.create_upload(data, **kwargs)
+
+        return LROPoller(
+            client=self,
+            initial_response=response,
+            deserialization_callback=lambda: None,
+            polling_method=polling_method,
         )
 ```
 
 
 ### Poller - LROPoller/AsyncLROPoller
 
+The last option is if you need to customize the public interface of the LROPoller / AsyncLROPoller.
+
 Example: I want to add a cancel method to my poller
 
+Note that if you support rehydration of the LRO via `continuation_token`, you must override the `from_continuation_token` 
+method so that the custom poller is used.
 
 ```python
 class CustomLROPoller(LROPoller[PollingReturnType]):
 
-    def cancel_upload(self) -> None:
-        return self.polling_method.client.cancel_upload_file(self.polling_method.file_name)
+    def cancel(self, **kwargs) -> None:
+        """
+        """
+        return self.polling_method().client.cancel_upload_file(self.polling_method().file_id, **kwargs)
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[PollingReturnType], continuation_token: str, **kwargs
+    ) -> "CustomLROPoller[PollingReturnType]":
+        (
+            client,
+            initial_response,
+            deserialization_callback,
+        ) = polling_method.from_continuation_token(continuation_token, **kwargs)
+        return cls(client, initial_response, deserialization_callback, polling_method)
 
 ```
 
@@ -741,16 +834,21 @@ And now, to plug into the client code:
 ```python
 class ServiceOperations:
 
-    def begin_upload(self, data: AnyStr, name: str) -> LROPoller[JSON]:
+    def begin_upload(self, data: AnyStr, **kwargs) -> LROPoller[JSON]:
+        continuation_token = kwargs.pop("continuation_token", None)
+        polling_method = CustomLROBasePolling(**kwargs)
+        if continuation_token is not None:
+            return CustomLROPoller.from_continuation_token(
+                continuation_token=continuation_token,
+                polling_method=polling_method,
+                client=self
+            )
+        response = self._client.create_upload(data, **kwargs)
         return CustomLROPoller(
-            client=self._client,
-            initial_response=self.create_upload(data, name, **kwargs),
+            client=self,
+            initial_response=response,
             deserialization_callback=lambda: None,
-            polling_method=CustomLROBasePolling(
-                command=functools.partial(self.get_upload_file, name=name, **kwargs),
-                client=self._client,
-                name=name
-            ),
+            polling_method=polling_method,
         )
 ```
 
