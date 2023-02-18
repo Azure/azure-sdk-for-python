@@ -253,7 +253,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if model_id is None:
             model_id = str(uuid.uuid4())
 
-        response = await self._client.document_models.authorize_copy_document_model(
+        response = await self._client.document_models.authorize_copy(
             authorize_copy_request=self._generated_models.AuthorizeCopyRequest(
                 model_id=model_id, description=description, tags=tags
             ),
@@ -366,7 +366,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: List all models that were built successfully under the Form Recognizer resource.
         """
 
-        return self._client.document_models.get_document_models(  # type: ignore
+        return self._client.document_models.list(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [DocumentModelSummary._from_generated(x) for x in objs],
@@ -392,7 +392,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: Get model counts and limits under the Form Recognizer resource.
         """
 
-        response = await self._client.resource_info.get_resource_details(**kwargs)
+        response = await self._client.resource_info.get(**kwargs)
         return ResourceDetails._from_generated(response.custom_document_models)
 
     @distributed_trace_async
@@ -417,7 +417,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
         if not model_id:
             raise ValueError("model_id cannot be None or empty.")
 
-        response = await self._client.document_models.get_document_model(model_id=model_id, **kwargs)
+        response = await self._client.document_models.get(model_id=model_id, **kwargs)
         return DocumentModelDetails._from_generated(response)
 
     @distributed_trace
@@ -442,7 +442,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
                 :caption: List all document model operations in the past 24 hours.
         """
 
-        return self._client.operations.get_operations(  # type: ignore
+        return self._client.operations.list(  # type: ignore
             cls=kwargs.pop(
                 "cls",
                 lambda objs: [OperationSummary._from_generated(x) for x in objs],
@@ -477,7 +477,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBaseAsync):
             raise ValueError("'operation_id' cannot be None or empty.")
 
         return OperationDetails._from_generated(
-            await self._client.operations.get_operation(operation_id, **kwargs),
+            await self._client.operations.get(operation_id, **kwargs),
             api_version=self._api_version,
         )
 
