@@ -41,9 +41,7 @@ class HelloWorldAsync(object):
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(
-            self.authority, exclude_environment_credential=True, is_async=True
-        )
+        self.credential = get_credential(self.authority, is_async=True)
 
     async def basic_sample(self):
         load_registry()

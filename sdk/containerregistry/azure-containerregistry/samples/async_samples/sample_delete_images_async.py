@@ -18,7 +18,8 @@ USAGE:
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has at least four repositories, run load_registry() if you don't have.
+    This sample assumes your registry has at least one repositories with more than three images,
+    run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
@@ -41,9 +42,7 @@ class DeleteImagesAsync(object):
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(
-            self.authority, exclude_environment_credential=True, is_async=True
-        )
+        self.credential = get_credential(self.authority, is_async=True)
 
     async def delete_images(self):
         load_registry()

@@ -40,7 +40,7 @@ class DeleteTags(object):
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(self.authority, exclude_environment_credential=True)
+        self.credential = get_credential(self.authority)
 
     def delete_tags(self):
         load_registry()

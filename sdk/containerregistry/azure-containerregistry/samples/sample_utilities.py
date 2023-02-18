@@ -21,7 +21,7 @@ import os
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
 from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSource, ImportMode
 from azure.identity import AzureAuthorityHosts, ClientSecretCredential, DefaultAzureCredential
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
+from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential, DefaultAzureCredential  as AsyncDefaultAzureCredential
 
 def load_registry():
     authority = get_authority(os.environ.get("CONTAINERREGISTRY_ENDPOINT"))
@@ -98,14 +98,17 @@ def get_audience(authority):
         return "https://management.usgovcloudapi.net"
 
 def get_credential(authority, **kwargs):
-    if authority != AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        return ClientSecretCredential(
+    is_async = kwargs.pop("is_async", False)
+    if is_async:
+        return AsyncClientSecretCredential(
             tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
             client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
             client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
             authority=authority
         )
-    is_async = kwargs.pop("is_async", False)
-    if is_async:
-        return AsyncDefaultAzureCredential(**kwargs)
-    return DefaultAzureCredential(**kwargs)
+    return ClientSecretCredential(
+        tenant_id=os.environ.get("CONTAINERREGISTRY_TENANT_ID"),
+        client_id=os.environ.get("CONTAINERREGISTRY_CLIENT_ID"),
+        client_secret=os.environ.get("CONTAINERREGISTRY_CLIENT_SECRET"),
+        authority=authority
+    )
