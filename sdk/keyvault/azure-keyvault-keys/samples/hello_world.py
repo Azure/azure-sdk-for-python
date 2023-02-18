@@ -34,11 +34,13 @@ from azure.keyvault.keys import KeyClient
 # 5. Delete a key (begin_delete_key)
 # ----------------------------------------------------------------------------------------------------------
 
+# [START create_a_key_client]
 # Instantiate a key client that will be used to call the service.
 # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = KeyClient(vault_url=VAULT_URL, credential=credential)
+# [END create_a_key_client]
 
 # Let's create an RSA key with size 2048, hsm disabled and optional key_operations of encrypt, decrypt.
 # if the key already exists in the Key Vault, then a new version of the key is created.

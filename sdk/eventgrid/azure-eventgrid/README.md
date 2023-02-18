@@ -52,23 +52,16 @@ With the `azure-identity` package, you can seamlessly authorize requests in both
 
 For example, you can use `DefaultAzureCredential` to construct a client which will authenticate using Azure Active Directory:
 
-```Python
+<!-- SNIPPET:sample_authentication.client_auth_with_token_cred -->
+```python
 from azure.identity import DefaultAzureCredential
 from azure.eventgrid import EventGridPublisherClient, EventGridEvent
 
-event = EventGridEvent(
-    data={"team": "azure-sdk"},
-    subject="Door1",
-    event_type="Azure.Sdk.Demo",
-    data_version="2.0"
-)
-
 credential = DefaultAzureCredential()
-endpoint = os.environ["EG_TOPIC_HOSTNAME"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
 client = EventGridPublisherClient(endpoint, credential)
-
-client.send(event)
 ```
+<!-- END SNIPPET -->
 
 #### Looking up the endpoint
 You can find the topic endpoint within the Event Grid Topic resource on the Azure portal. This will look like:
@@ -81,14 +74,20 @@ pass the key as a string into an instance of [AzureKeyCredential][azure-key-cred
 
 > **Note:** The Access Key may be found in the azure portal in the "Access Keys" menu of the Event Grid Topic resource.  They may also be obtained via the azure CLI, or the `azure-mgmt-eventgrid` library. A guide for getting access keys can be found [here](https://docs.microsoft.com/azure/event-grid/get-access-keys).
 
+<!-- SNIPPET:sample_authentication.client_auth_with_key_cred -->
 ```python
-from azure.core.credentials import AzureKeyCredential
+import os
 from azure.eventgrid import EventGridPublisherClient
+from azure.core.credentials import AzureKeyCredential
 
-endpoint = "https://<name>.<region>.eventgrid.azure.net/api/events"
-credential = AzureKeyCredential("<access_key>")
-eg_publisher_client = EventGridPublisherClient(endpoint, credential)
+topic_key = os.environ["EVENTGRID_TOPIC_KEY"]
+endpoint = os.environ["EVENTGRID_TOPIC_ENDPOINT"]
+
+credential = AzureKeyCredential(topic_key)
+client = EventGridPublisherClient(endpoint, credential)
 ```
+<!-- END SNIPPET -->
+
 > **Note:** A client may also be authenticated via SAS signature, using the `AzureSasCredential`. A sample demonstrating this, is available [here][python-eg-sample-send-using-sas] ([async_version][python-eg-sample-send-using-sas-async]).
 
 > **Note:** The `generate_sas` method can be used to generate a shared access signature. A sample demonstrating this can be seen [here][python-eg-generate-sas].

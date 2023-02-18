@@ -95,13 +95,17 @@ Alternatively, you can use [Azure CLI][azure_cli_endpoint_lookup] snippet below 
 Once you have the value for the API key, you can pass it as a string into an instance of [AzureKeyCredential][azure-key-credential]. Use the key as the credential parameter
 to authenticate the client:
 
+<!-- SNIPPET:sample_authentication.create_ta_client_with_key -->
 ```python
+import os
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics import TextAnalyticsClient
+endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
+key = os.environ["AZURE_LANGUAGE_KEY"]
 
-credential = AzureKeyCredential("<api_key>")
-text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
+text_analytics_client = TextAnalyticsClient(endpoint, AzureKeyCredential(key))
 ```
+<!-- END SNIPPET -->
 
 #### Create a TextAnalyticsClient with an Azure Active Directory Credential
 
@@ -126,13 +130,18 @@ AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
 
 Use the returned token credential to authenticate the client:
 
+<!-- SNIPPET:sample_authentication.create_ta_client_with_aad -->
 ```python
+import os
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.identity import DefaultAzureCredential
 
+endpoint = os.environ["AZURE_LANGUAGE_ENDPOINT"]
 credential = DefaultAzureCredential()
-text_analytics_client = TextAnalyticsClient(endpoint="https://<resource-name>.cognitiveservices.azure.com/", credential=credential)
+
+text_analytics_client = TextAnalyticsClient(endpoint, credential=credential)
 ```
+<!-- END SNIPPET -->
 
 ## Key concepts
 

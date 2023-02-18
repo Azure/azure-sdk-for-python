@@ -81,14 +81,17 @@ The API key can be found in the Azure Portal or by running the following Azure C
 To use an [API key][cognitive_authentication_api_key] as the `credential` parameter,
 pass the key as a string into an instance of [AzureKeyCredential][azure-key-credential].
 
+<!-- SNIPPET:sample_authentication.create_dt_client_with_key -->
 ```python
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.translation.document import DocumentTranslationClient
 
-endpoint = "https://<resource-name>.cognitiveservices.azure.com/"
-credential = AzureKeyCredential("<api_key>")
-document_translation_client = DocumentTranslationClient(endpoint, credential)
+endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
+key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
+
+document_translation_client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 ```
+<!-- END SNIPPET -->
 
 #### Create the client with an Azure Active Directory credential
 
@@ -106,16 +109,20 @@ Translator resource by assigning the `"Cognitive Services User"` role to your se
 Once completed, set the values of the client ID, tenant ID, and client secret of the AAD application as environment variables:
 `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_CLIENT_SECRET`.
 
+<!-- SNIPPET:sample_authentication.create_dt_client_with_aad -->
 ```python
+"""DefaultAzureCredential will use the values from these environment
+variables: AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET
+"""
 from azure.identity import DefaultAzureCredential
 from azure.ai.translation.document import DocumentTranslationClient
+
+endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
 credential = DefaultAzureCredential()
 
-document_translation_client = DocumentTranslationClient(
-    endpoint="https://<resource-name>.cognitiveservices.azure.com/",
-    credential=credential
-)
+document_translation_client = DocumentTranslationClient(endpoint, credential)
 ```
+<!-- END SNIPPET -->
 
 ## Key concepts
 

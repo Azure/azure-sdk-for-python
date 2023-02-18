@@ -30,9 +30,11 @@ from azure.keyvault.certificates import CertificateClient, CertificatePolicy, Ce
 
 # Instantiate a certificate client that will be used to call the service.
 # Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
+# [START create_a_certificate_client]
 VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
 client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+# [END create_a_certificate_client]
 
 # Let's create a certificate for holding bank account credentials valid for 1 year.
 # if the certificate already exists in the Key Vault, then a new version of the certificate is created.
@@ -57,6 +59,7 @@ cert_policy = CertificatePolicy(
 )
 cert_name = "HelloWorldCertificate"
 
+# [START create_a_certificate]
 # begin_create_certificate returns a poller. Calling result() on the poller will return the certificate
 # as a KeyVaultCertificate if creation is successful, and the CertificateOperation if not. The wait()
 # call on the poller will wait until the long running operation is complete.
@@ -64,12 +67,16 @@ certificate = client.begin_create_certificate(
     certificate_name=cert_name, policy=cert_policy
 ).result()
 print(f"Certificate with name '{certificate.name}' created")
+# [END create_a_certificate]
 
+# [START get_certificate]
 # Let's get the bank certificate using its name
 print("\n.. Get a certificate by name")
 bank_certificate = client.get_certificate(cert_name)
 print(f"Certificate with name '{bank_certificate.name}' was found'.")
+# [END get_certificate]
 
+# [START update_certificate]
 # After one year, the bank account is still active, and we have decided to update the tags.
 print("\n.. Update a certificate by name")
 tags = {"a": "b"}
@@ -82,10 +89,13 @@ print(
 print(
     f"Certificate with name '{bank_certificate.name}' was updated with tags '{updated_certificate.properties.tags}'"
 )
+# [END update_certificate]
 
+# [START delete_certificate]
 # The bank account was closed, need to delete its credentials from the Key Vault.
 print("\n.. Delete certificate")
 deleted_certificate = client.begin_delete_certificate(bank_certificate.name).result()
 print(f"Certificate with name '{deleted_certificate.name}' was deleted.")
+# [END delete_certificate]
 
 print("\nrun_sample done")

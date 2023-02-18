@@ -18,12 +18,14 @@ CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
 
 
+# [START send_event_data_batch]
 def send_event_data_batch(producer):
     # Without specifying partition_id or partition_key
     # the events will be distributed to available partitions via round-robin.
     event_data_batch = producer.create_batch()
     event_data_batch.add(EventData('Single message'))
     producer.send_batch(event_data_batch)
+# [END send_event_data_batch]
 
 
 def send_event_data_batch_with_limited_size(producer):

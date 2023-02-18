@@ -43,14 +43,15 @@ See [azure-identity][azure_identity] documentation for more information about ot
 #### Create a client
 After configuring your environment for the [DefaultAzureCredential][default_cred_ref] to use a suitable method of authentication, you can do the following to create a key client (replacing the value of `vault_url` with your vault's URL):
 
+<!-- SNIPPET:hello_world.create_a_key_client -->
 ```python
-from azure.identity import DefaultAzureCredential
-from azure.keyvault.keys import KeyClient
-
+# Instantiate a key client that will be used to call the service.
+# Here we use the DefaultAzureCredential, but any azure-identity credential can be used.
+VAULT_URL = os.environ["VAULT_URL"]
 credential = DefaultAzureCredential()
-
-key_client = KeyClient(vault_url="https://my-key-vault.vault.azure.net/", credential=credential)
+client = KeyClient(vault_url=VAULT_URL, credential=credential)
 ```
+<!-- END SNIPPET -->
 
 > **NOTE:** For an asynchronous client, import `azure.keyvault.keys.aio`'s `KeyClient` instead.
 

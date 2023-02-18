@@ -92,22 +92,18 @@ to get started exploring APIs, but it should be managed carefully.*
 
 We can use the api-key to create a new `SearchClient`.
 
+<!-- SNIPPET:sample_authentication.create_search_client_with_key -->
 ```python
-import os
 from azure.core.credentials import AzureKeyCredential
 from azure.search.documents import SearchClient
 
-index_name = "nycjobs"
-# Get the service endpoint and API key from the environment
-endpoint = os.environ["SEARCH_ENDPOINT"]
-key = os.environ["SEARCH_API_KEY"]
+service_endpoint = os.getenv("AZURE_SEARCH_SERVICE_ENDPOINT")
+index_name = os.getenv("AZURE_SEARCH_INDEX_NAME")
+key = os.getenv("AZURE_SEARCH_API_KEY")
 
-# Create a client
-credential = AzureKeyCredential(key)
-client = SearchClient(endpoint=endpoint,
-                      index_name=index_name,
-                      credential=credential)
+search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 ```
+<!-- END SNIPPET -->
 
 ## Key concepts
 
