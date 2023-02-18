@@ -67,19 +67,20 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_repository(self, containerregistry_endpoint):
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [TO_BE_DELETED])
+        repo = self.get_repo_name("repo")
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [repo])
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            await client.delete_repository(TO_BE_DELETED)
+            await client.delete_repository(repo)
 
-            async for repo in client.list_repository_names():
-                if repo == TO_BE_DELETED:
-                    raise ValueError("Repository not deleted")
+            self.sleep(10)
+            with pytest.raises(ResourceNotFoundError):
+                await client.get_repository_properties(repo)
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_repository_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            await client.delete_repository("not_real_repo")
+            await client.delete_repository(DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -427,17 +428,14 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_tag(self, containerregistry_endpoint):
         repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
-        tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            await client.delete_tag(repo, tag + str(0))
+            await client.delete_tag(repo, tag)
 
-            count = 0
-            async for tag in client.list_tag_properties(repo):
-                assert f"{repo}:{tag.name}" in tags[1:]
-                count += 1
-            assert count == 3
+            self.sleep(10)
+            with pytest.raises(ResourceNotFoundError):
+                await client.get_tag_properties(repo, tag)
 
             # Cleanup
             await client.delete_repository(repo)
@@ -447,6 +445,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_tag_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             await client.delete_tag(DOES_NOT_EXIST, DOES_NOT_EXIST)
+            await client.delete_tag(ALPINE, DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -468,19 +467,17 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
-        tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            manifest = await client.get_manifest_properties(repo, tag)
+            manifest = await client.get_manifest_properties(ALPINE, "latest")
             digest = manifest.digest
             invalid_digest = digest[:-10] + u"a" * 10
+            await client.delete_manifest(ALPINE, invalid_digest)
 
-            await client.delete_manifest(repo, invalid_digest)
+            with pytest.raises(ResourceNotFoundError):
+                await client.delete_manifest(ALPINE, DOES_NOT_EXIST)
 
-            # Cleanup
-            await client.delete_repository(repo)
+            with pytest.raises(ResourceNotFoundError):
+                await client.delete_manifest(DOES_NOT_EXIST, DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy_async
