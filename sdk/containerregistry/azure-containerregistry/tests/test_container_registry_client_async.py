@@ -92,7 +92,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_repository_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -111,7 +111,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -216,7 +216,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_manifest_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -240,7 +240,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_manifest_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -259,7 +259,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_manifest_properties_kwargs(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -280,7 +280,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_tag_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -303,7 +303,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_tag_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -322,7 +322,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_update_tag_properties_kwargs(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -343,7 +343,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
@@ -361,7 +361,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
@@ -393,7 +393,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
@@ -425,7 +425,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_tag(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
@@ -451,7 +451,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_manifest(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -468,7 +468,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
+        repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 

@@ -7,6 +7,8 @@ import logging
 import os
 import pytest
 
+from datetime import datetime
+
 from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
@@ -41,6 +43,12 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
                 )
             return DefaultAzureCredential(**kwargs)
         return FakeTokenCredential()
+    
+    def get_repo_name(self, prefix):
+        if self.is_live:
+            suffix = datetime.now().strftime("%H%M%S")
+            return self.get_resource_name(prefix + suffix)
+        return self.get_resource_name(prefix)
 
     def create_registry_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)
