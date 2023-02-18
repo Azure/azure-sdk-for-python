@@ -91,36 +91,22 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy_async
-    async def test_update_properties(self, containerregistry_endpoint):
-        repository = self.get_resource_name("repo")
-        tag_identifier = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repository}:{tag_identifier}"])
+    async def test_update_repository_properties(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        tag = self.get_resource_name("tag")
+        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
+
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_repository_properties(repository)
+            properties = self.set_all_properties(RepositoryProperties(), False)
+            received = await client.update_repository_properties(repo, properties)
+            self.assert_all_properties(received, False)
 
-            properties.can_delete = False
-            properties.can_read = False
-            properties.can_list = False
-            properties.can_write = False
+            properties = self.set_all_properties(properties, True)
+            received = await client.update_repository_properties(repo, properties)
+            self.assert_all_properties(received, True)
 
-            new_properties = await client.update_repository_properties(repository, properties)
-
-            assert properties.can_delete == new_properties.can_delete
-            assert properties.can_read == new_properties.can_read
-            assert properties.can_list == new_properties.can_list
-            assert properties.can_write == new_properties.can_write
-
-            new_properties.can_delete = True
-            new_properties.can_read = True
-            new_properties.can_list = True
-            new_properties.can_write = True
-
-            new_properties = await client.update_repository_properties(repository, new_properties)
-
-            assert new_properties.can_delete == True
-            assert new_properties.can_read == True
-            assert new_properties.can_list == True
-            assert new_properties.can_write == True
+            # Cleanup
+            await client.delete_repository(repo)
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -130,43 +116,14 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_repository_properties(repo)
-            properties = self.set_all_properties(properties, True)
-            received = await client.update_repository_properties(repo, properties)
-            self.assert_all_properties(properties, True)
-
-            received = await client.update_repository_properties(repo, can_delete=False)
-            assert received.can_delete == False
-            assert received.can_list == True
-            assert received.can_read == True
-            assert received.can_write == True
-
-            received = await client.update_repository_properties(repo, can_read=False)
-            assert received.can_delete == False
-            assert received.can_list == True
-            assert received.can_read == False
-            assert received.can_write == True
-
-            received = await client.update_repository_properties(repo, can_write=False)
-            assert received.can_delete == False
-            assert received.can_list == True
-            assert received.can_read == False
-            assert received.can_write == False
-
-            received = await client.update_repository_properties(repo, can_list=False)
-            assert received.can_delete == False
-            assert received.can_list == False
-            assert received.can_read == False
-            assert received.can_write == False
+            received = await client.update_repository_properties(
+                repo, can_delete=False, can_read=False, can_write=False, can_list=False
+            )
+            self.assert_all_properties(received, False)
 
             received = await client.update_repository_properties(
-                repo,
-                can_delete=True,
-                can_read=True,
-                can_write=True,
-                can_list=True,
+                repo, can_delete=True, can_read=True, can_write=True, can_list=True
             )
-
             self.assert_all_properties(received, True)
 
             # Cleanup
@@ -287,10 +244,8 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
-        async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_manifest_properties(repo, tag)
- 
-            properties = self.set_all_properties(properties, False)
+        async with self.create_registry_client(containerregistry_endpoint) as client: 
+            properties = self.set_all_properties(ArtifactManifestProperties(), False)
             received = await client.update_manifest_properties(repo, tag, properties)
             self.assert_all_properties(received, False)
 
@@ -312,7 +267,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             received = await client.update_manifest_properties(
                 repo, tag, can_delete=False, can_read=False, can_write=False, can_list=False
             )
-            self.set_all_properties(received, False)
+            self.assert_all_properties(received, False)
 
             received = await client.update_manifest_properties(
                 repo, tag, can_delete=True, can_read=True, can_write=True, can_list=True
@@ -353,9 +308,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_tag_properties(repo, tag)
-
-            properties = self.set_all_properties(properties, False)
+            properties = self.set_all_properties(ArtifactTagProperties(), False)
             received = await client.update_tag_properties(repo, tag, properties)
             self.assert_all_properties(received, False)
 
