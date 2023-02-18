@@ -719,8 +719,8 @@ class CustomLROPolling(PollingMethod):
         self._kwargs = kwargs
 
     def initialize(self, client, initial_response, deserialization_callback):
-        """
-        """        
+        """Set the initial status of this LRO.
+        """ 
         self.client = client
         self.file_id = response.file_id
         self._pipeline_response = self._initial_response = initial_response
@@ -728,23 +728,25 @@ class CustomLROPolling(PollingMethod):
         self._command = functools.partial(self.client.get_upload_file, file_id=self.file_id, **self._kwargs)
 
     def status(self) -> str:
-        """
+        """Return the current status as a string.
+
+        :rtype: str
         """
         return "Succeeded" if self._finished else "InProgress"
 
     def finished(self) -> bool:
-        """
+        """Is this polling finished?
+
+        :rtype: bool
         """
         return self._finished
 
     def resource(self) -> JSON:
-        """
-        """
+        """Return the built resource."""
         return self._resource
 
     def run(self) -> None:
-        """
-        """
+        """The polling loop"""
         while not self.finished():
             try:
                 self._resource = self._command()
@@ -812,8 +814,7 @@ method so that the custom poller is used.
 class CustomLROPoller(LROPoller[PollingReturnType]):
 
     def cancel(self, **kwargs) -> None:
-        """
-        """
+        """Cancel the upload"""
         return self.polling_method().client.cancel_upload_file(self.polling_method().file_id, **kwargs)
 
     @classmethod
@@ -834,7 +835,7 @@ And now, to plug into the client code:
 ```python
 class ServiceOperations:
 
-    def begin_upload(self, data: AnyStr, **kwargs) -> LROPoller[JSON]:
+    def begin_upload(self, data: AnyStr, **kwargs) -> CustomLROPoller[JSON]:
         continuation_token = kwargs.pop("continuation_token", None)
         polling_method = CustomLROBasePolling(**kwargs)
         if continuation_token is not None:
