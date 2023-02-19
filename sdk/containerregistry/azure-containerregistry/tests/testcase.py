@@ -43,12 +43,6 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
                 )
             return DefaultAzureCredential(**kwargs)
         return FakeTokenCredential()
-    
-    def get_repo_name(self, prefix):
-        if self.is_live:
-            suffix = datetime.now().strftime("%H%M%S")
-            return self.get_resource_name(prefix + suffix)
-        return self.get_resource_name(prefix)
 
     def create_registry_client(self, endpoint, **kwargs):
         authority = get_authority(endpoint)

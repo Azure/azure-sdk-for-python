@@ -69,7 +69,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_delete_repository(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [repo])
         with self.create_registry_client(containerregistry_endpoint) as client:
             client.delete_repository(repo)
@@ -95,7 +95,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_repository_properties(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
         with self.create_registry_client(containerregistry_endpoint) as client:
@@ -113,7 +113,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_repository_properties_kwargs(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -214,7 +214,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_get_manifest_properties(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -231,7 +231,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -251,7 +251,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_manifest_properties(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -270,7 +270,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_manifest_properties_kwargs(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -291,7 +291,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_get_tag_properties(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -314,7 +314,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_tag_properties(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -333,7 +333,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_update_tag_properties_kwargs(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -354,7 +354,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tag_properties(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
@@ -373,7 +373,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
@@ -396,7 +396,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
@@ -419,7 +419,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_delete_tag(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -443,7 +443,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_delete_manifest(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         tag = self.get_resource_name("tag")
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
 
@@ -519,7 +519,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_upload_oci_manifest(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         with self.create_registry_client(containerregistry_endpoint) as client:
             self.upload_manifest_prerequisites(repo, client)
@@ -539,7 +539,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
         manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
         manifest = _deserialize_manifest(manifest_stream)     
@@ -561,7 +561,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         manifest = self.create_oci_manifest()
         with self.create_registry_client(containerregistry_endpoint) as client:
             tag = "v1"
@@ -592,7 +592,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
         manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
         manifest = _deserialize_manifest(manifest_stream)
@@ -625,7 +625,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy
     def test_upload_blob(self, containerregistry_endpoint):
-        repo = self.get_repo_name("repo")
+        repo = self.get_resource_name("repo")
         blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
         path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
 
