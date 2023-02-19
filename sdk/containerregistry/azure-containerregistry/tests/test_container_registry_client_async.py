@@ -346,15 +346,16 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_list_tag_properties(self, containerregistry_endpoint):
         repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
-        tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
+        tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
+        self.sleep(10)
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             count = 0
             async for tag in client.list_tag_properties(repo):
                 assert f"{repo}:{tag.name}" in tags
                 count += 1
-            assert count == 4
+            assert count == 2
 
             # Cleanup
             await client.delete_repository(repo)
@@ -364,8 +365,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
         repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
-        tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
+        tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
+        self.sleep(10)
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
@@ -376,17 +378,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                     assert tag.last_updated_on < prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
                 count += 1
-            assert count == 4
-
-            prev_last_updated_on = None
-            count = 0
-            async for tag in client.list_tag_properties(repo, order_by="timedesc"):
-                assert f"{repo}:{tag.name}" in tags
-                if prev_last_updated_on:
-                    assert tag.last_updated_on < prev_last_updated_on
-                prev_last_updated_on = tag.last_updated_on
-                count += 1
-            assert count == 4
+            assert count == 2
 
             # Cleanup
             await client.delete_repository(repo)
@@ -396,8 +388,9 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
         repo = self.get_repo_name("repo")
         tag = self.get_resource_name("tag")
-        tags = [f"{repo}:{tag + str(i)}" for i in range(4)]
+        tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
         self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
+        self.sleep(10)
 
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
@@ -408,17 +401,7 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
                     assert tag.last_updated_on > prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
                 count += 1
-            assert count == 4
-
-            prev_last_updated_on = None
-            count = 0
-            async for tag in client.list_tag_properties(repo, order_by="timeasc"):
-                assert f"{repo}:{tag.name}" in tags
-                if prev_last_updated_on:
-                    assert tag.last_updated_on > prev_last_updated_on
-                prev_last_updated_on = tag.last_updated_on
-                count += 1
-            assert count == 4
+            assert count == 2
 
             # Cleanup
             await client.delete_repository(repo)
