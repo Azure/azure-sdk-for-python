@@ -431,6 +431,13 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     )
 
 
+class Gender(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice gender type."""
+
+    MALE = "male"
+    FEMALE = "female"
+
+
 class CallMediaRecognizeOptions(object):
     """
     Options to configure the Recognize operation.

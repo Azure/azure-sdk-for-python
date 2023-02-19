@@ -24,7 +24,7 @@ TextSource as TextSourceInternal
 from ._generated.models import PlaySourceType
 from ._models import  (
     CallMediaRecognizeOptions, CallMediaRecognizeDtmfOptions, CallMediaRecognizeChoiceOptions, 
-    PlaySource, FileSource, TextSource
+    PlaySource, FileSource, TextSource, CommunicationIdentifier
 )
 
 if TYPE_CHECKING:
@@ -59,7 +59,7 @@ class CallMediaClient(object):
     def play(
         self, 
         play_source: PlaySource, 
-        play_to: List[CommunicationIdentifierModel],
+        play_to: List[CommunicationIdentifier],
         **kwargs
     ):
         """
@@ -88,7 +88,7 @@ class CallMediaClient(object):
                 voice_name=play_source.voice_name
             )
             play_source_internal = PlaySourceInternal(
-                source_type=PlaySource.TEXT,
+                source_type=PlaySourceType.TEXT,
                 play_source_id=play_source.play_source_id,
                 text_source=text_source
             )
