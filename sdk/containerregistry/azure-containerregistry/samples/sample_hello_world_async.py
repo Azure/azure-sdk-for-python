@@ -7,18 +7,19 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_delete_images_async.py
+FILE: sample_hello_world_async.py
 
 DESCRIPTION:
-    This sample demonstrates deleting all but the most recent three images for each repository.
+    This sample demonstrate creating a ContainerRegistryClient and iterating
+    through the collection of tags in the repository with anonymous access.
 
 USAGE:
-    python sample_delete_images_async.py
+    python sample_hello_world_async.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has at least four repositories, run load_registry() if you don't have.
+    This sample assumes your registry has a repository "library/hello-world", run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
     2) CONTAINERREGISTRY_TENANT_ID - The service principal's tenant ID
@@ -30,50 +31,49 @@ USAGE:
 import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ArtifactManifestOrder
 from azure.containerregistry.aio import ContainerRegistryClient
-from samples.sample_utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
-class DeleteImagesAsync(object):
+class HelloWorldAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(
-            self.authority, exclude_environment_credential=True, is_async=True
-        )
+        self.credential = get_credential(self.authority, is_async=True)
 
-    async def delete_images(self):
+    async def basic_sample(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
+        # [START create_registry_client]
         async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
-            async for repository in client.list_repository_names():
-                print(repository)
-
-                # Keep the three most recent images, delete everything else
-                manifest_count = 0
-                async for manifest in client.list_manifest_properties(
-                    repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
-                ):
-                    manifest_count += 1
-                    if manifest_count > 3:
-                        # Make sure will have the permission to delete the manifest later
+        # [END create_registry_client]
+            # Iterate through all the repositories
+            async for repository_name in client.list_repository_names():
+                print(repository_name)
+                if repository_name == "library/hello-world":
+                    print("Tags of repository library/hello-world:")
+                    async for tag in client.list_tag_properties(repository_name):
+                        print(tag.name)
+                        
+                        # Make sure will have the permission to delete the repository later
                         await client.update_manifest_properties(
-                            repository,
-                            manifest.digest,
+                            repository_name,
+                            tag.name,
                             can_write=True,
                             can_delete=True
                         )
 
-                        print(f"Deleting {repository}:{manifest.digest}")
-                        await client.delete_manifest(repository, manifest.digest)
+                    print("Deleting " + repository_name)
+                    # [START delete_repository]
+                    await client.delete_repository(repository_name)
+                    # [END delete_repository]
 
 
 async def main():
-    sample = DeleteImagesAsync()
-    await sample.delete_images()
+    sample = HelloWorldAsync()
+    await sample.basic_sample()
 
 
 if __name__ == "__main__":

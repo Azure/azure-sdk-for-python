@@ -7,18 +7,18 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_set_image_properties.py
+FILE: sample_set_image_properties_async.py
 
 DESCRIPTION:
     This sample demonstrates setting an image's properties on the tag so it can't be overwritten during a lengthy
     deployment.
 
 USAGE:
-    python sample_set_image_properties.py
+    python sample_set_image_properties_async.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
-    
+
     This sample assumes your registry has a repository "library/hello-world" with image tagged "v1",
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
@@ -29,26 +29,27 @@ USAGE:
     5) CONTAINERREGISTRY_RESOURCE_GROUP - The resource group name
     6) CONTAINERREGISTRY_REGISTRY_NAME - The registry name
 """
+import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
-from azure.containerregistry import ContainerRegistryClient
+from azure.containerregistry.aio import ContainerRegistryClient
 from utilities import load_registry, get_authority, get_audience, get_credential
 
 
-class SetImageProperties(object):
+class SetImagePropertiesAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(self.authority)
+        self.credential = get_credential(self.authority, is_async=True)
 
-    def set_image_properties(self):
+    async def set_image_properties(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
-        with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
+        async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
             # Set permissions on the v1 image's "latest" tag
-            client.update_manifest_properties(
+            await client.update_manifest_properties(
                 "library/hello-world",
                 "v1",
                 can_write=False,
@@ -61,6 +62,10 @@ class SetImageProperties(object):
             # (which references the same image), it would succeed.
 
 
+async def main():
+    sample = SetImagePropertiesAsync()
+    await sample.set_image_properties()
+
+
 if __name__ == "__main__":
-    sample = SetImageProperties()
-    sample.set_image_properties()
+    asyncio.run(main())

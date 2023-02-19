@@ -7,19 +7,18 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_set_image_properties_async.py
+FILE: sample_delete_images_async.py
 
 DESCRIPTION:
-    This sample demonstrates setting an image's properties on the tag so it can't be overwritten during a lengthy
-    deployment.
+    This sample demonstrates deleting all but the most recent three images for each repository.
 
 USAGE:
-    python sample_set_image_properties_async.py
+    python sample_delete_images_async.py
 
     Set the environment variables with your own values before running the sample:
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
 
-    This sample assumes your registry has a repository "library/hello-world" with image tagged "v1",
+    This sample assumes your registry has at least one repository with more than three images,
     run load_registry() if you don't have.
     Set the environment variables with your own values before running load_registry():
     1) CONTAINERREGISTRY_ENDPOINT - The URL of you Container Registry account
@@ -32,41 +31,48 @@ USAGE:
 import asyncio
 import os
 from dotenv import find_dotenv, load_dotenv
+from azure.containerregistry import ArtifactManifestOrder
 from azure.containerregistry.aio import ContainerRegistryClient
-from samples.sample_utilities import load_registry, get_authority, get_audience, get_credential
+from utilities import load_registry, get_authority, get_audience, get_credential
 
 
-class SetImagePropertiesAsync(object):
+class DeleteImagesAsync(object):
     def __init__(self):
         load_dotenv(find_dotenv())
         self.endpoint = os.environ.get("CONTAINERREGISTRY_ENDPOINT")
         self.authority = get_authority(self.endpoint)
         self.audience = get_audience(self.authority)
-        self.credential = get_credential(
-            self.authority, exclude_environment_credential=True, is_async=True
-        )
+        self.credential = get_credential(self.authority, is_async=True)
 
-    async def set_image_properties(self):
+    async def delete_images(self):
         load_registry()
         # Instantiate an instance of ContainerRegistryClient
         async with ContainerRegistryClient(self.endpoint, self.credential, audience=self.audience) as client:
-            # Set permissions on the v1 image's "latest" tag
-            await client.update_manifest_properties(
-                "library/hello-world",
-                "v1",
-                can_write=False,
-                can_delete=False
-            )
-            # After this update, if someone were to push an update to `<registry endpoint>\library\hello-world:v1`,
-            # it would fail. It's worth noting that if this image also had another tag, such as `latest`,
-            # and that tag did not have permissions set to prevent reads or deletes, the image could still be
-            # overwritten. For example, if someone were to push an update to `<registry endpoint>\hello-world:latest`
-            # (which references the same image), it would succeed.
+            async for repository in client.list_repository_names():
+                print(repository)
+
+                # Keep the three most recent images, delete everything else
+                manifest_count = 0
+                async for manifest in client.list_manifest_properties(
+                    repository, order_by=ArtifactManifestOrder.LAST_UPDATED_ON_DESCENDING
+                ):
+                    manifest_count += 1
+                    if manifest_count > 3:
+                        # Make sure will have the permission to delete the manifest later
+                        await client.update_manifest_properties(
+                            repository,
+                            manifest.digest,
+                            can_write=True,
+                            can_delete=True
+                        )
+
+                        print(f"Deleting {repository}:{manifest.digest}")
+                        await client.delete_manifest(repository, manifest.digest)
 
 
 async def main():
-    sample = SetImagePropertiesAsync()
-    await sample.set_image_properties()
+    sample = DeleteImagesAsync()
+    await sample.delete_images()
 
 
 if __name__ == "__main__":
