@@ -7,8 +7,6 @@ import logging
 import os
 import pytest
 
-from datetime import datetime
-
 from azure.containerregistry import ContainerRegistryClient
 from azure.containerregistry._helpers import _is_tag, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest

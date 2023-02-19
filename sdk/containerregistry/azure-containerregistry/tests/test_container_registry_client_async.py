@@ -19,7 +19,7 @@ from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationErr
 from azure.core.async_paging import AsyncItemPaged
 from azure.identity import AzureAuthorityHosts
 from asynctestcase import AsyncContainerRegistryTestClass, get_authority, get_audience
-from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
+from constants import HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils.aio import recorded_by_proxy_async
 

@@ -21,7 +21,7 @@ from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationErr
 from azure.core.paging import ItemPaged
 from azure.identity import AzureAuthorityHosts
 from testcase import ContainerRegistryTestClass, get_authority, get_audience
-from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
+from constants import HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils import recorded_by_proxy
 
