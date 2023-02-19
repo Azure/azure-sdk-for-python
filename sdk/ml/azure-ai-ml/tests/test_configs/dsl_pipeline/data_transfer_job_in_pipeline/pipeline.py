@@ -13,7 +13,6 @@ parent_dir = str(Path(__file__).parent)
 def generate_dsl_pipeline() -> PipelineJob:
     path_source_s3 = "test1/*"
     query_source_sql = "select top(10) Name from SalesLT.ProductCategory"
-    connection_target_s3 = "azureml:my-s3-connection"
 
     connection_target_azuresql = 'azureml:my_export_azuresqldb_connection'
     table_name = "dbo.Persons"
@@ -24,7 +23,7 @@ def generate_dsl_pipeline() -> PipelineJob:
     merge_files_func = load_component(parent_dir + "/copy_data/merge_files.yaml")
 
     @dsl.pipeline(description="submit a pipeline with data transfer job")
-    def data_transfer_copy_pipeline_from_yaml(query_source_sql, path_source_s3, connection_target_s3):
+    def data_transfer_copy_pipeline_from_yaml(query_source_sql, path_source_s3):
         source_snowflake = Database(query=query_source_sql, connection='azureml:my_azuresqldb_connection')
         snowflake_blob = import_data(
             source=source_snowflake,
@@ -41,7 +40,6 @@ def generate_dsl_pipeline() -> PipelineJob:
     pipeline = data_transfer_copy_pipeline_from_yaml(
         query_source_sql=query_source_sql,
         path_source_s3=path_source_s3,
-        connection_target_s3=connection_target_s3,
         )
 
     pipeline.settings.default_compute = "adftest"

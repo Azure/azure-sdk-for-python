@@ -85,18 +85,28 @@ class DataTransferComponent(Component):  # pylint: disable=too-many-instance-att
         elif isinstance(io_dict, FileSystem):
             component_io = FileSystem()
         else:
-            data_type = io_dict.get("type", None)
-            if data_type == ExternalDataType.DATABASE:
-                component_io = Database()
-            elif data_type == ExternalDataType.FILE_SYSTEM:
-                component_io = FileSystem()
+            if isinstance(io_dict, dict):
+                data_type = io_dict.get("type", None)
+                if data_type == ExternalDataType.DATABASE:
+                    component_io = Database()
+                elif data_type == ExternalDataType.FILE_SYSTEM:
+                    component_io = FileSystem()
+                else:
+                    msg = "Type in source or sink only support {} and {}, currently got {}."
+                    raise ValidationException(
+                        message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
+                        no_personal_data_message=msg.format(
+                            ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
+                        ),
+                        target=ErrorTarget.COMPONENT,
+                        error_category=ErrorCategory.USER_ERROR,
+                        error_type=ValidationErrorType.INVALID_VALUE,
+                    )
             else:
-                msg = "Source or sink only support type {} and {}, currently got {}."
+                msg = "Source or sink only support dict, Database and FileSystem"
                 raise ValidationException(
-                    message=msg.format(ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, data_type),
-                    no_personal_data_message=msg.format(
-                        ExternalDataType.DATABASE, ExternalDataType.FILE_SYSTEM, "data_type"
-                    ),
+                    message=msg,
+                    no_personal_data_message=msg,
                     target=ErrorTarget.COMPONENT,
                     error_category=ErrorCategory.USER_ERROR,
                     error_type=ValidationErrorType.INVALID_VALUE,
@@ -150,52 +160,6 @@ class DataTransferCopyComponent(DataTransferComponent):
         :rtype: str
         """
         return self._data_copy_mode
-
-    def _customized_validate(self):
-        validation_result = super(DataTransferCopyComponent, self)._customized_validate()
-        validation_result.merge_with(self._validate_copy())
-        return validation_result
-
-    def _validate_copy(self):
-        validation_result = self._create_empty_validation_result()
-        validation_result.merge_with(self._validate_input_output_mapping())
-        return validation_result
-
-    def _validate_input_output_mapping(self):
-        validation_result = self._create_empty_validation_result()
-        inputs_count = len(self.inputs)
-        outputs_count = len(self.outputs)
-        if outputs_count != 1:
-            msg = "Only support single output in {}, but there're {} outputs."
-            validation_result.append_error(
-                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count), yaml_path="outputs"
-            )
-        else:
-            input_type = None
-            output_type = None
-            if inputs_count == 1:
-                for _, input_data in self.inputs.items():
-                    input_type = input_data.type
-                for _, output_data in self.outputs.items():
-                    output_type = output_data.type
-                if input_type is None or output_type is None or input_type != output_type:
-                    msg = "Input type {} doesn't exactly match with output type {} in task {}"
-                    validation_result.append_error(
-                        message=msg.format(input_type, output_type, DataTransferTaskType.COPY_DATA), yaml_path="outputs"
-                    )
-            elif inputs_count > 1:
-                for _, output_data in self.outputs.items():
-                    output_type = output_data.type
-                if output_type is None or output_type != AssetTypes.URI_FOLDER:
-                    msg = "output type {} need to be {} in task {}"
-                    validation_result.append_error(
-                        message=msg.format(output_type, AssetTypes.URI_FOLDER, DataTransferTaskType.COPY_DATA),
-                        yaml_path="outputs",
-                    )
-            else:
-                msg = "Inputs must be set in task {}."
-                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path="outputs")
-        return validation_result
 
 
 class DataTransferImportComponent(DataTransferComponent):

@@ -189,6 +189,7 @@ def copy_data(
         inputs=job_inputs,
         outputs=job_outputs,
         task=task,
+        data_copy_mode=data_copy_mode,
         **kwargs,
     )
     return data_transfer_copy_obj
@@ -244,7 +245,7 @@ def import_data(
     component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
     component = kwargs.pop("component", None)
     if component is None:
-        if source.type == ExternalDataType.DATABASE:
+        if source and source.type == ExternalDataType.DATABASE:
             component_id = DataTransferBuiltinComponentUri.IMPORT_DATABASE
         else:
             component_id = DataTransferBuiltinComponentUri.IMPORT_FILE_SYSTEM
@@ -327,7 +328,7 @@ def export_data(
     component = kwargs.pop("component", None)
 
     if component is None:
-        if sink.type == ExternalDataType.DATABASE:
+        if sink and sink.type == ExternalDataType.DATABASE:
             component_id = DataTransferBuiltinComponentUri.EXPORT_DATABASE
         else:
             component_id = DataTransferBuiltinComponentUri.EXPORT_FILE_SYSTEM

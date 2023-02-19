@@ -7,7 +7,7 @@
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load, validates, ValidationError
+from marshmallow import INCLUDE, fields, post_load, validates, ValidationError, pre_load
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -37,6 +37,40 @@ class DataTransferCopyComponentSchema(DataTransferComponentSchemaMixin):
         keys=fields.Str(),
         values=NestedField(InputPortSchema),
     )
+
+    @pre_load
+    def _validate_input_output_mapping(self, data, **kwargs):
+        inputs = data.get("inputs", {})
+        outputs = data.get("outputs", {})
+        inputs_count = len(inputs)
+        outputs_count = len(outputs)
+        if outputs_count != 1:
+            msg = "Only support single output in {}, but there're {} outputs."
+            raise ValidationError(message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count), field_name="outputs")
+        else:
+            input_type = None
+            output_type = None
+            if inputs_count == 1:
+                for _, input_data in inputs.items():
+                    input_type = input_data.get("type", None)
+                for _, output_data in outputs.items():
+                    output_type = output_data.get("type", None)
+                if input_type is None or output_type is None or input_type != output_type:
+                    msg = "Input type {} doesn't exactly match with output type {} in task {}"
+                    raise ValidationError(message=msg.format(input_type, output_type, DataTransferTaskType.COPY_DATA),
+                                          field_name="outputs")
+            elif inputs_count > 1:
+                for _, output_data in outputs.items():
+                    output_type = output_data.get("type", None)
+                if output_type is None or output_type != AssetTypes.URI_FOLDER:
+                    msg = "output type {} need to be {} in task {}"
+                    raise ValidationError(message=msg.format(output_type, AssetTypes.URI_FOLDER, DataTransferTaskType.COPY_DATA), field_name="outputs")
+            else:
+                msg = "Inputs must be set in task {}."
+                raise ValidationError(
+                    message=msg.format(DataTransferTaskType.COPY_DATA),
+                    field_name="inputs")
+        return data
 
 
 class SinkSourceSchema(metaclass=PatchedSchemaMeta):

@@ -7,7 +7,6 @@ settings:
 inputs:
   path_source_s3: test1/*
   query_source_sql: select top(10) Name from SalesLT.ProductCategory
-  connection_target_s3: azureml:my-s3-connection
 
 outputs:
   merged_blob:

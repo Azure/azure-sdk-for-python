@@ -36,7 +36,7 @@ class PipelineDataTransferCopyJobSchema(DataTransferCopyJobSchema):
 class PipelineDataTransferImportJobSchema(DataTransferImportJobSchema):
     outputs = fields.Dict(
         keys=fields.Str(),
-        values=UnionField([NestedField(OutputSchema)], allow_none=True),
+        values=UnionField([NestedField(OutputSchema), fields.Str()], allow_none=True),
     )
 
     @post_load

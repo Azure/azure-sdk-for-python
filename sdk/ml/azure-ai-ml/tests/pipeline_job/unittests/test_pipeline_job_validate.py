@@ -9,8 +9,9 @@ import pytest
 from marshmallow import ValidationError
 from pytest_mock import MockFixture
 
-from azure.ai.ml import Input, MLClient, dsl, load_component, load_job
+from azure.ai.ml import Input, Output, MLClient, dsl, load_component, load_job
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes, SERVERLESS_COMPUTE
+from azure.ai.ml.constants._component import DataTransferTaskType, DataCopyMode
 from azure.ai.ml.entities import Choice, CommandComponent, PipelineJob
 from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import ValidationException, UserErrorException
@@ -282,6 +283,32 @@ class TestPipelineJobValidate:
             assert validation_result.passed
         else:
             assert validation_result.error_messages == expected_error_message
+
+    @pytest.mark.parametrize(
+        "pipeline_output_path, error_message",
+        [
+            (
+                "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_invalid_output_type.yaml",
+                "Outputs field only support type mltable for database and uri_folder for file_system",
+            ),
+            (
+                    "./tests/test_configs/pipeline_jobs/data_transfer/invalid/import_data_invalid_output_type_binding.yaml",
+                    "Outputs field only support type mltable for database and uri_folder for file_system",
+            ),
+            (
+                    "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type.yaml",
+                    "Inputs field only support type uri_file for database and uri_folder for file_system",
+            ),
+            (
+                    "./tests/test_configs/pipeline_jobs/data_transfer/invalid/export_data_invalid_input_type_binding.yaml",
+                    "Inputs field only support type uri_file for database and uri_folder for file_system",
+            ),
+        ],
+    )
+    def test_data_transfer_job(self, pipeline_output_path, error_message):
+        pipeline = load_job(source=pipeline_output_path)
+        validate_result = pipeline._validate()
+        assert error_message in str(validate_result.error_messages)
 
 
 @pytest.mark.unittest
@@ -715,3 +742,103 @@ class TestDSLPipelineJobValidate:
         job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_with_registered_pipeline_component.yml")
         validation_result = job._validate_compute_is_set()
         assert validation_result.passed
+
+    def test_dsl_data_transfer_copy_pipeline_with_invalid_outputs(self) -> None:
+        from azure.ai.ml.data_transfer import copy_data
+        cosmos_folder = Input(
+            path="/data/iris_model",
+            type=AssetTypes.URI_FOLDER,
+        )
+        cosmos_folder_dup = Input(
+            path="/data/iris_model",
+            type=AssetTypes.URI_FOLDER,
+        )
+
+        inputs = {
+            "folder1": cosmos_folder,
+            "folder2": cosmos_folder_dup,
+        }
+        outputs = {"output_folder": Output(type=AssetTypes.URI_FILE)}
+
+        merge_files_func = copy_data(
+            inputs=inputs,
+            outputs=outputs,
+            task=DataTransferTaskType.COPY_DATA,
+            data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
+        )
+
+        # Define pipeline
+        @dsl.pipeline(description="submit a pipeline with data transfer copy job")
+        def data_transfer_copy_pipeline_from_builder(cosmos_folder, cosmos_folder_dup):
+            merge_files = merge_files_func(folder1=cosmos_folder, folder2=cosmos_folder_dup)
+            return {"merged_blob": merge_files.outputs.output_folder}
+
+        pipeline = data_transfer_copy_pipeline_from_builder(
+            cosmos_folder=cosmos_folder, cosmos_folder_dup=cosmos_folder_dup
+        )
+
+        validate_result = pipeline._validate()
+        assert validate_result.error_messages == {
+            'jobs.merge_files.component.outputs': 'output type uri_file need to be uri_folder in task copy_data',
+            'jobs.merge_files.compute': 'Compute not set'
+        }
+
+    def test_dsl_data_transfer_import_pipeline_with_invalid_outputs(self) -> None:
+        query_source_snowflake = "select * from TPCH_SF1000.PARTSUPP limit 10"
+        connection_target_azuresql = "azureml:my_snowflake_connection"
+        outputs = {
+            "test": Output(
+                type=AssetTypes.URI_FOLDER,
+                path="azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/"),
+            "sink": Output(
+                type=AssetTypes.URI_FOLDER,
+                path="azureml://datastores/workspaceblobstore_sas/paths/importjob/${{name}}/output_dir/snowflake/",
+            )
+        }
+
+        @dsl.pipeline(description="submit a pipeline with data transfer import database job")
+        def data_transfer_import_database_pipeline_from_builder(query_source_snowflake, connection_target_azuresql):
+            from azure.ai.ml.data_transfer import Database, import_data
+
+            source_snowflake = Database(query=query_source_snowflake, connection=connection_target_azuresql)
+            snowflake_blob = import_data(
+                source=source_snowflake,
+                outputs=outputs,
+            )
+
+        pipeline = data_transfer_import_database_pipeline_from_builder(query_source_snowflake,
+                                                                       connection_target_azuresql)
+        validate_result = pipeline._validate()
+        assert validate_result.error_messages == {
+            'jobs.snowflake_blob.component.outputs': 'outputs field only support one output called sink in task type '
+                                                     'import_data.',
+            'jobs.snowflake_blob.compute': 'Compute not set',
+            'jobs.snowflake_blob.outputs.sink': 'Outputs field only support one output called sink in import task',
+            'jobs.snowflake_blob.outputs.sink.type': 'Outputs field only support type mltable for database and uri_'
+                                                     'folder for file_system'}
+
+    def test_dsl_data_transfer_export_pipeline_with_invalid_inputs(self) -> None:
+        path_source_s3 = "s3://my_bucket/my_folder"
+        connection_target = "azureml:my_s3_connection"
+
+        my_cosmos_folder = Input(type=AssetTypes.URI_FILE, path="azureml://datastores/my_cosmos/paths/source_cosmos")
+
+        @dsl.pipeline(description="submit a pipeline with data transfer export file system job")
+        def data_transfer_export_file_system_pipeline_from_builder(path_source_s3, connection_target, cosmos_folder):
+            from azure.ai.ml.data_transfer import FileSystem, export_data
+
+            source_snowflake = FileSystem(path=path_source_s3, connection=connection_target)
+            s3_blob = export_data(inputs={"source": cosmos_folder, "test": my_cosmos_folder}, sink=source_snowflake)
+
+        pipeline = data_transfer_export_file_system_pipeline_from_builder(
+            path_source_s3, connection_target, my_cosmos_folder
+        )
+
+        validate_result = pipeline._validate()
+        assert validate_result.error_messages == {
+            'jobs.s3_blob.component.inputs': 'inputs field only support one input called source in task type '
+                                             'export_data.',
+            'jobs.s3_blob.compute': 'Compute not set',
+            'jobs.s3_blob.inputs.source': 'Inputs field only support one input called source in export task',
+            'jobs.s3_blob.inputs.source.type': 'Inputs field only support type uri_file for database and uri_folder'
+                                               'for file_system'}
