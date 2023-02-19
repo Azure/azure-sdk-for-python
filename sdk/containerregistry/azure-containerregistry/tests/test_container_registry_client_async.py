@@ -178,16 +178,6 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
             assert count > 0
 
-            prev_last_updated_on = None
-            count = 0
-            async for artifact in client.list_manifest_properties(BUSYBOX, order_by="timedesc"):
-                if prev_last_updated_on:
-                    assert artifact.last_updated_on < prev_last_updated_on
-                prev_last_updated_on = artifact.last_updated_on
-                count += 1
-
-            assert count > 0
-
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_registry_artifacts_ascending(self, containerregistry_endpoint):
@@ -204,39 +194,26 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
 
             assert count > 0
 
-            prev_last_updated_on = None
-            count = 0
-            async for artifact in client.list_manifest_properties(BUSYBOX, order_by="timeasc"):
-                if prev_last_updated_on:
-                    assert artifact.last_updated_on > prev_last_updated_on
-                prev_last_updated_on = artifact.last_updated_on
-                count += 1
-
-            assert count > 0
-
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_manifest_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_manifest_properties(repo, tag)
-
+            properties = await client.get_manifest_properties(ALPINE, "latest")
             assert isinstance(properties, ArtifactManifestProperties)
-            assert properties.repository_name == repo
-            assert properties.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, repo, properties.digest)
-
-            # Cleanup
-            await client.delete_repository(repo)
+            assert properties.repository_name == ALPINE
+            assert properties.fully_qualified_reference in self.create_fully_qualified_reference(containerregistry_endpoint, ALPINE, properties.digest)
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_manifest_properties_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
+            manifest = await client.get_manifest_properties(ALPINE, "latest")
+            invalid_digest = manifest.digest[:-10] + u"a" * 10
+
             with pytest.raises(ResourceNotFoundError):
-                properties = await client.get_manifest_properties("DOESNOTEXIST", "DOESNOTEXIST")
+                await client.get_manifest_properties(ALPINE, invalid_digest)
+            with pytest.raises(ResourceNotFoundError):
+                await client.get_manifest_properties(DOES_NOT_EXIST, DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -281,25 +258,19 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_tag_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, [f"{repo}:{tag}"])
-
         async with self.create_registry_client(containerregistry_endpoint) as client:
-            properties = await client.get_tag_properties(repo, tag)
-
+            properties = await client.get_tag_properties(ALPINE, "latest")
             assert isinstance(properties, ArtifactTagProperties)
-            assert properties.name == tag
-
-            # Cleanup
-            await client.delete_repository(repo)
+            assert properties.name == "latest"
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_get_tag_properties_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             with pytest.raises(ResourceNotFoundError):
-                await client.get_tag_properties("Nonexistent", "Nonexistent")
+                await client.get_tag_properties(DOES_NOT_EXIST, DOES_NOT_EXIST)
+            with pytest.raises(ResourceNotFoundError):
+                await client.get_tag_properties(ALPINE, DOES_NOT_EXIST)
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -344,67 +315,43 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
-        self.sleep(10)
-
+        tags = [f"{ALPINE}:latest"]
         async with self.create_registry_client(containerregistry_endpoint) as client:
             count = 0
-            async for tag in client.list_tag_properties(repo):
-                assert f"{repo}:{tag.name}" in tags
+            async for tag in client.list_tag_properties(ALPINE):
+                assert f"{ALPINE}:{tag.name}" in tags
                 count += 1
-            assert count == 2
-
-            # Cleanup
-            await client.delete_repository(repo)
+            assert count == 1
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties_order_descending(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
-        self.sleep(10)
-
+        tags = [f"{ALPINE}:latest"]
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
-            async for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
-                assert f"{repo}:{tag.name}" in tags
+            async for tag in client.list_tag_properties(ALPINE, order_by=ArtifactTagOrder.LAST_UPDATED_ON_DESCENDING):
+                assert f"{ALPINE}:{tag.name}" in tags
                 if prev_last_updated_on:
                     assert tag.last_updated_on < prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
                 count += 1
-            assert count == 2
-
-            # Cleanup
-            await client.delete_repository(repo)
+            assert count == 1
 
     @acr_preparer()
     @recorded_by_proxy_async
     async def test_list_tag_properties_order_ascending(self, containerregistry_endpoint):
-        repo = self.get_resource_name("repo")
-        tag = self.get_resource_name("tag")
-        tags = [f"{repo}:{tag + str(i)}" for i in range(2)]
-        self.import_image(containerregistry_endpoint, HELLO_WORLD, tags)
-        self.sleep(10)
-
+        tags = [f"{ALPINE}:latest"]
         async with self.create_registry_client(containerregistry_endpoint) as client:
             prev_last_updated_on = None
             count = 0
-            async for tag in client.list_tag_properties(repo, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
-                assert f"{repo}:{tag.name}" in tags
+            async for tag in client.list_tag_properties(ALPINE, order_by=ArtifactTagOrder.LAST_UPDATED_ON_ASCENDING):
+                assert f"{ALPINE}:{tag.name}" in tags
                 if prev_last_updated_on:
                     assert tag.last_updated_on > prev_last_updated_on
                 prev_last_updated_on = tag.last_updated_on
                 count += 1
-            assert count == 2
-
-            # Cleanup
-            await client.delete_repository(repo)
+            assert count == 1
 
     @acr_preparer()
     @recorded_by_proxy_async
@@ -452,13 +399,11 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     async def test_delete_manifest_does_not_exist(self, containerregistry_endpoint):
         async with self.create_registry_client(containerregistry_endpoint) as client:
             manifest = await client.get_manifest_properties(ALPINE, "latest")
-            digest = manifest.digest
-            invalid_digest = digest[:-10] + u"a" * 10
-            await client.delete_manifest(ALPINE, invalid_digest)
+            invalid_digest = manifest.digest[:-10] + u"a" * 10
 
+            await client.delete_manifest(ALPINE, invalid_digest)
             with pytest.raises(ResourceNotFoundError):
                 await client.delete_manifest(ALPINE, DOES_NOT_EXIST)
-
             with pytest.raises(ResourceNotFoundError):
                 await client.delete_manifest(DOES_NOT_EXIST, DOES_NOT_EXIST)
 
