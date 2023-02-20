@@ -4,10 +4,10 @@
 # ------------------------------------
 # pylint: skip-file
 
-from enum import Enum, EnumMeta
-import re
+from enum import Enum
 from six import with_metaclass
 from typing import Mapping, Optional, Union, Any
+
 try:
     from typing import Protocol, TypedDict
 except ImportError:
@@ -23,6 +23,7 @@ class CommunicationIdentifierKind(with_metaclass(CaseInsensitiveEnumMeta, str, E
     COMMUNICATION_USER = "communication_user"
     PHONE_NUMBER = "phone_number"
     MICROSOFT_TEAMS_USER = "microsoft_teams_user"
+    MICROSOFT_BOT = "microsoft_bot"
 
 
 class CommunicationCloudEnvironment(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
@@ -188,6 +189,62 @@ def _microsoft_teams_user_raw_id(identifier: MicrosoftTeamsUserIdentifier) -> st
     return '8:orgid:{}'.format(user_id)
 
 
+MicrosoftBotProperties = TypedDict(
+    'MicrosoftBotProperties',
+    bot_id=str,
+    is_global=bool,
+    cloud=Union[CommunicationCloudEnvironment, str]
+)
+
+
+class MicrosoftBotIdentifier(object):
+    """Represents an identifier for a Microsoft bot.
+
+    :ivar str raw_id: Optional raw ID of the identifier.
+    :ivar kind: The type of identifier.
+    :vartype kind: str or CommunicationIdentifierKind
+    :ivar Mapping properties: The properties of the identifier.
+     The keys in this mapping include:
+        - `bot_id`(str): The id of the Microsoft bot.
+        - `is_global` (bool): Set this to true if the bot is global.
+        - `cloud` (str): Cloud environment that this identifier belongs to.
+
+    :param str bot_id: Microsoft bot id.
+    :keyword bool is_global: `True` if the identifier is global. Default value is `False`.
+    :keyword cloud: Cloud environment that the bot belongs to. Default value is `PUBLIC`.
+    :paramtype cloud: str or ~azure.communication.chat.CommunicationCloudEnvironment
+    """
+    kind = CommunicationIdentifierKind.MICROSOFT_BOT
+
+    def __init__(self, bot_id, **kwargs):
+        # type: (str, Any) -> None
+        self.raw_id = kwargs.get('raw_id')
+        self.properties = MicrosoftBotProperties(
+            bot_id=bot_id,
+            is_global=kwargs.get('is_global', False),
+            cloud=kwargs.get('cloud') or CommunicationCloudEnvironment.PUBLIC
+        )
+        if self.raw_id is None:
+            self.raw_id = _microsoft_bot_raw_id(self)
+
+
+def _microsoft_bot_raw_id(identifier: MicrosoftBotIdentifier) -> str:
+    bot_id = identifier.properties['bot_id']
+    cloud = identifier.properties['cloud']
+    if identifier.properties['is_global']:
+        if cloud == CommunicationCloudEnvironment.DOD:
+            return '28:dod-global:{}'.format(bot_id)
+        elif cloud == CommunicationCloudEnvironment.GCCH:
+            return '28:gcch-global:{}'.format(bot_id)
+        return '28:{}'.format(bot_id)
+
+    if cloud == CommunicationCloudEnvironment.DOD:
+        return '28:dod:{}'.format(bot_id)
+    elif cloud == CommunicationCloudEnvironment.GCCH:
+        return '28:gcch:{}'.format(bot_id)
+    return '28:orgid:{}'.format(bot_id)
+
+
 def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     """
     Creates a CommunicationIdentifier from a given raw ID.
@@ -198,11 +255,17 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     """
     if raw_id.startswith('4:'):
         return PhoneNumberIdentifier(
-            value = raw_id[len('4:'):]
+            value=raw_id[len('4:'):]
         )
 
     segments = raw_id.split(':', maxsplit=2)
     if len(segments) < 3:
+        if len(segments) == 2 and segments[0] == '28':
+            return MicrosoftBotIdentifier(
+                bot_id=segments[1],
+                is_global=True,
+                cloud=CommunicationCloudEnvironment.PUBLIC
+            )
         return UnknownIdentifier(identifier=raw_id)
 
     prefix = '{}:{}:'.format(segments[0], segments[1])
@@ -216,23 +279,53 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
-            cloud='PUBLIC'
+            cloud=CommunicationCloudEnvironment.PUBLIC
         )
     elif prefix == '8:dod:':
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
-            cloud='DOD'
+            cloud=CommunicationCloudEnvironment.DOD
         )
     elif prefix == '8:gcch:':
         return MicrosoftTeamsUserIdentifier(
             user_id=suffix,
             is_anonymous=False,
-            cloud='GCCH'
+            cloud=CommunicationCloudEnvironment.GCCH
         )
     elif prefix in ['8:acs:', '8:spool:', '8:dod-acs:', '8:gcch-acs:']:
         return CommunicationUserIdentifier(
             id=raw_id
+        )
+    elif prefix == '28:gcch-global:':
+        return MicrosoftBotIdentifier(
+            bot_id=suffix,
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.GCCH
+        )
+    elif prefix == '28:orgid:':
+        return MicrosoftBotIdentifier(
+            bot_id=suffix,
+            is_global=False,
+            cloud=CommunicationCloudEnvironment.PUBLIC
+        )
+    elif prefix == '28:dod-global:':
+        return MicrosoftBotIdentifier(
+            bot_id=suffix,
+            is_global=True,
+            cloud=CommunicationCloudEnvironment.DOD
+        )
+    elif prefix == '28:gcch:':
+        return MicrosoftBotIdentifier(
+            bot_id=suffix,
+            is_global=False,
+            cloud=CommunicationCloudEnvironment.GCCH
+        )
+    elif prefix == '28:dod:':
+        return MicrosoftBotIdentifier(
+            bot_id=suffix,
+            is_global=False,
+            cloud=CommunicationCloudEnvironment.DOD
         )
     return UnknownIdentifier(
         identifier=raw_id
