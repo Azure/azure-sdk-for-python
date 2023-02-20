@@ -1,6 +1,6 @@
 # Release History
 
-## 23.0.0b2 (2023-02-16)
+## 23.0.0b2 (2023-02-20)
 
 ### Other Changes
 
