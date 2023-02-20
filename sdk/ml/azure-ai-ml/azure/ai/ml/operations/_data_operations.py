@@ -320,6 +320,19 @@ class DataOperations(_ScopeDependentOperations):
             raise ex
 
     def import_data(self, data_import: DataImport) -> Job:
+        """Returns the data import job that is creating the data asset.
+
+        :param data_import: DataImport object.
+        :type data_import: azure.ai.ml.entities.DataImport
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the being created Data artifact path is
+            already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataImport cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
+        :return: data import job object.
+        :rtype: ~azure.ai.ml.entities.Job
+        """
+
         import_job = DataTransferImportJob(
             compute="serverless",
             outputs={"sink": Output(type=data_import.type, path=data_import.path, name=data_import.name)},

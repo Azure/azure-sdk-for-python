@@ -15,7 +15,7 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 class DataImport(Data):
-    """Data for training and scoring.
+    """Data import job to create the data asset.
 
     :param name: Name of the resource.
     :type name: str
@@ -27,7 +27,7 @@ class DataImport(Data):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
-    :param path: The path to the asset on the datastore. This can be local or remote
+    :param path: The path to the asset being created by data import job.
     :type path: str
     :param type: The type of the asset. Valid values are uri_file, uri_folder, mltable. Defaults to uri_folder.
     :type type: Literal[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
