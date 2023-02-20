@@ -7,7 +7,7 @@
 from copy import deepcopy
 
 import yaml
-from marshmallow import INCLUDE, fields, post_load, validates, ValidationError, pre_load
+from marshmallow import INCLUDE, fields, post_load, validates, ValidationError
 
 from azure.ai.ml._schema.assets.asset import AnonymousAssetSchema
 from azure.ai.ml._schema.component.component import ComponentSchema

@@ -800,5 +800,6 @@ class TestDSLPipelineJobValidate:
                                              'export_data.',
             'jobs.s3_blob.compute': 'Compute not set',
             'jobs.s3_blob.inputs.source': 'Inputs field only support one input called source in export task',
-            'jobs.s3_blob.inputs.source.type': 'Inputs field only support type uri_file for database and uri_folder'
-                                               'for file_system'}
+            'jobs.s3_blob.inputs.source.type':
+                'Inputs field only support type uri_file for database and uri_folder for file_system'
+        }

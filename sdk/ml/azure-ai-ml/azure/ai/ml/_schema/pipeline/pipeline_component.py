@@ -84,8 +84,19 @@ def PipelineJobsField():
             NestedField(SparkSchema, unknown=INCLUDE),
             NestedField(PipelineSparkJobSchema),
         ],
-        NodeType.DATA_TRANSFER: [
-            TypeSensitiveUnionField(
+    }
+
+    # Note: the private node types only available when private preview flag opened before init of pipeline job
+    # schema class.
+    if is_private_preview_enabled():
+        pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema, unknown=INCLUDE)]
+        pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
+        pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema, unknown=INCLUDE)]
+
+    # Todo: Put data_transfer logic to the last to avoid error message conflict, open a item to track:
+    #  https://msdata.visualstudio.com/Vienna/_workitems/edit/2244262/
+    pipeline_enable_job_type[NodeType.DATA_TRANSFER] = [
+        TypeSensitiveUnionField(
                 {
                     DataTransferTaskType.COPY_DATA: [
                         NestedField(DataTransferCopySchema, unknown=INCLUDE),
@@ -103,15 +114,7 @@ def PipelineJobsField():
                 type_field_name="task",
                 unknown=INCLUDE
             )
-        ],
-    }
-
-    # Note: the private node types only available when private preview flag opened before init of pipeline job
-    # schema class.
-    if is_private_preview_enabled():
-        pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema, unknown=INCLUDE)]
-        pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
-        pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema, unknown=INCLUDE)]
+    ]
 
     pipeline_job_field = fields.Dict(
         keys=NodeNameStr(),
