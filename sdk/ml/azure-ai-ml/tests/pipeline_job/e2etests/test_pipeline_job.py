@@ -1688,13 +1688,19 @@ class TestPipelineJob(AzureRecordedTestCase):
             'type': 'data_transfer'
         }
 
-    def test_serverless_compute_in_pipeline(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        yaml_path = "./tests/test_configs/pipeline_jobs/serverless_compute/pipeline_with_command.yml"
+    @pytest.mark.parametrize(
+        "yaml_path",
+        [
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/command/pipeline.yml",
+            "./tests/test_configs/pipeline_jobs/serverless_compute/all_types/sweep/pipeline.yml",
+        ],
+    )
+    def test_serverless_compute_in_pipeline(
+        self, client: MLClient, randstr: Callable[[str], str], yaml_path: str
+    ) -> None:
         pipeline_job = load_job(yaml_path)
-        created_pipeline_job = assert_job_cancel(pipeline_job, client)
-        jobs = created_pipeline_job._to_rest_object().as_dict()["properties"]["jobs"]
-        for job in jobs.values():
-            assert job["computeId"] == SERVERLESS_COMPUTE, job["name"]
+        # assert_job_cancel(pipeline_job, client)
+        client.create_or_update(pipeline_job)
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")

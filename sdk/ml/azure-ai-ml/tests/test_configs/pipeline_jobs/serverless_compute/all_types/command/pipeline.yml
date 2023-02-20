@@ -1,6 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
 type: pipeline
-display_name: hello_world_pipeline
+display_name: Serverless in Pipeline - Command
 settings:
   default_compute: azureml:serverless
 jobs:
