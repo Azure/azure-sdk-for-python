@@ -7,7 +7,7 @@
 from os import PathLike
 from pathlib import Path
 from typing import Dict, Optional, Union
-from azure.ai.ml._schema._data_import import DataImportSchema
+from azure.ai.ml._schema._data_import.data_import import DataImportSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs.external_data import Database, FileSystem
@@ -49,8 +49,6 @@ class DataImport(Data):
         **kwargs,
     ):
         super().__init__(
-            self,
-            *,
             name=name,
             version=version,
             description=description,
@@ -65,18 +63,18 @@ class DataImport(Data):
     @classmethod
     def _load(
         cls,
-        data_import: Optional[Dict] = None,
+        data: Optional[Dict] = None,
         yaml_path: Optional[Union[PathLike, str]] = None,
         params_override: Optional[list] = None,
         **kwargs,
     ) -> "DataImport":
-        data_import = data_import or {}
+        data = data or {}
         params_override = params_override or []
         context = {
             BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
             PARAMS_OVERRIDE_KEY: params_override,
         }
-        data_import = Data._load_from_dict(yaml_data=data_import, context=context, **kwargs)
+        data_import = DataImport._load_from_dict(yaml_data=data, context=context, **kwargs)
 
         return data_import
 

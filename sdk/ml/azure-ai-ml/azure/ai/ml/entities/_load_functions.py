@@ -475,10 +475,10 @@ def load_data_import(
     :param params_override: Fields to overwrite on top of the yaml file.
         Format is [{"field1": "value1"}, {"field2": "value2"}]
     :type params_override: List[Dict]
-    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if DataImport cannot be successfully validated.
         Details will be provided in the error message.
-    :return: Constructed data object.
-    :rtype: Data
+    :return: Constructed data_import object.
+    :rtype: DataImport
     """
     return load_common(DataImport, source, relative_origin, **kwargs)
 
