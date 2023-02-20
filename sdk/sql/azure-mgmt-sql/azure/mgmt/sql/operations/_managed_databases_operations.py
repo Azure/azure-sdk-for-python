@@ -719,8 +719,8 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested database resource state. Is either a ManagedDatabase type or a
+         IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedDatabase or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1077,8 +1077,8 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: The requested database resource state. Is either a model type or a IO type.
-         Required.
+        :param parameters: The requested database resource state. Is either a ManagedDatabaseUpdate
+         type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseUpdate or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1307,8 +1307,8 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Parameters of the cancel managed database move operation. Is either a model
-         type or a IO type. Required.
+        :param parameters: Parameters of the cancel managed database move operation. Is either a
+         ManagedDatabaseMoveDefinition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseMoveDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1535,7 +1535,7 @@ class ManagedDatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: Parameters of the complete managed database move operation. Is either a
-         model type or a IO type. Required.
+         ManagedDatabaseMoveDefinition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseMoveDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1764,7 +1764,7 @@ class ManagedDatabasesOperations:
         :param database_name: The name of the database. Required.
         :type database_name: str
         :param parameters: The definition for completing the restore of this managed database. Is
-         either a model type or a IO type. Required.
+         either a CompleteDatabaseRestoreDefinition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.CompleteDatabaseRestoreDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1990,8 +1990,8 @@ class ManagedDatabasesOperations:
         :type managed_instance_name: str
         :param database_name: The name of the database. Required.
         :type database_name: str
-        :param parameters: Parameters of the start managed database move operation. Is either a model
-         type or a IO type. Required.
+        :param parameters: Parameters of the start managed database move operation. Is either a
+         ManagedDatabaseStartMoveDefinition type or a IO type. Required.
         :type parameters: ~azure.mgmt.sql.models.ManagedDatabaseStartMoveDefinition or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
