@@ -4,14 +4,12 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
-from devtools_testutils import AzureTestCase
-from azure.purview.workflow.aio import PurviewWorkflowClient
-from azure.identity import UsernamePasswordCredential
+from devtools_testutils import AzureRecordedTestCase
 
-class WorkflowAsyncTest(AzureTestCase):
-    def __init__(self, method_name, **kwargs):
-        super(WorkflowAsyncTest, self).__init__(method_name, **kwargs)
+from azure.purview.workflow.aio import PurviewWorkflowClient
+
+
+class WorkflowAsyncTest(AzureRecordedTestCase):
 
     def create_async_client(self, endpoint):
         credential = self.get_credential(PurviewWorkflowClient, is_async=True)

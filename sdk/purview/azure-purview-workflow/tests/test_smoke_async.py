@@ -18,4 +18,3 @@ class WorkflowSmokeAsyncTest(WorkflowAsyncTest):
         response = client.list_workflows()
         result = [item async for item in response]
         assert len(result) >= 1
-
