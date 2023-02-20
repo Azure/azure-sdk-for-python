@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
 from azure.ai.ml._utils.utils import dump_yaml_to_file, get_all_data_binding_expressions, load_yaml
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstants
 from azure.ai.ml.exceptions import UserErrorException
 
@@ -577,4 +578,5 @@ class PipelineExpression(PipelineExpressionMixin):
             component_func = load_component(yaml_path)
             component_kwargs = {k: v.value for k, v in self._inputs.items()}
             self._created_component = component_func(**component_kwargs)
+            self._created_component.environment_variables = {AZUREML_PRIVATE_FEATURES_ENV_VAR: "true"}
         return self._created_component
