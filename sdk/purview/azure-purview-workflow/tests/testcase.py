@@ -5,7 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase
+from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase, AzureTestCase
 from azure.purview.workflow import PurviewWorkflowClient
 
 
@@ -23,5 +23,5 @@ class WorkflowTest(AzureRecordedTestCase):
 WorkflowPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "workflow",
-    workflow_endpoint="https://myservice.azure.com"
+    workflow_endpoint="https://test-create-account.purview.azure.com"
 )
