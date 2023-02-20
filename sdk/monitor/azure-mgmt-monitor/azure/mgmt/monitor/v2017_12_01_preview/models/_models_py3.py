@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import List, Optional, TYPE_CHECKING, Union
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -30,7 +30,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -74,8 +74,8 @@ class MetricNamespace(_serialization.Model):
         name: Optional[str] = None,
         classification: Optional[Union[str, "_models.NamespaceClassification"]] = None,
         properties: Optional["_models.MetricNamespaceName"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The ID of the metric namespace.
         :paramtype id: str
@@ -114,7 +114,7 @@ class MetricNamespaceCollection(_serialization.Model):
         "value": {"key": "value", "type": "[MetricNamespace]"},
     }
 
-    def __init__(self, *, value: List["_models.MetricNamespace"], **kwargs):
+    def __init__(self, *, value: List["_models.MetricNamespace"], **kwargs: Any) -> None:
         """
         :keyword value: The values for the metric namespaces. Required.
         :paramtype value: list[~$(python-base-namespace).v2017_12_01_preview.models.MetricNamespace]
@@ -134,7 +134,7 @@ class MetricNamespaceName(_serialization.Model):
         "metric_namespace_name": {"key": "metricNamespaceName", "type": "str"},
     }
 
-    def __init__(self, *, metric_namespace_name: Optional[str] = None, **kwargs):
+    def __init__(self, *, metric_namespace_name: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword metric_namespace_name: The metric namespace name.
         :paramtype metric_namespace_name: str

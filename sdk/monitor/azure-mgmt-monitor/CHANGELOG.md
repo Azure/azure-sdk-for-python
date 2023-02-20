@@ -1,5 +1,46 @@
 # Release History
 
+## 6.0.0 (2023-02-20)
+
+### Features Added
+
+  - Added operation group AzureMonitorWorkspacesOperations
+  - Added operation group MonitorOperationsOperations
+  - Model AzureMonitorPrivateLinkScope has a new parameter system_data
+  - Model Condition has a new parameter metric_name
+  - Model Operation has a new parameter action_type
+  - Model Operation has a new parameter origin
+  - Model PrivateLinkResource has a new parameter required_zone_names
+  - Model ScheduledQueryRuleResource has a new parameter auto_mitigate
+  - Model ScheduledQueryRuleResource has a new parameter check_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResource has a new parameter identity
+  - Model ScheduledQueryRuleResource has a new parameter is_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResource has a new parameter public_network_access
+  - Model ScheduledQueryRuleResource has a new parameter rule_resolve_configuration
+  - Model ScheduledQueryRuleResource has a new parameter skip_query_validation
+  - Model ScheduledQueryRuleResource has a new parameter system_data
+  - Model ScheduledQueryRuleResourceCollection has a new parameter next_link
+  - Model ScheduledQueryRuleResourcePatch has a new parameter auto_mitigate
+  - Model ScheduledQueryRuleResourcePatch has a new parameter check_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResourcePatch has a new parameter identity
+  - Model ScheduledQueryRuleResourcePatch has a new parameter is_workspace_alerts_storage_configured
+  - Model ScheduledQueryRuleResourcePatch has a new parameter public_network_access
+  - Model ScheduledQueryRuleResourcePatch has a new parameter rule_resolve_configuration
+  - Model ScheduledQueryRuleResourcePatch has a new parameter skip_query_validation
+  - Model ScopedResource has a new parameter system_data
+
+### Breaking Changes
+
+  - Model AzureMonitorPrivateLinkScope has a new required parameter access_mode_settings
+  - Model Operation no longer has parameter service_specification
+  - Model OperationDisplay no longer has parameter publisher
+  - Model PrivateEndpointConnectionListResult no longer has parameter next_link
+  - Model PrivateLinkResourceListResult no longer has parameter next_link
+  - Removed operation ActionGroupsOperations.begin_create_notifications_at_resource_group_level
+  - Removed operation ActionGroupsOperations.begin_post_test_notifications
+  - Removed operation ActionGroupsOperations.get_test_notifications
+  - Removed operation ActionGroupsOperations.get_test_notifications_at_resource_group_level
+
 ## 5.0.1 (2022-09-30)
 
 ### Bugs Fixed

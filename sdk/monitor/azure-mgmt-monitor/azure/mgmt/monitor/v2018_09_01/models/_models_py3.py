@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -32,8 +32,12 @@ class ActionGroupList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.ActionGroupResource"]] = None, next_link: Optional[str] = None, **kwargs
-    ):
+        self,
+        *,
+        value: Optional[List["_models.ActionGroupResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of action groups.
         :paramtype value: list[~$(python-base-namespace).v2018_09_01.models.ActionGroupResource]
@@ -60,7 +64,7 @@ class ActionGroupPatchBody(_serialization.Model):
         "enabled": {"key": "properties.enabled", "type": "bool"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -107,7 +111,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -222,8 +226,8 @@ class ActionGroupResource(Resource):  # pylint: disable=too-many-instance-attrib
         logic_app_receivers: Optional[List["_models.LogicAppReceiver"]] = None,
         azure_function_receivers: Optional[List["_models.AzureFunctionReceiver"]] = None,
         arm_role_receivers: Optional[List["_models.ArmRoleReceiver"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -304,7 +308,7 @@ class ArmRoleReceiver(_serialization.Model):
         "role_id": {"key": "roleId", "type": "str"},
     }
 
-    def __init__(self, *, name: str, role_id: str, **kwargs):
+    def __init__(self, *, name: str, role_id: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the arm role receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -362,8 +366,8 @@ class AutomationRunbookReceiver(_serialization.Model):
         is_global_runbook: bool,
         name: Optional[str] = None,
         service_uri: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword automation_account_id: The Azure automation account Id which holds this runbook and
          authenticate to Azure resource. Required.
@@ -410,7 +414,7 @@ class AzureAppPushReceiver(_serialization.Model):
         "email_address": {"key": "emailAddress", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -454,8 +458,8 @@ class AzureFunctionReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, function_app_resource_id: str, function_name: str, http_trigger_url: str, **kwargs
-    ):
+        self, *, name: str, function_app_resource_id: str, function_name: str, http_trigger_url: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the azure function receiver. Names must be unique across all
          receivers within an action group. Required.
@@ -495,7 +499,7 @@ class BaselineMetadata(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: str, **kwargs):
+    def __init__(self, *, name: str, value: str, **kwargs: Any) -> None:
         """
         :keyword name: Name of the baseline metadata. Required.
         :paramtype name: str
@@ -536,7 +540,7 @@ class EmailReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, email_address: str, **kwargs):
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the email receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -567,7 +571,7 @@ class EnableRequest(_serialization.Model):
         "receiver_name": {"key": "receiverName", "type": "str"},
     }
 
-    def __init__(self, *, receiver_name: str, **kwargs):
+    def __init__(self, *, receiver_name: str, **kwargs: Any) -> None:
         """
         :keyword receiver_name: The name of the receiver to resubscribe. Required.
         :paramtype receiver_name: str
@@ -590,7 +594,7 @@ class ErrorResponse(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword code: Error code.
         :paramtype code: str
@@ -641,8 +645,8 @@ class ItsmReceiver(_serialization.Model):
     }
 
     def __init__(
-        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs
-    ):
+        self, *, name: str, workspace_id: str, connection_id: str, ticket_configuration: str, region: str, **kwargs: Any
+    ) -> None:
         """
         :keyword name: The name of the Itsm receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -694,7 +698,7 @@ class LogicAppReceiver(_serialization.Model):
         "callback_url": {"key": "callbackUrl", "type": "str"},
     }
 
-    def __init__(self, *, name: str, resource_id: str, callback_url: str, **kwargs):
+    def __init__(self, *, name: str, resource_id: str, callback_url: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the logic app receiver. Names must be unique across all receivers
          within an action group. Required.
@@ -748,8 +752,8 @@ class MetricBaselinesResponse(_serialization.Model):
         interval: datetime.timedelta,
         namespace: Optional[str] = None,
         value: Optional[List["_models.SingleMetricBaseline"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword timespan: The timespan for which the data was retrieved. Its value consists of two
          datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
@@ -792,7 +796,7 @@ class MetricSingleDimension(_serialization.Model):
         "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(self, *, name: str, value: str, **kwargs):
+    def __init__(self, *, name: str, value: str, **kwargs: Any) -> None:
         """
         :keyword name: Name of the dimension. Required.
         :paramtype name: str
@@ -836,8 +840,8 @@ class SingleBaseline(_serialization.Model):
         sensitivity: Union[str, "_models.BaselineSensitivity"],
         low_thresholds: List[float],
         high_thresholds: List[float],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword sensitivity: the sensitivity of the baseline. Required. Known values are: "Low",
          "Medium", and "High".
@@ -889,8 +893,8 @@ class SingleMetricBaseline(_serialization.Model):
         type: str,
         metric_name: str,
         baselines: List["_models.TimeSeriesBaseline"],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The metric baseline Id. Required.
         :paramtype id: str
@@ -941,7 +945,7 @@ class SmsReceiver(_serialization.Model):
         "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the SMS receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -997,8 +1001,8 @@ class TimeSeriesBaseline(_serialization.Model):
         data: List["_models.SingleBaseline"],
         dimensions: Optional[List["_models.MetricSingleDimension"]] = None,
         metadata_values: Optional[List["_models.BaselineMetadata"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword aggregation: The aggregation type of the metric. Required.
         :paramtype aggregation: str
@@ -1045,7 +1049,7 @@ class VoiceReceiver(_serialization.Model):
         "phone_number": {"key": "phoneNumber", "type": "str"},
     }
 
-    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs):
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the voice receiver. Names must be unique across all receivers within
          an action group. Required.
@@ -1083,7 +1087,7 @@ class WebhookReceiver(_serialization.Model):
         "service_uri": {"key": "serviceUri", "type": "str"},
     }
 
-    def __init__(self, *, name: str, service_uri: str, **kwargs):
+    def __init__(self, *, name: str, service_uri: str, **kwargs: Any) -> None:
         """
         :keyword name: The name of the webhook receiver. Names must be unique across all receivers
          within an action group. Required.

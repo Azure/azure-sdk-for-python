@@ -8,7 +8,7 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
@@ -37,7 +37,7 @@ class AutoscaleErrorResponse(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, error: Optional["_models.AutoscaleErrorResponseError"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.AutoscaleErrorResponseError"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
         :paramtype error: ~$(python-base-namespace).v2022_10_01.models.AutoscaleErrorResponseError
@@ -74,8 +74,8 @@ class AutoscaleErrorResponseError(_serialization.Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword code: One of a server-defined set of error codes.
         :paramtype code: str
@@ -126,8 +126,8 @@ class AutoscaleNotification(_serialization.Model):
         *,
         email: Optional["_models.EmailNotification"] = None,
         webhooks: Optional[List["_models.WebhookNotification"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword email: the email notification.
         :paramtype email: ~$(python-base-namespace).v2022_10_01.models.EmailNotification
@@ -181,8 +181,8 @@ class AutoscaleProfile(_serialization.Model):
         rules: List["_models.ScaleRule"],
         fixed_date: Optional["_models.TimeWindow"] = None,
         recurrence: Optional["_models.Recurrence"] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword name: the name of the profile. Required.
         :paramtype name: str
@@ -247,7 +247,7 @@ class Resource(_serialization.Model):
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -350,8 +350,8 @@ class AutoscaleSettingResource(Resource):  # pylint: disable=too-many-instance-a
         name_properties_name: Optional[str] = None,
         target_resource_uri: Optional[str] = None,
         target_resource_location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
@@ -411,7 +411,9 @@ class AutoscaleSettingResourceCollection(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AutoscaleSettingResource"], next_link: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, value: List["_models.AutoscaleSettingResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: the values for the autoscale setting resources. Required.
         :paramtype value: list[~$(python-base-namespace).v2022_10_01.models.AutoscaleSettingResource]
@@ -479,8 +481,8 @@ class AutoscaleSettingResourcePatch(_serialization.Model):
         name: Optional[str] = None,
         target_resource_uri: Optional[str] = None,
         target_resource_location: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -542,8 +544,8 @@ class EmailNotification(_serialization.Model):
         send_to_subscription_administrator: bool = False,
         send_to_subscription_co_administrators: bool = False,
         custom_emails: Optional[List[str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword send_to_subscription_administrator: a value indicating whether to send email to
          subscription administrator.
@@ -645,8 +647,8 @@ class MetricTrigger(_serialization.Model):  # pylint: disable=too-many-instance-
         metric_resource_location: Optional[str] = None,
         dimensions: Optional[List["_models.ScaleRuleMetricDimension"]] = None,
         divide_per_instance: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword metric_name: the name of the metric that defines what the rule monitors. Required.
         :paramtype metric_name: str
@@ -730,8 +732,8 @@ class PredictiveAutoscalePolicy(_serialization.Model):
         *,
         scale_mode: Union[str, "_models.PredictiveAutoscalePolicyScaleMode"],
         scale_look_ahead_time: Optional[datetime.timedelta] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword scale_mode: the predictive autoscale mode. Required. Known values are: "Disabled",
          "ForecastOnly", and "Enabled".
@@ -781,8 +783,8 @@ class PredictiveResponse(_serialization.Model):
         metric_name: Optional[str] = None,
         target_resource_id: Optional[str] = None,
         data: Optional[List["_models.PredictiveValue"]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword timespan: The timespan for which the data was retrieved. Its value consists of two
          datetimes concatenated, separated by '/'.  This may be adjusted in the future and returned back
@@ -828,7 +830,7 @@ class PredictiveValue(_serialization.Model):
         "value": {"key": "value", "type": "float"},
     }
 
-    def __init__(self, *, time_stamp: datetime.datetime, value: float, **kwargs):
+    def __init__(self, *, time_stamp: datetime.datetime, value: float, **kwargs: Any) -> None:
         """
         :keyword time_stamp: the timestamp for the metric value in ISO 8601 format. Required.
         :paramtype time_stamp: ~datetime.datetime
@@ -841,7 +843,8 @@ class PredictiveValue(_serialization.Model):
 
 
 class Recurrence(_serialization.Model):
-    """The repeating times at which this profile begins. This element is not used if the FixedDate element is used.
+    """The repeating times at which this profile begins. This element is not used if the FixedDate
+    element is used.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -866,8 +869,12 @@ class Recurrence(_serialization.Model):
     }
 
     def __init__(
-        self, *, frequency: Union[str, "_models.RecurrenceFrequency"], schedule: "_models.RecurrentSchedule", **kwargs
-    ):
+        self,
+        *,
+        frequency: Union[str, "_models.RecurrenceFrequency"],
+        schedule: "_models.RecurrentSchedule",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword frequency: the recurrence frequency. How often the schedule profile should take
          effect. This value must be Week, meaning each week will have the same set of profiles. For
@@ -943,7 +950,7 @@ class RecurrentSchedule(_serialization.Model):
         "minutes": {"key": "minutes", "type": "[int]"},
     }
 
-    def __init__(self, *, time_zone: str, days: List[str], hours: List[int], minutes: List[int], **kwargs):
+    def __init__(self, *, time_zone: str, days: List[str], hours: List[int], minutes: List[int], **kwargs: Any) -> None:
         """
         :keyword time_zone: the timezone for the hours of the profile. Some examples of valid time
          zones are: Dateline Standard Time, UTC-11, Hawaiian Standard Time, Alaskan Standard Time,
@@ -1031,8 +1038,8 @@ class ScaleAction(_serialization.Model):
         type: Union[str, "_models.ScaleType"],
         cooldown: datetime.timedelta,
         value: str = "1",
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword direction: the scale direction. Whether the scaling action increases or decreases the
          number of instances. Required. Known values are: "None", "Increase", and "Decrease".
@@ -1082,7 +1089,7 @@ class ScaleCapacity(_serialization.Model):
         "default": {"key": "default", "type": "str"},
     }
 
-    def __init__(self, *, minimum: str, maximum: str, default: str, **kwargs):
+    def __init__(self, *, minimum: str, maximum: str, default: str, **kwargs: Any) -> None:
         """
         :keyword minimum: the minimum number of instances for the resource. Required.
         :paramtype minimum: str
@@ -1121,7 +1128,9 @@ class ScaleRule(_serialization.Model):
         "scale_action": {"key": "scaleAction", "type": "ScaleAction"},
     }
 
-    def __init__(self, *, metric_trigger: "_models.MetricTrigger", scale_action: "_models.ScaleAction", **kwargs):
+    def __init__(
+        self, *, metric_trigger: "_models.MetricTrigger", scale_action: "_models.ScaleAction", **kwargs: Any
+    ) -> None:
         """
         :keyword metric_trigger: the trigger that results in a scaling action. Required.
         :paramtype metric_trigger: ~$(python-base-namespace).v2022_10_01.models.MetricTrigger
@@ -1167,8 +1176,8 @@ class ScaleRuleMetricDimension(_serialization.Model):
         dimension_name: str,
         operator: Union[str, "_models.ScaleRuleMetricDimensionOperationType"],
         values: List[str],
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword dimension_name: Name of the dimension. Required.
         :paramtype dimension_name: str
@@ -1224,8 +1233,8 @@ class SystemData(_serialization.Model):
         last_modified_by: Optional[str] = None,
         last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
@@ -1305,7 +1314,9 @@ class TimeWindow(_serialization.Model):
         "end": {"key": "end", "type": "iso-8601"},
     }
 
-    def __init__(self, *, start: datetime.datetime, end: datetime.datetime, time_zone: Optional[str] = None, **kwargs):
+    def __init__(
+        self, *, start: datetime.datetime, end: datetime.datetime, time_zone: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword time_zone: the timezone of the start and end times for the profile. Some examples of
          valid time zones are: Dateline Standard Time, UTC-11, Hawaiian Standard Time, Alaskan Standard
@@ -1363,7 +1374,9 @@ class WebhookNotification(_serialization.Model):
         "properties": {"key": "properties", "type": "{str}"},
     }
 
-    def __init__(self, *, service_uri: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(
+        self, *, service_uri: Optional[str] = None, properties: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword service_uri: the service address to receive the notification.
         :paramtype service_uri: str
