@@ -148,13 +148,8 @@ class CodegenTestPR:
         head_sha = print_exec_output('git rev-parse HEAD')[0]
         return head_sha
 
-    def readme_local_folder(self) -> Path:
-        result = re.findall('specification/[a-zA-Z-]+/resource-manager', self.spec_readme)
-        if len(result) == 0:
-            service_name = self.spec_readme
-        else:
-            service_name = result[0].split('/')[1]
-        return Path(f'specification/{service_name}/resource-manager/readme.md')
+    def readme_local_folder(self) -> str:
+        return "specification" + self.spec_readme.split("specification")[-1]
 
     def get_sdk_folder_with_autorest_result(self):
         generate_result = self.get_autorest_result()
@@ -187,8 +182,10 @@ class CodegenTestPR:
             'headSha': self.get_latest_commit_in_swagger_repo(),
             'repoHttpsUrl': "https://github.com/Azure/azure-rest-api-specs",
             'specFolder': self.spec_repo,
-            'relatedReadmeMdFiles': [str(self.readme_local_folder())]
+            'relatedReadmeMdFiles': [self.readme_local_folder()]
         }
+        log(str(input_data))
+
         # if Python tag exists
         if os.getenv('PYTHON_TAG'):
             input_data['python_tag'] = os.getenv('PYTHON_TAG')
