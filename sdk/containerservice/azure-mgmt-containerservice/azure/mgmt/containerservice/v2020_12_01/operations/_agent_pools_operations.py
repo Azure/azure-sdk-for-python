@@ -667,7 +667,7 @@ class AgentPoolsOperations:
         :param agent_pool_name: The name of the agent pool. Required.
         :type agent_pool_name: str
         :param parameters: Parameters supplied to the Create or Update an agent pool operation. Is
-         either a model type or a IO type. Required.
+         either a AgentPool type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2020_12_01.models.AgentPool or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1039,7 +1039,7 @@ class AgentPoolsOperations:
     @distributed_trace
     def begin_upgrade_node_image_version(
         self, resource_group_name: str, resource_name: str, agent_pool_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.AgentPool]:
         """Upgrade node image version of an agent pool to the latest.
 
         Upgrade node image version of an agent pool to the latest.
