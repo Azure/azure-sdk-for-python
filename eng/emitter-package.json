@@ -10,6 +10,6 @@
     "@cadl-lang/eslint-config-cadl": "~0.5.0",
     "@cadl-lang/openapi": "~0.40.0",
     "@cadl-lang/rest": "~0.40.0",
-    "@cadl-lang/versioning": "~0.38.0"
+    "@cadl-lang/versioning": "~0.40.0"
   }
 }
