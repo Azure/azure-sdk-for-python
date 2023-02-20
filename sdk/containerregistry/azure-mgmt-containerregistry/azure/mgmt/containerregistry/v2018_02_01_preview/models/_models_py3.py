@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,18 +8,19 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from ... import _serialization
 
-from ._container_registry_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class BaseImageDependency(msrest.serialization.Model):
+class BaseImageDependency(_serialization.Model):
     """Properties that describe a base image dependency.
 
-    :ivar type: The type of the base image dependency. Possible values include: "BuildTime",
-     "RunTime".
+    :ivar type: The type of the base image dependency. Known values are: "BuildTime" and "RunTime".
     :vartype type: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageDependencyType
     :ivar registry: The registry login server.
@@ -32,25 +34,25 @@ class BaseImageDependency(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'registry': {'key': 'registry', 'type': 'str'},
-        'repository': {'key': 'repository', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'digest': {'key': 'digest', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "registry": {"key": "registry", "type": "str"},
+        "repository": {"key": "repository", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+        "digest": {"key": "digest", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "BaseImageDependencyType"]] = None,
+        type: Optional[Union[str, "_models.BaseImageDependencyType"]] = None,
         registry: Optional[str] = None,
         repository: Optional[str] = None,
         tag: Optional[str] = None,
         digest: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: The type of the base image dependency. Possible values include: "BuildTime",
+        :keyword type: The type of the base image dependency. Known values are: "BuildTime" and
          "RunTime".
         :paramtype type: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageDependencyType
@@ -63,7 +65,7 @@ class BaseImageDependency(msrest.serialization.Model):
         :keyword digest: The sha256-based digest of the image manifest.
         :paramtype digest: str
         """
-        super(BaseImageDependency, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.registry = registry
         self.repository = repository
@@ -71,8 +73,9 @@ class BaseImageDependency(msrest.serialization.Model):
         self.digest = digest
 
 
-class ProxyResource(msrest.serialization.Model):
-    """The resource model definition for a ARM proxy resource. It will have everything other than required location and tags.
+class ProxyResource(_serialization.Model):
+    """The resource model definition for a ARM proxy resource. It will have everything other than
+    required location and tags.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -85,30 +88,26 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
 
 
-class Build(ProxyResource):
+class Build(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Build resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -121,12 +120,12 @@ class Build(ProxyResource):
     :vartype type: str
     :ivar build_id: The unique identifier for the build.
     :vartype build_id: str
-    :ivar status: The current status of the build. Possible values include: "Queued", "Started",
-     "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+    :ivar status: The current status of the build. Known values are: "Queued", "Started",
+     "Running", "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
     :vartype status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
     :ivar last_updated_time: The last updated time for the build.
     :vartype last_updated_time: ~datetime.datetime
-    :ivar build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
+    :ivar build_type: The type of build. Known values are: "AutoBuild" and "QuickBuild".
     :vartype build_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
     :ivar create_time: The time the build was created.
     :vartype create_time: ~datetime.datetime
@@ -149,66 +148,66 @@ class Build(ProxyResource):
     :vartype is_archive_enabled: bool
     :ivar platform: The platform properties against which the build will happen.
     :vartype platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
-    :ivar provisioning_state: The provisioning state of a build. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The provisioning state of a build. Known values are: "Creating",
+     "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'build_id': {'key': 'properties.buildId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'last_updated_time': {'key': 'properties.lastUpdatedTime', 'type': 'iso-8601'},
-        'build_type': {'key': 'properties.buildType', 'type': 'str'},
-        'create_time': {'key': 'properties.createTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'finish_time': {'key': 'properties.finishTime', 'type': 'iso-8601'},
-        'output_images': {'key': 'properties.outputImages', 'type': '[ImageDescriptor]'},
-        'build_task': {'key': 'properties.buildTask', 'type': 'str'},
-        'image_update_trigger': {'key': 'properties.imageUpdateTrigger', 'type': 'ImageUpdateTrigger'},
-        'git_commit_trigger': {'key': 'properties.gitCommitTrigger', 'type': 'GitCommitTrigger'},
-        'is_archive_enabled': {'key': 'properties.isArchiveEnabled', 'type': 'bool'},
-        'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "build_id": {"key": "properties.buildId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "last_updated_time": {"key": "properties.lastUpdatedTime", "type": "iso-8601"},
+        "build_type": {"key": "properties.buildType", "type": "str"},
+        "create_time": {"key": "properties.createTime", "type": "iso-8601"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "finish_time": {"key": "properties.finishTime", "type": "iso-8601"},
+        "output_images": {"key": "properties.outputImages", "type": "[ImageDescriptor]"},
+        "build_task": {"key": "properties.buildTask", "type": "str"},
+        "image_update_trigger": {"key": "properties.imageUpdateTrigger", "type": "ImageUpdateTrigger"},
+        "git_commit_trigger": {"key": "properties.gitCommitTrigger", "type": "GitCommitTrigger"},
+        "is_archive_enabled": {"key": "properties.isArchiveEnabled", "type": "bool"},
+        "platform": {"key": "properties.platform", "type": "PlatformProperties"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         build_id: Optional[str] = None,
-        status: Optional[Union[str, "BuildStatus"]] = None,
+        status: Optional[Union[str, "_models.BuildStatus"]] = None,
         last_updated_time: Optional[datetime.datetime] = None,
-        build_type: Optional[Union[str, "BuildType"]] = None,
+        build_type: Optional[Union[str, "_models.BuildType"]] = None,
         create_time: Optional[datetime.datetime] = None,
         start_time: Optional[datetime.datetime] = None,
         finish_time: Optional[datetime.datetime] = None,
-        output_images: Optional[List["ImageDescriptor"]] = None,
+        output_images: Optional[List["_models.ImageDescriptor"]] = None,
         build_task: Optional[str] = None,
-        image_update_trigger: Optional["ImageUpdateTrigger"] = None,
-        git_commit_trigger: Optional["GitCommitTrigger"] = None,
-        is_archive_enabled: Optional[bool] = False,
-        platform: Optional["PlatformProperties"] = None,
-        provisioning_state: Optional[Union[str, "ProvisioningState"]] = None,
-        **kwargs
-    ):
+        image_update_trigger: Optional["_models.ImageUpdateTrigger"] = None,
+        git_commit_trigger: Optional["_models.GitCommitTrigger"] = None,
+        is_archive_enabled: bool = False,
+        platform: Optional["_models.PlatformProperties"] = None,
+        provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword build_id: The unique identifier for the build.
         :paramtype build_id: str
-        :keyword status: The current status of the build. Possible values include: "Queued", "Started",
-         "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+        :keyword status: The current status of the build. Known values are: "Queued", "Started",
+         "Running", "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
         :paramtype status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
         :keyword last_updated_time: The last updated time for the build.
         :paramtype last_updated_time: ~datetime.datetime
-        :keyword build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
+        :keyword build_type: The type of build. Known values are: "AutoBuild" and "QuickBuild".
         :paramtype build_type: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
         :keyword create_time: The time the build was created.
@@ -233,12 +232,12 @@ class Build(ProxyResource):
         :keyword platform: The platform properties against which the build will happen.
         :paramtype platform:
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
-        :keyword provisioning_state: The provisioning state of a build. Possible values include:
-         "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+        :keyword provisioning_state: The provisioning state of a build. Known values are: "Creating",
+         "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
         :paramtype provisioning_state: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
         """
-        super(Build, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.build_id = build_id
         self.status = status
         self.last_updated_time = last_updated_time
@@ -255,17 +254,17 @@ class Build(ProxyResource):
         self.provisioning_state = provisioning_state
 
 
-class BuildArgument(msrest.serialization.Model):
+class BuildArgument(_serialization.Model):
     """Properties of a build argument.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the argument. Possible values include: "DockerBuildArgument".
+    :ivar type: The type of the argument. Required. "DockerBuildArgument"
     :vartype type: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgumentType
-    :ivar name: Required. The name of the argument.
+    :ivar name: The name of the argument. Required.
     :vartype name: str
-    :ivar value: Required. The value of the argument.
+    :ivar value: The value of the argument. Required.
     :vartype value: str
     :ivar is_secret: Flag to indicate whether the argument represents a secret and want to be
      removed from build logs.
@@ -273,48 +272,47 @@ class BuildArgument(msrest.serialization.Model):
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'value': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'is_secret': {'key': 'isSecret', 'type': 'bool'},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "is_secret": {"key": "isSecret", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "BuildArgumentType"],
+        type: Union[str, "_models.BuildArgumentType"],
         name: str,
         value: str,
-        is_secret: Optional[bool] = False,
-        **kwargs
-    ):
+        is_secret: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword type: Required. The type of the argument. Possible values include:
-         "DockerBuildArgument".
+        :keyword type: The type of the argument. Required. "DockerBuildArgument"
         :paramtype type: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgumentType
-        :keyword name: Required. The name of the argument.
+        :keyword name: The name of the argument. Required.
         :paramtype name: str
-        :keyword value: Required. The value of the argument.
+        :keyword value: The value of the argument. Required.
         :paramtype value: str
         :keyword is_secret: Flag to indicate whether the argument represents a secret and want to be
          removed from build logs.
         :paramtype is_secret: bool
         """
-        super(BuildArgument, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.name = name
         self.value = value
         self.is_secret = is_secret
 
 
-class BuildArgumentList(msrest.serialization.Model):
+class BuildArgumentList(_serialization.Model):
     """The list of build arguments for a build step.
 
     :ivar value: The collection value.
@@ -324,37 +322,33 @@ class BuildArgumentList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BuildArgument]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BuildArgument]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BuildArgument"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.BuildArgument"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
-        super(BuildArgumentList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class BuildFilter(msrest.serialization.Model):
+class BuildFilter(_serialization.Model):
     """Properties that are enabled for Odata querying.
 
     :ivar build_id: The unique identifier for the build.
     :vartype build_id: str
-    :ivar build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
+    :ivar build_type: The type of build. Known values are: "AutoBuild" and "QuickBuild".
     :vartype build_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
-    :ivar status: The current status of the build. Possible values include: "Queued", "Started",
-     "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+    :ivar status: The current status of the build. Known values are: "Queued", "Started",
+     "Running", "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
     :vartype status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
     :ivar create_time: The create time for a build.
     :vartype create_time: ~datetime.datetime
@@ -370,37 +364,37 @@ class BuildFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'build_id': {'key': 'buildId', 'type': 'str'},
-        'build_type': {'key': 'buildType', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'create_time': {'key': 'createTime', 'type': 'iso-8601'},
-        'finish_time': {'key': 'finishTime', 'type': 'iso-8601'},
-        'output_image_manifests': {'key': 'outputImageManifests', 'type': 'str'},
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
-        'build_task_name': {'key': 'buildTaskName', 'type': 'str'},
+        "build_id": {"key": "buildId", "type": "str"},
+        "build_type": {"key": "buildType", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "create_time": {"key": "createTime", "type": "iso-8601"},
+        "finish_time": {"key": "finishTime", "type": "iso-8601"},
+        "output_image_manifests": {"key": "outputImageManifests", "type": "str"},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
+        "build_task_name": {"key": "buildTaskName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         build_id: Optional[str] = None,
-        build_type: Optional[Union[str, "BuildType"]] = None,
-        status: Optional[Union[str, "BuildStatus"]] = None,
+        build_type: Optional[Union[str, "_models.BuildType"]] = None,
+        status: Optional[Union[str, "_models.BuildStatus"]] = None,
         create_time: Optional[datetime.datetime] = None,
         finish_time: Optional[datetime.datetime] = None,
         output_image_manifests: Optional[str] = None,
         is_archive_enabled: Optional[bool] = None,
         build_task_name: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword build_id: The unique identifier for the build.
         :paramtype build_id: str
-        :keyword build_type: The type of build. Possible values include: "AutoBuild", "QuickBuild".
+        :keyword build_type: The type of build. Known values are: "AutoBuild" and "QuickBuild".
         :paramtype build_type: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildType
-        :keyword status: The current status of the build. Possible values include: "Queued", "Started",
-         "Running", "Succeeded", "Failed", "Canceled", "Error", "Timeout".
+        :keyword status: The current status of the build. Known values are: "Queued", "Started",
+         "Running", "Succeeded", "Failed", "Canceled", "Error", and "Timeout".
         :paramtype status: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStatus
         :keyword create_time: The create time for a build.
         :paramtype create_time: ~datetime.datetime
@@ -414,7 +408,7 @@ class BuildFilter(msrest.serialization.Model):
         :keyword build_task_name: The name of the build task that the build corresponds to.
         :paramtype build_task_name: str
         """
-        super(BuildFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.build_id = build_id
         self.build_type = build_type
         self.status = status
@@ -425,7 +419,7 @@ class BuildFilter(msrest.serialization.Model):
         self.build_task_name = build_task_name
 
 
-class BuildGetLogResult(msrest.serialization.Model):
+class BuildGetLogResult(_serialization.Model):
     """The result of get log link operation.
 
     :ivar log_link: The link to logs for a azure container registry build.
@@ -433,24 +427,19 @@ class BuildGetLogResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'log_link': {'key': 'logLink', 'type': 'str'},
+        "log_link": {"key": "logLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        log_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, log_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword log_link: The link to logs for a azure container registry build.
         :paramtype log_link: str
         """
-        super(BuildGetLogResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.log_link = log_link
 
 
-class BuildListResult(msrest.serialization.Model):
+class BuildListResult(_serialization.Model):
     """Collection of builds.
 
     :ivar value: The collection value.
@@ -460,24 +449,20 @@ class BuildListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Build]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Build]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Build"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.Build"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.Build]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
-        super(BuildListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
@@ -499,34 +484,29 @@ class BuildStep(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'BuildStepProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "BuildStepProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["BuildStepProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.BuildStepProperties"] = None, **kwargs: Any) -> None:
         """
         :keyword properties: The properties of a build step.
         :paramtype properties:
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepProperties
         """
-        super(BuildStep, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class BuildStepList(msrest.serialization.Model):
+class BuildStepList(_serialization.Model):
     """The collection of build items.
 
     :ivar value: The collection value.
@@ -536,144 +516,126 @@ class BuildStepList(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BuildStep]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BuildStep]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BuildStep"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.BuildStep"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStep]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
-        super(BuildStepList, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class BuildStepProperties(msrest.serialization.Model):
+class BuildStepProperties(_serialization.Model):
     """Base properties for any build step.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DockerBuildStep.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DockerBuildStep
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provisioning_state: The provisioning state of the build step. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The provisioning state of the build step. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker".
+    :ivar type: The type of the step. Required. "Docker"
     :vartype type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepType
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'type': {'required': True, 'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "type": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'Docker': 'DockerBuildStep'}
-    }
+    _subtype_map = {"type": {"Docker": "DockerBuildStep"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BuildStepProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
         self.provisioning_state = None
-        self.type = None  # type: Optional[str]
+        self.type: Optional[str] = None
 
 
-class BuildStepPropertiesUpdateParameters(msrest.serialization.Model):
+class BuildStepPropertiesUpdateParameters(_serialization.Model):
     """The properties for updating a build step.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: DockerBuildStepUpdateParameters.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    DockerBuildStepUpdateParameters
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker".
+    :ivar type: The type of the step. Required. "Docker"
     :vartype type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepType
     """
 
     _validation = {
-        'type': {'required': True, 'readonly': True},
+        "type": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'Docker': 'DockerBuildStepUpdateParameters'}
-    }
+    _subtype_map = {"type": {"Docker": "DockerBuildStepUpdateParameters"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(BuildStepPropertiesUpdateParameters, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
-class BuildStepUpdateParameters(msrest.serialization.Model):
+class BuildStepUpdateParameters(_serialization.Model):
     """The parameters for updating a build step.
 
     :ivar properties: The properties for updating a build step.
     :vartype properties:
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepPropertiesUpdateParameters
-    :ivar tags: A set of tags. The ARM resource tags.
+    :ivar tags: The ARM resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'BuildStepPropertiesUpdateParameters'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "properties": {"key": "properties", "type": "BuildStepPropertiesUpdateParameters"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        properties: Optional["BuildStepPropertiesUpdateParameters"] = None,
+        properties: Optional["_models.BuildStepPropertiesUpdateParameters"] = None,
         tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword properties: The properties for updating a build step.
         :paramtype properties:
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepPropertiesUpdateParameters
-        :keyword tags: A set of tags. The ARM resource tags.
+        :keyword tags: The ARM resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(BuildStepUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
         self.tags = tags
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """An Azure resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -686,43 +648,37 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: Required. The location of the resource. This cannot be changed after the
-     resource is created.
+    :ivar location: The location of the resource. This cannot be changed after the resource is
+     created. Required.
     :vartype location: str
-    :ivar tags: A set of tags. The tags of the resource.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Required. The location of the resource. This cannot be changed after the
-         resource is created.
+        :keyword location: The location of the resource. This cannot be changed after the resource is
+         created. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. The tags of the resource.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -730,8 +686,9 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class BuildTask(Resource):
-    """The build task that has the resource properties and all build items. The build task will have all information to schedule a build against it.
+class BuildTask(Resource):  # pylint: disable=too-many-instance-attributes
+    """The build task that has the resource properties and all build items. The build task will have
+    all information to schedule a build against it.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -743,20 +700,20 @@ class BuildTask(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar location: Required. The location of the resource. This cannot be changed after the
-     resource is created.
+    :ivar location: The location of the resource. This cannot be changed after the resource is
+     created. Required.
     :vartype location: str
-    :ivar tags: A set of tags. The tags of the resource.
+    :ivar tags: The tags of the resource.
     :vartype tags: dict[str, str]
-    :ivar provisioning_state: The provisioning state of the build task. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The provisioning state of the build task. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
     :ivar creation_date: The creation date of build task.
     :vartype creation_date: ~datetime.datetime
     :ivar alias: The alternative updatable name for a build task.
     :vartype alias: str
-    :ivar status: The current status of build task. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of build task. Known values are: "Disabled" and "Enabled".
     :vartype status: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
     :ivar source_repository: The properties that describes the source(code) for the build task.
@@ -769,28 +726,28 @@ class BuildTask(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'creation_date': {'readonly': True},
-        'timeout': {'maximum': 28800, 'minimum': 300},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "creation_date": {"readonly": True},
+        "timeout": {"maximum": 28800, "minimum": 300},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'creation_date': {'key': 'properties.creationDate', 'type': 'iso-8601'},
-        'alias': {'key': 'properties.alias', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'source_repository': {'key': 'properties.sourceRepository', 'type': 'SourceRepositoryProperties'},
-        'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
-        'timeout': {'key': 'properties.timeout', 'type': 'int'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "creation_date": {"key": "properties.creationDate", "type": "iso-8601"},
+        "alias": {"key": "properties.alias", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "source_repository": {"key": "properties.sourceRepository", "type": "SourceRepositoryProperties"},
+        "platform": {"key": "properties.platform", "type": "PlatformProperties"},
+        "timeout": {"key": "properties.timeout", "type": "int"},
     }
 
     def __init__(
@@ -799,22 +756,21 @@ class BuildTask(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         alias: Optional[str] = None,
-        status: Optional[Union[str, "BuildTaskStatus"]] = None,
-        source_repository: Optional["SourceRepositoryProperties"] = None,
-        platform: Optional["PlatformProperties"] = None,
-        timeout: Optional[int] = 3600,
-        **kwargs
-    ):
+        status: Optional[Union[str, "_models.BuildTaskStatus"]] = None,
+        source_repository: Optional["_models.SourceRepositoryProperties"] = None,
+        platform: Optional["_models.PlatformProperties"] = None,
+        timeout: int = 3600,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Required. The location of the resource. This cannot be changed after the
-         resource is created.
+        :keyword location: The location of the resource. This cannot be changed after the resource is
+         created. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. The tags of the resource.
+        :keyword tags: The tags of the resource.
         :paramtype tags: dict[str, str]
         :keyword alias: The alternative updatable name for a build task.
         :paramtype alias: str
-        :keyword status: The current status of build task. Possible values include: "Disabled",
-         "Enabled".
+        :keyword status: The current status of build task. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
         :keyword source_repository: The properties that describes the source(code) for the build task.
@@ -826,7 +782,7 @@ class BuildTask(Resource):
         :keyword timeout: Build timeout in seconds.
         :paramtype timeout: int
         """
-        super(BuildTask, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.provisioning_state = None
         self.creation_date = None
         self.alias = alias
@@ -836,40 +792,34 @@ class BuildTask(Resource):
         self.timeout = timeout
 
 
-class QueueBuildRequest(msrest.serialization.Model):
+class QueueBuildRequest(_serialization.Model):
     """The queue build request parameters.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: BuildTaskBuildRequest, QuickBuildRequest.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BuildTaskBuildRequest, QuickBuildRequest
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the build request.Constant filled by server.
+    :ivar type: The type of the build request. Required.
     :vartype type: str
     """
 
     _validation = {
-        'type': {'required': True, 'readonly': True},
+        "type": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'BuildTask': 'BuildTaskBuildRequest', 'QuickBuild': 'QuickBuildRequest'}
-    }
+    _subtype_map = {"type": {"BuildTask": "BuildTaskBuildRequest", "QuickBuild": "QuickBuildRequest"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(QueueBuildRequest, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
 class BuildTaskBuildRequest(QueueBuildRequest):
@@ -879,39 +829,34 @@ class BuildTaskBuildRequest(QueueBuildRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the build request.Constant filled by server.
+    :ivar type: The type of the build request. Required.
     :vartype type: str
-    :ivar build_task_name: Required. The name of build task against which build has to be queued.
+    :ivar build_task_name: The name of build task against which build has to be queued. Required.
     :vartype build_task_name: str
     """
 
     _validation = {
-        'type': {'required': True, 'readonly': True},
-        'build_task_name': {'required': True},
+        "type": {"required": True, "readonly": True},
+        "build_task_name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'build_task_name': {'key': 'buildTaskName', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "build_task_name": {"key": "buildTaskName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        build_task_name: str,
-        **kwargs
-    ):
+    def __init__(self, *, build_task_name: str, **kwargs: Any) -> None:
         """
-        :keyword build_task_name: Required. The name of build task against which build has to be
-         queued.
+        :keyword build_task_name: The name of build task against which build has to be queued.
+         Required.
         :paramtype build_task_name: str
         """
-        super(BuildTaskBuildRequest, self).__init__(**kwargs)
-        self.type = 'BuildTask'  # type: str
+        super().__init__(**kwargs)
+        self.type: str = "BuildTask"
         self.build_task_name = build_task_name
 
 
-class BuildTaskFilter(msrest.serialization.Model):
+class BuildTaskFilter(_serialization.Model):
     """The filter that can be used for listing build tasks.
 
     :ivar alias: The alternative name for build task.
@@ -919,24 +864,19 @@ class BuildTaskFilter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'alias': {'key': 'alias', 'type': 'str'},
+        "alias": {"key": "alias", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        alias: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, alias: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword alias: The alternative name for build task.
         :paramtype alias: str
         """
-        super(BuildTaskFilter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.alias = alias
 
 
-class BuildTaskListResult(msrest.serialization.Model):
+class BuildTaskListResult(_serialization.Model):
     """The collection of build tasks.
 
     :ivar value: The collection value.
@@ -946,36 +886,32 @@ class BuildTaskListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[BuildTask]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[BuildTask]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["BuildTask"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+        self, *, value: Optional[List["_models.BuildTask"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The collection value.
         :paramtype value: list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTask]
         :keyword next_link: The URI that can be used to request the next set of paged results.
         :paramtype next_link: str
         """
-        super(BuildTaskListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class BuildTaskUpdateParameters(msrest.serialization.Model):
+class BuildTaskUpdateParameters(_serialization.Model):
     """The parameters for updating a build task.
 
-    :ivar tags: A set of tags. The ARM resource tags.
+    :ivar tags: The ARM resource tags.
     :vartype tags: dict[str, str]
     :ivar alias: The alternative updatable name for a build task.
     :vartype alias: str
-    :ivar status: The current status of build task. Possible values include: "Disabled", "Enabled".
+    :ivar status: The current status of build task. Known values are: "Disabled" and "Enabled".
     :vartype status: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
     :ivar platform: The platform properties against which the build has to happen.
@@ -988,16 +924,16 @@ class BuildTaskUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'timeout': {'maximum': 28800, 'minimum': 300},
+        "timeout": {"maximum": 28800, "minimum": 300},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'alias': {'key': 'properties.alias', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'platform': {'key': 'properties.platform', 'type': 'PlatformProperties'},
-        'timeout': {'key': 'properties.timeout', 'type': 'int'},
-        'source_repository': {'key': 'properties.sourceRepository', 'type': 'SourceRepositoryUpdateParameters'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "alias": {"key": "properties.alias", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "platform": {"key": "properties.platform", "type": "PlatformProperties"},
+        "timeout": {"key": "properties.timeout", "type": "int"},
+        "source_repository": {"key": "properties.sourceRepository", "type": "SourceRepositoryUpdateParameters"},
     }
 
     def __init__(
@@ -1005,19 +941,18 @@ class BuildTaskUpdateParameters(msrest.serialization.Model):
         *,
         tags: Optional[Dict[str, str]] = None,
         alias: Optional[str] = None,
-        status: Optional[Union[str, "BuildTaskStatus"]] = None,
-        platform: Optional["PlatformProperties"] = None,
+        status: Optional[Union[str, "_models.BuildTaskStatus"]] = None,
+        platform: Optional["_models.PlatformProperties"] = None,
         timeout: Optional[int] = None,
-        source_repository: Optional["SourceRepositoryUpdateParameters"] = None,
-        **kwargs
-    ):
+        source_repository: Optional["_models.SourceRepositoryUpdateParameters"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword tags: A set of tags. The ARM resource tags.
+        :keyword tags: The ARM resource tags.
         :paramtype tags: dict[str, str]
         :keyword alias: The alternative updatable name for a build task.
         :paramtype alias: str
-        :keyword status: The current status of build task. Possible values include: "Disabled",
-         "Enabled".
+        :keyword status: The current status of build task. Known values are: "Disabled" and "Enabled".
         :paramtype status: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildTaskStatus
         :keyword platform: The platform properties against which the build has to happen.
@@ -1029,7 +964,7 @@ class BuildTaskUpdateParameters(msrest.serialization.Model):
         :paramtype source_repository:
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceRepositoryUpdateParameters
         """
-        super(BuildTaskUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.alias = alias
         self.status = status
@@ -1038,7 +973,7 @@ class BuildTaskUpdateParameters(msrest.serialization.Model):
         self.source_repository = source_repository
 
 
-class BuildUpdateParameters(msrest.serialization.Model):
+class BuildUpdateParameters(_serialization.Model):
     """The set of build properties that can be updated.
 
     :ivar is_archive_enabled: The value that indicates whether archiving is enabled or not.
@@ -1046,36 +981,30 @@ class BuildUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'is_archive_enabled': {'key': 'isArchiveEnabled', 'type': 'bool'},
+        "is_archive_enabled": {"key": "isArchiveEnabled", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        is_archive_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, is_archive_enabled: Optional[bool] = None, **kwargs: Any) -> None:
         """
         :keyword is_archive_enabled: The value that indicates whether archiving is enabled or not.
         :paramtype is_archive_enabled: bool
         """
-        super(BuildUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_archive_enabled = is_archive_enabled
 
 
-class DockerBuildStep(BuildStepProperties):
+class DockerBuildStep(BuildStepProperties):  # pylint: disable=too-many-instance-attributes
     """The Docker build step.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar provisioning_state: The provisioning state of the build step. Possible values include:
-     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar provisioning_state: The provisioning state of the build step. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.ProvisioningState
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker".
+    :ivar type: The type of the step. Required. "Docker"
     :vartype type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepType
     :ivar branch: The repository branch name.
     :vartype branch: str
@@ -1096,30 +1025,30 @@ class DockerBuildStep(BuildStepProperties):
     :ivar base_image_dependencies: List of base image dependencies for a step.
     :vartype base_image_dependencies:
      list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageDependency]
-    :ivar base_image_trigger: The type of the auto trigger for base image dependency updates.
-     Possible values include: "All", "Runtime", "None".
+    :ivar base_image_trigger: The type of the auto trigger for base image dependency updates. Known
+     values are: "All", "Runtime", and "None".
     :vartype base_image_trigger: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageTriggerType
     """
 
     _validation = {
-        'provisioning_state': {'readonly': True},
-        'type': {'required': True, 'readonly': True},
-        'base_image_dependencies': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "type": {"required": True, "readonly": True},
+        "base_image_dependencies": {"readonly": True},
     }
 
     _attribute_map = {
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'branch': {'key': 'branch', 'type': 'str'},
-        'image_names': {'key': 'imageNames', 'type': '[str]'},
-        'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
-        'no_cache': {'key': 'noCache', 'type': 'bool'},
-        'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'build_arguments': {'key': 'buildArguments', 'type': '[BuildArgument]'},
-        'base_image_dependencies': {'key': 'baseImageDependencies', 'type': '[BaseImageDependency]'},
-        'base_image_trigger': {'key': 'baseImageTrigger', 'type': 'str'},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "branch": {"key": "branch", "type": "str"},
+        "image_names": {"key": "imageNames", "type": "[str]"},
+        "is_push_enabled": {"key": "isPushEnabled", "type": "bool"},
+        "no_cache": {"key": "noCache", "type": "bool"},
+        "docker_file_path": {"key": "dockerFilePath", "type": "str"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "build_arguments": {"key": "buildArguments", "type": "[BuildArgument]"},
+        "base_image_dependencies": {"key": "baseImageDependencies", "type": "[BaseImageDependency]"},
+        "base_image_trigger": {"key": "baseImageTrigger", "type": "str"},
     }
 
     def __init__(
@@ -1127,14 +1056,14 @@ class DockerBuildStep(BuildStepProperties):
         *,
         branch: Optional[str] = None,
         image_names: Optional[List[str]] = None,
-        is_push_enabled: Optional[bool] = True,
-        no_cache: Optional[bool] = False,
+        is_push_enabled: bool = True,
+        no_cache: bool = False,
         docker_file_path: Optional[str] = None,
         context_path: Optional[str] = None,
-        build_arguments: Optional[List["BuildArgument"]] = None,
-        base_image_trigger: Optional[Union[str, "BaseImageTriggerType"]] = None,
-        **kwargs
-    ):
+        build_arguments: Optional[List["_models.BuildArgument"]] = None,
+        base_image_trigger: Optional[Union[str, "_models.BaseImageTriggerType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword branch: The repository branch name.
         :paramtype branch: str
@@ -1154,12 +1083,12 @@ class DockerBuildStep(BuildStepProperties):
         :paramtype build_arguments:
          list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
         :keyword base_image_trigger: The type of the auto trigger for base image dependency updates.
-         Possible values include: "All", "Runtime", "None".
+         Known values are: "All", "Runtime", and "None".
         :paramtype base_image_trigger: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageTriggerType
         """
-        super(DockerBuildStep, self).__init__(**kwargs)
-        self.type = 'Docker'  # type: str
+        super().__init__(**kwargs)
+        self.type: str = "Docker"
         self.branch = branch
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
@@ -1178,8 +1107,7 @@ class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the step.Constant filled by server. Possible values include:
-     "Docker".
+    :ivar type: The type of the step. Required. "Docker"
     :vartype type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildStepType
     :ivar branch: The repository branch name.
     :vartype branch: str
@@ -1197,26 +1125,26 @@ class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):
     :ivar build_arguments: The custom arguments for building this build step.
     :vartype build_arguments:
      list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
-    :ivar base_image_trigger: The type of the auto trigger for base image dependency updates.
-     Possible values include: "All", "Runtime", "None".
+    :ivar base_image_trigger: The type of the auto trigger for base image dependency updates. Known
+     values are: "All", "Runtime", and "None".
     :vartype base_image_trigger: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageTriggerType
     """
 
     _validation = {
-        'type': {'required': True, 'readonly': True},
+        "type": {"required": True, "readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'branch': {'key': 'branch', 'type': 'str'},
-        'image_names': {'key': 'imageNames', 'type': '[str]'},
-        'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
-        'no_cache': {'key': 'noCache', 'type': 'bool'},
-        'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
-        'context_path': {'key': 'contextPath', 'type': 'str'},
-        'build_arguments': {'key': 'buildArguments', 'type': '[BuildArgument]'},
-        'base_image_trigger': {'key': 'baseImageTrigger', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "branch": {"key": "branch", "type": "str"},
+        "image_names": {"key": "imageNames", "type": "[str]"},
+        "is_push_enabled": {"key": "isPushEnabled", "type": "bool"},
+        "no_cache": {"key": "noCache", "type": "bool"},
+        "docker_file_path": {"key": "dockerFilePath", "type": "str"},
+        "context_path": {"key": "contextPath", "type": "str"},
+        "build_arguments": {"key": "buildArguments", "type": "[BuildArgument]"},
+        "base_image_trigger": {"key": "baseImageTrigger", "type": "str"},
     }
 
     def __init__(
@@ -1228,10 +1156,10 @@ class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):
         no_cache: Optional[bool] = None,
         docker_file_path: Optional[str] = None,
         context_path: Optional[str] = None,
-        build_arguments: Optional[List["BuildArgument"]] = None,
-        base_image_trigger: Optional[Union[str, "BaseImageTriggerType"]] = None,
-        **kwargs
-    ):
+        build_arguments: Optional[List["_models.BuildArgument"]] = None,
+        base_image_trigger: Optional[Union[str, "_models.BaseImageTriggerType"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword branch: The repository branch name.
         :paramtype branch: str
@@ -1251,12 +1179,12 @@ class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):
         :paramtype build_arguments:
          list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.BuildArgument]
         :keyword base_image_trigger: The type of the auto trigger for base image dependency updates.
-         Possible values include: "All", "Runtime", "None".
+         Known values are: "All", "Runtime", and "None".
         :paramtype base_image_trigger: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.BaseImageTriggerType
         """
-        super(DockerBuildStepUpdateParameters, self).__init__(**kwargs)
-        self.type = 'Docker'  # type: str
+        super().__init__(**kwargs)
+        self.type: str = "Docker"
         self.branch = branch
         self.image_names = image_names
         self.is_push_enabled = is_push_enabled
@@ -1267,7 +1195,7 @@ class DockerBuildStepUpdateParameters(BuildStepPropertiesUpdateParameters):
         self.base_image_trigger = base_image_trigger
 
 
-class GitCommitTrigger(msrest.serialization.Model):
+class GitCommitTrigger(_serialization.Model):
     """The git commit trigger that caused a build.
 
     :ivar id: The unique ID of the trigger.
@@ -1283,23 +1211,23 @@ class GitCommitTrigger(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'commit_id': {'key': 'commitId', 'type': 'str'},
-        'repository_url': {'key': 'repositoryUrl', 'type': 'str'},
-        'branch_name': {'key': 'branchName', 'type': 'str'},
-        'provider_type': {'key': 'providerType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "commit_id": {"key": "commitId", "type": "str"},
+        "repository_url": {"key": "repositoryUrl", "type": "str"},
+        "branch_name": {"key": "branchName", "type": "str"},
+        "provider_type": {"key": "providerType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         commit_id: Optional[str] = None,
         repository_url: Optional[str] = None,
         branch_name: Optional[str] = None,
         provider_type: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The unique ID of the trigger.
         :paramtype id: str
@@ -1312,7 +1240,7 @@ class GitCommitTrigger(msrest.serialization.Model):
         :keyword provider_type: The source control provider type.
         :paramtype provider_type: str
         """
-        super(GitCommitTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.commit_id = commit_id
         self.repository_url = repository_url
@@ -1320,7 +1248,7 @@ class GitCommitTrigger(msrest.serialization.Model):
         self.provider_type = provider_type
 
 
-class ImageDescriptor(msrest.serialization.Model):
+class ImageDescriptor(_serialization.Model):
     """Properties for a registry image.
 
     :ivar registry: The registry login server.
@@ -1334,10 +1262,10 @@ class ImageDescriptor(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'registry': {'key': 'registry', 'type': 'str'},
-        'repository': {'key': 'repository', 'type': 'str'},
-        'tag': {'key': 'tag', 'type': 'str'},
-        'digest': {'key': 'digest', 'type': 'str'},
+        "registry": {"key": "registry", "type": "str"},
+        "repository": {"key": "repository", "type": "str"},
+        "tag": {"key": "tag", "type": "str"},
+        "digest": {"key": "digest", "type": "str"},
     }
 
     def __init__(
@@ -1347,8 +1275,8 @@ class ImageDescriptor(msrest.serialization.Model):
         repository: Optional[str] = None,
         tag: Optional[str] = None,
         digest: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword registry: The registry login server.
         :paramtype registry: str
@@ -1359,14 +1287,14 @@ class ImageDescriptor(msrest.serialization.Model):
         :keyword digest: The sha256-based digest of the image manifest.
         :paramtype digest: str
         """
-        super(ImageDescriptor, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.registry = registry
         self.repository = repository
         self.tag = tag
         self.digest = digest
 
 
-class ImageUpdateTrigger(msrest.serialization.Model):
+class ImageUpdateTrigger(_serialization.Model):
     """The image update trigger that caused a build.
 
     :ivar id: The unique ID of the trigger.
@@ -1378,19 +1306,19 @@ class ImageUpdateTrigger(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'timestamp': {'key': 'timestamp', 'type': 'iso-8601'},
-        'images': {'key': 'images', 'type': '[ImageDescriptor]'},
+        "id": {"key": "id", "type": "str"},
+        "timestamp": {"key": "timestamp", "type": "iso-8601"},
+        "images": {"key": "images", "type": "[ImageDescriptor]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         timestamp: Optional[datetime.datetime] = None,
-        images: Optional[List["ImageDescriptor"]] = None,
-        **kwargs
-    ):
+        images: Optional[List["_models.ImageDescriptor"]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword id: The unique ID of the trigger.
         :paramtype id: str
@@ -1400,48 +1328,42 @@ class ImageUpdateTrigger(msrest.serialization.Model):
         :paramtype images:
          list[~azure.mgmt.containerregistry.v2018_02_01_preview.models.ImageDescriptor]
         """
-        super(ImageUpdateTrigger, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.timestamp = timestamp
         self.images = images
 
 
-class PlatformProperties(msrest.serialization.Model):
+class PlatformProperties(_serialization.Model):
     """The platform properties against which the build has to happen.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar os_type: Required. The operating system type required for the build. Possible values
-     include: "Windows", "Linux".
+    :ivar os_type: The operating system type required for the build. Required. Known values are:
+     "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.OsType
     :ivar cpu: The CPU configuration in terms of number of cores required for the build.
     :vartype cpu: int
     """
 
     _validation = {
-        'os_type': {'required': True},
+        "os_type": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'cpu': {'key': 'cpu', 'type': 'int'},
+        "os_type": {"key": "osType", "type": "str"},
+        "cpu": {"key": "cpu", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        os_type: Union[str, "OsType"],
-        cpu: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, os_type: Union[str, "_models.OsType"], cpu: Optional[int] = None, **kwargs: Any) -> None:
         """
-        :keyword os_type: Required. The operating system type required for the build. Possible values
-         include: "Windows", "Linux".
+        :keyword os_type: The operating system type required for the build. Required. Known values are:
+         "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.OsType
         :keyword cpu: The CPU configuration in terms of number of cores required for the build.
         :paramtype cpu: int
         """
-        super(PlatformProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_type = os_type
         self.cpu = cpu
 
@@ -1453,14 +1375,14 @@ class QuickBuildRequest(QueueBuildRequest):
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar type: Required. The type of the build request.Constant filled by server.
+    :ivar type: The type of the build request. Required.
     :vartype type: str
     :ivar image_names: The fully qualified image names including the repository and tag.
     :vartype image_names: list[str]
-    :ivar source_location: Required. The URL(absolute or relative) of the source that needs to be
-     built. For Docker build, it can be an URL to a tar or github repository as supported by Docker.
+    :ivar source_location: The URL(absolute or relative) of the source that needs to be built. For
+     Docker build, it can be an URL to a tar or github repository as supported by Docker.
      If it is relative URL, the relative path should be obtained from calling getSourceUploadUrl
-     API.
+     API. Required.
     :vartype source_location: str
     :ivar build_arguments: The collection of build arguments to be used.
     :vartype build_arguments:
@@ -1472,53 +1394,52 @@ class QuickBuildRequest(QueueBuildRequest):
     :vartype no_cache: bool
     :ivar timeout: Build timeout in seconds.
     :vartype timeout: int
-    :ivar platform: Required. The platform properties against which the build will happen.
+    :ivar platform: The platform properties against which the build will happen. Required.
     :vartype platform: ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
-    :ivar docker_file_path: Required. The Docker file path relative to the source location.
+    :ivar docker_file_path: The Docker file path relative to the source location. Required.
     :vartype docker_file_path: str
     """
 
     _validation = {
-        'type': {'required': True, 'readonly': True},
-        'source_location': {'required': True},
-        'timeout': {'maximum': 28800, 'minimum': 300},
-        'platform': {'required': True},
-        'docker_file_path': {'required': True},
+        "type": {"required": True, "readonly": True},
+        "source_location": {"required": True},
+        "timeout": {"maximum": 28800, "minimum": 300},
+        "platform": {"required": True},
+        "docker_file_path": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'image_names': {'key': 'imageNames', 'type': '[str]'},
-        'source_location': {'key': 'sourceLocation', 'type': 'str'},
-        'build_arguments': {'key': 'buildArguments', 'type': '[BuildArgument]'},
-        'is_push_enabled': {'key': 'isPushEnabled', 'type': 'bool'},
-        'no_cache': {'key': 'noCache', 'type': 'bool'},
-        'timeout': {'key': 'timeout', 'type': 'int'},
-        'platform': {'key': 'platform', 'type': 'PlatformProperties'},
-        'docker_file_path': {'key': 'dockerFilePath', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "image_names": {"key": "imageNames", "type": "[str]"},
+        "source_location": {"key": "sourceLocation", "type": "str"},
+        "build_arguments": {"key": "buildArguments", "type": "[BuildArgument]"},
+        "is_push_enabled": {"key": "isPushEnabled", "type": "bool"},
+        "no_cache": {"key": "noCache", "type": "bool"},
+        "timeout": {"key": "timeout", "type": "int"},
+        "platform": {"key": "platform", "type": "PlatformProperties"},
+        "docker_file_path": {"key": "dockerFilePath", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         source_location: str,
-        platform: "PlatformProperties",
+        platform: "_models.PlatformProperties",
         docker_file_path: str,
         image_names: Optional[List[str]] = None,
-        build_arguments: Optional[List["BuildArgument"]] = None,
-        is_push_enabled: Optional[bool] = True,
-        no_cache: Optional[bool] = False,
-        timeout: Optional[int] = 3600,
-        **kwargs
-    ):
+        build_arguments: Optional[List["_models.BuildArgument"]] = None,
+        is_push_enabled: bool = True,
+        no_cache: bool = False,
+        timeout: int = 3600,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword image_names: The fully qualified image names including the repository and tag.
         :paramtype image_names: list[str]
-        :keyword source_location: Required. The URL(absolute or relative) of the source that needs to
-         be built. For Docker build, it can be an URL to a tar or github repository as supported by
-         Docker.
+        :keyword source_location: The URL(absolute or relative) of the source that needs to be built.
+         For Docker build, it can be an URL to a tar or github repository as supported by Docker.
          If it is relative URL, the relative path should be obtained from calling getSourceUploadUrl
-         API.
+         API. Required.
         :paramtype source_location: str
         :keyword build_arguments: The collection of build arguments to be used.
         :paramtype build_arguments:
@@ -1531,14 +1452,14 @@ class QuickBuildRequest(QueueBuildRequest):
         :paramtype no_cache: bool
         :keyword timeout: Build timeout in seconds.
         :paramtype timeout: int
-        :keyword platform: Required. The platform properties against which the build will happen.
+        :keyword platform: The platform properties against which the build will happen. Required.
         :paramtype platform:
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.PlatformProperties
-        :keyword docker_file_path: Required. The Docker file path relative to the source location.
+        :keyword docker_file_path: The Docker file path relative to the source location. Required.
         :paramtype docker_file_path: str
         """
-        super(QuickBuildRequest, self).__init__(**kwargs)
-        self.type = 'QuickBuild'  # type: str
+        super().__init__(**kwargs)
+        self.type: str = "QuickBuild"
         self.image_names = image_names
         self.source_location = source_location
         self.build_arguments = build_arguments
@@ -1549,14 +1470,14 @@ class QuickBuildRequest(QueueBuildRequest):
         self.docker_file_path = docker_file_path
 
 
-class SourceControlAuthInfo(msrest.serialization.Model):
+class SourceControlAuthInfo(_serialization.Model):
     """The authorization properties for accessing the source code repository.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar token_type: The type of Auth token. Possible values include: "PAT", "OAuth".
+    :ivar token_type: The type of Auth token. Known values are: "PAT" and "OAuth".
     :vartype token_type: str or ~azure.mgmt.containerregistry.v2018_02_01_preview.models.TokenType
-    :ivar token: Required. The access token used to access the source control provider.
+    :ivar token: The access token used to access the source control provider. Required.
     :vartype token: str
     :ivar refresh_token: The refresh token used to refresh the access token.
     :vartype refresh_token: str
@@ -1567,32 +1488,32 @@ class SourceControlAuthInfo(msrest.serialization.Model):
     """
 
     _validation = {
-        'token': {'required': True},
+        "token": {"required": True},
     }
 
     _attribute_map = {
-        'token_type': {'key': 'tokenType', 'type': 'str'},
-        'token': {'key': 'token', 'type': 'str'},
-        'refresh_token': {'key': 'refreshToken', 'type': 'str'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'expires_in': {'key': 'expiresIn', 'type': 'int'},
+        "token_type": {"key": "tokenType", "type": "str"},
+        "token": {"key": "token", "type": "str"},
+        "refresh_token": {"key": "refreshToken", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
+        "expires_in": {"key": "expiresIn", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         token: str,
-        token_type: Optional[Union[str, "TokenType"]] = None,
+        token_type: Optional[Union[str, "_models.TokenType"]] = None,
         refresh_token: Optional[str] = None,
         scope: Optional[str] = None,
         expires_in: Optional[int] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword token_type: The type of Auth token. Possible values include: "PAT", "OAuth".
+        :keyword token_type: The type of Auth token. Known values are: "PAT" and "OAuth".
         :paramtype token_type: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.TokenType
-        :keyword token: Required. The access token used to access the source control provider.
+        :keyword token: The access token used to access the source control provider. Required.
         :paramtype token: str
         :keyword refresh_token: The refresh token used to refresh the access token.
         :paramtype refresh_token: str
@@ -1601,7 +1522,7 @@ class SourceControlAuthInfo(msrest.serialization.Model):
         :keyword expires_in: Time in seconds that the token remains valid.
         :paramtype expires_in: int
         """
-        super(SourceControlAuthInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.token_type = token_type
         self.token = token
         self.refresh_token = refresh_token
@@ -1609,16 +1530,16 @@ class SourceControlAuthInfo(msrest.serialization.Model):
         self.expires_in = expires_in
 
 
-class SourceRepositoryProperties(msrest.serialization.Model):
+class SourceRepositoryProperties(_serialization.Model):
     """The properties of the source code repository.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar source_control_type: Required. The type of source control service. Possible values
-     include: "Github", "VisualStudioTeamService".
+    :ivar source_control_type: The type of source control service. Required. Known values are:
+     "Github" and "VisualStudioTeamService".
     :vartype source_control_type: str or
      ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlType
-    :ivar repository_url: Required. The full URL to the source code repository.
+    :ivar repository_url: The full URL to the source code repository. Required.
     :vartype repository_url: str
     :ivar is_commit_trigger_enabled: The value of this property indicates whether the source
      control commit trigger is enabled or not.
@@ -1630,32 +1551,32 @@ class SourceRepositoryProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'source_control_type': {'required': True},
-        'repository_url': {'required': True},
+        "source_control_type": {"required": True},
+        "repository_url": {"required": True},
     }
 
     _attribute_map = {
-        'source_control_type': {'key': 'sourceControlType', 'type': 'str'},
-        'repository_url': {'key': 'repositoryUrl', 'type': 'str'},
-        'is_commit_trigger_enabled': {'key': 'isCommitTriggerEnabled', 'type': 'bool'},
-        'source_control_auth_properties': {'key': 'sourceControlAuthProperties', 'type': 'SourceControlAuthInfo'},
+        "source_control_type": {"key": "sourceControlType", "type": "str"},
+        "repository_url": {"key": "repositoryUrl", "type": "str"},
+        "is_commit_trigger_enabled": {"key": "isCommitTriggerEnabled", "type": "bool"},
+        "source_control_auth_properties": {"key": "sourceControlAuthProperties", "type": "SourceControlAuthInfo"},
     }
 
     def __init__(
         self,
         *,
-        source_control_type: Union[str, "SourceControlType"],
+        source_control_type: Union[str, "_models.SourceControlType"],
         repository_url: str,
-        is_commit_trigger_enabled: Optional[bool] = False,
-        source_control_auth_properties: Optional["SourceControlAuthInfo"] = None,
-        **kwargs
-    ):
+        is_commit_trigger_enabled: bool = False,
+        source_control_auth_properties: Optional["_models.SourceControlAuthInfo"] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword source_control_type: Required. The type of source control service. Possible values
-         include: "Github", "VisualStudioTeamService".
+        :keyword source_control_type: The type of source control service. Required. Known values are:
+         "Github" and "VisualStudioTeamService".
         :paramtype source_control_type: str or
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlType
-        :keyword repository_url: Required. The full URL to the source code repository.
+        :keyword repository_url: The full URL to the source code repository. Required.
         :paramtype repository_url: str
         :keyword is_commit_trigger_enabled: The value of this property indicates whether the source
          control commit trigger is enabled or not.
@@ -1665,14 +1586,14 @@ class SourceRepositoryProperties(msrest.serialization.Model):
         :paramtype source_control_auth_properties:
          ~azure.mgmt.containerregistry.v2018_02_01_preview.models.SourceControlAuthInfo
         """
-        super(SourceRepositoryProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_control_type = source_control_type
         self.repository_url = repository_url
         self.is_commit_trigger_enabled = is_commit_trigger_enabled
         self.source_control_auth_properties = source_control_auth_properties
 
 
-class SourceRepositoryUpdateParameters(msrest.serialization.Model):
+class SourceRepositoryUpdateParameters(_serialization.Model):
     """The properties for updating the source code repository configuration.
 
     :ivar source_control_auth_properties: The authorization properties for accessing the source
@@ -1685,17 +1606,17 @@ class SourceRepositoryUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'source_control_auth_properties': {'key': 'sourceControlAuthProperties', 'type': 'SourceControlAuthInfo'},
-        'is_commit_trigger_enabled': {'key': 'isCommitTriggerEnabled', 'type': 'bool'},
+        "source_control_auth_properties": {"key": "sourceControlAuthProperties", "type": "SourceControlAuthInfo"},
+        "is_commit_trigger_enabled": {"key": "isCommitTriggerEnabled", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        source_control_auth_properties: Optional["SourceControlAuthInfo"] = None,
+        source_control_auth_properties: Optional["_models.SourceControlAuthInfo"] = None,
         is_commit_trigger_enabled: Optional[bool] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword source_control_auth_properties: The authorization properties for accessing the source
          code repository.
@@ -1705,12 +1626,12 @@ class SourceRepositoryUpdateParameters(msrest.serialization.Model):
          control commit trigger is enabled or not.
         :paramtype is_commit_trigger_enabled: bool
         """
-        super(SourceRepositoryUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.source_control_auth_properties = source_control_auth_properties
         self.is_commit_trigger_enabled = is_commit_trigger_enabled
 
 
-class SourceUploadDefinition(msrest.serialization.Model):
+class SourceUploadDefinition(_serialization.Model):
     """The properties of a response to source upload request.
 
     :ivar upload_url: The URL where the client can upload the source.
@@ -1721,17 +1642,11 @@ class SourceUploadDefinition(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'upload_url': {'key': 'uploadUrl', 'type': 'str'},
-        'relative_path': {'key': 'relativePath', 'type': 'str'},
+        "upload_url": {"key": "uploadUrl", "type": "str"},
+        "relative_path": {"key": "relativePath", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        upload_url: Optional[str] = None,
-        relative_path: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, upload_url: Optional[str] = None, relative_path: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword upload_url: The URL where the client can upload the source.
         :paramtype upload_url: str
@@ -1739,6 +1654,6 @@ class SourceUploadDefinition(msrest.serialization.Model):
          queue build request.
         :paramtype relative_path: str
         """
-        super(SourceUploadDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.upload_url = upload_url
         self.relative_path = relative_path

@@ -1,5 +1,11 @@
 # Release History
 
+## 21.2.0 (2023-02-20)
+
+### Features Added
+
+  - Model ManagedCluster has a new parameter upgrade_settings
+
 ## 21.1.0 (2022-12-30)
 
 ### Features Added
