@@ -161,6 +161,47 @@ class DataTransferCopyComponent(DataTransferComponent):
         """
         return self._data_copy_mode
 
+    def _customized_validate(self):
+        validation_result = super(DataTransferCopyComponent, self)._customized_validate()
+        validation_result.merge_with(self._validate_input_output_mapping())
+        return validation_result
+
+    def _validate_input_output_mapping(self):
+        validation_result = self._create_empty_validation_result()
+        inputs_count = len(self.inputs)
+        outputs_count = len(self.outputs)
+        if outputs_count != 1:
+            msg = "Only support single output in {}, but there're {} outputs."
+            validation_result.append_error(
+                message=msg.format(DataTransferTaskType.COPY_DATA, outputs_count), yaml_path="outputs"
+            )
+        else:
+            input_type = None
+            output_type = None
+            if inputs_count == 1:
+                for _, input_data in self.inputs.items():
+                    input_type = input_data.type
+                for _, output_data in self.outputs.items():
+                    output_type = output_data.type
+                if input_type is None or output_type is None or input_type != output_type:
+                    msg = "Input type {} doesn't exactly match with output type {} in task {}"
+                    validation_result.append_error(
+                        message=msg.format(input_type, output_type, DataTransferTaskType.COPY_DATA), yaml_path="outputs"
+                    )
+            elif inputs_count > 1:
+                for _, output_data in self.outputs.items():
+                    output_type = output_data.type
+                if output_type is None or output_type != AssetTypes.URI_FOLDER:
+                    msg = "output type {} need to be {} in task {}"
+                    validation_result.append_error(
+                        message=msg.format(output_type, AssetTypes.URI_FOLDER, DataTransferTaskType.COPY_DATA),
+                        yaml_path="outputs",
+                    )
+            else:
+                msg = "Inputs must be set in task {}."
+                validation_result.append_error(message=msg.format(DataTransferTaskType.COPY_DATA), yaml_path="inputs")
+        return validation_result
+
 
 class DataTransferImportComponent(DataTransferComponent):
     """DataTransfer import component version, used to define a data transfer component.

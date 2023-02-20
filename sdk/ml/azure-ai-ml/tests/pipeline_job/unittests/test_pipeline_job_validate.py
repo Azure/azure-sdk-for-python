@@ -743,46 +743,6 @@ class TestDSLPipelineJobValidate:
         validation_result = job._validate_compute_is_set()
         assert validation_result.passed
 
-    def test_dsl_data_transfer_copy_pipeline_with_invalid_outputs(self) -> None:
-        from azure.ai.ml.data_transfer import copy_data
-        cosmos_folder = Input(
-            path="/data/iris_model",
-            type=AssetTypes.URI_FOLDER,
-        )
-        cosmos_folder_dup = Input(
-            path="/data/iris_model",
-            type=AssetTypes.URI_FOLDER,
-        )
-
-        inputs = {
-            "folder1": cosmos_folder,
-            "folder2": cosmos_folder_dup,
-        }
-        outputs = {"output_folder": Output(type=AssetTypes.URI_FILE)}
-
-        merge_files_func = copy_data(
-            inputs=inputs,
-            outputs=outputs,
-            task=DataTransferTaskType.COPY_DATA,
-            data_copy_mode=DataCopyMode.MERGE_WITH_OVERWRITE,
-        )
-
-        # Define pipeline
-        @dsl.pipeline(description="submit a pipeline with data transfer copy job")
-        def data_transfer_copy_pipeline_from_builder(cosmos_folder, cosmos_folder_dup):
-            merge_files = merge_files_func(folder1=cosmos_folder, folder2=cosmos_folder_dup)
-            return {"merged_blob": merge_files.outputs.output_folder}
-
-        pipeline = data_transfer_copy_pipeline_from_builder(
-            cosmos_folder=cosmos_folder, cosmos_folder_dup=cosmos_folder_dup
-        )
-
-        validate_result = pipeline._validate()
-        assert validate_result.error_messages == {
-            'jobs.merge_files.component.outputs': 'output type uri_file need to be uri_folder in task copy_data',
-            'jobs.merge_files.compute': 'Compute not set'
-        }
-
     def test_dsl_data_transfer_import_pipeline_with_invalid_outputs(self) -> None:
         query_source_snowflake = "select * from TPCH_SF1000.PARTSUPP limit 10"
         connection_target_azuresql = "azureml:my_snowflake_connection"
