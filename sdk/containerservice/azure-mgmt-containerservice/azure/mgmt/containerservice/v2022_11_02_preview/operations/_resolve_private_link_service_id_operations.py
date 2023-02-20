@@ -181,7 +181,7 @@ class ResolvePrivateLinkServiceIdOperations:
         :param resource_name: The name of the managed cluster resource. Required.
         :type resource_name: str
         :param parameters: Parameters required in order to resolve a private link service ID. Is either
-         a model type or a IO type. Required.
+         a PrivateLinkResource type or a IO type. Required.
         :type parameters: ~azure.mgmt.containerservice.v2022_11_02_preview.models.PrivateLinkResource
          or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
