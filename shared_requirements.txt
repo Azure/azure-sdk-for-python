@@ -400,6 +400,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-monitor msrest>=0.7.1
 #override azure-mgmt-applicationinsights msrest>=0.7.1
 #override azure-mgmt-networkfunction msrest>=0.7.1
+#override azure-mgmt-storagemover azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-notificationhubs msrest>=0.7.1
 #override azure-mgmt-desktopvirtualization typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-azurestackhci typing-extensions>=4.3.0; python_version<'3.8.0'
@@ -562,6 +563,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-healthcareapis typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-resource azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-edgeorder typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-storagemover typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-containerinstance msrest>=0.7.1
 #override azure-mgmt-containerinstance azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-cognitiveservices msrest>=0.7.1
@@ -575,6 +577,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-frontdoor msrest>=0.7.1
 #override azure-mgmt-frontdoor azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-signalr msrest>=0.7.1
+#override azure-mgmt-storagemover msrest>=0.7.1
 #override azure-mgmt-signalr azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-hybridnetwork msrest>=0.7.1
 #override azure-mgmt-machinelearningcompute typing-extensions>=4.3.0; python_version<'3.8.0'
