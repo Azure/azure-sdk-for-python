@@ -8,7 +8,7 @@ from testcase import WorkflowTest, WorkflowPowerShellPreparer
 from devtools_testutils import recorded_by_proxy
 
 
-class WorkflowSmokeTest(WorkflowTest):
+class TestWorkflowSmoke(WorkflowTest):
 
     @WorkflowPowerShellPreparer()
     @recorded_by_proxy

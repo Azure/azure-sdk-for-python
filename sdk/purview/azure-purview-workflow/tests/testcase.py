@@ -5,7 +5,9 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase, AzureTestCase
+
+from devtools_testutils import PowerShellPreparer, AzureRecordedTestCase
+
 from azure.purview.workflow import PurviewWorkflowClient
 
 

@@ -9,7 +9,7 @@ from testcase_async import WorkflowAsyncTest
 from devtools_testutils.aio import recorded_by_proxy_async
 
 
-class WorkflowSmokeAsyncTest(WorkflowAsyncTest):
+class TestWorkflowSmokeAsync(WorkflowAsyncTest):
 
     @WorkflowPowerShellPreparer()
     @recorded_by_proxy_async
